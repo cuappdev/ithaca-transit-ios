@@ -1,3 +1,23 @@
-PODFILE CHECKSUM: 3466676ad854117ab5c08cae47e7513378342cdf
+PODS:
+  - GoogleMaps (2.1.1):
+    - GoogleMaps/Maps (= 2.1.1)
+  - GoogleMaps/Base (2.1.1)
+  - GoogleMaps/Maps (2.1.1):
+    - GoogleMaps/Base
+  - GooglePlaces (2.1.1):
+    - GoogleMaps/Base (= 2.1.1)
+  - SwiftyJSON (3.1.4)
 
-COCOAPODS: 1.1.0.beta.1
+DEPENDENCIES:
+  - GoogleMaps (~> 2.1.1)
+  - GooglePlaces (~> 2.1.1)
+  - SwiftyJSON (~> 3.1.4)
+
+SPEC CHECKSUMS:
+  GoogleMaps: a5b5bbe47734e2443bde781a6aa64e69fdb6d785
+  GooglePlaces: 35636d86e5020cba3856eb988c09a5491de0a65a
+  SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
+
+PODFILE CHECKSUM: 87cfebd3b59c407ac565b76676b47f18609d9bf0
+
+COCOAPODS: 1.2.0
