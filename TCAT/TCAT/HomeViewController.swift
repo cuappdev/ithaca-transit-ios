@@ -14,8 +14,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var resultsViewController: GMSAutocompleteResultsViewController?
     var searchController: UISearchController?
     var resultView: UITextView?
-    
     var tableView : UITableView!
+    let userDefaults = UserDefaults.standard
     
     //ADD TO COLOR EXTENSION
     let headerTextColor = UIColor(red: 100/255, green: 100/255, blue: 100/255, alpha: 1.0)
@@ -112,10 +112,42 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                            didAutocompleteWith place: GMSPlace) {
         searchController?.isActive = false
         // Do something with the selected place.
+        print(place.coordinate.latitude)
+        let resultLocation = SearchLocation(name: place.name, latitude: place.coordinate.latitude, longitude: place.coordinate.longitude)
+        print(resultLocation)
+        print(retrieveRecentLocations())
+        insertRecentLocation(location: resultLocation)
+        print(retrieveRecentLocations())
+        
+      
+        
+        
         print("Place name: \(place.name)")
         print("Place address: \(place.formattedAddress)")
         print("Place attributions: \(place.attributions)")
     }
+    
+    func retrieveRecentLocations() -> [SearchLocation] {
+        print("in retrive locations")
+        if let recentLocations = userDefaults.value(forKey: "recentLocations") as? Data {
+            return NSKeyedUnarchiver.unarchiveObject(with: recentLocations) as! [SearchLocation]
+        }
+        return [SearchLocation]()
+    }
+    
+    func insertRecentLocation(location: SearchLocation) {
+        print("in insert")
+        var currentLocations = retrieveRecentLocations()
+        print("got current locations")
+        let updatedLocations = currentLocations + [location]
+        print("appending")
+        print(updatedLocations)
+        let data = NSKeyedArchiver.archivedData(withRootObject: updatedLocations)
+        print("archived")
+        userDefaults.set(data, forKey: "recentLocations")
+        
+    }
+    
     
     func resultsController(_ resultsController: GMSAutocompleteResultsViewController,
                            didFailAutocompleteWithError error: Error){
