@@ -15,6 +15,7 @@ import SwiftyJSON
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    let userDefaults = UserDefaults.standard
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -33,6 +34,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         nav1.viewControllers = [mainView]
         self.window!.rootViewController = nav1
         self.window?.makeKeyAndVisible()
+        
+        //check if userdefaults for recentLocations exsits, if not make one
+       // if userDefaults.value(forKey: "recentLocations") == nil {
+       //     userDefaults.set(, forKey: "recentLocations")
+       // }
     
         
         
