@@ -27,14 +27,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
         let nav1 = UINavigationController()
-        nav1.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        nav1.navigationBar.shadowImage = UIImage()
         nav1.navigationBar.isTranslucent = true
         nav1.navigationBar.tintColor = .white
         let mainView = HomeViewController()
         nav1.viewControllers = [mainView]
         self.window!.rootViewController = nav1
         self.window?.makeKeyAndVisible()
+    
         
         
         return true
