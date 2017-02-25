@@ -10,13 +10,13 @@ import UIKit
 import GoogleMaps
 
 class MapViewController: UIViewController, GMSMapViewDelegate {
-    
-    // Constants
-    let polyline = Polyline()
-    var waypoints: [Waypoint] = []
-    
+
     // Variables
     var mapView: GMSMapView!
+    var path: GMSMutablePath!
+    var polyline: GMSPolyline!
+    var routePath: Path!
+    var waypoints: [Waypoint] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +33,7 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
         waypoints = [Waypoint(lat: 42.444738, long: -76.489383),
                      Waypoint(lat: 42.445173, long: -76.485027),
                      Waypoint(lat: 42.445221, long: -76.481615)]
+        routePath = Path(waypoints: waypoints, color: .tcatBlue)
         
         drawMapRoute()
         drawStops()
@@ -40,18 +41,27 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
     
     // MARK: Map and Route Methods
     
-    func drawRoute() {
-        let path = GMSMutablePath(fromEncodedPath: polyline.overviewPolyline)
-        let routePolyline = GMSPolyline(path: path)
-        
-        routePolyline.strokeColor = .tcatBlue
-        routePolyline.strokeWidth = 5
-        routePolyline.map = mapView
+    // Call this function to simulate travelling on route
+    func testDrawing() {
+        Timer.scheduledTimer(timeInterval: 1,
+                             target: self,
+                             selector: #selector(self.updateMapDrawing),
+                             userInfo: nil,
+                             repeats: true)
     }
     
     func drawMapRoute() {
-        polyline.getPolyline(waypoints: waypoints)
-        drawRoute()
+        path = GMSMutablePath(fromEncodedPath: routePath.overviewPolyline)
+        polyline = GMSPolyline(path: path)
+        polyline.strokeColor = routePath.color
+        polyline.strokeWidth = 5
+        polyline.map = mapView
+        updateMapDrawing()
+    }
+    
+    func updateMapDrawing() {
+        polyline.path = path
+        path.removeCoordinate(at: 0)
     }
     
     func drawStops() {

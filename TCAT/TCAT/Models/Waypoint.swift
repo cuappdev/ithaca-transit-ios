@@ -14,7 +14,7 @@ class Waypoint: NSObject {
     var lat: CGFloat
     var long: CGFloat
     
-    public init(lat: CGFloat, long: CGFloat) {
+    init(lat: CGFloat, long: CGFloat) {
         self.lat = lat
         self.long = long
         
