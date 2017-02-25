@@ -21,9 +21,13 @@ enum DirectionsStatus: String {
 
 class Path: GMSPolyline {
     
+    let polylineWidth: CGFloat = 6
+    let dashLengths: [NSNumber] = [14, 10]
+    
     var waypoints: [Waypoint] = []
+    var dottedPolyline: GMSPolyline = GMSPolyline()
     var mutablePath: GMSMutablePath? = nil
-    var color: UIColor = UIColor.black
+    var color: UIColor = .black
     
     init(waypoints: [Waypoint], color: UIColor) {
         super.init()
@@ -37,7 +41,13 @@ class Path: GMSPolyline {
         self.mutablePath = GMSMutablePath(fromEncodedPath: getPolyline())
         self.path = mutablePath
         self.strokeColor = color
-        self.strokeWidth = 5
+        self.strokeWidth = polylineWidth
+        
+        let dashStyles: [GMSStrokeStyle] = [.solidColor(color), .solidColor(.clear)]
+        self.dottedPolyline.path = mutablePath
+        self.dottedPolyline.strokeColor = color
+        self.dottedPolyline.strokeWidth = polylineWidth - 2
+        self.dottedPolyline.spans = GMSStyleSpans(mutablePath!, dashStyles, dashLengths, kGMSLengthRhumb)
     }
     
     func getPolyline() -> String {

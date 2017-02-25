@@ -40,6 +40,7 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
         route = [routePathA, routePathB]
         
         drawMapRoute()
+        testDrawing()
     }
     
     // MARK: Map and Route Methods
@@ -55,6 +56,7 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
     
     func drawMapRoute() {
         for routePath in route {
+            routePath.dottedPolyline.map = mapView
             routePath.map = mapView
             drawWaypoints(waypoints: routePath.waypoints)
         }
@@ -69,7 +71,6 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
                     break
                 }
             }
-            
         }
     }
     
