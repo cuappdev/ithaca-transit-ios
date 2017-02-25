@@ -10,12 +10,16 @@ import UIKit
 import GoogleMaps
 
 class MapViewController: UIViewController, GMSMapViewDelegate {
+    
+    // Constants
+    let markerRadius: CGFloat = 10
 
     // Variables
     var mapView: GMSMapView!
     var route: [Path] = []
     var waypointsA: [Waypoint] = []
     var waypointsB: [Waypoint] = []
+    var currMarker: GMSMarker!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,10 +44,28 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
         route = [routePathA, routePathB]
         
         drawMapRoute()
+        
+        // TEMP: Set up current location marker
+        setUpCurrentMarker()
+        
         testDrawing()
     }
     
     // MARK: Map and Route Methods
+    
+    func setUpCurrentMarker() {
+        let iconView = UIView(frame: CGRect(x: 0, y: 0, width: markerRadius*2, height: markerRadius*2))
+        iconView.backgroundColor = .gray
+        iconView.layer.cornerRadius = iconView.frame.width / 2.0
+        iconView.layer.masksToBounds = true
+        iconView.layer.borderColor = UIColor.white.cgColor
+        iconView.layer.borderWidth = 2
+        
+        let startCoords = CLLocationCoordinate2DMake(CLLocationDegrees(waypointsA[0].lat), CLLocationDegrees(waypointsA[0].long))
+        currMarker = GMSMarker(position: startCoords)
+        currMarker.iconView = iconView
+        currMarker.map = mapView
+    }
     
     // Call this function to simulate travelling on route
     func testDrawing() {
@@ -68,6 +90,9 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
                 if mutablePath.count() > 0 {
                     routePath.path = mutablePath
                     routePath.mutablePath?.removeCoordinate(at: 0)
+                    
+                    let coord = mutablePath.coordinate(at: 0)
+                    currMarker.position = coord
                     break
                 }
             }
