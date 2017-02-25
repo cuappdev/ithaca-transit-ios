@@ -19,35 +19,52 @@ enum DirectionsStatus: String {
     case UNKNOWN_ERROR
 }
 
+enum PathType: String {
+    case Driving
+    case Walking
+}
+
 class Path: GMSPolyline {
     
     let polylineWidth: CGFloat = 6
     let dashLengths: [NSNumber] = [14, 10]
     
     var waypoints: [Waypoint] = []
-    var dottedPolyline: GMSPolyline = GMSPolyline()
-    var mutablePath: GMSMutablePath? = nil
+    var traveledPolyline: GMSPolyline = GMSPolyline()
+    var traveledPath: GMSMutablePath? = nil
+    var untraveledPath: GMSMutablePath? = nil
+    var pathType: PathType = .Driving
     var color: UIColor = .black
     
-    init(waypoints: [Waypoint], color: UIColor) {
+    init(waypoints: [Waypoint], pathType: PathType, color: UIColor) {
         super.init()
         self.waypoints = waypoints
+        self.pathType = pathType
         self.color = color
         
         for waypoint in waypoints {
             waypoint.setColor(color: color)
         }
         
-        self.mutablePath = GMSMutablePath(fromEncodedPath: getPolyline())
-        self.path = mutablePath
+        self.untraveledPath = GMSMutablePath(fromEncodedPath: getPolyline())
+        self.traveledPath = untraveledPath
+        
+        self.path = untraveledPath
         self.strokeColor = color
         self.strokeWidth = polylineWidth
+        self.traveledPolyline.path = traveledPath
+        self.traveledPolyline.strokeColor = .gray
+        self.traveledPolyline.strokeWidth = polylineWidth
         
-        let dashStyles: [GMSStrokeStyle] = [.solidColor(color), .solidColor(.clear)]
-        self.dottedPolyline.path = mutablePath
-        self.dottedPolyline.strokeColor = color
-        self.dottedPolyline.strokeWidth = polylineWidth - 2
-        self.dottedPolyline.spans = GMSStyleSpans(mutablePath!, dashStyles, dashLengths, kGMSLengthRhumb)
+        if pathType == .Walking {
+            let untraveledDashStyles: [GMSStrokeStyle] = [.solidColor(color), .solidColor(.clear)]
+            self.spans = GMSStyleSpans(untraveledPath!, untraveledDashStyles, dashLengths, kGMSLengthRhumb)
+            self.strokeWidth -= 2
+            
+            let traveledDashStyles: [GMSStrokeStyle] = [.solidColor(.gray), .solidColor(.clear)]
+            self.traveledPolyline.spans = GMSStyleSpans(traveledPath!, traveledDashStyles, dashLengths, kGMSLengthRhumb)
+            self.traveledPolyline.strokeWidth -= 2
+        }
     }
     
     func getPolyline() -> String {

@@ -39,8 +39,8 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
         waypointsB = [Waypoint(lat: 42.445221, long: -76.481615, wpType: .Origin),
                      Waypoint(lat: 42.443147, long: -76.479534, wpType: .Destination)]
     
-        let routePathA = Path(waypoints: waypointsA, color: .tcatBlue)
-        let routePathB = Path(waypoints: waypointsB, color: .orange)
+        let routePathA = Path(waypoints: waypointsA, pathType: .Walking, color: .tcatBlue)
+        let routePathB = Path(waypoints: waypointsB, pathType: .Driving, color: .orange)
         route = [routePathA, routePathB]
         
         drawMapRoute()
@@ -55,7 +55,7 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
     
     func setUpCurrentMarker() {
         let iconView = UIView(frame: CGRect(x: 0, y: 0, width: markerRadius*2, height: markerRadius*2))
-        iconView.backgroundColor = .gray
+        iconView.backgroundColor = .black
         iconView.layer.cornerRadius = iconView.frame.width / 2.0
         iconView.layer.masksToBounds = true
         iconView.layer.borderColor = UIColor.white.cgColor
@@ -78,7 +78,7 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
     
     func drawMapRoute() {
         for routePath in route {
-            routePath.dottedPolyline.map = mapView
+            routePath.traveledPolyline.map = mapView
             routePath.map = mapView
             drawWaypoints(waypoints: routePath.waypoints)
         }
@@ -86,12 +86,12 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
     
     func updateMapDrawing() {
         for routePath in route {
-            if let mutablePath = routePath.mutablePath {
-                if mutablePath.count() > 0 {
-                    routePath.path = mutablePath
-                    routePath.mutablePath?.removeCoordinate(at: 0)
+            if let traveledPath = routePath.traveledPath {
+                if traveledPath.count() > 0 {
+                    routePath.path = traveledPath
+                    routePath.traveledPath?.removeCoordinate(at: 0)
                     
-                    let coord = mutablePath.coordinate(at: 0)
+                    let coord = traveledPath.coordinate(at: 0)
                     currMarker.position = coord
                     break
                 }
