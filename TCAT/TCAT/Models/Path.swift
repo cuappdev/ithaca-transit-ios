@@ -1,5 +1,5 @@
 //
-//  Polyline.swift
+//  Path.swift
 //  TCAT
 //
 //  Created by Annie Cheng on 2/24/17.
@@ -9,21 +9,30 @@
 import Foundation
 import SwiftyJSON
 
-class Polyline: NSObject {
+enum DirectionsStatus: String {
+    case OK
+    case ZERO_RESULTS
+    case OVER_QUERY_LIMIT
+    case REQUEST_DENIED
+    case INVALID_REQUEST
+    case UNKNOWN_ERROR
+}
+
+class Path: NSObject {
     
-    var overviewPolyline = ""
+    var waypoints: [Waypoint] = []
+    var overviewPolyline: String = ""
+    var color: UIColor = UIColor.black
     
-    enum DirectionsStatus: String {
-        case OK
-        case ZERO_RESULTS
-        case OVER_QUERY_LIMIT
-        case REQUEST_DENIED
-        case INVALID_REQUEST
-        case UNKNOWN_ERROR
+    init(waypoints: [Waypoint], color: UIColor) {
+        super.init()
+        self.waypoints = waypoints
+        self.overviewPolyline = getPolyline()
+        self.color = color
     }
     
-    func getPolyline(waypoints: [Waypoint]) {
-        if waypoints.count < 2 { return }
+    func getPolyline() -> String {
+        if waypoints.count < 2 { return "" }
         
         let origin = waypoints.first!
         let destination = waypoints.last!
@@ -42,8 +51,6 @@ class Polyline: NSObject {
                 let wpCoords = "\(waypoint.lat),\(waypoint.long)"
                 directionsURLString += "|\(wpCoords)"
             }
-            
-            print(directionsURLString)
         }
         
         directionsURLString = directionsURLString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
@@ -55,7 +62,7 @@ class Polyline: NSObject {
                 
                 switch directionsStatus {
                 case .OK:
-                    overviewPolyline = json["routes"][0]["overview_polyline"]["points"].stringValue
+                    return json["routes"][0]["overview_polyline"]["points"].stringValue
                 case .ZERO_RESULTS:
                     print("Zero Results: Can't draw polyline")
                 case .OVER_QUERY_LIMIT:
@@ -69,6 +76,8 @@ class Polyline: NSObject {
                 }
             }
         }
+        
+        return ""
     }
     
 }

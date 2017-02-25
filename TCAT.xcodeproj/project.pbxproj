@@ -37,7 +37,7 @@
 		DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */; };
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
 		D183A9FA1E611564006A9A15 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9F91E611564006A9A15 /* MapViewController.swift */; };
-		D183A9FC1E611643006A9A15 /* Polyline.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9FB1E611643006A9A15 /* Polyline.swift */; };
+		D183A9FC1E611643006A9A15 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9FB1E611643006A9A15 /* Path.swift */; };
 		D183A9FE1E61165B006A9A15 /* Waypoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9FD1E61165B006A9A15 /* Waypoint.swift */; };
 		DD2F988D1E50D80D0005F6BC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F988C1E50D80D0005F6BC /* ViewController.swift */; };
 /* End PBXBuildFile section */
@@ -94,7 +94,7 @@
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
 		D183A9F91E611564006A9A15 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapViewController.swift; path = Controllers/MapViewController.swift; sourceTree = "<group>"; };
-		D183A9FB1E611643006A9A15 /* Polyline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Polyline.swift; path = Models/Polyline.swift; sourceTree = "<group>"; };
+		D183A9FB1E611643006A9A15 /* Path.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Path.swift; path = Models/Path.swift; sourceTree = "<group>"; };
 		D183A9FD1E61165B006A9A15 /* Waypoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Waypoint.swift; path = Models/Waypoint.swift; sourceTree = "<group>"; };
 		DD2F988C1E50D80D0005F6BC /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = Controllers/ViewController.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
@@ -261,6 +261,7 @@
 				DD2F989A1E50F99A0005F6BC /* Route.swift */,
 				DD2F98A01E5141D10005F6BC /* Direction.swift */,
 				D183A9FB1E611643006A9A15 /* Polyline.swift */,
+				D183A9FB1E611643006A9A15 /* Path.swift */,
 				D183A9FD1E61165B006A9A15 /* Waypoint.swift */,
 			);
 			name = Model;
@@ -601,6 +602,8 @@
 				DD5D233C1E6367A100F8DECE /* Time.swift in Sources */,
 				DD2F988D1E50D80D0005F6BC /* ViewController.swift in Sources */,
 				D183A9FC1E611643006A9A15 /* Polyline.swift in Sources */,
+				D183A9FC1E611643006A9A15 /* Path.swift in Sources */,
+				D183AA001E612826006A9A15 /* UIColor+Shared.swift in Sources */,
 				D183A9FA1E611564006A9A15 /* MapViewController.swift in Sources */,
 				D183A9FE1E61165B006A9A15 /* Waypoint.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
