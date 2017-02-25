@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftyJSON
+import GoogleMaps
 
 enum DirectionsStatus: String {
     case OK
@@ -18,21 +19,25 @@ enum DirectionsStatus: String {
     case UNKNOWN_ERROR
 }
 
-class Path: NSObject {
+class Path: GMSPolyline {
     
     var waypoints: [Waypoint] = []
-    var overviewPolyline: String = ""
+    var mutablePath: GMSMutablePath? = nil
     var color: UIColor = UIColor.black
     
     init(waypoints: [Waypoint], color: UIColor) {
         super.init()
         self.waypoints = waypoints
-        self.overviewPolyline = getPolyline()
         self.color = color
         
         for waypoint in waypoints {
             waypoint.setColor(color: color)
         }
+        
+        self.mutablePath = GMSMutablePath(fromEncodedPath: getPolyline())
+        self.path = mutablePath
+        self.strokeColor = color
+        self.strokeWidth = 5
     }
     
     func getPolyline() -> String {
