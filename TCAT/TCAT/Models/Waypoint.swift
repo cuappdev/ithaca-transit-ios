@@ -18,6 +18,9 @@ enum WaypointType: String {
 
 class Waypoint: NSObject {
     
+    let bigRadius: CGFloat = 15
+    let smallRadius: CGFloat = 9
+    
     var lat: CGFloat = 0
     var long: CGFloat = 0
     var wpType: WaypointType = .Origin
@@ -44,16 +47,15 @@ class Waypoint: NSObject {
     }
     
     func drawOriginIcon() -> UIView {
-        let iconView = drawCircle(radius: 9, innerColor: .black, borderColor: .white)
+        let iconView = drawCircle(radius: smallRadius, innerColor: .black, borderColor: .white)
 
         return iconView
     }
     
     func drawDestinationIcon() -> UIView {
-        let radius: CGFloat = 9
-        let iconView = drawCircle(radius: radius, innerColor: .white, borderColor: .black)
+        let iconView = drawCircle(radius: smallRadius, innerColor: .white, borderColor: .black)
         
-        let innerView = UIView(frame: CGRect(x: 0, y: 0, width: radius/2.0, height: radius/2.0))
+        let innerView = UIView(frame: CGRect(x: 0, y: 0, width: smallRadius/2.0, height: smallRadius/2.0))
         innerView.center = iconView.center
         innerView.layer.cornerRadius = innerView.frame.width / 2.0
         innerView.layer.masksToBounds = true
@@ -64,10 +66,9 @@ class Waypoint: NSObject {
     }
     
     func drawStopIcon() -> UIView {
-        let radius: CGFloat = 15
-        let iconView = drawCircle(radius: radius, innerColor: .black)
+        let iconView = drawCircle(radius: bigRadius, innerColor: .black)
         
-        let busNumLabel = UILabel(frame: CGRect(x: 0, y: 0, width: radius*2, height: radius*2))
+        let busNumLabel = UILabel(frame: CGRect(x: 0, y: 0, width: bigRadius*2, height: bigRadius*2))
         busNumLabel.text = "\(self.busNumber)"
         busNumLabel.font = .systemFont(ofSize: 14)
         busNumLabel.textColor = .white
