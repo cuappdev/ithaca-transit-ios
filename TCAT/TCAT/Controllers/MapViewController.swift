@@ -30,9 +30,9 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
         view = mapView
         
         // FIX: Placeholder waypoints for testing
-        waypoints = [Waypoint(lat: 42.444738, long: -76.489383),
-                     Waypoint(lat: 42.445173, long: -76.485027),
-                     Waypoint(lat: 42.445221, long: -76.481615)]
+        waypoints = [Waypoint(lat: 42.444738, long: -76.489383, wpType: .Origin),
+                     Waypoint(lat: 42.445173, long: -76.485027, wpType: .Stop),
+                     Waypoint(lat: 42.445221, long: -76.481615, wpType: .Destination)]
         routePath = Path(waypoints: waypoints, color: .tcatBlue)
         
         drawMapRoute()
@@ -68,16 +68,7 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
         for waypoint in waypoints {
             let coords = CLLocationCoordinate2DMake(CLLocationDegrees(waypoint.lat), CLLocationDegrees(waypoint.long))
             let marker = GMSMarker(position: coords)
-            
-            // FIX: Placeholder stop icon
-            let iconView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
-            iconView.backgroundColor = .white
-            iconView.layer.cornerRadius = iconView.frame.width / 2.0
-            iconView.layer.masksToBounds = true
-            iconView.layer.borderWidth = 2
-            iconView.layer.borderColor = UIColor.black.cgColor
-            
-            marker.iconView = iconView
+            marker.iconView = waypoint.iconView
             marker.userData = waypoint
             marker.map = mapView
         }

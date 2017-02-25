@@ -29,6 +29,10 @@ class Path: NSObject {
         self.waypoints = waypoints
         self.overviewPolyline = getPolyline()
         self.color = color
+        
+        for waypoint in waypoints {
+            waypoint.setColor(color: color)
+        }
     }
     
     func getPolyline() -> String {
@@ -45,12 +49,8 @@ class Path: NSObject {
         var directionsURLString = "\(baseDirectionsURL)\(originQuery)&\(destinationQuery)"
         
         if waypoints.count > 2 {
-            directionsURLString += "&\(waypointsQuery)"
-            
-            for waypoint in waypoints {
-                let wpCoords = "\(waypoint.lat),\(waypoint.long)"
-                directionsURLString += "|\(wpCoords)"
-            }
+            let coords = waypoints.map { "|\($0.lat),\($0.long)" }
+            directionsURLString += "&\(waypointsQuery)\(coords.joined())"
         }
         
         directionsURLString = directionsURLString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
