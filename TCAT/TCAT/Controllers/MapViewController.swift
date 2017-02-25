@@ -13,10 +13,9 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 
     // Variables
     var mapView: GMSMapView!
-    var path: GMSMutablePath!
-    var polyline: GMSPolyline!
-    var routePath: Path!
-    var waypoints: [Waypoint] = []
+    var route: [Path] = []
+    var waypointsA: [Waypoint] = []
+    var waypointsB: [Waypoint] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,13 +29,17 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
         view = mapView
         
         // FIX: Placeholder waypoints for testing
-        waypoints = [Waypoint(lat: 42.444738, long: -76.489383, wpType: .Origin),
+        waypointsA = [Waypoint(lat: 42.444738, long: -76.489383, wpType: .Origin),
                      Waypoint(lat: 42.445173, long: -76.485027, wpType: .Stop),
-                     Waypoint(lat: 42.445221, long: -76.481615, wpType: .Destination)]
-        routePath = Path(waypoints: waypoints, color: .tcatBlue)
+                     Waypoint(lat: 42.445221, long: -76.481615, wpType: .None)]
+        waypointsB = [Waypoint(lat: 42.445221, long: -76.481615, wpType: .Origin),
+                     Waypoint(lat: 42.443147, long: -76.479534, wpType: .Destination)]
+    
+        let routePathA = Path(waypoints: waypointsA, color: .tcatBlue)
+        let routePathB = Path(waypoints: waypointsB, color: .orange)
+        route = [routePathA, routePathB]
         
         drawMapRoute()
-        drawStops()
     }
     
     // MARK: Map and Route Methods
@@ -51,20 +54,26 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
     }
     
     func drawMapRoute() {
-        path = GMSMutablePath(fromEncodedPath: routePath.overviewPolyline)
-        polyline = GMSPolyline(path: path)
-        polyline.strokeColor = routePath.color
-        polyline.strokeWidth = 5
-        polyline.map = mapView
-        updateMapDrawing()
+        for routePath in route {
+            routePath.map = mapView
+            drawWaypoints(waypoints: routePath.waypoints)
+        }
     }
     
     func updateMapDrawing() {
-        polyline.path = path
-        path.removeCoordinate(at: 0)
+        for routePath in route {
+            if let mutablePath = routePath.mutablePath {
+                if mutablePath.count() > 0 {
+                    routePath.path = mutablePath
+                    routePath.mutablePath?.removeCoordinate(at: 0)
+                    break
+                }
+            }
+            
+        }
     }
     
-    func drawStops() {
+    func drawWaypoints(waypoints: [Waypoint]) {
         for waypoint in waypoints {
             let coords = CLLocationCoordinate2DMake(CLLocationDegrees(waypoint.lat), CLLocationDegrees(waypoint.long))
             let marker = GMSMarker(position: coords)
