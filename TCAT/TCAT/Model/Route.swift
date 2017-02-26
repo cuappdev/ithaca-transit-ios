@@ -52,7 +52,6 @@ class Route: NSObject {
     var departureTime: Date
     var arrivalTime: Date
     
-    //NSELF: REMOVE FROM EXAMPLE
     /*To extract timeUntilDeparture's times in day, hour, and minute units:
      * let days: Int = timeUntilDeparture.day
      * let hours: Int = timeUntilDeparture.hour
