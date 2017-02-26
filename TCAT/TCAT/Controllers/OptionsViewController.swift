@@ -17,6 +17,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         tableView = UITableView(frame: view.frame)
         tableView.delegate = self
         tableView.dataSource = self
+        self.view.addSubview(tableView)
         
     }
 
@@ -33,14 +34,12 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
-        
-        return UITableViewCell()
+        return UITableViewCell(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 50))
     }
     
     
     func numberOfSections(in tableView: UITableView) -> Int{
-        
-        return 1
+        return 2
     }
     
     
