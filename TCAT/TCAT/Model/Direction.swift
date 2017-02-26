@@ -40,13 +40,15 @@ class BoardDirection: Direction {
         return "Debark at \(arrivalPlace)"
     }
     
+    //NSELF: REMOVE FROM EXAMPLE
     /*To extract travelTime's times in day, hour, and minute units:
      * let days: Int = travelTime.day
      * let hours: Int = travelTime.hour
      * let minutes: Int = travelTime.minute
      */
     var travelTime: DateComponents {
-        return Calendar.current.dateComponents([.hour, .minute, .day], from: departureTime , to: arrivalTime)
+        return Time.dateComponents(from: departureTime, to: arrivalTime)
+
     }
     
     init(routeNumber: Int, bound: Bound, stops: [String] = [], departureTime: Date, departurePlace: String, arrivalTime: Date, arrivalPlace: String) {

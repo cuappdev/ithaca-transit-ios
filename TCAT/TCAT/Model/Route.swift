@@ -15,7 +15,8 @@
 //    arrivalTime = 7:39 PM
 //    timeUntilDeparture = 5 min
 //    directions = [WalkDirection1, BoardDirection, WalkDirection2]
-//    mainStops = ["BakerFlagpole", "Angry Mom Records"]
+//    mainStops = ["Statler Hall", "Angry Mom Records"]
+//    mainStopsNums = [32, 0]
 //
 //WalkDirection1:
 //    departureTime = 7:21 PM
@@ -51,6 +52,7 @@ class Route: NSObject {
     var departureTime: Date
     var arrivalTime: Date
     
+    //NSELF: REMOVE FROM EXAMPLE
     /*To extract timeUntilDeparture's times in day, hour, and minute units:
      * let days: Int = timeUntilDeparture.day
      * let hours: Int = timeUntilDeparture.hour
@@ -58,16 +60,21 @@ class Route: NSObject {
      */
     var timeUntilDeparture: DateComponents {
         let now = Date() //curent date
-        return Calendar.current.dateComponents([.hour, .minute, .day], from: now , to: departureTime)
+        return Time.dateComponents(from: now, to: departureTime)
     }
     
     var directions: [Direction]
     var mainStops: [String]
+    //N2SELF: ADD TO EXAMPLE
+    var mainStopsNums: [Int] //-1 for pins
+    var travelDistance: Double //of first stop
     
-    init(departureTime: Date, arrivalTime: Date, directions: [Direction], mainStops: [String]) {
+    init(departureTime: Date, arrivalTime: Date, directions: [Direction], mainStops: [String], mainStopsNums: [Int], travelDistance: Double) {
         self.departureTime = departureTime
         self.arrivalTime = arrivalTime
         self.directions = directions
         self.mainStops = mainStops
+        self.mainStopsNums = mainStopsNums
+        self.travelDistance = travelDistance
     }
 }
