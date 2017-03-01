@@ -73,7 +73,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         cell.imageView?.frame = (frame: CGRect(x: 5, y: 5, width: 25, height: 25))
         cell.imageView?.image = #imageLiteral(resourceName: "search")
-
         cell.textLabel?.text = locations[indexPath.row].name
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
