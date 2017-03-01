@@ -19,7 +19,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     let headerTextColor = UIColor(red: 100/255, green: 100/255, blue: 100/255, alpha: 1.0)
     let backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
     let tableViewSeparatorColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1.0)
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,7 +29,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         searchBar = SearchBarView()
         searchBar.resultsViewController?.delegate = self
-        
+
         navigationItem.titleView = searchBar.searchController?.searchBar
     
 
@@ -45,8 +44,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         view.addSubview(tableView)
     }
 
-
-
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return retrieveRecentLocations().count == 0 ? 1 : 2
     }
@@ -75,6 +73,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         cell.imageView?.frame = (frame: CGRect(x: 5, y: 5, width: 25, height: 25))
         cell.imageView?.image = #imageLiteral(resourceName: "search")
+
         cell.textLabel?.text = locations[indexPath.row].name
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
@@ -85,7 +84,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0 ? 5 : retrieveRecentLocations().count
-
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
