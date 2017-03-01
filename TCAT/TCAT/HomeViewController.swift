@@ -9,29 +9,28 @@
 import UIKit
 import GooglePlaces
 
-class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, GMSAutocompleteResultsViewControllerDelegate {
+class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,GMSAutocompleteResultsViewControllerDelegate {
     
     var tableView : UITableView!
     let userDefaults = UserDefaults.standard
+    var searchBar: SearchBarView!
     
     //ADD TO COLOR EXTENSION
     let headerTextColor = UIColor(red: 100/255, green: 100/255, blue: 100/255, alpha: 1.0)
-    let tcatOrange = UIColor(red: 243/255, green: 156/255, blue: 18/255, alpha: 1.0)
+    let backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
+    let tableViewSeparatorColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1.0)
     
-    var searchBar: SearchBarView!
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "App Name"
-        navigationController?.navigationBar.barTintColor = tcatOrange
+        
+        navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        view.backgroundColor = UIColor(red: 241/255, green: 241/255, blue: 241/255, alpha: 1.0)
+        view.backgroundColor = backgroundColor
         
-        //To Implement the Search Bar within a vie
-        searchBar = SearchBarView(frame: CGRect(x: 0, y: 65.0, width: view.bounds.width, height: 45.0))
+        searchBar = SearchBarView()
         searchBar.resultsViewController?.delegate = self
-        view.addSubview(searchBar)
         
+        navigationItem.titleView = searchBar.searchController?.searchBar
         
         //UITableView Set Up
         let tableViewFrame = CGRect(x: 0, y: searchBar.frame.maxY, width: view.bounds.width, height: view.bounds.height - searchBar.bounds.height)
@@ -39,18 +38,18 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.separatorColor = tableViewSeparatorColor
         view.addSubview(tableView)
     }
-
- 
-    //Tableview
+    
+    
+    //TableView Methods
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return retrieveRecentLocations().count == 0 ? 1 : 2
     }
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
-        //header.textLabel?.font = UIFont(name: "SFUIDisplay-Regular", size: 12)!
         header.textLabel?.textColor = headerTextColor
         header.textLabel?.text = section == 0 ? "Cornell Destinations" : "Recent Searches"
     }
@@ -60,36 +59,36 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return indexPath.section == 0 ? 110.5 : 50.0
+        return indexPath.section == 0 ? 60.0 : 50.0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
+            //Stub for now
             return UITableViewCell()
         }
         let locations = retrieveRecentLocations()
-        var cell = tableView.dequeueReusableCell(withIdentifier: "recentLocation")
-        if cell == nil {
-            cell = UITableViewCell(style:UITableViewCellStyle.subtitle, reuseIdentifier: "recentLocation")
-        }
-        cell?.textLabel?.text = locations[indexPath.row].name
-        return cell!
+        let cell = tableView.dequeueReusableCell(withIdentifier: "recentLocation") == nil ? RecentSearchCell(style:UITableViewCellStyle.subtitle, reuseIdentifier: "recentLocation") : tableView.dequeueReusableCell(withIdentifier: "recentLocation")!
+        
+        cell.imageView?.frame = (frame: CGRect(x: 5, y: 5, width: 25, height: 25))
+        cell.textLabel?.text = locations[indexPath.row].name
+        cell.preservesSuperviewLayoutMargins = false
+        cell.separatorInset = .zero
+        cell.layoutMargins = .zero
+        
+        return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 1 : retrieveRecentLocations().count
+        return section == 0 ? 5 : retrieveRecentLocations().count
     }
     
-    //Collectionview
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return UICollectionViewCell()
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
-    }
-   
-    //Google Places
+    
+    //Google Places Methods
     func resultsController(_ resultsController: GMSAutocompleteResultsViewController,
                            didAutocompleteWith place: GMSPlace) {
         searchBar.searchController?.isActive = false
