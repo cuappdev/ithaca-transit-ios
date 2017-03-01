@@ -32,7 +32,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.resultsViewController?.delegate = self
         
         navigationItem.titleView = searchBar.searchController?.searchBar
-        
+    
 
         //UITableView Set Up
         let tableViewFrame = CGRect(x: 0, y: searchBar.frame.maxY, width: view.bounds.width, height: view.bounds.height - searchBar.bounds.height)
@@ -44,8 +44,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.separatorColor = tableViewSeparatorColor
         view.addSubview(tableView)
     }
-    
-    //TableView Methods
+
+
+
     func numberOfSections(in tableView: UITableView) -> Int {
         return retrieveRecentLocations().count == 0 ? 1 : 2
     }
@@ -84,6 +85,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0 ? 5 : retrieveRecentLocations().count
+
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -124,10 +126,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         print("Error: ", error.localizedDescription)
     }
     
-    // Turn the network activity indicator on and off again.
+    
+    //Turn the network activity indicator on and off again.
     func didRequestAutocompletePredictions(forResultsController resultsController: GMSAutocompleteResultsViewController) {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
     }
+    
     
     func didUpdateAutocompletePredictions(forResultsController resultsController: GMSAutocompleteResultsViewController) {
         UIApplication.shared.isNetworkActivityIndicatorVisible = false

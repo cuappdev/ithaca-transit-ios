@@ -9,6 +9,7 @@
 import UIKit
 import GooglePlaces
 
+
 class SearchBarView: UIView, UISearchControllerDelegate {
     
     var resultsViewController: GMSAutocompleteResultsViewController?
@@ -24,7 +25,6 @@ class SearchBarView: UIView, UISearchControllerDelegate {
         //Google Places Soft Bounds
         let northEastCoords = CLLocationCoordinate2D(latitude: 42.588371, longitude: -76.265306)
         let southWestCoords = CLLocationCoordinate2D(latitude: 42.318871, longitude: -76.684236)
-        
         
         resultsViewController = GMSAutocompleteResultsViewController()
         resultsViewController?.autocompleteBounds = GMSCoordinateBounds(coordinate: northEastCoords, coordinate: southWestCoords)
