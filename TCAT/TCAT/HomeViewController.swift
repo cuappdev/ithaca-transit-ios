@@ -71,6 +71,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let cell = tableView.dequeueReusableCell(withIdentifier: "recentLocation") == nil ? RecentSearchCell(style:UITableViewCellStyle.subtitle, reuseIdentifier: "recentLocation") : tableView.dequeueReusableCell(withIdentifier: "recentLocation")!
         
         cell.imageView?.frame = (frame: CGRect(x: 5, y: 5, width: 25, height: 25))
+        cell.imageView?.image = #imageLiteral(resourceName: "search")
         cell.textLabel?.text = locations[indexPath.row].name
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
