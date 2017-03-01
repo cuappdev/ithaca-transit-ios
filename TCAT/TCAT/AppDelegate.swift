@@ -38,9 +38,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         navigationBar.navigationBar.backgroundColor = .white
         let mainView = HomeViewController()
         navigationBar.viewControllers = [mainView]
+        self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = navigationBar
         self.window?.makeKeyAndVisible()
-        self.window = UIWindow(frame: UIScreen.main.bounds)
         
         return true
     }
