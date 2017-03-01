@@ -11,15 +11,14 @@ import GooglePlaces
 
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, GMSAutocompleteResultsViewControllerDelegate {
     
-    var resultsViewController: GMSAutocompleteResultsViewController?
-    var searchController: UISearchController?
-    var resultView: UITextView?
     var tableView : UITableView!
     let userDefaults = UserDefaults.standard
     
     //ADD TO COLOR EXTENSION
     let headerTextColor = UIColor(red: 100/255, green: 100/255, blue: 100/255, alpha: 1.0)
     let tcatOrange = UIColor(red: 243/255, green: 156/255, blue: 18/255, alpha: 1.0)
+    
+    var searchBar: SearchBarView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,35 +27,14 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         view.backgroundColor = UIColor(red: 241/255, green: 241/255, blue: 241/255, alpha: 1.0)
         
-        resultsViewController = GMSAutocompleteResultsViewController()
-        resultsViewController?.delegate = self
-        //general bounds for now. Not sure how far tcat goes. They are soft bounds
-        let northEastCoords = CLLocationCoordinate2D(latitude: 42.588371, longitude: -76.265306)
-        let southWestCoords = CLLocationCoordinate2D(latitude: 42.318871, longitude: -76.684236)
-        resultsViewController?.autocompleteBounds = GMSCoordinateBounds(coordinate: northEastCoords, coordinate: southWestCoords)
+        //To Implement the Search Bar within a vie
+        searchBar = SearchBarView(frame: CGRect(x: 0, y: 65.0, width: view.bounds.width, height: 45.0))
+        searchBar.resultsViewController?.delegate = self
+        view.addSubview(searchBar)
         
-        searchController = UISearchController(searchResultsController: resultsViewController)
-        searchController?.searchResultsUpdater = resultsViewController
-        searchController?.searchBar.placeholder = "Search any destination eg. 101 Cook St, Balch Hall"
-        searchController?.searchBar.searchBarStyle = .minimal
-        searchController?.searchBar.backgroundColor = .white
-        searchController?.searchBar.tintColor = .clear
-        searchController?.searchBar.isTranslucent = true
-        
-    
-        let subView = UIView(frame: CGRect(x: 0, y: 65.0, width: view.bounds.width, height: 45.0))
-        
-        subView.addSubview((searchController?.searchBar)!)
-        view.addSubview(subView)
-        searchController?.searchBar.sizeToFit()
-        searchController?.hidesNavigationBarDuringPresentation = false
-        
-        // When UISearchController presents the results view, present it in
-        // this view controller, not one further up the chain.
-        definesPresentationContext = true
         
         //UITableView Set Up
-        let tableViewFrame = CGRect(x: 0, y: subView.frame.maxY, width: view.bounds.width, height: view.bounds.height - subView.bounds.height)
+        let tableViewFrame = CGRect(x: 0, y: searchBar.frame.maxY, width: view.bounds.width, height: view.bounds.height - searchBar.bounds.height)
         tableView = UITableView(frame: tableViewFrame, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
@@ -64,12 +42,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         view.addSubview(tableView)
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-
+ 
     //Tableview
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
@@ -91,11 +64,20 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        if indexPath.section == 0 {
+            return UITableViewCell()
+        }
+        let locations = retrieveRecentLocations()
+        var cell = tableView.dequeueReusableCell(withIdentifier: "recentLocation")
+        if cell == nil {
+            cell = UITableViewCell(style:UITableViewCellStyle.subtitle, reuseIdentifier: "recentLocation")
+        }
+        cell?.textLabel?.text = locations[indexPath.row].name
+        return cell!
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 1 : 10
+        return section == 0 ? 1 : retrieveRecentLocations().count
     }
     
     //Collectionview
@@ -110,25 +92,13 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     //Google Places
     func resultsController(_ resultsController: GMSAutocompleteResultsViewController,
                            didAutocompleteWith place: GMSPlace) {
-        searchController?.isActive = false
+        searchBar.searchController?.isActive = false
         // Do something with the selected place.
-        print(place.coordinate.latitude)
         let resultLocation = SearchLocation(name: place.name, latitude: place.coordinate.latitude, longitude: place.coordinate.longitude)
-        print(resultLocation)
-        print(retrieveRecentLocations())
         insertRecentLocation(location: resultLocation)
-        print(retrieveRecentLocations())
-        
-      
-        
-        
-        print("Place name: \(place.name)")
-        print("Place address: \(place.formattedAddress)")
-        print("Place attributions: \(place.attributions)")
     }
     
     func retrieveRecentLocations() -> [SearchLocation] {
-        print("in retrive locations")
         if let recentLocations = userDefaults.value(forKey: "recentLocations") as? Data {
             return NSKeyedUnarchiver.unarchiveObject(with: recentLocations) as! [SearchLocation]
         }
@@ -136,29 +106,29 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func insertRecentLocation(location: SearchLocation) {
-        print("in insert")
-        var currentLocations = retrieveRecentLocations()
-        print("got current locations")
-        let updatedLocations = currentLocations + [location]
-        print("appending")
-        print(updatedLocations)
-        let data = NSKeyedArchiver.archivedData(withRootObject: updatedLocations)
-        print("archived")
-        userDefaults.set(data, forKey: "recentLocations")
+        let currentLocations = retrieveRecentLocations()
+        var updatedLocations = [location] + currentLocations
+        if updatedLocations.count > 8 {
+            updatedLocations.remove(at: updatedLocations.count - 1)
+        }
         
+        let data = NSKeyedArchiver.archivedData(withRootObject: updatedLocations)
+        userDefaults.set(data, forKey: "recentLocations")
+        tableView.reloadData()
     }
     
     
     func resultsController(_ resultsController: GMSAutocompleteResultsViewController,
                            didFailAutocompleteWithError error: Error){
-        // TODO: handle the error.
         print("Error: ", error.localizedDescription)
     }
     
-    // Turn the network activity indicator on and off again.
+    
+    //Turn the network activity indicator on and off again.
     func didRequestAutocompletePredictions(forResultsController resultsController: GMSAutocompleteResultsViewController) {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
     }
+    
     
     func didUpdateAutocompletePredictions(forResultsController resultsController: GMSAutocompleteResultsViewController) {
         UIApplication.shared.isNetworkActivityIndicatorVisible = false

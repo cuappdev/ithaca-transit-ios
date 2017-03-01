@@ -32,7 +32,6 @@ class SearchLocation: NSObject, NSCoding {
     
     
     public func encode(with aCoder: NSCoder) {
-        
         aCoder.encode(self.name, forKey: "name")
         aCoder.encode(self.latitude, forKey: "latitude")
         aCoder.encode(self.longitude, forKey: "longitude")
