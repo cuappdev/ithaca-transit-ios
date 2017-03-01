@@ -23,6 +23,7 @@ class SearchLocation: NSObject, NSCoding {
     // MARK: NSCoding
     
     required convenience init(coder aDecoder: NSCoder) {
+
         let name = aDecoder.decodeObject(forKey: "name") as! String
         let latitude = aDecoder.decodeObject(forKey: "latitude") as! CLLocationDegrees
         let longitude = aDecoder.decodeObject(forKey: "longitude") as! CLLocationDegrees
