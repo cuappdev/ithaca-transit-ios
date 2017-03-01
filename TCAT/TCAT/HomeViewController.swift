@@ -14,6 +14,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var tableView : UITableView!
     let userDefaults = UserDefaults.standard
     var searchBar: SearchBarView!
+    let maxNumberOfRecentLocations = 8
     
     //ADD TO COLOR EXTENSION
     let headerTextColor = UIColor(red: 100/255, green: 100/255, blue: 100/255, alpha: 1.0)
@@ -68,7 +69,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             return UITableViewCell()
         }
         let locations = retrieveRecentLocations()
-        let cell = tableView.dequeueReusableCell(withIdentifier: "recentLocation") == nil ? RecentSearchCell(style:UITableViewCellStyle.subtitle, reuseIdentifier: "recentLocation") : tableView.dequeueReusableCell(withIdentifier: "recentLocation")!
+        let cell = tableView.dequeueReusableCell(withIdentifier: "recentLocation") == nil ? RecentSearchCell(style: .subtitle, reuseIdentifier: "recentLocation") : tableView.dequeueReusableCell(withIdentifier: "recentLocation")!
         
         cell.imageView?.frame = (frame: CGRect(x: 5, y: 5, width: 25, height: 25))
         cell.imageView?.image = #imageLiteral(resourceName: "search")
@@ -108,7 +109,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func insertRecentLocation(location: SearchLocation) {
         let currentLocations = retrieveRecentLocations()
         var updatedLocations = [location] + currentLocations
-        if updatedLocations.count > 8 {
+        if updatedLocations.count > maxNumberOfRecentLocations {
             updatedLocations.remove(at: updatedLocations.count - 1)
         }
         
