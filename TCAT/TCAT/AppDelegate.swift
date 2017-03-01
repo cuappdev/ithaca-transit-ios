@@ -31,7 +31,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
         let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
         statusBar.backgroundColor = .white
-        self.window = UIWindow(frame: UIScreen.main.bounds)
         let nav1 = UINavigationController()
         nav1.extendedLayoutIncludesOpaqueBars = true
         nav1.navigationBar.isTranslucent = true
@@ -39,10 +38,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         nav1.navigationBar.backgroundColor = .white
         let mainView = HomeViewController()
         nav1.viewControllers = [mainView]
+        self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = nav1
         self.window?.makeKeyAndVisible()
 
-        
         return true
     }
     

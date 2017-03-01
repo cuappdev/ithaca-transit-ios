@@ -20,6 +20,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     let backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
     let tableViewSeparatorColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1.0)
     
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -32,17 +33,17 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         navigationItem.titleView = searchBar.searchController?.searchBar
         
+
         //UITableView Set Up
         let tableViewFrame = CGRect(x: 0, y: searchBar.frame.maxY, width: view.bounds.width, height: view.bounds.height - searchBar.bounds.height)
+
         tableView = UITableView(frame: tableViewFrame, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorColor = tableViewSeparatorColor
         view.addSubview(tableView)
-
     }
-    
     
     //TableView Methods
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -89,7 +90,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    
     //Google Places Methods
     func resultsController(_ resultsController: GMSAutocompleteResultsViewController,
                            didAutocompleteWith place: GMSPlace) {
@@ -118,19 +118,16 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.reloadData()
     }
     
-    
     func resultsController(_ resultsController: GMSAutocompleteResultsViewController,
                            didFailAutocompleteWithError error: Error){
         print("Error: ", error.localizedDescription)
     }
     
-  
     // Turn the network activity indicator on and off again.
     func didRequestAutocompletePredictions(forResultsController resultsController: GMSAutocompleteResultsViewController) {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
     }
     
-
     func didUpdateAutocompletePredictions(forResultsController resultsController: GMSAutocompleteResultsViewController) {
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
     }
