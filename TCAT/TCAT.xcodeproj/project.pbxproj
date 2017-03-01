@@ -15,7 +15,11 @@
 		449A7C831D80D0E80019300C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C811D80D0E80019300C /* LaunchScreen.storyboard */; };
 		449A7C8E1D80D0E80019300C /* TCATTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C8D1D80D0E80019300C /* TCATTests.swift */; };
 		449A7C991D80D0E80019300C /* TCATUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C981D80D0E80019300C /* TCATUITests.swift */; };
+		502D8F5D1E54C677005280F1 /* SearchLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502D8F5C1E54C677005280F1 /* SearchLocation.swift */; };
+		502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502D8F5E1E55161D005280F1 /* SearchBarView.swift */; };
 		50A19BA71E4BC57200AD6768 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50A19BA61E4BC57200AD6768 /* config.json */; };
+		50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A19BAD1E4C214000AD6768 /* HomeViewController.swift */; };
+		50C79D431E6369E000F40BBE /* RecentSearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C79D421E6369E000F40BBE /* RecentSearchCell.swift */; };
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
 		DD2F988D1E50D80D0005F6BC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F988C1E50D80D0005F6BC /* ViewController.swift */; };
 /* End PBXBuildFile section */
@@ -53,7 +57,11 @@
 		449A7C941D80D0E80019300C /* TCATUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TCATUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C981D80D0E80019300C /* TCATUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCATUITests.swift; sourceTree = "<group>"; };
 		449A7C9A1D80D0E80019300C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		50A19BA61E4BC57200AD6768 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = config.json; path = "Supporting Files/config.json"; sourceTree = "<group>"; };
+		502D8F5C1E54C677005280F1 /* SearchLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchLocation.swift; sourceTree = "<group>"; };
+		502D8F5E1E55161D005280F1 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
+		50A19BA61E4BC57200AD6768 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
+		50A19BAD1E4C214000AD6768 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		50C79D421E6369E000F40BBE /* RecentSearchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentSearchCell.swift; sourceTree = "<group>"; };
 		81725F2EBEBD3D184BFD0635 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
 		8236DFFA6C5F3AB1E6E1B0E4 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
 		97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -140,6 +148,11 @@
 			isa = PBXGroup;
 			children = (
 				449A7C781D80D0E80019300C /* AppDelegate.swift */,
+				449A7C7A1D80D0E80019300C /* ViewController.swift */,
+				50A19BAD1E4C214000AD6768 /* HomeViewController.swift */,
+				502D8F5E1E55161D005280F1 /* SearchBarView.swift */,
+				502D8F5C1E54C677005280F1 /* SearchLocation.swift */,
+				449A7C7C1D80D0E80019300C /* Main.storyboard */,
 				449A7C7F1D80D0E80019300C /* Assets.xcassets */,
 				DD2F988E1E50D8660005F6BC /* Base.lproj */,
 				DD2F988F1E50D89C0005F6BC /* Cells */,
@@ -150,6 +163,7 @@
 				50A19BA81E4BC5BC00AD6768 /* Supporting Files */,
 				DD2F98941E50D8DC0005F6BC /* Utilities */,
 				DD2F98951E50D8E60005F6BC /* Views */,
+				50C79D421E6369E000F40BBE /* RecentSearchCell.swift */,
 			);
 			path = TCAT;
 			sourceTree = "<group>";
@@ -522,8 +536,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD2F988D1E50D80D0005F6BC /* ViewController.swift in Sources */,
+				449A7C7B1D80D0E80019300C /* ViewController.swift in Sources */,
+				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
+				502D8F5D1E54C677005280F1 /* SearchLocation.swift in Sources */,
+				50C79D431E6369E000F40BBE /* RecentSearchCell.swift in Sources */,
+				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
