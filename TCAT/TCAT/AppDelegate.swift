@@ -30,17 +30,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
         let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
         statusBar.backgroundColor = .white
-        let nav1 = UINavigationController()
-        nav1.extendedLayoutIncludesOpaqueBars = true
-        nav1.navigationBar.isTranslucent = true
-        nav1.navigationBar.tintColor = .white
-        nav1.navigationBar.backgroundColor = .white
+        let navigationBar = UINavigationController()
+        navigationBar.extendedLayoutIncludesOpaqueBars = true
+        navigationBar.navigationBar.isTranslucent = true
+        navigationBar.navigationBar.tintColor = .white
+        navigationBar.navigationBar.backgroundColor = .white
         let mainView = HomeViewController()
-        nav1.viewControllers = [mainView]
+        navigationBar.viewControllers = [mainView]
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window!.rootViewController = nav1
+        self.window!.rootViewController = navigationBar
         self.window?.makeKeyAndVisible()
-
+        
         return true
     }
     

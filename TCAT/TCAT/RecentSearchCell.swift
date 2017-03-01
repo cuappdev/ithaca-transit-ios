@@ -28,7 +28,7 @@ class RecentSearchCell: UITableViewCell {
         
         self.textLabel?.frame = CGRect(x: 40, y: 0, width: self.frame.width - 45, height: 20)
         self.textLabel?.center.y = self.bounds.height / 2.0
-        self.textLabel?.font = UIFont.systemFont(ofSize: 13)
+        self.textLabel?.font = .systemFont(ofSize: 13)
         
     }
     
