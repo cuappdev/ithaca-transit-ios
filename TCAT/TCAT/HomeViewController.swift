@@ -40,6 +40,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.dataSource = self
         tableView.separatorColor = tableViewSeparatorColor
         view.addSubview(tableView)
+
     }
     
     
@@ -123,15 +124,16 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         print("Error: ", error.localizedDescription)
     }
     
-    
-    //Turn the network activity indicator on and off again.
+  
+    // Turn the network activity indicator on and off again.
     func didRequestAutocompletePredictions(forResultsController resultsController: GMSAutocompleteResultsViewController) {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
     }
     
-    
+
     func didUpdateAutocompletePredictions(forResultsController resultsController: GMSAutocompleteResultsViewController) {
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
     }
 }
+
 
