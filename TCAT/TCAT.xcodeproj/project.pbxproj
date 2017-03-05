@@ -27,7 +27,6 @@
 		DD2F98A31E5150990005F6BC /* OptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A21E5150990005F6BC /* OptionsViewController.swift */; };
 		DD5D233C1E6367A100F8DECE /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5D233B1E6367A100F8DECE /* Time.swift */; };
 		DDC221B61E5E146A000FB82B /* RouteTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DDC221B51E5E146A000FB82B /* RouteTableViewCell.xib */; };
-		DDC83CA11E52A66000D4EDDF /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA01E52A66000D4EDDF /* TableViewController.swift */; };
 		DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */; };
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -80,7 +79,6 @@
 		DD2F98A21E5150990005F6BC /* OptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OptionsViewController.swift; path = Controllers/OptionsViewController.swift; sourceTree = "<group>"; };
 		DD5D233B1E6367A100F8DECE /* Time.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Time.swift; path = Utilities/Time.swift; sourceTree = "<group>"; };
 		DDC221B51E5E146A000FB82B /* RouteTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RouteTableViewCell.xib; path = Cells/RouteTableViewCell.xib; sourceTree = "<group>"; };
-		DDC83CA01E52A66000D4EDDF /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TableViewController.swift; path = Controllers/TableViewController.swift; sourceTree = "<group>"; };
 		DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationTableViewCell.swift; path = Cells/LocationTableViewCell.swift; sourceTree = "<group>"; };
 		DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteTableViewCell.swift; path = Cells/RouteTableViewCell.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -272,7 +270,6 @@
 			isa = PBXGroup;
 			children = (
 				DD2F98A21E5150990005F6BC /* OptionsViewController.swift */,
-				DDC83CA01E52A66000D4EDDF /* TableViewController.swift */,
 				DD2F988C1E50D80D0005F6BC /* ViewController.swift */,
 			);
 			name = Controllers;
@@ -565,7 +562,6 @@
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
 				DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */,
-				DDC83CA11E52A66000D4EDDF /* TableViewController.swift in Sources */,
 				DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */,
 				DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */,
 				DD5D233C1E6367A100F8DECE /* Time.swift in Sources */,
