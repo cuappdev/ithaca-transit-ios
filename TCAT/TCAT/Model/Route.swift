@@ -64,8 +64,8 @@ class Route: NSObject {
     
     var directions: [Direction]
     var mainStops: [String]
-    //N2SELF: ADD TO EXAMPLE
     var mainStopsNums: [Int] //-1 for pins
+    //N2SELF: possible change this to walkDistance??
     var travelDistance: Double //of first stop
     
     init(departureTime: Date, arrivalTime: Date, directions: [Direction], mainStops: [String], mainStopsNums: [Int], travelDistance: Double) {
