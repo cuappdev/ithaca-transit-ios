@@ -21,7 +21,7 @@
 		50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A19BAD1E4C214000AD6768 /* HomeViewController.swift */; };
 		50C79D431E6369E000F40BBE /* RecentSearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C79D421E6369E000F40BBE /* RecentSearchCell.swift */; };
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
-		DD2F988D1E50D80D0005F6BC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F988C1E50D80D0005F6BC /* ViewController.swift */; };
+		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
 		DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A01E5141D10005F6BC /* Direction.swift */; };
 		DD2F98A31E5150990005F6BC /* OptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A21E5150990005F6BC /* OptionsViewController.swift */; };
@@ -73,6 +73,7 @@
 		8236DFFA6C5F3AB1E6E1B0E4 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
 		97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
 		DD2F988C1E50D80D0005F6BC /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = Controllers/ViewController.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
 		DD2F98A01E5141D10005F6BC /* Direction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Direction.swift; path = Model/Direction.swift; sourceTree = "<group>"; };
@@ -162,7 +163,6 @@
 			isa = PBXGroup;
 			children = (
 				449A7C781D80D0E80019300C /* AppDelegate.swift */,
-				449A7C7A1D80D0E80019300C /* ViewController.swift */,
 				50A19BAD1E4C214000AD6768 /* HomeViewController.swift */,
 				502D8F5E1E55161D005280F1 /* SearchBarView.swift */,
 				502D8F5C1E54C677005280F1 /* SearchLocation.swift */,
@@ -212,7 +212,6 @@
 		DD2F988E1E50D8660005F6BC /* Base.lproj */ = {
 			isa = PBXGroup;
 			children = (
-				449A7C7C1D80D0E80019300C /* Main.storyboard */,
 				449A7C811D80D0E80019300C /* LaunchScreen.storyboard */,
 			);
 			name = Base.lproj;
@@ -255,6 +254,7 @@
 			isa = PBXGroup;
 			children = (
 				DD5D233B1E6367A100F8DECE /* Time.swift */,
+				D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -558,9 +558,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				449A7C7B1D80D0E80019300C /* ViewController.swift in Sources */,
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
+				D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */,
 				DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */,
 				DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */,
 				DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */,
