@@ -77,6 +77,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell?.stopNums = routes[indexPath.row].mainStopsNums
         cell?.distance = routes[indexPath.row].travelDistance
         cell?.setData()
+        
         return cell!
     }
     
