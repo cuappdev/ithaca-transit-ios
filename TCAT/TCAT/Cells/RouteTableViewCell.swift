@@ -156,6 +156,7 @@ class RouteTableViewCell: UITableViewCell {
     }
     
     override func layoutSubviews() {
+        print("called")
         //Position depart time label
          departTimeLabel.center.x = contentView.frame.width - space - (departTimeLabel.frame.width/2)
         
@@ -170,7 +171,6 @@ class RouteTableViewCell: UITableViewCell {
                 
                 arrows[i-1].center.y = stopNumButtons[i-1].frame.maxY + space + (arrows[i-1].frame.height/2)
                 stopNumButtons[i].center.y = arrows[i-1].frame.maxY + space + (stopNumButtons[i].frame.height/2)
-                print("arrows \(i-1): \(arrows[i-1].frame.minY)")
             }
         }
         

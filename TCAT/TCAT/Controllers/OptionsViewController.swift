@@ -69,6 +69,13 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         if cell == nil {
             cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: identifier)
+            cell?.departureTime = routes[indexPath.row].departureTime
+            cell?.arrivalTime = routes[indexPath.row].arrivalTime
+            cell?.stops = routes[indexPath.row].mainStops
+            cell?.stopNums = routes[indexPath.row].mainStopsNums
+            cell?.distance = routes[indexPath.row].travelDistance
+            cell?.setData()
+            cell?.addSubviewsOnce()
         }
         
         cell?.departureTime = routes[indexPath.row].departureTime
