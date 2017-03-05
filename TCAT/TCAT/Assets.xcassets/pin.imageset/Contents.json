@@ -2,29 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-<<<<<<< HEAD
       "filename" : "Destination icon.png",
-=======
-      "filename" : "pin.png",
->>>>>>> Edited data model a bit. Created Time class to encapsulate time functions
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-<<<<<<< HEAD
       "filename" : "Destination icon@2x.png",
-=======
-      "filename" : "pin@2x.png",
->>>>>>> Edited data model a bit. Created Time class to encapsulate time functions
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-<<<<<<< HEAD
       "filename" : "Destination icon@3x.png",
-=======
-      "filename" : "pin@3x.png",
->>>>>>> Edited data model a bit. Created Time class to encapsulate time functions
       "scale" : "3x"
     }
   ],
