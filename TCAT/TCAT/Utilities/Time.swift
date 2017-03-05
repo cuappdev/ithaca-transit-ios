@@ -22,6 +22,15 @@ class Time{
      */
     static func dateComponents(from startTime: Date, to endTime: Date) -> DateComponents{
         return Calendar.current.dateComponents([.hour, .minute, .day], from: startTime, to: endTime)
+    }
+    
+    /*Takes time string formatted in "h:mm a" and returns today's date with that time
+     * Throws error if string not formatted in "h:mm a"
+     */
+    static func date(from string: String) -> Date{
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "h:mm a"
+        return dateFormatter.date(from: string)!
         
     }
 }
