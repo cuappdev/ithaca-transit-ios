@@ -24,6 +24,12 @@
 		DD2F988D1E50D80D0005F6BC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F988C1E50D80D0005F6BC /* ViewController.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
 		DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A01E5141D10005F6BC /* Direction.swift */; };
+		DD2F98A31E5150990005F6BC /* OptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A21E5150990005F6BC /* OptionsViewController.swift */; };
+		DD5D233C1E6367A100F8DECE /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5D233B1E6367A100F8DECE /* Time.swift */; };
+		DDC221B61E5E146A000FB82B /* RouteTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DDC221B51E5E146A000FB82B /* RouteTableViewCell.xib */; };
+		DDC83CA11E52A66000D4EDDF /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA01E52A66000D4EDDF /* TableViewController.swift */; };
+		DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */; };
+		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +77,12 @@
 		DD2F988C1E50D80D0005F6BC /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = Controllers/ViewController.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
 		DD2F98A01E5141D10005F6BC /* Direction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Direction.swift; path = Model/Direction.swift; sourceTree = "<group>"; };
+		DD2F98A21E5150990005F6BC /* OptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OptionsViewController.swift; path = Controllers/OptionsViewController.swift; sourceTree = "<group>"; };
+		DD5D233B1E6367A100F8DECE /* Time.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Time.swift; path = Utilities/Time.swift; sourceTree = "<group>"; };
+		DDC221B51E5E146A000FB82B /* RouteTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RouteTableViewCell.xib; path = Cells/RouteTableViewCell.xib; sourceTree = "<group>"; };
+		DDC83CA01E52A66000D4EDDF /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TableViewController.swift; path = Controllers/TableViewController.swift; sourceTree = "<group>"; };
+		DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationTableViewCell.swift; path = Cells/LocationTableViewCell.swift; sourceTree = "<group>"; };
+		DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteTableViewCell.swift; path = Cells/RouteTableViewCell.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E69224A160B2B078827D28A1 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -211,6 +223,9 @@
 		DD2F988F1E50D89C0005F6BC /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */,
+				DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */,
+				DDC221B51E5E146A000FB82B /* RouteTableViewCell.xib */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -241,6 +256,7 @@
 		DD2F98941E50D8DC0005F6BC /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				DD5D233B1E6367A100F8DECE /* Time.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -255,6 +271,8 @@
 		DD47EA501E50D77D009C68EB /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				DD2F98A21E5150990005F6BC /* OptionsViewController.swift */,
+				DDC83CA01E52A66000D4EDDF /* TableViewController.swift */,
 				DD2F988C1E50D80D0005F6BC /* ViewController.swift */,
 			);
 			name = Controllers;
@@ -380,6 +398,7 @@
 				50A19BA71E4BC57200AD6768 /* config.json in Resources */,
 				449A7C801D80D0E80019300C /* Assets.xcassets in Resources */,
 				449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */,
+				DDC221B61E5E146A000FB82B /* RouteTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -545,11 +564,16 @@
 				449A7C7B1D80D0E80019300C /* ViewController.swift in Sources */,
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
+				DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */,
+				DDC83CA11E52A66000D4EDDF /* TableViewController.swift in Sources */,
 				DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */,
+				DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */,
+				DD5D233C1E6367A100F8DECE /* Time.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
 				502D8F5D1E54C677005280F1 /* SearchLocation.swift in Sources */,
 				50C79D431E6369E000F40BBE /* RecentSearchCell.swift in Sources */,
 				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
+				DD2F98A31E5150990005F6BC /* OptionsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
