@@ -29,9 +29,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         tableView = UITableView(frame: view.frame)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.estimatedRowHeight = 44.0
-        tableView.rowHeight = UITableViewAutomaticDimension
-        self.view.addSubview(tableView)
+        view.addSubview(tableView)
         
         //Set up test routes
         let date1 = Time.date(from: "3:45 PM")
@@ -69,13 +67,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         if cell == nil {
             cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: identifier)
-            cell?.departureTime = routes[indexPath.row].departureTime
-            cell?.arrivalTime = routes[indexPath.row].arrivalTime
-            cell?.stops = routes[indexPath.row].mainStops
-            cell?.stopNums = routes[indexPath.row].mainStopsNums
-            cell?.distance = routes[indexPath.row].travelDistance
-            cell?.setData()
-            cell?.addSubviewsOnce()
         }
         
         cell?.departureTime = routes[indexPath.row].departureTime
@@ -87,7 +78,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         return cell!
     }
-    
     
     func numberOfSections(in tableView: UITableView) -> Int{
         return 2
