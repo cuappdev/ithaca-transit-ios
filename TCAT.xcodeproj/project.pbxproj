@@ -42,6 +42,7 @@
 		DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */; };
 		DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */; };
 		DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */; };
+		DD623C911E6D108E005ED004 /* RouteSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD623C901E6D108E005ED004 /* RouteSelectionView.swift */; };
 		DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */; };
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -109,6 +110,7 @@
 		DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Medium.otf"; path = "Resources/SFText-Medium.otf"; sourceTree = "<group>"; };
 		DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Regular.otf"; path = "Resources/SFText-Regular.otf"; sourceTree = "<group>"; };
 		DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Semibold.otf"; path = "Resources/SFText-Semibold.otf"; sourceTree = "<group>"; };
+		DD623C901E6D108E005ED004 /* RouteSelectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteSelectionView.swift; path = Views/RouteSelectionView.swift; sourceTree = "<group>"; };
 		DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationTableViewCell.swift; path = Cells/LocationTableViewCell.swift; sourceTree = "<group>"; };
 		DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteTableViewCell.swift; path = Cells/RouteTableViewCell.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -192,6 +194,10 @@
 			isa = PBXGroup;
 			children = (
 				449A7C781D80D0E80019300C /* AppDelegate.swift */,
+				50A19BAD1E4C214000AD6768 /* HomeViewController.swift */,
+				502D8F5E1E55161D005280F1 /* SearchBarView.swift */,
+				502D8F5C1E54C677005280F1 /* SearchLocation.swift */,
+				50C79D421E6369E000F40BBE /* RecentSearchCell.swift */,
 				449A7C7C1D80D0E80019300C /* Main.storyboard */,
 				449A7C7F1D80D0E80019300C /* Assets.xcassets */,
 				DD2F988E1E50D8660005F6BC /* Base.lproj */,
@@ -250,7 +256,6 @@
 				BF7A23C01E70CA7800F1E74F /* SmallDetailTableViewCell.swift */,
 				DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */,
 				DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */,
-				50C79D421E6369E000F40BBE /* RecentSearchCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -258,7 +263,6 @@
 		DD2F98901E50D8C50005F6BC /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				502D8F5C1E54C677005280F1 /* SearchLocation.swift */,
 			);
 			name = Data;
 			sourceTree = "<group>";
@@ -297,10 +301,10 @@
 		DD2F98951E50D8E60005F6BC /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				502D8F5E1E55161D005280F1 /* SearchBarView.swift */,
 				BF7A23C41E70CABB00F1E74F /* BusIcon.swift */,
 				BF7A23C51E70CABB00F1E74F /* DetailIconView.swift */,
 				BF7A23C61E70CABB00F1E74F /* DirectionCircle.swift */,
+				DD623C901E6D108E005ED004 /* RouteSelectionView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -308,7 +312,6 @@
 		DD47EA501E50D77D009C68EB /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				50A19BAD1E4C214000AD6768 /* HomeViewController.swift */,
 				BF7A23BC1E70CA6600F1E74F /* RouteDetailViewController.swift */,
 				DD2F98A21E5150990005F6BC /* OptionsViewController.swift */,
 				DD2F988C1E50D80D0005F6BC /* ViewController.swift */,
@@ -620,6 +623,7 @@
 				BF7A23C11E70CA7800F1E74F /* BusStopTableViewCell.swift in Sources */,
 				BF7A23C91E70CABC00F1E74F /* DirectionCircle.swift in Sources */,
 				BF7A23C81E70CABC00F1E74F /* DetailIconView.swift in Sources */,
+				DD623C911E6D108E005ED004 /* RouteSelectionView.swift in Sources */,
 				50C79D431E6369E000F40BBE /* RecentSearchCell.swift in Sources */,
 				D10AC6D81E832A94000FD292 /* Extensions.swift in Sources */,
 				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
