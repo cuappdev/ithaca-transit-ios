@@ -31,13 +31,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
         let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
         statusBar.backgroundColor = .white
-        let navigationBar = UINavigationController()
-        navigationBar.extendedLayoutIncludesOpaqueBars = true
-        navigationBar.navigationBar.isTranslucent = true
-        navigationBar.navigationBar.tintColor = .white
-        navigationBar.navigationBar.backgroundColor = .white
+        let navigationController = UINavigationController()
+        navigationController.extendedLayoutIncludesOpaqueBars = true
+        navigationController.navigationBar.isTranslucent = true
+        navigationController.navigationBar.tintColor = .black
+        navigationController.navigationBar.backgroundColor = .white
+        navigationController.navigationBar.titleTextAttributes = [ NSFontAttributeName: UIFont(name: "SFUIText-Regular", size: 18.0)!]
         let mainView = HomeViewController()
-        navigationBar.viewControllers = [mainView]
+        let mainView2 = OptionsViewController()
+        navigationController.viewControllers = [mainView2]
+        
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = navigationBar
         self.window?.makeKeyAndVisible() */
@@ -50,6 +53,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let routeDetailViewController = RouteDetailViewController()
         nav.pushViewController(routeDetailViewController, animated: true)
         window?.makeKeyAndVisible()
+        self.window!.rootViewController = UINavigationController(rootViewController: OptionsViewController())
+        self.window?.makeKeyAndVisible()
         
         return true
     }

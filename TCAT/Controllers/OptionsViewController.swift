@@ -10,28 +10,26 @@ import UIKit
 
 class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    //View
     var tableView: UITableView!
     let identifier: String = "Route cell"
     
-    
     //Data
     var routes: [Route] = []
-    //N2SELF: put model into data vars (to abstract away from model)
-    /*var departureTime: Date?
-    var arrivalTime: Date?
-    var stops: [String] = [] //mainStops
-    var stopNums: [Int] = [] //mainStopsNum, 0 for pins
-    var distance: Double? //of first stop*/
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        //Set up navigation bar
+        title = "Route Options"
+
+        //Set up table view
         tableView = UITableView(frame: view.frame)
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.backgroundColor = .green
         view.addSubview(tableView)
         
-        //Set up test routes
+        //Set up test data
         let date1 = Time.date(from: "3:45 PM")
         let date2 = Time.date(from: "3:52 PM")
         let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
@@ -80,12 +78,11 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func numberOfSections(in tableView: UITableView) -> Int{
-        return 2
+        return 1
     }
     
-    
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?{
-        return (section == 1) ? "Route Results" : nil
+        return "Route Results"
     
     }
     
