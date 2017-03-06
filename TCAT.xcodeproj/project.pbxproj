@@ -38,6 +38,10 @@
 		D183A9FE1E61165B006A9A15 /* Waypoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9FD1E61165B006A9A15 /* Waypoint.swift */; };
 		DD2F988D1E50D80D0005F6BC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F988C1E50D80D0005F6BC /* ViewController.swift */; };
 		DD2F98A31E5150990005F6BC /* OptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A21E5150990005F6BC /* OptionsViewController.swift */; };
+		DD5D233C1E6367A100F8DECE /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5D233B1E6367A100F8DECE /* Time.swift */; };
+		DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */; };
+		DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */; };
+		DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */; };
 		DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */; };
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -101,6 +105,10 @@
 		D183A9FD1E61165B006A9A15 /* Waypoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Waypoint.swift; path = Model/Waypoint.swift; sourceTree = "<group>"; };
 		DD2F988C1E50D80D0005F6BC /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = Controllers/ViewController.swift; sourceTree = "<group>"; };
 		DD2F98A21E5150990005F6BC /* OptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OptionsViewController.swift; path = Controllers/OptionsViewController.swift; sourceTree = "<group>"; };
+		DD5D233B1E6367A100F8DECE /* Time.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Time.swift; path = Utilities/Time.swift; sourceTree = "<group>"; };
+		DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Medium.otf"; path = "Resources/SFText-Medium.otf"; sourceTree = "<group>"; };
+		DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Regular.otf"; path = "Resources/SFText-Regular.otf"; sourceTree = "<group>"; };
+		DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Semibold.otf"; path = "Resources/SFText-Semibold.otf"; sourceTree = "<group>"; };
 		DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationTableViewCell.swift; path = Cells/LocationTableViewCell.swift; sourceTree = "<group>"; };
 		DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteTableViewCell.swift; path = Cells/RouteTableViewCell.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -269,6 +277,9 @@
 		DD2F98921E50D8D20005F6BC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */,
+				DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */,
+				DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -422,7 +433,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */,
 				449A7C831D80D0E80019300C /* LaunchScreen.storyboard in Resources */,
+				DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */,
+				DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */,
 				50A19BA71E4BC57200AD6768 /* config.json in Resources */,
 				449A7C801D80D0E80019300C /* Assets.xcassets in Resources */,
 				449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */,
