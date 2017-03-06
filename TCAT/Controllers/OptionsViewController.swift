@@ -8,7 +8,11 @@
 
 import UIKit
 
-//N2SELF: fix spacing of cells
+/* N2SELF:
+  * fix spacing of cells
+  * turn off cell highlight upon selection
+  * stop tableview from scrolling beyond top & bottom 
+ */
 
 class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -37,6 +41,8 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height))
         routeResults.delegate = self
         routeResults.dataSource = self
+        routeResults.separatorStyle = .none
+
         view.addSubview(routeResults)
         
         //Set up test data
@@ -106,7 +112,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         let travelTimeHeight: CGFloat = 20.33
         let pinHeight: CGFloat = 33.0
         let arrowHeight: CGFloat = 6.0
-        let space: CGFloat = 8.0
+        let space: CGFloat = 18.0
         
         let numOfArrows = CGFloat(routes[indexPath.row].mainStopsNums.count-1)
         let numOfPins = CGFloat(routes[indexPath.row].mainStopsNums.count)
