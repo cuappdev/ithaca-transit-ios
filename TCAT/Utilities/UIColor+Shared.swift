@@ -23,6 +23,7 @@ extension UIColor {
     @nonobjc static let timeIconColor = UIColor(red: 146/255, green: 146/255, blue: 146/255, alpha: 1.0)
     @nonobjc static let timeBackColor = UIColor(red: 252/255, green: 252/255, blue: 254/255, alpha: 1.0)
     @nonobjc static let lineColor = UIColor(red: 224/255, green: 224/255, blue: 224/255, alpha: 1.0)
+    @nonobjc static let routeResultsBackColor = UIColor(red: 242/255, green: 242/255, blue: 242/255, alpha: 1.0)
     
     // Get color from hex code
     public static func colorFromCode(_ code: Int, alpha: CGFloat) -> UIColor {
