@@ -8,10 +8,13 @@
 
 import UIKit
 
+//N2SELF: fix spacing of cells
+
 class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     //View
-    var tableView: UITableView!
+    var routeSelection: routeSelectionView!
+    var routeResults: UITableView!
     let identifier: String = "Route cell"
     
     //Data
@@ -21,13 +24,20 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewDidLoad()
         //Set up navigation bar
         title = "Route Options"
-
+        //Set up route selection view
+        routeSelection = routeSelectionView(frame: CGRect(x: 0, y: (navigationController?.navigationBar.frame.height)! + UIApplication.shared.statusBarFrame.size.height, width: view.frame.width, height: 150))
+        routeSelection.backgroundColor = .lineColor
+        routeSelection.positionViews()
+        var newRSFrame = routeSelection.frame
+        newRSFrame.size.height =  routeSelection.lineWidth + routeSelection.fromToView.frame.height + routeSelection.lineWidth + routeSelection.timeView.frame.height
+        routeSelection.frame = newRSFrame
+        view.addSubview(routeSelection)
+        
         //Set up table view
-        tableView = UITableView(frame: view.frame)
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.backgroundColor = .green
-        view.addSubview(tableView)
+        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height))
+        routeResults.delegate = self
+        routeResults.dataSource = self
+        view.addSubview(routeResults)
         
         //Set up test data
         let date1 = Time.date(from: "3:45 PM")
@@ -46,7 +56,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        tableView.register(RouteTableViewCell.classForCoder(), forCellReuseIdentifier: identifier)
+        routeResults.register(RouteTableViewCell.classForCoder(), forCellReuseIdentifier: identifier)
     }
 
     override func didReceiveMemoryWarning() {
