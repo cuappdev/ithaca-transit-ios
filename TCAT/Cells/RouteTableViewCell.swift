@@ -45,13 +45,13 @@ class RouteTableViewCell: UITableViewCell {
         //Set up time label text, frame
         travelTimeLabel.frame = CGRect(x: space*1.5, y: space, width: 135, height: 20)
         travelTimeLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
-        travelTimeLabel.textColor = .travelTimeColor
+        travelTimeLabel.textColor = .routeCellFontColor
         contentView.addSubview(travelTimeLabel)
         
         //Set up depart label text, &  frame
         departTimeLabel.frame = CGRect(x: 0, y: travelTimeLabel.frame.minY, width: 135, height: 20)
         departTimeLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
-        departTimeLabel.textColor = .departTimeColor
+        departTimeLabel.textColor = .routeCellFontColor
         contentView.addSubview(departTimeLabel)
     }
     
@@ -103,10 +103,10 @@ class RouteTableViewCell: UITableViewCell {
             if(stopNums[i] == -1){ //pin
                 stopNumButtons[i].setImage(UIImage(named: "pin"), for: .normal)
                 stopNumButtons[i].contentMode = .scaleAspectFit
-                stopNumButtons[i].tintColor = .pinColor
+                stopNumButtons[i].tintColor = .tcatBlue
             }else{
                 stopNumButtons[i].setTitle("\(stopNums[i])", for: .normal)
-                stopNumButtons[i].titleLabel?.font = UIFont(name: "SFUIDisplay-Regular", size: 13.0)
+                stopNumButtons[i].titleLabel?.font = UIFont(name: "SFUIDisplay-Semibold", size: 13.5)
                 stopNumButtons[i].setTitleColor(.white, for: .normal)
                 stopNumButtons[i].backgroundColor = .stopNumColor1
                 stopNumButtons[i].layer.cornerRadius = stopNumButtons[i].frame.width/2
@@ -127,7 +127,7 @@ class RouteTableViewCell: UITableViewCell {
             stopLabels.append(UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 20)))
             stopLabels[i].text = stops[i]
             stopLabels[i].font = UIFont(name: "SFUIText-Regular", size: 14.0)
-            stopLabels[i].textColor = .stopLabelColor
+            stopLabels[i].textColor = .routeCellFontColor
             stopLabels[i].sizeToFit()
         }
         
