@@ -25,8 +25,14 @@ class RouteTableViewCell: UITableViewCell {
     var arrows: [UIImageView] = []
     var distanceLabel: UILabel = UILabel()
     
+    var topLine: UIView = UIView()
+    var bottomLine: UIView = UIView()
+    var spaceBtCells: UIView = UIView()
+    
     //Spacing
-    let space: CGFloat = 8.0
+    let space: CGFloat = 18.0
+    let lineWidth: CGFloat = 0.75
+    let cellSpaceWidth: CGFloat = 4.0
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -53,6 +59,11 @@ class RouteTableViewCell: UITableViewCell {
         departTimeLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
         departTimeLabel.textColor = .routeCellFontColor
         contentView.addSubview(departTimeLabel)
+        
+        //Set up top seperator line
+        topLine = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: lineWidth))
+        topLine.backgroundColor = .lineColor
+        contentView.addSubview(topLine)
     }
     
     override func prepareForReuse() {
@@ -177,6 +188,15 @@ class RouteTableViewCell: UITableViewCell {
         }
         
         contentView.addSubview(distanceLabel)
+        
+        //Set up & position line and spacing btn cells
+        spaceBtCells = UIView(frame: CGRect(x: 0, y: contentView.frame.height - cellSpaceWidth, width: UIScreen.main.bounds.width, height: cellSpaceWidth))
+        spaceBtCells.backgroundColor = .routeResultsBackColor
+        contentView.addSubview(spaceBtCells)
+        
+        bottomLine = UIView(frame: CGRect(x: 0, y: spaceBtCells.frame.minY + lineWidth, width: UIScreen.main.bounds.width, height: lineWidth))
+        bottomLine.backgroundColor = .lineColor
+        contentView.addSubview(bottomLine)
     }
     
     required init?(coder aDecoder: NSCoder) {
