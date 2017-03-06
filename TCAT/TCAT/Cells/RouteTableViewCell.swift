@@ -55,10 +55,27 @@ class RouteTableViewCell: UITableViewCell {
         contentView.addSubview(departTimeLabel)
     }
     
-    /*Call this function after pass all data to cell 
-      * in order to set cell with this data
-     */
+    override func prepareForReuse() {
+        //Remove dyamically placed views from superview
+        for arrow in arrows{
+            arrow.removeFromSuperview()
+        }
+        for stopNumButton in stopNumButtons{
+            stopNumButton.removeFromSuperview()
+        }
+        for stopLabel in stopLabels{
+            stopLabel.removeFromSuperview()
+        }
+        //Clear the arrays that hold the dynamically placed views
+        arrows.removeAll()
+        stopNumButtons.removeAll()
+        stopLabels.removeAll()
+    }
+    
+    //Call this function after pass all data to cell in order to set cell with this data
     func setData(){
+        //Set data
+        
         //Input travel time
         travelTimeLabel.text = "\(Time.string(from: departureTime!)) - \(Time.string(from: arrivalTime!))"
         travelTimeLabel.sizeToFit()
@@ -93,7 +110,7 @@ class RouteTableViewCell: UITableViewCell {
                 stopNumButtons[i].setTitleColor(.white, for: .normal)
                 stopNumButtons[i].backgroundColor = .stopNumColor1
                 stopNumButtons[i].layer.cornerRadius = stopNumButtons[i].frame.width/2
-                stopNumButtons[i].layer.masksToBounds = true //N2SELF: Do i need this?
+                stopNumButtons[i].layer.masksToBounds = true
             }
             stopNumButtons[i].sizeToFit()
         }
@@ -119,34 +136,11 @@ class RouteTableViewCell: UITableViewCell {
         distanceLabel.textColor = .distanceLabelColor
         distanceLabel.text = "\(distance) mi away"
         distanceLabel.sizeToFit()
-    }
-    
-    func addSubviewsOnce(){
-        for i in 0...(stopNumButtons.count-1){
-            contentView.addSubview(stopNumButtons[i])
-        }
         
-        for i in 0...(arrows.count-1){
-            contentView.addSubview(arrows[i])
-        }
+        //Position views
         
-        for i in 0...(stopLabels.count-1){
-            contentView.addSubview(stopLabels[i])
-        }
-        
-        contentView.addSubview(distanceLabel)
-
-        
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func layoutSubviews() {
-        print("called")
         //Position depart time label
-         departTimeLabel.center.x = contentView.frame.width - space - (departTimeLabel.frame.width/2)
+        departTimeLabel.center.x = contentView.frame.width - space - (departTimeLabel.frame.width/2)
         
         //Positon buttons & arrows positions
         for i in 0...(stopNumButtons.count-1){
@@ -168,8 +162,25 @@ class RouteTableViewCell: UITableViewCell {
             stopLabels[i].center.y = stopNumButtons[i].center.y
         }
         
-        //Set up distance label
+        //Position distance label
         distanceLabel.frame = CGRect(x: stopLabels[0].frame.maxX + space, y: stopLabels[0].frame.minY, width: 90, height: 20)
+        
+        //Add subviews to view
+        for stopNumButton in stopNumButtons{
+            contentView.addSubview(stopNumButton)
+        }
+        for arrow in arrows{
+            contentView.addSubview(arrow)
+        }
+        for stopLabel in stopLabels{
+            contentView.addSubview(stopLabel)
+        }
+        
+        contentView.addSubview(distanceLabel)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
 }
