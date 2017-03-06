@@ -10,8 +10,8 @@ import UIKit
 
 /* N2SELF:
   * fix spacing of cells
-  * turn off cell highlight upon selection
-  * stop tableview from scrolling beyond top & bottom 
+  * stop tableview from scrolling beyond top & bottom
+  * add custom bus button and dots & lines
  */
 
 class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -42,6 +42,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         routeResults.delegate = self
         routeResults.dataSource = self
         routeResults.separatorStyle = .none
+        routeResults.allowsSelection = false
 
         view.addSubview(routeResults)
         
