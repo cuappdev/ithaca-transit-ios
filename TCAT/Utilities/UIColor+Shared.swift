@@ -19,5 +19,8 @@ extension UIColor {
     @nonobjc static let routeCellFontColor = UIColor(red: 34/255, green: 34/255, blue: 34/255, alpha: 1.0)
     @nonobjc static let distanceLabelColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1.0)
     @nonobjc static let headerTitleColor = UIColor(red: 71/255, green: 71/255, blue: 71/255, alpha: 1.0)
+    @nonobjc static let timeIconColor = UIColor(red: 146/255, green: 146/255, blue: 146/255, alpha: 1.0)
+    @nonobjc static let timeBackColor = UIColor(red: 252/255, green: 252/255, blue: 254/255, alpha: 1.0)
+    @nonobjc static let lineColor = UIColor(red: 224/255, green: 224/255, blue: 224/255, alpha: 1.0)
     
 }
