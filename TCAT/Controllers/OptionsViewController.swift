@@ -89,6 +89,12 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     }
     
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let header = view as! UITableViewHeaderFooterView
+        header.textLabel?.font = UIFont(name: "SFUIText-Regular", size: 14.0)
+        header.textLabel?.textColor = UIColor.headerTitleColor
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let travelTimeHeight: CGFloat = 20.33
         let pinHeight: CGFloat = 33.0
