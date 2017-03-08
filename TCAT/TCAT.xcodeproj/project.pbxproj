@@ -21,6 +21,14 @@
 		50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A19BAD1E4C214000AD6768 /* HomeViewController.swift */; };
 		50C79D431E6369E000F40BBE /* RecentSearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C79D421E6369E000F40BBE /* RecentSearchCell.swift */; };
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
+		BF7A23BD1E70CA6600F1E74F /* RouteDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23BC1E70CA6600F1E74F /* RouteDetailViewController.swift */; };
+		BF7A23C11E70CA7800F1E74F /* BusStopTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23BE1E70CA7800F1E74F /* BusStopTableViewCell.swift */; };
+		BF7A23C21E70CA7800F1E74F /* LargeDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23BF1E70CA7800F1E74F /* LargeDetailTableViewCell.swift */; };
+		BF7A23C31E70CA7800F1E74F /* SmallDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23C01E70CA7800F1E74F /* SmallDetailTableViewCell.swift */; };
+		BF7A23C71E70CABC00F1E74F /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23C41E70CABB00F1E74F /* BusIcon.swift */; };
+		BF7A23C81E70CABC00F1E74F /* DetailIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23C51E70CABB00F1E74F /* DetailIconView.swift */; };
+		BF7A23C91E70CABC00F1E74F /* DirectionCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23C61E70CABB00F1E74F /* DirectionCircle.swift */; };
+		BF7A23CB1E70CACE00F1E74F /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23CA1E70CACE00F1E74F /* Extensions.swift */; };
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
 		DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A01E5141D10005F6BC /* Direction.swift */; };
@@ -66,12 +74,20 @@
 		449A7C9A1D80D0E80019300C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		502D8F5C1E54C677005280F1 /* SearchLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchLocation.swift; sourceTree = "<group>"; };
 		502D8F5E1E55161D005280F1 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
-		50A19BA61E4BC57200AD6768 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
+		50A19BA61E4BC57200AD6768 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = config.json; path = "../../../../../../Desktop/tcat-ios/TCAT/TCAT/config.json"; sourceTree = "<group>"; };
 		50A19BAD1E4C214000AD6768 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		50C79D421E6369E000F40BBE /* RecentSearchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentSearchCell.swift; sourceTree = "<group>"; };
 		81725F2EBEBD3D184BFD0635 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
 		8236DFFA6C5F3AB1E6E1B0E4 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
 		97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
+		BF7A23BC1E70CA6600F1E74F /* RouteDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RouteDetailViewController.swift; sourceTree = "<group>"; };
+		BF7A23BE1E70CA7800F1E74F /* BusStopTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BusStopTableViewCell.swift; sourceTree = "<group>"; };
+		BF7A23BF1E70CA7800F1E74F /* LargeDetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LargeDetailTableViewCell.swift; sourceTree = "<group>"; };
+		BF7A23C01E70CA7800F1E74F /* SmallDetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SmallDetailTableViewCell.swift; sourceTree = "<group>"; };
+		BF7A23C41E70CABB00F1E74F /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BusIcon.swift; sourceTree = "<group>"; };
+		BF7A23C51E70CABB00F1E74F /* DetailIconView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailIconView.swift; sourceTree = "<group>"; };
+		BF7A23C61E70CABB00F1E74F /* DirectionCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectionCircle.swift; sourceTree = "<group>"; };
+		BF7A23CA1E70CACE00F1E74F /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
 		DD2F988C1E50D80D0005F6BC /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = Controllers/ViewController.swift; sourceTree = "<group>"; };
@@ -220,6 +236,9 @@
 		DD2F988F1E50D89C0005F6BC /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				BF7A23BE1E70CA7800F1E74F /* BusStopTableViewCell.swift */,
+				BF7A23BF1E70CA7800F1E74F /* LargeDetailTableViewCell.swift */,
+				BF7A23C01E70CA7800F1E74F /* SmallDetailTableViewCell.swift */,
 				DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */,
 				DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */,
 				DDC221B51E5E146A000FB82B /* RouteTableViewCell.xib */,
@@ -253,6 +272,7 @@
 		DD2F98941E50D8DC0005F6BC /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				BF7A23CA1E70CACE00F1E74F /* Extensions.swift */,
 				DD5D233B1E6367A100F8DECE /* Time.swift */,
 				D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */,
 			);
@@ -262,6 +282,9 @@
 		DD2F98951E50D8E60005F6BC /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BF7A23C41E70CABB00F1E74F /* BusIcon.swift */,
+				BF7A23C51E70CABB00F1E74F /* DetailIconView.swift */,
+				BF7A23C61E70CABB00F1E74F /* DirectionCircle.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -269,6 +292,7 @@
 		DD47EA501E50D77D009C68EB /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				BF7A23BC1E70CA6600F1E74F /* RouteDetailViewController.swift */,
 				DD2F98A21E5150990005F6BC /* OptionsViewController.swift */,
 				DD2F988C1E50D80D0005F6BC /* ViewController.swift */,
 			);
@@ -561,12 +585,20 @@
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
 				D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */,
+				BF7A23BD1E70CA6600F1E74F /* RouteDetailViewController.swift in Sources */,
+				BF7A23C21E70CA7800F1E74F /* LargeDetailTableViewCell.swift in Sources */,
 				DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */,
 				DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */,
+				BF7A23C71E70CABC00F1E74F /* BusIcon.swift in Sources */,
 				DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */,
+				BF7A23C31E70CA7800F1E74F /* SmallDetailTableViewCell.swift in Sources */,
 				DD5D233C1E6367A100F8DECE /* Time.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
 				502D8F5D1E54C677005280F1 /* SearchLocation.swift in Sources */,
+				BF7A23C11E70CA7800F1E74F /* BusStopTableViewCell.swift in Sources */,
+				BF7A23C91E70CABC00F1E74F /* DirectionCircle.swift in Sources */,
+				BF7A23CB1E70CACE00F1E74F /* Extensions.swift in Sources */,
+				BF7A23C81E70CABC00F1E74F /* DetailIconView.swift in Sources */,
 				50C79D431E6369E000F40BBE /* RecentSearchCell.swift in Sources */,
 				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
 				DD2F98A31E5150990005F6BC /* OptionsViewController.swift in Sources */,
