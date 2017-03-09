@@ -30,7 +30,7 @@ class DirectionCircle: UIView {
         
         if !isStandard {
             backgroundColor = .clear
-            layer.borderColor = UIColor.gray.cgColor
+            layer.borderColor = (type == .finishOn) ? UIColor.blue.cgColor : UIColor.gray.cgColor
             layer.borderWidth = 1.0
             let innerCircle = DirectionCircle(type == .finishOn ? .standardOn : .standardOff)
             innerCircle.center = center
