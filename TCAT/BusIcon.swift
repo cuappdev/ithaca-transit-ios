@@ -28,7 +28,7 @@ class BusIcon: UIView {
         
         self.number = number
         self.backgroundColor = color
-        self.layer.cornerRadius = 8
+        self.layer.cornerRadius = size == .large ? 8 : 4
         
         image = UIImageView(image: UIImage(named: "bus"))
         let constant: CGFloat = size == .large ? 0.9 : 0.6
