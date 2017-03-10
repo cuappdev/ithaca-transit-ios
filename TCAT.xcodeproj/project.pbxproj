@@ -25,11 +25,11 @@
 		BF7A23C11E70CA7800F1E74F /* BusStopTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23BE1E70CA7800F1E74F /* BusStopTableViewCell.swift */; };
 		BF7A23C21E70CA7800F1E74F /* LargeDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23BF1E70CA7800F1E74F /* LargeDetailTableViewCell.swift */; };
 		BF7A23C31E70CA7800F1E74F /* SmallDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23C01E70CA7800F1E74F /* SmallDetailTableViewCell.swift */; };
-		BF7A23C71E70CABC00F1E74F /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23C41E70CABB00F1E74F /* BusIcon.swift */; };
 		BF7A23C81E70CABC00F1E74F /* DetailIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23C51E70CABB00F1E74F /* DetailIconView.swift */; };
-		BF7A23C91E70CABC00F1E74F /* DirectionCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23C61E70CABB00F1E74F /* DirectionCircle.swift */; };
 		BF7A23CB1E70CACE00F1E74F /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23CA1E70CACE00F1E74F /* Extensions.swift */; };
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
+		DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
+		DD16B8E91E7046390089B7B2 /* DirectionCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E61E7046390089B7B2 /* DirectionCircle.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
 		DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A01E5141D10005F6BC /* Direction.swift */; };
 		DD2F98A31E5150990005F6BC /* OptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A21E5150990005F6BC /* OptionsViewController.swift */; };
@@ -93,6 +93,8 @@
 		BF7A23CA1E70CACE00F1E74F /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = Utilities/Extensions.swift; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
+		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
+		DD16B8E61E7046390089B7B2 /* DirectionCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DirectionCircle.swift; path = Views/DirectionCircle.swift; sourceTree = "<group>"; };
 		DD2F988C1E50D80D0005F6BC /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = Controllers/ViewController.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
 		DD2F98A01E5141D10005F6BC /* Direction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Direction.swift; path = Model/Direction.swift; sourceTree = "<group>"; };
@@ -290,10 +292,11 @@
 		DD2F98951E50D8E60005F6BC /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				BF7A23C41E70CABB00F1E74F /* BusIcon.swift */,
 				BF7A23C51E70CABB00F1E74F /* DetailIconView.swift */,
-				BF7A23C61E70CABB00F1E74F /* DirectionCircle.swift */,
-				DD623C901E6D108E005ED004 /* RouteSelectionView.swift */,
+				DD16B8E41E7046390089B7B2 /* BusIcon.swift */,
+				DD16B8E61E7046390089B7B2 /* DirectionCircle.swift */,
+				DD623C901E6D108E005ED004 /* routeSelectionView.swift */,
+				DD623C921E6D10B6005ED004 /* routeSelectionView.xib */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -594,7 +597,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
+				DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */,
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
+				DD16B8E91E7046390089B7B2 /* DirectionCircle.swift in Sources */,
 				D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */,
 				BF7A23BD1E70CA6600F1E74F /* RouteDetailViewController.swift in Sources */,
 				BF7A23C21E70CA7800F1E74F /* LargeDetailTableViewCell.swift in Sources */,
