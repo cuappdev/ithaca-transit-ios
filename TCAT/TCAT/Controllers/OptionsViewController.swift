@@ -9,16 +9,17 @@
 import UIKit
 
 /* N2SELF:
-  * stop tableview from scrolling beyond top & bottom
-  * need to test departure time
   * Route model > change mainStopNums to mainBusNums
   * make font of busIcon = SFU
+  * the table view might be bigger than you need
  */
 
 class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     //View
-    var routeSelection: routeSelectionView!
+    var routeSelection: RouteSelectionView!
+    var datePickerView: DatePickerView!
+    var datePickerOverlay: UIView!
     var routeResults: UITableView!
     let identifier: String = "Route cell"
     
@@ -30,13 +31,30 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         //Set up navigation bar
         title = "Route Options"
         //Set up route selection view
-        routeSelection = routeSelectionView(frame: CGRect(x: 0, y: (navigationController?.navigationBar.frame.height ?? 0) + UIApplication.shared.statusBarFrame.size.height, width: view.frame.width, height: 150))
+        routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: (navigationController?.navigationBar.frame.height ?? 0) + UIApplication.shared.statusBarFrame.size.height, width: view.frame.width, height: 150))
         routeSelection.backgroundColor = .lineColor
-        routeSelection.positionViews()
+        routeSelection.positionAndAddViews()
         var newRSFrame = routeSelection.frame
-        newRSFrame.size.height =  routeSelection.lineWidth + routeSelection.fromToView.frame.height + routeSelection.lineWidth + routeSelection.timeView.frame.height
+        newRSFrame.size.height =  routeSelection.lineWidth + routeSelection.fromToView.frame.height + routeSelection.lineWidth + routeSelection.timeButton.frame.height
         routeSelection.frame = newRSFrame
+        
         view.addSubview(routeSelection)
+        
+        //Set up datepicker
+        routeSelection.timeButton.addTarget(self, action: #selector(self.showDatePicker), for: .touchUpInside)
+        datePickerView = DatePickerView(frame: CGRect(x: 0, y: self.view.frame.height, width: view.frame.width, height: 287))
+        datePickerView.positionAndAddViews()
+        datePickerView.backgroundColor = .white
+        datePickerView.cancelButton.addTarget(self, action: #selector(self.dismissDatePicker), for: .touchUpInside)
+        datePickerView.doneButton.addTarget(self, action: #selector(self.saveDatePickerDate), for: .touchUpInside)
+        
+        datePickerOverlay = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height))
+        datePickerOverlay.backgroundColor = .black
+        datePickerOverlay.alpha = 0
+        datePickerOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissDatePicker)))
+        
+        view.addSubview(datePickerOverlay)
+        view.sendSubview(toBack: datePickerOverlay)
         
         //Set up table view
         routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0) - UIApplication.shared.statusBarFrame.size.height))
@@ -45,8 +63,11 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         routeResults.separatorStyle = .none
         routeResults.allowsSelection = false
         routeResults.backgroundColor = .routeResultsBackColor
+        routeResults.alwaysBounceVertical = false //so table view doesn't scroll over top & bottom
 
         view.addSubview(routeResults)
+        view.addSubview(datePickerView)//so datePicker can go ontop of other views
+
         
         //Set up test data
         let date1 = Time.date(from: "3:45 PM")
@@ -73,6 +94,36 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         // Dispose of any resources that can be recreated.
     }
     
+    //MARK: Datepicker functionality
+    func showDatePicker(sender: UIButton){
+        view.bringSubview(toFront: datePickerOverlay)
+        view.bringSubview(toFront: datePickerView)
+        UIView.animate(withDuration: 0.5) { 
+            self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
+            self.datePickerOverlay.alpha = 0.7
+        }
+    }
+    
+    func dismissDatePicker(sender: UIButton){
+        UIView.animate(withDuration: 0.5, animations: { 
+            self.datePickerView.center.y = self.view.frame.height + (self.datePickerView.frame.height/2)
+            self.datePickerOverlay.alpha = 0.0
+        }) { (true) in
+            self.view.sendSubview(toBack: self.datePickerOverlay)
+            self.view.sendSubview(toBack: self.datePickerView)
+        }
+    }
+    
+    func saveDatePickerDate(sender: UIButton){
+        let date = datePickerView.datePicker.date
+        let dateString = Time.fullString(from: date)
+        routeSelection.timeButton.setTitle(dateString, for: .normal)
+        
+        //dismiss datepicker view
+        dismissDatePicker(sender: sender)
+    }
+    
+    
     //MARK: Tableview Data Source
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         return routes.count
@@ -86,7 +137,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: identifier)
         }
         
-        print("Cell \(indexPath.row)")
         cell?.departureTime = routes[indexPath.row].departureTime
         cell?.arrivalTime = routes[indexPath.row].arrivalTime
         cell?.stops = routes[indexPath.row].mainStops
