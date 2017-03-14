@@ -230,20 +230,6 @@ class RouteTableViewCell: UITableViewCell {
         bottomLine = UIView(frame: CGRect(x: 0, y: spaceBtCells.frame.minY + cellBorderWidthY, width: UIScreen.main.bounds.width, height: cellBorderWidthY))
         bottomLine.backgroundColor = .lineColor
         contentView.addSubview(bottomLine)
-        
-        //Print heights:
-        print("Travel time space from superview: \(spaceYTimeLabelFromSuperviewTop)")
-        print("Travel time height: \(travelTimeLabel.frame.height)")
-        print("Space from Travel time to First dot: \(spaceYTimeLabelAndDot)")
-        print("Height of each dot: \(stopDots.first?.frame.height)")
-        print("Space bt each dot: \(stopDots[1].frame.minY - (stopDots.first?.frame.maxY ?? 0))")
-        print("Height of last dot: \(stopDots.last?.frame.height)")
-        print("Space bt dot and last dot: \((stopDots.last?.frame.minY ?? 0) - (stopDots[stopDots.count-2].frame.maxY ))")
-        print("Space from end of cell: \(spaceYToCellBorder)")
-        print("Cell border width: \(cellBorderWidthY)")
-        print("Space bt cells: \(cellSpaceWidthY)")
-        print("\n")
-        
     }
     
     required init?(coder aDecoder: NSCoder) {

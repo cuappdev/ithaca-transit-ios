@@ -35,8 +35,8 @@
 		DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */; };
 		DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */; };
 		DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */; };
-		DD623C911E6D108E005ED004 /* routeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD623C901E6D108E005ED004 /* routeSelectionView.swift */; };
-		DD623C931E6D10B6005ED004 /* routeSelectionView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DD623C921E6D10B6005ED004 /* routeSelectionView.xib */; };
+		DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */; };
+		DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */; };
 		DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */; };
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -97,8 +97,8 @@
 		DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Medium.otf"; path = "Resources/SFText-Medium.otf"; sourceTree = "<group>"; };
 		DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Regular.otf"; path = "Resources/SFText-Regular.otf"; sourceTree = "<group>"; };
 		DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Semibold.otf"; path = "Resources/SFText-Semibold.otf"; sourceTree = "<group>"; };
-		DD623C901E6D108E005ED004 /* routeSelectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = routeSelectionView.swift; path = Views/routeSelectionView.swift; sourceTree = "<group>"; };
-		DD623C921E6D10B6005ED004 /* routeSelectionView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = routeSelectionView.xib; path = Views/routeSelectionView.xib; sourceTree = "<group>"; };
+		DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatePickerView.swift; path = Views/DatePickerView.swift; sourceTree = "<group>"; };
+		DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteSelectionView.swift; path = Views/RouteSelectionView.swift; sourceTree = "<group>"; };
 		DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationTableViewCell.swift; path = Cells/LocationTableViewCell.swift; sourceTree = "<group>"; };
 		DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteTableViewCell.swift; path = Cells/RouteTableViewCell.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -284,10 +284,10 @@
 		DD2F98951E50D8E60005F6BC /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */,
+				DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */,
 				DD16B8E41E7046390089B7B2 /* BusIcon.swift */,
 				DD16B8E61E7046390089B7B2 /* DirectionCircle.swift */,
-				DD623C901E6D108E005ED004 /* routeSelectionView.swift */,
-				DD623C921E6D10B6005ED004 /* routeSelectionView.xib */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -424,7 +424,6 @@
 				50A19BA71E4BC57200AD6768 /* config.json in Resources */,
 				449A7C801D80D0E80019300C /* Assets.xcassets in Resources */,
 				449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */,
-				DD623C931E6D10B6005ED004 /* routeSelectionView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -593,7 +592,11 @@
 				DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */,
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
 <<<<<<< HEAD:TCAT.xcodeproj/project.pbxproj.orig
+<<<<<<< HEAD:TCAT.xcodeproj/project.pbxproj.orig
 =======
+=======
+				DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */,
+>>>>>>> 036bb18... Set up datepicker:TCAT/TCAT.xcodeproj/project.pbxproj
 				DD16B8E91E7046390089B7B2 /* DirectionCircle.swift in Sources */,
 				D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */,
 >>>>>>> 5e08f7f... Set up route cells:TCAT/TCAT.xcodeproj/project.pbxproj
@@ -601,15 +604,18 @@
 =======
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
 				DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */,
+<<<<<<< HEAD:TCAT.xcodeproj/project.pbxproj.orig
 				DD2F988D1E50D80D0005F6BC /* ViewController.swift in Sources */,
 >>>>>>> f0d8f971c0aff419896a371db4be2cfed31d3aeb
+=======
+				DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */,
+>>>>>>> 036bb18... Set up datepicker:TCAT/TCAT.xcodeproj/project.pbxproj
 				DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */,
 				DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */,
 				DD5D233C1E6367A100F8DECE /* Time.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
 <<<<<<< HEAD
 				502D8F5D1E54C677005280F1 /* SearchLocation.swift in Sources */,
-				DD623C911E6D108E005ED004 /* routeSelectionView.swift in Sources */,
 				50C79D431E6369E000F40BBE /* RecentSearchCell.swift in Sources */,
 				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
 =======
