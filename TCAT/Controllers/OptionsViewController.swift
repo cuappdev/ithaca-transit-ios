@@ -8,32 +8,71 @@
 
 import UIKit
 
+/* N2SELF:
+  * Route model > change mainStopNums to mainBusNums
+  * make font of busIcon = SFU
+  * the table view might be bigger than you need
+  * formate datepicker view according to design
+  * format date to "Today, Tomorrow, Next Tuesday" (after next week stuff don't need any more custom string)
+  * stop date picker from going back in time
+ */
+
 class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var tableView: UITableView!
+    //View
+    var routeSelection: RouteSelectionView!
+    var datePickerView: DatePickerView!
+    var datePickerOverlay: UIView!
+    var routeResults: UITableView!
     let identifier: String = "Route cell"
-    
     
     //Data
     var routes: [Route] = []
-    //N2SELF: put model into data vars (to abstract away from model)
-    /*var departureTime: Date?
-    var arrivalTime: Date?
-    var stops: [String] = [] //mainStops
-    var stopNums: [Int] = [] //mainStopsNum, 0 for pins
-    var distance: Double? //of first stop*/
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
-        tableView = UITableView(frame: view.frame)
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.estimatedRowHeight = 44.0
-        tableView.rowHeight = UITableViewAutomaticDimension
-        self.view.addSubview(tableView)
+        //Set up navigation bar
+        title = "Route Options"
+        //Set up route selection view
+        routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: (navigationController?.navigationBar.frame.height ?? 0) + UIApplication.shared.statusBarFrame.size.height, width: view.frame.width, height: 150))
+        routeSelection.backgroundColor = .lineColor
+        routeSelection.positionAndAddViews()
+        var newRSFrame = routeSelection.frame
+        newRSFrame.size.height =  routeSelection.lineWidth + routeSelection.fromToView.frame.height + routeSelection.lineWidth + routeSelection.timeButton.frame.height
+        routeSelection.frame = newRSFrame
         
-        //Set up test routes
+        view.addSubview(routeSelection)
+        
+        //Set up datepicker
+        routeSelection.timeButton.addTarget(self, action: #selector(self.showDatePicker), for: .touchUpInside)
+        datePickerView = DatePickerView(frame: CGRect(x: 0, y: self.view.frame.height, width: view.frame.width, height: 287))
+        datePickerView.positionAndAddViews()
+        datePickerView.backgroundColor = .white
+        datePickerView.cancelButton.addTarget(self, action: #selector(self.dismissDatePicker), for: .touchUpInside)
+        datePickerView.doneButton.addTarget(self, action: #selector(self.saveDatePickerDate), for: .touchUpInside)
+        
+        datePickerOverlay = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height))
+        datePickerOverlay.backgroundColor = .black
+        datePickerOverlay.alpha = 0
+        datePickerOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissDatePicker)))
+        
+        view.addSubview(datePickerOverlay)
+        view.sendSubview(toBack: datePickerOverlay)
+        
+        //Set up table view
+        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0) - UIApplication.shared.statusBarFrame.size.height))
+        routeResults.delegate = self
+        routeResults.dataSource = self
+        routeResults.separatorStyle = .none
+        routeResults.allowsSelection = false
+        routeResults.backgroundColor = .routeResultsBackColor
+        routeResults.alwaysBounceVertical = false //so table view doesn't scroll over top & bottom
+
+        view.addSubview(routeResults)
+        view.addSubview(datePickerView)//so datePicker can go ontop of other views
+
+        
+        //Set up test data
         let date1 = Time.date(from: "3:45 PM")
         let date2 = Time.date(from: "3:52 PM")
         let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
@@ -50,13 +89,43 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        tableView.register(RouteTableViewCell.classForCoder(), forCellReuseIdentifier: identifier)
+        routeResults.register(RouteTableViewCell.classForCoder(), forCellReuseIdentifier: identifier)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    //MARK: Datepicker functionality
+    func showDatePicker(sender: UIButton){
+        view.bringSubview(toFront: datePickerOverlay)
+        view.bringSubview(toFront: datePickerView)
+        UIView.animate(withDuration: 0.5) { 
+            self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
+            self.datePickerOverlay.alpha = 0.7
+        }
+    }
+    
+    func dismissDatePicker(sender: UIButton){
+        UIView.animate(withDuration: 0.5, animations: { 
+            self.datePickerView.center.y = self.view.frame.height + (self.datePickerView.frame.height/2)
+            self.datePickerOverlay.alpha = 0.0
+        }) { (true) in
+            self.view.sendSubview(toBack: self.datePickerOverlay)
+            self.view.sendSubview(toBack: self.datePickerView)
+        }
+    }
+    
+    func saveDatePickerDate(sender: UIButton){
+        let date = datePickerView.datePicker.date
+        let dateString = Time.fullString(from: date)
+        routeSelection.timeButton.setTitle(dateString, for: .normal)
+        
+        //dismiss datepicker view
+        dismissDatePicker(sender: sender)
+    }
+    
     
     //MARK: Tableview Data Source
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
@@ -69,50 +138,54 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         if cell == nil {
             cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: identifier)
-            cell?.departureTime = routes[indexPath.row].departureTime
-            cell?.arrivalTime = routes[indexPath.row].arrivalTime
-            cell?.stops = routes[indexPath.row].mainStops
-            cell?.stopNums = routes[indexPath.row].mainStopsNums
-            cell?.distance = routes[indexPath.row].travelDistance
-            cell?.setData()
-            cell?.addSubviewsOnce()
         }
         
         cell?.departureTime = routes[indexPath.row].departureTime
         cell?.arrivalTime = routes[indexPath.row].arrivalTime
         cell?.stops = routes[indexPath.row].mainStops
-        cell?.stopNums = routes[indexPath.row].mainStopsNums
+        cell?.busNums = routes[indexPath.row].mainStopsNums
         cell?.distance = routes[indexPath.row].travelDistance
         cell?.setData()
         
         return cell!
     }
     
-    
     func numberOfSections(in tableView: UITableView) -> Int{
-        return 2
+        return 1
     }
     
-    
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?{
-        return (section == 1) ? "Route Results" : nil
+        return "Route Results"
     
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let header = view as! UITableViewHeaderFooterView
+        header.contentView.backgroundColor = .routeResultsBackColor
+        header.textLabel?.font = UIFont(name: "SFUIText-Regular", size: 14.0)
+        header.textLabel?.textColor = UIColor.headerTitleColor
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let travelTimeHeight: CGFloat = 20.33
-        let pinHeight: CGFloat = 33.0
-        let arrowHeight: CGFloat = 6.0
-        let space: CGFloat = 8.0
+        let spaceYTimeLabelFromSuperviewTop: CGFloat = 18.0
+        let travelTimeHeight: CGFloat = 17.0
+        let spaceYTimeLabelAndDot: CGFloat = 26.0
+        let heightDot: CGFloat = 8.0
+        let lineLengthYBtDots: CGFloat = 21.0
         
-        let numOfArrows = CGFloat(routes[indexPath.row].mainStopsNums.count-1)
-        let numOfPins = CGFloat(routes[indexPath.row].mainStopsNums.count)
+        let spaceBtDotAndLineDot: CGFloat = 17.0
+        let heightLineDot: CGFloat = 16.0
+        let spaceYToCellBorder: CGFloat = 18.0
+        let cellBorderWidthY: CGFloat = 0.75
+        let cellSpaceWidthY: CGFloat = 4.0
         
-        let totalPinHeight = numOfPins*pinHeight
-        let totalPinSpacingHeight = numOfArrows*space*2
-        let totalArrowHeight = numOfArrows*arrowHeight
+        let numOfDots = routes[indexPath.row].mainStops.count - 1 //1 less b/c last dot is line dot
+        let numOfLinesBtDots = numOfDots - 1
         
-        return space + travelTimeHeight + space + totalPinHeight + totalPinSpacingHeight + totalArrowHeight  + space
+        let  headerHeight = spaceYTimeLabelFromSuperviewTop + travelTimeHeight + spaceYTimeLabelAndDot
+        let dotsHeight = CGFloat(numOfDots)*heightDot + CGFloat(numOfLinesBtDots)*lineLengthYBtDots + spaceBtDotAndLineDot + heightLineDot
+        let footerHeight = spaceYToCellBorder + cellBorderWidthY + cellSpaceWidthY
+        return (headerHeight + dotsHeight + footerHeight)
     }
     
 
