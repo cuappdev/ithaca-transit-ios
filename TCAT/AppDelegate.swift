@@ -50,8 +50,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let dummyWindow = UIViewController()
         let nav = UINavigationController(rootViewController: dummyWindow)
         window?.rootViewController = nav
-        let routeDetailViewController = RouteDetailViewController()
-        nav.pushViewController(routeDetailViewController, animated: true)
+//        let routeDetailViewController = RouteDetailViewController()
+//        nav.pushViewController(routeDetailViewController, animated: true)
         window?.makeKeyAndVisible()
         self.window!.rootViewController = UINavigationController(rootViewController: OptionsViewController())
         self.window?.makeKeyAndVisible()
