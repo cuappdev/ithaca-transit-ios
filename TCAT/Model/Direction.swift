@@ -7,106 +7,75 @@
 //
 
 import UIKit
-import CoreLocation
 
 protocol Direction {
-    var time: Date {get set}
-    var place: String {get set}
-    var location: CLLocation {get set}
-    var placeDescription: String {get} //e.g. "Walk to Statler", "Board at Statler", "Debark at Ithaca Commons"
-    var timeDescription: String {get} // "e.g. 7:21 PM"
+    var departureTime: Date {get set}
+    var departurePlace: String {get set}
+    var departureDescription: String {get} //e.g. "Walk to Statler", "Board at Statler", "Debark at Ithaca Commons"
 }
 
 /* To get string version of Bound
- * let inbound: String = Bound.inbound.rawValue  //"inbound"
- * let outbound: String = Bound.inbound.rawValue //"outbound"
- */
-enum Bound: String {
+  * let inbound: String = Bound.inbound.rawValue  //"inbound"
+  * let outbound: String = Bound.inbound.rawValue //"outbound"
+*/
+enum Bound: String{
     case inbound, outbound
 }
 
-struct DepartDirection: Direction {
-    
-    var time: Date
-    var place: String
-    var placeDescription: String {
-        return "at \(place)"
-    }
-    var timeDescription: String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: time)
-    }
-    var location: CLLocation
+class BoardDirection: Direction {
     
     var routeNumber: Int
     var bound: Bound
     var stops: [String]
-    var arrivalTime: Date
     
+    var departureTime: Date
+    var departurePlace: String
+    var departureDescription: String {
+        return "Board at \(departurePlace)"
+    }
+    
+    var arrivalTime: Date
+    var arrivalPlace: String
+    var arrivalDescription: String {
+        return "Debark at \(arrivalPlace)"
+    }
+    
+    //NSELF: REMOVE FROM EXAMPLE
     /*To extract travelTime's times in day, hour, and minute units:
      * let days: Int = travelTime.day
      * let hours: Int = travelTime.hour
      * let minutes: Int = travelTime.minute
      */
     var travelTime: DateComponents {
-        return Time.dateComponents(from: time, to: arrivalTime)
+        return Time.dateComponents(from: departureTime, to: arrivalTime)
+
     }
     
-    init(time: Date, place: String, location: CLLocation, routeNumber: Int, bound: Bound, stops: [String] = [],  arrivalTime: Date) {
-        self.time = time
-        self.place = place
-        self.location = location
+    init(routeNumber: Int, bound: Bound, stops: [String] = [], departureTime: Date, departurePlace: String, arrivalTime: Date, arrivalPlace: String) {
         self.routeNumber = routeNumber
         self.bound = bound
         self.stops = stops
+        self.departureTime = departureTime
+        self.departurePlace = departurePlace
         self.arrivalTime = arrivalTime
+        self.arrivalPlace = arrivalPlace
     }
-    
+
 }
 
-struct ArriveDirection: Direction {
+class WalkDirection: Direction {
     
-    var time: Date
-    var place: String
-    var placeDescription: String {
-        return "Debark at \(place)"
+    var departureTime: Date
+    var departurePlace: String
+    var departureDescription: String {
+        return "Walk to \(departurePlace)"
     }
-    var timeDescription: String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: time)
-    }
-    var location: CLLocation
-    
-    init(time: Date, place: String, location: CLLocation) {
-        self.time = time
-        self.place = place
-        self.location = location
-    }
-    
-}
-
-struct WalkDirection: Direction {
-    
-    var time: Date
-    var place: String
-    var placeDescription: String {
-        return "Walk to \(place)"
-    }
-    var timeDescription: String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: time)
-    }
-    var location: CLLocation
-    
     var travelDistance: Double
     
-    init(time: Date, place: String, location: CLLocation, travelDistance: Double) {
-        self.time = time
-        self.place = place
-        self.location = location
+    
+    init(departureTime: Date, departurePlace: String, travelDistance: Double) {
+        self.departureTime = departureTime
+        self.departurePlace = departurePlace
         self.travelDistance = travelDistance
     }
 }
