@@ -5,10 +5,11 @@
 //  Created by Monica Ong on 3/14/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
+
 import UIKit
 
 class DatePickerView: UIView {
-    
+
     var cancelButton: UIButton!
     var doneButton: UIButton!
     var datePicker: UIDatePicker!
@@ -51,10 +52,10 @@ class DatePickerView: UIView {
         addSubview(datePicker)
         addSubview(cancelButton)
         addSubview(doneButton)
-    }
+     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
 }
