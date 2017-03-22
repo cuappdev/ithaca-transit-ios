@@ -28,12 +28,16 @@
 		BF7A23C71E70CABC00F1E74F /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23C41E70CABB00F1E74F /* BusIcon.swift */; };
 		BF7A23C81E70CABC00F1E74F /* DetailIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23C51E70CABB00F1E74F /* DetailIconView.swift */; };
 		BF7A23C91E70CABC00F1E74F /* DirectionCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23C61E70CABB00F1E74F /* DirectionCircle.swift */; };
-		BF7A23CB1E70CACE00F1E74F /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7A23CA1E70CACE00F1E74F /* Extensions.swift */; };
-		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
-		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
-		DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A01E5141D10005F6BC /* Direction.swift */; };
+		D10AC6D21E832877000FD292 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10AC6D11E832877000FD292 /* Route.swift */; };
+		D10AC6D41E83287B000FD292 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10AC6D31E83287B000FD292 /* Direction.swift */; };
+		D10AC6D81E832A94000FD292 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10AC6D51E832A94000FD292 /* Extensions.swift */; };
+		D10AC6D91E832A94000FD292 /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10AC6D61E832A94000FD292 /* Time.swift */; };
+		D10AC6DA1E832A94000FD292 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10AC6D71E832A94000FD292 /* UIColor+Shared.swift */; };
+		D183A9FA1E611564006A9A15 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9F91E611564006A9A15 /* MapViewController.swift */; };
+		D183A9FC1E611643006A9A15 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9FB1E611643006A9A15 /* Path.swift */; };
+		D183A9FE1E61165B006A9A15 /* Waypoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9FD1E61165B006A9A15 /* Waypoint.swift */; };
+		DD2F988D1E50D80D0005F6BC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F988C1E50D80D0005F6BC /* ViewController.swift */; };
 		DD2F98A31E5150990005F6BC /* OptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A21E5150990005F6BC /* OptionsViewController.swift */; };
-		DD5D233C1E6367A100F8DECE /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5D233B1E6367A100F8DECE /* Time.swift */; };
 		DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */; };
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -86,14 +90,17 @@
 		BF7A23C41E70CABB00F1E74F /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
 		BF7A23C51E70CABB00F1E74F /* DetailIconView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DetailIconView.swift; path = Views/DetailIconView.swift; sourceTree = "<group>"; };
 		BF7A23C61E70CABB00F1E74F /* DirectionCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DirectionCircle.swift; path = Views/DirectionCircle.swift; sourceTree = "<group>"; };
-		BF7A23CA1E70CACE00F1E74F /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = Utilities/Extensions.swift; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
+		D10AC6D11E832877000FD292 /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
+		D10AC6D31E83287B000FD292 /* Direction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Direction.swift; path = Model/Direction.swift; sourceTree = "<group>"; };
+		D10AC6D51E832A94000FD292 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = Utilities/Extensions.swift; sourceTree = "<group>"; };
+		D10AC6D61E832A94000FD292 /* Time.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Time.swift; path = Utilities/Time.swift; sourceTree = "<group>"; };
+		D10AC6D71E832A94000FD292 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
+		D183A9F91E611564006A9A15 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapViewController.swift; path = Controllers/MapViewController.swift; sourceTree = "<group>"; };
+		D183A9FB1E611643006A9A15 /* Path.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Path.swift; path = Model/Path.swift; sourceTree = "<group>"; };
+		D183A9FD1E61165B006A9A15 /* Waypoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Waypoint.swift; path = Model/Waypoint.swift; sourceTree = "<group>"; };
 		DD2F988C1E50D80D0005F6BC /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = Controllers/ViewController.swift; sourceTree = "<group>"; };
-		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
-		DD2F98A01E5141D10005F6BC /* Direction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Direction.swift; path = Model/Direction.swift; sourceTree = "<group>"; };
 		DD2F98A21E5150990005F6BC /* OptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OptionsViewController.swift; path = Controllers/OptionsViewController.swift; sourceTree = "<group>"; };
-		DD5D233B1E6367A100F8DECE /* Time.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Time.swift; path = Utilities/Time.swift; sourceTree = "<group>"; };
 		DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationTableViewCell.swift; path = Cells/LocationTableViewCell.swift; sourceTree = "<group>"; };
 		DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteTableViewCell.swift; path = Cells/RouteTableViewCell.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -251,8 +258,10 @@
 		DD2F98911E50D8C90005F6BC /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				DD2F989A1E50F99A0005F6BC /* Route.swift */,
-				DD2F98A01E5141D10005F6BC /* Direction.swift */,
+				D10AC6D11E832877000FD292 /* Route.swift */,
+				D10AC6D31E83287B000FD292 /* Direction.swift */,
+				D183A9FB1E611643006A9A15 /* Path.swift */,
+				D183A9FD1E61165B006A9A15 /* Waypoint.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -267,9 +276,9 @@
 		DD2F98941E50D8DC0005F6BC /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				BF7A23CA1E70CACE00F1E74F /* Extensions.swift */,
-				DD5D233B1E6367A100F8DECE /* Time.swift */,
-				D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */,
+				D10AC6D51E832A94000FD292 /* Extensions.swift */,
+				D10AC6D61E832A94000FD292 /* Time.swift */,
+				D10AC6D71E832A94000FD292 /* UIColor+Shared.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -292,6 +301,7 @@
 				BF7A23BC1E70CA6600F1E74F /* RouteDetailViewController.swift */,
 				DD2F98A21E5150990005F6BC /* OptionsViewController.swift */,
 				DD2F988C1E50D80D0005F6BC /* ViewController.swift */,
+				D183A9F91E611564006A9A15 /* MapViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -579,25 +589,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
-				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
-				D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */,
 				BF7A23BD1E70CA6600F1E74F /* RouteDetailViewController.swift in Sources */,
 				BF7A23C21E70CA7800F1E74F /* LargeDetailTableViewCell.swift in Sources */,
 				DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */,
-				DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */,
 				BF7A23C71E70CABC00F1E74F /* BusIcon.swift in Sources */,
+				D10AC6D91E832A94000FD292 /* Time.swift in Sources */,
 				DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */,
 				BF7A23C31E70CA7800F1E74F /* SmallDetailTableViewCell.swift in Sources */,
-				DD5D233C1E6367A100F8DECE /* Time.swift in Sources */,
+				DD2F988D1E50D80D0005F6BC /* ViewController.swift in Sources */,
+				D183A9FC1E611643006A9A15 /* Path.swift in Sources */,
+				D183A9FA1E611564006A9A15 /* MapViewController.swift in Sources */,
+				D183A9FE1E61165B006A9A15 /* Waypoint.swift in Sources */,
+				D10AC6DA1E832A94000FD292 /* UIColor+Shared.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
 				502D8F5D1E54C677005280F1 /* SearchLocation.swift in Sources */,
 				BF7A23C11E70CA7800F1E74F /* BusStopTableViewCell.swift in Sources */,
 				BF7A23C91E70CABC00F1E74F /* DirectionCircle.swift in Sources */,
-				BF7A23CB1E70CACE00F1E74F /* Extensions.swift in Sources */,
 				BF7A23C81E70CABC00F1E74F /* DetailIconView.swift in Sources */,
 				50C79D431E6369E000F40BBE /* RecentSearchCell.swift in Sources */,
+				D10AC6D81E832A94000FD292 /* Extensions.swift in Sources */,
 				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
+				D10AC6D21E832877000FD292 /* Route.swift in Sources */,
 				DD2F98A31E5150990005F6BC /* OptionsViewController.swift in Sources */,
+				D10AC6D41E83287B000FD292 /* Direction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
