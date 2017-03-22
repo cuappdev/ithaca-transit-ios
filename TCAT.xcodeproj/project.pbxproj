@@ -39,6 +39,9 @@
 		D183A9FA1E611564006A9A15 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9F91E611564006A9A15 /* MapViewController.swift */; };
 		D183A9FC1E611643006A9A15 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9FB1E611643006A9A15 /* Path.swift */; };
 		D183A9FE1E61165B006A9A15 /* Waypoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9FD1E61165B006A9A15 /* Waypoint.swift */; };
+		D183A9FA1E611564006A9A15 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9F91E611564006A9A15 /* MapViewController.swift */; };
+		D183A9FC1E611643006A9A15 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9FB1E611643006A9A15 /* Path.swift */; };
+		D183A9FE1E61165B006A9A15 /* Waypoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183A9FD1E61165B006A9A15 /* Waypoint.swift */; };
 		DD2F988D1E50D80D0005F6BC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F988C1E50D80D0005F6BC /* ViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -93,6 +96,9 @@
 		BF7A23CA1E70CACE00F1E74F /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = Utilities/Extensions.swift; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
+		D183A9F91E611564006A9A15 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapViewController.swift; path = Controllers/MapViewController.swift; sourceTree = "<group>"; };
+		D183A9FB1E611643006A9A15 /* Path.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Path.swift; path = Models/Path.swift; sourceTree = "<group>"; };
+		D183A9FD1E61165B006A9A15 /* Waypoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Waypoint.swift; path = Models/Waypoint.swift; sourceTree = "<group>"; };
 		D183A9F91E611564006A9A15 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapViewController.swift; path = Controllers/MapViewController.swift; sourceTree = "<group>"; };
 		D183A9FB1E611643006A9A15 /* Path.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Path.swift; path = Models/Path.swift; sourceTree = "<group>"; };
 		D183A9FD1E61165B006A9A15 /* Waypoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Waypoint.swift; path = Models/Waypoint.swift; sourceTree = "<group>"; };
@@ -258,9 +264,6 @@
 		DD2F98911E50D8C90005F6BC /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				DD2F989A1E50F99A0005F6BC /* Route.swift */,
-				DD2F98A01E5141D10005F6BC /* Direction.swift */,
-				D183A9FB1E611643006A9A15 /* Polyline.swift */,
 				D183A9FB1E611643006A9A15 /* Path.swift */,
 				D183A9FD1E61165B006A9A15 /* Waypoint.swift */,
 			);
@@ -277,9 +280,7 @@
 		DD2F98941E50D8DC0005F6BC /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				BF7A23CA1E70CACE00F1E74F /* Extensions.swift */,
-				DD5D233B1E6367A100F8DECE /* Time.swift */,
-				D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */,
+				D183A9FF1E612826006A9A15 /* UIColor+Shared.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -601,7 +602,6 @@
 				BF7A23C31E70CA7800F1E74F /* SmallDetailTableViewCell.swift in Sources */,
 				DD5D233C1E6367A100F8DECE /* Time.swift in Sources */,
 				DD2F988D1E50D80D0005F6BC /* ViewController.swift in Sources */,
-				D183A9FC1E611643006A9A15 /* Polyline.swift in Sources */,
 				D183A9FC1E611643006A9A15 /* Path.swift in Sources */,
 				D183AA001E612826006A9A15 /* UIColor+Shared.swift in Sources */,
 				D183A9FA1E611564006A9A15 /* MapViewController.swift in Sources */,
