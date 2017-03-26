@@ -10,10 +10,6 @@ import Foundation
 import UIKit
 
 extension UIColor {
-    //N2SELF: get rid of these old colors
-    @nonobjc static let stopNumColor1 = UIColor(red: 243/255, green: 156/255, blue: 18/255, alpha: 1.0)
-    @nonobjc static let stopNumColor2 = UIColor(red: 255/255, green: 97/255, blue: 116/255, alpha: 1.0)
-    @nonobjc static let pinColor = UIColor(red: 52/255, green: 152/255, blue: 219/255, alpha: 1.0)
     //General colors
     @nonobjc static let tcatBlue = UIColor(red: 7/255, green: 157/255, blue: 220/255, alpha: 1.0)
     //OptionsVC colors
@@ -24,6 +20,7 @@ extension UIColor {
     @nonobjc static let timeBackColor = UIColor(red: 252/255, green: 252/255, blue: 254/255, alpha: 1.0)
     @nonobjc static let lineColor = UIColor(red: 224/255, green: 224/255, blue: 224/255, alpha: 1.0)
     @nonobjc static let routeResultsBackColor = UIColor(red: 242/255, green: 242/255, blue: 242/255, alpha: 1.0)
+    @nonobjc static let disclaimerLabelColor = UIColor(red: 155/255, green: 155/255, blue: 155/255, alpha: 1.0)
     
     // Get color from hex code
     public static func colorFromCode(_ code: Int, alpha: CGFloat) -> UIColor {
