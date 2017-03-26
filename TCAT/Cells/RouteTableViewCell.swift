@@ -13,20 +13,41 @@ class RouteTableViewCell: UITableViewCell {
     //Data
     var departureTime: Date?
     var arrivalTime: Date?
-    var stops: [String] = [] //mainStops
-    var stopNums: [Int] = [] //mainStopsNum, 0 for pins
+    var stops: [String] = []
+    var busNums: [Int] = []
     var distance: Double = 0 //of first stop
     
     //View
     var travelTimeLabel: UILabel = UILabel()
     var departTimeLabel: UILabel = UILabel()
     var stopLabels: [UILabel] = []
-    var stopNumButtons: [UIButton] = []
-    var arrows: [UIImageView] = []
+    var stopDots: [DirectionCircle] = []
+    var busIcons: [BusIcon] = []
+    var busLine: UIView = UIView()
     var distanceLabel: UILabel = UILabel()
     
+    var topLine: UIView = UIView()
+    var bottomLine: UIView = UIView()
+    var spaceBtCells: UIView = UIView()
+    
     //Spacing
-    let space: CGFloat = 8.0
+    let spaceXFromSuperviewLeft: CGFloat = 18.0
+    let spaceYToCellBorder: CGFloat = 18.0
+
+    let spaceYTimeLabelFromSuperviewTop: CGFloat = 18.0
+    let spaceYDepartLabelFromSuperviewRight: CGFloat = 12.0
+
+    let spaceYTimeLabelAndDot: CGFloat = 26.0
+
+    let busLineWidthX: CGFloat = 1.0
+    let busLineLengthY: CGFloat = 21.0
+    
+    let spaceXBtBusIconAndDot: CGFloat = 12.0
+    let spaceXBtDotAndStopLabel: CGFloat = 17.5
+    let spaceXBtStopLabelAndDistLabel: CGFloat = 5.5
+    
+    let cellBorderWidthY: CGFloat = 0.75
+    let cellSpaceWidthY: CGFloat = 4.0
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -43,28 +64,55 @@ class RouteTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         //Set up time label text, frame
-        travelTimeLabel.frame = CGRect(x: space*1.5, y: space, width: 135, height: 20)
+        travelTimeLabel.frame = CGRect(x: spaceXFromSuperviewLeft, y: spaceYTimeLabelFromSuperviewTop, width: 135, height: 20)
         travelTimeLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
-        travelTimeLabel.textColor = .travelTimeColor
+        travelTimeLabel.textColor = .routeCellFontColor
         contentView.addSubview(travelTimeLabel)
         
         //Set up depart label text, &  frame
         departTimeLabel.frame = CGRect(x: 0, y: travelTimeLabel.frame.minY, width: 135, height: 20)
         departTimeLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
-        departTimeLabel.textColor = .departTimeColor
+        departTimeLabel.textColor = .routeCellFontColor
         contentView.addSubview(departTimeLabel)
+        
+        //Set up top seperator line
+        topLine = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: cellBorderWidthY))
+        topLine.backgroundColor = .lineColor
+        contentView.addSubview(topLine)
+        
+        //Set up bus line
+        busLine = UIView(frame: CGRect(x: 0, y: 0, width: busLineWidthX, height: busLineLengthY))
+        busLine.backgroundColor = .tcatBlue
+        contentView.addSubview(busLine)
     }
     
-    /*Call this function after pass all data to cell 
-      * in order to set cell with this data
-     */
+    override func prepareForReuse() {
+        //Remove dyamically placed views from superview
+        for stopNumButton in stopDots{
+            stopNumButton.removeFromSuperview()
+        }
+        for stopLabel in stopLabels{
+            stopLabel.removeFromSuperview()
+        }
+        for busIcon in busIcons{
+            busIcon.removeFromSuperview()
+        }
+        //Clear the arrays that hold the dynamically placed views
+        stopDots.removeAll()
+        stopLabels.removeAll()
+        busIcons.removeAll()
+    }
+    
+    //Call this function after pass all data to cell in order to set cell with this data
     func setData(){
+        //Set data
+        
         //Input travel time
         travelTimeLabel.text = "\(Time.string(from: departureTime!)) - \(Time.string(from: arrivalTime!))"
         travelTimeLabel.sizeToFit()
         
         //Generate time string based on time until departure
-        let timeUntilDeparture = Time.dateComponents(from: departureTime!, to: Date())
+        let timeUntilDeparture = Time.dateComponents(from: Date(), to: departureTime!)
         var timeStr = ""
         if(timeUntilDeparture.day! > 0){
             timeStr += "\(timeUntilDeparture.day!) d "
@@ -80,29 +128,19 @@ class RouteTableViewCell: UITableViewCell {
         departTimeLabel.text = "Departs in \(timeStr)"
         departTimeLabel.sizeToFit()
         
-        //Create stopNumButtons & format
-        for i in 0...(stopNums.count-1){
-            stopNumButtons.append(UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30)))
-            if(stopNums[i] == -1){ //pin
-                stopNumButtons[i].setImage(UIImage(named: "pin"), for: .normal)
-                stopNumButtons[i].contentMode = .scaleAspectFit
-                stopNumButtons[i].tintColor = .pinColor
+        //Create stopDots & busIcons
+        for i in 0...(busNums.count-1){
+            if(i == (busNums.count - 1)){
+                let circleLineBlue = DirectionCircle(.finishOn)
+                circleLineBlue.backgroundColor = .white
+                stopDots.append(circleLineBlue)
             }else{
-                stopNumButtons[i].setTitle("\(stopNums[i])", for: .normal)
-                stopNumButtons[i].titleLabel?.font = UIFont(name: "SFUIDisplay-Regular", size: 13.0)
-                stopNumButtons[i].setTitleColor(.white, for: .normal)
-                stopNumButtons[i].backgroundColor = .stopNumColor1
-                stopNumButtons[i].layer.cornerRadius = stopNumButtons[i].frame.width/2
-                stopNumButtons[i].layer.masksToBounds = true //N2SELF: Do i need this?
+                let circleDotBlue = DirectionCircle(.standardOn)
+                stopDots.append(circleDotBlue)
             }
-            stopNumButtons[i].sizeToFit()
-        }
-        
-        //Create arrows (one less arrows than stops buttons)
-        for i in 0...stopNumButtons.count-2{
-            arrows.append(UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 6)))
-            arrows[i].image = UIImage(named: "arrow")
-            arrows[i].contentMode = .scaleAspectFit
+            if(busNums[i] != -1){ //Don't add pins
+                busIcons.append(BusIcon(size: .small, number: busNums[i]))
+            }
         }
         
         //Create stops text
@@ -110,7 +148,7 @@ class RouteTableViewCell: UITableViewCell {
             stopLabels.append(UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 20)))
             stopLabels[i].text = stops[i]
             stopLabels[i].font = UIFont(name: "SFUIText-Regular", size: 14.0)
-            stopLabels[i].textColor = .stopLabelColor
+            stopLabels[i].textColor = .routeCellFontColor
             stopLabels[i].sizeToFit()
         }
         
@@ -119,57 +157,83 @@ class RouteTableViewCell: UITableViewCell {
         distanceLabel.textColor = .distanceLabelColor
         distanceLabel.text = "\(distance) mi away"
         distanceLabel.sizeToFit()
-    }
-    
-    func addSubviewsOnce(){
-        for i in 0...(stopNumButtons.count-1){
-            contentView.addSubview(stopNumButtons[i])
+        
+        //Position views
+        
+        //Position depart time label
+        departTimeLabel.center.x = contentView.frame.width - spaceYDepartLabelFromSuperviewRight - (departTimeLabel.frame.width/2)
+        
+        //Positon stop dots positions
+        for i in 0...(stopDots.count-1){
+            if(i == 0){ //set position of first pins
+                stopDots[i].center.y = travelTimeLabel.frame.maxY + spaceYTimeLabelAndDot + (stopDots[i].frame.height/2)
+            }else{//set position of other pins & arrows
+                stopDots[i].center.x = stopDots[i-1].center.x
+                stopDots[i].center.y = stopDots[i-1].frame.maxY + busLineLengthY + (stopDots[i-1].frame.height/2) //for dots w/ lines use dot w/out lines height to keep line width btn dots uniform
+            }
         }
         
-        for i in 0...(arrows.count-1){
-            contentView.addSubview(arrows[i])
+        //Position bus icons
+        for i in 0...(busIcons.count-1){
+            busIcons[i].center.y = (stopDots[i].center.y + stopDots[i+1].center.y)/2
+            busIcons[i].center.x = spaceXFromSuperviewLeft + (busIcons[i].frame.width/2)
         }
         
+        //Postion first dot relative to bus icon & rest of dots relative to previous dot
+        for i in 0...(stopDots.count-1){
+            if(i==0){
+               stopDots[i].center.x =  busIcons[i].frame.maxX + spaceXBtBusIconAndDot + (stopDots[i].frame.width/2)
+            }else{
+                stopDots[i].center.x = stopDots[i-1].center.x
+            }
+            
+        }
+        
+        //Position bus line
+        busLine.center.x = stopDots[0].center.x
+        busLine.frame = CGRect(x: stopDots[0].center.x - busLineWidthX, y: stopDots[0].center.y, width: busLineWidthX, height: stopDots[stopDots.count-1].center.y - stopDots[0].center.y)
+        
+        //Position stop labels
         for i in 0...(stopLabels.count-1){
-            contentView.addSubview(stopLabels[i])
+            if(i == 0){//postion first label relative to stopDot
+              stopLabels[i].center.x = stopDots[i].frame.maxX + spaceXBtDotAndStopLabel + (stopLabels[i].frame.width/2)
+            }else{ //left align rest of labels with first label
+                let oldFrame = stopLabels[i].frame
+                let newFrame = CGRect(x: stopLabels[0].frame.minX, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height)
+                stopLabels[i].frame = newFrame
+            }
+            stopLabels[i].center.y = stopDots[i].center.y
+        }
+        
+        //Position distance label
+        distanceLabel.frame = CGRect(x: stopLabels[0].frame.maxX + spaceXBtStopLabelAndDistLabel, y: stopLabels[0].frame.minY, width: 90, height: 20)
+        distanceLabel.sizeToFit()
+        
+        //Add subviews to view
+        for stopNumButton in stopDots{
+            contentView.addSubview(stopNumButton)
+        }
+        for stopLabel in stopLabels{
+            contentView.addSubview(stopLabel)
+        }
+        for busIcon in busIcons{
+            contentView.addSubview(busIcon)
         }
         
         contentView.addSubview(distanceLabel)
-
         
+        //Set up & position line and spacing btn cells
+        spaceBtCells = UIView(frame: CGRect(x: 0, y: contentView.frame.height - cellSpaceWidthY, width: UIScreen.main.bounds.width, height: cellSpaceWidthY))
+        spaceBtCells.backgroundColor = .routeResultsBackColor
+        contentView.addSubview(spaceBtCells)
+        
+        bottomLine = UIView(frame: CGRect(x: 0, y: spaceBtCells.frame.minY + cellBorderWidthY, width: UIScreen.main.bounds.width, height: cellBorderWidthY))
+        bottomLine.backgroundColor = .lineColor
+        contentView.addSubview(bottomLine)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func layoutSubviews() {
-        print("called")
-        //Position depart time label
-         departTimeLabel.center.x = contentView.frame.width - space - (departTimeLabel.frame.width/2)
-        
-        //Positon buttons & arrows positions
-        for i in 0...(stopNumButtons.count-1){
-            if(i == 0){ //set position of first pins
-                stopNumButtons[i].center.x = space + (stopNumButtons[i].frame.width/2)
-                stopNumButtons[i].center.y = travelTimeLabel.frame.maxY + space + (stopNumButtons[i].frame.height/2)
-            }else{//set position of other pins & arrows
-                arrows[i-1].center.x = stopNumButtons[i-1].center.x
-                stopNumButtons[i].center.x = stopNumButtons[i-1].center.x
-                
-                arrows[i-1].center.y = stopNumButtons[i-1].frame.maxY + space + (arrows[i-1].frame.height/2)
-                stopNumButtons[i].center.y = arrows[i-1].frame.maxY + space + (stopNumButtons[i].frame.height/2)
-            }
-        }
-        
-        //Position stops
-        for i in 0...(stopLabels.count-1){
-            stopLabels[i].center.x = stopNumButtons[i].frame.maxX + space + (stopLabels[i].frame.width/2)
-            stopLabels[i].center.y = stopNumButtons[i].center.y
-        }
-        
-        //Set up distance label
-        distanceLabel.frame = CGRect(x: stopLabels[0].frame.maxX + space, y: stopLabels[0].frame.minY, width: 90, height: 20)
     }
 
 }
