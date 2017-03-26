@@ -14,44 +14,71 @@ class DatePickerView: UIView {
     var doneButton: UIButton!
     var datePicker: UIDatePicker!
     var arriveDepartBar: UISegmentedControl!
-    let arriveDepartOptions: [String] = ["Depart at", "Arrive by"]
+    let arriveDepartOptions: [String] = ["Arrive By", "Leave At"]
+    var disclaimerLabel: UILabel!
     
-    let leadingSpace: CGFloat = 17.5
-    let topSpace: CGFloat = 29.0
+    let buttonHeight: CGFloat = 20
+    let segmentControlHeight: CGFloat = 29
+    let datePickerHeight: CGFloat = 164.5
+    let labelHeight: CGFloat = 28
+    
+    let spaceBtButtonAndSuprviewTop: CGFloat = 16.0
+    let spaceBtButtonAndSuperviewSide: CGFloat = 12.0
+    let spaceBtButtonAndSegmentedControl: CGFloat = 16.0
     let spaceBtSegmentControlAndDatePicker: CGFloat = 8.0
     
     override init(frame: CGRect){
         super.init(frame: frame)
         arriveDepartBar = UISegmentedControl(items: arriveDepartOptions)
-        arriveDepartBar.frame = CGRect(x: 30, y: topSpace, width: self.frame.width*(2/3), height: 23)
         arriveDepartBar.tintColor = .tcatBlue
-        arriveDepartBar.selectedSegmentIndex = 0 //Depart at default option
+        arriveDepartBar.selectedSegmentIndex = 1
+        let segmentControlFont = UIFont(name: "SFUIText-Regular", size: 13.0)
+        arriveDepartBar.setTitleTextAttributes([NSFontAttributeName: segmentControlFont!], for: .normal)
         
         datePicker = UIDatePicker()
         
         cancelButton = UIButton()
         cancelButton.setTitle("Cancel", for: .normal)
-        cancelButton.titleLabel?.font = UIFont(name: "SFUIText-Regular", size: 14.0)
+        cancelButton.titleLabel?.font = UIFont(name: "SFUIText-Regular", size: 17.0)
         cancelButton.setTitleColor(.timeIconColor, for: .normal)
         
         doneButton = UIButton()
         doneButton.setTitle("Done", for: .normal)
-        doneButton.titleLabel?.font = UIFont(name: "SFUIText-Regular", size: 14.0)
+        doneButton.titleLabel?.font = UIFont(name: "SFUIText-Regular", size: 17.0)
         doneButton.setTitleColor(.tcatBlue, for: .normal)
+        
+        disclaimerLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.frame.width*(343/375), height: labelHeight))
+        disclaimerLabel.textColor = .disclaimerLabelColor
+        disclaimerLabel.font = UIFont(name: "SFUIText-Regular", size: 12.0)
+        disclaimerLabel.text = "Results are shown for buses departing up to 30 minutes after the selected time"
+        disclaimerLabel.numberOfLines = 0
+        disclaimerLabel.lineBreakMode = .byWordWrapping
+        disclaimerLabel.textAlignment = .center
+        disclaimerLabel.sizeToFit()
     }
     
-    
     func positionAndAddViews(){
+        cancelButton.frame = CGRect(x: spaceBtButtonAndSuperviewSide, y: spaceBtButtonAndSuprviewTop, width: 60, height: buttonHeight)
+        
+        doneButton.frame = CGRect(x: 0, y: spaceBtButtonAndSuprviewTop, width: 55, height: buttonHeight)
+        let newFrame = CGRect(x: self.frame.width - spaceBtButtonAndSuperviewSide - doneButton.frame.width, y: doneButton.frame.minY, width: doneButton.frame.width, height: doneButton.frame.height)
+        doneButton.frame = newFrame
+        
+        arriveDepartBar.frame = CGRect(x: 0, y: cancelButton.frame.maxY + spaceBtButtonAndSegmentedControl, width: self.frame.width*(343/375), height: segmentControlHeight)
         arriveDepartBar.center.x = self.frame.width/2
-        datePicker.frame = CGRect(x: 0, y: arriveDepartBar.frame.maxY + spaceBtSegmentControlAndDatePicker, width: self.frame.width, height: 172)
-        cancelButton.frame = CGRect(x: 0, y: datePicker.frame.maxY, width: self.frame.width/2, height: 55)
-        doneButton.frame = CGRect(x: cancelButton.frame.maxX, y: cancelButton.frame.minY, width: self.frame.width/2, height: cancelButton.frame.height)
+        
+        datePicker.frame = CGRect(x: 0, y: arriveDepartBar.frame.maxY + spaceBtSegmentControlAndDatePicker, width: self.frame.width, height: datePickerHeight)
+        datePicker.center.x = self.frame.width/2
+
+        disclaimerLabel.center.x = self.frame.width/2
+        disclaimerLabel.center.y = datePicker.frame.maxY + (self.frame.height - datePicker.frame.maxY)/2
         
         //Add views
-        addSubview(arriveDepartBar)
-        addSubview(datePicker)
         addSubview(cancelButton)
         addSubview(doneButton)
+        addSubview(arriveDepartBar)
+        addSubview(datePicker)
+        addSubview(disclaimerLabel)
      }
     
     required init?(coder aDecoder: NSCoder) {

@@ -45,7 +45,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         //Set up datepicker
         routeSelection.timeButton.addTarget(self, action: #selector(self.showDatePicker), for: .touchUpInside)
-        datePickerView = DatePickerView(frame: CGRect(x: 0, y: self.view.frame.height, width: view.frame.width, height: 287))
+        datePickerView = DatePickerView(frame: CGRect(x: 0, y: self.view.frame.height, width: view.frame.width, height: 305.5))
         datePickerView.positionAndAddViews()
         datePickerView.backgroundColor = .white
         datePickerView.cancelButton.addTarget(self, action: #selector(self.dismissDatePicker), for: .touchUpInside)
@@ -67,7 +67,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         routeResults.allowsSelection = false
         routeResults.backgroundColor = .routeResultsBackColor
         routeResults.alwaysBounceVertical = false //so table view doesn't scroll over top & bottom
-
         view.addSubview(routeResults)
         view.addSubview(datePickerView)//so datePicker can go ontop of other views
 
@@ -91,10 +90,21 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewWillAppear(_ animated: Bool) {
         routeResults.register(RouteTableViewCell.classForCoder(), forCellReuseIdentifier: identifier)
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        Loader.addLoaderTo(routeResults)
+        Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(self.loaded), userInfo: nil, repeats: false)
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    //MARK: Loader functionality
+    func loaded()
+    {
+        Loader.removeLoaderFrom(routeResults)
     }
     
     //MARK: Datepicker functionality

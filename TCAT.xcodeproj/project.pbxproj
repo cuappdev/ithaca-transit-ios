@@ -37,6 +37,7 @@
 		DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */; };
 		DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */; };
 		DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */; };
+		DD87F20A1E878CB5000C244B /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD87F2091E878CB5000C244B /* Loader.swift */; };
 		DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */; };
 		DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */; };
 		DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */; };
@@ -102,6 +103,7 @@
 		DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Medium.otf"; path = "Resources/SFText-Medium.otf"; sourceTree = "<group>"; };
 		DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Regular.otf"; path = "Resources/SFText-Regular.otf"; sourceTree = "<group>"; };
 		DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Semibold.otf"; path = "Resources/SFText-Semibold.otf"; sourceTree = "<group>"; };
+		DD87F2091E878CB5000C244B /* Loader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Loader.swift; path = Utilities/Loader.swift; sourceTree = "<group>"; };
 		DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatePickerView.swift; path = Views/DatePickerView.swift; sourceTree = "<group>"; };
 		DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteSelectionView.swift; path = Views/RouteSelectionView.swift; sourceTree = "<group>"; };
 		DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationTableViewCell.swift; path = Cells/LocationTableViewCell.swift; sourceTree = "<group>"; };
@@ -280,6 +282,7 @@
 		DD2F98941E50D8DC0005F6BC /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				DD87F2091E878CB5000C244B /* Loader.swift */,
 				BF7A23CA1E70CACE00F1E74F /* Extensions.swift */,
 				DD5D233B1E6367A100F8DECE /* Time.swift */,
 				D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */,
@@ -599,6 +602,7 @@
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */,
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
+				DD87F20A1E878CB5000C244B /* Loader.swift in Sources */,
 				DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */,
 				DD16B8E91E7046390089B7B2 /* DirectionCircle.swift in Sources */,
 				D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */,
