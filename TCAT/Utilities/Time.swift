@@ -10,6 +10,15 @@ import Foundation
 
 class Time{
     
+    /*Takes date and return full date formatted in "EEEE, MMMM d, yyyy at h:mm a""
+     */
+    static func fullString(from date: Date)-> String{
+        let formatter = DateFormatter()
+        formatter.dateStyle = .full
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+    
     /*Takes date and return time formatted in "h:mm a"
      */
     static func string(from time: Date) -> String {
