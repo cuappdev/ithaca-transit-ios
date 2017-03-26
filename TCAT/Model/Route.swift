@@ -67,13 +67,15 @@ class Route: NSObject {
     //N2SELF: ADD TO EXAMPLE
     var mainStopsNums: [Int] //-1 for pins
     var travelDistance: Double //of first stop
+    var lastStopTime: Date // the critical last time a bus route runs
     
-    init(departureTime: Date, arrivalTime: Date, directions: [Direction], mainStops: [String], mainStopsNums: [Int], travelDistance: Double) {
+    init(departureTime: Date, arrivalTime: Date, directions: [Direction], mainStops: [String], mainStopsNums: [Int], travelDistance: Double, lastStopTime: Date = Date()) {
         self.departureTime = departureTime
         self.arrivalTime = arrivalTime
         self.directions = directions
         self.mainStops = mainStops
         self.mainStopsNums = mainStopsNums
         self.travelDistance = travelDistance
+        self.lastStopTime = lastStopTime
     }
 }
