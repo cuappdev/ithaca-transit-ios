@@ -12,7 +12,6 @@ import UIKit
   * Route model > change mainStopNums to mainBusNums
   * make font of busIcon = SFU
   * the table view might be bigger than you need
-  * formate datepicker view according to design
   * format date to "Today, Tomorrow, Next Tuesday" (after next week stuff don't need any more custom string)
   * stop date picker from going back in time
  */

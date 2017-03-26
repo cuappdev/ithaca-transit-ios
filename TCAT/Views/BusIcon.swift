@@ -40,7 +40,7 @@ class BusIcon: UIView {
         
         label = UILabel()
         label.text = "\(number)"
-        label.font = UIFont.systemFont(ofSize: size == .large ? 21 : 15, weight: UIFontWeightSemibold)
+        label.font = (size == .large) ? UIFont(name: "SFUIText-Semibold", size: 21) : UIFont(name: "SFUIText-Semibold", size: 15)
         label.textColor = .white
         label.sizeToFit()
         label.center = center
