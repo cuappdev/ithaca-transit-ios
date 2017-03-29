@@ -10,17 +10,15 @@ import Foundation
 import UIKit
 
 extension UIColor {
-    //General colors
-    @nonobjc static let tcatBlue = UIColor(red: 7/255, green: 157/255, blue: 220/255, alpha: 1.0)
-    //OptionsVC colors
-    @nonobjc static let routeCellFontColor = UIColor(red: 34/255, green: 34/255, blue: 34/255, alpha: 1.0)
-    @nonobjc static let distanceLabelColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1.0)
-    @nonobjc static let headerTitleColor = UIColor(red: 71/255, green: 71/255, blue: 71/255, alpha: 1.0)
-    @nonobjc static let timeIconColor = UIColor(red: 146/255, green: 146/255, blue: 146/255, alpha: 1.0)
-    @nonobjc static let timeBackColor = UIColor(red: 252/255, green: 252/255, blue: 254/255, alpha: 1.0)
-    @nonobjc static let lineColor = UIColor(red: 224/255, green: 224/255, blue: 224/255, alpha: 1.0)
-    @nonobjc static let routeResultsBackColor = UIColor(red: 242/255, green: 242/255, blue: 242/255, alpha: 1.0)
-    @nonobjc static let disclaimerLabelColor = UIColor(red: 155/255, green: 155/255, blue: 155/255, alpha: 1.0)
+    static let tcatBlueColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1.0)
+    static let primaryTextColor = UIColor(white: 34 / 255, alpha: 1.0)
+    static let secondaryTextColor = UIColor(white: 74 / 255, alpha: 1.0)
+    static let tableHeaderColor = UIColor(white: 100 / 255, alpha: 1.0)
+    static let mediumGrayColor = UIColor(white: 155 / 255, alpha: 1.0)
+    static let lineColor = UIColor(white: 230 / 255, alpha: 1.0)
+    static let tableBackgroundColor = UIColor(white: 242 / 255, alpha: 1.0)
+    static let summaryBackgroundColor = UIColor(white: 248 / 255, alpha: 1.0)
+    static let optionsTimeBackgroundColor = UIColor(white: 252 / 255, alpha: 1.0)
     
     // Get color from hex code
     public static func colorFromCode(_ code: Int, alpha: CGFloat) -> UIColor {
@@ -30,4 +28,30 @@ extension UIColor {
         
         return UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
+}
+
+/** Round specific corners of UIView */
+extension UIView {
+    func roundCorners(corners: UIRectCorner, radius: CGFloat) {
+        let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        self.layer.mask = mask
+    }
+}
+
+/** Bold a phrase that appears in a string, and return the attributed string */
+func bold(pattern: String, in string: String) -> NSMutableAttributedString {
+    let fontSize = UIFont.systemFontSize
+    let attributedString = NSMutableAttributedString(string: string,
+                                                     attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: fontSize)])
+    let boldFontAttribute = [NSFontAttributeName: UIFont.boldSystemFont(ofSize: fontSize)]
+    
+    do {
+        let regex = try NSRegularExpression(pattern: pattern, options: [])
+        let ranges = regex.matches(in: string, options: [], range: NSMakeRange(0, string.characters.count)).map {$0.range}
+        for range in ranges { attributedString.addAttributes(boldFontAttribute, range: range) }
+    } catch { }
+    
+    return attributedString
 }

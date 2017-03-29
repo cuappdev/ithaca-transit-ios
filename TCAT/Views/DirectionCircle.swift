@@ -29,16 +29,16 @@ class DirectionCircle: UIView {
         
         if !isStandard {
             backgroundColor = .clear
-            layer.borderColor = (type == .finishOn) ? UIColor.tcatBlue.cgColor : UIColor.gray.cgColor
+            layer.borderColor = (type == .finishOn) ? UIColor.tcatBlueColor.cgColor : UIColor.gray.cgColor
             layer.borderWidth = 1.0
             let innerCircle = DirectionCircle(type == .finishOn ? .standardOn : .standardOff)
             innerCircle.center = center
             addSubview(innerCircle)
         } else {
-            backgroundColor = type == .standardOff ? .gray :  UIColor.tcatBlue
+            backgroundColor = type == .standardOff ? .gray :  UIColor.tcatBlueColor
             if type == .busStop {
                 backgroundColor = .white
-                layer.borderColor =  UIColor.tcatBlue.cgColor
+                layer.borderColor =  UIColor.tcatBlueColor.cgColor
                 layer.borderWidth = 1.0
             }
         }

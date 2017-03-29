@@ -39,7 +39,7 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
         waypointsB = [Waypoint(lat: 42.445221, long: -76.481615, wpType: .Origin),
                      Waypoint(lat: 42.443147, long: -76.479534, wpType: .Destination)]
     
-        let routePathA = Path(waypoints: waypointsA, pathType: .Walking, color: .tcatBlue)
+        let routePathA = Path(waypoints: waypointsA, pathType: .Walking, color: .tcatBlueColor)
         let routePathB = Path(waypoints: waypointsB, pathType: .Driving, color: .orange)
         route = [routePathA, routePathB]
         

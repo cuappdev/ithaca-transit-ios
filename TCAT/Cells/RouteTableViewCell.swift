@@ -66,13 +66,13 @@ class RouteTableViewCell: UITableViewCell {
         //Set up time label text, frame
         travelTimeLabel.frame = CGRect(x: spaceXFromSuperviewLeft, y: spaceYTimeLabelFromSuperviewTop, width: 135, height: 20)
         travelTimeLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
-        travelTimeLabel.textColor = .routeCellFontColor
+        travelTimeLabel.textColor = .primaryTextColor
         contentView.addSubview(travelTimeLabel)
         
         //Set up depart label text, &  frame
         departTimeLabel.frame = CGRect(x: 0, y: travelTimeLabel.frame.minY, width: 135, height: 20)
         departTimeLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
-        departTimeLabel.textColor = .routeCellFontColor
+        departTimeLabel.textColor = .primaryTextColor
         contentView.addSubview(departTimeLabel)
         
         //Set up top seperator line
@@ -82,7 +82,7 @@ class RouteTableViewCell: UITableViewCell {
         
         //Set up bus line
         busLine = UIView(frame: CGRect(x: 0, y: 0, width: busLineWidthX, height: busLineLengthY))
-        busLine.backgroundColor = .tcatBlue
+        busLine.backgroundColor = .tcatBlueColor
         contentView.addSubview(busLine)
     }
     
@@ -148,13 +148,13 @@ class RouteTableViewCell: UITableViewCell {
             stopLabels.append(UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 20)))
             stopLabels[i].text = stops[i]
             stopLabels[i].font = UIFont(name: "SFUIText-Regular", size: 14.0)
-            stopLabels[i].textColor = .routeCellFontColor
+            stopLabels[i].textColor = .primaryTextColor
             stopLabels[i].sizeToFit()
         }
         
         //Set up distance label
         distanceLabel.font = UIFont(name: "SFUIText-Regular", size: 12.0)
-        distanceLabel.textColor = .distanceLabelColor
+        distanceLabel.textColor = .mediumGrayColor
         distanceLabel.text = "\(distance) mi away"
         distanceLabel.sizeToFit()
         
@@ -224,7 +224,7 @@ class RouteTableViewCell: UITableViewCell {
         
         //Set up & position line and spacing btn cells
         spaceBtCells = UIView(frame: CGRect(x: 0, y: contentView.frame.height - cellSpaceWidthY, width: UIScreen.main.bounds.width, height: cellSpaceWidthY))
-        spaceBtCells.backgroundColor = .routeResultsBackColor
+        spaceBtCells.backgroundColor = .tableBackgroundColor
         contentView.addSubview(spaceBtCells)
         
         bottomLine = UIView(frame: CGRect(x: 0, y: spaceBtCells.frame.minY + cellBorderWidthY, width: UIScreen.main.bounds.width, height: cellBorderWidthY))

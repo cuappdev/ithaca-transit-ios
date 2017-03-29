@@ -46,14 +46,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.makeKeyAndVisible() */
         
         // Initalize window without storyboard
-        window = UIWindow()
-        let dummyWindow = UIViewController()
-        let nav = UINavigationController(rootViewController: dummyWindow)
-        window?.rootViewController = nav
-//        let routeDetailViewController = RouteDetailViewController()
-//        nav.pushViewController(routeDetailViewController, animated: true)
-        window?.makeKeyAndVisible()
-        self.window!.rootViewController = UINavigationController(rootViewController: OptionsViewController())
+        let rootVC =  OptionsViewController()
+        let navigationController = UINavigationController(rootViewController: rootVC)
+        navigationController.navigationBar.barTintColor = .white
+        navigationController.navigationBar.isTranslucent = false
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.window!.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
         
         return true
