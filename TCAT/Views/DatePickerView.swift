@@ -30,7 +30,7 @@ class DatePickerView: UIView {
     override init(frame: CGRect){
         super.init(frame: frame)
         arriveDepartBar = UISegmentedControl(items: arriveDepartOptions)
-        arriveDepartBar.tintColor = .tcatBlue
+        arriveDepartBar.tintColor = .tcatBlueColor
         arriveDepartBar.selectedSegmentIndex = 1
         let segmentControlFont = UIFont(name: "SFUIText-Regular", size: 13.0)
         arriveDepartBar.setTitleTextAttributes([NSFontAttributeName: segmentControlFont!], for: .normal)
@@ -40,15 +40,15 @@ class DatePickerView: UIView {
         cancelButton = UIButton()
         cancelButton.setTitle("Cancel", for: .normal)
         cancelButton.titleLabel?.font = UIFont(name: "SFUIText-Regular", size: 17.0)
-        cancelButton.setTitleColor(.timeIconColor, for: .normal)
+        cancelButton.setTitleColor(.mediumGrayColor, for: .normal)
         
         doneButton = UIButton()
         doneButton.setTitle("Done", for: .normal)
         doneButton.titleLabel?.font = UIFont(name: "SFUIText-Regular", size: 17.0)
-        doneButton.setTitleColor(.tcatBlue, for: .normal)
+        doneButton.setTitleColor(.tcatBlueColor, for: .normal)
         
         disclaimerLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.frame.width*(343/375), height: labelHeight))
-        disclaimerLabel.textColor = .disclaimerLabelColor
+        disclaimerLabel.textColor = .mediumGrayColor
         disclaimerLabel.font = UIFont(name: "SFUIText-Regular", size: 12.0)
         disclaimerLabel.text = "Results are shown for buses departing up to 30 minutes after the selected time"
         disclaimerLabel.numberOfLines = 0

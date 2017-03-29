@@ -51,11 +51,11 @@ class RouteSelectionView: UIView {
         timeButton = UIButton(frame: CGRect(x: 0, y: 0, width: self.frame.width, height: timeButtonHeight))
         timeButton.setImage(#imageLiteral(resourceName: "clock"), for: .normal)
         timeButton.contentMode = .scaleAspectFit
-        timeButton.tintColor = .timeIconColor
+        timeButton.tintColor = .mediumGrayColor
         timeButton.setTitle("Leave now", for: .normal)
-        timeButton.setTitleColor(.timeIconColor, for: .normal)
+        timeButton.setTitleColor(.mediumGrayColor, for: .normal)
         timeButton.titleLabel?.font = UIFont(name: "SFUIText-Regular", size: 14.0)
-        timeButton.backgroundColor = .timeBackColor
+        timeButton.backgroundColor = .optionsTimeBackgroundColor
         timeButton.contentHorizontalAlignment = .left
         timeButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: leadingSpace, bottom: 0, right: 0)
         timeButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: leadingSpace*1.5, bottom: 0, right: 0)

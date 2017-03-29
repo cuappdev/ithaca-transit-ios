@@ -13,7 +13,8 @@ import UIKit
   * make font of busIcon = SFU
   * the table view might be bigger than you need
   * format date to "Today, Tomorrow, Next Tuesday" (after next week stuff don't need any more custom string)
-  * stop date picker from going back in time
+  * stop date picker from going back in time, restrict ot next 6 days
+  * fix navigation color = set it to not clear
  */
 
 class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -33,7 +34,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         //Set up navigation bar
         title = "Route Options"
         //Set up route selection view
-        routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: (navigationController?.navigationBar.frame.height ?? 0) + UIApplication.shared.statusBarFrame.size.height, width: view.frame.width, height: 150))
+        routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 150))
         routeSelection.backgroundColor = .lineColor
         routeSelection.positionAndAddViews()
         var newRSFrame = routeSelection.frame
@@ -64,7 +65,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         routeResults.dataSource = self
         routeResults.separatorStyle = .none
         routeResults.allowsSelection = false
-        routeResults.backgroundColor = .routeResultsBackColor
+        routeResults.backgroundColor = .tableBackgroundColor
         routeResults.alwaysBounceVertical = false //so table view doesn't scroll over top & bottom
         view.addSubview(routeResults)
         view.addSubview(datePickerView)//so datePicker can go ontop of other views
@@ -170,9 +171,9 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
-        header.contentView.backgroundColor = .routeResultsBackColor
+        header.contentView.backgroundColor = .tableBackgroundColor
         header.textLabel?.font = UIFont(name: "SFUIText-Regular", size: 14.0)
-        header.textLabel?.textColor = UIColor.headerTitleColor
+        header.textLabel?.textColor = UIColor.secondaryTextColor
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
