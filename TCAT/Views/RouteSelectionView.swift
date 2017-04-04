@@ -58,7 +58,7 @@ class RouteSelectionView: UIView {
         timeButton.backgroundColor = .optionsTimeBackgroundColor
         timeButton.contentHorizontalAlignment = .left
         timeButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: leadingSpace, bottom: 0, right: 0)
-        timeButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: leadingSpace*1.5, bottom: 0, right: 0)
+        timeButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: fromSearch.frame.minX - 15, bottom: 0, right: 0)
         
     }
     

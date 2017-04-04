@@ -9,9 +9,6 @@
 import UIKit
 
 /* N2SELF:
-  * Route model > change mainStopNums to mainBusNums
-  * make font of busIcon = SFU
-  * the table view might be bigger than you need
   * format date to "Today, Tomorrow, Next Tuesday" (after next week stuff don't need any more custom string)
   * stop date picker from going back in time, restrict ot next 6 days
   * fix navigation color = set it to not clear
@@ -60,7 +57,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         view.sendSubview(toBack: datePickerOverlay)
         
         //Set up table view
-        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0) - UIApplication.shared.statusBarFrame.size.height))
+        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0) - UIApplication.shared.statusBarFrame.height))
         routeResults.delegate = self
         routeResults.dataSource = self
         routeResults.separatorStyle = .none
@@ -130,7 +127,20 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     func saveDatePickerDate(sender: UIButton){
         let date = datePickerView.datePicker.date
         let dateString = Time.fullString(from: date)
-        routeSelection.timeButton.setTitle(dateString, for: .normal)
+        let segmentedControl = datePickerView.arriveDepartBar
+        let action = (segmentedControl?.titleForSegment(at: segmentedControl?.selectedSegmentIndex ?? 0)) ?? ""
+        var title = ""
+        //Customize string based on date
+        if(Calendar.current.isDateInToday(date) || Calendar.current.isDateInTomorrow(date)){
+            let removePreposition = action.capitalizingFirstLetter().components(separatedBy: " ").first! //Use simply,"arrive" or "leave"
+            let day = Calendar.current.isDateInToday(date) ? "" : " tomorrow" //if today don't put day
+            title = "\(removePreposition)\(day) at \(Time.string(from: date))"
+        }else{
+            let customAction = (action.lowercased().contains("arrive")) ? action.capitalizingFirstLetter() : "\(action.capitalizingFirstLetter().components(separatedBy: " ").first!) on" //Use "arrive by" or "leave on"
+            title = "\(customAction) \(dateString)"
+        }
+
+        routeSelection.timeButton.setTitle(title, for: .normal)
         
         //dismiss datepicker view
         dismissDatePicker(sender: sender)

@@ -39,7 +39,6 @@
 		DDB49C9A1E8857E000A99C35 /* BusStopTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C971E8857E000A99C35 /* BusStopTableViewCell.swift */; };
 		DDB49C9D1E8857FC00A99C35 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C9B1E8857FC00A99C35 /* Path.swift */; };
 		DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C9C1E8857FC00A99C35 /* Waypoint.swift */; };
-		DDB49CA01E88584100A99C35 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C9F1E88584100A99C35 /* Extensions.swift */; };
 		DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49CA11E88584B00A99C35 /* DetailIconView.swift */; };
 		DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */; };
 		DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */; };
@@ -107,7 +106,6 @@
 		DDB49C971E8857E000A99C35 /* BusStopTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusStopTableViewCell.swift; path = Cells/BusStopTableViewCell.swift; sourceTree = "<group>"; };
 		DDB49C9B1E8857FC00A99C35 /* Path.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Path.swift; path = Model/Path.swift; sourceTree = "<group>"; };
 		DDB49C9C1E8857FC00A99C35 /* Waypoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Waypoint.swift; path = Model/Waypoint.swift; sourceTree = "<group>"; };
-		DDB49C9F1E88584100A99C35 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = Utilities/Extensions.swift; sourceTree = "<group>"; };
 		DDB49CA11E88584B00A99C35 /* DetailIconView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DetailIconView.swift; path = Views/DetailIconView.swift; sourceTree = "<group>"; };
 		DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatePickerView.swift; path = Views/DatePickerView.swift; sourceTree = "<group>"; };
 		DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteSelectionView.swift; path = Views/RouteSelectionView.swift; sourceTree = "<group>"; };
@@ -289,7 +287,6 @@
 		DD2F98941E50D8DC0005F6BC /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				DDB49C9F1E88584100A99C35 /* Extensions.swift */,
 				DD87F2091E878CB5000C244B /* Loader.swift */,
 				DD5D233B1E6367A100F8DECE /* Time.swift */,
 				D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */,
@@ -627,7 +624,6 @@
 				DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */,
 				502D8F5D1E54C677005280F1 /* SearchLocation.swift in Sources */,
 				50C79D431E6369E000F40BBE /* RecentSearchCell.swift in Sources */,
-				DDB49CA01E88584100A99C35 /* Extensions.swift in Sources */,
 				DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */,
 				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
 				DDB49C941E8857D000A99C35 /* RouteDetailViewController.swift in Sources */,

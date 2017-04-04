@@ -55,3 +55,11 @@ func bold(pattern: String, in string: String) -> NSMutableAttributedString {
     
     return attributedString
 }
+
+extension String {
+    func capitalizingFirstLetter() -> String {
+        let first = String(characters.prefix(1)).capitalized
+        let other = String(characters.dropFirst()).lowercased()
+        return first + other
+    }
+}
