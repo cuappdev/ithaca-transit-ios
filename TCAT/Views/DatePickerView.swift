@@ -36,6 +36,10 @@ class DatePickerView: UIView {
         arriveDepartBar.setTitleTextAttributes([NSFontAttributeName: segmentControlFont!], for: .normal)
         
         datePicker = UIDatePicker()
+        let now = Date()
+        datePicker.minimumDate = now //set minimum date now
+        let next6Days = now.addingTimeInterval(6*24*60*60)
+        datePicker.maximumDate = next6Days //set maximum date to 6 days from now
         
         cancelButton = UIButton()
         cancelButton.setTitle("Cancel", for: .normal)
