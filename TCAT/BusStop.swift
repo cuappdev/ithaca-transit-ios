@@ -1,55 +1,35 @@
 //
-//  SearchLocation.swift
+//  BusStop.swift
 //  TCAT
 //
-//  Created by Austin Astorga on 2/15/17.
+//  Created by Austin Astorga on 3/26/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
 import UIKit
 import CoreLocation
 
-class SearchLocation: NSObject, NSCoding {
+class BusStop: NSObject, NSCoding {
     var name: String?
-    var latitude: CLLocationDegrees?
-    var longitude: CLLocationDegrees?
+    var lat: CLLocationDegrees?
+    var long: CLLocationDegrees?
     
-    init(name: String, latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
+    init(name: String, lat: CLLocationDegrees, long: CLLocationDegrees) {
         self.name = name
-        self.latitude = latitude
-        self.longitude = longitude
+        self.lat = lat
+        self.long = long
     }
-    
     // MARK: NSCoding
-    
     required convenience init(coder aDecoder: NSCoder) {
         let name = aDecoder.decodeObject(forKey: "name") as! String
         let latitude = aDecoder.decodeObject(forKey: "latitude") as! CLLocationDegrees
         let longitude = aDecoder.decodeObject(forKey: "longitude") as! CLLocationDegrees
-        self.init(name: name, latitude: latitude, longitude: longitude)
+        self.init(name: name, lat: latitude, long: longitude)
     }
     
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(self.name, forKey: "name")
-        aCoder.encode(self.latitude, forKey: "latitude")
-        aCoder.encode(self.longitude, forKey: "longitude")
+        aCoder.encode(self.lat, forKey: "latitude")
+        aCoder.encode(self.long, forKey: "longitude")
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
