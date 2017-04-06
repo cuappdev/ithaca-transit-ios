@@ -9,6 +9,7 @@ target 'TCAT' do
   pod 'GoogleMaps', '~> 2.1.1'
   pod 'GooglePlaces', '~> 2.1.1'
   pod 'SwiftyJSON', '~> 3.1.4'
+  pod 'Alamofire', '~> 4.4'
 
   target 'TCATTests' do
     inherit! :search_paths

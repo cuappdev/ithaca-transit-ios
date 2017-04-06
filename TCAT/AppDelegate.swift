@@ -46,13 +46,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.makeKeyAndVisible() */
         
         // Initalize window without storyboard
-        let rootVC =  OptionsViewController()
+        let rootVC =  HomeViewController()
         let navigationController = UINavigationController(rootViewController: rootVC)
         navigationController.navigationBar.barTintColor = .white
         navigationController.navigationBar.isTranslucent = false
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
+        
+        if userDefaults.value(forKey: "recentSearch") == nil {
+            userDefaults.set([Any](), forKey: "recentSearch")
+        }
         
         return true
     }
