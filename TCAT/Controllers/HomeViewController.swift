@@ -19,8 +19,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     let userDefaults = UserDefaults.standard
     var searchBar: SearchBarView!
     var recentLocations: [Any] = []
-    
-    let cornellDestinations = [(name: "North Campus", stops: "RPCC, Balch Hall, Appel, Helen Newman, Jessup Field"),(name: "West Campus", stops: "Baker Flagpole, Baker Flagpole (Slopeside)"),(name: "Central Campus", stops: "Statler Hall, Uris Hall, Goldwin Smith Hall"),(name: "Collegetown", stops: "Collegetown Crossing, Schwartz Center"),(name: "Ithaca Commons", stops: "Albany @ Salvation Army, State Street, Lot 32")]
+    let cornellDestinations = [(name: "North Campus", stops: "RPCC, Balch Hall, Appel, Helen Newman, Jessup Field"),
+                               (name: "West Campus", stops: "Baker Flagpole, Baker Flagpole (Slopeside)"),
+                               (name: "Central Campus", stops: "Statler Hall, Uris Hall, Goldwin Smith Hall"),
+                               (name: "Collegetown", stops: "Collegetown Crossing, Schwartz Center"),
+                               (name: "Ithaca Commons", stops: "Albany @ Salvation Army, State Street, Lot 32")]
     
     func tctSectionHeaderFont() -> UIFont? {
         return UIFont.systemFont(ofSize: 14)
