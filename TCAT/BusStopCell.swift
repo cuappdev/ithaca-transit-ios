@@ -1,20 +1,20 @@
 //
-//  RecentSearchCell.swift
+//  BusStopCell.swift
 //  TCAT
 //
-//  Created by Austin Astorga on 2/26/17.
+//  Created by Austin Astorga on 3/21/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
 import UIKit
 
-class RecentSearchCell: UITableViewCell {
-    
+class BusStopCell: UITableViewCell {
+
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
-    
+
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
     }
@@ -33,13 +33,12 @@ class RecentSearchCell: UITableViewCell {
         imageView?.frame = CGRect(x: 10, y: 5, width: 20, height: 20)
         imageView?.contentMode = .scaleAspectFit
         imageView?.center.y = bounds.height / 2.0
-        imageView?.image = #imageLiteral(resourceName: "search")
+        imageView?.image = #imageLiteral(resourceName: "bus")
+        imageView?.tintColor = .tcatBlueColor
         
         textLabel?.frame = CGRect(x: 40, y: 0, width: frame.width - 45, height: 20)
         textLabel?.center.y = bounds.height / 2.0
         textLabel?.font = .systemFont(ofSize: 13)
-        
-        
     }
-    
+
 }
