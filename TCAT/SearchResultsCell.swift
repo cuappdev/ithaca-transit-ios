@@ -9,11 +9,11 @@
 import UIKit
 
 class SearchResultsCell: UITableViewCell {
-    let labelWidthConstant = 45
-    let labelXPosition = 40
-    let imageHeight = 20
-    let imageWidth = 20
-    let labelHeight = 20
+    let labelWidthConstant = CGFloat(45.0)
+    let labelXPosition = CGFloat(40.0)
+    let imageHeight = CGFloat(20.0)
+    let imageWidth = CGFloat(20.0)
+    let labelHeight = CGFloat(20.0)
     
     override func awakeFromNib() {
         super.awakeFromNib()
