@@ -24,7 +24,6 @@
 		503EC3851E969B6100B3D4D4 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = 503EC3841E969B6100B3D4D4 /* config.json */; };
 		503EC3871E969B7D00B3D4D4 /* MOCK_DATA.json in Resources */ = {isa = PBXBuildFile; fileRef = 503EC3861E969B7D00B3D4D4 /* MOCK_DATA.json */; };
 		50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A19BAD1E4C214000AD6768 /* HomeViewController.swift */; };
-		50C79D431E6369E000F40BBE /* RecentSearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C79D421E6369E000F40BBE /* RecentSearchCell.swift */; };
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
 		DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
@@ -93,7 +92,6 @@
 		503EC3841E969B6100B3D4D4 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
 		503EC3861E969B7D00B3D4D4 /* MOCK_DATA.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MOCK_DATA.json; sourceTree = "<group>"; };
 		50A19BAD1E4C214000AD6768 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HomeViewController.swift; path = Controllers/HomeViewController.swift; sourceTree = "<group>"; };
-		50C79D421E6369E000F40BBE /* RecentSearchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RecentSearchCell.swift; path = Cells/RecentSearchCell.swift; sourceTree = "<group>"; };
 		81725F2EBEBD3D184BFD0635 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
 		8236DFFA6C5F3AB1E6E1B0E4 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
 		97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -258,7 +256,6 @@
 				DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */,
 				DDB49C961E8857E000A99C35 /* SmallDetailTableViewCell.swift */,
 				DDB49C971E8857E000A99C35 /* BusStopTableViewCell.swift */,
-				50C79D421E6369E000F40BBE /* RecentSearchCell.swift */,
 				503EC37A1E969ACD00B3D4D4 /* BusStopCell.swift */,
 				503EC37C1E969ADF00B3D4D4 /* SearchResultsCell.swift */,
 				DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */,
@@ -642,7 +639,6 @@
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
 				DDB49C931E8857D000A99C35 /* MapViewController.swift in Sources */,
 				DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */,
-				50C79D431E6369E000F40BBE /* RecentSearchCell.swift in Sources */,
 				DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */,
 				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
 				503EC3811E969B2F00B3D4D4 /* PlaceResult.swift in Sources */,
