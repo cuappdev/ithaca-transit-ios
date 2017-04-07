@@ -57,7 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if userDefaults.value(forKey: "recentSearch") == nil {
             userDefaults.set([Any](), forKey: "recentSearch")
         }
-        
+
         return true
     }
     

@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-class BusStop: NSObject, NSCoding, JSONDecodable {
+class BusStop: NSObject, NSCoding {
     var name: String?
     var lat: CLLocationDegrees?
     var long: CLLocationDegrees?
