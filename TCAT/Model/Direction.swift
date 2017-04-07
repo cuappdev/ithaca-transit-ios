@@ -102,11 +102,13 @@ struct WalkDirection: Direction {
     var location: CLLocation
     
     var travelDistance: Double
+    var destinationLocation: CLLocation?
     
-    init(time: Date, place: String, location: CLLocation, travelDistance: Double) {
+    init(time: Date, place: String, location: CLLocation, travelDistance: Double, destination: CLLocation = nil) {
         self.time = time
         self.place = place
         self.location = location
         self.travelDistance = travelDistance
+        self.destinationLocation = destination
     }
 }
