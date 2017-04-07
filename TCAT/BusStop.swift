@@ -9,16 +9,18 @@
 import UIKit
 import CoreLocation
 
-class BusStop: NSObject, NSCoding {
+class BusStop: NSObject, NSCoding, JSONDecodable {
     var name: String?
     var lat: CLLocationDegrees?
     var long: CLLocationDegrees?
+    
     
     init(name: String, lat: CLLocationDegrees, long: CLLocationDegrees) {
         self.name = name
         self.lat = lat
         self.long = long
     }
+    
     // MARK: NSCoding
     required convenience init(coder aDecoder: NSCoder) {
         let name = aDecoder.decodeObject(forKey: "name") as! String
