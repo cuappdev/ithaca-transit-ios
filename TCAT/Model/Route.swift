@@ -45,11 +45,14 @@
 //
 
 import UIKit
+import TRON
+import SwiftyJSON
+import CoreLocation
 
-class Route: NSObject {
+class Route: NSObject, JSONDecodable {
     
-    var departureTime: Date
-    var arrivalTime: Date
+    var departureTime: Date = Date()
+    var arrivalTime: Date = Date()
     
     //NSELF: REMOVE FROM EXAMPLE
     /*To extract timeUntilDeparture's times in day, hour, and minute units:
@@ -62,12 +65,23 @@ class Route: NSObject {
         return Time.dateComponents(from: now, to: departureTime)
     }
     
-    var directions: [Direction]
-    var mainStops: [String]
+    var directions: [Direction] = [Direction]()
+    var mainStops: [String] = [String]()
     //N2SELF: ADD TO EXAMPLE
-    var mainStopsNums: [Int] //-1 for pins
-    var travelDistance: Double //of first stop
-    var lastStopTime: Date // the critical last time a bus route runs
+    var mainStopsNums: [Int] = [Int]()//-1 for pins
+    var travelDistance: Double = 0.0 //of first stop
+    var lastStopTime: Date = Date()// the critical last time a bus route runs
+    
+    required init(json: JSON) throws {
+        super.init()
+        departureTime = Time.date(from: json["departureTime"].stringValue)
+        arrivalTime = Time.date(from: json["arrivalTime"].stringValue)
+        directions = directionJSON(json:json["directions"].array!)
+        mainStops = json["stopNames"].arrayObject as! [String]
+        mainStopsNums = json["stopNumbers"].arrayObject as! [Int]
+        travelDistance = directions[0] is WalkDirection ? (directions[0] as! WalkDirection).travelDistance : 0.0
+        lastStopTime = Date()
+    }
     
     init(departureTime: Date, arrivalTime: Date, directions: [Direction], mainStops: [String], mainStopsNums: [Int], travelDistance: Double, lastStopTime: Date = Date()) {
         self.departureTime = departureTime
@@ -77,5 +91,53 @@ class Route: NSObject {
         self.mainStopsNums = mainStopsNums
         self.travelDistance = travelDistance
         self.lastStopTime = lastStopTime
+    }
+    
+    
+    func directionJSON(json: [JSON]) -> [Direction] {
+        var directionArray = [Direction]()
+        for direction in json {
+            let directionType = direction["directionType"].stringValue
+            if directionType == "walk" {
+                directionArray.append(walkDirection(json: direction))
+            } else if directionType == "depart" {
+                directionArray.append(departDirection(json: direction))
+            } else if directionType == "arrive"{
+                directionArray.append(arriveDirection(json: direction))
+            } else {
+                //Direction isn't valid.
+            }
+        }
+        return directionArray
+    }
+    
+    
+    func walkDirection(json: JSON) -> WalkDirection {
+        let time = Time.date(from: json["time"].stringValue)
+        let place = json["place"].stringValue
+        let location = CLLocation(latitude: json["location"][0].doubleValue, longitude: json["location"][1].doubleValue)
+        let travelDistance = json["travelDistance"].doubleValue
+        return WalkDirection(time: time, place: place, location: location, travelDistance: travelDistance)
+    }
+    
+    
+    func departDirection(json: JSON) -> DepartDirection {
+        let time = Time.date(from: json["time"].stringValue)
+        let place = json["place"].stringValue
+        let location = CLLocation(latitude: json["location"][0].doubleValue, longitude: json["location"][1].doubleValue)
+        let routeNumber = json["routeNumber"].intValue
+        let bound = Bound(rawValue: json["bound"].stringValue)
+        let stops = json["stops"].arrayObject as! [String]
+        let arrivalTime = Time.date(from: json["arrivalTime"].stringValue)
+        return DepartDirection(time: time, place: place, location: location, routeNumber: routeNumber, bound: bound!, stops: stops, arrivalTime: arrivalTime)
+        
+    }
+    
+    
+    func arriveDirection(json: JSON) -> ArriveDirection {
+        let time = Time.date(from: json["time"].stringValue)
+        let place = json["place"].stringValue
+        let location = CLLocation(latitude: json["location"][0].doubleValue, longitude: json["location"][1].doubleValue)
+        return ArriveDirection(time: time, place: place, location: location)   
     }
 }
