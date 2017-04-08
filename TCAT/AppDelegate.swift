@@ -25,26 +25,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GMSServices.provideAPIKey(json["google-maps"].stringValue)
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
-        /* Main app entry point commented out to work on feature
-        //Set Up Navigation Controller
-        UINavigationBar.appearance().shadowImage = UIImage()
-        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
-        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
-        statusBar.backgroundColor = .white
-        let navigationController = UINavigationController()
-        navigationController.extendedLayoutIncludesOpaqueBars = true
-        navigationController.navigationBar.isTranslucent = true
-        navigationController.navigationBar.tintColor = .black
-        navigationController.navigationBar.backgroundColor = .white
-        navigationController.navigationBar.titleTextAttributes = [ NSFontAttributeName: UIFont(name: "SFUIText-Regular", size: 18.0)!]
-        let mainView = HomeViewController()
-        let mainView2 = OptionsViewController()
-        navigationController.viewControllers = [mainView2]
-        
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window!.rootViewController = navigationBar
-        self.window?.makeKeyAndVisible() */
-        
         // Initalize window without storyboard
         let rootVC =  HomeViewController()
         let navigationController = UINavigationController(rootViewController: rootVC)
