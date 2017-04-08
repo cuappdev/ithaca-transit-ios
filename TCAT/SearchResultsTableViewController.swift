@@ -222,18 +222,34 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
     }
     
     
+    func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop]{
+        var nonLetterArray = [BusStop]()
+        var letterArray = [BusStop]()
+        for stop in busStops {
+            if stop.name?.characters.first! == letter {
+                letterArray.append(stop)
+            } else {
+                nonLetterArray.append(stop)
+            }
+        }
+        return letterArray + nonLetterArray
+    }
+    
+    
     func fetchGooglePlaces(searchText: String) {
         searchResults = []
         let filteredBusStops = busStops.filter({(item: BusStop) -> Bool in
             let stringMatch = item.name?.lowercased().range(of: searchText.lowercased())
             return stringMatch != nil
         })
-        searchResults = searchResults + filteredBusStops
-        
+
         if searchText == "" {
             searchString = ""
             tableView.reloadData()
         } else {
+            
+            let updatedOrderBusStops = sortFilteredBusStops(busStops: filteredBusStops, letter: searchText.capitalized.characters.first!)
+            searchResults = searchResults + updatedOrderBusStops
             let urlReadySearch = searchText.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
             let stub = "https://maps.googleapis.com/maps/api/place/autocomplete/json?location=42.4440,-76.5019&radius=24140&strictbounds&input="
             let apiKey = "&key=\(json["google-places"].stringValue)"
