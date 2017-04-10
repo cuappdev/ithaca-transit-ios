@@ -38,6 +38,7 @@ struct DepartDirection: Direction {
         return formatter.string(from: time)
     }
     var location: CLLocation
+    var path: [CLLocationCoordinate2D]
     
     var routeNumber: Int
     var bound: Bound
@@ -53,10 +54,12 @@ struct DepartDirection: Direction {
         return Time.dateComponents(from: time, to: arrivalTime)
     }
     
-    init(time: Date, place: String, location: CLLocation, routeNumber: Int, bound: Bound, stops: [String] = [],  arrivalTime: Date) {
+    init(time: Date, place: String, location: CLLocation, path: [CLLocationCoordinate2D] = [], 
+         routeNumber: Int, bound: Bound, stops: [String] = [],  arrivalTime: Date) {
         self.time = time
         self.place = place
         self.location = location
+        self.path = path
         self.routeNumber = routeNumber
         self.bound = bound
         self.stops = stops
@@ -104,7 +107,8 @@ struct WalkDirection: Direction {
     var travelDistance: Double
     var destinationLocation: CLLocation?
     
-    init(time: Date, place: String, location: CLLocation, travelDistance: Double, destination: CLLocation? = nil) {
+    init(time: Date, place: String, location: CLLocation, travelDistance: Double, 
+         destination: CLLocation? = nil) {
         self.time = time
         self.place = place
         self.location = location
