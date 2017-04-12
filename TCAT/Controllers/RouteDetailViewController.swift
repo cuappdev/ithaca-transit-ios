@@ -201,9 +201,11 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         mapView.animate(with: update)
         
     }
+
+    
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Error: \(error)")
+        print(error)
     }
     
     /** Centers map around all waypoints in routePaths, and animates the map */

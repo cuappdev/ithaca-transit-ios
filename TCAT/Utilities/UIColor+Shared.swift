@@ -10,17 +10,17 @@ import Foundation
 import UIKit
 
 extension UIColor {
-    static let tcatBlueColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1.0)
-    static let primaryTextColor = UIColor(white: 34 / 255, alpha: 1.0)
-    static let secondaryTextColor = UIColor(white: 74 / 255, alpha: 1.0)
-    static let tableHeaderColor = UIColor(white: 100 / 255, alpha: 1.0)
-    static let mediumGrayColor = UIColor(white: 155 / 255, alpha: 1.0)
-    static let lineColor = UIColor(white: 230 / 255, alpha: 1.0)
-    static let lineDarkColor = UIColor(white: 216 / 255, alpha: 1)
-    static let tableBackgroundColor = UIColor(white: 242 / 255, alpha: 1.0)
-    static let summaryBackgroundColor = UIColor(white: 248 / 255, alpha: 1.0)
-    static let optionsTimeBackgroundColor = UIColor(white: 252 / 255, alpha: 1.0)
-    static let searchBarPlaceholderTextColor = UIColor(red: 214.0 / 255.0, green: 216.0 / 255.0, blue: 220.0 / 255.0, alpha: 1.0)
+    @nonobjc static let tcatBlueColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1.0)
+    @nonobjc static let primaryTextColor = UIColor(white: 34 / 255, alpha: 1.0)
+    @nonobjc static let secondaryTextColor = UIColor(white: 74 / 255, alpha: 1.0)
+    @nonobjc static let tableHeaderColor = UIColor(white: 100 / 255, alpha: 1.0)
+    @nonobjc static let mediumGrayColor = UIColor(white: 155 / 255, alpha: 1.0)
+    @nonobjc static let lineColor = UIColor(white: 230 / 255, alpha: 1.0)
+    @nonobjc static let lineDarkColor = UIColor(white: 216 / 255, alpha: 1)
+    @nonobjc static let tableBackgroundColor = UIColor(white: 242 / 255, alpha: 1.0)
+    @nonobjc static let summaryBackgroundColor = UIColor(white: 248 / 255, alpha: 1.0)
+    @nonobjc static let optionsTimeBackgroundColor = UIColor(white: 252 / 255, alpha: 1.0)
+    @nonobjc static let searchBarPlaceholderTextColor = UIColor(red: 214.0 / 255.0, green: 216.0 / 255.0, blue: 220.0 / 255.0, alpha: 1.0)
     
     // Get color from hex code
     public static func colorFromCode(_ code: Int, alpha: CGFloat) -> UIColor {
