@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  DirectionCircle.swift
 //  TCAT
 //
 //  Created by Matthew Barker on 3/1/17.
@@ -15,7 +15,6 @@ enum CircleType: String {
 class DirectionCircle: UIView {
     
     var type: CircleType!
-
     
     init(_ type: CircleType) {
         
@@ -29,16 +28,16 @@ class DirectionCircle: UIView {
         
         if !isStandard {
             backgroundColor = .clear
-            layer.borderColor = (type == .finishOn) ? UIColor.tcatBlueColor.cgColor : UIColor.gray.cgColor
+            layer.borderColor = (type == .finishOn) ? UIColor.tcatBlueColor.cgColor : UIColor.lineColor.cgColor
             layer.borderWidth = 1.0
             let innerCircle = DirectionCircle(type == .finishOn ? .standardOn : .standardOff)
             innerCircle.center = center
             addSubview(innerCircle)
         } else {
-            backgroundColor = type == .standardOff ? .gray :  UIColor.tcatBlueColor
+            backgroundColor = type == .standardOff ? .lineColor : .tcatBlueColor
             if type == .busStop {
                 backgroundColor = .white
-                layer.borderColor =  UIColor.tcatBlueColor.cgColor
+                layer.borderColor = UIColor.tcatBlueColor.cgColor
                 layer.borderWidth = 1.0
             }
         }
@@ -48,5 +47,5 @@ class DirectionCircle: UIView {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-
+    
 }

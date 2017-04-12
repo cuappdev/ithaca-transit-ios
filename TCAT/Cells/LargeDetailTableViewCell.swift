@@ -11,56 +11,61 @@ import UIKit
 class LargeDetailTableViewCell: UITableViewCell {
     
     var iconView: DetailIconView!
-    var titleLabelLeft: UILabel!
+    var titleLabel: UILabel!
     var detailLabel: UILabel!
     var busIconView: BusIcon!
-    var titleLabelRight: UILabel!
     var chevron: UIImageView!
-    var detailTextView: UITextView!
     
-    let cellHeight: CGFloat = 96
-    var iconViewFrame: CGRect = CGRect()
+    let paragraphStyle = NSMutableParagraphStyle()
+    let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
+    var cellHeight: CGFloat = RouteDetailCellSize.largeHeight
+    
+    var direction: DepartDirection!
     var isExpanded: Bool = false
+    let edgeSpacing: CGFloat = 16
+    let labelSpacing: CGFloat = 4
     
-    let grayColor = UIColor(red: 74 / 255, green: 74 / 255, blue: 74 / 255, alpha: 1)
+    func getChevron() -> UIImageView {
+        let chevron = UIImageView()
+        chevron.frame.size = CGSize(width: 13.5, height: 8)
+        chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
+        chevron.image = UIImage(named: "arrow")
+        return chevron
+    }
+    
+    func getTitleLabel() -> UILabel {
+        let titleLabel = UILabel()
+        titleLabel.frame = CGRect(x: cellWidth, y: 0, width: chevron.frame.minX - cellWidth, height: 20)
+        titleLabel.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+        titleLabel.lineBreakMode = .byWordWrapping
+        titleLabel.textColor = .primaryTextColor
+        titleLabel.text = "Board"
+        titleLabel.sizeToFit()
+        return titleLabel
+    }
+    
+    func getDetailLabel() -> UILabel {
+        let detailLabel = UILabel()
+        detailLabel.frame = CGRect(x: cellWidth, y: 0, width: 20, height: 20)
+        detailLabel.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+        detailLabel.textColor = .mediumGrayColor
+        detailLabel.text = "Detail Label"
+        detailLabel.lineBreakMode = .byWordWrapping
+        detailLabel.sizeToFit()
+        return detailLabel
+    }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        titleLabelLeft = UILabel()
-        titleLabelLeft.frame = CGRect(x: 140, y: 0, width: 20, height: 20)
-        titleLabelLeft.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
-        titleLabelLeft.textColor = grayColor
-        titleLabelLeft.text = "Board"
-        titleLabelLeft.sizeToFit()
-        let labelOffset: CGFloat = (titleLabelLeft.frame.height / 2) + 4
-        titleLabelLeft.center.y = (cellHeight / 2) - labelOffset
-        contentView.addSubview(titleLabelLeft)
-        
-        titleLabelRight = UILabel()
-        titleLabelRight.frame = CGRect(x: 140 + 48 + 8, y: 0, width: 20, height: 20)
-        titleLabelRight.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
-        titleLabelRight.textColor = grayColor
-        titleLabelRight.text = "Title Label"
-        titleLabelRight.sizeToFit()
-        titleLabelRight.center.y = (cellHeight / 2) - labelOffset
-        contentView.addSubview(titleLabelRight)
-        
-        detailLabel = UILabel()
-        detailLabel.frame = CGRect(x: 140, y: 0, width: 20, height: 20)
-        detailLabel.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
-        detailLabel.textColor = grayColor.withAlphaComponent(0.5)
-        detailLabel.text = "Detail Label"
-        detailLabel.sizeToFit()
-        detailLabel.center.y = (cellHeight / 2) + labelOffset
-        contentView.addSubview(detailLabel)
-        
-        chevron = UIImageView()
-        chevron.frame.size = CGSize(width: 13.5, height: 8)
-        chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
-        chevron.image = UIImage(named: "chevron")
-        chevron.alpha = 0.5
+        chevron = getChevron()
         contentView.addSubview(chevron)
+        
+        titleLabel = getTitleLabel()
+        contentView.addSubview(titleLabel)
+        
+        detailLabel = getDetailLabel()
+        contentView.addSubview(detailLabel)
         
     }
     
@@ -68,65 +73,98 @@ class LargeDetailTableViewCell: UITableViewCell {
         print("Something bad happened"); fatalError("init(coder:) has not been implemented")
     }
     
-    func colorAttrString(pattern: String, attrString: NSMutableAttributedString, color: UIColor) -> NSMutableAttributedString {
-        
-        let attrString = NSMutableAttributedString(string: pattern)
-        let colorAttribute = [NSForegroundColorAttributeName : color]
-        do {
-            let regex = try NSRegularExpression(pattern: pattern, options: [])
-            let ranges = regex.matches(in: pattern, options: [], range: NSMakeRange(0, pattern.characters.count)).map {$0.range}
-            for range in ranges { attrString.addAttributes(colorAttribute, range: range) }
-        } catch { }
-        
-        return attrString
-    }
-    
-    func busRouteAttrString(pattern: String, attrString: NSMutableAttributedString, color: UIColor = .blue) -> NSMutableAttributedString {
-        
-        let attrString = NSMutableAttributedString(string: pattern)
-        let colorAttributes = [NSBackgroundColorAttributeName : color]
-        do {
-            let regex = try NSRegularExpression(pattern: pattern, options: [])
-            let ranges = regex.matches(in: pattern, options: [], range: NSMakeRange(0, pattern.characters.count)).map {$0.range}
-            for range in ranges { attrString.addAttributes(colorAttributes, range: range) }
-        } catch { }
-        
-        return attrString
-    }
     
     /** Precondition: Direction is BoardDirection */
     func setCell(_ direction: Direction, firstStep: Bool) {
         
-        let boardDirection = direction as! DepartDirection
-        let labelOffset: CGFloat = (titleLabelLeft.frame.height / 2) + 4
+        self.direction = direction as! DepartDirection
+        cellHeight = height()
+        
         let shouldAddIconView = iconView == nil
         let shouldAddBusIconView = busIconView == nil
         
+        // Add custom UIViews if they haven't been added already
         iconView = DetailIconView(height: cellHeight,
                                   type: IconType.busStart,
                                   time: direction.timeDescription,
                                   firstStep: firstStep,
                                   lastStep: false)
-        
         if shouldAddIconView { contentView.addSubview(iconView!) }
-        
-        busIconView = BusIcon(size: .small, number: boardDirection.routeNumber)
-        busIconView.frame.origin = CGPoint(x: titleLabelLeft.frame.maxX + 8, y: 0)
-        busIconView.center.y = (cellHeight / 2) - labelOffset
+        busIconView = BusIcon(size: .small, number: self.direction.routeNumber)
+        busIconView = formatBusIconView(busIconView, titleLabel)
         if shouldAddBusIconView { contentView.addSubview(busIconView) }
         
-        titleLabelRight.attributedText = bold(pattern: direction.place, in: direction.placeDescription)
-        titleLabelRight.frame.origin.x = busIconView.frame.maxX + 8
-        titleLabelRight.sizeToFit()
+        titleLabel = formatTitleLabel(titleLabel)
+        detailLabel = formatDetailLabel(detailLabel, titleLabel)
         
-        detailLabel.text = "\(boardDirection.stops.count) stops"
-        detailLabel.sizeToFit()
-        
-        chevron.center.y = iconView.center.y
+        // Place bus icon and chevron accordingly
+        busIconView.frame.origin.y = titleLabel.frame.minY // + (titleLabel.font.lineHeight / 2)
+        chevron.center.y = cellHeight / 2
         
     }
     
-    func getCellHeight() -> CGFloat { return cellHeight }
+    /** Abstracted formatting of content for titleLabel */
+    func formatTitleLabel(_ label: UILabel) -> UILabel {
+        
+        var busIconView = BusIcon(size: .small, number: self.direction.routeNumber)
+        busIconView = formatBusIconView(busIconView, label)
+        
+        // Add correct amount of spacing to create a gap for the busIcon
+        while label.frame.maxX < busIconView.frame.maxX + 8 {
+            label.text! += " "
+            label.sizeToFit()
+        }
+        
+        // Format and place labels
+        let attributedString = NSMutableAttributedString(string: label.text!)
+        attributedString.append(bold(pattern: self.direction.place,
+                                     in: self.direction.placeDescription))
+        label.attributedText = attributedString
+        
+        label.numberOfLines = 0
+        label.sizeToFit()
+        label.frame.size.width = (chevron.frame.minX - 12) - cellWidth
+        label.frame.origin.y = edgeSpacing
+        
+        paragraphStyle.lineSpacing = 8
+        attributedString.addAttribute(NSParagraphStyleAttributeName,
+                                      value: paragraphStyle,
+                                      range: NSMakeRange(0, attributedString.length))
+        label.attributedText = attributedString
+        
+        return label
+    }
+    
+    /** Abstracted formatting of content for detailLabel. Needs titleLabel */
+    func formatDetailLabel(_ label: UILabel, _ titleLabel: UILabel) -> UILabel {
+        label.text = "\(self.direction.stops.count) stops"
+        label.frame.origin.y = titleLabel.frame.maxY + labelSpacing
+        label.sizeToFit()
+        return label
+    }
+    
+    /** Abstracted formatting of content for busIconView. Needs initialized titleLabel */
+    func formatBusIconView(_ icon: BusIcon, _ titleLabel: UILabel) -> BusIcon {
+        icon.frame.origin = CGPoint(x: titleLabel.frame.maxX + 8, y: 0)
+        return icon
+    }
+    
+    /** Returns the number of lines a UILabel takes up based on it's frame */
+    func numberOfLines(_ label: UILabel, spacing: CGFloat) -> Int {
+        let fontHeight = label.font.lineHeight + spacing
+        let labelHeight = label.frame.size.height
+        return Int(floor(labelHeight / fontHeight))
+    }
+    
+    /** Precondition: setCell must be called before using this function */
+    func height() -> CGFloat {
+        
+        let titleLabel = formatTitleLabel(getTitleLabel())
+        let detailLabel = formatDetailLabel(getDetailLabel(), titleLabel)
+        
+        return titleLabel.frame.height + detailLabel.frame.height + labelSpacing + (edgeSpacing * 2)
+        
+    }
     
 }
 
