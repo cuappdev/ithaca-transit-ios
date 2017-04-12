@@ -129,7 +129,10 @@ class Route: NSObject, JSONDecodable {
         let bound = Bound(rawValue: json["bound"].stringValue)
         let stops = json["stops"].arrayObject as! [String]
         let arrivalTime = Time.date(from: json["arrivalTime"].stringValue)
-        return DepartDirection(time: time, place: place, location: location, routeNumber: routeNumber, bound: bound!, stops: stops, arrivalTime: arrivalTime)
+        let kmlString = json["kml"].stringValue
+        let path = CLLocationCoordinate2D.strToCoords(kmlString)
+        
+        return DepartDirection(time: time, place: place, location: location, path: path, routeNumber: routeNumber, bound: bound!, stops: stops, arrivalTime: arrivalTime)
         
     }
     
