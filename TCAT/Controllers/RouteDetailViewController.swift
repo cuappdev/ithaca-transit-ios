@@ -181,8 +181,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         print("DID UPDATE LOCATION")
-        print("Apple \(locations.last)")
-        print("Google \(mapView.myLocation)")
+        print("Apple \(String(describing: locations.last))")
+        print("Google \(String(describing: mapView.myLocation))")
         
         if let coord = locations.last?.coordinate {
             
@@ -203,7 +203,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Error" + error.localizedDescription)
+        print("Error: \(error)")
     }
     
     /** Centers map around all waypoints in routePaths, and animates the map */
