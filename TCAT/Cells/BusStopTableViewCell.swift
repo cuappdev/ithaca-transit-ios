@@ -11,7 +11,8 @@ import UIKit
 class BusStopTableViewCell: UITableViewCell {
     
     var titleLabel: UILabel!
-    let cellHeight: CGFloat = 68
+    let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
+    let cellWidth: CGFloat = RouteDetailCellSize.indentedWidth
     
     var connectorTop: UIView!
     var connectorBottom: UIView!
@@ -21,22 +22,24 @@ class BusStopTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         titleLabel = UILabel()
-        titleLabel.frame = CGRect(x: 160, y: 0, width: 20, height: 20)
+        titleLabel.frame = CGRect(x: cellWidth, y: 0, width: UIScreen.main.bounds.width - cellWidth - 20, height: 20)
         titleLabel.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
-        titleLabel.textColor = UIColor(red: 74 / 255, green: 74 / 255, blue: 74 / 255, alpha: 1)
+        titleLabel.textColor = .secondaryTextColor
         titleLabel.text = "Bus Stop Name"
+        titleLabel.lineBreakMode = .byWordWrapping
+        titleLabel.numberOfLines = 0
         titleLabel.sizeToFit()
         titleLabel.center.y = cellHeight / 2
         contentView.addSubview(titleLabel)
         
         connectorTop = UIView(frame: CGRect(x: 20, y: 0, width: 2, height: cellHeight / 2))
         connectorTop.frame.origin.x -= connectorTop.frame.width / 2
-        connectorTop.backgroundColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1)
+        connectorTop.backgroundColor = .tcatBlueColor
         contentView.addSubview(connectorTop)
         
         connectorBottom = UIView(frame: CGRect(x: 20, y: cellHeight / 2, width: 2, height: cellHeight / 2))
         connectorBottom.frame.origin.x -= connectorBottom.frame.width / 2
-        connectorBottom.backgroundColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1)
+        connectorBottom.backgroundColor = .tcatBlueColor
         contentView.addSubview(connectorBottom)
         
         statusCircle = DirectionCircle(.busStop)
@@ -52,12 +55,12 @@ class BusStopTableViewCell: UITableViewCell {
     }
     
     func setCell(_ name: String) {
-
+        
         titleLabel.text = name
         titleLabel.sizeToFit()
+        titleLabel.frame.size.width = UIScreen.main.bounds.width - cellWidth - 20
+        titleLabel.center.y = cellHeight / 2
         
     }
-    
-    func getCellHeight() -> CGFloat { return cellHeight }
     
 }

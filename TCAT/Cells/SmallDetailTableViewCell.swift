@@ -13,17 +13,20 @@ class SmallDetailTableViewCell: UITableViewCell {
     var iconView: DetailIconView? = nil
     var titleLabel: UILabel!
     
-    let cellHeight: CGFloat = 68
+    let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
+    let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
     var iconViewFrame: CGRect = CGRect()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         titleLabel = UILabel()
-        titleLabel.frame = CGRect(x: 140, y: 0, width: 20, height: 20)
+        titleLabel.frame = CGRect(x: cellWidth, y: 0, width: UIScreen.main.bounds.width - cellWidth - 20, height: 20)
         titleLabel.font = UIFont.systemFont(ofSize: 17)
-        titleLabel.textColor = UIColor(red: 74 / 255, green: 74 / 255, blue: 74 / 255, alpha: 1)
+        titleLabel.textColor = .secondaryTextColor
         titleLabel.text = "Small Cell"
+        titleLabel.lineBreakMode = .byWordWrapping
+        titleLabel.numberOfLines = 0
         titleLabel.sizeToFit()
         titleLabel.center.y = cellHeight / 2
         contentView.addSubview(titleLabel)
@@ -42,7 +45,7 @@ class SmallDetailTableViewCell: UITableViewCell {
                                   time: direction.timeDescription,
                                   firstStep: firstStep,
                                   lastStep: lastStep)
-
+        
         if shouldAddSubview { contentView.addSubview(iconView!) }
         
         if busEnd {
@@ -50,13 +53,14 @@ class SmallDetailTableViewCell: UITableViewCell {
             titleLabel.attributedText = bold(pattern: busDirection.place, in: busDirection.placeDescription)
         } else {
             let walkDirection = direction as! WalkDirection
-            titleLabel.attributedText = bold(pattern: walkDirection.place, in: walkDirection.placeDescription)
+            let walkString = walkDirection.placeDescription + " (\(walkDirection.travelDistance) mi)"
+            titleLabel.attributedText = bold(pattern: walkDirection.place, in: walkString)
         }
         
         titleLabel.sizeToFit()
+        titleLabel.frame.size.width = UIScreen.main.bounds.width - cellWidth - 20
+        titleLabel.center.y = cellHeight / 2
         
     }
-    
-    func getCellHeight() -> CGFloat { return cellHeight }
     
 }

@@ -16,6 +16,7 @@ extension UIColor {
     static let tableHeaderColor = UIColor(white: 100 / 255, alpha: 1.0)
     static let mediumGrayColor = UIColor(white: 155 / 255, alpha: 1.0)
     static let lineColor = UIColor(white: 230 / 255, alpha: 1.0)
+    static let lineDarkColor = UIColor(white: 216 / 255, alpha: 1)
     static let tableBackgroundColor = UIColor(white: 242 / 255, alpha: 1.0)
     static let summaryBackgroundColor = UIColor(white: 248 / 255, alpha: 1.0)
     static let optionsTimeBackgroundColor = UIColor(white: 252 / 255, alpha: 1.0)

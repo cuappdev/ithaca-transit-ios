@@ -5,54 +5,310 @@
 //  Created by Matthew Barker on 2/11/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
+//  Pre-Conditions:
+//
 
 import UIKit
 import GoogleMaps
+import CoreLocation
 
-class RouteDetailViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDataSource, UITableViewDelegate {
+struct RouteDetailCellSize {
+    static let smallHeight: CGFloat = 60
+    static let largeHeight: CGFloat = 80
+    static let regularWidth: CGFloat = 120
+    static let indentedWidth: CGFloat = 140
+}
+
+class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate, UIGestureRecognizerDelegate, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
     
     var detailView = UIView()
     var detailTableView: UITableView!
     var summaryView = UIView()
+    var locationManager = CLLocationManager()
+    
+    var mapView: GMSMapView!
+    var routePaths: [Path] = []
+    var myLocations: (previous: CLLocationCoordinate2D?, current: CLLocationCoordinate2D?)
+    var bounds = GMSCoordinateBounds()
     
     var route: Route!
     var directions: [Direction] = []
     
     let main = UIScreen.main.bounds
-    let summaryView_height: CGFloat = 80
-    let largeDetailHeight: CGFloat = 80
+    let summaryViewHeight: CGFloat = 80
+    var largeDetailHeight: CGFloat = 80
     var mediumDetailHeight: CGFloat = UIScreen.main.bounds.height / 2
     let smallDetailHeight: CGFloat = UIScreen.main.bounds.height - 80
     
+    let markerRadius: CGFloat = 8
+    let mapPadding: CGFloat = 40
+    
+    /** Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
+     * dummy data will be used. The directions parameter have logical assumptions,
+     * such as ArriveDirection always comes after DepartDirection. */
+    init (route: Route? = nil) {
+        super.init(nibName: nil, bundle: nil)
+        
+        if route == nil {
+            initializeDummyData()
+        }
+            
+        else {
+            
+            self.route = route
+            self.directions = route!.directions
+            
+            // Construct paths in routePaths based on directions
+            var skip: Bool = false
+            for index in 0..<directions.count {
+                
+                if skip { skip = false; continue }
+                
+                let direction = directions[index]
+                let originLatitude = CGFloat(direction.location.coordinate.latitude)
+                let originLongitude = CGFloat(direction.location.coordinate.longitude)
+                
+                if let walkDirection = direction as? WalkDirection {
+                    
+                    var latitude: CGFloat
+                    var longitude: CGFloat
+                    var end: Waypoint
+                    
+                    let origin = Waypoint(lat: originLatitude, long: originLongitude, wpType: .Origin)
+                    // index == 0 ? .Origin : .None
+                    
+                    // Pre-Condition: destinationLocation only used if WalkDirection is last
+                    if walkDirection.destinationLocation == nil {
+                        let nextDirection = directions[index + 1]
+                        latitude = CGFloat(nextDirection.location.coordinate.latitude)
+                        longitude = CGFloat(nextDirection.location.coordinate.longitude)
+                        end = Waypoint(lat: latitude, long: longitude, wpType: .None)
+                    } else {
+                        latitude = CGFloat(walkDirection.destinationLocation!.coordinate.latitude)
+                        longitude = CGFloat(walkDirection.destinationLocation!.coordinate.longitude)
+                        end = Waypoint(lat: latitude, long: longitude, wpType: .Destination)
+                    }
+                    
+                    let walkPath = Path(waypoints: [origin, end], pathType: .Walking, color: .tcatBlueColor)
+                    routePaths.append(walkPath)
+                    
+                }
+                
+                if let busDirection = direction as? DepartDirection {
+                    
+                    var routeWaypoints: [Waypoint] = []
+                    for index in 0..<busDirection.path.count {
+                        let coord = busDirection.path[index]
+                        let type: WaypointType = {
+                            switch index {
+                            case 0 : return .Origin
+                            case (busDirection.path.count / 2) : return .Stop
+                            default : return .None
+                            } // show stop waypoint in middle of route, origin for start, none otherwise
+                        }()
+                        let point = Waypoint(lat: CGFloat(coord.latitude), long: CGFloat(coord.longitude),
+                                             wpType: type, busNumber: busDirection.routeNumber)
+                        routeWaypoints.append(point)
+                    }
+                    
+                    let busPath = Path(waypoints: routeWaypoints, pathType: .Driving, color: .tcatBlueColor)
+                    routePaths.append(busPath)
+                    skip = true // already accounted for ArriveDirection, should skip over
+                    
+                    
+                    
+                }
+                
+            }
+        }
+        
+    }
+    
+    required convenience init(coder aDecoder: NSCoder) {
+        let route = aDecoder.decodeObject(forKey: "route") as! Route
+        self.init(route: route)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        parseDirections()
         formatNavigationController()
         initializeDetailView()
+        
+        // Set up Location Manager
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager.distanceFilter = 10
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        // locationManager.activityType = .automotiveNavigation
     }
     
     override func loadView() {
-        let camera = GMSCameraPosition.camera(withLatitude: 1.285, longitude: 103.848, zoom: 12)
+        let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: 15.5)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
-        mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: summaryView_height, right: 0)
+        mapView.padding = UIEdgeInsets(top: statusNavHeight(), left: 0, bottom: summaryViewHeight, right: 0)
+        mapView.delegate = self
+        mapView.isMyLocationEnabled = true
+        mapView.settings.compassButton = true
+        mapView.settings.myLocationButton = true
+        mapView.setMinZoom(14, maxZoom: 25)
+        self.mapView = mapView
         view = mapView
     }
     
-    func parseDirections() {
+    func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
+        
+        // most extreme points on TCAT Route map
+        let north = 42.61321283145329
+        let east = -76.28125469914926
+        let south = 42.32796328578829
+        let west = -76.67690943302259
+        
+        let northEast = CLLocationCoordinate2DMake(north, east)
+        let southWest = CLLocationCoordinate2DMake(south, west)
+        let panBounds = GMSCoordinateBounds(coordinate: northEast, coordinate: southWest)
+        
+        if panBounds.contains(position.target) { return }
+        
+        let center = mapView.camera.target
+        let newLong = min(max(center.longitude, panBounds.southWest.longitude), panBounds.northEast.longitude)
+        let newLat = min(max(center.latitude, panBounds.southWest.latitude), panBounds.northEast.latitude)
+        let update = GMSCameraUpdate.setTarget(CLLocationCoordinate2DMake(newLat, newLong))
+        mapView.animate(with: update)
+        
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        print("DID UPDATE LOCATION")
+        print("Apple \(locations.last)")
+        print("Google \(mapView.myLocation)")
+        
+        if let coord = locations.last?.coordinate {
+            
+            myLocations.current = CLLocationCoordinate2D(latitude: coord.latitude, longitude: coord.latitude)
+            
+            if myLocations.current == nil {
+                myLocations.previous = CLLocationCoordinate2D(latitude: coord.latitude, longitude: coord.latitude)
+            } else {
+                myLocations.previous = myLocations.current
+            }
+            
+        }
+        
+        isInitialView() ? drawMapRoute() : updateMapDrawing()
+        let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
+        mapView.animate(with: update)
+        
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Error" + error.localizedDescription)
+    }
+    
+    /** Centers map around all waypoints in routePaths, and animates the map */
+    func centerMap() {
+        bounds = GMSCoordinateBounds()
+        for route in routePaths {
+            for waypoint in route.waypoints {
+                let coords = CLLocationCoordinate2DMake(CLLocationDegrees(waypoint.lat), CLLocationDegrees(waypoint.long))
+                bounds = bounds.includingCoordinate(coords)
+            }
+        }
+        let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
+        mapView.animate(with: update)
+    }
+    
+    /** Draw all waypoints initially for all routes in routePaths, plus fill bounds */
+    func drawMapRoute() {
+        
+        // see below comment
+        var minLat: CGFloat = CGFloat.greatestFiniteMagnitude
+        var maxLat: CGFloat = -1 * CGFloat.greatestFiniteMagnitude
+        var minLong: CGFloat = CGFloat.greatestFiniteMagnitude
+        var maxLong: CGFloat = -1 * CGFloat.greatestFiniteMagnitude
+        
+        func drawWaypoints(waypoints: [Waypoint]) {
+            for waypoint in waypoints {
+                let coords = CLLocationCoordinate2DMake(CLLocationDegrees(waypoint.lat), CLLocationDegrees(waypoint.long))
+                let marker = GMSMarker(position: coords)
+                marker.iconView = waypoint.iconView
+                marker.userData = waypoint
+                marker.map = mapView
+                bounds = bounds.includingCoordinate(coords)
+                
+                // see below comment
+                if waypoint.long < minLong { minLong = waypoint.long }
+                if waypoint.long > maxLong { maxLong = waypoint.long }
+                if waypoint.lat < minLat { minLat = waypoint.lat }
+                if waypoint.lat > maxLat { maxLat = waypoint.lat }
+                
+            }
+        }
+        
+        for routePath in routePaths {
+            routePath.traveledPolyline.map = mapView
+            routePath.map = mapView
+            drawWaypoints(waypoints: routePath.waypoints)
+        }
+        
+        // Create dummy waypoint to make route appear in top half of the screen for starting view
+        // Key Assumption: map is oriented where north is "up"
+        
+        // average between min and max
+        let newLong = CLLocationDegrees((minLong + maxLong) / 2) // average
+        // double longest veritcal distance, plus multiplication by constant to simulate padding
+        let newLat = CLLocationDegrees(0.99995 * (maxLat - 2 * abs(maxLat - minLat)))
+        
+        bounds = bounds.includingCoordinate(CLLocationCoordinate2D(latitude: newLat, longitude: newLong))
+        
+        
+    }
+    
+    func updateMapDrawing() {
+        for routePath in routePaths {
+            if let traveledPath = routePath.traveledPath {
+                if traveledPath.count() > 0 && myLocations.current != nil {
+                    
+                    //mapView.myLocation
+                    
+                    let traveledBounds = GMSCoordinateBounds(coordinate: myLocations.previous!, coordinate: myLocations.current!)
+                    
+                    while traveledBounds.contains(routePath.traveledPath!.coordinate(at: 0)) {
+                        routePath.path = traveledPath
+                        routePath.traveledPath?.removeCoordinate(at: 0)
+                    }
+                    
+                    break
+                }
+            }
+        }
+    }
+    
+    /** Initialize dummy data for route w/ directions and routePaths */
+    func initializeDummyData() {
         
         let walk = WalkDirection(time: Date(),
                                  place: "my house",
                                  location: CLLocation(latitude: 1, longitude: 1),
                                  travelDistance: 0.2)
+        // Longest Bus Name - "Candlewyck Dr @ Route 96 (Trumansburg Rd)"
         let board = DepartDirection(time: Date().addingTimeInterval(300),
-                                    place: "Bus Stop 1",
+                                    place: "Candlewyck Dr @ Route 96",
                                     location: CLLocation(latitude: 1, longitude: 1),
                                     routeNumber: 42,
                                     bound: Bound.inbound,
                                     stops: ["Bus Stop 2", "Bus Stop 3", "Bus Stop 4"],
                                     arrivalTime: Date().addingTimeInterval(600))
+        /* let board2 = DepartDirection(time: Date().addingTimeInterval(300),
+         place: "Bus Stop 1 this is an overflow cell",
+         location: CLLocation(latitude: 1, longitude: 1),
+         routeNumber: 43,
+         bound: Bound.inbound,
+         stops: ["Bus Stop 2", "Bus Stop 3 this is going to be an overflow stop", "Bus Stop 4"],
+         arrivalTime: Date().addingTimeInterval(600)) */
         let debark = ArriveDirection(time: Date().addingTimeInterval(600),
-                                     place: "Bus Stop 5",
+                                     place: "Bus Stop 5 (this) is an overflow cell",
                                      location: CLLocation(latitude: 1, longitude: 1))
         let walk2 = WalkDirection(time: Date().addingTimeInterval(900),
                                   place: "not my house",
@@ -65,55 +321,118 @@ class RouteDetailViewController: UIViewController, UIGestureRecognizerDelegate, 
                       arrivalTime: Date().addingTimeInterval(900),
                       directions: directions,
                       mainStops: ["Bus Stop 1", "Bus Stop 5", "not my house"],
-                      mainStopsNums: [16, -1, -1],
+                      mainStopsNums: [42, -1, -1],
                       travelDistance: 1.0)
         
+        //
+        
+        let waypointsA = [Waypoint(lat: 42.444738, long: -76.489383, wpType: .Origin),
+                          Waypoint(lat: 42.445173, long: -76.485027, wpType: .Stop),
+                          Waypoint(lat: 42.445220, long: -76.481615, wpType: .None)]
+        let waypointsB = [Waypoint(lat: 42.445220, long: -76.481615, wpType: .Origin),
+                          Waypoint(lat: 42.443146, long: -76.479534, wpType: .Destination)]
+        
+        routePaths = [
+            
+            Path(waypoints: waypointsA, pathType: .Walking, color: .tcatBlueColor),
+            Path(waypoints: waypointsB, pathType: .Driving, color: .tcatBlueColor)
+            
+        ]
+        
+        let waypointsC = [Waypoint(lat: 42.4555961, long: -76.47580300, wpType: .Origin),
+                          Waypoint(lat: 42.4556161, long: -76.47580300, wpType: .Origin),
+                          Waypoint(lat: 42.4556361, long: -76.47580300, wpType: .Origin)]
+        
+        routePaths = [Path(waypoints: waypointsC, pathType: .Walking, color: .tcatBlueColor)]
+        
     }
     
+    /** Set title, buttons, and style of navigation controller */
     func formatNavigationController() {
         
+        let otherAttributes = [NSFontAttributeName: UIFont(name :".SFUIText", size: 14)!]
+        let titleAttributes: [String : Any] = [NSFontAttributeName : UIFont(name :".SFUIText", size: 18)!, NSForegroundColorAttributeName : UIColor.black]
+        
+        // general
+        title = "Route Details"
         UIApplication.shared.statusBarStyle = .default
         navigationController?.navigationBar.backgroundColor = .white
-        navigationController?.navigationBar.tintColor = .darkGray
         
-        title = "Route Details"
-        let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelAction))
+        // text and font
+        navigationController?.navigationBar.tintColor = .primaryTextColor
+        navigationController?.navigationBar.titleTextAttributes = titleAttributes
+        navigationController?.navigationItem.backBarButtonItem?.setTitleTextAttributes(otherAttributes, for: .normal)
+        
+        // right button
+        self.navigationItem.leftBarButtonItem?.setTitleTextAttributes(otherAttributes, for: .normal)
+        let cancelButton = UIBarButtonItem(title: "Exit", style: .plain, target: self, action: #selector(cancelAction))
+        cancelButton.setTitleTextAttributes(otherAttributes, for: .normal)
         self.navigationItem.setRightBarButton(cancelButton, animated: true)
         
-    }
-    
-    func cancelAction() {
+        // back button
+        let backButton = UIButton(type: .system)
+        backButton.setImage(UIImage(named: "back"), for: .normal)
+        let attributedString = NSMutableAttributedString(string: "  Back")
+        // raise back button text a hair - attention to detail, baby
+        attributedString.addAttribute(NSBaselineOffsetAttributeName, value: 0.3, range: NSMakeRange(0, attributedString.length))
+        backButton.setAttributedTitle(attributedString, for: .normal)
+        backButton.sizeToFit()
+        self.navigationItem.setLeftBarButton(UIBarButtonItem(customView: backButton), animated: true)
         
     }
     
-    /** Animate detailTableView back onto screen */
-    func summaryTapped(_ sender: UITapGestureRecognizer) {
-        UIView.animate(withDuration: 0.5) {
-            let isMedium = self.detailView.frame.minY == self.mediumDetailHeight
-            let point = CGPoint(x: 0, y: isMedium ? self.smallDetailHeight : self.mediumDetailHeight)
-            self.detailView.frame = CGRect(origin: point, size: self.view.frame.size)
-        }
+    /** Return height of status bar and possible navigation controller */
+    func statusNavHeight() -> CGFloat {
+        return UIApplication.shared.statusBarFrame.height +
+            (navigationController?.navigationBar.frame.height ?? 0)
     }
     
+    /** Check if screen is in inital view of half map, half detailView */
+    func isInitialView() -> Bool {
+        return mediumDetailHeight == detailView.frame.minY
+    }
+    
+    /** Reset search */
+    func cancelAction() {
+        navigationController?.popToRootViewController(animated: true)
+    }
+    
+    /** Animate detailTableView back onto screen, centering map */
+    func summaryTapped(_ sender: UITapGestureRecognizer) {
+        
+        // MARK: Re-center only from middle?
+        if isInitialView() { centerMap() }
+        
+        let isSmall = self.detailView.frame.minY == self.smallDetailHeight
+        
+        UIView.animate(withDuration: 0.25) {
+            let point = CGPoint(x: 0, y: isSmall ? self.largeDetailHeight : self.smallDetailHeight)
+            self.detailView.frame = CGRect(origin: point, size: self.view.frame.size)
+        }
+        
+    }
+    
+    /** Create and configure detailView, summaryView, tableView */
     func initializeDetailView() {
         
         // Format the Detail View (color, shadow, gestures)
         detailView.backgroundColor = .white
         detailView.frame = CGRect(x: 0, y: mediumDetailHeight, width: main.width, height: main.height - largeDetailHeight)
-        detailView.roundCorners(corners: [.topLeft, .topRight], radius: 12)
+        detailView.layer.cornerRadius = 12
+        detailView.layer.shadowColor = UIColor.black.cgColor
+        detailView.layer.shadowOpacity = 0.5
+        detailView.layer.shadowOffset = .zero
+        detailView.layer.shadowRadius = 4
+        detailView.layer.shadowPath = UIBezierPath(rect: detailView.bounds).cgPath
+        
         let gesture = UIPanGestureRecognizer(target: self, action: #selector(panGesture))
         gesture.delegate = self
         detailView.addGestureRecognizer(gesture)
         
         // Place and format the summary view
-        summaryView.backgroundColor = UIColor(red: 248 / 255, green: 248 / 255, blue: 248 / 255, alpha: 1)
-        summaryView.frame = CGRect(x: 0, y: 0, width: main.width, height: summaryView_height)
+        summaryView.backgroundColor = .summaryBackgroundColor
+        summaryView.frame = CGRect(x: 0, y: 0, width: main.width, height: summaryViewHeight)
         summaryView.roundCorners(corners: [.topLeft, .topRight], radius: 12)
-        summaryView.layer.shadowColor = UIColor.black.cgColor
-        summaryView.layer.shadowOpacity = 0.5
-        summaryView.layer.shadowOffset = CGSize.zero
-        summaryView.layer.shadowRadius = 16
-        summaryView.layer.shadowPath = UIBezierPath(rect: detailView.bounds).cgPath
         let summaryTapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
         summaryTapGesture.delegate = self
         summaryView.addGestureRecognizer(summaryTapGesture)
@@ -121,81 +440,94 @@ class RouteDetailViewController: UIViewController, UIGestureRecognizerDelegate, 
         
         // Create puller tab
         let puller = UIView(frame: CGRect(x: 0, y: 6, width: 32, height: 4))
+        // value to help center items below
+        let pullerHeight = (puller.frame.origin.y + puller.frame.height) / 2
         puller.center.x = summaryView.center.x
-        puller.backgroundColor = UIColor(red: 155 / 255, green: 155 / 255, blue: 155 / 255, alpha: 1)
+        puller.backgroundColor = .mediumGrayColor
         puller.layer.cornerRadius = puller.frame.height / 2
         summaryView.addSubview(puller)
         
-        // Create and place all bus routes in Directions
-        var center = CGPoint(x: 20 + 36, y: summaryView.frame.height / 2)
-        var icon_maxY: CGFloat = 20
+        // Create and place all bus routes in Directions (account for small screens)
+        var icon_maxY: CGFloat = 24; var first = true
+        let mainStopCount = route.mainStopsNums.filter { $0 != -1 }.count
+        var center = CGPoint(x: icon_maxY, y: (summaryView.frame.height / 2) + pullerHeight)
         for direction in directions {
             if direction is DepartDirection {
-                
-                let busIcon = BusIcon(size: .large, number: 16)
+                let busDirection = direction as! DepartDirection
+                // use smaller icons for small phones or multiple icons
+                let busSize: BusIconSize = mainStopCount > 1 ? .small : .large
+                let busIcon = BusIcon(size: busSize, number: busDirection.routeNumber)
+                if first { center.x += busIcon.frame.width / 2; first = false }
                 busIcon.center = center
                 summaryView.addSubview(busIcon)
-                
-                center.x += (22 * 2) + 8
-                icon_maxY += busIcon.frame.width
+                center.x += busIcon.frame.width + 12
+                icon_maxY += busIcon.frame.width + 12
             }
         }
         
-        // Place and format summary label
-        let leftTextLabel = UILabel()
+        // Place and format top summary label
+        let textLabelPadding: CGFloat = 16
+        let summaryTopLabel = UILabel()
         if let firstDirection = (directions.filter { $0 is DepartDirection }).first {
-            if let totalTime = Time.dateComponents(from: route.departureTime, to: route.arrivalTime).minute {
-                leftTextLabel.text = "Depart at \(firstDirection.timeDescription) • \(totalTime) min"
-            } else {
-                leftTextLabel.text = "Depart at \(firstDirection.timeDescription)"
-            }
-        } else {
-            leftTextLabel.text = "Summary Data"
-        }
+            summaryTopLabel.text = "Depart at \(firstDirection.timeDescription)"
+        } else { summaryTopLabel.text = "Summary Top Label" }
+        summaryTopLabel.font = UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular)
+        summaryTopLabel.textColor = .primaryTextColor
+        summaryTopLabel.sizeToFit()
+        summaryTopLabel.frame.origin.x = icon_maxY + textLabelPadding
+        summaryTopLabel.center.y = (summaryView.bounds.height / 2) + pullerHeight - (summaryTopLabel.frame.height / 2)
+        summaryView.addSubview(summaryTopLabel)
         
-        leftTextLabel.font = UIFont.systemFont(ofSize: 17, weight: UIFontWeightMedium)
-        leftTextLabel.textColor = UIColor(red: 74 / 255, green: 74 / 255, blue: 74 / 255, alpha: 1)
-        leftTextLabel.sizeToFit()
-        leftTextLabel.frame.origin.x = icon_maxY + 16
-        leftTextLabel.center.y = (summaryView.bounds.height) / 2
-        summaryView.addSubview(leftTextLabel)
+        // Place and format bottom summary label
+        let summaryBottomLabel = UILabel()
+        if let totalTime = Time.dateComponents(from: route.departureTime, to: route.arrivalTime).minute {
+            summaryBottomLabel.text = "\(totalTime) minutes"
+        } else { summaryBottomLabel.text = "Summary Bottom Label" }
+        summaryBottomLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular)
+        summaryBottomLabel.textColor = .mediumGrayColor
+        summaryBottomLabel.sizeToFit()
+        summaryBottomLabel.frame.origin.x = icon_maxY + textLabelPadding
+        summaryBottomLabel.center.y = (summaryView.bounds.height / 2) + pullerHeight + (summaryBottomLabel.frame.height / 2)
+        summaryView.addSubview(summaryBottomLabel)
         
         // Create Detail Table View
         detailTableView = UITableView()
-        detailTableView.frame.origin = CGPoint(x: 0, y: summaryView_height)
-        detailTableView.frame.size = CGSize(width: main.width, height: detailView.frame.height - summaryView_height)
+        detailTableView.frame.origin = CGPoint(x: 0, y: summaryViewHeight)
+        detailTableView.frame.size = CGSize(width: main.width, height: detailView.frame.height - summaryViewHeight)
         detailTableView.bounces = false
-        detailTableView.estimatedRowHeight = 96 // 68 walking
+        detailTableView.estimatedRowHeight = RouteDetailCellSize.smallHeight
         detailTableView.rowHeight = UITableViewAutomaticDimension
         detailTableView.register(SmallDetailTableViewCell.self, forCellReuseIdentifier: "smallCell")
         detailTableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: "largeCell")
         detailTableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: "busStopCell")
+        detailTableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: "footer")
         detailTableView.dataSource = self
         detailTableView.delegate = self
         detailView.addSubview(detailTableView)
         view.addSubview(detailView)
         
-        // Resize and change Detail View / Table View if the view can be smaller (less cells)
-        let calculatedTableViewHeight = calculateTableViewHeight()
-        if calculatedTableViewHeight < (largeDetailHeight - smallDetailHeight) {
-            detailView.frame.size.height = calculatedTableViewHeight + 16
-            detailView.frame.origin.y = main.height - detailView.frame.size.height
-            mediumDetailHeight = main.height - (calculatedTableViewHeight + 16)
-        }
-        
     }
     
-    func calculateTableViewHeight() -> CGFloat {
-        // check what kind of cell from array
-        var sum: CGFloat = 0
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        
+        var heightOfCells: CGFloat = 0
         for direction in directions {
-            if direction is WalkDirection || direction is ArriveDirection {
-                sum += SmallDetailTableViewCell().getCellHeight()
+            if direction is DepartDirection {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "largeCell")! as! LargeDetailTableViewCell
+                cell.setCell(direction, firstStep: false)
+                heightOfCells += cell.height()
             } else {
-                sum += LargeDetailTableViewCell().getCellHeight()
+                heightOfCells += RouteDetailCellSize.smallHeight
             }
         }
-        return sum
+        
+        return main.height - largeDetailHeight - summaryViewHeight - heightOfCells
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footer = tableView.dequeueReusableHeaderFooterView(withIdentifier: "footer")
+        footer?.contentView.backgroundColor = .white
+        return footer
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -203,41 +535,55 @@ class RouteDetailViewController: UIViewController, UIGestureRecognizerDelegate, 
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
         let direction = directions[indexPath.row]
-        return direction is WalkDirection || direction is ArriveDirection ? 68 : 96
-    }
-    
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 96
+        
+        if direction is DepartDirection {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "largeCell")! as! LargeDetailTableViewCell
+            cell.setCell(direction, firstStep: indexPath.row == 0)
+            return cell.height()
+        } else {
+            return RouteDetailCellSize.smallHeight
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let direction = directions[indexPath.row]
         let isBusStopCell = direction is ArriveDirection && direction.location.coordinate.latitude == 0.0
+        let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
+        
+        /// Formatting, including selectionStyle, and seperator line fixes
+        func format(_ cell: UITableViewCell) -> UITableViewCell {
+            cell.selectionStyle = .none
+            if indexPath.row == directions.count - 1 {
+                cell.layoutMargins = UIEdgeInsets(top: 0, left: main.width, bottom: 0, right: 0)
+            }
+            return cell
+        }
         
         if isBusStopCell {
             let cell = tableView.dequeueReusableCell(withIdentifier: "busStopCell")! as! BusStopTableViewCell
             cell.setCell(direction.place)
-            cell.selectionStyle = .none
-            cell.layoutMargins = UIEdgeInsets(top: 0, left: main.width, bottom: 0, right: 0)
-            return cell
+            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
+            return format(cell)
         }
+            
         else if direction is WalkDirection || direction is ArriveDirection {
             let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell")! as! SmallDetailTableViewCell
             cell.setCell(direction, busEnd: direction is ArriveDirection,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
-            cell.selectionStyle = .none
-            cell.layoutMargins = UIEdgeInsets(top: 0, left: 140, bottom: 0, right: 0)
-            return cell
+            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
+            return format(cell)
         }
+            
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "largeCell")! as! LargeDetailTableViewCell
             cell.setCell(direction, firstStep: indexPath.row == 0)
-            cell.selectionStyle = .none
-            cell.layoutMargins = UIEdgeInsets(top: 0, left: 140, bottom: 0, right: 0)
-            return cell
+            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
+            return format(cell)
         }
         
     }
@@ -250,26 +596,22 @@ class RouteDetailViewController: UIViewController, UIGestureRecognizerDelegate, 
         if direction is DepartDirection {
             
             let cell = tableView.cellForRow(at: indexPath) as! LargeDetailTableViewCell
+            cell.isExpanded = !cell.isExpanded
+            
+            // Flip arrow
             cell.chevron.layer.removeAllAnimations()
             
-            UIView.animate(withDuration: TimeInterval(0.2), animations: {
-                cell.chevron.transform = cell.chevron.transform.rotated(by: CGFloat(M_PI))
+            let transitionOptionsOne: UIViewAnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
+            UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsOne, animations: {
+                cell.chevron.isHidden = true
             })
             
-            /*
-             func flip() {
-             let transitionOptionsOne: UIViewAnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
-             UIView.transition(with: cell.chevron, duration: 0.5, options: transitionOptionsOne, animations: {
-             cell.chevron.isHidden = true
-             })
-             let transitionOptionsTwo: UIViewAnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
-             UIView.transition(with: cell.chevron, duration: 0.5, options: transitionOptionsTwo, animations: {
-             cell.chevron.isHidden = false
-             })
-             }
-             */
+            cell.chevron.transform = cell.chevron.transform.rotated(by: CGFloat.pi)
             
-            cell.isExpanded = !cell.isExpanded
+            let transitionOptionsTwo: UIViewAnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
+            UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsTwo, animations: {
+                cell.chevron.isHidden = false
+            })
             
             // Prepare bus stop data to be inserted / deleted into Directions array
             var busStops: [Direction] = []
@@ -295,15 +637,14 @@ class RouteDetailViewController: UIViewController, UIGestureRecognizerDelegate, 
             }
             
             tableView.endUpdates()
-            
             tableView.scrollToRow(at: indexPath, at: .none, animated: true)
-            
+            let lastIndexPath = IndexPath(row: directions.count - 1, section: 0)
+            tableView.reloadRows(at: [lastIndexPath], with: .none)
         }
         
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        
         return true
     }
     
@@ -324,34 +665,9 @@ class RouteDetailViewController: UIViewController, UIGestureRecognizerDelegate, 
             
             var duration = Double(abs(visibleScreen - y)) / Double(abs(velocity.y))
             duration = duration > 1.3 ? 1 : duration
-            //print("duration: \(duration)")
             
             UIView.animate(withDuration: duration) {
-                
-                var point = CGPoint()
-                
-                if y <= self.mediumDetailHeight + visibleScreen / 4 && y >= self.mediumDetailHeight - visibleScreen / 4 {
-                    point = CGPoint(x: 0, y: velocity.y >= 0 ? self.smallDetailHeight : self.largeDetailHeight)
-                } else {
-                    if y > self.mediumDetailHeight + visibleScreen / 4 {
-                        if velocity.y > 0 {
-                            point = CGPoint(x: 0, y: self.smallDetailHeight)
-                        } else {
-                            point = CGPoint(x: 0, y: velocity.y <= -1000 ? self.largeDetailHeight : self.mediumDetailHeight)
-                        }
-                    } else {
-                        if velocity.y < 0 {
-                            point = CGPoint(x: 0, y: self.largeDetailHeight)
-                        } else {
-                            point = CGPoint(x: 0, y: velocity.y >= 1000 ? self.smallDetailHeight : self.mediumDetailHeight)
-                        }
-                    }
-                }
-                
-                //print("translation: \(translation)")
-                //print("velocity: \(velocity)")
-                //print("point: \(point)")
-                
+                let point = CGPoint(x: 0, y: velocity.y > 0 ? self.smallDetailHeight : self.largeDetailHeight)
                 self.detailView.frame = CGRect(origin: point, size: self.view.frame.size)
             }
         }

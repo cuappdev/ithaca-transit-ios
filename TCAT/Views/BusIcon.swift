@@ -14,7 +14,6 @@ enum BusIconSize: String {
 
 class BusIcon: UIView {
     
-    var color: UIColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1)
     var number: Int = 99
     
     var label: UILabel!
@@ -27,7 +26,7 @@ class BusIcon: UIView {
         }
         
         self.number = number
-        self.backgroundColor = color
+        self.backgroundColor = .tcatBlueColor
         self.layer.cornerRadius = size == .large ? 8 : 4
         
         image = UIImageView(image: UIImage(named: "bus"))
@@ -40,7 +39,7 @@ class BusIcon: UIView {
         
         label = UILabel()
         label.text = "\(number)"
-        label.font = (size == .large) ? UIFont(name: "SFUIText-Semibold", size: 21) : UIFont(name: "SFUIText-Semibold", size: 15)
+        label.font = UIFont.systemFont(ofSize: size == .large ? 20 : 14, weight: UIFontWeightSemibold)
         label.textColor = .white
         label.sizeToFit()
         label.center = center

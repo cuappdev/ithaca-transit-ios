@@ -18,8 +18,8 @@ enum WaypointType: String {
 
 class Waypoint: NSObject {
     
-    let bigRadius: CGFloat = 15
-    let smallRadius: CGFloat = 9
+    let smallDiameter: CGFloat = 12
+    let largeDiameter: CGFloat = 16
     
     var lat: CGFloat = 0
     var long: CGFloat = 0
@@ -47,46 +47,26 @@ class Waypoint: NSObject {
     }
     
     func drawOriginIcon() -> UIView {
-        let iconView = drawCircle(radius: smallRadius, innerColor: .black, borderColor: .white)
-
-        return iconView
+        return drawCircle(radius: smallDiameter / 2, innerColor: .tcatBlueColor)
     }
     
     func drawDestinationIcon() -> UIView {
-        let iconView = drawCircle(radius: smallRadius, innerColor: .white, borderColor: .black)
-        
-        let innerView = UIView(frame: CGRect(x: 0, y: 0, width: smallRadius/2.0, height: smallRadius/2.0))
-        innerView.center = iconView.center
-        innerView.layer.cornerRadius = innerView.frame.width / 2.0
-        innerView.layer.masksToBounds = true
-        innerView.backgroundColor = .black
-        iconView.addSubview(innerView)
-        
-        return iconView
+        return drawCircle(radius: largeDiameter / 2, innerColor: .white, borderColor: .tcatBlueColor)
     }
     
     func drawStopIcon() -> UIView {
-        let iconView = drawCircle(radius: bigRadius, innerColor: .black)
-        
-        let busNumLabel = UILabel(frame: CGRect(x: 0, y: 0, width: bigRadius*2, height: bigRadius*2))
-        busNumLabel.text = "\(self.busNumber)"
-        busNumLabel.font = .systemFont(ofSize: 14)
-        busNumLabel.textColor = .white
-        busNumLabel.textAlignment = .center
-        busNumLabel.center = iconView.center
-        iconView.addSubview(busNumLabel)
-        
-        return iconView
+        return BusIcon(size: .small, number: self.busNumber)
     }
     
     func drawCircle(radius: CGFloat, innerColor: UIColor, borderColor: UIColor? = nil) -> UIView {
-        let circleView = UIView(frame: CGRect(x: 0, y: 0, width: radius*2, height: radius*2))
+        let circleView = UIView(frame: CGRect(x: 0, y: 0, width: radius * 2, height: radius * 2))
+        circleView.center = .zero
         circleView.layer.cornerRadius = circleView.frame.width / 2.0
         circleView.layer.masksToBounds = true
         circleView.backgroundColor = innerColor
         
         if let borderColor = borderColor {
-            circleView.layer.borderWidth = 2
+            circleView.layer.borderWidth = 4
             circleView.layer.borderColor = borderColor.cgColor
         }
         

@@ -26,9 +26,9 @@ enum PathType: String {
 
 class Path: GMSPolyline {
     
-    let polylineWidth: CGFloat = 6
     let dashLengths: [NSNumber] = [14, 10]
     
+    var polylineWidth: CGFloat!
     var waypoints: [Waypoint] = []
     var traveledPolyline: GMSPolyline = GMSPolyline()
     var traveledPath: GMSMutablePath? = nil
@@ -42,10 +42,7 @@ class Path: GMSPolyline {
         self.pathType = pathType
         self.color = color
         
-        for waypoint in waypoints {
-            waypoint.setColor(color: color)
-        }
-        
+        self.polylineWidth = pathType == .Driving ? 4 : 6
         self.untraveledPath = GMSMutablePath(fromEncodedPath: getPolyline())
         self.traveledPath = untraveledPath
         
@@ -108,7 +105,6 @@ class Path: GMSPolyline {
                 }
             }
         }
-        
         return ""
     }
     
