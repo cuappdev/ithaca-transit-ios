@@ -44,6 +44,9 @@ class Time{
      */
     static func date(from string: String) -> Date{
         //Get date
+        if string.isEmpty {
+            print("Hey! YOU THE JSON ISN'T FORMATTED CORRECTLY")
+            return Date()}
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "h:mm a"
         let date = dateFormatter.date(from: string)
