@@ -50,7 +50,11 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         super.init(nibName: nil, bundle: nil)
         
         if route == nil {
-            initializeDummyData()
+            
+            // initializeDummyData()
+            
+            initializeRouteTesting()
+            
         }
             
         else {
@@ -346,6 +350,16 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                           Waypoint(lat: 42.4556361, long: -76.47580300, wpType: .Origin)]
         
         routePaths = [Path(waypoints: waypointsC, pathType: .Walking, color: .tcatBlueColor)]
+        
+    }
+    
+    func initializeRouteTesting() {
+        
+        // MARK: Test API here
+        
+        // set route, directions
+        // routePaths
+        //  path: waypoints
         
     }
     
