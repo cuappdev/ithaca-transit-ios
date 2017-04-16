@@ -66,6 +66,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         } else {
             //result is a placeResult, so we need to send placeID to backend to get proper directions
             print("result is a placeResult, so we need to send placeID to backend to get proper directions")
+            print("PlaceID", placeResult?.placeID ?? "")
         }
     }
     
