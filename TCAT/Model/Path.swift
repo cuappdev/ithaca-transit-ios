@@ -49,9 +49,6 @@ class Path: GMSPolyline {
         self.path = untraveledPath
         self.strokeColor = color
         self.strokeWidth = polylineWidth
-        self.traveledPolyline.path = traveledPath // DELETE PATH
-        self.traveledPolyline.strokeColor = .gray // DELETE PATH
-        self.traveledPolyline.strokeWidth = polylineWidth // DELETE PATH
         
         if pathType == .Walking {
             let untraveledDashStyles: [GMSStrokeStyle] = [.solidColor(color), .solidColor(.clear)]
