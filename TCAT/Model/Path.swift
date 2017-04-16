@@ -49,19 +49,17 @@ class Path: GMSPolyline {
         self.path = untraveledPath
         self.strokeColor = color
         self.strokeWidth = polylineWidth
-        self.traveledPolyline.path = traveledPath
-        self.traveledPolyline.strokeColor = .gray
-        self.traveledPolyline.strokeWidth = polylineWidth
         
         if pathType == .Walking {
             let untraveledDashStyles: [GMSStrokeStyle] = [.solidColor(color), .solidColor(.clear)]
             self.spans = GMSStyleSpans(untraveledPath!, untraveledDashStyles, dashLengths, kGMSLengthRhumb)
             self.strokeWidth -= 2
             
-            let traveledDashStyles: [GMSStrokeStyle] = [.solidColor(.gray), .solidColor(.clear)]
+            let traveledDashStyles: [GMSStrokeStyle] = [.solidColor(.mediumGrayColor), .solidColor(.clear)]
             self.traveledPolyline.spans = GMSStyleSpans(traveledPath!, traveledDashStyles, dashLengths, kGMSLengthRhumb)
             self.traveledPolyline.strokeWidth -= 2
         }
+        
     }
     
     func getPolyline() -> String {

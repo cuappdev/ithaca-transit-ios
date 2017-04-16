@@ -66,4 +66,10 @@ class Network {
         request.method = .get
         return request
     }
+    
+    class func getTestRoute(startLat: Double, startLng: Double, destPlaceID: String) -> APIRequest<Route, Error> {
+        let request: APIRequest<Route, Error> = tron.request("navigate?lat=\(startLat)&lng=\(startLng)&sink=\(destPlaceID)")
+        request.method = .get
+        return request
+    }
 }

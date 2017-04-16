@@ -50,76 +50,78 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         super.init(nibName: nil, bundle: nil)
         
         if route == nil {
-            initializeDummyData()
+            initializeTestingData()
+        } else {
+            initializeRoute(route: route!)
         }
+
+    }
+    
+    func initializeRoute(route: Route) {
+        
+        self.route = route
+        self.directions = route.directions
+        
+        // Construct paths in routePaths based on directions
+        var skipDirection: Bool = false
+        for index in 0..<directions.count {
             
-        else {
+            // skip parsing of current direction
+            // e.g. all path info is in DepartDirection, don't need ArriveDirection
+            if skipDirection { skipDirection = false; continue }
             
-            self.route = route
-            self.directions = route!.directions
+            let direction = directions[index]
+            let originLatitude = CGFloat(direction.location.coordinate.latitude)
+            let originLongitude = CGFloat(direction.location.coordinate.longitude)
             
-            // Construct paths in routePaths based on directions
-            var skip: Bool = false
-            for index in 0..<directions.count {
+            if let walkDirection = direction as? WalkDirection {
                 
-                if skip { skip = false; continue }
+                var latitude: CGFloat
+                var longitude: CGFloat
+                var end: Waypoint
                 
-                let direction = directions[index]
-                let originLatitude = CGFloat(direction.location.coordinate.latitude)
-                let originLongitude = CGFloat(direction.location.coordinate.longitude)
+                let origin = Waypoint(lat: originLatitude, long: originLongitude, wpType: .Origin)
                 
-                if let walkDirection = direction as? WalkDirection {
-                    
-                    var latitude: CGFloat
-                    var longitude: CGFloat
-                    var end: Waypoint
-                    
-                    let origin = Waypoint(lat: originLatitude, long: originLongitude, wpType: .Origin)
-                    // index == 0 ? .Origin : .None
-                    
-                    // Pre-Condition: destinationLocation only used if WalkDirection is last
-                    if walkDirection.destinationLocation == nil {
-                        let nextDirection = directions[index + 1]
-                        latitude = CGFloat(nextDirection.location.coordinate.latitude)
-                        longitude = CGFloat(nextDirection.location.coordinate.longitude)
-                        end = Waypoint(lat: latitude, long: longitude, wpType: .None)
-                    } else {
-                        latitude = CGFloat(walkDirection.destinationLocation!.coordinate.latitude)
-                        longitude = CGFloat(walkDirection.destinationLocation!.coordinate.longitude)
-                        end = Waypoint(lat: latitude, long: longitude, wpType: .Destination)
-                    }
-                    
-                    let walkPath = Path(waypoints: [origin, end], pathType: .Walking, color: .tcatBlueColor)
-                    routePaths.append(walkPath)
-                    
+                // Pre-Condition: destinationLocation only used if WalkDirection is last
+                if let destinationLocation = walkDirection.destinationLocation {
+                    latitude = CGFloat(destinationLocation.coordinate.latitude)
+                    longitude = CGFloat(destinationLocation.coordinate.longitude)
+                    end = Waypoint(lat: latitude, long: longitude, wpType: .Destination)
+                } else {
+                    let nextDirection = directions[index + 1]
+                    latitude = CGFloat(nextDirection.location.coordinate.latitude)
+                    longitude = CGFloat(nextDirection.location.coordinate.longitude)
+                    end = Waypoint(lat: latitude, long: longitude, wpType: .None)
                 }
                 
-                if let busDirection = direction as? DepartDirection {
-                    
-                    var routeWaypoints: [Waypoint] = []
-                    for index in 0..<busDirection.path.count {
-                        let coord = busDirection.path[index]
-                        let type: WaypointType = {
-                            switch index {
-                            case 0 : return .Origin
-                            case (busDirection.path.count / 2) : return .Stop
-                            default : return .None
-                            } // show stop waypoint in middle of route, origin for start, none otherwise
-                        }()
-                        let point = Waypoint(lat: CGFloat(coord.latitude), long: CGFloat(coord.longitude),
-                                             wpType: type, busNumber: busDirection.routeNumber)
-                        routeWaypoints.append(point)
-                    }
-                    
-                    let busPath = Path(waypoints: routeWaypoints, pathType: .Driving, color: .tcatBlueColor)
-                    routePaths.append(busPath)
-                    skip = true // already accounted for ArriveDirection, should skip over
-                    
-                    
-                    
-                }
+                let walkPath = Path(waypoints: [origin, end], pathType: .Walking, color: .tcatBlueColor)
+                routePaths.append(walkPath)
                 
             }
+            
+            if let busDirection = direction as? DepartDirection {
+                
+                var routeWaypoints: [Waypoint] = []
+                for index in 0..<busDirection.path.count {
+                    let coord = busDirection.path[index]
+                    let type: WaypointType = {
+                        switch index {
+                        case 0 : return .Origin
+                        case (busDirection.path.count / 2) : return .Stop
+                        default : return .None
+                        } // show stop waypoint in middle of route, origin for start, none otherwise
+                    }()
+                    let point = Waypoint(lat: CGFloat(coord.latitude), long: CGFloat(coord.longitude),
+                                         wpType: type, busNumber: busDirection.routeNumber)
+                    routeWaypoints.append(point)
+                }
+                
+                let busPath = Path(waypoints: routeWaypoints, pathType: .Driving, color: .tcatBlueColor)
+                routePaths.append(busPath)
+                skipDirection = true // already accounted for ArriveDirection, should skip over
+                
+            }
+            
         }
         
     }
@@ -179,31 +181,25 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
-        print("DID UPDATE LOCATION")
-        print("Apple \(String(describing: locations.last))")
-        print("Google \(String(describing: mapView.myLocation))")
-        
-        if let coord = locations.last?.coordinate {
+                
+        if let newCoord = locations.last?.coordinate {
             
-            myLocations.current = CLLocationCoordinate2D(latitude: coord.latitude, longitude: coord.latitude)
-            
-            if myLocations.current == nil {
-                myLocations.previous = CLLocationCoordinate2D(latitude: coord.latitude, longitude: coord.latitude)
+            if let current = myLocations.current {
+                myLocations.previous = current
             } else {
-                myLocations.previous = myLocations.current
+                myLocations.previous = CLLocationCoordinate2D(latitude: newCoord.latitude, longitude: newCoord.longitude)
             }
+            
+            myLocations.current = CLLocationCoordinate2D(latitude: newCoord.latitude, longitude: newCoord.longitude)
             
         }
         
-        isInitialView() ? drawMapRoute() : updateMapDrawing()
+        if isInitialView() { drawMapRoute() }
         let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
         mapView.animate(with: update)
         
     }
 
-    
-    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         print(error)
     }
@@ -267,28 +263,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
     }
     
-    func updateMapDrawing() {
-        for routePath in routePaths {
-            if let traveledPath = routePath.traveledPath {
-                if traveledPath.count() > 0 && myLocations.current != nil {
-                    
-                    //mapView.myLocation
-                    
-                    let traveledBounds = GMSCoordinateBounds(coordinate: myLocations.previous!, coordinate: myLocations.current!)
-                    
-                    while traveledBounds.contains(routePath.traveledPath!.coordinate(at: 0)) {
-                        routePath.path = traveledPath
-                        routePath.traveledPath?.removeCoordinate(at: 0)
-                    }
-                    
-                    break
-                }
-            }
-        }
-    }
-    
     /** Initialize dummy data for route w/ directions and routePaths */
-    func initializeDummyData() {
+    func initializeTestingData() {
         
         let walk = WalkDirection(time: Date(),
                                  place: "my house",
@@ -340,12 +316,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             Path(waypoints: waypointsB, pathType: .Driving, color: .tcatBlueColor)
             
         ]
-        
-        let waypointsC = [Waypoint(lat: 42.4555961, long: -76.47580300, wpType: .Origin),
-                          Waypoint(lat: 42.4556161, long: -76.47580300, wpType: .Origin),
-                          Waypoint(lat: 42.4556361, long: -76.47580300, wpType: .Origin)]
-        
-        routePaths = [Path(waypoints: waypointsC, pathType: .Walking, color: .tcatBlueColor)]
         
     }
     
@@ -402,7 +372,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     /** Animate detailTableView back onto screen, centering map */
     func summaryTapped(_ sender: UITapGestureRecognizer) {
         
-        // MARK: Re-center only from middle?
+        // Re-center only from middle?
         if isInitialView() { centerMap() }
         
         let isSmall = self.detailView.frame.minY == self.smallDetailHeight
@@ -632,10 +602,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             // Insert or remove bus stop data based on selection
             if cell.isExpanded {
                 directions.insert(contentsOf: busStops, at: indexPath.row + 1)
-                tableView.insertRows(at: indexPathArray, with: .automatic)
+                tableView.insertRows(at: indexPathArray, with: .middle)
             } else {
                 directions.replaceSubrange(busStopRange, with: [])
-                tableView.deleteRows(at: indexPathArray, with: .automatic)
+                tableView.deleteRows(at: indexPathArray, with: .middle)
             }
             
             tableView.endUpdates()
