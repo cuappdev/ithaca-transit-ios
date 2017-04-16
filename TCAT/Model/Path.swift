@@ -52,12 +52,8 @@ class Path: GMSPolyline {
         
         if pathType == .Walking {
             let untraveledDashStyles: [GMSStrokeStyle] = [.solidColor(color), .solidColor(.clear)]
-            self.spans = GMSStyleSpans(untraveledPath!, untraveledDashStyles, dashLengths, kGMSLengthRhumb)
+            self.spans = GMSStyleSpans(untraveledPath!, untraveledDashStyles, dashLengths, .rhumb)
             self.strokeWidth -= 2
-            
-            let traveledDashStyles: [GMSStrokeStyle] = [.solidColor(.mediumGrayColor), .solidColor(.clear)]
-            self.traveledPolyline.spans = GMSStyleSpans(traveledPath!, traveledDashStyles, dashLengths, kGMSLengthRhumb)
-            self.traveledPolyline.strokeWidth -= 2
         }
         
     }
