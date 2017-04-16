@@ -11,6 +11,7 @@
 import UIKit
 import GoogleMaps
 import CoreLocation
+import MapKit
 
 struct RouteDetailCellSize {
     static let smallHeight: CGFloat = 60
@@ -74,23 +75,13 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             
             if let walkDirection = direction as? WalkDirection {
                 
-                var latitude: CGFloat
-                var longitude: CGFloat
-                var end: Waypoint
-                
                 let origin = Waypoint(lat: originLatitude, long: originLongitude, wpType: .Origin)
                 
-                // Pre-Condition: destinationLocation only used if WalkDirection is last
-                if let destinationLocation = walkDirection.destinationLocation {
-                    latitude = CGFloat(destinationLocation.coordinate.latitude)
-                    longitude = CGFloat(destinationLocation.coordinate.longitude)
-                    end = Waypoint(lat: latitude, long: longitude, wpType: .Destination)
-                } else {
-                    let nextDirection = directions[index + 1]
-                    latitude = CGFloat(nextDirection.location.coordinate.latitude)
-                    longitude = CGFloat(nextDirection.location.coordinate.longitude)
-                    end = Waypoint(lat: latitude, long: longitude, wpType: .None)
-                }
+                // If last walk direction, use destintion waypoint; otherwise, don't
+                let type: WaypointType = (index == directions.count - 1) ? .Destination : .None
+                let endLatitude = CGFloat(walkDirection.destinationLocation.coordinate.latitude)
+                let endLongitude = CGFloat(walkDirection.destinationLocation.coordinate.longitude)
+                let end = Waypoint(lat: endLatitude, long: endLongitude, wpType: type)
                 
                 let walkPath = Path(waypoints: [origin, end], pathType: .Walking, color: .tcatBlueColor)
                 routePaths.append(walkPath)
@@ -255,7 +246,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let walk = WalkDirection(time: Date(),
                                  place: "my house",
                                  location: CLLocation(latitude: 1, longitude: 1),
-                                 travelDistance: 0.2)
+                                 travelDistance: 0.2,
+                                 destination: CLLocation(latitude: 1, longitude: 1))
         // Longest Bus Name - "Candlewyck Dr @ Route 96 (Trumansburg Rd)"
         let board = DepartDirection(time: Date().addingTimeInterval(300),
                                     place: "Candlewyck Dr @ Route 96",
@@ -277,7 +269,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let walk2 = WalkDirection(time: Date().addingTimeInterval(900),
                                   place: "not my house",
                                   location: CLLocation(latitude: 1, longitude: 1),
-                                  travelDistance: 0.3)
+                                  travelDistance: 0.3,
+                                  destination: CLLocation(latitude: 1, longitude: 1))
         
         directions = [walk, board, debark, walk2]
         

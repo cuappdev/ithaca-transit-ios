@@ -117,7 +117,10 @@ class Route: NSObject, JSONDecodable {
         let place = json["place"].stringValue
         let location = CLLocation(latitude: json["location"][0].doubleValue, longitude: json["location"][1].doubleValue)
         let travelDistance = json["travelDistance"].doubleValue
-        return WalkDirection(time: time, place: place, location: location, travelDistance: travelDistance)
+        let destinationLocation = CLLocation(latitude: json["destinationLocation"][0].doubleValue,
+                                             longitude: json["destinationLocation"][1].doubleValue)
+        return WalkDirection(time: time, place: place, location: location, travelDistance: travelDistance,
+                             destination: destinationLocation)
     }
     
     
@@ -131,9 +134,8 @@ class Route: NSObject, JSONDecodable {
         let arrivalTime = Time.date(from: json["arrivalTime"].stringValue)
         let kmlString = json["kml"].stringValue
         let path = CLLocationCoordinate2D.strToCoords(kmlString)
-        
-        return DepartDirection(time: time, place: place, location: location, path: path, routeNumber: routeNumber, bound: bound!, stops: stops, arrivalTime: arrivalTime)
-        
+        return DepartDirection(time: time, place: place, location: location, path: path,
+                               routeNumber: routeNumber, bound: bound!, stops: stops, arrivalTime: arrivalTime)
     }
     
     
