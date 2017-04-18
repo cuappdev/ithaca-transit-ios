@@ -6,11 +6,11 @@ target 'TCAT' do
   use_frameworks!
 
   # Pods for TCAT
-  pod 'GoogleMaps', '~> 2.1.1'
-  pod 'GooglePlaces', '~> 2.1.1'
+  pod 'GoogleMaps', '~> 2.2'
+  pod 'GooglePlaces', '~> 2.2'
   pod 'SwiftyJSON', '~> 3.1.4'
   pod 'Alamofire', '~> 4.4'
-  pod 'TRON', '~> 2.0.0'
+  pod 'TRON', '~> 3.0.0'
 
   target 'TCATTests' do
     inherit! :search_paths

@@ -12,7 +12,7 @@ import CoreLocation
 protocol Direction {
     var time: Date {get set}
     var place: String {get set}
-    var location: CLLocation {get set}
+    var location: CLLocation {get set} //START location for direction
     var placeDescription: String {get} //e.g. "Walk to Statler", "Board at Statler", "Debark at Ithaca Commons"
     var timeDescription: String {get} // "e.g. 7:21 PM"
 }
@@ -105,10 +105,10 @@ struct WalkDirection: Direction {
     var location: CLLocation
     
     var travelDistance: Double
-    var destinationLocation: CLLocation?
+    var destinationLocation: CLLocation
     
     init(time: Date, place: String, location: CLLocation, travelDistance: Double, 
-         destination: CLLocation? = nil) {
+         destination: CLLocation) {
         self.time = time
         self.place = place
         self.location = location
