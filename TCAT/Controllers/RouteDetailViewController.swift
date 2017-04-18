@@ -11,6 +11,7 @@
 import UIKit
 import GoogleMaps
 import CoreLocation
+import MapKit
 
 struct RouteDetailCellSize {
     static let smallHeight: CGFloat = 60
@@ -48,13 +49,11 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
      * such as ArriveDirection always comes after DepartDirection. */
     init (route: Route? = nil) {
         super.init(nibName: nil, bundle: nil)
-        
         if route == nil {
             initializeTestingData()
         } else {
             initializeRoute(route: route!)
         }
-
     }
     
     func initializeRoute(route: Route) {
@@ -76,23 +75,13 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             
             if let walkDirection = direction as? WalkDirection {
                 
-                var latitude: CGFloat
-                var longitude: CGFloat
-                var end: Waypoint
-                
                 let origin = Waypoint(lat: originLatitude, long: originLongitude, wpType: .Origin)
                 
-                // Pre-Condition: destinationLocation only used if WalkDirection is last
-                if let destinationLocation = walkDirection.destinationLocation {
-                    latitude = CGFloat(destinationLocation.coordinate.latitude)
-                    longitude = CGFloat(destinationLocation.coordinate.longitude)
-                    end = Waypoint(lat: latitude, long: longitude, wpType: .Destination)
-                } else {
-                    let nextDirection = directions[index + 1]
-                    latitude = CGFloat(nextDirection.location.coordinate.latitude)
-                    longitude = CGFloat(nextDirection.location.coordinate.longitude)
-                    end = Waypoint(lat: latitude, long: longitude, wpType: .None)
-                }
+                // If last walk direction, use destintion waypoint; otherwise, don't
+                let type: WaypointType = (index == directions.count - 1) ? .Destination : .None
+                let endLatitude = CGFloat(walkDirection.destinationLocation.coordinate.latitude)
+                let endLongitude = CGFloat(walkDirection.destinationLocation.coordinate.longitude)
+                let end = Waypoint(lat: endLatitude, long: endLongitude, wpType: type)
                 
                 let walkPath = Path(waypoints: [origin, end], pathType: .Walking, color: .tcatBlueColor)
                 routePaths.append(walkPath)
@@ -142,23 +131,20 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         locationManager.distanceFilter = 10
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
-        // locationManager.activityType = .automotiveNavigation
     }
     
     override func loadView() {
+        
+        // set mapView with settings
         let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: 15.5)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
-        mapView.padding = UIEdgeInsets(top: statusNavHeight(), left: 0, bottom: summaryViewHeight, right: 0)
+        mapView.padding = UIEdgeInsets(top: statusNavHeight(includingShadow: true), left: 0,
+                                       bottom: summaryViewHeight, right: 0)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
         mapView.settings.compassButton = true
         mapView.settings.myLocationButton = true
         mapView.setMinZoom(14, maxZoom: 25)
-        self.mapView = mapView
-        view = mapView
-    }
-    
-    func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
         
         // most extreme points on TCAT Route map
         let north = 42.61321283145329
@@ -169,29 +155,21 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let northEast = CLLocationCoordinate2DMake(north, east)
         let southWest = CLLocationCoordinate2DMake(south, west)
         let panBounds = GMSCoordinateBounds(coordinate: northEast, coordinate: southWest)
+        mapView.cameraTargetBounds = panBounds
         
-        if panBounds.contains(position.target) { return }
-        
-        let center = mapView.camera.target
-        let newLong = min(max(center.longitude, panBounds.southWest.longitude), panBounds.northEast.longitude)
-        let newLat = min(max(center.latitude, panBounds.southWest.latitude), panBounds.northEast.latitude)
-        let update = GMSCameraUpdate.setTarget(CLLocationCoordinate2DMake(newLat, newLong))
-        mapView.animate(with: update)
-        
+        self.mapView = mapView
+        view = mapView
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
                 
         if let newCoord = locations.last?.coordinate {
-            
             if let current = myLocations.current {
                 myLocations.previous = current
             } else {
                 myLocations.previous = CLLocationCoordinate2D(latitude: newCoord.latitude, longitude: newCoord.longitude)
             }
-            
             myLocations.current = CLLocationCoordinate2D(latitude: newCoord.latitude, longitude: newCoord.longitude)
-            
         }
         
         if isInitialView() { drawMapRoute() }
@@ -260,7 +238,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         bounds = bounds.includingCoordinate(CLLocationCoordinate2D(latitude: newLat, longitude: newLong))
         
-        
     }
     
     /** Initialize dummy data for route w/ directions and routePaths */
@@ -269,7 +246,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let walk = WalkDirection(time: Date(),
                                  place: "my house",
                                  location: CLLocation(latitude: 1, longitude: 1),
-                                 travelDistance: 0.2)
+                                 travelDistance: 0.2,
+                                 destination: CLLocation(latitude: 1, longitude: 1))
         // Longest Bus Name - "Candlewyck Dr @ Route 96 (Trumansburg Rd)"
         let board = DepartDirection(time: Date().addingTimeInterval(300),
                                     place: "Candlewyck Dr @ Route 96",
@@ -278,20 +256,21 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                                     bound: Bound.inbound,
                                     stops: ["Bus Stop 2", "Bus Stop 3", "Bus Stop 4"],
                                     arrivalTime: Date().addingTimeInterval(600))
-        /* let board2 = DepartDirection(time: Date().addingTimeInterval(300),
-         place: "Bus Stop 1 this is an overflow cell",
-         location: CLLocation(latitude: 1, longitude: 1),
-         routeNumber: 43,
-         bound: Bound.inbound,
-         stops: ["Bus Stop 2", "Bus Stop 3 this is going to be an overflow stop", "Bus Stop 4"],
-         arrivalTime: Date().addingTimeInterval(600)) */
+//        let board2 = DepartDirection(time: Date().addingTimeInterval(300),
+//                                     place: "Bus Stop 1 this is an overflow cell",
+//                                     location: CLLocation(latitude: 1, longitude: 1),
+//                                     routeNumber: 43,
+//                                     bound: Bound.inbound,
+//                                     stops: ["Bus Stop 2", "Bus Stop 3 this is going to be an overflow stop", "Bus Stop 4"],
+//                                     arrivalTime: Date().addingTimeInterval(600))
         let debark = ArriveDirection(time: Date().addingTimeInterval(600),
                                      place: "Bus Stop 5 (this) is an overflow cell",
                                      location: CLLocation(latitude: 1, longitude: 1))
         let walk2 = WalkDirection(time: Date().addingTimeInterval(900),
                                   place: "not my house",
                                   location: CLLocation(latitude: 1, longitude: 1),
-                                  travelDistance: 0.3)
+                                  travelDistance: 0.3,
+                                  destination: CLLocation(latitude: 1, longitude: 1))
         
         directions = [walk, board, debark, walk2]
         
@@ -301,8 +280,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                       mainStops: ["Bus Stop 1", "Bus Stop 5", "not my house"],
                       mainStopsNums: [42, -1, -1],
                       travelDistance: 1.0)
-        
-        //
         
         let waypointsA = [Waypoint(lat: 42.444738, long: -76.489383, wpType: .Origin),
                           Waypoint(lat: 42.445173, long: -76.485027, wpType: .Stop),
@@ -323,7 +300,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     func formatNavigationController() {
         
         let otherAttributes = [NSFontAttributeName: UIFont(name :".SFUIText", size: 14)!]
-        let titleAttributes: [String : Any] = [NSFontAttributeName : UIFont(name :".SFUIText", size: 18)!, NSForegroundColorAttributeName : UIColor.black]
+        let titleAttributes: [String : Any] = [NSFontAttributeName : UIFont(name :".SFUIText", size: 18)!,
+                                               NSForegroundColorAttributeName : UIColor.black]
         
         // general
         title = "Route Details"
@@ -354,9 +332,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     }
     
     /** Return height of status bar and possible navigation controller */
-    func statusNavHeight() -> CGFloat {
+    func statusNavHeight(includingShadow: Bool = false) -> CGFloat {
         return UIApplication.shared.statusBarFrame.height +
-            (navigationController?.navigationBar.frame.height ?? 0)
+            (navigationController?.navigationBar.frame.height ?? 0) +
+            (includingShadow ? 4 : 0)
     }
     
     /** Check if screen is in inital view of half map, half detailView */
@@ -605,7 +584,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 tableView.insertRows(at: indexPathArray, with: .middle)
             } else {
                 directions.replaceSubrange(busStopRange, with: [])
-                tableView.deleteRows(at: indexPathArray, with: .middle)
+                tableView.deleteRows(at: indexPathArray, with: .bottom)
             }
             
             tableView.endUpdates()
@@ -616,7 +595,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
     }
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith
+        otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
     

@@ -6,8 +6,8 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import Foundation
 import UIKit
+import MapKit
 
 extension UIColor {
     @nonobjc static let tcatBlueColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1.0)
@@ -30,6 +30,21 @@ extension UIColor {
         
         return UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
+}
+
+/** Return the amount of time, in seconds, to walk from start to end */
+func calculateTravelTime(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D,
+                         _ completionHandler: @escaping (TimeInterval?) -> ()) {
+    
+    let request = MKDirectionsRequest()
+    request.source = MKMapItem(placemark: MKPlacemark(coordinate: start, addressDictionary: [:]))
+    request.destination = MKMapItem(placemark: MKPlacemark(coordinate: end, addressDictionary: [:]))
+    request.transportType = .walking
+    let directions = MKDirections(request: request)
+    directions.calculateETA { (response, error) in
+        if error != nil { completionHandler(response?.expectedTravelTime) }
+    }
+    
 }
 
 /** Round specific corners of UIView */
