@@ -90,7 +90,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             
             if let busDirection = direction as? DepartDirection {
                 
-                var routeWaypoints: [Waypoint] = []
+                var routeWaypoints: [[Waypoint]] = []
+                var currentWaypoint : [Waypoint] = []
+                
+                
                 for index in 0..<busDirection.path.count {
                     let coord = busDirection.path[index]
                     let type: WaypointType = {
@@ -102,12 +105,20 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                     }()
                     let point = Waypoint(lat: CGFloat(coord.latitude), long: CGFloat(coord.longitude),
                                          wpType: type, busNumber: busDirection.routeNumber)
-                    routeWaypoints.append(point)
+                    currentWaypoint.append(point)
+                    if index % 7 == 0 {
+                        let lastWaypointInArray = currentWaypoint.last
+                       routeWaypoints.append(currentWaypoint)
+                        currentWaypoint = [lastWaypointInArray!]
+                    }
+                }
+                for x in 0..<routeWaypoints.count {
+                    if x % 5 == 0 {usleep(500000)}
+                    let busPath = Path(waypoints: routeWaypoints[x], pathType: .Driving, color: .tcatBlueColor)
+                    routePaths.append(busPath)
+                    skipDirection = true // already accounted for ArriveDirection, should skip over
                 }
                 
-                let busPath = Path(waypoints: routeWaypoints, pathType: .Driving, color: .tcatBlueColor)
-                routePaths.append(busPath)
-                skipDirection = true // already accounted for ArriveDirection, should skip over
                 
             }
             
