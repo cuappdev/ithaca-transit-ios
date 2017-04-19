@@ -60,9 +60,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.reloadData()
         let optionsVC = OptionsViewController()
         if busStop != nil {
-            //optionsVC.searchTo = (.busstop, busStop)
+            optionsVC.searchTo = (.busstop, busStop)
         } else {
-            //optionsVC.searchTo = (.placeresult, placeResult)
+            optionsVC.searchTo = (.placeresult, placeResult)
         }
         navigationController?.pushViewController(optionsVC, animated: true)
     }
@@ -115,10 +115,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             let optionsVC = OptionsViewController()
             if recentLocations[indexPath.row] is BusStop {
                 let busStop = recentLocations[indexPath.row] as! BusStop
-                //optionsVC.searchTo = (.busstop, busStop)
+                optionsVC.searchTo = (.busstop, busStop)
             } else {
                 let placeResult = recentLocations[indexPath.row] as! PlaceResult
-                //optionsVC.searchTo = (.placeresult, placeResult)
+                optionsVC.searchTo = (.placeresult, placeResult)
             }
             navigationController?.pushViewController(optionsVC, animated: true)
         }
