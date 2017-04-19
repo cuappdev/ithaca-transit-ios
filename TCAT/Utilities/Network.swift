@@ -55,7 +55,7 @@ class AllBusStops: JSONDecodable {
 
 class Network {
     static let tron = TRON(baseURL: "http://rawgit.com/cuappdev/tcat-backend/7b3be8f/")
-    //static let tron = TRON(baseURL: "http://10.129.17.89:5000")
+    //static let tron = TRON(baseURL: "http://10.129.17.89:5000/")
     
     class func getRoutes() -> APIRequest<Route, Error> {
         let request: APIRequest<Route, Error> = tron.request("navigate.json")
@@ -69,23 +69,35 @@ class Network {
         request.method = .get
         return request
     }
+    
+    
+    class func getPlaceRoute(startLat: Double, startLng: Double, destPlaceID: String) -> APIRequest<Array<Route>, Error> {
+        let request: APIRequest<Array<Route>, Error> = tron.request("navigate?source=\(startLat),\(startLng)&sink=\(destPlaceID)")
+        request.method = .get
+        return request
+    }
+    
+    class func getBusRoute(startLat: Double, startLng: Double, destLat: Double, destLng: Double) -> APIRequest<Array<Route>, Error> {
+        let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
+        request.parameters = ["source": "\(startLat),\(startLng)", "sink": "\(destLat),\(destLng)" ]
+        request.method = .get
+        return request
+    }    
+}
 
-    
-    class func getPlaceRoute(startLat: Double, startLng: Double, destPlaceID: String) -> APIRequest<Route, Error> {
-        let request: APIRequest<Route, Error> = tron.request("navigate?source=\(startLat),\(startLng)&sink=\(destPlaceID)")
-        request.method = .get
-        return request
-    }
-    
-    class func getBusRoute(startLat: Double, startLng: Double, destLat: Double, destLng: Double) -> APIRequest<Route, Error> {
-        let request: APIRequest<Route, Error> = tron.request("navigate?source=\(startLat),\(startLng)&sink=\(destLat),\(destLng)")
-        request.method = .get
-        return request
-    }
-    
-    class func getTestRoute(startLat: Double, startLng: Double, destPlaceID: String) -> APIRequest<Route, Error> {
-        let request: APIRequest<Route, Error> = tron.request("navigate?lat=\(startLat)&lng=\(startLng)&sink=\(destPlaceID)")
-        request.method = .get
-        return request
+extension Array : JSONDecodable {
+    public init(json: JSON) {
+        self.init(json.arrayValue.flatMap {
+            if let type = Element.self as? JSONDecodable.Type {
+                let element : Element?
+                do {
+                    element = try type.init(json: $0) as? Element
+                } catch {
+                    return nil
+                }
+                return element
+            }
+            return nil
+        })
     }
 }
