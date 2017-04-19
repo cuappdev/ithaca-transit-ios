@@ -20,7 +20,9 @@ import SwiftyJSON
 
 /* Things to fix:
   * PlaceResult & BuSStop really cannot be 2 different objects, cause too much hassle. N2Do inheritance
+  * Shiv: round travel distance to 1 decimal point
   * Austin: Fix glitch w/ recent searches. Does not send correct text
+  * Get rid of random print statements
  */
 
 /* Things to consider:
@@ -65,6 +67,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     //Data
     var routes: [Route] = []
+    var loaderroutes: [Route] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,17 +90,22 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             //Hide search bar
         navigationItem.titleView = nil
         searchBarView.searchController?.isActive = false
-
         routeSelection.toSearch.addTarget(self, action: #selector(self.searchingTo), for: .touchUpInside)
         routeSelection.fromSearch.addTarget(self, action: #selector(self.searchingFrom), for: .touchUpInside)
         
         //Autofill destination if user has already selected one from previous screen
         if let selectedDestination = searchTo.1 {
             //set search text to either bus stop or place result
-            var title = (selectedDestination as? BusStop)?.name
-            title  = (selectedDestination as? PlaceResult)?.name
-            routeSelection.toSearch.setTitle(title, for: .normal)
+            if let bustitle = (selectedDestination as? BusStop)?.name{
+               routeSelection.toSearch.setTitle(bustitle, for: .normal)
+            }
+            if let placetitle  = (selectedDestination as? PlaceResult)?.name{
+                routeSelection.toSearch.setTitle(placetitle, for: .normal)
+            }
         }
+        //Get rid of back button 
+//        let backButton = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: navigationController, action: nil)
+//        navigationItem.leftBarButtonItem = backButton
         /*
         //Ask user for location
         locationManager = CLLocationManager()
@@ -164,22 +172,21 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             return
         }
         
-        //Set up test data
-//        let date1 = Time.date(from: "3:45 PM")
-//        let date2 = Time.date(from: "3:52 PM")
-//        let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
-//        
-//        let date3 = Time.date(from: "12:12 PM")
-//        let date4 = Time.date(from: "12:47 PM")
-//        let route2 = Route(departureTime: date3, arrivalTime: date4, directions: [], mainStops: ["Annabel Taylor Hall", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
-//        
-//        let date5 = Time.date(from: "1:12 PM")
-//        let date6 = Time.date(from: "1:38 PM")
-//        let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Schwartz Center", "Commons - Seneca Street"], mainStopsNums: [90, 32, -1], travelDistance: 0.1)
-//        
-//        routes = [route1, route2, route3]
+        //Set up fake data
+        let date1 = Time.date(from: "3:45 PM")
+        let date2 = Time.date(from: "3:52 PM")
+        let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
         
-        searchForRoutes()
+        let date3 = Time.date(from: "12:12 PM")
+        let date4 = Time.date(from: "12:47 PM")
+        let route2 = Route(departureTime: date3, arrivalTime: date4, directions: [], mainStops: ["Annabel Taylor Hall", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
+        
+        let date5 = Time.date(from: "1:12 PM")
+        let date6 = Time.date(from: "1:38 PM")
+        let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Schwartz Center", "Commons - Seneca Street"], mainStopsNums: [90, 32, -1], travelDistance: 0.1)
+        
+        loaderroutes = [route1, route2, route3]
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -188,7 +195,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     override func viewDidAppear(_ animated: Bool) {
 //        Loader.addLoaderTo(routeResults)
-//        Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(self.loaded), userInfo: nil, repeats: false)
+//        Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(, userInfo: nil, repeats: false)
     }
 
     override func didReceiveMemoryWarning() {
@@ -204,20 +211,34 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             switch searchTo.0 {
             case .busstop:
                 if let endBus = end as? BusStop{
+                    Loader.addLoaderTo(routeResults)
+                    routes = loaderroutes
+                    routeResults.reloadData()
                     Network.getBusRoute(startLat: startBus.lat!, startLng: startBus.long!, destLat: endBus.lat!, destLng: endBus.long!).perform(withSuccess: { (routes) in
                         self.routes = routes
                         self.routeResults.reloadData()
+                        self.loaded()
                     }, failure: { (error) in
                         print("Error: \(error)")
+                        self.routes = []
+                        self.routeResults.reloadData()
+                        self.loaded()
                     })
                 }
             default: //place result
                 if let endPlace = end as? PlaceResult{
+                    Loader.addLoaderTo(routeResults)
+                    routes = loaderroutes
+                    routeResults.reloadData()
                     Network.getPlaceRoute(startLat: startBus.lat!, startLng: startBus.long!, destPlaceID: endPlace.placeID!).perform(withSuccess: { (routes) in
                         self.routes = routes
                         self.routeResults.reloadData()
+                        self.loaded()
                     }, failure: { (error) in
                         print("Error: \(error)")
+                        self.routes = []
+                        self.routeResults.reloadData()
+                        self.loaded()
                     })
                 }
             }

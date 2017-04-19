@@ -155,7 +155,7 @@ class RouteTableViewCell: UITableViewCell {
         //Set up distance label
         distanceLabel.font = UIFont(name: "SFUIText-Regular", size: 12.0)
         distanceLabel.textColor = .mediumGrayColor
-        distanceLabel.text = "\(distance) mi away"
+        distanceLabel.text = "\(distance.roundToPlaces(places: 1)) mi away"
         distanceLabel.sizeToFit()
         
         //Position views
@@ -174,12 +174,7 @@ class RouteTableViewCell: UITableViewCell {
         }
         
         //Position bus icons
-        print("busIcon length: \(busIcons.count)")
-        print("stopDots length: \(stopDots.count)")
         for i in 0...(busIcons.count-1){
-            print(i)
-            print("busIcon length: \(busIcons.count)")
-            print("stopDots length: \(stopDots.count)")
             busIcons[i].center.y = (stopDots[i].center.y + stopDots[i+1].center.y)/2
             busIcons[i].center.x = spaceXFromSuperviewLeft + (busIcons[i].frame.width/2)
         }
