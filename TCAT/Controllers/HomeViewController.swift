@@ -55,6 +55,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         view.addSubview(tableView)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.definesPresentationContext = true
+    }
+    
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?) {
         recentLocations = retrieveRecentLocations()
         tableView.reloadData()
@@ -120,6 +124,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 let placeResult = recentLocations[indexPath.row] as! PlaceResult
                 optionsVC.searchTo = (.placeresult, placeResult)
             }
+            self.definesPresentationContext = false //else going to try and present optionVC on homeVC when in optionVC
             navigationController?.pushViewController(optionsVC, animated: true)
         }
         tableView.deselectRow(at: indexPath, animated: true)
