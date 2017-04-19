@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
         // Initalize window without storyboard
-        let rootVC = OptionsViewController()
+        let rootVC = HomeViewController()
         let navigationController = UINavigationController(rootViewController: rootVC)
         navigationController.navigationBar.barTintColor = .white
         navigationController.navigationBar.isTranslucent = false
@@ -44,7 +44,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
             self.userDefaults.set(data, forKey: "allBusStops")
         })
-        
         
         return true
     }
