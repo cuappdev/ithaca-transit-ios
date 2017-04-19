@@ -15,11 +15,16 @@ import DZNEmptyDataSet
 protocol DestinationDelegate {
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?)
 }
+protocol SearchBarCancelDelegate {
+    func didCancel()
+}
+
 
 class SearchResultsTableViewController: UITableViewController, UISearchResultsUpdating, UISearchBarDelegate, DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
     
     let userDefaults = UserDefaults.standard
     var destinationDelegate: DestinationDelegate?
+    var searchBarCancelDelegate: SearchBarCancelDelegate?
     var busStops: [BusStop] = []
     var isRecentLocationsEmpty: Bool!
     var placesTimer: Timer!
@@ -32,7 +37,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
     var noSearchResults: Bool?
     var sections : [(index: Int, length :Int, title: String)] = []
     var sectionExtraIndex: Int!
-
+    
     func tctSectionHeaderFont() -> UIFont? {
         return UIFont.systemFont(ofSize: 14)
     }
@@ -145,7 +150,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
     
     /* cellForRowAt Helpers */
     func getTableViewCell(indexPath: IndexPath) -> UITableViewCell {
-
+        
         if isSearchEmpty() {
             return indexPath.section == 0 && !isRecentLocationsEmpty && recentLocations[indexPath.row] is PlaceResult ? tableView.dequeueReusableCell(withIdentifier: "searchResults") as! SearchResultsCell : tableView.dequeueReusableCell(withIdentifier: "busStops") as! BusStopCell
         }
@@ -163,14 +168,14 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
         }
         return (placeResultArray[index] as! PlaceResult).name!
     }
-
+    
     func getDetailText(reuseIdentifier: String, index: Int) -> String? {
         let placeResultArray = reuseIdentifier == "searchResults" && isSearchEmpty() && !isRecentLocationsEmpty ? recentLocations : searchResults
         if reuseIdentifier == "searchResults" {
             let detailString = (placeResultArray[index] as! PlaceResult).detail!
             let indexOfLastComma = detailString.range(of: ",", options: .backwards, range: nil, locale: nil)
             if indexOfLastComma != nil {
-            let parsedDetailString = detailString.substring(to: (indexOfLastComma?.lowerBound)!)
+                let parsedDetailString = detailString.substring(to: (indexOfLastComma?.lowerBound)!)
                 return parsedDetailString
             }
             return detailString
@@ -187,6 +192,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
         searchString = ""
         searchResults = []
         tableView.reloadData()
+        searchBarCancelDelegate?.didCancel()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

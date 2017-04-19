@@ -60,15 +60,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.reloadData()
         let optionsVC = OptionsViewController()
         if busStop != nil {
-            optionsVC.destinationBusStop = busStop
+            //optionsVC.searchTo = (.busstop, busStop)
         } else {
-<<<<<<< HEAD
-            //result is a placeResult, so we need to send placeID to backend to get proper directions
-            print("result is a placeResult, so we need to send placeID to backend to get proper directions")
-            print("PlaceID", placeResult?.placeID ?? "")
-=======
-           optionsVC.destinationPlaceResult = placeResult
->>>>>>> added a-z index picker, no search results found, and cleaned up code. Added more network calls
+            //optionsVC.searchTo = (.placeresult, placeResult)
         }
         navigationController?.pushViewController(optionsVC, animated: true)
     }
@@ -120,12 +114,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         else {
             let optionsVC = OptionsViewController()
             if recentLocations[indexPath.row] is BusStop {
-                optionsVC.destinationBusStop = (recentLocations[indexPath.row] as! BusStop)
+                let busStop = recentLocations[indexPath.row] as! BusStop
+                //optionsVC.searchTo = (.busstop, busStop)
             } else {
-                optionsVC.destinationPlaceResult = (recentLocations[indexPath.row] as! PlaceResult)
+                let placeResult = recentLocations[indexPath.row] as! PlaceResult
+                //optionsVC.searchTo = (.placeresult, placeResult)
             }
-            navigationController?.navigationItem.titleView = nil
-            optionsVC.title = "TESTEST"
             navigationController?.pushViewController(optionsVC, animated: true)
         }
         tableView.deselectRow(at: indexPath, animated: true)
