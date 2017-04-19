@@ -54,8 +54,9 @@ class AllBusStops: JSONDecodable {
  */
 
 class Network {
-    static let tron = TRON(baseURL: "http://rawgit.com/cuappdev/tcat-ios/4e095ce/")
-//    static let tron = TRON(baseURL: "http://10.132.8.213:5000/")
+//    static let tron = TRON(baseURL: "http://rawgit.com/cuappdev/tcat-ios/5262ca8/")
+    static let tron = TRON(baseURL: "http://10.132.8.213:5000/")
+    
     
     class func getRoutes() -> APIRequest<Route, Error> {
         let request: APIRequest<Route, Error> = tron.request("navigate.json")
@@ -72,14 +73,15 @@ class Network {
     
     
     class func getPlaceRoute(startLat: Double, startLng: Double, destPlaceID: String) -> APIRequest<Array<Route>, Error> {
-        let request: APIRequest<Array<Route>, Error> = tron.request("routeTestingJSON.json")
+        let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
+        request.parameters = ["source": "\(startLat),\(startLng)", "sink": "\(destPlaceID)" ]
         request.method = .get
         return request
     }
     
     class func getBusRoute(startLat: Double, startLng: Double, destLat: Double, destLng: Double) -> APIRequest<Array<Route>, Error> {
-        let request: APIRequest<Array<Route>, Error> = tron.request("routeTestingJSON.json")
-        //request.parameters = ["source": "\(startLat),\(startLng)", "sink": "\(destLat),\(destLng)" ]
+        let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
+        request.parameters = ["source": "\(startLat),\(startLng)", "sink": "\(destLat),\(destLng)" ]
         request.method = .get
         return request
     }    
