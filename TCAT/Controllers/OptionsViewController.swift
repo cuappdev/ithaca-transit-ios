@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import CoreLocation
+import SwiftyJSON
 
 /* Main:
   * get users current location = autofill
@@ -38,11 +39,13 @@ enum SearchDeparture: String{
     case arriveby, leaveat
 }
 
-class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, DestinationDelegate, UISearchBarDelegate, CLLocationManagerDelegate {
+class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,
+    DestinationDelegate, SearchBarCancelDelegate,UISearchBarDelegate,
+    CLLocationManagerDelegate {
     
     //Search bar
     var searchBarView: SearchBarView!
-    var locationManager: CLLocationManager!
+    var locationManager: CLLocationManager = CLLocationManager()
         //Fill search data w/ default values
     var searchType: SearchType = .from
     var searchFrom: (SearchObject, AnyObject?) = (.busstop, nil)
@@ -85,8 +88,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         navigationItem.titleView = nil
         searchBarView.searchController?.isActive = false
 
-//        searchBarView.searchController?.searchBar.delegate = self
-
         routeSelection.toSearch.addTarget(self, action: #selector(self.searchingTo), for: .touchUpInside)
         routeSelection.fromSearch.addTarget(self, action: #selector(self.searchingFrom), for: .touchUpInside)
         
@@ -97,7 +98,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             title  = (selectedDestination as? PlaceResult)?.name
             routeSelection.toSearch.setTitle(title, for: .normal)
         }
-        
+        /*
         //Ask user for location
         locationManager = CLLocationManager()
 //        if CLLocationManager.authorizationStatus() == .notDetermined {
@@ -110,6 +111,24 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             locationManager.startUpdatingLocation()
+        }*/
+        
+        //Ask user for location
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        
+        //Use users current location if no starting point set
+        if CLLocationManager.locationServicesEnabled() {
+            if CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedWhenInUse
+                || CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedAlways {
+                locationManager.startUpdatingLocation()
+            }
+            else{
+                locationManager.requestWhenInUseAuthorization()
+            }
+        }
+        else{
+            //Alert user to open location service, bra bra bra here...
         }
         
         //Set up datepicker
@@ -146,19 +165,21 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         //Set up test data
-        let date1 = Time.date(from: "3:45 PM")
-        let date2 = Time.date(from: "3:52 PM")
-        let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
+//        let date1 = Time.date(from: "3:45 PM")
+//        let date2 = Time.date(from: "3:52 PM")
+//        let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
+//        
+//        let date3 = Time.date(from: "12:12 PM")
+//        let date4 = Time.date(from: "12:47 PM")
+//        let route2 = Route(departureTime: date3, arrivalTime: date4, directions: [], mainStops: ["Annabel Taylor Hall", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
+//        
+//        let date5 = Time.date(from: "1:12 PM")
+//        let date6 = Time.date(from: "1:38 PM")
+//        let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Schwartz Center", "Commons - Seneca Street"], mainStopsNums: [90, 32, -1], travelDistance: 0.1)
+//        
+//        routes = [route1, route2, route3]
         
-        let date3 = Time.date(from: "12:12 PM")
-        let date4 = Time.date(from: "12:47 PM")
-        let route2 = Route(departureTime: date3, arrivalTime: date4, directions: [], mainStops: ["Annabel Taylor Hall", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
-        
-        let date5 = Time.date(from: "1:12 PM")
-        let date6 = Time.date(from: "1:38 PM")
-        let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Schwartz Center", "Commons - Seneca Street"], mainStopsNums: [90, 32, -1], travelDistance: 0.1)
-        
-        routes = [route1, route2, route3]
+        searchForRoutes()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -168,8 +189,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidAppear(_ animated: Bool) {
 //        Loader.addLoaderTo(routeResults)
 //        Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(self.loaded), userInfo: nil, repeats: false)
-        locationManager = CLLocationManager()
-        locationManager.requestWhenInUseAuthorization()
     }
 
     override func didReceiveMemoryWarning() {
@@ -177,18 +196,41 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         // Dispose of any resources that can be recreated.
     }
 
+    
     //MARK: Search bar functionality
     func searchForRoutes(){
-        //Make sure call this every time user changes info or if all info filled (by default)
         print("Searching for routes")
-        //Make sure all info is not null
-        //Change routes object list
-        //Reload table view using loader
-        
+        /* Make sure call this every time user changes info or if all info filled (by default)
+          * Make sure all info is not null
+          * Change routes object list
+          * Reload table view using loader
+         */
+        Network.getBusRoute(startLat: 42.44252, startLng: -76.482364, destLat: 42.44252, destLng: -76.482364).perform(withSuccess: { (response) in
+            self.routes = response
+//            for route in self.routes{
+//                route.printRoute()
+//            }
+            self.routeResults.reloadData()
+        }) { (error) in
+            print("error")
+            print(error)
+        }
+    }
+    
+    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        print("didChangeAuthorization")
+        if status == CLAuthorizationStatus.authorizedWhenInUse
+            || status == CLAuthorizationStatus.authorizedAlways {
+            locationManager.startUpdatingLocation()
+        }
+        else{
+            //other procedures when location service is not permitted.
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error){
         locationManager.stopUpdatingLocation()
+        print("didFailWithError")
         print(error)
     }
     
@@ -246,7 +288,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         searchForRoutes()
     }
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar){
+    func didCancel(){
         //Hide search bar
         navigationItem.titleView = nil
         searchBarView.searchController?.isActive = false
@@ -311,7 +353,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     //MARK: Tableview Data Source & Delegate
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool{
-        navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
+//        navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
         return false // halts the selection process = don't have selected look
     }
 
@@ -329,6 +371,8 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell?.departureTime = routes[indexPath.row].departureTime
         cell?.arrivalTime = routes[indexPath.row].arrivalTime
         cell?.stops = routes[indexPath.row].mainStops
+        routes[indexPath.row].mainStopsNums.remove(at: 0) //HACK for Shiv's data  = remove lat stop and add pin (-1)
+        routes[indexPath.row].mainStopsNums.append(-1)
         cell?.busNums = routes[indexPath.row].mainStopsNums
         cell?.distance = routes[indexPath.row].travelDistance
         cell?.setData()

@@ -145,4 +145,21 @@ class Route: NSObject, JSONDecodable {
         let location = CLLocation(latitude: json["location"][0].doubleValue, longitude: json["location"][1].doubleValue)
         return ArriveDirection(time: time, place: place, location: location)   
     }
+    
+    //For debugging purposes
+    func printRoute(){
+        var mainStopsStr = "("
+        for mainStop in mainStops{
+            mainStopsStr += "\(mainStop), "
+        }
+        mainStopsStr += ")"
+        var mainStopsNumsStr = "("
+        for mainStopNum in mainStopsNums{
+            mainStopsNumsStr += "\(mainStopNum), "
+        }
+        mainStopsNumsStr += ")"
+        print("departureTime: \(departureTime), arrivalTime: \(arrivalTime)")
+        print("mainStops: \(mainStopsStr), mainStopsNums:  \(mainStopsNumsStr)")
+    }
 }
+

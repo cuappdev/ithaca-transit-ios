@@ -49,7 +49,8 @@ class Time{
             return Date()}
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "h:mm a"
-        let date = dateFormatter.date(from: string)
+        let string2 = string.replacingOccurrences(of: "-", with: "") //HACK: get rid of "-" in time
+        let date = dateFormatter.date(from: string2)
         var dateComponents = Time.dateComponents(from: date!)
         //Modify date to have today's day, month & year
         var todaysDateComponents = Time.dateComponents(from: Date())

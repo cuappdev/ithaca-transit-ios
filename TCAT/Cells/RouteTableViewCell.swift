@@ -174,7 +174,12 @@ class RouteTableViewCell: UITableViewCell {
         }
         
         //Position bus icons
+        print("busIcon length: \(busIcons.count)")
+        print("stopDots length: \(stopDots.count)")
         for i in 0...(busIcons.count-1){
+            print(i)
+            print("busIcon length: \(busIcons.count)")
+            print("stopDots length: \(stopDots.count)")
             busIcons[i].center.y = (stopDots[i].center.y + stopDots[i+1].center.y)/2
             busIcons[i].center.x = spaceXFromSuperviewLeft + (busIcons[i].frame.width/2)
         }
