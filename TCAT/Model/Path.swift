@@ -17,6 +17,7 @@ enum DirectionsStatus: String {
     case REQUEST_DENIED
     case INVALID_REQUEST
     case UNKNOWN_ERROR
+    case MAX_WAYPOINTS_EXCEEDED
 }
 
 enum PathType: String {
@@ -81,6 +82,7 @@ class Path: GMSPolyline {
         if let directionsURL = URL(string: directionsURLString) {
             if let data = try? Data(contentsOf: directionsURL) {
                 let json = JSON(data: data)
+                print(json)
                 let directionsStatus = DirectionsStatus(rawValue: json["status"].stringValue)!
                 
                 switch directionsStatus {
@@ -96,6 +98,8 @@ class Path: GMSPolyline {
                     print("Invalid Request: Can't draw polyline")
                 case .UNKNOWN_ERROR:
                     print("Unknown Error: Can't draw polyline")
+                case .MAX_WAYPOINTS_EXCEEDED:
+                    print("Max Waypoints Exceeded: Can't draw polyline")
                 }
             }
         }

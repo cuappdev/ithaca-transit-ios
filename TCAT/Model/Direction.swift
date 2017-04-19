@@ -22,7 +22,7 @@ protocol Direction {
  * let outbound: String = Bound.inbound.rawValue //"outbound"
  */
 enum Bound: String {
-    case inbound, outbound
+    case inbound, outbound, loop
 }
 
 struct DepartDirection: Direction {
