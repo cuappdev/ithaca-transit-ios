@@ -38,13 +38,14 @@ class SearchResultsCell: UITableViewCell {
         imageView?.frame = CGRect(x: 10, y: 5, width: imageWidth, height: imageHeight)
         imageView?.contentMode = .scaleAspectFit
         imageView?.center.y = bounds.height / 2.0
-        imageView?.image = #imageLiteral(resourceName: "pin")
+        imageView?.image = reuseIdentifier == "cornellDestinations" ? #imageLiteral(resourceName: "bus") : #imageLiteral(resourceName: "pin")
+        imageView?.tintColor = reuseIdentifier == "cornellDestinations" ? .tcatBlueColor : nil
         
-        textLabel?.frame = CGRect(x: labelXPosition, y: 5.0, width: frame.width - labelWidthConstant, height: labelHeight)
+        textLabel?.frame = CGRect(x: labelXPosition, y: 8.0, width: frame.width - labelWidthConstant, height: labelHeight)
         textLabel?.font = .systemFont(ofSize: 13)
         
         detailTextLabel?.frame = CGRect(x: labelXPosition, y: 0, width: frame.width - labelWidthConstant, height: labelHeight)
-        detailTextLabel?.center.y = bounds.height - 12.0
+        detailTextLabel?.center.y = bounds.height - 15.0
         detailTextLabel?.textColor = UIColor(white: 153.0 / 255.0, alpha: 1.0)
         detailTextLabel?.font = .systemFont(ofSize: 12)
     }
