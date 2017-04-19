@@ -47,7 +47,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     var searchBarView: SearchBarView!
     var locationManager: CLLocationManager = CLLocationManager()
         //Fill search data w/ default values
-    var searchType: SearchType = .from
+    var searchType: SearchType = .from //for search bar
     var searchFrom: (SearchObject, AnyObject?) = (.busstop, nil)
     var searchTo: (SearchObject, AnyObject?) = (.busstop, nil)
     var searchDeparture: SearchDeparture? = .leaveat
@@ -183,7 +183,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        routeResults.register(RouteTableViewCell.classForCoder(), forCellReuseIdentifier: identifier)
+        routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: identifier)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -199,21 +199,28 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     //MARK: Search bar functionality
     func searchForRoutes(){
-        print("Searching for routes")
-        /* Make sure call this every time user changes info or if all info filled (by default)
-          * Make sure all info is not null
-          * Change routes object list
-          * Reload table view using loader
-         */
-        Network.getBusRoute(startLat: 42.44252, startLng: -76.482364, destLat: 42.44252, destLng: -76.482364).perform(withSuccess: { (response) in
-            self.routes = response
-//            for route in self.routes{
-//                route.printRoute()
-//            }
-            self.routeResults.reloadData()
-        }) { (error) in
-            print("error")
-            print(error)
+        //N2SELF: N2 put in parameters for searchDate & searchDepature
+        if let startBus = searchFrom.1 as? BusStop, let end = searchTo.1 {
+            switch searchTo.0 {
+            case .busstop:
+                if let endBus = end as? BusStop{
+                    Network.getBusRoute(startLat: startBus.lat!, startLng: startBus.long!, destLat: endBus.lat!, destLng: endBus.long!).perform(withSuccess: { (routes) in
+                        self.routes = routes
+                        self.routeResults.reloadData()
+                    }, failure: { (error) in
+                        print("Error: \(error)")
+                    })
+                }
+            default: //place result
+                if let endPlace = end as? PlaceResult{
+                    Network.getPlaceRoute(startLat: startBus.lat!, startLng: startBus.long!, destPlaceID: endPlace.placeID!).perform(withSuccess: { (routes) in
+                        self.routes = routes
+                        self.routeResults.reloadData()
+                    }, failure: { (error) in
+                        print("Error: \(error)")
+                    })
+                }
+            }
         }
     }
     
@@ -371,8 +378,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell?.departureTime = routes[indexPath.row].departureTime
         cell?.arrivalTime = routes[indexPath.row].arrivalTime
         cell?.stops = routes[indexPath.row].mainStops
-        routes[indexPath.row].mainStopsNums.remove(at: 0) //HACK for Shiv's data  = remove lat stop and add pin (-1)
-        routes[indexPath.row].mainStopsNums.append(-1)
         cell?.busNums = routes[indexPath.row].mainStopsNums
         cell?.distance = routes[indexPath.row].travelDistance
         cell?.setData()
