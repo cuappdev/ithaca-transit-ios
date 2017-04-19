@@ -353,7 +353,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     //MARK: Tableview Data Source & Delegate
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool{
-//        navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
+       navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
         return false // halts the selection process = don't have selected look
     }
 
@@ -371,8 +371,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell?.departureTime = routes[indexPath.row].departureTime
         cell?.arrivalTime = routes[indexPath.row].arrivalTime
         cell?.stops = routes[indexPath.row].mainStops
-        routes[indexPath.row].mainStopsNums.remove(at: 0) //HACK for Shiv's data  = remove lat stop and add pin (-1)
-        routes[indexPath.row].mainStopsNums.append(-1)
         cell?.busNums = routes[indexPath.row].mainStopsNums
         cell?.distance = routes[indexPath.row].travelDistance
         cell?.setData()
