@@ -360,7 +360,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     //MARK: Tableview Data Source & Delegate
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool{
-//        navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
+       navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
         return false // halts the selection process = don't have selected look
     }
 
