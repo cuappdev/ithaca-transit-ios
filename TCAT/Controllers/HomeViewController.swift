@@ -44,37 +44,38 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         
         let tableViewFrame = CGRect(x: 0, y: searchBar.frame.maxY, width: view.bounds.width, height: view.bounds.height - searchBar.bounds.height)
-        
         tableView = UITableView(frame: tableViewFrame, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorColor = .lineColor
-        
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: "cornellDestinations")
+        tableView.register(BusStopCell.self, forCellReuseIdentifier: "busStop")
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "searchResults")
+        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "cornellDestinations")
         view.addSubview(tableView)
     }
-    
     
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?) {
         recentLocations = retrieveRecentLocations()
         tableView.reloadData()
+        let optionsVC = OptionsViewController()
         if busStop != nil {
-            //result is a busStop, so we know lat and long to send to backend
-            print("result is a busStop, so we know lat and long to send to backend")
+            optionsVC.destinationBusStop = busStop
         } else {
+<<<<<<< HEAD
             //result is a placeResult, so we need to send placeID to backend to get proper directions
             print("result is a placeResult, so we need to send placeID to backend to get proper directions")
             print("PlaceID", placeResult?.placeID ?? "")
+=======
+           optionsVC.destinationPlaceResult = placeResult
+>>>>>>> added a-z index picker, no search results found, and cleaned up code. Added more network calls
         }
+        navigationController?.pushViewController(optionsVC, animated: true)
     }
-    
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return recentLocations.isEmpty ? 1 : 2
     }
-    
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
@@ -83,16 +84,13 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         header.textLabel?.text = section == 0 ? "Cornell Destinations" : "Recent Searches"
     }
     
-    
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return section == 0 ? "Cornell Destinations" : "Recent Searches"
     }
     
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return indexPath.section == 0 ? 60.0 : 50.0
+        return 50.0
     }
-    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let sectionZero = indexPath.section == 0
@@ -111,26 +109,28 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         return cell
     }
     
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0 ? 5 : retrieveRecentLocations().count
     }
     
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 {
-            //let selectedRecentSearch = recentLocations[indexPath.row]
-            //searchBar.searchController?.searchBar.text = selectedRecentSearch
-            //searchBar.searchController?.isActive = true
-            //searchBar.resultsViewController?.searchString = selectedRecentSearch
-            //searchBar.resultsViewController?.fetchGooglePlaces(searchText: selectedRecentSearch)
-            print("Go straight to monicas view and send it to shiv")
-            
+        if indexPath.section == 0 {
+            //figure out networkCall for shiv
+        }
+        else {
+            let optionsVC = OptionsViewController()
+            if recentLocations[indexPath.row] is BusStop {
+                optionsVC.destinationBusStop = (recentLocations[indexPath.row] as! BusStop)
+            } else {
+                optionsVC.destinationPlaceResult = (recentLocations[indexPath.row] as! PlaceResult)
+            }
+            navigationController?.navigationItem.titleView = nil
+            optionsVC.title = "TESTEST"
+            navigationController?.pushViewController(optionsVC, animated: true)
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
-    
-    
+
     func getDetailText(reuseIdentifier: String, index: Int) -> String? {
         if reuseIdentifier == "searchResults" {
             let detailString = (recentLocations[index] as! PlaceResult).detail!
@@ -141,13 +141,15 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         return nil
     }
     
-    
     func getTableViewCell(indexPath: IndexPath) -> UITableViewCell {
-        let isRecentSearchBusStop = indexPath.section == 1 && recentLocations[indexPath.row] is BusStop
-        if indexPath.section == 0 || isRecentSearchBusStop { return tableView.dequeueReusableCell(withIdentifier: "cornellDestinations")! as! BusStopCell }
+        if indexPath.section == 0 {
+           return tableView.dequeueReusableCell(withIdentifier: "cornellDestinations")! as! SearchResultsCell
+        }
+        else if indexPath.section == 1 && recentLocations[indexPath.row] is BusStop {
+            return tableView.dequeueReusableCell(withIdentifier: "busStop")! as! BusStopCell
+        }
         return tableView.dequeueReusableCell(withIdentifier: "searchResults")! as! SearchResultsCell
     }
-    
     
     func getRecentLocationTitle(indexPath: IndexPath) -> String {
         if let recentLocation = recentLocations[indexPath.row] as? BusStop {
