@@ -43,7 +43,8 @@ class Path: GMSPolyline {
         self.color = color
         
         self.polylineWidth = pathType == .Driving ? 4 : 6
-        self.untraveledPath = GMSMutablePath(fromEncodedPath: getPolyline())
+        self.untraveledPath = createPathFromWaypoints(waypoints: waypoints)
+        //old code: GMSMutablePath(fromEncodedPath: getPolyline())
         self.traveledPath = untraveledPath
         
         self.path = untraveledPath
@@ -58,6 +59,14 @@ class Path: GMSPolyline {
         
     }
     
+    func createPathFromWaypoints(waypoints: [Waypoint]) -> GMSMutablePath {
+        let path = GMSMutablePath()
+        for waypoint in waypoints {
+            path.add(CLLocationCoordinate2D(latitude: waypoint.lat, longitude: waypoint.long))
+        }
+        return path
+    }
+    
     func getPolyline() -> String {
         if waypoints.count < 2 { return "" }
         
@@ -67,7 +76,7 @@ class Path: GMSPolyline {
         let baseDirectionsURL = "https://maps.googleapis.com/maps/api/directions/json?"
         let originQuery = "origin=\(origin.lat),\(origin.long)"
         let destinationQuery = "destination=\(destination.lat),\(destination.long)"
-        let waypointsQuery = "waypoints=optimize:false"
+        let waypointsQuery = "waypoints=optimize:true"
         
         var directionsURLString = "\(baseDirectionsURL)\(originQuery)&\(destinationQuery)"
         

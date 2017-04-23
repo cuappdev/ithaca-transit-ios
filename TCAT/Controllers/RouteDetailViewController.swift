@@ -50,7 +50,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     init (route: Route? = nil) {
         super.init(nibName: nil, bundle: nil)
         if route == nil {
-            initializeTestingData()
+            // initializeTestingData()
+            
         } else {
             initializeRoute(route: route!)
         }
@@ -70,8 +71,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             if skipDirection { skipDirection = false; continue }
             
             let direction = directions[index]
-            let originLatitude = CGFloat(direction.location.coordinate.latitude)
-            let originLongitude = CGFloat(direction.location.coordinate.longitude)
+            let originLatitude = direction.location.coordinate.latitude
+            let originLongitude = direction.location.coordinate.longitude
             
             if let walkDirection = direction as? WalkDirection {
                 
@@ -79,8 +80,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 
                 // If last walk direction, use destintion waypoint; otherwise, don't
                 let type: WaypointType = (index == directions.count - 1) ? .Destination : .None
-                let endLatitude = CGFloat(walkDirection.destinationLocation.coordinate.latitude)
-                let endLongitude = CGFloat(walkDirection.destinationLocation.coordinate.longitude)
+                let endLatitude = walkDirection.destinationLocation.coordinate.latitude
+                let endLongitude = walkDirection.destinationLocation.coordinate.longitude
                 let end = Waypoint(lat: endLatitude, long: endLongitude, wpType: type)
                 
                 let walkPath = Path(waypoints: [origin, end], pathType: .Walking, color: .tcatBlueColor)
@@ -100,7 +101,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                         default : return .None
                         } // show stop waypoint in middle of route, origin for start, none otherwise
                     }()
-                    let point = Waypoint(lat: CGFloat(coord.latitude), long: CGFloat(coord.longitude),
+                    let point = Waypoint(lat: coord.latitude, long: coord.longitude,
                                          wpType: type, busNumber: busDirection.routeNumber)
                     routeWaypoints.append(point)
                 }
@@ -122,8 +123,15 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        formatNavigationController()
-        initializeDetailView()
+        
+        let _ = Network.getTestRoute().perform(withSuccess: { (route) in
+            self.initializeRoute(route: route)
+            self.formatNavigationController()
+            self.initializeDetailView()
+        }) { (error) in
+            print(error)
+        }
+        
         
         // Set up Location Manager
         locationManager.delegate = self
@@ -199,10 +207,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     func drawMapRoute() {
         
         // see below comment
-        var minLat: CGFloat = CGFloat.greatestFiniteMagnitude
-        var maxLat: CGFloat = -1 * CGFloat.greatestFiniteMagnitude
-        var minLong: CGFloat = CGFloat.greatestFiniteMagnitude
-        var maxLong: CGFloat = -1 * CGFloat.greatestFiniteMagnitude
+        var minLat: Double = .greatestFiniteMagnitude
+        var maxLat: Double = -1 * .greatestFiniteMagnitude
+        var minLong: Double = .greatestFiniteMagnitude
+        var maxLong: Double = -1 * .greatestFiniteMagnitude
         
         func drawWaypoints(waypoints: [Waypoint]) {
             for waypoint in waypoints {
@@ -287,6 +295,13 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let waypointsB = [Waypoint(lat: 42.445220, long: -76.481615, wpType: .Origin),
                           Waypoint(lat: 42.443146, long: -76.479534, wpType: .Destination)]
         
+        let _ = Network.getTestRoute().perform(withSuccess: { (route) in
+            self.initializeRoute(route: route)
+        }) { (error) in
+            print(error)
+        }
+        
+        
         routePaths = [
             
             Path(waypoints: waypointsA, pathType: .Walking, color: .tcatBlueColor),
@@ -346,6 +361,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     /** Reset search */
     func cancelAction() {
         navigationController?.popToRootViewController(animated: true)
+        // view.window?.rootViewController?.dismiss(animated: true, completion: nil)
     }
     
     /** Animate detailTableView back onto screen, centering map */

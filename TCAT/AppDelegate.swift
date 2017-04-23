@@ -26,10 +26,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
         // Initalize window without storyboard
-        let rootVC = HomeViewController()
+        let rootVC = RouteDetailViewController() //HomeViewController()
         let navigationController = UINavigationController(rootViewController: rootVC)
-        navigationController.navigationBar.barTintColor = .white
-        navigationController.navigationBar.isTranslucent = false
+        // navigationController.navigationBar.barTintColor = .white
+        // navigationController.navigationBar.isTranslucent = false
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
