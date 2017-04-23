@@ -71,20 +71,21 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             if skipDirection { skipDirection = false; continue }
             
             let direction = directions[index]
-            let originLatitude = direction.location.coordinate.latitude
-            let originLongitude = direction.location.coordinate.longitude
             
             if let walkDirection = direction as? WalkDirection {
                 
-                let origin = Waypoint(lat: originLatitude, long: originLongitude, wpType: .Origin)
+                var walkWaypoints: [Waypoint] = []
+                if !walkDirection.path.isEmpty {
+                    let type: WaypointType = (index == directions.count - 1) ? .Destination : .None
+                    for walkWaypoint in walkDirection.path {
+                        let waypoint = Waypoint(lat: walkWaypoint.latitude, long: walkWaypoint.longitude, wpType: type)
+                        walkWaypoints.append(waypoint)
+                    }
+                } else {
+                    print("error: walkDirection.path is empty")
+                }
                 
-                // If last walk direction, use destintion waypoint; otherwise, don't
-                let type: WaypointType = (index == directions.count - 1) ? .Destination : .None
-                let endLatitude = walkDirection.destinationLocation.coordinate.latitude
-                let endLongitude = walkDirection.destinationLocation.coordinate.longitude
-                let end = Waypoint(lat: endLatitude, long: endLongitude, wpType: type)
-                
-                let walkPath = Path(waypoints: [origin, end], pathType: .Walking, color: .tcatBlueColor)
+                let walkPath = Path(waypoints: walkWaypoints, pathType: .Walking, color: .tcatBlueColor)
                 routePaths.append(walkPath)
                 
             }
@@ -336,13 +337,15 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         // back button
         let backButton = UIButton(type: .system)
-        backButton.setImage(UIImage(named: "back"), for: .normal)
+        backButton.setImage(UIImage(named: "Back"), for: .normal)
         let attributedString = NSMutableAttributedString(string: "  Back")
         // raise back button text a hair - attention to detail, baby
         attributedString.addAttribute(NSBaselineOffsetAttributeName, value: 0.3, range: NSMakeRange(0, attributedString.length))
         backButton.setAttributedTitle(attributedString, for: .normal)
         backButton.sizeToFit()
-        self.navigationItem.setLeftBarButton(UIBarButtonItem(customView: backButton), animated: true)
+        let barButtonBackItem = UIBarButtonItem(customView: backButton)
+        barButtonBackItem.action = #selector(backAction)
+        self.navigationItem.setLeftBarButton(barButtonBackItem, animated: true)
         
     }
     
@@ -361,7 +364,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     /** Reset search */
     func cancelAction() {
         navigationController?.popToRootViewController(animated: true)
-        // view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+    }
+    
+    func backAction() {
+        navigationController?.popViewController(animated: true)
     }
     
     /** Animate detailTableView back onto screen, centering map */

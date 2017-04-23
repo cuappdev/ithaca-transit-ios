@@ -32,19 +32,15 @@ extension UIColor {
     }
 }
 
-/** Return the amount of time, in seconds, to walk from start to end */
-func calculateTravelTime(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D,
-                         _ completionHandler: @escaping (TimeInterval?) -> ()) {
-    
-    let request = MKDirectionsRequest()
-    request.source = MKMapItem(placemark: MKPlacemark(coordinate: start, addressDictionary: [:]))
-    request.destination = MKMapItem(placemark: MKPlacemark(coordinate: end, addressDictionary: [:]))
-    request.transportType = .walking
-    let directions = MKDirections(request: request)
-    directions.calculateETA { (response, error) in
-        if error != nil { completionHandler(response?.expectedTravelTime) }
+extension MKPolyline {
+    public var coordinates: [CLLocationCoordinate2D] {
+        var coords = [CLLocationCoordinate2D](repeating: kCLLocationCoordinate2DInvalid,
+                                              count: self.pointCount)
+        
+        self.getCoordinates(&coords, range: NSRange(location: 0, length: self.pointCount))
+        
+        return coords
     }
-    
 }
 
 /** Round specific corners of UIView */
@@ -78,5 +74,13 @@ extension String {
         let first = String(characters.prefix(1)).capitalized
         let other = String(characters.dropFirst()).lowercased()
         return first + other
+    }
+}
+
+extension Double {
+    /// Rounds the double to decimal places value
+    mutating func roundToPlaces(places:Int) -> Double {
+        let divisor = pow(10.0, Double(places))
+        return Darwin.round(self * divisor) / divisor
     }
 }

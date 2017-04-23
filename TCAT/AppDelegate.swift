@@ -37,7 +37,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if userDefaults.value(forKey: "recentSearch") == nil {
             userDefaults.set([Any](), forKey: "recentSearch")
         }
-
+        
+        Network.getAllStops().perform(withSuccess: { stops in
+            self.userDefaults.set([BusStop](), forKey: "allBusStops")
+            let allBusStops = stops.allStops
+            let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
+            self.userDefaults.set(data, forKey: "allBusStops")
+        })
+        
         return true
     }
     
