@@ -91,6 +91,19 @@ class ArriveDirection: Direction {
     
 }
 
+/** Representation of the distance (meters) and expectedTravelTime (seconds) of a walking route */
+class WalkDirectionResult {
+    
+    var distance: CLLocationDistance // meters
+    var time: TimeInterval // seconds
+    
+    init(distance: CLLocationDistance, time: TimeInterval) {
+        self.distance = distance
+        self.time = time
+    }
+    
+}
+
 class WalkDirection: Direction {
     
     var time: Date
@@ -119,10 +132,10 @@ class WalkDirection: Direction {
         self.path = path
     }
     
-    /** Return the amount of time (seconds) to walk between two points between two points. Also
-      calulcates CLLocationCoordinate2D path to walk between points and updates path variable automatically */
+    /** Return a WalkDirectionResult (see spec) between two points. Also calulcates CLLocationCoordinate2D path to
+     walk between points and updates path variable automatically */
     func calculateWalkingDirections(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D,
-                                    _ completionHandler: @escaping (TimeInterval) -> Void) {
+                                    _ completionHandler: @escaping (WalkDirectionResult) -> Void) {
         
         let request = MKDirectionsRequest()
         request.source = MKMapItem(placemark: MKPlacemark(coordinate: start, addressDictionary: [:]))
@@ -133,7 +146,8 @@ class WalkDirection: Direction {
         directions.calculate { (response, error) in
             if let route = response?.routes.first {
                 self.path = route.polyline.coordinates
-                completionHandler(route.expectedTravelTime)
+                let walkDirectionResult = WalkDirectionResult(distance: route.distance, time: route.expectedTravelTime)
+                completionHandler(walkDirectionResult)
             }
         }
     }
