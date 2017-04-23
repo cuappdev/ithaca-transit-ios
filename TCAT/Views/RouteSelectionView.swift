@@ -10,11 +10,13 @@ import UIKit
 
 class RouteSelectionView: UIView {
     
+    var searchBar: SearchBarView!
+
     var fromToView: UIView!
     var fromLabel: UILabel!
     var toLabel: UILabel!
-    var fromSearch: UITextField!
-    var toSearch: UITextField!
+    var fromSearch: UIButton!
+    var toSearch: UIButton!
     
     var timeButton: UIButton!
     
@@ -22,21 +24,31 @@ class RouteSelectionView: UIView {
     let leadingSpace: CGFloat = 17.5
     let topSpace: CGFloat = 21.5
     let btnLabelSpace: CGFloat = 16.0
+    let searchTextSpaceFromLeft: CGFloat = 12.0
+    let searchHeight: CGFloat = 28
     let searchTrailingSpace: CGFloat = 12.0
     let topBottomTimeSpace: CGFloat = 9.0
     let timeButtonHeight: CGFloat = 40.0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+
         fromLabel = UILabel(frame: CGRect(x: leadingSpace, y: 0, width: 40, height: 20))
         fromLabel.text = "From"
         fromLabel.sizeToFit()
         fromLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
         fromLabel.textColor = .black
         
-        fromSearch = UITextField(frame: CGRect(x: fromLabel.frame.maxX + btnLabelSpace, y: topSpace, width: 277, height: 28))
+        fromSearch = UIButton(frame: CGRect(x: fromLabel.frame.maxX + btnLabelSpace, y: topSpace, width: 277, height: searchHeight))
+        fromSearch.backgroundColor = .tableBackgroundColor
+        fromSearch.setTitleColor(.primaryTextColor, for: .normal)
+        fromSearch.titleLabel?.font = UIFont(name: "SFUIText-Regular", size: 14.0)
+        fromSearch.contentHorizontalAlignment = .left
+        fromSearch.contentEdgeInsets = UIEdgeInsetsMake(0, searchTextSpaceFromLeft, 0, 0)
+        fromSearch.layer.cornerRadius = searchHeight/4
+        fromSearch.layer.masksToBounds = true
         fromLabel.center.y = fromSearch.center.y
-        fromSearch.backgroundColor = .yellow
+
         
         toLabel = UILabel(frame: CGRect(x: fromLabel.frame.minX, y: 0, width: 20, height: 20))
         toLabel.text = "To"
@@ -44,9 +56,15 @@ class RouteSelectionView: UIView {
         toLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
         toLabel.textColor = .black
         
-        toSearch = UITextField(frame: CGRect(x: toLabel.frame.maxX + btnLabelSpace, y: fromSearch.frame.maxY + leadingSpace, width: 277, height: 28))
+        toSearch = UIButton(frame: CGRect(x: toLabel.frame.maxX + btnLabelSpace, y: fromSearch.frame.maxY + leadingSpace, width: fromSearch.frame.width, height: fromSearch.frame.height))
+        toSearch.backgroundColor = .tableBackgroundColor
+        toSearch.setTitleColor(.primaryTextColor, for: .normal)
+        toSearch.titleLabel?.font = UIFont(name: "SFUIText-Regular", size: 14.0)
+        toSearch.contentHorizontalAlignment = .left
+        toSearch.contentEdgeInsets = UIEdgeInsetsMake(0, searchTextSpaceFromLeft, 0, 0)
+        toSearch.layer.cornerRadius = fromSearch.layer.cornerRadius
+        toSearch.layer.masksToBounds = true
         toLabel.center.y = toSearch.center.y
-        toSearch.backgroundColor = .yellow
         
         timeButton = UIButton(frame: CGRect(x: 0, y: 0, width: self.frame.width, height: timeButtonHeight))
         timeButton.setImage(#imageLiteral(resourceName: "clock"), for: .normal)
@@ -74,7 +92,7 @@ class RouteSelectionView: UIView {
         fromSearchFrame.size.width = self.frame.width - fromSearch.frame.minX - searchTrailingSpace
         fromSearch.frame = fromSearchFrame
         
-        toSearch.frame = CGRect(x: fromSearch.frame.minX, y: fromSearch.frame.maxY + topSpace, width: fromSearch.frame.width, height: fromSearch.frame.height)
+        toSearch.frame = CGRect(x: fromSearch.frame.minX, y: fromSearch.frame.maxY + (topSpace/2), width: fromSearch.frame.width, height: fromSearch.frame.height) //Divide topSpace by 2 to account for searchBar white border
         
         //Add views as subviews
         addSubview(fromToView)
@@ -84,6 +102,7 @@ class RouteSelectionView: UIView {
         fromToView.addSubview(toLabel)
         addSubview(timeButton)
     }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

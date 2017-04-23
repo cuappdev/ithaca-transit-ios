@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import MapKit
 
 protocol Direction {
     var time: Date {get set}
@@ -22,10 +23,10 @@ protocol Direction {
  * let outbound: String = Bound.inbound.rawValue //"outbound"
  */
 enum Bound: String {
-    case inbound, outbound
+    case inbound, outbound, loop
 }
 
-struct DepartDirection: Direction {
+class DepartDirection: Direction {
     
     var time: Date
     var place: String
@@ -68,7 +69,7 @@ struct DepartDirection: Direction {
     
 }
 
-struct ArriveDirection: Direction {
+class ArriveDirection: Direction {
     
     var time: Date
     var place: String
@@ -90,7 +91,7 @@ struct ArriveDirection: Direction {
     
 }
 
-struct WalkDirection: Direction {
+class WalkDirection: Direction {
     
     var time: Date
     var place: String
@@ -103,16 +104,38 @@ struct WalkDirection: Direction {
         return formatter.string(from: time)
     }
     var location: CLLocation
+    var path: [CLLocationCoordinate2D]
     
     var travelDistance: Double
     var destinationLocation: CLLocation
     
     init(time: Date, place: String, location: CLLocation, travelDistance: Double, 
-         destination: CLLocation) {
+         destination: CLLocation, path: [CLLocationCoordinate2D] = []) {
         self.time = time
         self.place = place
         self.location = location
         self.travelDistance = travelDistance
         self.destinationLocation = destination
+        self.path = path
     }
+    
+    /** Return the amount of time (seconds) to walk between two points between two points. Also
+      calulcates CLLocationCoordinate2D path to walk between points and updates path variable automatically */
+    func calculateWalkingDirections(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D,
+                                    _ completionHandler: @escaping (TimeInterval) -> Void) {
+        
+        let request = MKDirectionsRequest()
+        request.source = MKMapItem(placemark: MKPlacemark(coordinate: start, addressDictionary: [:]))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: end, addressDictionary: [:]))
+        request.transportType = .walking
+        request.requestsAlternateRoutes = false
+        let directions = MKDirections(request: request)
+        directions.calculate { (response, error) in
+            if let route = response?.routes.first {
+                self.path = route.polyline.coordinates
+                completionHandler(route.expectedTravelTime)
+            }
+        }
+    }
+    
 }

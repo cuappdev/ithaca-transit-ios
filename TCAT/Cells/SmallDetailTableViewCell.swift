@@ -53,7 +53,7 @@ class SmallDetailTableViewCell: UITableViewCell {
             titleLabel.attributedText = bold(pattern: busDirection.place, in: busDirection.placeDescription)
         } else {
             let walkDirection = direction as! WalkDirection
-            let walkString = walkDirection.placeDescription + " (\(walkDirection.travelDistance) mi)"
+            let walkString = walkDirection.placeDescription + " (\(walkDirection.travelDistance.roundToPlaces(places: 1)) mi)"
             titleLabel.attributedText = bold(pattern: walkDirection.place, in: walkString)
         }
         
