@@ -6,8 +6,8 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import Foundation
 import UIKit
+import CoreLocation
 
 enum WaypointType: String {
     case Origin
@@ -21,13 +21,13 @@ class Waypoint: NSObject {
     let smallDiameter: CGFloat = 12
     let largeDiameter: CGFloat = 16
     
-    var lat: CGFloat = 0
-    var long: CGFloat = 0
+    var lat: CLLocationDegrees = 0
+    var long: CLLocationDegrees = 0
     var wpType: WaypointType = .Origin
     var iconView: UIView = UIView()
     var busNumber: Int = 0
     
-    init(lat: CGFloat, long: CGFloat, wpType: WaypointType, busNumber: Int = 0) {
+    init(lat: CLLocationDegrees, long: CLLocationDegrees, wpType: WaypointType, busNumber: Int = 0) {
         super.init()
         self.lat = lat
         self.long = long
