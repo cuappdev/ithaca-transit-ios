@@ -22,7 +22,6 @@ class SearchBarView: UIView, UISearchControllerDelegate {
         UIBarButtonItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName:UIColor.black], for: .normal)
 
         resultsViewController = SearchResultsTableViewController()
-        print("Inside search bar init")
         searchController = UISearchController(searchResultsController: resultsViewController)
         searchController?.searchResultsUpdater = resultsViewController
         searchController?.searchBar.isTranslucent = true
@@ -41,9 +40,6 @@ class SearchBarView: UIView, UISearchControllerDelegate {
         searchController?.dimsBackgroundDuringPresentation = false
         searchController?.hidesNavigationBarDuringPresentation = false
         searchController?.definesPresentationContext = false
-        
-        print("SearchResultsTableViewController/searchResultsController: \(resultsViewController)")
-        print("Search controller: \(searchController)")
     }
     
     required init?(coder aDecoder: NSCoder) {
