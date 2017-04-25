@@ -51,7 +51,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         super.init(nibName: nil, bundle: nil)
         if route == nil {
             // initializeTestingData()
-            
         } else {
             initializeRoute(route: route!)
         }
@@ -125,14 +124,15 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let _ = Network.getTestRoute().perform(withSuccess: { (route) in
-            self.initializeRoute(route: route)
-            self.formatNavigationController()
-            self.initializeDetailView()
+        let _ = Network.getTestRoute().perform(withSuccess: { (routes) in
+            if let firstRoute = routes.first {
+                self.initializeRoute(route: firstRoute)
+                self.formatNavigationController()
+                self.initializeDetailView()
+            }
         }) { (error) in
             print(error)
         }
-        
         
         // Set up Location Manager
         locationManager.delegate = self
@@ -295,13 +295,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                           Waypoint(lat: 42.445220, long: -76.481615, wpType: .None)]
         let waypointsB = [Waypoint(lat: 42.445220, long: -76.481615, wpType: .Origin),
                           Waypoint(lat: 42.443146, long: -76.479534, wpType: .Destination)]
-        
-        let _ = Network.getTestRoute().perform(withSuccess: { (route) in
-            self.initializeRoute(route: route)
-        }) { (error) in
-            print(error)
-        }
-        
         
         routePaths = [
             
