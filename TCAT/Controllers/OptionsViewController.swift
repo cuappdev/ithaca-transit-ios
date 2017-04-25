@@ -129,7 +129,8 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         if CLLocationManager.locationServicesEnabled() {
             if CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedWhenInUse
                 || CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedAlways {
-                locationManager.startUpdatingLocation()
+                // locationManager.startUpdatingLocation() // FIX to stop endless location delivery
+                locationManager.requestLocation()
             }
             else{
                 locationManager.requestWhenInUseAuthorization()
@@ -186,6 +187,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Schwartz Center", "Commons - Seneca Street"], mainStopsNums: [90, 32, -1], travelDistance: 0.1)
         
         loaderroutes = [route1, route2, route3]
+        routes = loaderroutes
         
     }
     
@@ -249,7 +251,8 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         print("didChangeAuthorization")
         if status == CLAuthorizationStatus.authorizedWhenInUse
             || status == CLAuthorizationStatus.authorizedAlways {
-            locationManager.startUpdatingLocation()
+            // locationManager.startUpdatingLocation() // FIX to stop endless location delivery
+            locationManager.requestLocation()
         }
         else{
             //other procedures when location service is not permitted.
