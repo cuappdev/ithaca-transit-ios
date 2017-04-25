@@ -78,8 +78,8 @@ class Network {
         return request
     }
     
-    class func getTestRoute() -> APIRequest<Route, Error> {
-        let request: APIRequest<Route, Error> = tron.request("routeTestingJSON.json")
+    class func getTestRoute() -> APIRequest<Array<Route>, Error> {
+        let request: APIRequest<Array<Route>, Error> = tron.request("routeTestingJSON.json")
         request.method = .get
         return request
     }
