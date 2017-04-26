@@ -29,7 +29,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     
     var mapView: GMSMapView!
     var routePaths: [Path] = []
-    var myLocations: (previous: CLLocationCoordinate2D?, current: CLLocationCoordinate2D?)
+    var currentLocation: CLLocationCoordinate2D?
     var bounds = GMSCoordinateBounds()
     
     var route: Route!
@@ -49,15 +49,17 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
      * such as ArriveDirection always comes after DepartDirection. */
     init (route: Route? = nil) {
         super.init(nibName: nil, bundle: nil)
+        print("INIT")
         if route == nil {
             // initializeTestingData()
         } else {
-            initializeRoute(route: route!)
+            
         }
     }
     
     func initializeRoute(route: Route) {
         
+        print("INIT ROUTE")
         self.route = route
         self.directions = route.directions
         
@@ -114,6 +116,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             
         }
         
+        print("INIT FINISHED")
+        
     }
     
     required convenience init(coder aDecoder: NSCoder) {
@@ -124,8 +128,11 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        print("VDL")
+        
         let _ = Network.getTestRoute().perform(withSuccess: { (routes) in
             if let firstRoute = routes.first {
+                print("COMPLETION")
                 self.initializeRoute(route: firstRoute)
                 self.formatNavigationController()
                 self.initializeDetailView()
@@ -140,6 +147,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         locationManager.distanceFilter = 10
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+        
+        print("VDL FINISHED")
     }
     
     override func loadView() {
@@ -173,12 +182,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
                 
         if let newCoord = locations.last?.coordinate {
-            if let current = myLocations.current {
-                myLocations.previous = current
-            } else {
-                myLocations.previous = CLLocationCoordinate2D(latitude: newCoord.latitude, longitude: newCoord.longitude)
-            }
-            myLocations.current = CLLocationCoordinate2D(latitude: newCoord.latitude, longitude: newCoord.longitude)
+            currentLocation = newCoord
         }
         
         if isInitialView() { drawMapRoute() }
@@ -326,7 +330,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         // right button
         self.navigationItem.leftBarButtonItem?.setTitleTextAttributes(otherAttributes, for: .normal)
-        let cancelButton = UIBarButtonItem(title: "Exit", style: .plain, target: self, action: #selector(cancelAction))
+        let cancelButton = UIBarButtonItem(title: "Exit", style: .plain, target: self, action: #selector(exitAction))
         cancelButton.setTitleTextAttributes(otherAttributes, for: .normal)
         self.navigationItem.setRightBarButton(cancelButton, animated: true)
         
@@ -357,12 +361,11 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     }
     
     /** Reset search */
-    func cancelAction() {
+    func exitAction() {
+        navigationController?.popToRootViewController(animated: true)
         if let homeViewController = navigationController?.viewControllers.first as? HomeViewController {
             homeViewController.searchBar.resultsViewController?.dismiss(animated: false, completion: nil)
         }
-        navigationController?.popToRootViewController(animated: true)
-        
     }
     
     func backAction() {
