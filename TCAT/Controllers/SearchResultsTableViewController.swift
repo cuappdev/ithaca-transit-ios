@@ -114,17 +114,15 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 && !isRecentLocationsEmpty {
-            print(tableView.numberOfSections)
-            print(sections.count)
+        if indexPath.section == 0 && isSearchEmpty() {
             if let placeResult = recentLocations[indexPath.row] as? PlaceResult {
                 destinationDelegate?.didSelectDestination(busStop: nil, placeResult: placeResult)
             } else {
                 destinationDelegate?.didSelectDestination(busStop: recentLocations[indexPath.row] as? BusStop, placeResult: nil)
             }
-            
         } else {
-            if isSearchEmpty() { destinationDelegate?.didSelectDestination(busStop: busStops[sections[indexPath.section - sectionExtraIndex].index + indexPath.row], placeResult: nil)
+            if isSearchEmpty() {
+                destinationDelegate?.didSelectDestination(busStop: busStops[sections[indexPath.section - sectionExtraIndex].index + indexPath.row], placeResult: nil)
                 insertRecentLocation(location: busStops[indexPath.row])
             }
             else {
