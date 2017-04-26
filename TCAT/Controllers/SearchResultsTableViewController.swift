@@ -64,6 +64,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
         tableView.sectionIndexColor = .primaryTextColor
         tableView.keyboardDismissMode = .onDrag
         tableView.backgroundColor = .tableBackgroundColor
+        tableView.reloadData()
     }
     
     override func didReceiveMemoryWarning() {
@@ -113,7 +114,9 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 && tableView.numberOfSections == sections.count + sectionExtraIndex {
+        if indexPath.section == 0 && !isRecentLocationsEmpty {
+            print(tableView.numberOfSections)
+            print(sections.count)
             if let placeResult = recentLocations[indexPath.row] as? PlaceResult {
                 destinationDelegate?.didSelectDestination(busStop: nil, placeResult: placeResult)
             } else {
@@ -121,7 +124,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
             }
             
         } else {
-            if isSearchEmpty() { destinationDelegate?.didSelectDestination(busStop: busStops[indexPath.row], placeResult: nil)
+            if isSearchEmpty() { destinationDelegate?.didSelectDestination(busStop: busStops[sections[indexPath.section - sectionExtraIndex].index + indexPath.row], placeResult: nil)
                 insertRecentLocation(location: busStops[indexPath.row])
             }
             else {
@@ -184,14 +187,21 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
     }
     
     /* Search Bar Methods */
-    func updateSearchResults(for searchController: UISearchController) {
-        searchController.searchResultsController?.view.isHidden = false
-    }
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+    func clearSearch() {
         searchString = ""
         searchResults = []
         tableView.reloadData()
+    }
+    func updateSearchResults(for searchController: UISearchController) {
+        searchController.searchResultsController?.view.isHidden = false
+        if searchController.searchBar.text == "" {
+            clearSearch()
+        }
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        clearSearch()
         searchBarCancelDelegate?.didCancel()
     }
     
