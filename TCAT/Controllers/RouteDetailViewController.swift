@@ -232,6 +232,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         }
         
         for routePath in routePaths {
+            print(routePath.waypoints)
+            print("\n")
             routePath.traveledPolyline.map = mapView
             routePath.map = mapView
             drawWaypoints(waypoints: routePath.waypoints)
@@ -356,7 +358,11 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     
     /** Reset search */
     func cancelAction() {
+        if let homeViewController = navigationController?.viewControllers.first as? HomeViewController {
+            homeViewController.searchBar.resultsViewController?.dismiss(animated: false, completion: nil)
+        }
         navigationController?.popToRootViewController(animated: true)
+        
     }
     
     func backAction() {
