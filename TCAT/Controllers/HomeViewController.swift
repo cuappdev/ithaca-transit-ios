@@ -42,7 +42,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         navigationItem.titleView = searchBar.searchController?.searchBar
         self.definesPresentationContext = true
         
-        
         let tableViewFrame = CGRect(x: 0, y: searchBar.frame.maxY, width: view.bounds.width, height: view.bounds.height - searchBar.bounds.height)
         tableView = UITableView(frame: tableViewFrame, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
@@ -57,6 +56,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewWillAppear(_ animated: Bool) {
         self.definesPresentationContext = true
+        print("viewWillAppear")
     }
     
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?) {
@@ -68,6 +68,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         } else {
             optionsVC.searchTo = (.placeresult, placeResult)
         }
+        let date1 = Time.date(from: "3:45 PM")
+        let date2 = Time.date(from: "3:52 PM")
+        let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
+//        let routeVC = RouteDetailViewController(route: route1)
         navigationController?.pushViewController(optionsVC, animated: true)
     }
     
@@ -125,6 +129,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 optionsVC.searchTo = (.placeresult, placeResult)
             }
             self.definesPresentationContext = false //else going to try and present optionVC on homeVC when in optionVC
+            let date1 = Time.date(from: "3:45 PM")
+            let date2 = Time.date(from: "3:52 PM")
+            let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
+            let routeVC = RouteDetailViewController(route: route1)
             navigationController?.pushViewController(optionsVC, animated: true)
         }
         tableView.deselectRow(at: indexPath, animated: true)

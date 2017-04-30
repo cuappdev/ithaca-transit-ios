@@ -70,8 +70,11 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         //Set up navigation bar
-        self.title = "Route Options"
-
+        let titleAttributes: [String : Any] = [NSFontAttributeName : UIFont(name :".SFUIText", size: 18)!,
+                                               NSForegroundColorAttributeName : UIColor.black]
+        title = "Route Options"
+        navigationController?.navigationBar.titleTextAttributes = titleAttributes //so title actually shows up
+        
         //Set up route selection view
         routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 150))
         routeSelection.backgroundColor = .lineColor
