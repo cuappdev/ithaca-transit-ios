@@ -13,10 +13,8 @@ import SwiftyJSON
 
 /* 2Do:
   * Make Github issue for Shiv
-  * current location = lmm.requestLocation()
   * Add Matt's logic
   * My title is not showing up??
-  * Cancel button does not hide searchController??
   * Austin to Mine's = fix back button to Matt's custom back button
   * deque = the line keeps showing up ??
   * Loader = fix
@@ -47,7 +45,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     //Search bar
     var searchBarView: SearchBarView!
-    var locationManager: CLLocationManager = CLLocationManager()
+    var locationManager: CLLocationManager!
         //Fill search data w/ default values
     var searchType: SearchType = .from //for search bar
     var searchFrom: (SearchObject, AnyObject?) = (.busstop, nil)
@@ -72,7 +70,8 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         //Set up navigation bar
-//        navigationController?.navigationBar.topItem?.title = "Route Options"
+        self.title = "Route Options"
+
         //Set up route selection view
         routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 150))
         routeSelection.backgroundColor = .lineColor
@@ -85,10 +84,11 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         //Set up search bar for my view
         searchBarView = SearchBarView()
         searchBarView.resultsViewController?.destinationDelegate = self
+        searchBarView.resultsViewController?.searchBarCancelDelegate = self
         searchBarView.searchController?.searchBar.sizeToFit()
         self.definesPresentationContext = true
             //Hide search bar
-        navigationItem.titleView = nil
+//        navigationItem.titleView = nil
         searchBarView.searchController?.isActive = false
         routeSelection.toSearch.addTarget(self, action: #selector(self.searchingTo), for: .touchUpInside)
         routeSelection.fromSearch.addTarget(self, action: #selector(self.searchingFrom), for: .touchUpInside)
@@ -104,24 +104,11 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
         }
         
-
-        //Ask user for location
-//        locationManager = CLLocationManager()
-//        if CLLocationManager.authorizationStatus() == .notDetermined {
-//            locationManager.requestWhenInUseAuthorization()
-//        }
-//        
-//        //Use users current location if no starting point set
-//        if CLLocationManager.locationServicesEnabled() {
-//            let locationManager = CLLocationManager()
-//            locationManager.delegate = self
-//            locationManager.desiredAccuracy = kCLLocationAccuracyBest
-//            locationManager.startUpdatingLocation()
-//        }
-        
-        //Ask user for location
+        //Set up location
+        locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.distanceFilter = 10
         
         //Use users current location if no starting point set
         if CLLocationManager.locationServicesEnabled() {
@@ -132,9 +119,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             else{
                 locationManager.requestWhenInUseAuthorization()
             }
-        }
-        else{
-            //Alert user to open location service, bra bra bra here...
         }
         
         //Set up datepicker
@@ -190,6 +174,8 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     override func viewWillAppear(_ animated: Bool) {
         routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: identifier)
+        self.title = "Route Options"
+
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -215,6 +201,11 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
                     routeResults.reloadData()
                     Network.getBusRoute(startLat: startBus.lat!, startLng: startBus.long!, destLat: endBus.lat!, destLng: endBus.long!).perform(withSuccess: { (routes) in
                         print("success")
+//                        routes.map({ route in
+//                            route.directions.map({ (direction) in
+//                                <#code#>
+//                            })
+//                        })
                         self.routes = routes
                         self.routeResults.reloadData()
                         self.loaded()
@@ -245,35 +236,24 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("error:: \(error)")
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
+        locationManager.stopUpdatingLocation()
+        print("didFailWithError: \(error)")
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        print("didChangeAuthorization")
         if status == CLAuthorizationStatus.authorizedWhenInUse
             || status == CLAuthorizationStatus.authorizedAlways {
             locationManager.requestLocation()
         }
-        else{
-            //other procedures when location service is not permitted.
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error){
-        locationManager.stopUpdatingLocation()
-        print("didFailWithError")
-        print(error)
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("Did update location called")
-//        let locValue:CLLocationCoordinate2D = manager.location!.coordinate
-//        print("locations = \(locValue.latitude) \(locValue.longitude)")
-        if locations.first != nil {
-            print("location:: (location)")
+        //If don't have start location, set to current location
+        if searchFrom.1 == nil, let location = manager.location{
+            searchFrom.1 = BusStop(name: "Current Location", lat: location.coordinate.latitude, long: location.coordinate.longitude)
+            routeSelection.fromSearch.setTitle((searchFrom.1 as? BusStop)?.name, for: .normal)
         }
-        
     }
     
     func searchingTo(sender: UIButton){
@@ -326,6 +306,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func didCancel(){
         //Hide search bar
+        print("delegate called")
         navigationItem.titleView = nil
         searchBarView.searchController?.isActive = false
 
