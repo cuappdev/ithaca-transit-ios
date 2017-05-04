@@ -27,6 +27,7 @@
 		505E00E91E9ED6BC00F09BAE /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = 505E00E81E9ED6BC00F09BAE /* config.json */; };
 		50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A19BAD1E4C214000AD6768 /* HomeViewController.swift */; };
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
+		BF48F1111EB6474A00744937 /* routeTestingJSON.json in Resources */ = {isa = PBXBuildFile; fileRef = BF48F1101EB6474A00744937 /* routeTestingJSON.json */; };
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
 		DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
@@ -99,6 +100,7 @@
 		81725F2EBEBD3D184BFD0635 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
 		8236DFFA6C5F3AB1E6E1B0E4 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
 		97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
+		BF48F1101EB6474A00744937 /* routeTestingJSON.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = routeTestingJSON.json; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
 		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
@@ -271,6 +273,7 @@
 		DD2F98901E50D8C50005F6BC /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				BF48F1101EB6474A00744937 /* routeTestingJSON.json */,
 				503EC3861E969B7D00B3D4D4 /* MOCK_DATA.json */,
 			);
 			name = Data;
@@ -465,6 +468,7 @@
 				DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */,
 				DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */,
 				449A7C801D80D0E80019300C /* Assets.xcassets in Resources */,
+				BF48F1111EB6474A00744937 /* routeTestingJSON.json in Resources */,
 				449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

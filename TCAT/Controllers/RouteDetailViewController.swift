@@ -12,6 +12,7 @@ import UIKit
 import GoogleMaps
 import CoreLocation
 import MapKit
+import SwiftyJSON
 
 struct RouteDetailCellSize {
     static let smallHeight: CGFloat = 60
@@ -29,7 +30,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     
     var mapView: GMSMapView!
     var routePaths: [Path] = []
-    var myLocations: (previous: CLLocationCoordinate2D?, current: CLLocationCoordinate2D?)
+    var currentLocation: CLLocationCoordinate2D?
     var bounds = GMSCoordinateBounds()
     
     var route: Route!
@@ -50,7 +51,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     init (route: Route? = nil) {
         super.init(nibName: nil, bundle: nil)
         if route == nil {
-            // initializeTestingData()
+            let json = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource:
+                "routeTestingJSON", withExtension: "json")!))
+            initializeRoute(route: try! Route(json: json.first!.1))
         } else {
             initializeRoute(route: route!)
         }
@@ -63,6 +66,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         // Construct paths in routePaths based on directions
         var skipDirection: Bool = false
+        
+        if directions.count == 0 { print("Directions array is empty!") }
+
         for index in 0..<directions.count {
             
             // skip parsing of current direction
@@ -123,16 +129,18 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.formatNavigationController()
+        self.initializeDetailView()
         
+        /*
         let _ = Network.getTestRoute().perform(withSuccess: { (routes) in
             if let firstRoute = routes.first {
-                self.initializeRoute(route: firstRoute)
-                self.formatNavigationController()
-                self.initializeDetailView()
+
             }
         }) { (error) in
             print(error)
-        }
+        }*/
         
         // Set up Location Manager
         locationManager.delegate = self
@@ -153,7 +161,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         mapView.isMyLocationEnabled = true
         mapView.settings.compassButton = true
         mapView.settings.myLocationButton = true
-        mapView.setMinZoom(14, maxZoom: 25)
+        mapView.setMinZoom(12, maxZoom: 25)
         
         // most extreme points on TCAT Route map
         let north = 42.61321283145329
@@ -173,16 +181,13 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
                 
         if let newCoord = locations.last?.coordinate {
-            if let current = myLocations.current {
-                myLocations.previous = current
-            } else {
-                myLocations.previous = CLLocationCoordinate2D(latitude: newCoord.latitude, longitude: newCoord.longitude)
-            }
-            myLocations.current = CLLocationCoordinate2D(latitude: newCoord.latitude, longitude: newCoord.longitude)
+            currentLocation = newCoord
         }
         
         if isInitialView() { drawMapRoute() }
-        let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
+        let bottom = (main.height / 2) - (statusNavHeight(includingShadow: false) - 16)
+        let edgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: bottom, right: 0)
+        let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
         mapView.animate(with: update)
         
     }
@@ -207,46 +212,21 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     /** Draw all waypoints initially for all routes in routePaths, plus fill bounds */
     func drawMapRoute() {
         
-        // see below comment
-        var minLat: Double = .greatestFiniteMagnitude
-        var maxLat: Double = -1 * .greatestFiniteMagnitude
-        var minLong: Double = .greatestFiniteMagnitude
-        var maxLong: Double = -1 * .greatestFiniteMagnitude
-        
-        func drawWaypoints(waypoints: [Waypoint]) {
-            for waypoint in waypoints {
+        for routePath in routePaths {
+            
+            routePath.traveledPolyline.map = mapView
+            routePath.map = mapView
+            
+            for waypoint in routePath.waypoints {
                 let coords = CLLocationCoordinate2DMake(CLLocationDegrees(waypoint.lat), CLLocationDegrees(waypoint.long))
                 let marker = GMSMarker(position: coords)
                 marker.iconView = waypoint.iconView
                 marker.userData = waypoint
                 marker.map = mapView
                 bounds = bounds.includingCoordinate(coords)
-                
-                // see below comment
-                if waypoint.long < minLong { minLong = waypoint.long }
-                if waypoint.long > maxLong { maxLong = waypoint.long }
-                if waypoint.lat < minLat { minLat = waypoint.lat }
-                if waypoint.lat > maxLat { maxLat = waypoint.lat }
-                
             }
         }
-        
-        for routePath in routePaths {
-            routePath.traveledPolyline.map = mapView
-            routePath.map = mapView
-            drawWaypoints(waypoints: routePath.waypoints)
-        }
-        
-        // Create dummy waypoint to make route appear in top half of the screen for starting view
-        // Key Assumption: map is oriented where north is "up"
-        
-        // average between min and max
-        let newLong = CLLocationDegrees((minLong + maxLong) / 2) // average
-        // double longest veritcal distance, plus multiplication by constant to simulate padding
-        let newLat = CLLocationDegrees(0.99995 * (maxLat - 2 * abs(maxLat - minLat)))
-        
-        bounds = bounds.includingCoordinate(CLLocationCoordinate2D(latitude: newLat, longitude: newLong))
-        
+
     }
     
     /** Initialize dummy data for route w/ directions and routePaths */
@@ -324,7 +304,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         // right button
         self.navigationItem.leftBarButtonItem?.setTitleTextAttributes(otherAttributes, for: .normal)
-        let cancelButton = UIBarButtonItem(title: "Exit", style: .plain, target: self, action: #selector(cancelAction))
+        let cancelButton = UIBarButtonItem(title: "Exit", style: .plain, target: self, action: #selector(exitAction))
         cancelButton.setTitleTextAttributes(otherAttributes, for: .normal)
         self.navigationItem.setRightBarButton(cancelButton, animated: true)
         
@@ -355,8 +335,11 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     }
     
     /** Reset search */
-    func cancelAction() {
+    func exitAction() {
         navigationController?.popToRootViewController(animated: true)
+        if let homeViewController = navigationController?.viewControllers.first as? HomeViewController {
+            homeViewController.searchBar.resultsViewController?.dismiss(animated: false, completion: nil)
+        }
     }
     
     func backAction() {
@@ -366,10 +349,12 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     /** Animate detailTableView back onto screen, centering map */
     func summaryTapped(_ sender: UITapGestureRecognizer) {
         
-        // Re-center only from middle?
-        if isInitialView() { centerMap() }
-        
         let isSmall = self.detailView.frame.minY == self.smallDetailHeight
+        
+        if isInitialView() || !isSmall {
+            // !isSmall so centering takes place when going from not small to small
+            centerMap()
+        }
         
         UIView.animate(withDuration: 0.25) {
             let point = CGPoint(x: 0, y: isSmall ? self.largeDetailHeight : self.smallDetailHeight)
