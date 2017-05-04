@@ -45,7 +45,7 @@ class Path: GMSPolyline {
         
         self.polylineWidth = pathType == .Driving ? 4 : 6
         self.untraveledPath = createPathFromWaypoints(waypoints: waypoints)
-        //old code: GMSMutablePath(fromEncodedPath: getPolyline())
+        // old code: GMSMutablePath(fromEncodedPath: getPolyline())
         self.traveledPath = untraveledPath
         
         self.path = untraveledPath
