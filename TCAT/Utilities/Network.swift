@@ -56,7 +56,7 @@ class AllBusStops: JSONDecodable {
 class Network {
 
 //    TRON(baseURL: "http://rawgit.com/cuappdev/tcat-ios/1194a64/")
-    static let tron = TRON(baseURL: "http://52.26.153.237/")
+    static let tron = TRON(baseURL: "http://52.26.153.237")
     
     class func getRoutes() -> APIRequest<Route, Error> {
         let request: APIRequest<Route, Error> = tron.request("navigate.json")
@@ -70,7 +70,6 @@ class Network {
         request.method = .get
         return request
     }
-    
     
     class func getPlaceRoute(startLat: Double, startLng: Double, destPlaceID: String) -> APIRequest<Array<Route>, Error> {
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
