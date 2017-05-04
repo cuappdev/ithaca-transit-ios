@@ -21,6 +21,11 @@ class BusStop: NSObject, NSCoding {
         self.long = long
     }
     
+    override func isEqual(_ object: Any?) -> Bool {
+        guard let object = object as? BusStop else {return false}
+        return object.name == name && object.lat == lat && object.long == long
+    }
+    
     // MARK: NSCoding
     required convenience init(coder aDecoder: NSCoder) {
         let name = aDecoder.decodeObject(forKey: "name") as! String
