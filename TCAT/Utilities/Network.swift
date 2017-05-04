@@ -53,7 +53,6 @@ class AllBusStops: JSONDecodable {
  */
 
 class Network {
-    
     //    TRON(baseURL: "http://rawgit.com/cuappdev/tcat-ios/1194a64/")
     static let tron = TRON(baseURL: "http://tcat-dev-env-1.bsjzqmpigt.us-west-2.elasticbeanstalk.com/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")

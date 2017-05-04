@@ -184,7 +184,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     //MARK: Search bar functionality
     func searchForRoutes(){
-        //N2SELF: N2 put in parameters for searchDate & searchDepature
         if searchTime == nil{
             searchTime = Date()
         }
