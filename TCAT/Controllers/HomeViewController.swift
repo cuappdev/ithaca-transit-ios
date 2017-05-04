@@ -151,7 +151,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func getTableViewCell(indexPath: IndexPath) -> UITableViewCell {
-        print("RECENT LOCATIONS COUNT", recentLocations.count, indexPath.row)
         if indexPath.section == 0 {
             return tableView.dequeueReusableCell(withIdentifier: "cornellDestinations")! as! SearchResultsCell
         }
