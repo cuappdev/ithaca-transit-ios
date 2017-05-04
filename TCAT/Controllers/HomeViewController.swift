@@ -51,12 +51,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "searchResults")
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "cornellDestinations")
         view.addSubview(tableView)
-        view.setNeedsLayout()
     }
     
     
     override func viewWillAppear(_ animated: Bool) {
         self.definesPresentationContext = true
+        recentLocations = retrieveRecentLocations()
         tableView.reloadData()
     }
 
@@ -85,8 +85,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let header = view as! UITableViewHeaderFooterView
         header.textLabel?.textColor = .secondaryTextColor
         header.textLabel?.font = tctSectionHeaderFont()
-        header.backgroundColor = .blue
-        header.tintColor = .blue
         header.textLabel?.text = section == 0 ? "Cornell Destinations" : "Recent Searches"
     }
     
@@ -153,9 +151,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func getTableViewCell(indexPath: IndexPath) -> UITableViewCell {
+        print("RECENT LOCATIONS COUNT", recentLocations.count, indexPath.row)
         if indexPath.section == 0 {
             return tableView.dequeueReusableCell(withIdentifier: "cornellDestinations")! as! SearchResultsCell
         }
+            
         else if indexPath.section == 1 && recentLocations[indexPath.row] is BusStop {
             return tableView.dequeueReusableCell(withIdentifier: "busStop")! as! BusStopCell
         }

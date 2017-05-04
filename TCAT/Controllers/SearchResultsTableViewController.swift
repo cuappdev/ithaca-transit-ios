@@ -54,7 +54,6 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
         isRecentLocationsEmpty = recentLocations.isEmpty
         sectionExtraIndex = !isRecentLocationsEmpty ? 1 : 0
         formatSections()
-        definesPresentationContext = true
         extendedLayoutIncludesOpaqueBars = true
         tableView.register(BusStopCell.self, forCellReuseIdentifier: "busStops")
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "searchResults")
