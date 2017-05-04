@@ -148,7 +148,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         locationManager.distanceFilter = 10
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
-        
+
     }
     
     override func loadView() {
@@ -227,8 +227,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 bounds = bounds.includingCoordinate(coords)
             }
             
-        }
-        
+        }     
     }
     
     /** Initialize dummy data for route w/ directions and routePaths */

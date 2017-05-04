@@ -116,7 +116,6 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 && isSearchEmpty() && !isRecentLocationsEmpty {
-
             if let placeResult = recentLocations[indexPath.row] as? PlaceResult {
                 destinationDelegate?.didSelectDestination(busStop: nil, placeResult: placeResult)
             } else {
