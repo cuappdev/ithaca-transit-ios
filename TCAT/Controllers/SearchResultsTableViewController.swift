@@ -54,6 +54,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
         isRecentLocationsEmpty = recentLocations.isEmpty
         sectionExtraIndex = !isRecentLocationsEmpty ? 1 : 0
         formatSections()
+        definesPresentationContext = true
         extendedLayoutIncludesOpaqueBars = true
         tableView.register(BusStopCell.self, forCellReuseIdentifier: "busStops")
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "searchResults")
@@ -115,7 +116,9 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
         if indexPath.section == 0 && isSearchEmpty() && !isRecentLocationsEmpty {
+            insertRecentLocation(location: recentLocations[indexPath.row])
             if let placeResult = recentLocations[indexPath.row] as? PlaceResult {
                 destinationDelegate?.didSelectDestination(busStop: nil, placeResult: placeResult)
             } else {
@@ -123,8 +126,8 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
             }
         } else {
             if isSearchEmpty() {
+                insertRecentLocation(location: busStops[sections[indexPath.section - sectionExtraIndex].index + indexPath.row])
                 destinationDelegate?.didSelectDestination(busStop: busStops[sections[indexPath.section - sectionExtraIndex].index + indexPath.row], placeResult: nil)
-                insertRecentLocation(location: busStops[indexPath.row])
             }
             else {
                 insertRecentLocation(location: searchResults[indexPath.row])
@@ -136,6 +139,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
             }
         }
         tableView.deselectRow(at: indexPath, animated: true)
+        
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -186,11 +190,13 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
     }
     
     /* Search Bar Methods */
-    
     func clearSearch() {
         searchString = ""
         searchResults = []
+        let indexPath = IndexPath(row: 0, section: 0)
+        tableView.scrollToRow(at: indexPath, at: .top, animated: false)
         tableView.reloadData()
+        
     }
     func updateSearchResults(for searchController: UISearchController) {
         searchController.searchResultsController?.view.isHidden = false
@@ -304,7 +310,14 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
     
     func insertRecentLocation(location: Any) {
         let recentLocations = retrieveRecentLocations()
-        var updatedRecentLocations = [location] + recentLocations
+        var filteredLocations = [Any]()
+        if location is BusStop {
+            filteredLocations = recentLocations.filter({ !areObjectsEqual(type: BusStop.self, a: location, b: $0)})
+        } else {
+           filteredLocations = recentLocations.filter({ !areObjectsEqual(type: PlaceResult.self, a: location, b: $0)})
+        }
+        print(filteredLocations.map({$0}))
+        var updatedRecentLocations = [location] + filteredLocations
         if updatedRecentLocations.count > 8 { updatedRecentLocations.remove(at: updatedRecentLocations.count - 1)}
         let data = NSKeyedArchiver.archivedData(withRootObject: updatedRecentLocations)
         userDefaults.set(data, forKey: "recentSearch")

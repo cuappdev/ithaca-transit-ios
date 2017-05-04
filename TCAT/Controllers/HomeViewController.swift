@@ -35,14 +35,13 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         view.backgroundColor = .tableBackgroundColor
-        
+        definesPresentationContext = true
         searchBar = SearchBarView()
         searchBar.resultsViewController?.destinationDelegate = self
         searchBar.searchController?.searchBar.sizeToFit()
         navigationItem.titleView = searchBar.searchController?.searchBar
-        self.definesPresentationContext = true
-        
-        let tableViewFrame = CGRect(x: 0, y: searchBar.frame.maxY, width: view.bounds.width, height: view.bounds.height - searchBar.bounds.height)
+        let tableViewFrame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height - (navigationController?.navigationBar.bounds.height)!)
+
         tableView = UITableView(frame: tableViewFrame, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
@@ -52,13 +51,15 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "searchResults")
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "cornellDestinations")
         view.addSubview(tableView)
+        view.setNeedsLayout()
     }
+    
     
     override func viewWillAppear(_ animated: Bool) {
         self.definesPresentationContext = true
-        print("viewWillAppear")
+        tableView.reloadData()
     }
-    
+
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?) {
         recentLocations = retrieveRecentLocations()
         tableView.reloadData()
@@ -73,6 +74,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
 //        let routeVC = RouteDetailViewController(route: route1)
         navigationController?.pushViewController(optionsVC, animated: true)
+        searchBar.searchController?.isActive = false
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -83,6 +85,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let header = view as! UITableViewHeaderFooterView
         header.textLabel?.textColor = .secondaryTextColor
         header.textLabel?.font = tctSectionHeaderFont()
+        header.backgroundColor = .blue
+        header.tintColor = .blue
         header.textLabel?.text = section == 0 ? "Cornell Destinations" : "Recent Searches"
     }
     
@@ -137,7 +141,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
-
+    
     func getDetailText(reuseIdentifier: String, index: Int) -> String? {
         if reuseIdentifier == "searchResults" {
             let detailString = (recentLocations[index] as! PlaceResult).detail!
@@ -150,7 +154,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func getTableViewCell(indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
-           return tableView.dequeueReusableCell(withIdentifier: "cornellDestinations")! as! SearchResultsCell
+            return tableView.dequeueReusableCell(withIdentifier: "cornellDestinations")! as! SearchResultsCell
         }
         else if indexPath.section == 1 && recentLocations[indexPath.row] is BusStop {
             return tableView.dequeueReusableCell(withIdentifier: "busStop")! as! BusStopCell
