@@ -19,6 +19,11 @@ class PlaceResult: NSObject, NSCoding {
         self.placeID = placeID
     }
     
+    override func isEqual(_ object: Any?) -> Bool {
+        guard let object = object as? PlaceResult else {return false}
+        return object.placeID == placeID
+    }
+    
     // MARK: NSCoding
     required convenience init(coder aDecoder: NSCoder) {
         let name = aDecoder.decodeObject(forKey: "name") as! String

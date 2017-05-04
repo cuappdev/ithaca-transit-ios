@@ -24,7 +24,6 @@ class SearchBarView: UIView, UISearchControllerDelegate {
         resultsViewController = SearchResultsTableViewController()
         searchController = UISearchController(searchResultsController: resultsViewController)
         searchController?.searchResultsUpdater = resultsViewController
-        searchController?.searchBar.isTranslucent = true
         searchController?.searchBar.sizeToFit()
         searchController?.searchBar.delegate = resultsViewController
         resultsViewController?.searchBar = searchController?.searchBar
@@ -35,11 +34,10 @@ class SearchBarView: UIView, UISearchControllerDelegate {
         
         searchController?.searchBar.backgroundColor = .clear
         searchController?.searchBar.tintColor = .clear
-        searchController?.searchBar.isTranslucent = true
         searchController?.delegate = self
         searchController?.dimsBackgroundDuringPresentation = false
         searchController?.hidesNavigationBarDuringPresentation = false
-        searchController?.definesPresentationContext = false
+
     }
     
     required init?(coder aDecoder: NSCoder) {
