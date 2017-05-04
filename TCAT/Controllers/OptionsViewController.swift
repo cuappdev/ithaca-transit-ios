@@ -18,6 +18,7 @@ import SwiftyJSON
   * Austin to Mine's = fix back button to Matt's custom back button
   * deque = the line keeps showing up ??
   * Loader = fix
+  * work on overflow - datepicker & dist label (maybe put below)
  */
 /* Austin - when run on my phone don't see any search results
   *
@@ -158,16 +159,16 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         //Set up fake data
-        let date1 = Time.date(from: "3:45 PM")
-        let date2 = Time.date(from: "3:52 PM")
+        let date1 = Time.date(from: "8:45 PM")
+        let date2 = Time.date(from: "9:52 PM")
         let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
         
-        let date3 = Time.date(from: "12:12 PM")
-        let date4 = Time.date(from: "12:47 PM")
+        let date3 = Time.date(from: "10:12 PM")
+        let date4 = Time.date(from: "10:47 PM")
         let route2 = Route(departureTime: date3, arrivalTime: date4, directions: [], mainStops: ["Annabel Taylor Hall", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
         
-        let date5 = Time.date(from: "1:12 PM")
-        let date6 = Time.date(from: "1:38 PM")
+        let date5 = Time.date(from: "11:12 PM")
+        let date6 = Time.date(from: "11:38 PM")
         let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Schwartz Center", "Commons - Seneca Street"], mainStopsNums: [90, 32, -1], travelDistance: 0.1)
         
         loaderroutes = [route1, route2, route3]
@@ -204,11 +205,10 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
                     routeResults.reloadData()
                     Network.getBusRoute(startLat: startBus.lat!, startLng: startBus.long!, destLat: endBus.lat!, destLng: endBus.long!).perform(withSuccess: { (routes) in
                         print("success")
-//                        routes.map({ route in
-//                            route.directions.map({ (direction) in
-//                                <#code#>
-//                            })
-//                        })
+//                        var validroutes = []
+//                        for route in routes{
+//                            
+//                        }
                         self.routes = routes
                         self.routeResults.reloadData()
                         self.loaded()
