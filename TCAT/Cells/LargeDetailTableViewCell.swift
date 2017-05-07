@@ -98,7 +98,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         detailLabel = formatDetailLabel(detailLabel, titleLabel)
         
         // Place bus icon and chevron accordingly
-        busIconView.frame.origin.y = titleLabel.frame.minY // + (titleLabel.font.lineHeight / 2)
+        busIconView.frame.origin.y = titleLabel.frame.minY + (titleLabel.font.lineHeight / 2)
         chevron.center.y = cellHeight / 2
         
     }
@@ -145,6 +145,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     
     /** Abstracted formatting of content for busIconView. Needs initialized titleLabel */
     func formatBusIconView(_ icon: BusIcon, _ titleLabel: UILabel) -> BusIcon {
+        print("icon.frame.size.height: \(icon.frame.size.height)")
         icon.frame.origin = CGPoint(x: titleLabel.frame.maxX + 8, y: 0)
         return icon
     }

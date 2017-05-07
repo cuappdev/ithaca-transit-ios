@@ -132,20 +132,21 @@ class WalkDirection: Direction {
         self.path = path
     }
     
-    /** Return a WalkDirectionResult (see spec) between two points. Also calulcates CLLocationCoordinate2D path to
-     walk between points and updates path variable automatically */
-    func calculateWalkingDirections(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D,
-                                    _ completionHandler: @escaping (WalkDirectionResult) -> Void) {
+    /** Return a WalkDirectionResult (see spec) between two the object's location and destinationLocation. 
+     Also calulcates CLLocationCoordinate2D path to walk between points and updates path variable automatically */
+    func calculateWalkingDirections(_ completionHandler: @escaping (WalkDirectionResult) -> Void) {
         
         let request = MKDirectionsRequest()
-        request.source = MKMapItem(placemark: MKPlacemark(coordinate: start, addressDictionary: [:]))
-        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: end, addressDictionary: [:]))
+        request.source = MKMapItem(placemark: MKPlacemark(coordinate: location.coordinate, addressDictionary: [:]))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destinationLocation.coordinate,
+                                                               addressDictionary: [:]))
         request.transportType = .walking
         request.requestsAlternateRoutes = false
         let directions = MKDirections(request: request)
         directions.calculate { (response, error) in
             if let route = response?.routes.first {
                 self.path = route.polyline.coordinates
+                self.travelDistance = route.distance
                 let walkDirectionResult = WalkDirectionResult(distance: route.distance, time: route.expectedTravelTime)
                 completionHandler(walkDirectionResult)
             }

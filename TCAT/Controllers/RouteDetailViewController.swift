@@ -51,9 +51,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     init (route: Route? = nil) {
         super.init(nibName: nil, bundle: nil)
         if route == nil {
-            let json = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource:
-                "routeTestingJSON", withExtension: "json")!))
-            initializeRoute(route: try! Route(json: json.first!.1))
+            // let json = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "routeTestingJSON", withExtension: "json")!))
+            // initializeRoute(route: try! Route(json: json.first!.1))
         } else {
             initializeRoute(route: route!)
         }
@@ -63,6 +62,19 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         self.route = route
         self.directions = route.directions
+        
+        print("\nROUTE\n")
+        print("departureTime \(route.departureTime)")
+        print("arrivalTime \(route.arrivalTime)")
+        print("allStops \(route.allStops)")
+        print("timeUntilDeparture \(route.timeUntilDeparture)")
+        print("lastStopTime \(route.lastStopTime)")
+        print("mainStops \(route.mainStops)")
+        print("mainStopNums \(route.mainStopsNums)")
+        for direction in directions {
+            let _ = direction
+            // print("\(route.directions)")
+        }
         
         // Construct paths in routePaths based on directions
         var skipDirection: Bool = false

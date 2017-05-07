@@ -70,8 +70,8 @@ class Route: NSObject, JSONDecodable {
     //N2SELF: ADD TO EXAMPLE
     var allStops : [String] = [String]()
     var mainStopsNums: [Int] = [Int]()//-1 for pins
-    var travelDistance: Double = 0.0 //of first stop
-    var lastStopTime: Date = Date()// the critical last time a bus route runs
+    var travelDistance: Double = 0.0 // of first stop
+    var lastStopTime: Date = Date() // the critical last time a bus route runs
     
     required init(json: JSON) throws {
         super.init()
