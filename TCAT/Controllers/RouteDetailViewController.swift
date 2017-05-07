@@ -81,7 +81,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 
                 var walkWaypoints: [Waypoint] = []
                 if !walkDirection.path.isEmpty {
-                    let type: WaypointType = (index == directions.count - 1) ? .Destination : .None
+                    let type: WaypointType = (index == directions.count - 1) ? .destination : .none
                     for walkWaypoint in walkDirection.path {
                         let waypoint = Waypoint(lat: walkWaypoint.latitude, long: walkWaypoint.longitude, wpType: type)
                         walkWaypoints.append(waypoint)
@@ -90,7 +90,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                     print("error: walkDirection.path is empty")
                 }
                 
-                let walkPath = Path(waypoints: walkWaypoints, pathType: .Walking, color: .tcatBlueColor)
+                let walkPath = Path(waypoints: walkWaypoints, pathType: .walking, color: .tcatBlueColor)
                 routePaths.append(walkPath)
                 
             }
@@ -102,9 +102,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                     let coord = busDirection.path[index]
                     let type: WaypointType = {
                         switch index {
-                        case 0 : return .Origin
-                        case (busDirection.path.count / 2) : return .Stop
-                        default : return .None
+                        case 0 : return .origin
+                        case (busDirection.path.count / 2) : return .stop
+                        default : return .none
                         } // show stop waypoint in middle of route, origin for start, none otherwise
                     }()
                     let point = Waypoint(lat: coord.latitude, long: coord.longitude,
@@ -112,7 +112,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                     routeWaypoints.append(point)
                 }
                 
-                let busPath = Path(waypoints: routeWaypoints, pathType: .Driving, color: .tcatBlueColor)
+                let busPath = Path(waypoints: routeWaypoints, pathType: .driving, color: .tcatBlueColor)
                 routePaths.append(busPath)
                 skipDirection = true // already accounted for ArriveDirection, should skip over
                 
@@ -132,16 +132,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
         self.formatNavigationController()
         self.initializeDetailView()
-        
-        /*
-        let _ = Network.getTestRoute().perform(withSuccess: { (routes) in
-            if let firstRoute = routes.first {
-
-            }
-        }) { (error) in
-            print(error)
-        }*/
-        
+                
         // Set up Location Manager
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
@@ -155,8 +146,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         // set mapView with settings
         let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: 15.5)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
-        mapView.padding = UIEdgeInsets(top: statusNavHeight(includingShadow: true), left: 0,
-                                       bottom: summaryViewHeight, right: 0)
+        mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: summaryViewHeight, right: 0)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
         mapView.settings.compassButton = true
@@ -227,62 +217,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             }
         }
 
-    }
-    
-    /** Initialize dummy data for route w/ directions and routePaths */
-    func initializeTestingData() {
-        
-        let walk = WalkDirection(time: Date(),
-                                 place: "my house",
-                                 location: CLLocation(latitude: 1, longitude: 1),
-                                 travelDistance: 0.2,
-                                 destination: CLLocation(latitude: 1, longitude: 1))
-        // Longest Bus Name - "Candlewyck Dr @ Route 96 (Trumansburg Rd)"
-        let board = DepartDirection(time: Date().addingTimeInterval(300),
-                                    place: "Candlewyck Dr @ Route 96",
-                                    location: CLLocation(latitude: 1, longitude: 1),
-                                    routeNumber: 42,
-                                    bound: Bound.inbound,
-                                    stops: ["Bus Stop 2", "Bus Stop 3", "Bus Stop 4"],
-                                    arrivalTime: Date().addingTimeInterval(600))
-//        let board2 = DepartDirection(time: Date().addingTimeInterval(300),
-//                                     place: "Bus Stop 1 this is an overflow cell",
-//                                     location: CLLocation(latitude: 1, longitude: 1),
-//                                     routeNumber: 43,
-//                                     bound: Bound.inbound,
-//                                     stops: ["Bus Stop 2", "Bus Stop 3 this is going to be an overflow stop", "Bus Stop 4"],
-//                                     arrivalTime: Date().addingTimeInterval(600))
-        let debark = ArriveDirection(time: Date().addingTimeInterval(600),
-                                     place: "Bus Stop 5 (this) is an overflow cell",
-                                     location: CLLocation(latitude: 1, longitude: 1))
-        let walk2 = WalkDirection(time: Date().addingTimeInterval(900),
-                                  place: "not my house",
-                                  location: CLLocation(latitude: 1, longitude: 1),
-                                  travelDistance: 0.3,
-                                  destination: CLLocation(latitude: 1, longitude: 1))
-        
-        directions = [walk, board, debark, walk2]
-        
-        route = Route(departureTime: Date(),
-                      arrivalTime: Date().addingTimeInterval(900),
-                      directions: directions,
-                      mainStops: ["Bus Stop 1", "Bus Stop 5", "not my house"],
-                      mainStopsNums: [42, -1, -1],
-                      travelDistance: 1.0)
-        
-        let waypointsA = [Waypoint(lat: 42.444738, long: -76.489383, wpType: .Origin),
-                          Waypoint(lat: 42.445173, long: -76.485027, wpType: .Stop),
-                          Waypoint(lat: 42.445220, long: -76.481615, wpType: .None)]
-        let waypointsB = [Waypoint(lat: 42.445220, long: -76.481615, wpType: .Origin),
-                          Waypoint(lat: 42.443146, long: -76.479534, wpType: .Destination)]
-        
-        routePaths = [
-            
-            Path(waypoints: waypointsA, pathType: .Walking, color: .tcatBlueColor),
-            Path(waypoints: waypointsB, pathType: .Driving, color: .tcatBlueColor)
-            
-        ]
-        
     }
     
     /** Set title, buttons, and style of navigation controller */
@@ -424,7 +358,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let textLabelPadding: CGFloat = 16
         let summaryTopLabel = UILabel()
         if let firstDirection = (directions.filter { $0 is DepartDirection }).first {
-            summaryTopLabel.text = "Depart at \(firstDirection.timeDescription)"
+            summaryTopLabel.text = "Departs at \(firstDirection.timeDescription)"
         } else { summaryTopLabel.text = "Summary Top Label" }
         summaryTopLabel.font = UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular)
         summaryTopLabel.textColor = .primaryTextColor
@@ -436,7 +370,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         // Place and format bottom summary label
         let summaryBottomLabel = UILabel()
         if let totalTime = Time.dateComponents(from: route.departureTime, to: route.arrivalTime).minute {
-            summaryBottomLabel.text = "\(totalTime) minutes"
+            summaryBottomLabel.text = "Trip Duration - \(totalTime) minutes"
         } else { summaryBottomLabel.text = "Summary Bottom Label" }
         summaryBottomLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular)
         summaryBottomLabel.textColor = .mediumGrayColor
