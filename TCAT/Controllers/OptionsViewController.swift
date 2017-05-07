@@ -172,6 +172,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         loaderroutes = [route1, route2, route3]
         routes = loaderroutes
+        searchForRoutes()
         
     }
     

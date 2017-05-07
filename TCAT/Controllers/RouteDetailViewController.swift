@@ -40,7 +40,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     let summaryViewHeight: CGFloat = 80
     var largeDetailHeight: CGFloat = 80
     var mediumDetailHeight: CGFloat = UIScreen.main.bounds.height / 2
-    let smallDetailHeight: CGFloat = UIScreen.main.bounds.height - 80
+    var smallDetailHeight: CGFloat = UIScreen.main.bounds.height - 80
     
     let markerRadius: CGFloat = 8
     let mapPadding: CGFloat = 40
@@ -287,6 +287,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     
     /** Set title, buttons, and style of navigation controller */
     func formatNavigationController() {
+        
+        smallDetailHeight -= statusNavHeight()
+        mediumDetailHeight -= statusNavHeight()
+        largeDetailHeight -= statusNavHeight()
         
         let otherAttributes = [NSFontAttributeName: UIFont(name :".SFUIText", size: 14)!]
         let titleAttributes: [String : Any] = [NSFontAttributeName : UIFont(name :".SFUIText", size: 18)!,

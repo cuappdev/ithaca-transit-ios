@@ -55,7 +55,7 @@ class AllBusStops: JSONDecodable {
 
 class Network {
 
-    static let tron = TRON(baseURL: "http://52.26.153.237")
+    static let tron = TRON(baseURL: "http://tcat-dev-env-1.bsjzqmpigt.us-west-2.elasticbeanstalk.com/")
     
     class func getRoutes() -> APIRequest<Route, Error> {
         let request: APIRequest<Route, Error> = tron.request("navigate.json")
@@ -65,7 +65,7 @@ class Network {
     }
     
     class func getAllStops() -> APIRequest<AllBusStops, Error> {
-        let request: APIRequest<AllBusStops, Error> = tron.request("stops2.json")
+        let request: APIRequest<AllBusStops, Error> = tron.request("stops")
         request.method = .get
         return request
     }

@@ -69,10 +69,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         } else {
             optionsVC.searchTo = (.placeresult, placeResult)
         }
-        let date1 = Time.date(from: "3:45 PM")
-        let date2 = Time.date(from: "3:52 PM")
-        let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
+        //let date1 = Time.date(from: "3:45 PM")
+        //let date2 = Time.date(from: "3:52 PM")
+        //let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
 //        let routeVC = RouteDetailViewController(route: route1)
+        definesPresentationContext = false
         navigationController?.pushViewController(optionsVC, animated: true)
         searchBar.searchController?.isActive = false
     }
@@ -130,11 +131,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 let placeResult = recentLocations[indexPath.row] as! PlaceResult
                 optionsVC.searchTo = (.placeresult, placeResult)
             }
-            self.definesPresentationContext = false //else going to try and present optionVC on homeVC when in optionVC
-            let date1 = Time.date(from: "3:45 PM")
-            let date2 = Time.date(from: "3:52 PM")
-            let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
-            let routeVC = RouteDetailViewController(route: route1)
+            definesPresentationContext = false //else going to try and present optionVC on homeVC when in optionVC
+            //let date1 = Time.date(from: "3:45 PM")
+            //let date2 = Time.date(from: "3:52 PM")
+            //let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
+            //let routeVC = RouteDetailViewController(route: route1)
             navigationController?.pushViewController(optionsVC, animated: true)
         }
         tableView.deselectRow(at: indexPath, animated: true)
