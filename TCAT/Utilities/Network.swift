@@ -73,48 +73,52 @@ class Network {
     
     class func getRoutes(start: BusStop, end: PlaceResult, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error> {
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
-        request.parameters = ["source": "\(start.lat),\(start.long)", "sink": "\(end.placeID)"]
-        if type == .arriveby {
+        request.parameters = ["source": "\(start.lat!),\(start.long!)", "sink": "\(end.placeID!)"]
+        if type == .leaveat {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
             request.parameters["arrive_time"] = Time.string(from: time)
         }
+        print(request.parameters)
         request.method = .get
         return request
     }
     
     class func getRoutes(start: BusStop, end: BusStop, time: Date, type: SearchType)  -> APIRequest<Array<Route>, Error>{
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
-        request.parameters = ["source": "\(start.lat),\(start.long)", "sink": "\(end.lat),\(end.long)" ]
-        if type == .arriveby {
+        request.parameters = ["source": "\(start.lat!),\(start.long!)", "sink": "\(end.lat!),\(end.long!)" ]
+        if type == .leaveat {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
             request.parameters["arrive_time"] = Time.string(from: time)
         }
+        print(request.parameters)
         request.method = .get
         return request
     }
     
     class func getRoutes(start: PlaceResult, end: PlaceResult, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error>{
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
-        request.parameters = ["source": "\(start.placeID)", "sink": "\(end.placeID)"]
-        if type == .arriveby {
+        request.parameters = ["source": "\(start.placeID!)", "sink": "\(end.placeID!)"]
+        if type == .leaveat {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
             request.parameters["arrive_time"] = Time.string(from: time)
         }
+        print(request.parameters)
         request.method = .get
         return request
     }
     
     class func getRoutes(start: PlaceResult, end: BusStop, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error>{
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
-        request.parameters = ["source": "\(start.placeID)", "sink": "\(end.lat),\(end.long)"]
-        if type == .arriveby {
+        request.parameters = ["source": "\(start.placeID!)", "sink": "\(end.lat!),\(end.long!)"]
+        if type == .leaveat {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
             request.parameters["arrive_time"] = Time.string(from: time)
         }
+        print(request.parameters)
         request.method = .get
         return request
     }

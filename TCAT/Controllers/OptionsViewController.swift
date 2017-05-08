@@ -88,14 +88,12 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         routeSelection.fromSearch.addTarget(self, action: #selector(self.searchingFrom), for: .touchUpInside)
 
         //Autofill destination if user has already selected one from previous screen
-        if let selectedDestination = searchTo.1 {
-            //set search text to either bus stop or place result
-            if let bustitle = (selectedDestination as? BusStop)?.name{
-               routeSelection.toSearch.setTitle(bustitle, for: .normal)
-            }
-            if let placetitle  = (selectedDestination as? PlaceResult)?.name{
-                routeSelection.toSearch.setTitle(placetitle, for: .normal)
-            }
+        let (endBus, endPlace) = searchTo
+        if let destination = endBus{
+            routeSelection.toSearch.setTitle(destination.name, for: .normal)
+        }
+        if let destination = endPlace{
+            routeSelection.toSearch.setTitle(destination.name, for: .normal)
         }
         
         //Set up location
@@ -242,35 +240,52 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
+    //Leave now = all buses that leave at the user's "now" time
     func getValidRoutes(routes: [Route]) -> [Route]{
-//        var validroutes: [Route] = []
-//        for route in routes{
-//            let directions = route.directions
-//            for i in 0..<directions.count{
-//                if let walkDir = directions[i] as? WalkDirection{
-//                    if i == 0{
-//                        if let walkDir = route.directions[0] as? WalkDirection{
-//                            walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
-//                                if self.searchTimeType == .leaveat{
-//                                    
-//                                }else{
-//                                    let arriveToStopDate = self.searchTime?.addingTimeInterval(walkTimeInterval)
-//                                    if(arriveToStopDate! <= route.directions[1].time){
-//                                        validroutes.append(route)
-//                                    }
-//                                }
-//                            })
-//                        }
-//                    }else if i == (directions.count - 1){
-//                            
-//                    }else{
-//                            
-//                    }
-//                }
-//            }
-//        }
-        
-        return []
+        var validroutes: [Route] = []
+        for route in routes{
+            var validRoute = true
+            let directions = route.directions
+            //Check directions to invalidate route
+            for i in 0..<directions.count{
+                if let walkDir = directions[i] as? WalkDirection{
+                    if i == 0{
+                        walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
+                            //this might be sketch for leave now, check logic
+                            if self.searchTimeType == .leaveat{ //make sure if walk now to stop, get there before leaveat time
+                                let walkToStopDate = Date().addingTimeInterval(walkTimeInterval)
+                                if(walkToStopDate > self.searchTime!){
+                                    validRoute = false
+                                }
+                            }else{ //make sure walk to stop before bus leaves
+                                let walkToStopDate = self.searchTime?.addingTimeInterval(walkTimeInterval)
+                                if(walkToStopDate! > route.directions[1].time){
+                                    validRoute = false
+                                }
+                            }
+                        })
+                    }else if i == (directions.count - 1){
+                        walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
+                            if self.searchTimeType == .arriveby { //make sure walk to destination before arrive by time
+                                let walkToDestinationDate = route.directions[i-1].time.addingTimeInterval(walkTimeInterval)
+                                if(walkToDestinationDate > self.searchTime!){
+                                    validRoute = false
+                                }
+                            }
+                        })
+                    }else{ //make sure can walk from previous stop and arrive to next stop by the time bus departs
+                        walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
+                            let walkToStopDate = route.directions[i-1].time.addingTimeInterval(walkTimeInterval)
+                            if(walkToStopDate > route.directions[i+1].time){
+                                validRoute = false
+                            }
+                        })
+                    }
+                }
+            }
+            if (validRoute) {validroutes.append(route)}
+        }
+        return validroutes
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {

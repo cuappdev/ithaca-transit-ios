@@ -91,18 +91,6 @@ class ArriveDirection: Direction {
     
 }
 
-class WalkDirectionResult {
-    
-    var distance: CLLocationDistance // meters
-    var time: TimeInterval // seconds
-    
-    init(distance: CLLocationDistance, time: TimeInterval) {
-        self.distance = distance
-        self.time = time
-    }
-    
-}
-
 class WalkDirection: Direction {
     
     var time: Date
