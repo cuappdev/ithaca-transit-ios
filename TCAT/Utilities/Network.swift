@@ -54,8 +54,10 @@ class AllBusStops: JSONDecodable {
  */
 
 class Network {
-
+    
     static let tron = TRON(baseURL: "http://tcat-dev-env-1.bsjzqmpigt.us-west-2.elasticbeanstalk.com/")
+    
+    static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     
     class func getRoutes() -> APIRequest<Route, Error> {
         let request: APIRequest<Route, Error> = tron.request("navigate.json")
@@ -88,7 +90,17 @@ class Network {
         request.parameters = ["source": "\(startLat),\(startLng)", "sink": "\(destLat),\(destLng)" ]
         request.method = .get
         return request
-    }    
+    }
+    
+    class func getGooglePlaces(searchText: String) -> APIRequest<Array<PlaceResult>, Error> {
+        let googleJson = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
+        let urlReadySearch = searchText.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+        let request: APIRequest<Array<PlaceResult>, Error> = googleTron.request("json")
+        request.parameters = ["location": "42.4440,-76.5019", "radius": 24140, "input": urlReadySearch, "key": googleJson["google-places"].stringValue]
+        request.method = .get
+        print(request.path)
+        return request
+    }
 }
 
 extension Array : JSONDecodable {

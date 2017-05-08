@@ -15,6 +15,7 @@
 		449A7C831D80D0E80019300C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C811D80D0E80019300C /* LaunchScreen.storyboard */; };
 		449A7C8E1D80D0E80019300C /* TCATTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C8D1D80D0E80019300C /* TCATTests.swift */; };
 		449A7C991D80D0E80019300C /* TCATUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C981D80D0E80019300C /* TCATUITests.swift */; };
+		5006F7B81EBFC7DE005ACAF2 /* CornellDestinationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5006F7B71EBFC7DE005ACAF2 /* CornellDestinationCell.swift */; };
 		502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502D8F5E1E55161D005280F1 /* SearchBarView.swift */; };
 		503EC37B1E969ACD00B3D4D4 /* BusStopCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37A1E969ACD00B3D4D4 /* BusStopCell.swift */; };
 		503EC37D1E969ADF00B3D4D4 /* SearchResultsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37C1E969ADF00B3D4D4 /* SearchResultsCell.swift */; };
@@ -85,6 +86,7 @@
 		449A7C941D80D0E80019300C /* TCATUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TCATUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C981D80D0E80019300C /* TCATUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCATUITests.swift; sourceTree = "<group>"; };
 		449A7C9A1D80D0E80019300C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5006F7B71EBFC7DE005ACAF2 /* CornellDestinationCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CornellDestinationCell.swift; path = Cells/CornellDestinationCell.swift; sourceTree = "<group>"; };
 		502D8F5E1E55161D005280F1 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchBarView.swift; path = Views/SearchBarView.swift; sourceTree = "<group>"; };
 		503EC37A1E969ACD00B3D4D4 /* BusStopCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusStopCell.swift; path = Cells/BusStopCell.swift; sourceTree = "<group>"; };
 		503EC37C1E969ADF00B3D4D4 /* SearchResultsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchResultsCell.swift; path = Cells/SearchResultsCell.swift; sourceTree = "<group>"; };
@@ -264,6 +266,7 @@
 				503EC37C1E969ADF00B3D4D4 /* SearchResultsCell.swift */,
 				DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */,
 				DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */,
+				5006F7B71EBFC7DE005ACAF2 /* CornellDestinationCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -633,6 +636,7 @@
 				503EC37D1E969ADF00B3D4D4 /* SearchResultsCell.swift in Sources */,
 				DDBCD5E71E989E5800014641 /* DirectionCircle.swift in Sources */,
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
+				5006F7B81EBFC7DE005ACAF2 /* CornellDestinationCell.swift in Sources */,
 				503EC38D1E96B85B00B3D4D4 /* Network.swift in Sources */,
 				DDB49C9D1E8857FC00A99C35 /* Path.swift in Sources */,
 				DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */,

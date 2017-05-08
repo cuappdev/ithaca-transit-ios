@@ -330,17 +330,4 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
         userDefaults.set(updatedRecentSearchArray, forKey: "recentSearch")
         recentLocations = retrieveRecentLocations()
     }
-    
-    func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop]{
-        var nonLetterArray = [BusStop]()
-        var letterArray = [BusStop]()
-        for stop in busStops {
-            if stop.name?.characters.first! == letter {
-                letterArray.append(stop)
-            } else {
-                nonLetterArray.append(stop)
-            }
-        }
-        return letterArray + nonLetterArray
-    }
 }

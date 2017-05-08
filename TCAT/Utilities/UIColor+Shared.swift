@@ -89,3 +89,16 @@ func areObjectsEqual<T: Equatable>(type: T.Type, a: Any, b: Any) -> Bool {
     guard let a = a as? T, let b = b as? T else { return false }
     return a == b
 }
+
+func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop]{
+    var nonLetterArray = [BusStop]()
+    var letterArray = [BusStop]()
+    for stop in busStops {
+        if stop.name?.characters.first! == letter {
+            letterArray.append(stop)
+        } else {
+            nonLetterArray.append(stop)
+        }
+    }
+    return letterArray + nonLetterArray
+}

@@ -7,16 +7,25 @@
 //
 
 import UIKit
+import TRON
+import SwiftyJSON
 
-class PlaceResult: NSObject, NSCoding {
-    var name: String?
-    var detail: String?
-    var placeID: String?
+class PlaceResult: NSObject, NSCoding, JSONDecodable {
+    var name: String? = ""
+    var detail: String? = ""
+    var placeID: String? = ""
     
     init(name: String, detail: String, placeID: String) {
         self.name = name
         self.detail = detail
         self.placeID = placeID
+    }
+    
+    required init(json: JSON) throws {
+        print("called JSON THING")
+        self.name = json["structured_formatting"]["main_text"].stringValue
+        self.detail = json["structured_formatting"]["secondary_text"].stringValue
+        self.placeID = json["place_id"].stringValue
     }
     
     override func isEqual(_ object: Any?) -> Bool {
