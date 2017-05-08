@@ -187,13 +187,11 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         if searchTime == nil{
             searchTime = Date()
         }
-        
         let (fromBus, fromPlace) = searchFrom
         let (toBus, toPlace) = searchTo
         if let startBus = fromBus, let endBus = toBus{
             Network.getRoutes(start: startBus, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = routes //self.getValidRoutes(routes: routes)
-                print("Got Routes")
+                self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
                 self.loaded()
             }, failure: { (error) in
@@ -205,7 +203,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         if let startBus = fromBus, let endPlace = toPlace{
             Network.getRoutes(start: startBus, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = routes //self.getValidRoutes(routes: routes)
+                self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
                 self.loaded()
             }, failure: { (error) in
@@ -217,7 +215,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         if let startPlace = fromPlace, let endBus = toBus{
             Network.getRoutes(start: startPlace, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = routes //self.getValidRoutes(routes: routes)
+                self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
                 self.loaded()
             }, failure: { (error) in
@@ -229,7 +227,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         if let startPlace = fromPlace, let endPlace = toPlace{
             Network.getRoutes(start: startPlace, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = routes //self.getValidRoutes(routes: routes)
+                self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
                 self.loaded()
             }, failure: { (error) in
