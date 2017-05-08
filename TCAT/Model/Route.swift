@@ -68,16 +68,19 @@ class Route: NSObject, JSONDecodable {
     var directions: [Direction] = [Direction]()
     var mainStops: [String] = [String]()
     //N2SELF: ADD TO EXAMPLE
+    var allStops : [String] = [String]()
     var mainStopsNums: [Int] = [Int]()//-1 for pins
-    var travelDistance: Double = 0.0 //of first stop
-    var lastStopTime: Date = Date()// the critical last time a bus route runs
+    var travelDistance: Double = 0.0 // of first stop
+    var lastStopTime: Date = Date() // the critical last time a bus route runs
     
     required init(json: JSON) throws {
         super.init()
-        departureTime = Time.date(from: json["time"].stringValue)
+        departureTime = Time.date(from: json["departureTime"].stringValue)
         arrivalTime = Time.date(from: json["arrivalTime"].stringValue)
         directions = directionJSON(json:json["directions"].array!)
-        mainStops = json["stopNames"].arrayObject as! [String]
+        //We need all stopNames for matt but not monica
+        mainStops = json["mainStopNames"].arrayObject as! [String]
+        allStops = json["allStopNames"].arrayObject as! [String]
         mainStopsNums = json["stopNumbers"].arrayObject as! [Int]
         travelDistance = directions[0] is WalkDirection ? (directions[0] as! WalkDirection).travelDistance : 0.0
         lastStopTime = Date()

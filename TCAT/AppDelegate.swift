@@ -12,10 +12,11 @@ import GooglePlaces
 import SwiftyJSON
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
     
     var window: UIWindow?
     let userDefaults = UserDefaults.standard
+    let locationManager = CLLocationManager()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -47,7 +48,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.userDefaults.set(data, forKey: "allBusStops")
         })
         
+        
+        //Ask for current location
+        locationManager.delegate = self
+        print("About to ask for location")
+        locationManager.requestWhenInUseAuthorization()
+        //locationManager.requestLocation()
+        
         return true
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        print(status)
     }
     
     func applicationWillResignActive(_ application: UIApplication) {

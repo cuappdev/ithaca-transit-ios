@@ -10,10 +10,10 @@ import UIKit
 import CoreLocation
 
 enum WaypointType: String {
-    case Origin
-    case Destination
-    case Stop
-    case None
+    case origin
+    case destination
+    case stop
+    case none
 }
 
 class Waypoint: NSObject {
@@ -23,7 +23,7 @@ class Waypoint: NSObject {
     
     var lat: CLLocationDegrees = 0
     var long: CLLocationDegrees = 0
-    var wpType: WaypointType = .Origin
+    var wpType: WaypointType = .origin
     var iconView: UIView = UIView()
     var busNumber: Int = 0
     
@@ -35,13 +35,13 @@ class Waypoint: NSObject {
         self.busNumber = busNumber
         
         switch wpType {
-        case .Origin:
+        case .origin:
             self.iconView = drawOriginIcon()
-        case .Destination:
+        case .destination:
             self.iconView = drawDestinationIcon()
-        case .Stop:
+        case .stop:
             self.iconView = drawStopIcon()
-        case .None:
+        case .none:
             self.iconView = UIView()
         }
     }
@@ -75,11 +75,11 @@ class Waypoint: NSObject {
     
     func setColor(color: UIColor) {
         switch wpType {
-        case .Origin, .Stop:
+        case .origin, .stop:
             iconView.backgroundColor = color
-        case .Destination:
+        case .destination:
             iconView.layer.borderColor = color.cgColor
-        case .None:
+        case .none:
             break
         }
     }
