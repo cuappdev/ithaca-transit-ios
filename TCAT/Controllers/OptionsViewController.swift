@@ -12,31 +12,21 @@ import CoreLocation
 import SwiftyJSON
 
 /* 2Do:
-  * Make Github issue for Shiv
   * Add Matt's logic
-  * My title is not showing up??
-  * Austin to Mine's = fix back button to Matt's custom back button
   * deque = the line keeps showing up ??
   * Loader = fix
   * work on overflow - datepicker & dist label (maybe put below)
- */
-/* Austin - when run on my phone don't see any search results
-  *
  */
 /* Later:
   * PlaceResult & BuSStop really cannot be 2 different objects, cause too much hassle. N2Do inheritance
   * selection style for cells?
   * Get rid of random print statements
  */
-enum SearchType: String{
+enum SearchBarType: String{
     case from, to
 }
 
-enum SearchObject: String{
-    case placeresult, busstop
-}
-
-enum SearchDeparture: String{
+enum SearchType: String{
     case arriveby, leaveat
 }
 
@@ -48,11 +38,11 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     var searchBarView: SearchBarView!
     var locationManager: CLLocationManager!
         //Fill search data w/ default values
-    var searchType: SearchType = .from //for search bar
-    var searchFrom: (SearchObject, AnyObject?) = (.busstop, nil)
-    var searchTo: (SearchObject, AnyObject?) = (.busstop, nil)
-    var searchDeparture: SearchDeparture? = .leaveat
-    var searchDate: Date? = Date()
+    var searchType: SearchBarType = .from //for search bar
+    var searchFrom: (BusStop?, PlaceResult?) = (nil, nil)
+    var searchTo: (BusStop?, PlaceResult?) = (nil, nil)
+    var searchTimeType: SearchType = .leaveat
+    var searchTime: Date?
     
     //View
     var routeSelection: RouteSelectionView!
@@ -153,8 +143,8 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         view.addSubview(datePickerView)//so datePicker can go ontop of other views
 
         //If no date is set then date should be same as today's date
-        guard let _ = searchDate else{
-            searchDate = Date()
+        guard let _ = searchTime else{
+            searchTime = Date()
             return
         }
         
@@ -196,47 +186,91 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     //MARK: Search bar functionality
     func searchForRoutes(){
         //N2SELF: N2 put in parameters for searchDate & searchDepature
-        if let startBus = searchFrom.1 as? BusStop, let end = searchTo.1 {
-            switch searchTo.0 {
-            case .busstop:
-                if let endBus = end as? BusStop{
-                    routes = loaderroutes
-                    Loader.addLoaderTo(routeResults)
-                    routeResults.reloadData()
-                    Network.getBusRoute(startLat: startBus.lat!, startLng: startBus.long!, destLat: endBus.lat!, destLng: endBus.long!).perform(withSuccess: { (routes) in
-                        print("success")
-//                        var validroutes = []
-//                        for route in routes{
-//                            
-//                        }
-                        self.routes = routes
-                        self.routeResults.reloadData()
-                        self.loaded()
-                    }, failure: { (error) in
-                        print("Error: \(error)")
-                        self.routes = []
-                        self.routeResults.reloadData()
-                        self.loaded()
-                    })
-                }
-            default: //place result
-                if let endPlace = end as? PlaceResult{
-                    Loader.addLoaderTo(routeResults)
-                    routes = loaderroutes
-                    routeResults.reloadData()
-                    Network.getPlaceRoute(startLat: startBus.lat!, startLng: startBus.long!, destPlaceID: endPlace.placeID!).perform(withSuccess: { (routes) in
-                        self.routes = routes
-                        self.routeResults.reloadData()
-                        self.loaded()
-                    }, failure: { (error) in
-                        print("Error: \(error)")
-                        self.routes = []
-                        self.routeResults.reloadData()
-                        self.loaded()
-                    })
-                }
-            }
+        if searchTime == nil{
+            searchTime = Date()
         }
+        
+        let (fromBus, fromPlace) = searchFrom
+        let (toBus, toPlace) = searchTo
+        if let startBus = fromBus, let endBus = toBus{
+            Network.getRoutes(start: startBus, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
+                self.routes = self.getValidRoutes(routes: routes)
+                self.routeResults.reloadData()
+                self.loaded()
+            }, failure: { (error) in
+                print("Error: \(error)")
+                self.routes = []
+                self.routeResults.reloadData()
+                self.loaded()
+            })
+        }
+        if let startBus = fromBus, let endPlace = toPlace{
+            Network.getRoutes(start: startBus, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
+                self.routes = self.getValidRoutes(routes: routes)
+                self.routeResults.reloadData()
+                self.loaded()
+            }, failure: { (error) in
+                print("Error: \(error)")
+                self.routes = []
+                self.routeResults.reloadData()
+                self.loaded()
+            })
+        }
+        if let startPlace = fromPlace, let endBus = toBus{
+            Network.getRoutes(start: startPlace, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
+                self.routes = self.getValidRoutes(routes: routes)
+                self.routeResults.reloadData()
+                self.loaded()
+            }, failure: { (error) in
+                print("Error: \(error)")
+                self.routes = []
+                self.routeResults.reloadData()
+                self.loaded()
+            })
+        }
+        if let startPlace = fromPlace, let endPlace = toPlace{
+            Network.getRoutes(start: startPlace, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
+                self.routes = self.getValidRoutes(routes: routes)
+                self.routeResults.reloadData()
+                self.loaded()
+            }, failure: { (error) in
+                print("Error: \(error)")
+                self.routes = []
+                self.routeResults.reloadData()
+                self.loaded()
+            })
+        }
+    }
+    
+    func getValidRoutes(routes: [Route]) -> [Route]{
+//        var validroutes: [Route] = []
+//        for route in routes{
+//            let directions = route.directions
+//            for i in 0..<directions.count{
+//                if let walkDir = directions[i] as? WalkDirection{
+//                    if i == 0{
+//                        if let walkDir = route.directions[0] as? WalkDirection{
+//                            walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
+//                                if self.searchTimeType == .leaveat{
+//                                    
+//                                }else{
+//                                    let arriveToStopDate = self.searchTime?.addingTimeInterval(walkTimeInterval)
+//                                    if(arriveToStopDate! <= route.directions[1].time){
+//                                        validroutes.append(route)
+//                                    }
+//                                }
+//                            })
+//                        }
+//                    }else if i == (directions.count - 1){
+//                            
+//                    }else{
+//                            
+//                    }
+//                }
+//            }
+//        }
+        
+        return []
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
@@ -253,9 +287,9 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //If don't have start location, set to current location
-        if searchFrom.1 == nil, let location = manager.location{
-            searchFrom.1 = BusStop(name: "Current Location", lat: location.coordinate.latitude, long: location.coordinate.longitude)
-            routeSelection.fromSearch.setTitle((searchFrom.1 as? BusStop)?.name, for: .normal)
+        if searchFrom.0 == nil, let location = manager.location{
+            searchFrom.0 = BusStop(name: "Current Location", lat: location.coordinate.latitude, long: location.coordinate.longitude)
+            routeSelection.fromSearch.setTitle(searchFrom.0?.name, for: .normal)
         }
     }
     
@@ -285,17 +319,17 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         switch searchType{
             case .from:
                 if let result = busStop{
-                    searchFrom = (.busstop, result)
+                    searchFrom = (result, nil)
                     routeSelection.fromSearch.setTitle(result.name, for: .normal)
                 }else if let result = placeResult{
-                    searchFrom = (.busstop, result)
+                    searchFrom = (nil, result)
                     routeSelection.fromSearch.setTitle(result.name, for: .normal)                }
             default:
                 if let result = busStop{
-                    searchTo = (.busstop, result)
+                    searchTo = (result, nil)
                     routeSelection.toSearch.setTitle(result.name, for: .normal)
                 }else if let result = placeResult{
-                    searchTo = (.busstop, result)
+                    searchTo = (nil, result)
                     routeSelection.toSearch.setTitle(result.name, for: .normal)
                 }
         }
@@ -309,7 +343,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func didCancel(){
         //Hide search bar
-        print("delegate called")
         navigationItem.titleView = nil
         searchBarView.searchController?.isActive = false
 
@@ -343,23 +376,23 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func saveDatePickerDate(sender: UIButton){
         let date = datePickerView.datePicker.date
-        searchDate = date
+        searchTime = date
         let dateString = Time.fullString(from: date)
         let segmentedControl = datePickerView.arriveDepartBar
         let selectedSegString = (segmentedControl?.titleForSegment(at: segmentedControl?.selectedSegmentIndex ?? 0)) ?? ""
         if (selectedSegString.lowercased().contains("arrive")){
-            searchDeparture = .arriveby
+            searchTimeType = .arriveby
         }else{
-            searchDeparture = .leaveat
+            searchTimeType = .leaveat
         }
         var title = ""
         //Customize string based on date
         if(Calendar.current.isDateInToday(date) || Calendar.current.isDateInTomorrow(date)){
-            let verb = (searchDeparture == .arriveby) ? "Arrive" : "Leave" //Use simply,"arrive" or "leave"
+            let verb = (searchTimeType == .arriveby) ? "Arrive" : "Leave" //Use simply,"arrive" or "leave"
             let day = Calendar.current.isDateInToday(date) ? "" : " tomorrow" //if today don't put day
             title = "\(verb)\(day) at \(Time.string(from: date))"
         }else{
-            let verb = (searchDeparture == .arriveby) ? "Arrive by" : "Leave on" //Use "arrive by" or "leave on"
+            let verb = (searchTimeType == .arriveby) ? "Arrive by" : "Leave on" //Use "arrive by" or "leave on"
             title = "\(verb) \(dateString)"
         }
         routeSelection.timeButton.setTitle(title, for: .normal)

@@ -65,9 +65,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.reloadData()
         let optionsVC = OptionsViewController()
         if busStop != nil {
-            optionsVC.searchTo = (.busstop, busStop)
+            optionsVC.searchTo = (busStop, nil)
         } else {
-            optionsVC.searchTo = (.placeresult, placeResult)
+            optionsVC.searchTo = (nil, placeResult)
         }
         let date1 = Time.date(from: "3:45 PM")
         let date2 = Time.date(from: "3:52 PM")
@@ -125,10 +125,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             let optionsVC = OptionsViewController()
             if recentLocations[indexPath.row] is BusStop {
                 let busStop = recentLocations[indexPath.row] as! BusStop
-                optionsVC.searchTo = (.busstop, busStop)
+                optionsVC.searchTo = (busStop, nil)
             } else {
                 let placeResult = recentLocations[indexPath.row] as! PlaceResult
-                optionsVC.searchTo = (.placeresult, placeResult)
+                optionsVC.searchTo = (nil, placeResult)
             }
             self.definesPresentationContext = false //else going to try and present optionVC on homeVC when in optionVC
             let date1 = Time.date(from: "3:45 PM")

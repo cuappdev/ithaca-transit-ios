@@ -91,7 +91,6 @@ class ArriveDirection: Direction {
     
 }
 
-/** Representation of the distance (meters) and expectedTravelTime (seconds) of a walking route */
 class WalkDirectionResult {
     
     var distance: CLLocationDistance // meters
@@ -133,21 +132,20 @@ class WalkDirection: Direction {
     }
     
     /** Return a WalkDirectionResult (see spec) between two points. Also calulcates CLLocationCoordinate2D path to
-     walk between points and updates path variable automatically */
-    func calculateWalkingDirections(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D,
-                                    _ completionHandler: @escaping (WalkDirectionResult) -> Void) {
-        
+     walk between points and updates path variable automatically
+    Completion hanldre returns distance (meters) and expectedTravelTime (seconds) of a walking route */
+    func calculateWalkingDirections(_ completionHandler: @escaping (CLLocationDistance, TimeInterval) -> Void) {
         let request = MKDirectionsRequest()
-        request.source = MKMapItem(placemark: MKPlacemark(coordinate: start, addressDictionary: [:]))
-        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: end, addressDictionary: [:]))
+        request.source = MKMapItem(placemark: MKPlacemark(coordinate: location.coordinate, addressDictionary: [:]))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destinationLocation.coordinate, addressDictionary: [:]))
         request.transportType = .walking
         request.requestsAlternateRoutes = false
         let directions = MKDirections(request: request)
         directions.calculate { (response, error) in
             if let route = response?.routes.first {
                 self.path = route.polyline.coordinates
-                let walkDirectionResult = WalkDirectionResult(distance: route.distance, time: route.expectedTravelTime)
-                completionHandler(walkDirectionResult)
+                self.travelDistance = route.distance
+                completionHandler((route.distance, route.expectedTravelTime))
             }
         }
     }

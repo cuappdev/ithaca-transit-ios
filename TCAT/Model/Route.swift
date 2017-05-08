@@ -74,7 +74,7 @@ class Route: NSObject, JSONDecodable {
     
     required init(json: JSON) throws {
         super.init()
-        departureTime = Time.date(from: json["departureTime"].stringValue)
+        departureTime = Time.date(from: json["time"].stringValue)
         arrivalTime = Time.date(from: json["arrivalTime"].stringValue)
         directions = directionJSON(json:json["directions"].array!)
         mainStops = json["stopNames"].arrayObject as! [String]
