@@ -79,6 +79,7 @@ class Network {
         }else{
             request.parameters["arrive_time"] = Time.string(from: time)
         }
+        print(request.parameters)
         request.method = .get
         return request
     }
@@ -92,6 +93,7 @@ class Network {
         }else{
             request.parameters["arrive_time"] = Time.string(from: time)
         }
+        print(request.parameters)
         request.method = .get
         return request
     }
@@ -104,6 +106,7 @@ class Network {
         }else{
             request.parameters["arrive_time"] = Time.string(from: time)
         }
+        print(request.parameters)
         request.method = .get
         return request
     }
@@ -117,6 +120,7 @@ class Network {
         }else{
             request.parameters["arrive_time"] = Time.string(from: time)
         }
+        print(request.parameters)
         request.method = .get
         return request
     }

@@ -65,14 +65,14 @@ class RouteTableViewCell: UITableViewCell {
         
         //Set up time label text, frame
         travelTimeLabel.frame = CGRect(x: spaceXFromSuperviewLeft, y: spaceYTimeLabelFromSuperviewTop, width: 135, height: 20)
-        travelTimeLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
+        travelTimeLabel.font = UIFont(name: "SFUIText-Medium", size: 14.0)
         travelTimeLabel.textColor = .primaryTextColor
         contentView.addSubview(travelTimeLabel)
         
         //Set up depart label text, &  frame
         departTimeLabel.frame = CGRect(x: 0, y: travelTimeLabel.frame.minY, width: 135, height: 20)
-        departTimeLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
-        departTimeLabel.textColor = .primaryTextColor
+        departTimeLabel.font = UIFont(name: "SFUIText-Medium", size: 14.0)
+        departTimeLabel.textColor = .tcatBlueColor
         contentView.addSubview(departTimeLabel)
         
         //Set up top seperator line
