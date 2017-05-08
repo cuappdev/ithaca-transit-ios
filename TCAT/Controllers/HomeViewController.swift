@@ -10,6 +10,8 @@ import UIKit
 import GooglePlaces
 import SwiftyJSON
 import Alamofire
+import MYTableViewIndex
+
 
 struct Section {
     let type: SectionType
@@ -31,7 +33,7 @@ enum ItemType {
 }
 
 
-class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, TableViewIndexDelegate, TableViewIndexDataSource {
     var cornellDestinationSection: Section!
     var recentSearchesSection: Section!
     var allStopsSection: Section!
@@ -46,8 +48,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                                (name: "Central Campus", stops: "Statler Hall, Uris Hall, Goldwin Smith Hall"),
                                (name: "Collegetown", stops: "Collegetown Crossing, Schwartz Center"),
                                (name: "Ithaca Commons", stops: "Albany @ Salvation Army, State Street, Lot 32")]
-    let json = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
-    
     
     func tctSectionHeaderFont() -> UIFont? {
         return UIFont.systemFont(ofSize: 14)
@@ -55,6 +55,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     var sections: [Section] = [] {
         didSet {
+            print("DID CHANGE SECTIONS")
             tableView.reloadData()
         }
     }
@@ -94,6 +95,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         recentSearchesSection = Section(type: .RecentSearches, items: recentLocations)
         searchResultsSection = Section(type: .SearchResults, items: [])
         sections = recentLocations.isEmpty ? [cornellDestinationSection, allStopsSection] : [cornellDestinationSection, recentSearchesSection, allStopsSection]
+        
+        
+        let tableViewIndex = TableViewIndex(frame: CGRect())
+        tableViewIndex.delegate = self
+        tableViewIndex.dataSource = self
+        view.addSubview(tableViewIndex)
         
     }
     
@@ -138,6 +145,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.endEditing(true)
+        searchBar.text = nil
         sections = recentLocations.isEmpty ? [allStopsSection] : [recentSearchesSection, allStopsSection]
         tableView.beginUpdates()
         sections.insert(cornellDestinationSection, at: 0)
@@ -152,46 +160,47 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
     }
     
+    func indexItems(for tableViewIndex: TableViewIndex) -> [UIView] {
+        var views: [UIView] = []
+        for x in 0...10 {
+        views.append(StringItem(text: "\(x)"))
+        }
+        return views
+    }
+    
     func getPlaces(timer: Timer) {
-        print("In Get Places")
-        var itemTypes: [ItemType] = []
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
-        
-        if searchText != "" {
+        Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
+            self.parseGoogleJSON(searchText: searchText, json: responseJson)
+        })
+    }
+    
+    
+    func parseGoogleJSON(searchText: String, json: JSON) {
+        var itemTypes: [ItemType] = []
         let filteredBusStops = getAllBusStops().filter({(item: BusStop) -> Bool in
             let stringMatch = item.name?.lowercased().range(of: searchText.lowercased())
             return stringMatch != nil
         })
         let updatedOrderBusStops = sortFilteredBusStops(busStops: filteredBusStops, letter: searchText.capitalized.characters.first!)
-        itemTypes = itemTypes + updatedOrderBusStops.map( {ItemType.BusStop($0)} )
-        let urlReadySearch = searchText.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
-        let stub = "https://maps.googleapis.com/maps/api/place/autocomplete/json?location=42.4440,-76.5019&radius=24140&strictbounds&input="
-        let apiKey = "&key=\(json["google-places"].stringValue)"
-        let searchUrlString = stub + urlReadySearch + apiKey
-        Alamofire.request(searchUrlString).responseJSON {response in
-            if  response.result.value != nil {
-                let resultJson = JSON(response.result.value!)
-                for result in resultJson["predictions"].array! {
-                    let placeResult = PlaceResult(name: result["structured_formatting"]["main_text"].stringValue, detail: result["structured_formatting"]["secondary_text"].stringValue, placeID: result["place_id"].stringValue)
-                    //check if name matches exactly a bus stop name
-                    let isPlaceABusStop = filteredBusStops.contains(where: {(stop) -> Bool in
-                        placeResult.name!.contains(stop.name!)
-                    })
-                    if !isPlaceABusStop {
-                        itemTypes.append(ItemType.PlaceResult(placeResult))
-                    }
+        itemTypes = updatedOrderBusStops.map( {ItemType.BusStop($0)} )
+        
+        if let predictionsArray = json["predictions"].array {
+            for result in predictionsArray {
+                let placeResult = PlaceResult(name: result["structured_formatting"]["main_text"].stringValue, detail: result["structured_formatting"]["secondary_text"].stringValue, placeID: result["place_id"].stringValue)
+                let isPlaceABusStop = filteredBusStops.contains(where: {(stop) -> Bool in
+                    placeResult.name!.contains(stop.name!)
+                })
+                if !isPlaceABusStop {
+                    itemTypes.append(ItemType.PlaceResult(placeResult))
                 }
-                self.searchResultsSection.items = itemTypes
-                self.sections = [self.searchResultsSection]
-                self.tableView.reloadData()
+            }
+            self.searchResultsSection.items = itemTypes
+            self.sections = [self.searchResultsSection]
+
             }
         }
-    }
-        else {
-            sections = recentLocations.isEmpty ? [allStopsSection] : [recentSearchesSection, allStopsSection]
-        }
-    }
-    
+
 func numberOfSections(in tableView: UITableView) -> Int {
     return sections.count
 }
@@ -284,7 +293,7 @@ func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("User Selected Cornell Destination")
     case .BusStop(let busStop):
         print("Selected Bus Stop: ", busStop.name)
-    //optionsVC.searchTo(.busstop, busStop as? Any)
+    //optionsVC.searchTo(.busstop, busStop)
     case .PlaceResult(let placeResult):
         print("Selected Place Result: ", placeResult.name)
         //optionsVC.searchTo(.placeResult, placeResult)
