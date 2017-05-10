@@ -28,6 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         // Initalize window without storyboard
         let rootVC = HomeViewController()
+        rootVC.getBusStops()
         let navigationController = UINavigationController(rootViewController: rootVC)
         navigationController.navigationBar.barTintColor = .white
         navigationController.navigationBar.isTranslucent = false
@@ -41,14 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             userDefaults.set([Any](), forKey: "recentSearch")
         }
         
-        Network.getAllStops().perform(withSuccess: { stops in
-            self.userDefaults.set([BusStop](), forKey: "allBusStops")
-            let allBusStops = stops.allStops
-            let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
-            self.userDefaults.set(data, forKey: "allBusStops")
-        })
-        
-        
         //Ask for current location
         locationManager.delegate = self
         print("About to ask for location")
@@ -60,6 +53,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         print(status)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
     }
     
     func applicationWillResignActive(_ application: UIApplication) {

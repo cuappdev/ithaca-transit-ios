@@ -1,14 +1,15 @@
 //
-//  SearchResultsCell.swift
+//  CornellDestinationCell.swift
 //  TCAT
 //
-//  Created by Austin Astorga on 3/22/17.
+//  Created by Austin Astorga on 5/7/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
 import UIKit
 
-class SearchResultsCell: UITableViewCell {
+class CornellDestinationCell: UITableViewCell {
+
     let labelWidthConstant: CGFloat = 45.0
     let labelXPosition: CGFloat = 40.0
     let imageHeight: CGFloat = 20.0
@@ -38,8 +39,8 @@ class SearchResultsCell: UITableViewCell {
         imageView?.frame = CGRect(x: 10, y: 5, width: imageWidth, height: imageHeight)
         imageView?.contentMode = .scaleAspectFit
         imageView?.center.y = bounds.height / 2.0
-        imageView?.image = reuseIdentifier == "cornellDestinations" ? #imageLiteral(resourceName: "bus") : #imageLiteral(resourceName: "pin")
-        imageView?.tintColor = reuseIdentifier == "cornellDestinations" ? .tcatBlueColor : nil
+        imageView?.image = #imageLiteral(resourceName: "bus")
+        imageView?.tintColor = .tcatBlueColor 
         
         textLabel?.frame = CGRect(x: labelXPosition, y: 8.0, width: frame.width - labelWidthConstant, height: labelHeight)
         textLabel?.font = .systemFont(ofSize: 13)
@@ -49,4 +50,6 @@ class SearchResultsCell: UITableViewCell {
         detailTextLabel?.textColor = .mediumGrayColor
         detailTextLabel?.font = .systemFont(ofSize: 12)
     }
+
+
 }

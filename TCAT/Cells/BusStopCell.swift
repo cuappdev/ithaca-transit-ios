@@ -9,11 +9,11 @@
 import UIKit
 
 class BusStopCell: UITableViewCell {
-    let labelWidthConstant = CGFloat(45.0)
-    let labelXPosition = CGFloat(40.0)
-    let imageHeight = CGFloat(20.0)
-    let imageWidth = CGFloat(20.0)
-    let labelHeight = CGFloat(20.0)
+    let labelWidthConstant: CGFloat = 45.0
+    let labelXPosition: CGFloat = 40.0
+    let imageHeight: CGFloat = 20.0
+    let imageWidth: CGFloat = 20.0
+    let labelHeight: CGFloat = 20.0
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -35,13 +35,13 @@ class BusStopCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        imageView?.frame = CGRect(x: 10, y: 5, width: imageWidth, height: imageHeight)
+        imageView?.frame = CGRect(x: 10.0, y: 5.0, width: imageWidth, height: imageHeight)
         imageView?.contentMode = .scaleAspectFit
         imageView?.center.y = bounds.height / 2.0
-        imageView?.image = #imageLiteral(resourceName: "bus")
+        imageView?.image = reuseIdentifier == "currentLocation" ? #imageLiteral(resourceName: "location") : #imageLiteral(resourceName: "bus")
         imageView?.tintColor = .tcatBlueColor
         
-        textLabel?.frame = CGRect(x: labelXPosition, y: 0, width: frame.width - labelWidthConstant, height: labelHeight)
+        textLabel?.frame = CGRect(x: labelXPosition, y: 0.0, width: frame.width - labelWidthConstant, height: labelHeight)
         textLabel?.center.y = bounds.height / 2.0
         textLabel?.font = .systemFont(ofSize: 13)
     }

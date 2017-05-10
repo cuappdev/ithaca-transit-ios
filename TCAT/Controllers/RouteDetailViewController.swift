@@ -288,7 +288,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     func exitAction() {
         navigationController?.popToRootViewController(animated: true)
         if let homeViewController = navigationController?.viewControllers.first as? HomeViewController {
-            homeViewController.searchBar.resultsViewController?.dismiss(animated: false, completion: nil)
+            //homeViewController.searchBar.resultsViewController?.dismiss(animated: false, completion: nil)
         }
     }
     
