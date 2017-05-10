@@ -101,6 +101,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = 10
+        locationManager.startUpdatingLocation()
         
         //Use users current location if no starting point set
        /* if CLLocationManager.locationServicesEnabled() {
@@ -280,18 +281,20 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == CLAuthorizationStatus.authorizedWhenInUse
             || status == CLAuthorizationStatus.authorizedAlways {
-            locationManager.requestLocation()
+            print("Requesting Location")
+            //locationManager.requestLocation()
         }
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //If don't have start location, set to current location
+        locationManager.stopUpdatingLocation()
         if searchFrom.0 == nil, let location = manager.location {
             let currentLocationStop =  BusStop(name: "Current Location", lat: location.coordinate.latitude, long: location.coordinate.longitude)
             searchFrom.0 = currentLocationStop
             searchBarView.resultsViewController?.currentLocation = currentLocationStop
             routeSelection.fromSearch.setTitle(searchFrom.0?.name, for: .normal)
-        
+            searchForRoutes()
         }
     }
     
