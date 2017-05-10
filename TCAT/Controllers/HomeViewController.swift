@@ -279,6 +279,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
     }
     
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+    }
+    
     /* TableViewIndex Functions */
     func indexItems(for tableViewIndex: TableViewIndex) -> [UIView] {
         let arrayOfKeys = Array(sectionIndexes.keys).sorted()
@@ -321,10 +325,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         if searchText.characters.count > 0 {
             Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
                 self.searchResultsSection = parseGoogleJSON(searchText: searchText, json: responseJson)
-                self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
+                self.tableView.contentOffset = .zero
+                self.sections = [self.searchResultsSection]
                 self.tableViewIndexController.setHidden(true, animated: false)
-                if !self.sections.isEmpty {
-                    self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false) }
+                //if !self.sections[0].items.isEmpty {
+                    //self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false) }
             })
         } else {
             sections = recentLocations.isEmpty ? [cornellDestinationSection, allStopsSection] : [cornellDestinationSection, recentSearchesSection, allStopsSection]
