@@ -103,7 +103,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         locationManager.distanceFilter = 10
         
         //Use users current location if no starting point set
-        if CLLocationManager.locationServicesEnabled() {
+       /* if CLLocationManager.locationServicesEnabled() {
             if CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedWhenInUse
                 || CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedAlways {
                 locationManager.requestLocation()
@@ -111,7 +111,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             else{
                 locationManager.requestWhenInUseAuthorization()
             }
-        }
+        } */
         
         //Set up datepicker
         routeSelection.timeButton.addTarget(self, action: #selector(self.showDatePicker), for: .touchUpInside)
@@ -171,7 +171,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     override func viewDidAppear(_ animated: Bool) {
-//        Loader.addLoaderTo(routeResults)
+        Loader.addLoaderTo(routeResults)
 //        Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(, userInfo: nil, repeats: false)
     }
 
@@ -192,7 +192,8 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         let (toBus, toPlace) = searchTo
         if let startBus = fromBus, let endBus = toBus{
             Network.getRoutes(start: startBus, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = self.getValidRoutes(routes: routes)
+                self.routes = routes //self.getValidRoutes(routes: routes)
+                print("Got Routes")
                 self.routeResults.reloadData()
                 self.loaded()
             }, failure: { (error) in
@@ -204,7 +205,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         if let startBus = fromBus, let endPlace = toPlace{
             Network.getRoutes(start: startBus, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = self.getValidRoutes(routes: routes)
+                self.routes = routes //self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
                 self.loaded()
             }, failure: { (error) in
@@ -216,7 +217,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         if let startPlace = fromPlace, let endBus = toBus{
             Network.getRoutes(start: startPlace, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = self.getValidRoutes(routes: routes)
+                self.routes = routes //self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
                 self.loaded()
             }, failure: { (error) in
@@ -228,7 +229,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         if let startPlace = fromPlace, let endPlace = toPlace{
             Network.getRoutes(start: startPlace, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = self.getValidRoutes(routes: routes)
+                self.routes = routes //self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
                 self.loaded()
             }, failure: { (error) in
@@ -285,9 +286,12 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //If don't have start location, set to current location
-        if searchFrom.0 == nil, let location = manager.location{
-            searchFrom.0 = BusStop(name: "Current Location", lat: location.coordinate.latitude, long: location.coordinate.longitude)
+        if searchFrom.0 == nil, let location = manager.location {
+            let currentLocationStop =  BusStop(name: "Current Location", lat: location.coordinate.latitude, long: location.coordinate.longitude)
+            searchFrom.0 = currentLocationStop
+            searchBarView.resultsViewController?.currentLocation = currentLocationStop
             routeSelection.fromSearch.setTitle(searchFrom.0?.name, for: .normal)
+        
         }
     }
     

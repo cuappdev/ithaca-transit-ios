@@ -26,6 +26,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     let userDefaults = UserDefaults.standard
     let locationManager = CLLocationManager()
     
+    var currentLocation: BusStop?
     var destinationDelegate: DestinationDelegate?
     var searchBarCancelDelegate: SearchBarCancelDelegate?
     var timer: Timer?
@@ -90,8 +91,14 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         allStopsSection = Section(type: .allStops, items: prepareAllBusStopItems(allBusStops: allBusStops))
         recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
         searchResultsSection = Section(type: .searchResults, items: [])
-        currentLocationSection = Section(type: .currentLocation, items: [])
-        sections = recentLocations.isEmpty ? [allStopsSection] : [recentSearchesSection, allStopsSection]
+        if let currentLocation = currentLocation {
+            currentLocationSection = Section(type: .currentLocation, items: [.busStop(currentLocation)])
+            sections = recentLocations.isEmpty ? [currentLocationSection, allStopsSection] : [currentLocationSection, recentSearchesSection, allStopsSection]
+        } else {
+            currentLocationSection = Section(type: .currentLocation, items: [])
+            sections = recentLocations.isEmpty ? [allStopsSection] : [recentSearchesSection, allStopsSection]
+        }
+        
         
         //Set Up Index Bar
         tableViewIndexController = TableViewIndexController(tableView: tableView)
@@ -109,7 +116,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     
     /* Location Manager Delegates */
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let firstLocation = locations.first {
+        if let firstLocation = locations.first, currentLocationSection.items.isEmpty {
             let currentLocationBusItem = ItemType.busStop(BusStop(name: "Current Location", lat: firstLocation.coordinate.latitude, long: firstLocation.coordinate.longitude))
             currentLocationSection = Section(type: .currentLocation, items: [currentLocationBusItem])
             sections = recentLocations.isEmpty ? [currentLocationSection ,allStopsSection] : [currentLocationSection, recentSearchesSection, allStopsSection]   
