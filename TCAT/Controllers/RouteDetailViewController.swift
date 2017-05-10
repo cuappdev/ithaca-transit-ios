@@ -589,11 +589,15 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let y = self.detailView.frame.minY
         
         if y + translation.y >= largeDetailHeight && y + translation.y <= smallDetailHeight {
+            print("y + translation >= large and y + translation <= small")
+            print("translation: \(translation), velocity: \(velocity), y: \(y)")
             self.detailView.frame = CGRect(x: 0, y: y + translation.y, width: detailView.frame.width, height: detailView.frame.height)
             recognizer.setTranslation(CGPoint.zero, in: self.detailView)
         }
         
         if recognizer.state == .ended {
+            print("recognizer.state == .ended")
+            print("translation: \(translation), velocity: \(velocity), y: \(y)")
             
             let visibleScreen = self.main.height - UIApplication.shared.statusBarFrame.height - self.navigationController!.navigationBar.frame.height
             

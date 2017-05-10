@@ -74,6 +74,7 @@ class Network {
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
         request.parameters = ["source": "\(start.lat ??? ""),\(start.long ??? "")",
             "sink": "\(end.placeID ??? "")"]
+
         if type == .arriveBy {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
@@ -88,6 +89,7 @@ class Network {
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
         request.parameters = ["source": "\(start.lat ??? ""),\(start.long ??? "")",
             "sink": "\(end.lat ??? ""),\(end.long ??? "")" ]
+
         if type == .arriveBy {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
@@ -101,6 +103,7 @@ class Network {
     class func getRoutes(start: PlaceResult, end: PlaceResult, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error>{
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
         request.parameters = ["source": "\(start.placeID ??? "")", "sink": "\(end.placeID ??? "")"]
+
         if type == .arriveBy {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
@@ -115,6 +118,7 @@ class Network {
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
         request.parameters = ["source": "\(start.placeID ??? "")",
             "sink": "\(end.lat ??? ""),\(end.long ??? "")"]
+
         if type == .arriveBy {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
