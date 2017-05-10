@@ -5,7 +5,6 @@
 //  Created by Austin Astorga on 4/6/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
-
 import Foundation
 import SwiftyJSON
 import TRON
@@ -54,10 +53,11 @@ class AllBusStops: JSONDecodable {
  */
 
 class Network {
-
-//    TRON(baseURL: "http://rawgit.com/cuappdev/tcat-ios/1194a64/")
+    
+    //    TRON(baseURL: "http://rawgit.com/cuappdev/tcat-ios/1194a64/")
     static let tron = TRON(baseURL: "http://tcat-dev-env-1.bsjzqmpigt.us-west-2.elasticbeanstalk.com/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
+    
     class func getRoutes() -> APIRequest<Route, Error> {
         let request: APIRequest<Route, Error> = tron.request("navigate.json")
         request.method = .get
@@ -73,7 +73,8 @@ class Network {
     
     class func getRoutes(start: BusStop, end: PlaceResult, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error> {
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
-        request.parameters = ["source": "\(start.lat),\(start.long)", "sink": "\(end.placeID)"]
+        request.parameters = ["source": "\(start.lat ??? ""),\(start.long ??? "")",
+            "sink": "\(end.placeID ??? "")"]
         if type == .arriveby {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
@@ -83,9 +84,10 @@ class Network {
         return request
     }
     
-    class func getRoutes(start: BusStop, end: BusStop, time: Date, type: SearchType)  -> APIRequest<Array<Route>, Error>{
+    class func getRoutes(start: BusStop, end: BusStop, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error>{
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
-        request.parameters = ["source": "\(start.lat),\(start.long)", "sink": "\(end.lat),\(end.long)" ]
+        request.parameters = ["source": "\(start.lat ??? ""),\(start.long ??? "")",
+            "sink": "\(end.lat ??? ""),\(end.long ??? "")" ]
         if type == .arriveby {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
@@ -97,7 +99,7 @@ class Network {
     
     class func getRoutes(start: PlaceResult, end: PlaceResult, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error>{
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
-        request.parameters = ["source": "\(start.placeID)", "sink": "\(end.placeID)"]
+        request.parameters = ["source": "\(start.placeID ??? "")", "sink": "\(end.placeID ??? "")"]
         if type == .arriveby {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
@@ -109,7 +111,8 @@ class Network {
     
     class func getRoutes(start: PlaceResult, end: BusStop, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error>{
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
-        request.parameters = ["source": "\(start.placeID)", "sink": "\(end.lat),\(end.long)"]
+        request.parameters = ["source": "\(start.placeID ??? "")",
+            "sink": "\(end.lat ??? ""),\(end.long ??? "")"]
         if type == .arriveby {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{

@@ -90,6 +90,15 @@ func areObjectsEqual<T: Equatable>(type: T.Type, a: Any, b: Any) -> Bool {
     return a == b
 }
 
+infix operator ???: NilCoalescingPrecedence
+
+public func ???<T>(optional: T?, defaultValue: @autoclosure () -> String) -> String {
+    switch optional {
+    case let value?: return String(describing: value)
+    case nil: return defaultValue()
+    }
+}
+
 func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop]{
     var nonLetterArray = [BusStop]()
     var letterArray = [BusStop]()
