@@ -11,57 +11,44 @@ import GooglePlaces
 import SwiftyJSON
 import Alamofire
 import MYTableViewIndex
-
-
-struct Section {
-    let type: SectionType
-    var items: [ItemType]
-    
-}
-
-enum SectionType {
-    case CornellDestination
-    case RecentSearches
-    case AllStops
-    case SearchResults
-}
-
-enum ItemType {
-    case BusStop(BusStop)
-    case PlaceResult(PlaceResult)
-    case CornellDestination
-}
-
+import DZNEmptyDataSet
 
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, TableViewIndexDelegate, TableViewIndexDataSource {
-    var cornellDestinationSection: Section!
-    var recentSearchesSection: Section!
-    var allStopsSection: Section!
-    var searchResultsSection: Section!
-    var timer: Timer?
-    var tableView : UITableView!
     let userDefaults = UserDefaults.standard
-    var searchBar: UISearchBar!
-    var recentLocations: [ItemType] = []
     let cornellDestinations = [(name: "North Campus", stops: "RPCC, Balch Hall, Appel, Helen Newman, Jessup Field"),
                                (name: "West Campus", stops: "Baker Flagpole, Baker Flagpole (Slopeside)"),
                                (name: "Central Campus", stops: "Statler Hall, Uris Hall, Goldwin Smith Hall"),
                                (name: "Collegetown", stops: "Collegetown Crossing, Schwartz Center"),
                                (name: "Ithaca Commons", stops: "Albany @ Salvation Army, State Street, Lot 32")]
     
-    func tctSectionHeaderFont() -> UIFont? {
-        return UIFont.systemFont(ofSize: 14)
-    }
-    
+    var cornellDestinationSection: Section!
+    var recentSearchesSection: Section!
+    var allStopsSection: Section!
+    var searchResultsSection: Section!
+    var timer: Timer?
+    var sectionIndexes: [String: Int]!
+    var tableView : UITableView!
+    var tableViewIndexController: TableViewIndexController!
+    var initialTableViewIndexMidY: CGFloat!
+    var searchBar: UISearchBar!
+    var recentLocations: [ItemType] = []
+    var isKeyboardVisible = false
     var sections: [Section] = [] {
         didSet {
-            print("DID CHANGE SECTIONS")
             tableView.reloadData()
         }
     }
     
+    func tctSectionHeaderFont() -> UIFont? {
+        return UIFont.systemFont(ofSize: 14)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        //Add Notification Observers
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
+        
         recentLocations = retrieveRecentLocations()
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
@@ -76,81 +63,213 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
         textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
         navigationItem.titleView = searchBar
-        let tableViewFrame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height - (navigationController?.navigationBar.bounds.height)!)
         
+        sectionIndexes = sectionIndexesForBusStop()
+        
+        let tableViewFrame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height - (navigationController?.navigationBar.bounds.height)!)
         tableView = UITableView(frame: tableViewFrame, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorColor = .lineColor
+        tableView.keyboardDismissMode = .onDrag
+        tableView.emptyDataSetSource = self
+        tableView.tableFooterView = UIView()
+        tableView.showsVerticalScrollIndicator = false
         tableView.register(BusStopCell.self, forCellReuseIdentifier: "busStop")
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "searchResults")
         tableView.register(CornellDestinationCell.self, forCellReuseIdentifier: "cornellDestinations")
         view.addSubview(tableView)
         
-        
-        cornellDestinationSection = Section(type: .CornellDestination, items: [.CornellDestination])
+        cornellDestinationSection = Section(type: .cornellDestination, items: [.cornellDestination])
         let allBusStops = getAllBusStops()
-        allStopsSection = Section(type: .AllStops, items: prepareAllBusStopItems(allBusStops: allBusStops))
-        recentSearchesSection = Section(type: .RecentSearches, items: recentLocations)
-        searchResultsSection = Section(type: .SearchResults, items: [])
+        allStopsSection = Section(type: .allStops, items: prepareAllBusStopItems(allBusStops: allBusStops))
+        recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
+        searchResultsSection = Section(type: .searchResults, items: [])
         sections = recentLocations.isEmpty ? [cornellDestinationSection, allStopsSection] : [cornellDestinationSection, recentSearchesSection, allStopsSection]
         
-        
-        let tableViewIndex = TableViewIndex(frame: CGRect())
-        tableViewIndex.delegate = self
-        tableViewIndex.dataSource = self
-        view.addSubview(tableViewIndex)
-        
+        tableViewIndexController = TableViewIndexController(tableView: tableView)
+        tableViewIndexController.tableViewIndex.delegate = self
+        tableViewIndexController.tableViewIndex.dataSource = self
+        initialTableViewIndexMidY = tableViewIndexController.tableViewIndex.indexRect().minY
+        tableViewIndexController.tableViewIndex.backgroundView?.backgroundColor = .clear
+        tableViewIndexController.setHidden(true, animated: false)
+        setUpIndexBar(contentOffsetY: 0.0)
     }
-    
     
     override func viewWillAppear(_ animated: Bool) {
-        self.definesPresentationContext = true
         recentLocations = retrieveRecentLocations()
-        tableView.reloadData()
-    }
-    
-    func prepareAllBusStopItems(allBusStops: [BusStop]) -> [ItemType] {
-        var itemArray: [ItemType] = []
-        for bus in allBusStops {
-            itemArray.append(.BusStop(BusStop(name: bus.name!, lat: bus.lat!, long: bus.long!)))
+        recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
+        if searchBar.showsCancelButton {
+            searchBar.becomeFirstResponder()
+            tableViewIndexController.setHidden(true, animated: false)
+        } else {
+            sections = recentLocations.isEmpty ? [cornellDestinationSection, allStopsSection] : [cornellDestinationSection, recentSearchesSection, allStopsSection]
         }
-        return itemArray
     }
     
-    func getAllBusStops() -> [BusStop] {
-        if let allBusStops = userDefaults.value(forKey: "allBusStops") as? Data {
-            return NSKeyedUnarchiver.unarchiveObject(with: allBusStops) as! [BusStop]
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return sections.count
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let header = view as! UITableViewHeaderFooterView
+        header.textLabel?.textColor = .secondaryTextColor
+        header.textLabel?.font = tctSectionHeaderFont()
+        switch sections[section].type {
+        case .cornellDestination: header.textLabel?.text = "Cornell Destinations"
+        case .recentSearches: header.textLabel?.text = "Recent Searches"
+        case .allStops: header.textLabel?.text = "All Stops"
+        case .searchResults: header.textLabel?.text = nil
+        default: break
         }
-        return [BusStop]()
     }
     
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch sections[section].type {
+        case .cornellDestination: return "Cornell Destinations"
+        case .recentSearches: return "Recent Searches"
+        case .allStops: return "All Stops"
+        case .searchResults: return nil
+        default: return nil
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50.0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var itemType : ItemType?
+        var cell: UITableViewCell!
+        
+        switch sections[indexPath.section].type {
+        case .cornellDestination:
+            itemType = .cornellDestination
+        case .recentSearches, .allStops, .searchResults:
+            itemType = sections[indexPath.section].items[indexPath.row]
+        default: break
+        }
+        
+        if let itemType = itemType {
+            switch itemType {
+            case .busStop(let busStop):
+                cell = tableView.dequeueReusableCell(withIdentifier: "busStop") as! BusStopCell
+                cell.textLabel?.text = busStop.name
+            case .placeResult(let placeResult):
+                cell = tableView.dequeueReusableCell(withIdentifier: "searchResults") as! SearchResultsCell
+                cell.textLabel?.text = placeResult.name
+                cell.detailTextLabel?.text = placeResult.detail
+            case .cornellDestination:
+                cell = tableView.dequeueReusableCell(withIdentifier: "cornellDestinations") as! CornellDestinationCell
+                cell.textLabel?.text = cornellDestinations[indexPath.row].name
+                cell.detailTextLabel?.text = cornellDestinations[indexPath.row].stops
+            }
+        }
+        
+        cell.textLabel?.font = tctSectionHeaderFont()
+        cell.preservesSuperviewLayoutMargins = false
+        cell.separatorInset = .zero
+        cell.layoutMargins = .zero
+        cell.layoutSubviews()
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        switch sections[section].type {
+        case .cornellDestination: return cornellDestinations.count
+        case .recentSearches: return recentLocations.count
+        case .allStops: return sections[section].items.count
+        case .searchResults: return sections[section].items.count
+        default: return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        var itemType: ItemType
+        let optionsVC = OptionsViewController()
+        
+        switch sections[indexPath.section].type {
+        case .cornellDestination:
+            itemType = .cornellDestination
+        case .recentSearches, .searchResults, .allStops:
+            itemType = sections[indexPath.section].items[indexPath.row]
+        default: itemType = ItemType.cornellDestination
+        }
+        
+        switch itemType {
+        case .cornellDestination:
+            print("User Selected Cornell Destination")
+        case .busStop(let busStop):
+            insertRecentLocation(location: busStop)
+            optionsVC.searchTo = (busStop, nil)
+        case .placeResult(let placeResult):
+            insertRecentLocation(location: placeResult)
+            optionsVC.searchTo = (nil, placeResult)
+        }
+        definesPresentationContext = false
+        tableView.deselectRow(at: indexPath, animated: true)
+        searchBar.endEditing(true)
+        navigationController?.pushViewController(optionsVC, animated: true)
+    }
+    
+    /* Get all bus stops and store in userDefaults */
+    func getBusStops() {
+        Network.getAllStops().perform(withSuccess: { stops in
+            self.userDefaults.set([BusStop](), forKey: "allBusStops")
+            let allBusStops = stops.allStops
+            let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
+            self.userDefaults.set(data, forKey: "allBusStops")
+            self.allStopsSection = Section(type: .allStops, items: prepareAllBusStopItems(allBusStops: getAllBusStops()))
+            self.sections = self.recentLocations.isEmpty ? [self.cornellDestinationSection,self.allStopsSection] : [self.cornellDestinationSection,self.recentSearchesSection, self.allStopsSection]
+        }, failure: {error in
+            print("Error when getting all stops", error)
+        })
+    }
+    
+    /* Keyboard Functions */
+    func keyboardWillShow(_ notification: Notification) {
+        isKeyboardVisible = true
+        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+            let contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height, 0.0)
+            tableView.contentInset = contentInsets
+        }
+    }
+    
+    func keyboardWillHide(_ notification: Notification) {
+        isKeyboardVisible = false
+        tableView.contentInset = .zero
+        tableView.scrollIndicatorInsets = .zero
+    }
+    
+    /* ScrollView Delegate */
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
+            cancelButton.isEnabled = true
+        }
+        let contentOffsetY = scrollView.contentOffset.y
+        if scrollView == tableView && searchBar.text == "" && !isKeyboardVisible {
+            setUpIndexBar(contentOffsetY: contentOffsetY)
+        }
+    }
+    
+    /* SearchBar Delegates */
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(true, animated: true)
-        //let secondSection = IndexPath(row: 0, section: 1)
-        //tableView.scrollToRow(at: secondSection, at: .top, animated: true)
-        tableView.beginUpdates()
-        tableView.deleteSections([0], with: .top)
-        sections.remove(at: 0)
-        tableView.endUpdates()
-        
-        //tableView.reloadData()
-    }
-    
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        
+        tableViewIndexController.setHidden(true, animated: false)
+        if sections.count > 1 {
+            let secondSection = IndexPath(row: 0, section: 1)
+            tableView.scrollToRow(at: secondSection, at: .top, animated: true)
+        }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.endEditing(true)
         searchBar.text = nil
-        sections = recentLocations.isEmpty ? [allStopsSection] : [recentSearchesSection, allStopsSection]
-        tableView.beginUpdates()
-        sections.insert(cornellDestinationSection, at: 0)
-        tableView.insertSections([0], with: .top)
-        tableView.endUpdates()
+        sections = recentLocations.isEmpty ? [cornellDestinationSection,allStopsSection] : [cornellDestinationSection,recentSearchesSection, allStopsSection]
+        tableViewIndexController.setHidden(false, animated: false)
         tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
         
     }
@@ -160,166 +279,59 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
     }
     
+    /* TableViewIndex Functions */
     func indexItems(for tableViewIndex: TableViewIndex) -> [UIView] {
-        var views: [UIView] = []
-        for x in 0...10 {
-        views.append(StringItem(text: "\(x)"))
-        }
-        return views
+        let arrayOfKeys = Array(sectionIndexes.keys).sorted()
+        return arrayOfKeys.map( { character -> UIView in
+            let letter = StringItem(text: character)
+            letter.tintColor = .tcatBlueColor
+            return letter })
     }
     
-    func getPlaces(timer: Timer) {
-        let searchText = (timer.userInfo as! [String: String])["searchText"]!
-        Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
-            self.parseGoogleJSON(searchText: searchText, json: responseJson)
-        })
+    func tableViewIndex(_ tableViewIndex: TableViewIndex, didSelect item: UIView, at index: Int) {
+        let arrayOfKeys = Array(sectionIndexes.keys).sorted()
+        let currentLetter = arrayOfKeys[index]
+        let indexPath = IndexPath(row: sectionIndexes[currentLetter]!, section: sections.count - 1)
+        if #available(iOS 10.0, *) {
+            let taptic = UIImpactFeedbackGenerator(style: .light)
+            taptic.prepare()
+            tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+            taptic.impactOccurred()
+        } else { tableView.scrollToRow(at: indexPath, at: .top, animated: false) }
     }
     
-    
-    func parseGoogleJSON(searchText: String, json: JSON) {
-        var itemTypes: [ItemType] = []
-        let filteredBusStops = getAllBusStops().filter({(item: BusStop) -> Bool in
-            let stringMatch = item.name?.lowercased().range(of: searchText.lowercased())
-            return stringMatch != nil
-        })
-        let updatedOrderBusStops = sortFilteredBusStops(busStops: filteredBusStops, letter: searchText.capitalized.characters.first!)
-        itemTypes = updatedOrderBusStops.map( {ItemType.BusStop($0)} )
-        
-        if let predictionsArray = json["predictions"].array {
-            for result in predictionsArray {
-                let placeResult = PlaceResult(name: result["structured_formatting"]["main_text"].stringValue, detail: result["structured_formatting"]["secondary_text"].stringValue, placeID: result["place_id"].stringValue)
-                let isPlaceABusStop = filteredBusStops.contains(where: {(stop) -> Bool in
-                    placeResult.name!.contains(stop.name!)
-                })
-                if !isPlaceABusStop {
-                    itemTypes.append(ItemType.PlaceResult(placeResult))
+    func setUpIndexBar(contentOffsetY: CGFloat) {
+        if let visibleRows = tableView.indexPathsForVisibleRows {
+            let visibleSections = visibleRows.map({$0.section})
+            if let allStopsIndex = sections.index(where: {$0.type == SectionType.allStops}), let firstAllStopCellIndexPath = visibleRows.filter({$0.section == allStopsIndex && $0.row == 1}).first {
+                let secondCell = tableView.cellForRow(at: firstAllStopCellIndexPath)
+                let newYPosition = view.convert(tableViewIndexController.tableViewIndex.indexRect(), from: tableView).minY
+                if ((newYPosition * -1.0) < (secondCell?.frame.minY)! - view.bounds.midY) {
+                    let offset = (secondCell?.frame.minY)! - initialTableViewIndexMidY - contentOffsetY
+                    tableViewIndexController.tableViewIndex.indexOffset = .init(horizontal: 0.0, vertical: offset)
+                    tableViewIndexController.setHidden(!visibleSections.contains(allStopsIndex), animated: true)
                 }
             }
-            self.searchResultsSection.items = itemTypes
-            self.sections = [self.searchResultsSection]
-
-            }
-        }
-
-func numberOfSections(in tableView: UITableView) -> Int {
-    return sections.count
-}
-
-func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-    let header = view as! UITableViewHeaderFooterView
-    header.textLabel?.textColor = .secondaryTextColor
-    header.textLabel?.font = tctSectionHeaderFont()
-    header.textLabel?.text = section == 0 ? "Cornell Destinations" : "Recent Searches"
-    switch sections[section].type {
-    case .CornellDestination: header.textLabel?.text = "Cornell Destinations"
-    case .RecentSearches: header.textLabel?.text = "Recent Searches"
-    case .AllStops: header.textLabel?.text = "All Stops"
-    case .SearchResults: header.textLabel?.text = nil
-    }
-}
-
-func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-    switch sections[section].type {
-    case .CornellDestination: return "Cornell Destinations"
-    case .RecentSearches: return "Recent Searches"
-    case .AllStops: return "All Stops"
-    case .SearchResults: return nil
-    }
-    
-}
-
-func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-    return 50.0
-}
-
-func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    var itemType : ItemType?
-    var cell: UITableViewCell!
-    
-    switch sections[indexPath.section].type {
-    case .CornellDestination:
-        itemType = .CornellDestination
-    case .RecentSearches, .AllStops, .SearchResults:
-        itemType = sections[indexPath.section].items[indexPath.row]
-    }
-    
-    if let itemType = itemType {
-        switch itemType {
-        case .BusStop(let busStop):
-            cell = tableView.dequeueReusableCell(withIdentifier: "busStop") as! BusStopCell
-            cell.textLabel?.text = busStop.name
-        case .PlaceResult(let placeResult):
-            cell = tableView.dequeueReusableCell(withIdentifier: "searchResults") as! SearchResultsCell
-            cell.textLabel?.text = placeResult.name
-            cell.detailTextLabel?.text = placeResult.detail
-        case .CornellDestination:
-            cell = tableView.dequeueReusableCell(withIdentifier: "cornellDestinations") as! CornellDestinationCell
-            cell.textLabel?.text = cornellDestinations[indexPath.row].name
-            cell.detailTextLabel?.text = cornellDestinations[indexPath.row].stops
         }
     }
     
-    cell.textLabel?.font = tctSectionHeaderFont()
-    cell.preservesSuperviewLayoutMargins = false
-    cell.separatorInset = .zero
-    cell.layoutMargins = .zero
-    cell.layoutSubviews()
-    
-    return cell
-}
-
-func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    switch sections[section].type {
-    case .CornellDestination: return cornellDestinations.count
-    case .RecentSearches: return recentLocations.count
-    case .AllStops: return sections[section].items.count
-    case .SearchResults: return sections[section].items.count
-    }
-}
-
-func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    var itemType: ItemType
-    let optionsVC = OptionsViewController()
-    
-    switch sections[indexPath.section].type {
-    case .CornellDestination:
-        itemType = .CornellDestination
-    case .RecentSearches, .SearchResults, .AllStops:
-        itemType = sections[indexPath.section].items[indexPath.row]
-    }
-    
-    switch itemType {
-    case .CornellDestination:
-        print("User Selected Cornell Destination")
-    case .BusStop(let busStop):
-        print("Selected Bus Stop: ", busStop.name)
-    //optionsVC.searchTo(.busstop, busStop)
-    case .PlaceResult(let placeResult):
-        print("Selected Place Result: ", placeResult.name)
-        //optionsVC.searchTo(.placeResult, placeResult)
-    }
-    
-    //navigationController?.pushViewController(optionsVC, animated: true)
-    
-    tableView.deselectRow(at: indexPath, animated: true)
-}
-
-func retrieveRecentLocations() -> [ItemType] {
-    if let recentLocations = userDefaults.value(forKey: "recentSearch") as? Data {
-        let recentSearches = NSKeyedUnarchiver.unarchiveObject(with: recentLocations) as! [Any]
-        var itemTypes: [ItemType] = []
-        for search in recentSearches {
-            if let busStop = search as? BusStop {
-                itemTypes.append(.BusStop(busStop))
-            }
-            if let searchResult = search as? PlaceResult {
-                itemTypes.append(.PlaceResult(searchResult))
-            }
+    /* Get Search Results */
+    func getPlaces(timer: Timer) {
+        let searchText = (timer.userInfo as! [String: String])["searchText"]!
+        if searchText.characters.count > 0 {
+            Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
+                self.searchResultsSection = parseGoogleJSON(searchText: searchText, json: responseJson)
+                self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
+                self.tableViewIndexController.setHidden(true, animated: false)
+                if !self.sections.isEmpty {
+                    self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false) }
+            })
+        } else {
+            sections = recentLocations.isEmpty ? [cornellDestinationSection, allStopsSection] : [cornellDestinationSection, recentSearchesSection, allStopsSection]
+            tableView.scrollToRow(at: IndexPath(row: 0, section: 1), at: .top, animated: false)
+            self.tableViewIndexController.setHidden(false, animated: false)
         }
-        return itemTypes
     }
-    return [ItemType]()
-}
 }
 
 

@@ -38,7 +38,7 @@ class BusStopCell: UITableViewCell {
         imageView?.frame = CGRect(x: 10, y: 5, width: imageWidth, height: imageHeight)
         imageView?.contentMode = .scaleAspectFit
         imageView?.center.y = bounds.height / 2.0
-        imageView?.image = #imageLiteral(resourceName: "bus")
+        imageView?.image = reuseIdentifier == "currentLocation" ? #imageLiteral(resourceName: "location") : #imageLiteral(resourceName: "bus")
         imageView?.tintColor = .tcatBlueColor
         
         textLabel?.frame = CGRect(x: labelXPosition, y: 0, width: frame.width - labelWidthConstant, height: labelHeight)
