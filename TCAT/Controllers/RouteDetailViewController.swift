@@ -40,6 +40,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     var mediumDetailHeight: CGFloat = UIScreen.main.bounds.height / 2
     var smallDetailHeight: CGFloat = UIScreen.main.bounds.height - 80
     
+    var contentOffset: CGFloat = 0
+    
     let markerRadius: CGFloat = 8
     let mapPadding: CGFloat = 40
     
@@ -293,22 +295,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         navigationController?.popViewController(animated: true)
     }
     
-    /** Animate detailTableView depending on context, centering map */
-    func summaryTapped(_ sender: UITapGestureRecognizer? = nil) {
-        
-        let isSmall = self.detailView.frame.minY == self.smallDetailHeight
-        
-        if isInitialView() || !isSmall {
-            centerMap() // !isSmall to make centered when going big to small
-        }
-        
-        UIView.animate(withDuration: 0.25) {
-            let point = CGPoint(x: 0, y: isSmall || self.isInitialView() ? self.largeDetailHeight : self.smallDetailHeight)
-            self.detailView.frame = CGRect(origin: point, size: self.view.frame.size)
-        }
-        
-    }
-    
     /** Create and configure detailView, summaryView, tableView */
     func initializeDetailView() {
         
@@ -405,19 +391,23 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
     }
     
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        
+    func detailTableViewHeight() -> CGFloat {
         var heightOfCells: CGFloat = 0
         for direction in directions {
             if direction is DepartDirection {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "largeCell")! as! LargeDetailTableViewCell
+                let cell = detailTableView.dequeueReusableCell(withIdentifier: "largeCell")! as! LargeDetailTableViewCell
                 cell.setCell(direction, firstStep: false)
                 heightOfCells += cell.height()
             } else {
                 heightOfCells += RouteDetailCellSize.smallHeight
             }
         }
+        return heightOfCells
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         
+        let heightOfCells = detailTableViewHeight()
         return main.height - largeDetailHeight - summaryViewHeight - heightOfCells
     }
     
@@ -451,6 +441,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let isBusStopCell = direction is ArriveDirection && direction.location.coordinate.latitude == 0.0
         let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
         
+        for index in 0..<directions.count {
+            // print("\(index) • \(directions[index])")
+        }
+        
         /// Formatting, including selectionStyle, and seperator line fixes
         func format(_ cell: UITableViewCell) -> UITableViewCell {
             cell.selectionStyle = .none
@@ -461,14 +455,15 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         }
         
         if isBusStopCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "busStopCell")! as! BusStopTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "busStopCell") as! BusStopTableViewCell
             cell.setCell(direction.place)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
             return format(cell)
         }
             
         else if direction is WalkDirection || direction is ArriveDirection {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell")! as! SmallDetailTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell") as! SmallDetailTableViewCell
+            print("index of below cell: \(indexPath.row)")
             cell.setCell(direction, busEnd: direction is ArriveDirection,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
@@ -477,7 +472,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         }
             
         else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "largeCell")! as! LargeDetailTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "largeCell") as! LargeDetailTableViewCell
             cell.setCell(direction, firstStep: indexPath.row == 0)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
             return format(cell)
@@ -527,6 +522,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             tableView.beginUpdates()
             
             // Insert or remove bus stop data based on selection
+            
+            print("directions before")
+            for direction in directions { print("direction: \(direction)") }
+            
             if cell.isExpanded {
                 directions.insert(contentsOf: busStops, at: indexPath.row + 1)
                 tableView.insertRows(at: indexPathArray, with: .middle)
@@ -535,10 +534,37 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 tableView.deleteRows(at: indexPathArray, with: .bottom)
             }
             
+            print("directions after")
+            for direction in directions { print("direction: \(direction)") }
+            
             tableView.endUpdates()
+            
             tableView.scrollToRow(at: indexPath, at: .none, animated: true)
-            let lastIndexPath = IndexPath(row: directions.count - 1, section: 0)
-            tableView.reloadRows(at: [lastIndexPath], with: .none)
+            tableView.contentSize.height = detailTableViewHeight()
+            tableView.setNeedsLayout()
+            tableView.layoutIfNeeded()
+            print("tableView.contentSize.height: \(tableView.contentSize.height)")
+            
+            // let lastIndexPath = IndexPath(row: directions.count - 1, section: 0)
+            // tableView.reloadRows(at: [lastIndexPath], with: .none)
+            
+        }
+        
+    }
+    
+    /** Animate detailTableView depending on context, centering map */
+    func summaryTapped(_ sender: UITapGestureRecognizer? = nil) {
+        
+        let isSmall = self.detailView.frame.minY == self.smallDetailHeight
+        
+        if isInitialView() || !isSmall {
+            centerMap() // !isSmall to make centered when going big to small
+        }
+        
+        UIView.animate(withDuration: 0.25) {
+            let point = CGPoint(x: 0, y: isSmall || self.isInitialView() ? self.largeDetailHeight : self.smallDetailHeight)
+            self.detailView.frame = CGRect(origin: point, size: self.view.frame.size)
+            self.detailTableView.layoutIfNeeded()
         }
         
     }
@@ -548,22 +574,26 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         return true
     }
     
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == detailTableView {
+            contentOffset = scrollView.contentOffset.y
+        }
+    }
+    
     func panGesture(recognizer: UIPanGestureRecognizer) {
+        
+        if contentOffset != 0 { return }
         
         let translation = recognizer.translation(in: self.detailView)
         let velocity = recognizer.velocity(in: self.detailView)
         let y = self.detailView.frame.minY
         
         if y + translation.y >= largeDetailHeight && y + translation.y <= smallDetailHeight {
-            print("y + translation >= large and y + translation <= small")
-            print("translation: \(translation), velocity: \(velocity), y: \(y)")
             self.detailView.frame = CGRect(x: 0, y: y + translation.y, width: detailView.frame.width, height: detailView.frame.height)
             recognizer.setTranslation(CGPoint.zero, in: self.detailView)
         }
         
         if recognizer.state == .ended {
-            print("recognizer.state == .ended")
-            print("translation: \(translation), velocity: \(velocity), y: \(y)")
             
             let visibleScreen = self.main.height - UIApplication.shared.statusBarFrame.height - self.navigationController!.navigationBar.frame.height
             

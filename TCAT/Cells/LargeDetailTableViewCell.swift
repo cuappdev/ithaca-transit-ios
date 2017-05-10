@@ -76,13 +76,43 @@ class LargeDetailTableViewCell: UITableViewCell {
     
     /** Precondition: Direction is BoardDirection */
     func setCell(_ direction: Direction, firstStep: Bool) {
-        
+                
         self.direction = direction as! DepartDirection
         cellHeight = height()
         
+        /*
         let shouldAddIconView = iconView == nil
         let shouldAddBusIconView = busIconView == nil
+        let shouldAddTitleLabel = titleLabel == nil
+        let shouldAddDetailLabel = detailLabel == nil
+        */
         
+        let shouldAddViews = iconView == nil || busIconView == nil ||
+            titleLabel == nil || detailLabel == nil
+        
+        if shouldAddViews {
+            iconView = DetailIconView(height: cellHeight,
+                                      type: IconType.busStart,
+                                      time: direction.timeDescription,
+                                      firstStep: firstStep,
+                                      lastStep: false)
+            contentView.addSubview(iconView!)
+            
+            busIconView = BusIcon(size: .small, number: self.direction.routeNumber)
+            busIconView = formatBusIconView(busIconView, titleLabel)
+            contentView.addSubview(busIconView)
+            
+            titleLabel = formatTitleLabel(titleLabel)
+            detailLabel = formatDetailLabel(detailLabel, titleLabel)
+            
+            // Place bus icon and chevron accordingly
+            if titleLabel.frame.height > 60 {
+                busIconView.frame.origin.y = titleLabel.frame.minY + (titleLabel.font.lineHeight / 2)
+            }
+            chevron.center.y = cellHeight / 2
+        }
+        
+        /*
         // Add custom UIViews if they haven't been added already
         iconView = DetailIconView(height: cellHeight,
                                   type: IconType.busStart,
@@ -94,12 +124,21 @@ class LargeDetailTableViewCell: UITableViewCell {
         busIconView = formatBusIconView(busIconView, titleLabel)
         if shouldAddBusIconView { contentView.addSubview(busIconView) }
         
+        print("just added stuff, before set labels")
+        
         titleLabel = formatTitleLabel(titleLabel)
         detailLabel = formatDetailLabel(detailLabel, titleLabel)
         
+        print("after set labels")
+        
         // Place bus icon and chevron accordingly
-        busIconView.frame.origin.y = titleLabel.frame.minY + (titleLabel.font.lineHeight / 2)
+        if titleLabel.frame.height > 60 {
+            busIconView.frame.origin.y = titleLabel.frame.minY + (titleLabel.font.lineHeight / 2)
+        }
         chevron.center.y = cellHeight / 2
+        
+        print("set cell finished")
+  */
         
     }
     
@@ -110,7 +149,12 @@ class LargeDetailTableViewCell: UITableViewCell {
         busIconView = formatBusIconView(busIconView, label)
         
         // Add correct amount of spacing to create a gap for the busIcon
-        while label.frame.maxX < busIconView.frame.maxX + 8 {
+        // Using constant always returned from
+        //      while label.frame.maxX < busIconView.frame.maxX + 8 {
+        // because it will occasionally run infinitely because of format func calls
+        var accum = 0
+        while accum <= 16 {
+            accum += 1
             label.text! += " "
             label.sizeToFit()
         }
@@ -125,8 +169,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         label.numberOfLines = 0
         label.sizeToFit()
         label.frame.size.width = (chevron.frame.minX - 12) - cellWidth
-        label.frame.origin.y = edgeSpacing - paragraphStyle.lineSpacing
-        
+        label.frame.origin.y = edgeSpacing // - paragraphStyle.lineSpacing
         
         attributedString.addAttribute(NSParagraphStyleAttributeName,
                                       value: paragraphStyle,
@@ -146,18 +189,16 @@ class LargeDetailTableViewCell: UITableViewCell {
     
     /** Abstracted formatting of content for busIconView. Needs initialized titleLabel */
     func formatBusIconView(_ icon: BusIcon, _ titleLabel: UILabel) -> BusIcon {
-        icon.frame.origin = CGPoint(x: titleLabel.frame.maxX + 8, y: 0)
+        icon.frame.origin = CGPoint(x: titleLabel.frame.maxX + 8,
+                                    y: titleLabel.frame.minY + titleLabel.font.lineHeight)
         return icon
     }
     
     /** Precondition: setCell must be called before using this function */
     func height() -> CGFloat {
-        
         let titleLabel = formatTitleLabel(getTitleLabel())
         let detailLabel = formatDetailLabel(getDetailLabel(), titleLabel)
-        
         return titleLabel.frame.height + detailLabel.frame.height + labelSpacing + (edgeSpacing * 2)
-        
     }
     
 }
