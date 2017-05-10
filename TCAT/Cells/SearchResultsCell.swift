@@ -9,11 +9,11 @@
 import UIKit
 
 class SearchResultsCell: UITableViewCell {
-    let labelWidthConstant = CGFloat(45.0)
-    let labelXPosition = CGFloat(40.0)
-    let imageHeight = CGFloat(20.0)
-    let imageWidth = CGFloat(20.0)
-    let labelHeight = CGFloat(20.0)
+    let labelWidthConstant: CFloat = 45.0
+    let labelXPosition: CFloat = 40.0
+    let imageHeight: CFloat = 20.0
+    let imageWidth: CFloat = 20.0
+    let labelHeight: CFloat = 20.0
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -46,7 +46,7 @@ class SearchResultsCell: UITableViewCell {
         
         detailTextLabel?.frame = CGRect(x: labelXPosition, y: 0, width: frame.width - labelWidthConstant, height: labelHeight)
         detailTextLabel?.center.y = bounds.height - 15.0
-        detailTextLabel?.textColor = UIColor(white: 153.0 / 255.0, alpha: 1.0)
+        detailTextLabel?.textColor = .mediumGrayColor
         detailTextLabel?.font = .systemFont(ofSize: 12)
     }
 }

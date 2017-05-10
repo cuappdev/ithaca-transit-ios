@@ -55,7 +55,7 @@ func insertRecentLocation(location: Any) {
         switch item {
         case .busStop(let busStop): return busStop
         case .placeResult(let placeResult): return placeResult
-        case .cornellDestination: return "wtf"
+        default: break
         }
     })
     let filteredLocations = location is BusStop ? convertedRecentLocations.filter({ !areObjectsEqual(type: BusStop.self, a: location, b: $0)}) : convertedRecentLocations.filter({ !areObjectsEqual(type: PlaceResult.self, a: location, b: $0)})
