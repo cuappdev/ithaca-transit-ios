@@ -120,13 +120,14 @@ class LargeDetailTableViewCell: UITableViewCell {
         attributedString.append(bold(pattern: self.direction.place,
                                      in: self.direction.placeDescription))
         label.attributedText = attributedString
+        paragraphStyle.lineSpacing = 8
         
         label.numberOfLines = 0
         label.sizeToFit()
         label.frame.size.width = (chevron.frame.minX - 12) - cellWidth
-        label.frame.origin.y = edgeSpacing
+        label.frame.origin.y = edgeSpacing - paragraphStyle.lineSpacing
         
-        paragraphStyle.lineSpacing = 8
+        
         attributedString.addAttribute(NSParagraphStyleAttributeName,
                                       value: paragraphStyle,
                                       range: NSMakeRange(0, attributedString.length))
@@ -145,16 +146,8 @@ class LargeDetailTableViewCell: UITableViewCell {
     
     /** Abstracted formatting of content for busIconView. Needs initialized titleLabel */
     func formatBusIconView(_ icon: BusIcon, _ titleLabel: UILabel) -> BusIcon {
-        print("icon.frame.size.height: \(icon.frame.size.height)")
         icon.frame.origin = CGPoint(x: titleLabel.frame.maxX + 8, y: 0)
         return icon
-    }
-    
-    /** Returns the number of lines a UILabel takes up based on it's frame */
-    func numberOfLines(_ label: UILabel, spacing: CGFloat) -> Int {
-        let fontHeight = label.font.lineHeight + spacing
-        let labelHeight = label.frame.size.height
-        return Int(floor(labelHeight / fontHeight))
     }
     
     /** Precondition: setCell must be called before using this function */

@@ -5,8 +5,6 @@
 //  Created by Matthew Barker on 2/11/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
-//  Pre-Conditions:
-//
 
 import UIKit
 import GoogleMaps
@@ -58,6 +56,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         }
     }
     
+    /** Construct Directions based on Route and parse Waypoint / Path data */
     func initializeRoute(route: Route) {
         
         self.route = route
@@ -284,30 +283,27 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         return mediumDetailHeight == detailView.frame.minY
     }
     
-    /** Reset search */
+    /** Return app to home page */
     func exitAction() {
         navigationController?.popToRootViewController(animated: true)
-        if let homeViewController = navigationController?.viewControllers.first as? HomeViewController {
-            //homeViewController.searchBar.resultsViewController?.dismiss(animated: false, completion: nil)
-        }
     }
     
+    /** Move back one view controller in navigationController stack */
     func backAction() {
         navigationController?.popViewController(animated: true)
     }
     
-    /** Animate detailTableView back onto screen, centering map */
-    func summaryTapped(_ sender: UITapGestureRecognizer) {
+    /** Animate detailTableView depending on context, centering map */
+    func summaryTapped(_ sender: UITapGestureRecognizer? = nil) {
         
         let isSmall = self.detailView.frame.minY == self.smallDetailHeight
         
         if isInitialView() || !isSmall {
-            // !isSmall so centering takes place when going from not small to small
-            centerMap()
+            centerMap() // !isSmall to make centered when going big to small
         }
         
         UIView.animate(withDuration: 0.25) {
-            let point = CGPoint(x: 0, y: isSmall ? self.largeDetailHeight : self.smallDetailHeight)
+            let point = CGPoint(x: 0, y: isSmall || self.isInitialView() ? self.largeDetailHeight : self.smallDetailHeight)
             self.detailView.frame = CGRect(origin: point, size: self.view.frame.size)
         }
         
@@ -496,6 +492,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         // Check if cell starts a bus direction, and should be expandable
         if direction is DepartDirection {
             
+            if isInitialView() { summaryTapped() }
+            
             let cell = tableView.cellForRow(at: indexPath) as! LargeDetailTableViewCell
             cell.isExpanded = !cell.isExpanded
             
@@ -557,11 +555,15 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let y = self.detailView.frame.minY
         
         if y + translation.y >= largeDetailHeight && y + translation.y <= smallDetailHeight {
+            print("y + translation >= large and y + translation <= small")
+            print("translation: \(translation), velocity: \(velocity), y: \(y)")
             self.detailView.frame = CGRect(x: 0, y: y + translation.y, width: detailView.frame.width, height: detailView.frame.height)
             recognizer.setTranslation(CGPoint.zero, in: self.detailView)
         }
         
         if recognizer.state == .ended {
+            print("recognizer.state == .ended")
+            print("translation: \(translation), velocity: \(velocity), y: \(y)")
             
             let visibleScreen = self.main.height - UIApplication.shared.statusBarFrame.height - self.navigationController!.navigationBar.frame.height
             
