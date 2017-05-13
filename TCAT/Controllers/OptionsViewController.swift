@@ -12,10 +12,11 @@ import CoreLocation
 import SwiftyJSON
 
 /* 2Do:
-  * Add Matt's logic
-  * deque = the line keeps showing up ??
-  * Loader = fix
+  * dequeReusable cell = the line keeps showing up ??
+  * Loader = implement/fix (glitch if go back bt Austin view & mine's)
   * work on overflow - datepicker & dist label (maybe put below)
+  * don't make tableview header sticky
+  * departure time live updates, if past time = say 0 mins instead of blank
  */
 /* Later:
   * PlaceResult & BuSStop really cannot be 2 different objects, cause too much hassle. N2Do inheritance
@@ -65,6 +66,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
                                                NSForegroundColorAttributeName : UIColor.black]
         title = "Route Options"
         navigationController?.navigationBar.titleTextAttributes = titleAttributes //so title actually shows up
+        self.view.backgroundColor = .tableBackgroundColor
         
         //Set up route selection view
         routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 150))
@@ -129,8 +131,12 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         view.addSubview(datePickerOverlay)
         view.sendSubview(toBack: datePickerOverlay)
         
+        //Set up swap
+        routeSelection.swapButton.addTarget(self, action: #selector(self.swapFromAndTo), for: .touchUpInside)
+        
         //Set up table view
-        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0) - UIApplication.shared.statusBarFrame.height))
+        let routeResultsTopPadding: CGFloat = 24
+        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY + routeResultsTopPadding, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0) - UIApplication.shared.statusBarFrame.height - routeResultsTopPadding))
         routeResults.delegate = self
         routeResults.allowsSelection = true
         routeResults.dataSource = self
@@ -141,9 +147,9 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         view.addSubview(datePickerView)//so datePicker can go ontop of other views
 
         //If no date is set then date should be same as today's date
-        guard let _ = searchTime else{
-            searchTime = Date()
-            return
+        if let _ = searchTime{
+        }else{
+            self.searchTime = Date()
         }
         
         //Set up fake data
@@ -161,8 +167,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         loaderroutes = [route1, route2, route3]
         routes = loaderroutes
-        searchForRoutes()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -181,10 +185,36 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         // Dispose of any resources that can be recreated.
     }
 
+    //MARK: Swap functionality
+    func swapFromAndTo(sender: UIButton){
+        //Swap data
+        let searchFromOld = searchFrom
+        searchFrom = searchTo
+        searchTo = searchFromOld
+        
+        //Update UI
+        let (fromBus, fromPlace) = searchFrom
+        let (toBus, toPlace) = searchTo
+        
+        if let start = fromBus, let name = start.name{
+            routeSelection.fromSearch.setTitle(name, for: .normal)
+        }else if let start = fromPlace, let name = start.name{
+            routeSelection.fromSearch.setTitle(name, for: .normal)
+        }else{
+            routeSelection.fromSearch.setTitle("", for: .normal)
+        }
+        
+        if let end = toBus, let name = end.name{
+            routeSelection.toSearch.setTitle(name, for: .normal)
+        }else if let end = toPlace, let name = end.name{
+            routeSelection.toSearch.setTitle(name, for: .normal)
+        }else{
+            routeSelection.toSearch.setTitle("", for: .normal)
+        }
+    }
     
     //MARK: Search bar functionality
     func searchForRoutes(){
-        //N2SELF: N2 put in parameters for searchDate & searchDepature
         if searchTime == nil{
             searchTime = Date()
         }
@@ -257,11 +287,18 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
                                 let walkToStopDate = Date().addingTimeInterval(walkTimeInterval)
                                 if(walkToStopDate > self.searchTime!){
                                     validRoute = false
+                                }else{
+                                    route.departureTime.addTimeInterval(-walkTimeInterval)
+                                    route.directions[i].time = route.departureTime
+                                    route.travelDistance = distance
                                 }
                             }else{ //make sure walk to stop before bus leaves
                                 let walkToStopDate = self.searchTime?.addingTimeInterval(walkTimeInterval)
                                 if(walkToStopDate! > route.directions[1].time){
                                     validRoute = false
+                                }else{
+                                    route.departureTime.addTimeInterval(-walkTimeInterval)
+                                    route.directions[i].time = route.departureTime
                                 }
                             }
                         })
@@ -271,6 +308,9 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
                                 let walkToDestinationDate = route.directions[i-1].time.addingTimeInterval(walkTimeInterval)
                                 if(walkToDestinationDate > self.searchTime!){
                                     validRoute = false
+                                }else{
+                                    route.arrivalTime.addTimeInterval(walkTimeInterval)
+                                    route.directions[i].time = route.arrivalTime
                                 }
                             }
                         })
@@ -279,6 +319,8 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
                             let walkToStopDate = route.directions[i-1].time.addingTimeInterval(walkTimeInterval)
                             if(walkToStopDate > route.directions[i+1].time){
                                 validRoute = false
+                            }else{
+                                route.directions[i].time = walkToStopDate
                             }
                         })
                     }
@@ -311,11 +353,15 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func searchingTo(sender: UIButton){
         searchType = .to
+         //For Austin's search bar to show current location option or not
+//        searchBarView.resultsViewController.shouldShowCurrentLocation = false
         presentSearchBar()
     }
     
     func searchingFrom(sender: UIButton){
         searchType = .from
+        //For Austin's search bar to show current location option or not
+//        searchBarView.resultsViewController.shouldShowCurrentLocation = false
         presentSearchBar()
     }
     
