@@ -52,6 +52,7 @@
 		DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */; };
 		DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */; };
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
+		DDD33DEF1EC2960400BC6454 /* CircleLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD33DEE1EC2960400BC6454 /* CircleLine.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -127,6 +128,7 @@
 		DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteSelectionView.swift; path = Views/RouteSelectionView.swift; sourceTree = "<group>"; };
 		DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationTableViewCell.swift; path = Cells/LocationTableViewCell.swift; sourceTree = "<group>"; };
 		DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteTableViewCell.swift; path = Cells/RouteTableViewCell.swift; sourceTree = "<group>"; };
+		DDD33DEE1EC2960400BC6454 /* CircleLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CircleLine.swift; path = Views/CircleLine.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E69224A160B2B078827D28A1 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -327,6 +329,7 @@
 				DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */,
 				DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */,
 				DD16B8E41E7046390089B7B2 /* BusIcon.swift */,
+				DDD33DEE1EC2960400BC6454 /* CircleLine.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -662,6 +665,7 @@
 				DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */,
 				DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */,
 				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
+				DDD33DEF1EC2960400BC6454 /* CircleLine.swift in Sources */,
 				503EC3811E969B2F00B3D4D4 /* PlaceResult.swift in Sources */,
 				505E00E51E9ED56F00F09BAE /* KMLParser.swift in Sources */,
 				DDB49C941E8857D000A99C35 /* RouteDetailViewController.swift in Sources */,
