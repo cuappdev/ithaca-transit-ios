@@ -26,7 +26,7 @@ enum SearchBarType: String{
 }
 
 enum SearchType: String{
-    case arriveby, leaveat
+    case arriveBy, leaveAt
 }
 
 class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,
@@ -40,7 +40,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     var searchType: SearchBarType = .from //for search bar
     var searchFrom: (BusStop?, PlaceResult?) = (nil, nil)
     var searchTo: (BusStop?, PlaceResult?) = (nil, nil)
-    var searchTimeType: SearchType = .leaveat
+    var searchTimeType: SearchType = .leaveAt
     var searchTime: Date?
     
     //View
@@ -306,7 +306,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
                     if i == 0{
                         walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
                             //this might be sketch for leave now, check logic
-                            if self.searchTimeType == .leaveat{ //make sure if walk now to stop, get there before leaveat time
+                            if self.searchTimeType == .leaveAt{ //make sure if walk now to stop, get there before leaveat time
                                 let walkToStopDate = Date().addingTimeInterval(walkTimeInterval)
                                 if(walkToStopDate > self.searchTime!){
                                     validRoute = false
@@ -327,7 +327,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
                         })
                     }else if i == (directions.count - 1){
                         walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
-                            if self.searchTimeType == .arriveby { //make sure walk to destination before arrive by time
+                            if self.searchTimeType == .arriveBy { //make sure walk to destination before arrive by time
                                 let walkToDestinationDate = route.directions[i-1].time.addingTimeInterval(walkTimeInterval)
                                 if(walkToDestinationDate > self.searchTime!){
                                     validRoute = false
@@ -475,18 +475,18 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         let segmentedControl = datePickerView.arriveDepartBar
         let selectedSegString = (segmentedControl?.titleForSegment(at: segmentedControl?.selectedSegmentIndex ?? 0)) ?? ""
         if (selectedSegString.lowercased().contains("arrive")){
-            searchTimeType = .arriveby
+            searchTimeType = .arriveBy
         }else{
-            searchTimeType = .leaveat
+            searchTimeType = .leaveAt
         }
         var title = ""
         //Customize string based on date
         if(Calendar.current.isDateInToday(date) || Calendar.current.isDateInTomorrow(date)){
-            let verb = (searchTimeType == .arriveby) ? "Arrive" : "Leave" //Use simply,"arrive" or "leave"
+            let verb = (searchTimeType == .arriveBy) ? "Arrive" : "Leave" //Use simply,"arrive" or "leave"
             let day = Calendar.current.isDateInToday(date) ? "" : " tomorrow" //if today don't put day
             title = "\(verb)\(day) at \(Time.string(from: date))"
         }else{
-            let verb = (searchTimeType == .arriveby) ? "Arrive by" : "Leave on" //Use "arrive by" or "leave on"
+            let verb = (searchTimeType == .arriveBy) ? "Arrive by" : "Leave on" //Use "arrive by" or "leave on"
             title = "\(verb) \(dateString)"
         }
         routeSelection.timeButton.setTitle(title, for: .normal)

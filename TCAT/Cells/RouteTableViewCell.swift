@@ -197,7 +197,6 @@ class RouteTableViewCell: UITableViewCell {
                 let bottomDot = stopDots[i+1]
                 let line = DottedLine(frame: CGRect(x: 0, y: topDot.frame.maxY, width: 1.0, height: bottomDot.frame.minY - topDot.frame.maxY))
                 line.backgroundColor = .white
-                print(line.frame.height)
                 line.tag = i
                 walkLines.append(line)
             }else{
