@@ -178,7 +178,9 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     override func viewDidAppear(_ animated: Bool) {
 //        Loader.addLoaderTo(routeResults)
-//        Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(, userInfo: nil, repeats: false)
+//        routeResults.reloadData()
+//        let timer = Timer(timeInterval: 2.0, target: self, selector: #selector(self.loaded), userInfo: nil, repeats: false)
+//        timer.fire()
     }
 
     override func didReceiveMemoryWarning() {
@@ -227,6 +229,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         if searchTime == nil{
             searchTime = Date()
         }
+
         let (fromBus, fromPlace) = searchFrom
         let (toBus, toPlace) = searchTo
         if let startBus = fromBus, let endBus = toBus{

@@ -133,7 +133,6 @@ class Network {
         request.method = .get
         return request
     }
-
 }
 
 extension Array : JSONDecodable {

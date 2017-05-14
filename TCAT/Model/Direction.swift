@@ -119,14 +119,13 @@ class WalkDirection: Direction {
         self.path = path
     }
     
-    /** Return a WalkDirectionResult (see spec) between two the object's location and destinationLocation.
-     Also calulcates CLLocationCoordinate2D path to walk between points and updates path variable automatically */
+    /** Return a WalkDirectionResult (see spec) between two points. Also calulcates CLLocationCoordinate2D path to
+     walk between points and updates path variable automatically
+    Completion hanldre returns distance (meters) and expectedTravelTime (seconds) of a walking route */
     func calculateWalkingDirections(_ completionHandler: @escaping (CLLocationDistance, TimeInterval) -> Void) {
-        
         let request = MKDirectionsRequest()
         request.source = MKMapItem(placemark: MKPlacemark(coordinate: location.coordinate, addressDictionary: [:]))
-        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destinationLocation.coordinate,
-                                                               addressDictionary: [:]))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destinationLocation.coordinate, addressDictionary: [:]))
         request.transportType = .walking
         request.requestsAlternateRoutes = false
         let directions = MKDirections(request: request)
