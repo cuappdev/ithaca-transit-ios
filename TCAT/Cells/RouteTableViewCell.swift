@@ -22,7 +22,8 @@ class RouteTableViewCell: UITableViewCell {
     var departTimeLabel: UILabel = UILabel()
     var stopLabels: [UILabel] = []
     var stopDots: [DirectionCircle] = []
-    var busIcons: [BusIcon] = []
+    var busIcons: [UIView] = []
+    var walkLines: [DottedLine] = []
     var busLine: UIView = UIView()
     var distanceLabel: UILabel = UILabel()
     
@@ -84,7 +85,9 @@ class RouteTableViewCell: UITableViewCell {
         busLine = UIView(frame: CGRect(x: 0, y: 0, width: busLineWidthX, height: busLineLengthY))
         busLine.backgroundColor = .tcatBlueColor
         contentView.addSubview(busLine)
+        
     }
+    
     
     override func prepareForReuse() {
         //Remove dyamically placed views from superview
@@ -97,10 +100,14 @@ class RouteTableViewCell: UITableViewCell {
         for busIcon in busIcons{
             busIcon.removeFromSuperview()
         }
+        for line in walkLines{
+            line.removeFromSuperview()
+        }
         //Clear the arrays that hold the dynamically placed views
         stopDots.removeAll()
         stopLabels.removeAll()
         busIcons.removeAll()
+        walkLines.removeAll()
     }
     
     //Call this function after pass all data to cell in order to set cell with this data
@@ -123,6 +130,9 @@ class RouteTableViewCell: UITableViewCell {
         if(timeUntilDeparture.minute! > 0 ){
             timeStr += "\(timeUntilDeparture.minute!) min"
         }
+        if timeStr.isEmpty{
+            timeStr = "0 min"
+        }
         
         //Input depart time
         departTimeLabel.text = "Departs in \(timeStr)"
@@ -138,7 +148,11 @@ class RouteTableViewCell: UITableViewCell {
                 let circleDotBlue = DirectionCircle(.standardOn)
                 stopDots.append(circleDotBlue)
             }
-            if(busNums[i] != -1){ //Don't add pins
+            if(busNums[i] == -2){
+                let walkIcon = UIImageView(image: UIImage(named: "walk"))
+                walkIcon.contentMode = .scaleAspectFit
+                busIcons.append(walkIcon)
+            }else if(busNums[i] != -1){ //Don't add pins
                 busIcons.append(BusIcon(size: .small, number: busNums[i]))
             }
         }
@@ -173,10 +187,22 @@ class RouteTableViewCell: UITableViewCell {
             }
         }
         
-        //Position bus icons
+        //Position bus icons (& create walk lines)
         for i in 0...(busIcons.count-1){
             busIcons[i].center.y = (stopDots[i].center.y + stopDots[i+1].center.y)/2
-            busIcons[i].center.x = spaceXFromSuperviewLeft + (busIcons[i].frame.width/2)
+            if let walkIcon = busIcons[i] as? UIImageView{
+                walkIcon.center.x = spaceXFromSuperviewLeft + (busIcons[i-1].frame.width/2)
+                //create walk lines
+                let topDot = stopDots[i]
+                let bottomDot = stopDots[i+1]
+                let line = DottedLine(frame: CGRect(x: 0, y: topDot.frame.maxY, width: 1.0, height: bottomDot.frame.minY - topDot.frame.maxY))
+                line.backgroundColor = .white
+                print(line.frame.height)
+                line.tag = i
+                walkLines.append(line)
+            }else{
+                busIcons[i].center.x = spaceXFromSuperviewLeft + (busIcons[i].frame.width/2)
+            }
         }
         
         //Postion first dot relative to bus icon & rest of dots relative to previous dot
@@ -186,7 +212,12 @@ class RouteTableViewCell: UITableViewCell {
             }else{
                 stopDots[i].center.x = stopDots[i-1].center.x
             }
-            
+        }
+        
+        //Position walk lines
+        for line in walkLines{
+            let i = line.tag
+            line.center.x = stopDots[i].center.x - 0.5 //so to cover up blue line
         }
         
         //Position bus line
@@ -218,6 +249,9 @@ class RouteTableViewCell: UITableViewCell {
         }
         for busIcon in busIcons{
             contentView.addSubview(busIcon)
+        }
+        for line in walkLines{
+            contentView.addSubview(line)
         }
         
         contentView.addSubview(distanceLabel)

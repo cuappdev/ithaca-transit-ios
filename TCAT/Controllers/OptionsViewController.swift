@@ -15,8 +15,6 @@ import SwiftyJSON
   * dequeReusable cell = the line keeps showing up ??
   * Loader = implement/fix (glitch if go back bt Austin view & mine's)
   * work on overflow - datepicker & dist label (maybe put below)
-  * don't make tableview header sticky
-  * departure time live updates, if past time = say 0 mins instead of blank
  */
 /* Later:
   * PlaceResult & BuSStop really cannot be 2 different objects, cause too much hassle. N2Do inheritance
@@ -58,6 +56,9 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     //Data
     var routes: [Route] = []
     var loaderroutes: [Route] = []
+    
+    let routeResultsTopPadding: CGFloat = 8.0
+    let routeResultsHeaderHeight: CGFloat = 49.0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -135,8 +136,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         routeSelection.swapButton.addTarget(self, action: #selector(self.swapFromAndTo), for: .touchUpInside)
         
         //Set up table view
-        let routeResultsTopPadding: CGFloat = 24
-        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY + routeResultsTopPadding, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0) - UIApplication.shared.statusBarFrame.height - routeResultsTopPadding))
+        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY + routeResultsTopPadding, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0) - UIApplication.shared.statusBarFrame.height - routeResultsTopPadding), style: .grouped)
         routeResults.delegate = self
         routeResults.allowsSelection = true
         routeResults.dataSource = self
@@ -153,20 +153,20 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         //Set up fake data
-        let date1 = Time.date(from: "8:45 PM")
-        let date2 = Time.date(from: "9:52 PM")
+        let date1 = Time.date(from: "3:45 PM")
+        let date2 = Time.date(from: "3:52 PM")
         let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
         
-        let date3 = Time.date(from: "10:12 PM")
-        let date4 = Time.date(from: "10:47 PM")
-        let route2 = Route(departureTime: date3, arrivalTime: date4, directions: [], mainStops: ["Annabel Taylor Hall", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
+        let date3 = Time.date(from: "3:45 PM")
+        let date4 = Time.date(from: "3:52 PM")
+        let route2 = Route(departureTime: date3, arrivalTime: date4, directions: [], mainStops: ["Baker Flagpole", "Collegetown Crossing", "Commons - Seneca Street"], mainStopsNums: [8, 16, -1], travelDistance: 0.1)
         
-        let date5 = Time.date(from: "11:12 PM")
-        let date6 = Time.date(from: "11:38 PM")
-        let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Schwartz Center", "Commons - Seneca Street"], mainStopsNums: [90, 32, -1], travelDistance: 0.1)
+        let date5 = Time.date(from: "3:45 PM")
+        let date6 = Time.date(from: "3:52 PM")
+        let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Jessup Fields", "RPCC", "Commons - Seneca Street"], mainStopsNums: [8, -2, 32, -1], travelDistance: 0.1)
         
         loaderroutes = [route1, route2, route3]
-        routes = loaderroutes
+        searchForRoutes()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -177,7 +177,9 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     override func viewDidAppear(_ animated: Bool) {
 //        Loader.addLoaderTo(routeResults)
-//        Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(, userInfo: nil, repeats: false)
+//        routeResults.reloadData()
+//        let timer = Timer(timeInterval: 2.0, target: self, selector: #selector(self.loaded), userInfo: nil, repeats: false)
+//        timer.fire()
     }
 
     override func didReceiveMemoryWarning() {
@@ -185,6 +187,12 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         // Dispose of any resources that can be recreated.
     }
 
+    //MARK: Loader functionality
+    func loaded()
+    {
+        Loader.removeLoaderFrom(routeResults)
+    }
+    
     //MARK: Swap functionality
     func swapFromAndTo(sender: UIButton){
         //Swap data
@@ -211,6 +219,8 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }else{
             routeSelection.toSearch.setTitle("", for: .normal)
         }
+        
+        searchForRoutes()
     }
     
     //MARK: Search bar functionality
@@ -222,6 +232,9 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         let (fromBus, fromPlace) = searchFrom
         let (toBus, toPlace) = searchTo
         if let startBus = fromBus, let endBus = toBus{
+//            routes = loaderroutes
+//            Loader.addLoaderTo(routeResults)
+//            routeResults.reloadData()
             Network.getRoutes(start: startBus, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
                 self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
@@ -234,6 +247,9 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             })
         }
         if let startBus = fromBus, let endPlace = toPlace{
+//            routes = loaderroutes
+//            Loader.addLoaderTo(routeResults)
+//            routeResults.reloadData()
             Network.getRoutes(start: startBus, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
                 self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
@@ -246,6 +262,9 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             })
         }
         if let startPlace = fromPlace, let endBus = toBus{
+//            routes = loaderroutes
+//            Loader.addLoaderTo(routeResults)
+//            routeResults.reloadData()
             Network.getRoutes(start: startPlace, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
                 self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
@@ -258,6 +277,9 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             })
         }
         if let startPlace = fromPlace, let endPlace = toPlace{
+//            routes = loaderroutes
+//            Loader.addLoaderTo(routeResults)
+//            routeResults.reloadData()
             Network.getRoutes(start: startPlace, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
                 self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
@@ -326,7 +348,17 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
                     }
                 }
             }
-            if (validRoute) {validroutes.append(route)}
+            if (validRoute) {
+                let (endBus, endRoute) = searchTo
+                var lastDir = route.directions.last
+                if let destination = endBus{
+                    lastDir?.place = destination.name!
+                }else if let destination = endRoute{
+                    lastDir?.place = destination.name!
+                }
+                
+                validroutes.append(route)
+            }
         }
         return validroutes
     }
@@ -410,12 +442,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     }
     
-    //MARK: Loader functionality
-    func loaded()
-    {
-        Loader.removeLoaderFrom(routeResults)
-    }
-    
     //MARK: Datepicker functionality
     func showDatePicker(sender: UIButton){
         view.bringSubview(toFront: datePickerOverlay)
@@ -468,6 +494,10 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     //MARK: Tableview Data Source & Delegate
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat{
+        return routeResultsHeaderHeight
+    }
+
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool{
        navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
         return false // halts the selection process = don't have selected look
@@ -500,7 +530,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?{
         return "Route Results"
-    
     }
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -508,6 +537,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         header.contentView.backgroundColor = .tableBackgroundColor
         header.textLabel?.font = UIFont(name: "SFUIText-Regular", size: 14.0)
         header.textLabel?.textColor = UIColor.secondaryTextColor
+        header.textLabel?.text = header.textLabel!.text!.capitalized //decapitalize
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
