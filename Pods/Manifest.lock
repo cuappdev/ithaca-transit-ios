@@ -8,6 +8,7 @@ PODS:
     - GoogleMaps/Base
   - GooglePlaces (2.2.0):
     - GoogleMaps/Base (= 2.2.0)
+  - MYTableViewIndex (0.2.0)
   - SwiftyJSON (3.1.4)
   - TRON (3.0.1):
     - Alamofire (~> 4.1)
@@ -24,17 +25,29 @@ DEPENDENCIES:
   - DZNEmptyDataSet
   - GoogleMaps (~> 2.2)
   - GooglePlaces (~> 2.2)
+  - MYTableViewIndex (from `https://github.com/mindz-eye/MYTableViewIndex.git`, commit `ef6119e2b0cd5968e2e24397cd59ab8080858054`)
   - SwiftyJSON (~> 3.1.4)
   - TRON (~> 3.0.0)
+
+EXTERNAL SOURCES:
+  MYTableViewIndex:
+    :commit: ef6119e2b0cd5968e2e24397cd59ab8080858054
+    :git: https://github.com/mindz-eye/MYTableViewIndex.git
+
+CHECKOUT OPTIONS:
+  MYTableViewIndex:
+    :commit: ef6119e2b0cd5968e2e24397cd59ab8080858054
+    :git: https://github.com/mindz-eye/MYTableViewIndex.git
 
 SPEC CHECKSUMS:
   Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   GoogleMaps: 104c418d61ab8a05dff06ed0784c25ea9d37da45
   GooglePlaces: bca867d5e9da15384c794b945e4226848bc6e9d9
+  MYTableViewIndex: 9b8c20c6edb693c67be3cf1246629ea9af3602f7
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   TRON: 6b4e8bfc5d5d50d3b5b579e8109ccc4029c1681c
 
-PODFILE CHECKSUM: babd6a622119afe7a691ae9cd0d87385c81ddb93
+PODFILE CHECKSUM: 070a0c7063054f57e76e48e23ac1b556120ef1ec
 
 COCOAPODS: 1.2.0
