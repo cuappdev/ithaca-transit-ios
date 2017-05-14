@@ -425,7 +425,7 @@
 				TargetAttributes = {
 					449A7C741D80D0E80019300C = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = ZGMCXU7X3U;
+						DevelopmentTeam = FV2G57GLFW;
 						LastSwiftMigration = 0820;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -823,7 +823,7 @@
 			baseConfigurationReference = 0DD68D5FD4D1CFE82BA753E7 /* Pods-TCAT.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = ZGMCXU7X3U;
+				DEVELOPMENT_TEAM = FV2G57GLFW;
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCAT;
@@ -837,7 +837,7 @@
 			baseConfigurationReference = 81725F2EBEBD3D184BFD0635 /* Pods-TCAT.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = ZGMCXU7X3U;
+				DEVELOPMENT_TEAM = FV2G57GLFW;
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCAT;

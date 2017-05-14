@@ -64,19 +64,19 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         self.route = route
         self.directions = route.directions
         
-        print("\nROUTE\n")
-        print("departureTime \(route.departureTime)")
-        print("arrivalTime \(route.arrivalTime)")
-        print("allStops \(route.allStops)")
-        print("timeUntilDeparture \(route.timeUntilDeparture)")
-        print("lastStopTime \(route.lastStopTime)")
-        print("mainStops \(route.mainStops)")
-        print("mainStopNums \(route.mainStopsNums)")
-        for direction in directions {
-            let _ = direction
-            // print("\(route.directions)")
-        }
-        
+//        print("\nROUTE\n")
+//        print("departureTime \(route.departureTime)")
+//        print("arrivalTime \(route.arrivalTime)")
+//        print("allStops \(route.allStops)")
+//        print("timeUntilDeparture \(route.timeUntilDeparture)")
+//        print("lastStopTime \(route.lastStopTime)")
+//        print("mainStops \(route.mainStops)")
+//        print("mainStopNums \(route.mainStopsNums)")
+//        for direction in directions {
+//            let _ = direction
+//            // print("\(route.directions)")
+//        }
+ 
         // Construct paths in routePaths based on directions
         var skipDirection: Bool = false
         
@@ -189,7 +189,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         if isInitialView() { drawMapRoute() }
         let bottom = (main.height / 2) - (statusNavHeight(includingShadow: false) - 16)
-        let edgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: bottom, right: 0)
+        let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: 0, bottom: bottom, right: 0)
         let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
         mapView.animate(with: update)
         
@@ -364,7 +364,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         // Place and format bottom summary label
         let summaryBottomLabel = UILabel()
         if let totalTime = Time.dateComponents(from: route.departureTime, to: route.arrivalTime).minute {
-            summaryBottomLabel.text = "Trip Duration - \(totalTime) minutes"
+            summaryBottomLabel.text = "Trip Duration: \(abs(totalTime)) minutes"
         } else { summaryBottomLabel.text = "Summary Bottom Label" }
         summaryBottomLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular)
         summaryBottomLabel.textColor = .mediumGrayColor
@@ -406,9 +406,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        
         let heightOfCells = detailTableViewHeight()
-        return main.height - largeDetailHeight - summaryViewHeight - heightOfCells
+        let total = main.height - largeDetailHeight - summaryViewHeight - heightOfCells
+        return total < RouteDetailCellSize.largeHeight ? RouteDetailCellSize.largeHeight : total
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -441,9 +441,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let isBusStopCell = direction is ArriveDirection && direction.location.coordinate.latitude == 0.0
         let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
         
-        for index in 0..<directions.count {
-            // print("\(index) • \(directions[index])")
-        }
+//        for index in 0..<directions.count {
+//            print("\(index) • \(directions[index])")
+//        }
         
         /// Formatting, including selectionStyle, and seperator line fixes
         func format(_ cell: UITableViewCell) -> UITableViewCell {
@@ -463,11 +463,16 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             
         else if direction is WalkDirection || direction is ArriveDirection {
             let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell") as! SmallDetailTableViewCell
-            print("index of below cell: \(indexPath.row)")
+            
+            print("\(indexPath.row) - iconView.type: \(cell.iconView?.type) [before setCell]")
+            
             cell.setCell(direction, busEnd: direction is ArriveDirection,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
+            
+            print("\(indexPath.row) - iconView.type: \(cell.iconView?.type) [after setCell]")
+            
             return format(cell)
         }
             
@@ -522,9 +527,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             tableView.beginUpdates()
             
             // Insert or remove bus stop data based on selection
-            
-            print("directions before")
             for direction in directions { print("direction: \(direction)") }
+            
+            print("\n--------\n")
             
             if cell.isExpanded {
                 directions.insert(contentsOf: busStops, at: indexPath.row + 1)
@@ -534,19 +539,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 tableView.deleteRows(at: indexPathArray, with: .bottom)
             }
             
-            print("directions after")
             for direction in directions { print("direction: \(direction)") }
             
             tableView.endUpdates()
-            
             tableView.scrollToRow(at: indexPath, at: .none, animated: true)
-            tableView.contentSize.height = detailTableViewHeight()
-            tableView.setNeedsLayout()
-            tableView.layoutIfNeeded()
-            print("tableView.contentSize.height: \(tableView.contentSize.height)")
-            
-            // let lastIndexPath = IndexPath(row: directions.count - 1, section: 0)
-            // tableView.reloadRows(at: [lastIndexPath], with: .none)
             
         }
         
@@ -589,15 +585,11 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let y = self.detailView.frame.minY
         
         if y + translation.y >= largeDetailHeight && y + translation.y <= smallDetailHeight {
-            print("y + translation >= large and y + translation <= small")
-            print("translation: \(translation), velocity: \(velocity), y: \(y)")
             self.detailView.frame = CGRect(x: 0, y: y + translation.y, width: detailView.frame.width, height: detailView.frame.height)
             recognizer.setTranslation(CGPoint.zero, in: self.detailView)
         }
         
         if recognizer.state == .ended {
-            print("recognizer.state == .ended")
-            print("translation: \(translation), velocity: \(velocity), y: \(y)")
             
             let visibleScreen = self.main.height - UIApplication.shared.statusBarFrame.height - self.navigationController!.navigationBar.frame.height
             

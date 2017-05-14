@@ -80,13 +80,6 @@ class LargeDetailTableViewCell: UITableViewCell {
         self.direction = direction as! DepartDirection
         cellHeight = height()
         
-        /*
-        let shouldAddIconView = iconView == nil
-        let shouldAddBusIconView = busIconView == nil
-        let shouldAddTitleLabel = titleLabel == nil
-        let shouldAddDetailLabel = detailLabel == nil
-        */
-        
         let shouldAddViews = iconView == nil || busIconView == nil ||
             titleLabel == nil || detailLabel == nil
         
@@ -111,34 +104,6 @@ class LargeDetailTableViewCell: UITableViewCell {
             }
             chevron.center.y = cellHeight / 2
         }
-        
-        /*
-        // Add custom UIViews if they haven't been added already
-        iconView = DetailIconView(height: cellHeight,
-                                  type: IconType.busStart,
-                                  time: direction.timeDescription,
-                                  firstStep: firstStep,
-                                  lastStep: false)
-        if shouldAddIconView { contentView.addSubview(iconView!) }
-        busIconView = BusIcon(size: .small, number: self.direction.routeNumber)
-        busIconView = formatBusIconView(busIconView, titleLabel)
-        if shouldAddBusIconView { contentView.addSubview(busIconView) }
-        
-        print("just added stuff, before set labels")
-        
-        titleLabel = formatTitleLabel(titleLabel)
-        detailLabel = formatDetailLabel(detailLabel, titleLabel)
-        
-        print("after set labels")
-        
-        // Place bus icon and chevron accordingly
-        if titleLabel.frame.height > 60 {
-            busIconView.frame.origin.y = titleLabel.frame.minY + (titleLabel.font.lineHeight / 2)
-        }
-        chevron.center.y = cellHeight / 2
-        
-        print("set cell finished")
-  */
         
     }
     
