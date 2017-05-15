@@ -117,7 +117,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         header.textLabel?.textColor = .secondaryTextColor
         header.textLabel?.font = tctSectionHeaderFont()
         switch sections[section].type {
-        case .cornellDestination: header.textLabel?.text = "Cornell Destinations"
+        case .cornellDestination: header.textLabel?.text = "Get There Now"
         case .recentSearches: header.textLabel?.text = "Recent Searches"
         case .allStops: header.textLabel?.text = "All Stops"
         case .searchResults: header.textLabel?.text = nil
@@ -127,7 +127,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch sections[section].type {
-        case .cornellDestination: return "Cornell Destinations"
+        case .cornellDestination: return "Get There Now"
         case .recentSearches: return "Recent Searches"
         case .allStops: return "All Stops"
         case .searchResults: return nil

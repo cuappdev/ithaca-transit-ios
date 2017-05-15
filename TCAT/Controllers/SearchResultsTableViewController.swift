@@ -162,7 +162,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch sections[section].type {
-        case .cornellDestination: return "Cornell Destinations"
+        case .cornellDestination: return "Get There Now"
         case .recentSearches: return "Recent Searches"
         case .allStops: return "All Stops"
         case .searchResults, .currentLocation: return nil
