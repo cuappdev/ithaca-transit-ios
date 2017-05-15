@@ -53,7 +53,6 @@ class AllBusStops: JSONDecodable {
  */
 
 class Network {
-    
     //    TRON(baseURL: "http://rawgit.com/cuappdev/tcat-ios/1194a64/")
     static let tron = TRON(baseURL: "http://tcat-dev-env-1.bsjzqmpigt.us-west-2.elasticbeanstalk.com/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
@@ -75,11 +74,12 @@ class Network {
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
         request.parameters = ["source": "\(start.lat ??? ""),\(start.long ??? "")",
             "sink": "\(end.placeID ??? "")"]
-        if type == .arriveby {
+        if type == .arriveBy {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
             request.parameters["arrive_time"] = Time.string(from: time)
         }
+        print(request.parameters)
         request.method = .get
         return request
     }
@@ -88,11 +88,12 @@ class Network {
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
         request.parameters = ["source": "\(start.lat ??? ""),\(start.long ??? "")",
             "sink": "\(end.lat ??? ""),\(end.long ??? "")" ]
-        if type == .arriveby {
+        if type == .arriveBy {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
             request.parameters["arrive_time"] = Time.string(from: time)
         }
+        print(request.parameters)
         request.method = .get
         return request
     }
@@ -100,11 +101,12 @@ class Network {
     class func getRoutes(start: PlaceResult, end: PlaceResult, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error>{
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
         request.parameters = ["source": "\(start.placeID ??? "")", "sink": "\(end.placeID ??? "")"]
-        if type == .arriveby {
+        if type == .arriveBy {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
             request.parameters["arrive_time"] = Time.string(from: time)
         }
+        print(request.parameters)
         request.method = .get
         return request
     }
@@ -113,11 +115,12 @@ class Network {
         let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
         request.parameters = ["source": "\(start.placeID ??? "")",
             "sink": "\(end.lat ??? ""),\(end.long ??? "")"]
-        if type == .arriveby {
+        if type == .arriveBy {
             request.parameters["depart_time"] = Time.string(from: time)
         }else{
             request.parameters["arrive_time"] = Time.string(from: time)
         }
+        print(request.parameters)
         request.method = .get
         return request
     }
@@ -130,7 +133,6 @@ class Network {
         request.method = .get
         return request
     }
-    
 }
 
 extension Array : JSONDecodable {

@@ -197,7 +197,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             itemType = sections[indexPath.section].items[indexPath.row]
         default: itemType = ItemType.cornellDestination
         }
-        
         switch itemType {
         case .cornellDestination:
             print("User Selected Cornell Destination")

@@ -12,9 +12,8 @@ import CoreLocation
 import SwiftyJSON
 
 /* 2Do:
-  * Add Matt's logic
-  * deque = the line keeps showing up ??
-  * Loader = fix
+  * dequeReusable cell = the line keeps showing up ??
+  * Loader = implement/fix (glitch if go back bt Austin view & mine's)
   * work on overflow - datepicker & dist label (maybe put below)
  */
 /* Later:
@@ -27,7 +26,7 @@ enum SearchBarType: String{
 }
 
 enum SearchType: String{
-    case arriveby, leaveat
+    case arriveBy, leaveAt
 }
 
 class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,
@@ -41,7 +40,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     var searchType: SearchBarType = .from //for search bar
     var searchFrom: (BusStop?, PlaceResult?) = (nil, nil)
     var searchTo: (BusStop?, PlaceResult?) = (nil, nil)
-    var searchTimeType: SearchType = .leaveat
+    var searchTimeType: SearchType = .leaveAt
     var searchTime: Date?
     
     //View
@@ -58,6 +57,9 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     var routes: [Route] = []
     var loaderroutes: [Route] = []
     
+    let routeResultsTopPadding: CGFloat = 8.0
+    let routeResultsHeaderHeight: CGFloat = 49.0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //Set up navigation bar
@@ -65,6 +67,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
                                                NSForegroundColorAttributeName : UIColor.black]
         title = "Route Options"
         navigationController?.navigationBar.titleTextAttributes = titleAttributes //so title actually shows up
+        self.view.backgroundColor = .tableBackgroundColor
         
         //Set up route selection view
         routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 150))
@@ -130,8 +133,11 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         view.addSubview(datePickerOverlay)
         view.sendSubview(toBack: datePickerOverlay)
         
+        //Set up swap
+        routeSelection.swapButton.addTarget(self, action: #selector(self.swapFromAndTo), for: .touchUpInside)
+        
         //Set up table view
-        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0) - UIApplication.shared.statusBarFrame.height))
+        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY + routeResultsTopPadding, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0) - UIApplication.shared.statusBarFrame.height - routeResultsTopPadding), style: .grouped)
         routeResults.delegate = self
         routeResults.allowsSelection = true
         routeResults.dataSource = self
@@ -142,27 +148,26 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         view.addSubview(datePickerView)//so datePicker can go ontop of other views
 
         //If no date is set then date should be same as today's date
-        guard let _ = searchTime else{
-            searchTime = Date()
-            return
+        if let _ = searchTime{
+        }else{
+            self.searchTime = Date()
         }
         
         //Set up fake data
-        let date1 = Time.date(from: "8:45 PM")
-        let date2 = Time.date(from: "9:52 PM")
+        let date1 = Time.date(from: "3:45 PM")
+        let date2 = Time.date(from: "3:52 PM")
         let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
         
-        let date3 = Time.date(from: "10:12 PM")
-        let date4 = Time.date(from: "10:47 PM")
-        let route2 = Route(departureTime: date3, arrivalTime: date4, directions: [], mainStops: ["Annabel Taylor Hall", "Commons - Seneca Street"], mainStopsNums: [90, -1], travelDistance: 0.1)
+        let date3 = Time.date(from: "3:45 PM")
+        let date4 = Time.date(from: "3:52 PM")
+        let route2 = Route(departureTime: date3, arrivalTime: date4, directions: [], mainStops: ["Baker Flagpole", "Collegetown Crossing", "Commons - Seneca Street"], mainStopsNums: [8, 16, -1], travelDistance: 0.1)
         
-        let date5 = Time.date(from: "11:12 PM")
-        let date6 = Time.date(from: "11:38 PM")
-        let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Schwartz Center", "Commons - Seneca Street"], mainStopsNums: [90, 32, -1], travelDistance: 0.1)
+        let date5 = Time.date(from: "3:45 PM")
+        let date6 = Time.date(from: "3:52 PM")
+        let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Jessup Fields", "RPCC", "Commons - Seneca Street"], mainStopsNums: [8, -2, 32, -1], travelDistance: 0.1)
         
         loaderroutes = [route1, route2, route3]
-        routes = loaderroutes
-        
+        searchForRoutes()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -172,8 +177,10 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        Loader.addLoaderTo(routeResults)
-//        Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(, userInfo: nil, repeats: false)
+//        Loader.addLoaderTo(routeResults)
+//        routeResults.reloadData()
+//        let timer = Timer(timeInterval: 2.0, target: self, selector: #selector(self.loaded), userInfo: nil, repeats: false)
+//        timer.fire()
     }
 
     override func didReceiveMemoryWarning() {
@@ -181,20 +188,56 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         // Dispose of any resources that can be recreated.
     }
 
+    //MARK: Loader functionality
+    func loaded()
+    {
+        Loader.removeLoaderFrom(routeResults)
+    }
+    
+    //MARK: Swap functionality
+    func swapFromAndTo(sender: UIButton){
+        //Swap data
+        let searchFromOld = searchFrom
+        searchFrom = searchTo
+        searchTo = searchFromOld
+        
+        //Update UI
+        let (fromBus, fromPlace) = searchFrom
+        let (toBus, toPlace) = searchTo
+        
+        if let start = fromBus, let name = start.name{
+            routeSelection.fromSearch.setTitle(name, for: .normal)
+        }else if let start = fromPlace, let name = start.name{
+            routeSelection.fromSearch.setTitle(name, for: .normal)
+        }else{
+            routeSelection.fromSearch.setTitle("", for: .normal)
+        }
+        
+        if let end = toBus, let name = end.name{
+            routeSelection.toSearch.setTitle(name, for: .normal)
+        }else if let end = toPlace, let name = end.name{
+            routeSelection.toSearch.setTitle(name, for: .normal)
+        }else{
+            routeSelection.toSearch.setTitle("", for: .normal)
+        }
+        
+        searchForRoutes()
+    }
     
     //MARK: Search bar functionality
     func searchForRoutes(){
-        //N2SELF: N2 put in parameters for searchDate & searchDepature
         if searchTime == nil{
             searchTime = Date()
         }
-        
+
         let (fromBus, fromPlace) = searchFrom
         let (toBus, toPlace) = searchTo
         if let startBus = fromBus, let endBus = toBus{
+//            routes = loaderroutes
+//            Loader.addLoaderTo(routeResults)
+//            routeResults.reloadData()
             Network.getRoutes(start: startBus, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = routes //self.getValidRoutes(routes: routes)
-                print("Got Routes")
+                self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
                 self.loaded()
             }, failure: { (error) in
@@ -205,8 +248,11 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             })
         }
         if let startBus = fromBus, let endPlace = toPlace{
+//            routes = loaderroutes
+//            Loader.addLoaderTo(routeResults)
+//            routeResults.reloadData()
             Network.getRoutes(start: startBus, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = routes //self.getValidRoutes(routes: routes)
+                self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
                 self.loaded()
             }, failure: { (error) in
@@ -217,8 +263,11 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             })
         }
         if let startPlace = fromPlace, let endBus = toBus{
+//            routes = loaderroutes
+//            Loader.addLoaderTo(routeResults)
+//            routeResults.reloadData()
             Network.getRoutes(start: startPlace, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = routes //self.getValidRoutes(routes: routes)
+                self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
                 self.loaded()
             }, failure: { (error) in
@@ -229,8 +278,11 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             })
         }
         if let startPlace = fromPlace, let endPlace = toPlace{
+//            routes = loaderroutes
+//            Loader.addLoaderTo(routeResults)
+//            routeResults.reloadData()
             Network.getRoutes(start: startPlace, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = routes //self.getValidRoutes(routes: routes)
+                self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
                 self.loaded()
             }, failure: { (error) in
@@ -242,35 +294,74 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
+    //Leave now = all buses that leave at the user's "now" time
     func getValidRoutes(routes: [Route]) -> [Route]{
-//        var validroutes: [Route] = []
-//        for route in routes{
-//            let directions = route.directions
-//            for i in 0..<directions.count{
-//                if let walkDir = directions[i] as? WalkDirection{
-//                    if i == 0{
-//                        if let walkDir = route.directions[0] as? WalkDirection{
-//                            walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
-//                                if self.searchTimeType == .leaveat{
-//                                    
-//                                }else{
-//                                    let arriveToStopDate = self.searchTime?.addingTimeInterval(walkTimeInterval)
-//                                    if(arriveToStopDate! <= route.directions[1].time){
-//                                        validroutes.append(route)
-//                                    }
-//                                }
-//                            })
-//                        }
-//                    }else if i == (directions.count - 1){
-//                            
-//                    }else{
-//                            
-//                    }
-//                }
-//            }
-//        }
-        
-        return []
+        var validroutes: [Route] = []
+        for route in routes{
+            var validRoute = true
+            let directions = route.directions
+            //Check directions to invalidate route
+            for i in 0..<directions.count{
+                if let walkDir = directions[i] as? WalkDirection{
+                    if i == 0{
+                        walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
+                            //this might be sketch for leave now, check logic
+                            if self.searchTimeType == .leaveAt{ //make sure if walk now to stop, get there before leaveat time
+                                let walkToStopDate = Date().addingTimeInterval(walkTimeInterval)
+                                if(walkToStopDate > self.searchTime!){
+                                    validRoute = false
+                                }else{
+                                    route.departureTime.addTimeInterval(-walkTimeInterval)
+                                    route.directions[i].time = route.departureTime
+                                    route.travelDistance = distance
+                                }
+                            }else{ //make sure walk to stop before bus leaves
+                                let walkToStopDate = self.searchTime?.addingTimeInterval(walkTimeInterval)
+                                if(walkToStopDate! > route.directions[1].time){
+                                    validRoute = false
+                                }else{
+                                    route.departureTime.addTimeInterval(-walkTimeInterval)
+                                    route.directions[i].time = route.departureTime
+                                }
+                            }
+                        })
+                    }else if i == (directions.count - 1){
+                        walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
+                            if self.searchTimeType == .arriveBy { //make sure walk to destination before arrive by time
+                                let walkToDestinationDate = route.directions[i-1].time.addingTimeInterval(walkTimeInterval)
+                                if(walkToDestinationDate > self.searchTime!){
+                                    validRoute = false
+                                }else{
+                                    route.arrivalTime.addTimeInterval(walkTimeInterval)
+                                    route.directions[i].time = route.arrivalTime
+                                }
+                            }
+                        })
+                    }else{ //make sure can walk from previous stop and arrive to next stop by the time bus departs
+                        walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
+                            let walkToStopDate = route.directions[i-1].time.addingTimeInterval(walkTimeInterval)
+                            if(walkToStopDate > route.directions[i+1].time){
+                                validRoute = false
+                            }else{
+                                route.directions[i].time = walkToStopDate
+                            }
+                        })
+                    }
+                }
+            }
+            if (validRoute) {
+                let (endBus, endRoute) = searchTo
+                var lastDir = route.directions.last
+                if let destination = endBus{
+                    lastDir?.place = destination.name!
+                }else if let destination = endRoute{
+                    lastDir?.place = destination.name!
+                }
+                
+                validroutes.append(route)
+            }
+        }
+        return validroutes
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
@@ -300,11 +391,15 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func searchingTo(sender: UIButton){
         searchType = .to
+         //For Austin's search bar to show current location option or not
+//        searchBarView.resultsViewController.shouldShowCurrentLocation = false
         presentSearchBar()
     }
     
     func searchingFrom(sender: UIButton){
         searchType = .from
+        //For Austin's search bar to show current location option or not
+//        searchBarView.resultsViewController.shouldShowCurrentLocation = false
         presentSearchBar()
     }
     
@@ -353,12 +448,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     }
     
-    //MARK: Loader functionality
-    func loaded()
-    {
-        Loader.removeLoaderFrom(routeResults)
-    }
-    
     //MARK: Datepicker functionality
     func showDatePicker(sender: UIButton){
         view.bringSubview(toFront: datePickerOverlay)
@@ -386,18 +475,18 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         let segmentedControl = datePickerView.arriveDepartBar
         let selectedSegString = (segmentedControl?.titleForSegment(at: segmentedControl?.selectedSegmentIndex ?? 0)) ?? ""
         if (selectedSegString.lowercased().contains("arrive")){
-            searchTimeType = .arriveby
+            searchTimeType = .arriveBy
         }else{
-            searchTimeType = .leaveat
+            searchTimeType = .leaveAt
         }
         var title = ""
         //Customize string based on date
         if(Calendar.current.isDateInToday(date) || Calendar.current.isDateInTomorrow(date)){
-            let verb = (searchTimeType == .arriveby) ? "Arrive" : "Leave" //Use simply,"arrive" or "leave"
+            let verb = (searchTimeType == .arriveBy) ? "Arrive" : "Leave" //Use simply,"arrive" or "leave"
             let day = Calendar.current.isDateInToday(date) ? "" : " tomorrow" //if today don't put day
             title = "\(verb)\(day) at \(Time.string(from: date))"
         }else{
-            let verb = (searchTimeType == .arriveby) ? "Arrive by" : "Leave on" //Use "arrive by" or "leave on"
+            let verb = (searchTimeType == .arriveBy) ? "Arrive by" : "Leave on" //Use "arrive by" or "leave on"
             title = "\(verb) \(dateString)"
         }
         routeSelection.timeButton.setTitle(title, for: .normal)
@@ -411,6 +500,10 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     //MARK: Tableview Data Source & Delegate
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat{
+        return routeResultsHeaderHeight
+    }
+
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool{
        navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
         return false // halts the selection process = don't have selected look
@@ -443,7 +536,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?{
         return "Route Results"
-    
     }
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -451,6 +543,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         header.contentView.backgroundColor = .tableBackgroundColor
         header.textLabel?.font = UIFont(name: "SFUIText-Regular", size: 14.0)
         header.textLabel?.textColor = UIColor.secondaryTextColor
+        header.textLabel?.text = header.textLabel!.text!.capitalized //decapitalize
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
