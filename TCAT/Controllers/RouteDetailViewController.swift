@@ -464,14 +464,14 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         else if direction is WalkDirection || direction is ArriveDirection {
             let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell") as! SmallDetailTableViewCell
             
-            print("\(indexPath.row) - iconView.type: \(cell.iconView?.type) [before setCell]")
+            // print("\(indexPath.row) - iconView.type: \(cell.iconView?.type) [before setCell]")
             
             cell.setCell(direction, busEnd: direction is ArriveDirection,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
             
-            print("\(indexPath.row) - iconView.type: \(cell.iconView?.type) [after setCell]")
+            // print("\(indexPath.row) - iconView.type: \(cell.iconView?.type) [after setCell]")
             
             return format(cell)
         }
@@ -527,9 +527,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             tableView.beginUpdates()
             
             // Insert or remove bus stop data based on selection
-            for direction in directions { print("direction: \(direction)") }
+            // for direction in directions { print("direction: \(direction)") }
             
-            print("\n--------\n")
+            // print("\n--------\n")
             
             if cell.isExpanded {
                 directions.insert(contentsOf: busStops, at: indexPath.row + 1)
@@ -539,7 +539,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 tableView.deleteRows(at: indexPathArray, with: .bottom)
             }
             
-            for direction in directions { print("direction: \(direction)") }
+            // for direction in directions { print("direction: \(direction)") }
             
             tableView.endUpdates()
             tableView.scrollToRow(at: indexPath, at: .none, animated: true)
