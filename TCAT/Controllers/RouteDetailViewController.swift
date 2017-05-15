@@ -5,8 +5,6 @@
 //  Created by Matthew Barker on 2/11/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
-//  Pre-Conditions:
-//
 
 import UIKit
 import GoogleMaps
@@ -42,6 +40,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     var mediumDetailHeight: CGFloat = UIScreen.main.bounds.height / 2
     var smallDetailHeight: CGFloat = UIScreen.main.bounds.height - 80
     
+    var contentOffset: CGFloat = 0
+    
     let markerRadius: CGFloat = 8
     let mapPadding: CGFloat = 40
     
@@ -58,24 +58,25 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         }
     }
     
+    /** Construct Directions based on Route and parse Waypoint / Path data */
     func initializeRoute(route: Route) {
         
         self.route = route
         self.directions = route.directions
         
-        print("\nROUTE\n")
-        print("departureTime \(route.departureTime)")
-        print("arrivalTime \(route.arrivalTime)")
-        print("allStops \(route.allStops)")
-        print("timeUntilDeparture \(route.timeUntilDeparture)")
-        print("lastStopTime \(route.lastStopTime)")
-        print("mainStops \(route.mainStops)")
-        print("mainStopNums \(route.mainStopsNums)")
-        for direction in directions {
-            let _ = direction
-            // print("\(route.directions)")
-        }
-        
+//        print("\nROUTE\n")
+//        print("departureTime \(route.departureTime)")
+//        print("arrivalTime \(route.arrivalTime)")
+//        print("allStops \(route.allStops)")
+//        print("timeUntilDeparture \(route.timeUntilDeparture)")
+//        print("lastStopTime \(route.lastStopTime)")
+//        print("mainStops \(route.mainStops)")
+//        print("mainStopNums \(route.mainStopsNums)")
+//        for direction in directions {
+//            let _ = direction
+//            // print("\(route.directions)")
+//        }
+ 
         // Construct paths in routePaths based on directions
         var skipDirection: Bool = false
         
@@ -188,7 +189,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         if isInitialView() { drawMapRoute() }
         let bottom = (main.height / 2) - (statusNavHeight(includingShadow: false) - 16)
-        let edgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: bottom, right: 0)
+        let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: 0, bottom: bottom, right: 0)
         let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
         mapView.animate(with: update)
         
@@ -284,33 +285,14 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         return mediumDetailHeight == detailView.frame.minY
     }
     
-    /** Reset search */
+    /** Return app to home page */
     func exitAction() {
         navigationController?.popToRootViewController(animated: true)
-        if let homeViewController = navigationController?.viewControllers.first as? HomeViewController {
-            //homeViewController.searchBar.resultsViewController?.dismiss(animated: false, completion: nil)
-        }
     }
     
+    /** Move back one view controller in navigationController stack */
     func backAction() {
         navigationController?.popViewController(animated: true)
-    }
-    
-    /** Animate detailTableView back onto screen, centering map */
-    func summaryTapped(_ sender: UITapGestureRecognizer) {
-        
-        let isSmall = self.detailView.frame.minY == self.smallDetailHeight
-        
-        if isInitialView() || !isSmall {
-            // !isSmall so centering takes place when going from not small to small
-            centerMap()
-        }
-        
-        UIView.animate(withDuration: 0.25) {
-            let point = CGPoint(x: 0, y: isSmall ? self.largeDetailHeight : self.smallDetailHeight)
-            self.detailView.frame = CGRect(origin: point, size: self.view.frame.size)
-        }
-        
     }
     
     /** Create and configure detailView, summaryView, tableView */
@@ -382,7 +364,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         // Place and format bottom summary label
         let summaryBottomLabel = UILabel()
         if let totalTime = Time.dateComponents(from: route.departureTime, to: route.arrivalTime).minute {
-            summaryBottomLabel.text = "Trip Duration - \(totalTime) minutes"
+            summaryBottomLabel.text = "Trip Duration: \(abs(totalTime)) minutes"
         } else { summaryBottomLabel.text = "Summary Bottom Label" }
         summaryBottomLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular)
         summaryBottomLabel.textColor = .mediumGrayColor
@@ -409,20 +391,24 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
     }
     
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        
+    func detailTableViewHeight() -> CGFloat {
         var heightOfCells: CGFloat = 0
         for direction in directions {
             if direction is DepartDirection {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "largeCell")! as! LargeDetailTableViewCell
+                let cell = detailTableView.dequeueReusableCell(withIdentifier: "largeCell")! as! LargeDetailTableViewCell
                 cell.setCell(direction, firstStep: false)
                 heightOfCells += cell.height()
             } else {
                 heightOfCells += RouteDetailCellSize.smallHeight
             }
         }
-        
-        return main.height - largeDetailHeight - summaryViewHeight - heightOfCells
+        return heightOfCells
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        let heightOfCells = detailTableViewHeight()
+        let total = main.height - largeDetailHeight - summaryViewHeight - heightOfCells
+        return total < RouteDetailCellSize.largeHeight ? RouteDetailCellSize.largeHeight : total
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -455,6 +441,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let isBusStopCell = direction is ArriveDirection && direction.location.coordinate.latitude == 0.0
         let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
         
+//        for index in 0..<directions.count {
+//            print("\(index) • \(directions[index])")
+//        }
+        
         /// Formatting, including selectionStyle, and seperator line fixes
         func format(_ cell: UITableViewCell) -> UITableViewCell {
             cell.selectionStyle = .none
@@ -465,23 +455,29 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         }
         
         if isBusStopCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "busStopCell")! as! BusStopTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "busStopCell") as! BusStopTableViewCell
             cell.setCell(direction.place)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
             return format(cell)
         }
             
         else if direction is WalkDirection || direction is ArriveDirection {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell")! as! SmallDetailTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell") as! SmallDetailTableViewCell
+            
+            // print("\(indexPath.row) - iconView.type: \(cell.iconView?.type) [before setCell]")
+            
             cell.setCell(direction, busEnd: direction is ArriveDirection,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
+            
+            // print("\(indexPath.row) - iconView.type: \(cell.iconView?.type) [after setCell]")
+            
             return format(cell)
         }
             
         else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "largeCell")! as! LargeDetailTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "largeCell") as! LargeDetailTableViewCell
             cell.setCell(direction, firstStep: indexPath.row == 0)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
             return format(cell)
@@ -495,6 +491,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         // Check if cell starts a bus direction, and should be expandable
         if direction is DepartDirection {
+            
+            if isInitialView() { summaryTapped() }
             
             let cell = tableView.cellForRow(at: indexPath) as! LargeDetailTableViewCell
             cell.isExpanded = !cell.isExpanded
@@ -529,6 +527,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             tableView.beginUpdates()
             
             // Insert or remove bus stop data based on selection
+            // for direction in directions { print("direction: \(direction)") }
+            
+            // print("\n--------\n")
+            
             if cell.isExpanded {
                 directions.insert(contentsOf: busStops, at: indexPath.row + 1)
                 tableView.insertRows(at: indexPathArray, with: .middle)
@@ -537,10 +539,28 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 tableView.deleteRows(at: indexPathArray, with: .bottom)
             }
             
+            // for direction in directions { print("direction: \(direction)") }
+            
             tableView.endUpdates()
             tableView.scrollToRow(at: indexPath, at: .none, animated: true)
-            let lastIndexPath = IndexPath(row: directions.count - 1, section: 0)
-            tableView.reloadRows(at: [lastIndexPath], with: .none)
+            
+        }
+        
+    }
+    
+    /** Animate detailTableView depending on context, centering map */
+    func summaryTapped(_ sender: UITapGestureRecognizer? = nil) {
+        
+        let isSmall = self.detailView.frame.minY == self.smallDetailHeight
+        
+        if isInitialView() || !isSmall {
+            centerMap() // !isSmall to make centered when going big to small
+        }
+        
+        UIView.animate(withDuration: 0.25) {
+            let point = CGPoint(x: 0, y: isSmall || self.isInitialView() ? self.largeDetailHeight : self.smallDetailHeight)
+            self.detailView.frame = CGRect(origin: point, size: self.view.frame.size)
+            self.detailTableView.layoutIfNeeded()
         }
         
     }
@@ -550,7 +570,15 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         return true
     }
     
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == detailTableView {
+            contentOffset = scrollView.contentOffset.y
+        }
+    }
+    
     func panGesture(recognizer: UIPanGestureRecognizer) {
+        
+        if contentOffset != 0 { return }
         
         let translation = recognizer.translation(in: self.detailView)
         let velocity = recognizer.velocity(in: self.detailView)

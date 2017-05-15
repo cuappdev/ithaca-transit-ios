@@ -39,6 +39,8 @@ class SmallDetailTableViewCell: UITableViewCell {
     
     func setCell(_ direction: Direction, busEnd: Bool, firstStep: Bool, lastStep: Bool) {
         
+        print("Direction of \(direction.place): \(busEnd ? IconType.busEnd : IconType.noBus) - firstStep: \(firstStep) • lastStep: \(lastStep)")
+        
         let shouldAddSubview = iconView == nil
         iconView = DetailIconView(height: cellHeight,
                                   type: busEnd ? IconType.busEnd: IconType.noBus,
@@ -53,7 +55,8 @@ class SmallDetailTableViewCell: UITableViewCell {
             titleLabel.attributedText = bold(pattern: busDirection.place, in: busDirection.placeDescription)
         } else {
             let walkDirection = direction as! WalkDirection
-            let walkString = walkDirection.placeDescription + " (\(walkDirection.travelDistance.roundToPlaces(places: 1)) mi)"
+            var walkString = lastStep ? "Arrive at \(walkDirection.place)" : walkDirection.placeDescription
+            walkString += " (\(walkDirection.travelDistance.roundToPlaces(places: 1)) mi)"
             titleLabel.attributedText = bold(pattern: walkDirection.place, in: walkString)
         }
         
