@@ -17,7 +17,7 @@ enum PathType: String {
 
 class Path: GMSPolyline {
     
-    let dashLengths: [NSNumber] = [14, 10]
+    let dashLengths: [NSNumber] = [10, 10]
     
     var polylineWidth: CGFloat!
     var waypoints: [Waypoint] = []

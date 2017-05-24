@@ -72,10 +72,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 //        print("lastStopTime \(route.lastStopTime)")
 //        print("mainStops \(route.mainStops)")
 //        print("mainStopNums \(route.mainStopsNums)")
-//        for direction in directions {
-//            let _ = direction
-//            // print("\(route.directions)")
-//        }
+          for direction in directions {
+              print("\(direction)")
+          }
  
         // Construct paths in routePaths based on directions
         var skipDirection: Bool = false
@@ -94,8 +93,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 
                 var walkWaypoints: [Waypoint] = []
                 if !walkDirection.path.isEmpty {
-                    let type: WaypointType = (index == directions.count - 1) ? .destination : .none
-                    for walkWaypoint in walkDirection.path {
+                    for i in 0..<walkDirection.path.count {
+                        let walkWaypoint = walkDirection.path[i]
+                        let type: WaypointType = (i == walkDirection.path.count  - 1) ? .destination : .none
                         let waypoint = Waypoint(lat: walkWaypoint.latitude, long: walkWaypoint.longitude, wpType: type)
                         walkWaypoints.append(waypoint)
                     }

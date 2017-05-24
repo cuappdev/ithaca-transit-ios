@@ -56,7 +56,8 @@ class SmallDetailTableViewCell: UITableViewCell {
         } else {
             let walkDirection = direction as! WalkDirection
             var walkString = lastStep ? "Arrive at \(walkDirection.place)" : walkDirection.placeDescription
-            walkString += " (\(walkDirection.travelDistance.roundToPlaces(places: 1)) mi)"
+            let roundDigit = walkDirection.travelDistance >= 10 ? 0 : 1
+            walkString += " (\(walkDirection.travelDistance.roundToPlaces(places: roundDigit)) mi)"
             titleLabel.attributedText = bold(pattern: walkDirection.place, in: walkString)
         }
         
