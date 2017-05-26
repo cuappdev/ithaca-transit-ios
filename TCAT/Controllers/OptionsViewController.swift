@@ -15,6 +15,14 @@ import SwiftyJSON
   * dequeReusable cell = the line keeps showing up ??
   * Loader = implement/fix (glitch if go back bt Austin view & mine's)
   * work on overflow - datepicker & dist label (maybe put below)
+  * update route cells to show ending location if not a bus stop (walk with walk icon)
+  * make swap button tad bit bigger
+  * date picker = 5 min time interval
+ */
+/* Bugs:
+  * Distance is still 0.0
+  * Sometimes (around 11am-12pm routes) depart time is blank
+  * Swap button is too small
  */
 /* Later:
   * PlaceResult & BuSStop really cannot be 2 different objects, cause too much hassle. N2Do inheritance
@@ -314,6 +322,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
                                     route.departureTime.addTimeInterval(-walkTimeInterval)
                                     route.directions[i].time = route.departureTime
                                     route.travelDistance = distance
+                                    print("travelDistance should be updated with : \(distance)")
                                 }
                             }else{ //make sure walk to stop before bus leaves
                                 let walkToStopDate = self.searchTime?.addingTimeInterval(walkTimeInterval)
