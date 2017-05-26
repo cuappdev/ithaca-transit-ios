@@ -169,7 +169,8 @@ class RouteTableViewCell: UITableViewCell {
         //Set up distance label
         distanceLabel.font = UIFont(name: "SFUIText-Regular", size: 12.0)
         distanceLabel.textColor = .mediumGrayColor
-        distanceLabel.text = "\(distance.roundToPlaces(places: 1)) mi away"
+        let roundDigit = distance >= 10 ? 0 : 1
+        distanceLabel.text = "\(distance.roundToPlaces(places: roundDigit)) mi away"
         distanceLabel.sizeToFit()
         
         //Position views
