@@ -103,6 +103,10 @@ class RouteTableViewCell: UITableViewCell {
         for line in walkLines{
             line.removeFromSuperview()
         }
+        //Remove seperator betweeen cells
+        spaceBtCells.removeFromSuperview()
+        bottomLine.removeFromSuperview()
+        
         //Clear the arrays that hold the dynamically placed views
         stopDots.removeAll()
         stopLabels.removeAll()

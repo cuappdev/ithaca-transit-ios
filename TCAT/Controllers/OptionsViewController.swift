@@ -12,17 +12,14 @@ import CoreLocation
 import SwiftyJSON
 
 /* 2Do:
-  * dequeReusable cell = the line keeps showing up ??
-  * Loader = implement/fix (glitch if go back bt Austin view & mine's)
   * work on overflow - datepicker & dist label (maybe put below)
   * update route cells to show ending location if not a bus stop (walk with walk icon)
   * make swap button tad bit bigger
-  * date picker = 5 min time interval
+  * "Sorry no routes" or blank if don't fill in all fields screen 
  */
 /* Bugs:
   * Distance is still 0.0
   * Sometimes (around 11am-12pm routes) depart time is blank
-  * Swap button is too small
  */
 /* Later:
   * PlaceResult & BuSStop really cannot be 2 different objects, cause too much hassle. N2Do inheritance
@@ -197,10 +194,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     override func viewDidAppear(_ animated: Bool) {
-//        Loader.addLoaderTo(routeResults)
-//        routeResults.reloadData()
-//        let timer = Timer(timeInterval: 2.0, target: self, selector: #selector(self.loaded), userInfo: nil, repeats: false)
-//        timer.fire()
+        
     }
     
     /** Move back one view controller in navigationController stack */
@@ -211,12 +205,6 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-
-    //MARK: Loader functionality
-    func loaded()
-    {
-        Loader.removeLoaderFrom(routeResults)
     }
     
     //MARK: Swap functionality
@@ -251,70 +239,70 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     //MARK: Search bar functionality
     func searchForRoutes(){
-        if searchTime == nil{
+        if searchTime == nil{ //Q: N2check if the option is LeaveNow? Or N2check not calling searchForRoutes?
             searchTime = Date()
         }
 
         let (fromBus, fromPlace) = searchFrom
         let (toBus, toPlace) = searchTo
         if let startBus = fromBus, let endBus = toBus{
-//            routes = loaderroutes
-//            Loader.addLoaderTo(routeResults)
-//            routeResults.reloadData()
+            routes = loaderroutes
+            routeResults.reloadData()
+            Loader.addLoaderTo(routeResults)
             Network.getRoutes(start: startBus, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
                 self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
-                self.loaded()
+                Loader.removeLoaderFrom(self.routeResults)
             }, failure: { (error) in
                 print("Error: \(error)")
                 self.routes = []
                 self.routeResults.reloadData()
-                self.loaded()
+                Loader.removeLoaderFrom(self.routeResults)
             })
         }
         if let startBus = fromBus, let endPlace = toPlace{
-//            routes = loaderroutes
-//            Loader.addLoaderTo(routeResults)
-//            routeResults.reloadData()
+            routes = loaderroutes
+            routeResults.reloadData()
+            Loader.addLoaderTo(routeResults)
             Network.getRoutes(start: startBus, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
                 self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
-                self.loaded()
+                Loader.removeLoaderFrom(self.routeResults)
             }, failure: { (error) in
                 print("Error: \(error)")
                 self.routes = []
                 self.routeResults.reloadData()
-                self.loaded()
+                Loader.removeLoaderFrom(self.routeResults)
             })
         }
         if let startPlace = fromPlace, let endBus = toBus{
-//            routes = loaderroutes
-//            Loader.addLoaderTo(routeResults)
-//            routeResults.reloadData()
+            routes = loaderroutes
+            routeResults.reloadData()
+            Loader.addLoaderTo(routeResults)
             Network.getRoutes(start: startPlace, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
                 self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
-                self.loaded()
+                Loader.removeLoaderFrom(self.routeResults)
             }, failure: { (error) in
                 print("Error: \(error)")
                 self.routes = []
                 self.routeResults.reloadData()
-                self.loaded()
+                Loader.removeLoaderFrom(self.routeResults)
             })
         }
         if let startPlace = fromPlace, let endPlace = toPlace{
-//            routes = loaderroutes
-//            Loader.addLoaderTo(routeResults)
-//            routeResults.reloadData()
+            routes = loaderroutes
+            routeResults.reloadData()
+            Loader.addLoaderTo(routeResults)
             Network.getRoutes(start: startPlace, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
                 self.routes = self.getValidRoutes(routes: routes)
                 self.routeResults.reloadData()
-                self.loaded()
+                Loader.removeLoaderFrom(self.routeResults)
             }, failure: { (error) in
                 print("Error: \(error)")
                 self.routes = []
                 self.routeResults.reloadData()
-                self.loaded()
+                Loader.removeLoaderFrom(self.routeResults)
             })
         }
     }

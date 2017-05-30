@@ -40,6 +40,7 @@ class DatePickerView: UIView {
         datePicker.minimumDate = now //set minimum date now
         let next6Days = now.addingTimeInterval(6*24*60*60)
         datePicker.maximumDate = next6Days //set maximum date to 6 days from now
+        datePicker.minuteInterval = 5 //time increments by 5 mins
         
         cancelButton = UIButton()
         cancelButton.setTitle("Cancel", for: .normal)
