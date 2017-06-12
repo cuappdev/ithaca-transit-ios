@@ -146,17 +146,19 @@ class RouteTableViewCell: UITableViewCell {
         for i in 0...(busNums.count-1){
             if(i == (busNums.count - 1)){
                 let circleLineBlue = DirectionCircle(.finishOn)
+                //DirectionCircle(.finishOff) grey outline
                 circleLineBlue.backgroundColor = .white
                 stopDots.append(circleLineBlue)
             }else{
                 let circleDotBlue = DirectionCircle(.standardOn)
+                    //DirectionCircle(.standardOn) grey dot
                 stopDots.append(circleDotBlue)
             }
-            if(busNums[i] == -2){
+            if(busNums[i] == -2){ //add walk icon
                 let walkIcon = UIImageView(image: UIImage(named: "walk"))
                 walkIcon.contentMode = .scaleAspectFit
                 busIcons.append(walkIcon)
-            }else if(busNums[i] != -1){ //Don't add pins
+            }else if(busNums[i] >= 0){ //add bus icon
                 busIcons.append(BusIcon(size: .small, number: busNums[i]))
             }
         }

@@ -12,10 +12,11 @@ import CoreLocation
 import SwiftyJSON
 
 /* 2Do:
+  * glitch: change the date to now always it seems like 
   * work on overflow - datepicker & dist label (maybe put below)
   * update route cells to show ending location if not a bus stop (walk with walk icon)
   * make swap button tad bit bigger
-  * "Sorry no routes" or blank if don't fill in all fields screen 
+  * "Sorry no routes" or blank if don't fill in all fields screen
  */
 /* Bugs:
   * Distance is still 0.0
@@ -184,7 +185,8 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Jessup Fields", "RPCC", "Commons - Seneca Street"], mainStopsNums: [8, -2, 32, -1], travelDistance: 0.1)
         
         loaderroutes = [route1, route2, route3]
-        searchForRoutes()
+        routes = loaderroutes
+//        searchForRoutes()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -239,7 +241,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     //MARK: Search bar functionality
     func searchForRoutes(){
-        if searchTime == nil{ //Q: N2check if the option is LeaveNow? Or N2check not calling searchForRoutes?
+        if searchTime == nil && routeSelection.timeButton.titleLabel?.text?.lowercased() == "leave now"{
             searchTime = Date()
         }
 
@@ -371,7 +373,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
                 }else if let destination = endRoute{
                     lastDir?.place = destination.name!
                 }
-                
+//                print("The routes travel distance \(route.travelDistance)")
                 validroutes.append(route)
             }
         }

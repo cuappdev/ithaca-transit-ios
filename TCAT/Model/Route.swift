@@ -8,38 +8,6 @@
 //  Note:
 //      - mainStops is for route options screen (Monica) and directions is for route detail screen (Matt)
 //      - departureTime and arrivalTime are for the entire route, while each direction has their own departure (and possibly arrival time)
-//
-//          Example: (One Route Stop Details screen)
-//Route:
-//    departureTime = 7:21 PM
-//    arrivalTime = 7:39 PM
-//    timeUntilDeparture = 5 min
-//    directions = [WalkDirection1, BoardDirection, WalkDirection2]
-//    mainStops = ["BakerFlagpole", "Angry Mom Records"]
-//
-//WalkDirection1:
-//    departureTime = 7:21 PM
-//    departurePlace = "Statler Hall"
-//    departureDescription = "Walk to Statler Hall"
-//    travelDistance = 0.2
-//
-//BoardDirection:
-//    routeNumber = 32
-//    bound = inbound
-//    stops = ["Bus Stop Name", "Bus Stop Name", "Bus Stop Name"]
-//    departureTime = 7:24 PM
-//    departurePlace = "Statler Hall"
-//    arrivalTime = 7:36 PM
-//    arrivalPlace = "Ithaca Commons"
-//    arrivalDescription = "Debark at Ithaca Commons"
-//    travelTime = 12 min
-//
-//WalkDirection2:
-//    departureTime = 7:39 PM
-//    departurePlace = "Angry Mom Records"
-//    departureDescription = "Walk to Angry Mom Records"
-//    travelDistance = 0.2
-//
 //  Created by Monica Ong on 2/12/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
@@ -54,7 +22,6 @@ class Route: NSObject, JSONDecodable {
     var departureTime: Date = Date()
     var arrivalTime: Date = Date()
     
-    //NSELF: REMOVE FROM EXAMPLE
     /*To extract timeUntilDeparture's times in day, hour, and minute units:
      * let days: Int = timeUntilDeparture.day
      * let hours: Int = timeUntilDeparture.hour
@@ -67,9 +34,8 @@ class Route: NSObject, JSONDecodable {
     
     var directions: [Direction] = [Direction]()
     var mainStops: [String] = [String]()
-    //N2SELF: ADD TO EXAMPLE
     var allStops : [String] = [String]()
-    var mainStopsNums: [Int] = [Int]()//-1 for pins
+    var mainStopsNums: [Int] = [Int]()//-1 for starting places, -2 for walking, -3 for ending places, -4 for ending bus stops
     var travelDistance: Double = 0.0 // of first stop
     var lastStopTime: Date = Date() // the critical last time a bus route runs
     
