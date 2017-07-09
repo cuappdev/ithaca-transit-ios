@@ -111,3 +111,11 @@ func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop]{
     }
     return letterArray + nonLetterArray
 }
+
+extension Array where Element: UIView {
+    
+    /// Remove each view from its superview.
+    func removeViewsFromSuperview(){
+        self.forEach{ $0.removeFromSuperview() }
+    }
+}

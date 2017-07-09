@@ -10,8 +10,7 @@ import Foundation
 
 class Time{
     
-    /*Takes date and return full date formatted in "EEEE, MMMM d, yyyy at h:mm a""
-     */
+    /// Takes date and return full date formatted in "EEEE, MMMM d, yyyy at h:mm a""
     static func fullString(from date: Date)-> String{
         let formatter = DateFormatter()
         formatter.dateStyle = .full
@@ -19,28 +18,48 @@ class Time{
         return formatter.string(from: date)
     }
     
-    /*Takes date and return time formatted in "h:mm a"
-     */
+    /// Takes date and return time formatted in "h:mm a"
     static func string(from time: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
         return formatter.string(from: time)
     }
     
-    /*Calculates time bt 2 dates, returns DateComponents
-     */
+    /// Returns time between 2 dates formatted in "# d  # hr # min"
+    static func timeString(from startTime: Date, to endTime: Date) -> String{
+        let time = dateComponents(from: startTime, to: endTime)
+        var timeStr = ""
+        if(time.day! > 0){
+            timeStr += "\(time.day!) d "
+        }
+        if(time.hour! > 0){
+            timeStr += "\(time.hour!) hr "
+        }
+        if(time.minute! > 0 ){
+            timeStr += "\(time.minute!) min"
+        }
+        if timeStr.isEmpty{
+            timeStr = "0 min"
+        }
+        
+        return timeStr
+    }
+    
+    /// Calculates time bt 2 dates, returns DateComponents
     static func dateComponents(from startTime: Date, to endTime: Date) -> DateComponents{
         return Calendar.current.dateComponents([.hour, .minute, .day], from: startTime, to: endTime)
     }
     
-    /*Calculates dateComponenets for a single date
-     */
+    /// Calculates dateComponenets for a single date
     static func dateComponents(from date: Date) -> DateComponents{
         return Calendar.current.dateComponents([.year,.month,.day, .hour, .minute], from: date)
     }
     
-    /*Takes time string formatted in "h:mm a" and returns today's date with that time
-     * Throws error if string not formatted in "h:mm a"
+    /** 
+     Takes time string formatted in "h:mm a" and returns today's date with that time
+     
+     - throws:
+     Error if string not formatted in "h:mm a"
      */
     static func date(from string: String) -> Date{
         //Get date

@@ -21,12 +21,6 @@ class Route: NSObject, JSONDecodable {
     
     var departureTime: Date = Date()
     var arrivalTime: Date = Date()
-    
-    /*To extract timeUntilDeparture's times in day, hour, and minute units:
-     * let days: Int = timeUntilDeparture.day
-     * let hours: Int = timeUntilDeparture.hour
-     * let minutes: Int = timeUntilDeparture.minute
-     */
     var timeUntilDeparture: DateComponents {
         let now = Date() //curent date
         return Time.dateComponents(from: now, to: departureTime)
@@ -62,7 +56,6 @@ class Route: NSObject, JSONDecodable {
         self.lastStopTime = lastStopTime
     }
     
-    
     func directionJSON(json: [JSON]) -> [Direction] {
         var directionArray = [Direction]()
         for direction in json {
@@ -80,7 +73,6 @@ class Route: NSObject, JSONDecodable {
         return directionArray
     }
     
-    
     func walkDirection(json: JSON) -> WalkDirection {
         let time = Time.date(from: json["time"].stringValue)
         let place = json["place"].stringValue
@@ -91,7 +83,6 @@ class Route: NSObject, JSONDecodable {
         return WalkDirection(time: time, place: place, location: location, travelDistance: travelDistance,
                              destination: destinationLocation)
     }
-    
     
     func departDirection(json: JSON) -> DepartDirection {
         let time = Time.date(from: json["time"].stringValue)
@@ -107,12 +98,18 @@ class Route: NSObject, JSONDecodable {
                                routeNumber: routeNumber, bound: bound!, stops: stops, arrivalTime: arrivalTime)
     }
     
-    
     func arriveDirection(json: JSON) -> ArriveDirection {
         let time = Time.date(from: json["time"].stringValue)
         let place = json["place"].stringValue
         let location = CLLocation(latitude: json["location"][0].doubleValue, longitude: json["location"][1].doubleValue)
         return ArriveDirection(time: time, place: place, location: location)   
+    }
+    
+    /// Modify mainStops and mainStopsNums to include the destination place result
+    func addPlaceDestination(_ placeDestination: PlaceResult){
+        mainStopsNums[mainStops.count - 1] = -2 //to add walk line from last bus stop to place result destination
+        mainStops.append(placeDestination.name!)
+        mainStopsNums.append(-3) //place result destination dot
     }
     
     //For debugging purposes

@@ -27,8 +27,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
         // Initalize window without storyboard
-        let rootVC = OptionsViewController() //HomeViewController()
-//        rootVC.getBusStops()
+        let rootVC = HomeViewController()
+        rootVC.getBusStops()
         let navigationController = UINavigationController(rootViewController: rootVC)
         navigationController.navigationBar.barTintColor = .white
         navigationController.navigationBar.isTranslucent = false
@@ -44,19 +44,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         //Ask for current location
         locationManager.delegate = self
-        print("About to ask for location")
         locationManager.requestWhenInUseAuthorization()
-        //locationManager.requestLocation()
         
         return true
     }
     
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        print(status)
-    }
-    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-        print(error)
+        print("AppDelegate locationManager didFailWithError: \(error)")
     }
     
     func applicationWillResignActive(_ application: UIApplication) {

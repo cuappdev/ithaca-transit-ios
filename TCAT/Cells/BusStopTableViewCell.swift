@@ -16,7 +16,7 @@ class BusStopTableViewCell: UITableViewCell {
     
     var connectorTop: UIView!
     var connectorBottom: UIView!
-    var statusCircle: DirectionCircle!
+    var statusCircle: Circle!
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -42,7 +42,7 @@ class BusStopTableViewCell: UITableViewCell {
         connectorBottom.backgroundColor = .tcatBlueColor
         contentView.addSubview(connectorBottom)
         
-        statusCircle = DirectionCircle(.busStop)
+        statusCircle = Circle(size: .small, color: .tcatBlueColor, style: .outline)
         statusCircle.center = self.center
         statusCircle.center.y = cellHeight / 2
         statusCircle.frame.origin.x = 20 - (statusCircle.frame.width / 2)

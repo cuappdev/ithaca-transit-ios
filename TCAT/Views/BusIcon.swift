@@ -19,7 +19,7 @@ class BusIcon: UIView {
     var label: UILabel!
     var image: UIImageView!
     
-    init(size: BusIconSize, number: Int) {
+    init(size: BusIconSize, number: Int) {        
         switch size {
         case .small : super.init(frame: CGRect(x: 0, y: 0, width: 48, height: 24))
         case .large : super.init(frame: CGRect(x: 0, y: 0, width: 72, height: 36))

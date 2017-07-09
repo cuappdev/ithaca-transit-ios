@@ -40,7 +40,7 @@
 		DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */; };
 		DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */; };
 		DD87F20A1E878CB5000C244B /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD87F2091E878CB5000C244B /* Loader.swift */; };
-		DDA134451EC6A8CB00460B18 /* DottedLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA134441EC6A8CB00460B18 /* DottedLine.swift */; };
+		DDA134451EC6A8CB00460B18 /* RouteLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA134441EC6A8CB00460B18 /* RouteLine.swift */; };
 		DDB49C941E8857D000A99C35 /* RouteDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C921E8857D000A99C35 /* RouteDetailViewController.swift */; };
 		DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */; };
 		DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C961E8857E000A99C35 /* SmallDetailTableViewCell.swift */; };
@@ -48,12 +48,13 @@
 		DDB49C9D1E8857FC00A99C35 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C9B1E8857FC00A99C35 /* Path.swift */; };
 		DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C9C1E8857FC00A99C35 /* Waypoint.swift */; };
 		DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49CA11E88584B00A99C35 /* DetailIconView.swift */; };
-		DDBCD5E71E989E5800014641 /* DirectionCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBCD5E61E989E5800014641 /* DirectionCircle.swift */; };
-		DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */; };
+		DDBCD5E71E989E5800014641 /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBCD5E61E989E5800014641 /* Circle.swift */; };
+		DDBFEAA01E787008002BBD96 /* DatepickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9E1E787008002BBD96 /* DatepickerView.swift */; };
 		DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */; };
 		DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */; };
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
 		DDD33DEF1EC2960400BC6454 /* CircleLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD33DEE1EC2960400BC6454 /* CircleLine.swift */; };
+		DDE0A9311F096A3E005CD01C /* RouteDiagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,7 +118,7 @@
 		DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Regular.otf"; path = "Resources/SFText-Regular.otf"; sourceTree = "<group>"; };
 		DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Semibold.otf"; path = "Resources/SFText-Semibold.otf"; sourceTree = "<group>"; };
 		DD87F2091E878CB5000C244B /* Loader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Loader.swift; path = Utilities/Loader.swift; sourceTree = "<group>"; };
-		DDA134441EC6A8CB00460B18 /* DottedLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DottedLine.swift; path = Views/DottedLine.swift; sourceTree = "<group>"; };
+		DDA134441EC6A8CB00460B18 /* RouteLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteLine.swift; path = Views/RouteLine.swift; sourceTree = "<group>"; };
 		DDB49C921E8857D000A99C35 /* RouteDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDetailViewController.swift; path = Controllers/RouteDetailViewController.swift; sourceTree = "<group>"; };
 		DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LargeDetailTableViewCell.swift; path = Cells/LargeDetailTableViewCell.swift; sourceTree = "<group>"; };
 		DDB49C961E8857E000A99C35 /* SmallDetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SmallDetailTableViewCell.swift; path = Cells/SmallDetailTableViewCell.swift; sourceTree = "<group>"; };
@@ -125,12 +126,13 @@
 		DDB49C9B1E8857FC00A99C35 /* Path.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Path.swift; path = Model/Path.swift; sourceTree = "<group>"; };
 		DDB49C9C1E8857FC00A99C35 /* Waypoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Waypoint.swift; path = Model/Waypoint.swift; sourceTree = "<group>"; };
 		DDB49CA11E88584B00A99C35 /* DetailIconView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DetailIconView.swift; path = Views/DetailIconView.swift; sourceTree = "<group>"; };
-		DDBCD5E61E989E5800014641 /* DirectionCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DirectionCircle.swift; path = Views/DirectionCircle.swift; sourceTree = "<group>"; };
-		DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatePickerView.swift; path = Views/DatePickerView.swift; sourceTree = "<group>"; };
+		DDBCD5E61E989E5800014641 /* Circle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Circle.swift; path = Views/Circle.swift; sourceTree = "<group>"; };
+		DDBFEA9E1E787008002BBD96 /* DatepickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatepickerView.swift; path = Views/DatepickerView.swift; sourceTree = "<group>"; };
 		DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteSelectionView.swift; path = Views/RouteSelectionView.swift; sourceTree = "<group>"; };
 		DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationTableViewCell.swift; path = Cells/LocationTableViewCell.swift; sourceTree = "<group>"; };
 		DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteTableViewCell.swift; path = Cells/RouteTableViewCell.swift; sourceTree = "<group>"; };
 		DDD33DEE1EC2960400BC6454 /* CircleLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CircleLine.swift; path = Views/CircleLine.swift; sourceTree = "<group>"; };
+		DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDiagram.swift; path = Views/RouteDiagram.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E69224A160B2B078827D28A1 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -325,14 +327,15 @@
 		DD2F98951E50D8E60005F6BC /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				DDBCD5E61E989E5800014641 /* DirectionCircle.swift */,
+				DDBCD5E61E989E5800014641 /* Circle.swift */,
+				DDD33DEE1EC2960400BC6454 /* CircleLine.swift */,
 				DDB49CA11E88584B00A99C35 /* DetailIconView.swift */,
 				502D8F5E1E55161D005280F1 /* SearchBarView.swift */,
-				DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */,
+				DDBFEA9E1E787008002BBD96 /* DatepickerView.swift */,
 				DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */,
 				DD16B8E41E7046390089B7B2 /* BusIcon.swift */,
-				DDD33DEE1EC2960400BC6454 /* CircleLine.swift */,
-				DDA134441EC6A8CB00460B18 /* DottedLine.swift */,
+				DDA134441EC6A8CB00460B18 /* RouteLine.swift */,
+				DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -643,14 +646,14 @@
 			files = (
 				503EC3831E969B3400B3D4D4 /* BusStop.swift in Sources */,
 				503EC37D1E969ADF00B3D4D4 /* SearchResultsCell.swift in Sources */,
-				DDBCD5E71E989E5800014641 /* DirectionCircle.swift in Sources */,
+				DDBCD5E71E989E5800014641 /* Circle.swift in Sources */,
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				5006F7BA1EC0F59A005ACAF2 /* SearchTableViewHelpers.swift in Sources */,
 				5006F7B81EBFC7DE005ACAF2 /* CornellDestinationCell.swift in Sources */,
 				503EC38D1E96B85B00B3D4D4 /* Network.swift in Sources */,
 				DDB49C9D1E8857FC00A99C35 /* Path.swift in Sources */,
 				DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */,
-				DDA134451EC6A8CB00460B18 /* DottedLine.swift in Sources */,
+				DDA134451EC6A8CB00460B18 /* RouteLine.swift in Sources */,
 				DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */,
 				503EC37B1E969ACD00B3D4D4 /* BusStopCell.swift in Sources */,
 				DDB49C9A1E8857E000A99C35 /* BusStopTableViewCell.swift in Sources */,
@@ -661,10 +664,11 @@
 				503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */,
 				DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */,
 				DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */,
-				DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */,
+				DDBFEAA01E787008002BBD96 /* DatepickerView.swift in Sources */,
 				DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */,
 				DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */,
 				DD5D233C1E6367A100F8DECE /* Time.swift in Sources */,
+				DDE0A9311F096A3E005CD01C /* RouteDiagram.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
 				DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */,
 				DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */,

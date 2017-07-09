@@ -38,20 +38,6 @@ class AllBusStops: JSONDecodable {
     }
 }
 
-
-/* Example Usage */
-
-/*let x = Network.getRoutes()
- x.perform(withSuccess: { route in
- print(route.mainStops)
- print(route.mainStopsNums)
- })
- 
- Network.getAllStops().perform(withSuccess: { stops in
- print(stops.allStops.map({print($0.name!)}))
- })
- */
-
 class Network {
     //    TRON(baseURL: "http://rawgit.com/cuappdev/tcat-ios/1194a64/")
     static let tron = TRON(baseURL: "http://tcat-dev-env-1.bsjzqmpigt.us-west-2.elasticbeanstalk.com/")

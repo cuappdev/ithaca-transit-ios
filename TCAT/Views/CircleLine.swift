@@ -10,51 +10,66 @@ import UIKit
 
 class CircleLine: UIView {
     
-    var begSolidCircle: CALayer!
-    var endSolidCircle: CALayer!
-    var borderCircle: CALayer!
-    var line: CALayer!
+    // MARK: View vars
     
-    let innerRadius: CGFloat = 8
-    let outerRadius: CGFloat = 16
-    let lineWidth: CGFloat = 1
-    let lineHeight: CGFloat = 28
+    var solidCircle: Circle!
+    var line: SolidLine!
+    var borderedCircle: Circle!
     
+    // MARK: Spacing vars
     
-    init(color: UIColor, frame: CGRect){
-        super.init(frame: frame)
-        begSolidCircle = CALayer()
-        begSolidCircle.frame = CGRect(x: 0, y: 0, width: innerRadius, height: innerRadius)
-        begSolidCircle.cornerRadius = begSolidCircle.frame.height/2
-        begSolidCircle.backgroundColor = color.cgColor
+    let superviewWidth: CGFloat = 16
+    let superviewHeight: CGFloat = 56
+    let lineHeight: CGFloat = 32
+    
+    init(color: UIColor){
+        super.init(frame: CGRect(x: 0, y: 0, width: superviewWidth, height: superviewHeight))
         
-        line = CALayer()
-        line.frame = CGRect(x: 0, y: begSolidCircle.frame.maxY, width: lineWidth, height: lineHeight)
-        line.position.x = begSolidCircle.position.x
-        line.backgroundColor = color.cgColor
+        solidCircle = Circle(size: .small, color: color, style: .solid)
+        line = SolidLine(height: lineHeight, color: color)
+        borderedCircle = Circle(size: .large, color: color, style: .bordered)
         
-        endSolidCircle = CALayer()
-        endSolidCircle.frame = CGRect(x: 0, y: line.frame.maxY + innerRadius/2, width: innerRadius, height: innerRadius)
-        endSolidCircle.position.x = begSolidCircle.position.x
-        endSolidCircle.cornerRadius = endSolidCircle.frame.height/2
-        endSolidCircle.backgroundColor = color.cgColor
+        positionSolidCircle()
+        positionLine(usingSolidCircle: solidCircle)
+        positionBorderedCircle(usingLine: line)
         
-        borderCircle = CALayer()
-        borderCircle.frame = CGRect(x: 0, y: 0, width: outerRadius, height: outerRadius)
-        borderCircle.position = endSolidCircle.position
-        borderCircle.cornerRadius = borderCircle.frame.height/2
-        borderCircle.backgroundColor = UIColor.clear.cgColor
-        borderCircle.borderColor = color.cgColor
-        borderCircle.borderWidth = 1.0
-        
-        layer.addSublayer(begSolidCircle)
-        layer.addSublayer(line)
-        layer.addSublayer(endSolidCircle)
-        layer.addSublayer(borderCircle)
+        addSubviews()
     }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    // MARK: Position
+    
+    private func positionSolidCircle(){
+        solidCircle.center.x = center.x
+    }
+    
+    private func positionLine(usingSolidCircle solidCircle: Circle){
+        line.center.x = solidCircle.center.x
+        
+        let oldFrame = line.frame
+        let newFrame = CGRect(x: oldFrame.minX, y: solidCircle.frame.maxY, width: oldFrame.width, height: oldFrame.height)
+        
+        line.frame = newFrame
+    }
+    
+    private func positionBorderedCircle(usingLine line: RouteLine){
+        let oldFrame = borderedCircle.frame
+        let newFrame = CGRect(x: oldFrame.minX, y: line.frame.maxY, width: oldFrame.width, height: oldFrame.height)
+        
+        borderedCircle.frame = newFrame
+        
+        borderedCircle.center.x = line.center.x
+    }
+    
+    // MARK: Add subviews
+    
+    private func addSubviews(){
+        addSubview(solidCircle)
+        addSubview(line)
+        addSubview(borderedCircle)
     }
 
 }

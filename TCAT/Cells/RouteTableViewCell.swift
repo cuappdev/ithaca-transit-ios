@@ -10,270 +10,206 @@ import UIKit
 
 class RouteTableViewCell: UITableViewCell {
 
-    //Data
-    var departureTime: Date?
-    var arrivalTime: Date?
-    var stops: [String] = []
-    var busNums: [Int] = []
-    var distance: Double = 0 //of first stop
+    // MARK: Data var
     
-    //View
+    var route: Route?
+    let identifier: String = "Route cell"
+    
+    // MARK: View vars
+    
     var travelTimeLabel: UILabel = UILabel()
-    var departTimeLabel: UILabel = UILabel()
-    var stopLabels: [UILabel] = []
-    var stopDots: [DirectionCircle] = []
-    var busIcons: [UIView] = []
-    var walkLines: [DottedLine] = []
-    var busLine: UIView = UIView()
-    var distanceLabel: UILabel = UILabel()
-    
-    var topLine: UIView = UIView()
-    var bottomLine: UIView = UIView()
-    var spaceBtCells: UIView = UIView()
-    
-    //Spacing
-    let spaceXFromSuperviewLeft: CGFloat = 18.0
-    let spaceYToCellBorder: CGFloat = 18.0
+    var departureTimeLabel: UILabel = UILabel()
+    var travelDistanceLabel: UILabel = UILabel()
 
-    let spaceYTimeLabelFromSuperviewTop: CGFloat = 18.0
-    let spaceYDepartLabelFromSuperviewRight: CGFloat = 12.0
-
-    let spaceYTimeLabelAndDot: CGFloat = 26.0
-
-    let busLineWidthX: CGFloat = 1.0
-    let busLineLengthY: CGFloat = 21.0
+    var routeDiagram: RouteDiagram = RouteDiagram()
     
-    let spaceXBtBusIconAndDot: CGFloat = 12.0
-    let spaceXBtDotAndStopLabel: CGFloat = 17.5
-    let spaceXBtStopLabelAndDistLabel: CGFloat = 5.5
+    var topBorder: UIView = UIView()
+    var bottomBorder: UIView = UIView()
+    var cellSeperator: UIView = UIView()
     
-    let cellBorderWidthY: CGFloat = 0.75
-    let cellSpaceWidthY: CGFloat = 4.0
+    // MARK: Spacing vars
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
+    let timeLabelLeftSpaceFromSuperview: CGFloat = 18.0
+    let timeLabelVerticalSpaceFromSuperview: CGFloat = 18.0
+    
+    let departLabelRightSpaceFromSuperview: CGFloat = 12.0
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
+    let timeLabelAndRouteDiagramVerticalSpace: CGFloat = 20.5
     
+    let cellBorderHeight: CGFloat = 0.75
+    let cellSeperatorHeight: CGFloat = 4.0
+    
+    let routeDiagramAndCellSeparatorVerticalSpace: CGFloat = 16.5
+    
+    // MARK: Init
+
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        //Set up time label text, frame
-        travelTimeLabel.frame = CGRect(x: spaceXFromSuperviewLeft, y: spaceYTimeLabelFromSuperviewTop, width: 135, height: 20)
-        travelTimeLabel.font = UIFont(name: "SFUIText-Medium", size: 14.0)
-        travelTimeLabel.textColor = .primaryTextColor
+        styleTravelTime()
+        styleDepartureTime()
+        styleTopBorder()
+        
+        positionTravelTime()
+        positionDepartureTimeVertically()
+        positionTopBorder()
+        
         contentView.addSubview(travelTimeLabel)
-        
-        //Set up depart label text, &  frame
-        departTimeLabel.frame = CGRect(x: 0, y: travelTimeLabel.frame.minY, width: 135, height: 20)
-        departTimeLabel.font = UIFont(name: "SFUIText-Medium", size: 14.0)
-        departTimeLabel.textColor = .tcatBlueColor
-        contentView.addSubview(departTimeLabel)
-        
-        //Set up top seperator line
-        topLine = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: cellBorderWidthY))
-        topLine.backgroundColor = .lineColor
-        contentView.addSubview(topLine)
-        
-        //Set up bus line
-        busLine = UIView(frame: CGRect(x: 0, y: 0, width: busLineWidthX, height: busLineLengthY))
-        busLine.backgroundColor = .tcatBlueColor
-        contentView.addSubview(busLine)
-        
+        contentView.addSubview(departureTimeLabel)
+        contentView.addSubview(topBorder)
     }
     
-    
-    override func prepareForReuse() {
-        //Remove dyamically placed views from superview
-        for stopNumButton in stopDots{
-            stopNumButton.removeFromSuperview()
-        }
-        for stopLabel in stopLabels{
-            stopLabel.removeFromSuperview()
-        }
-        for busIcon in busIcons{
-            busIcon.removeFromSuperview()
-        }
-        for line in walkLines{
-            line.removeFromSuperview()
-        }
-        //Remove seperator betweeen cells
-        spaceBtCells.removeFromSuperview()
-        bottomLine.removeFromSuperview()
-        
-        //Clear the arrays that hold the dynamically placed views
-        stopDots.removeAll()
-        stopLabels.removeAll()
-        busIcons.removeAll()
-        walkLines.removeAll()
+    init() {
+        super.init(style: UITableViewCellStyle.default, reuseIdentifier: identifier)
     }
     
-    //Call this function after pass all data to cell in order to set cell with this data
-    func setData(){
-        //Set data
-        
-        //Input travel time
-        travelTimeLabel.text = "\(Time.string(from: departureTime!)) - \(Time.string(from: arrivalTime!))"
-        travelTimeLabel.sizeToFit()
-        
-        //Generate time string based on time until departure
-        let timeUntilDeparture = Time.dateComponents(from: Date(), to: departureTime!)
-        var timeStr = ""
-        if(timeUntilDeparture.day! > 0){
-            timeStr += "\(timeUntilDeparture.day!) d "
-        }
-        if(timeUntilDeparture.hour! > 0){
-            timeStr += "\(timeUntilDeparture.hour!) hr "
-        }
-        if(timeUntilDeparture.minute! > 0 ){
-            timeStr += "\(timeUntilDeparture.minute!) min"
-        }
-        if timeStr.isEmpty{
-            timeStr = "0 min"
-        }
-        
-        //Input depart time
-        departTimeLabel.text = "Departs in \(timeStr)"
-        departTimeLabel.sizeToFit()
-        
-        //Create stopDots & busIcons
-        for i in 0...(busNums.count-1){
-            if(i == (busNums.count - 1)){
-                let circleLineBlue = DirectionCircle(.finishOn)
-                //DirectionCircle(.finishOff) grey outline
-                circleLineBlue.backgroundColor = .white
-                stopDots.append(circleLineBlue)
-            }else{
-                let circleDotBlue = DirectionCircle(.standardOn)
-                    //DirectionCircle(.standardOn) grey dot
-                stopDots.append(circleDotBlue)
-            }
-            if(busNums[i] == -2){ //add walk icon
-                let walkIcon = UIImageView(image: UIImage(named: "walk"))
-                walkIcon.contentMode = .scaleAspectFit
-                busIcons.append(walkIcon)
-            }else if(busNums[i] >= 0){ //add bus icon
-                busIcons.append(BusIcon(size: .small, number: busNums[i]))
-            }
-        }
-        
-        //Create stops text
-        for i in 0...((stops.count)-1) {
-            stopLabels.append(UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 20)))
-            stopLabels[i].text = stops[i]
-            stopLabels[i].font = UIFont(name: "SFUIText-Regular", size: 14.0)
-            stopLabels[i].textColor = .primaryTextColor
-            stopLabels[i].sizeToFit()
-        }
-        
-        //Set up distance label
-        distanceLabel.font = UIFont(name: "SFUIText-Regular", size: 12.0)
-        distanceLabel.textColor = .mediumGrayColor
-        let roundDigit = distance >= 10 ? 0 : 1
-        distanceLabel.text = "\(distance.roundToPlaces(places: roundDigit)) mi away"
-        distanceLabel.sizeToFit()
-        
-        //Position views
-        
-        //Position depart time label
-        departTimeLabel.center.x = contentView.frame.width - spaceYDepartLabelFromSuperviewRight - (departTimeLabel.frame.width/2)
-        
-        //Positon stop dots positions
-        for i in 0...(stopDots.count-1){
-            if(i == 0){ //set position of first pins
-                stopDots[i].center.y = travelTimeLabel.frame.maxY + spaceYTimeLabelAndDot + (stopDots[i].frame.height/2)
-            }else{//set position of other pins & arrows
-                stopDots[i].center.x = stopDots[i-1].center.x
-                stopDots[i].center.y = stopDots[i-1].frame.maxY + busLineLengthY + (stopDots[i-1].frame.height/2) //for dots w/ lines use dot w/out lines height to keep line width btn dots uniform
-            }
-        }
-        
-        //Position bus icons (& create walk lines)
-        for i in 0...(busIcons.count-1){
-            busIcons[i].center.y = (stopDots[i].center.y + stopDots[i+1].center.y)/2
-            if let walkIcon = busIcons[i] as? UIImageView{
-                walkIcon.center.x = spaceXFromSuperviewLeft + (busIcons[i-1].frame.width/2)
-                //create walk lines
-                let topDot = stopDots[i]
-                let bottomDot = stopDots[i+1]
-                let line = DottedLine(frame: CGRect(x: 0, y: topDot.frame.maxY, width: 1.0, height: bottomDot.frame.minY - topDot.frame.maxY))
-                line.backgroundColor = .white
-                line.tag = i
-                walkLines.append(line)
-            }else{
-                busIcons[i].center.x = spaceXFromSuperviewLeft + (busIcons[i].frame.width/2)
-            }
-        }
-        
-        //Postion first dot relative to bus icon & rest of dots relative to previous dot
-        for i in 0...(stopDots.count-1){
-            if(i==0){
-               stopDots[i].center.x =  busIcons[i].frame.maxX + spaceXBtBusIconAndDot + (stopDots[i].frame.width/2)
-            }else{
-                stopDots[i].center.x = stopDots[i-1].center.x
-            }
-        }
-        
-        //Position walk lines
-        for line in walkLines{
-            let i = line.tag
-            line.center.x = stopDots[i].center.x - 0.5 //so to cover up blue line
-        }
-        
-        //Position bus line
-        busLine.center.x = stopDots[0].center.x
-        busLine.frame = CGRect(x: stopDots[0].center.x - busLineWidthX, y: stopDots[0].center.y, width: busLineWidthX, height: stopDots[stopDots.count-1].center.y - stopDots[0].center.y)
-        
-        //Position stop labels
-        for i in 0...(stopLabels.count-1){
-            if(i == 0){//postion first label relative to stopDot
-              stopLabels[i].center.x = stopDots[i].frame.maxX + spaceXBtDotAndStopLabel + (stopLabels[i].frame.width/2)
-            }else{ //left align rest of labels with first label
-                let oldFrame = stopLabels[i].frame
-                let newFrame = CGRect(x: stopLabels[0].frame.minX, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height)
-                stopLabels[i].frame = newFrame
-            }
-            stopLabels[i].center.y = stopDots[i].center.y
-        }
-        
-        //Position distance label
-        distanceLabel.frame = CGRect(x: stopLabels[0].frame.maxX + spaceXBtStopLabelAndDistLabel, y: stopLabels[0].frame.minY, width: 90, height: 20)
-        distanceLabel.sizeToFit()
-        
-        //Add subviews to view
-        for stopNumButton in stopDots{
-            contentView.addSubview(stopNumButton)
-        }
-        for stopLabel in stopLabels{
-            contentView.addSubview(stopLabel)
-        }
-        for busIcon in busIcons{
-            contentView.addSubview(busIcon)
-        }
-        for line in walkLines{
-            contentView.addSubview(line)
-        }
-        
-        contentView.addSubview(distanceLabel)
-        
-        //Set up & position line and spacing btn cells
-        spaceBtCells = UIView(frame: CGRect(x: 0, y: contentView.frame.height - cellSpaceWidthY, width: UIScreen.main.bounds.width, height: cellSpaceWidthY))
-        spaceBtCells.backgroundColor = .tableBackgroundColor
-        contentView.addSubview(spaceBtCells)
-        
-        bottomLine = UIView(frame: CGRect(x: 0, y: spaceBtCells.frame.minY + cellBorderWidthY, width: UIScreen.main.bounds.width, height: cellBorderWidthY))
-        bottomLine.backgroundColor = .lineColor
-        contentView.addSubview(bottomLine)
+    override func awakeFromNib() {
+        super.awakeFromNib()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func heightForCell(withNumOfStops numOfStops: Int) -> CGFloat{
+        let numOfSolidStopDots = numOfStops - 1
+        let numOfRouteLines = numOfSolidStopDots - 1
+        
+        let timeLabelHeight: CGFloat = 17.0
+        
+        let headerHeight = timeLabelVerticalSpaceFromSuperview + timeLabelHeight  + timeLabelAndRouteDiagramVerticalSpace
+        
+        let solidStopDotDiameter: CGFloat = 8.0
+        let routeLineHeight: CGFloat = RouteDiagram.routeLineHeight
+        let destinationDotRouteLineHeight: CGFloat = 21.0
+        let destinationDotHeight: CGFloat = Circle(size: .large, color: .tcatBlueColor, style: .bordered).frame.height
+        
+        let routeDiagramHeight = (CGFloat(numOfSolidStopDots)*solidStopDotDiameter) +
+        (CGFloat(numOfRouteLines)*routeLineHeight) + destinationDotRouteLineHeight + destinationDotHeight
+        
+        let footerHeight = routeDiagramAndCellSeparatorVerticalSpace + cellSeperatorHeight
+        
+        return headerHeight + routeDiagramHeight + footerHeight
+    }
+    
+    // MARK: Reuse
+    
+    override func prepareForReuse() {
+        routeDiagram.prepareForReuse()
 
+        routeDiagram.removeFromSuperview()
+        cellSeperator.removeFromSuperview()
+        bottomBorder.removeFromSuperview()
+    }
+    
+    // MARK: Set Data
+        
+    func setRouteData(){
+        
+        guard let departureTime = route?.departureTime,
+              let arrivalTime = route?.arrivalTime,
+              let travelDistance = route?.travelDistance,
+              let stopNums = route?.mainStopsNums,
+              let stopNames = route?.mainStops
+              else{
+                print("RouteTableViewCell route object does not have the data needed to fill in the cell")
+                return
+              }
+        
+        setTravelTime(withDepartureTime: departureTime, withArrivalTime: arrivalTime)
+        setDepartureTime(withTime: departureTime)
+        
+        routeDiagram.setTravelDistance(withDistance: travelDistance)
+        routeDiagram.setRouteData(fromStopNums: stopNums, fromStopNames: stopNames)
+    }
+    
+    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
+        travelTimeLabel.text = "\(Time.string(from: departureTime)) - \(Time.string(from: arrivalTime))"
+        travelTimeLabel.sizeToFit()
+    }
+    
+    private func setDepartureTime(withTime departureTime: Date){
+        let time = Time.timeString(from: Date(), to: departureTime)
+        departureTimeLabel.text = "Departs in \(time)"
+        departureTimeLabel.sizeToFit()
+    }
+    
+    // MARK: Style
+    
+    private func styleTravelTime(){
+        travelTimeLabel.font = UIFont(name: "SFUIText-Medium", size: 14.0)
+        travelTimeLabel.textColor = .primaryTextColor
+    }
+    
+    private func styleDepartureTime(){
+        departureTimeLabel.font = UIFont(name: "SFUIText-Medium", size: 14.0)
+        departureTimeLabel.textColor = .tcatBlueColor
+    }
+    
+    private func styleTopBorder(){
+        topBorder.backgroundColor = .lineColor
+    }
+    
+    private func styleBottomBorder(){
+        bottomBorder.backgroundColor = .lineColor
+    }
+    
+    private func styleCellSeperator(){
+        cellSeperator.backgroundColor = .tableBackgroundColor
+    }
+    
+    // MARK: Positioning
+    
+    func positionSubviews(){
+        
+        positionDepartureTimeHorizontally()
+        positionRouteDiagram(usingTravelTimeLabel: travelTimeLabel)
+        
+        routeDiagram.positionSubviews()
+        
+        styleCellSeperator()
+        styleBottomBorder()
+        
+        positionCellSeperator(usingRouteDiagram: routeDiagram)
+        positionBottomBorder(usingCellSeperator: cellSeperator)
+    }
+    
+    private func positionTravelTime(){
+        travelTimeLabel.frame = CGRect(x: timeLabelLeftSpaceFromSuperview, y: timeLabelVerticalSpaceFromSuperview, width: 135, height: 20)
+    }
+    
+    private func positionDepartureTimeVertically(){
+        departureTimeLabel.frame = CGRect(x: 0, y: travelTimeLabel.frame.minY, width: 135, height: 20)
+    }
+    
+    private func positionTopBorder(){
+        topBorder.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: cellBorderHeight)
+    }
+    
+    private func positionDepartureTimeHorizontally(){
+        departureTimeLabel.center.x = contentView.frame.width - departLabelRightSpaceFromSuperview - (departureTimeLabel.frame.width/2)
+    }
+    
+    private func positionRouteDiagram(usingTravelTimeLabel travelTimeLabel: UILabel){
+        routeDiagram.frame = CGRect(x: 0, y: travelTimeLabel.frame.maxY + timeLabelAndRouteDiagramVerticalSpace, width: UIScreen.main.bounds.width, height: 75)
+    }
+    
+    private func positionCellSeperator(usingRouteDiagram routeDiagram: RouteDiagram){
+        cellSeperator.frame = CGRect(x: 0, y: routeDiagram.frame.maxY + routeDiagramAndCellSeparatorVerticalSpace, width: UIScreen.main.bounds.width, height: cellSeperatorHeight)
+    }
+    
+    private func positionBottomBorder(usingCellSeperator cellSeperator: UIView){
+        bottomBorder.frame = CGRect(x: 0, y: cellSeperator.frame.minY - cellBorderHeight, width: UIScreen.main.bounds.width, height: cellBorderHeight)
+    }
+    
+    // MARK: Add subviews
+    
+    func addSubviews(){
+        routeDiagram.addSubviews()
+        
+        contentView.addSubview(routeDiagram)
+        contentView.addSubview(cellSeperator)
+        contentView.addSubview(bottomBorder)
+    }
+    
 }
