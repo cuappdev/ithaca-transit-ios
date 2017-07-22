@@ -1,5 +1,5 @@
 //
-//  SearchBarViewController.swift
+//  SearchBarView.swift
 //  TCAT
 //
 //  Created by Austin Astorga on 2/15/17.

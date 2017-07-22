@@ -22,7 +22,7 @@ class DetailIconView: UIView {
     var timeLabel = UILabel()
     var connectorTop: UIView!
     var connectorBottom: UIView!
-    var statusCircle: DirectionCircle!
+    var statusCircle: Circle!
     
     init (height: CGFloat, type: IconType, time: String, firstStep: Bool, lastStep: Bool) {
         
@@ -40,11 +40,11 @@ class DetailIconView: UIView {
         
         if type == .noBus {
             if lastStep {
-                statusCircle = DirectionCircle(.finishOff)
+                statusCircle = Circle(size: .large, color: .lineColor, style: .bordered)
                 connectorTop.backgroundColor = .lineDarkColor
                 connectorBottom.backgroundColor = .clear
             } else {
-                statusCircle = DirectionCircle(.standardOff)
+                statusCircle = Circle(size: .small, color: .lineColor, style: .solid)
                 connectorTop.backgroundColor = .lineDarkColor
                 connectorBottom.backgroundColor = .lineDarkColor
                 if firstStep {
@@ -53,11 +53,11 @@ class DetailIconView: UIView {
             }
         } else {
             if lastStep {
-                statusCircle = DirectionCircle(.finishOn)
+                statusCircle = Circle(size: .large, color: .tcatBlueColor, style: .bordered)
                 connectorTop.backgroundColor = .tcatBlueColor
                 connectorBottom.backgroundColor = .clear
             } else {
-                statusCircle = DirectionCircle(.standardOn)
+                statusCircle = Circle(size: .small, color: .tcatBlueColor, style: .solid)
                 if type == .busStart {
                     connectorTop.backgroundColor = .lineDarkColor
                     connectorBottom.backgroundColor = .tcatBlueColor
