@@ -109,7 +109,7 @@ class RouteTableViewCell: UITableViewCell {
         guard let departureTime = route?.departureTime,
               let arrivalTime = route?.arrivalTime,
               let travelDistance = route?.travelDistance,
-              let stopNums = route?.mainStopsNums,
+              let stopNums = route?.mainStopNums,
               let stopNames = route?.mainStops
               else{
                 print("RouteTableViewCell route object does not have the data needed to fill in the cell")

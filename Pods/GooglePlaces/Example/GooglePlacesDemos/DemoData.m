@@ -27,6 +27,7 @@
 #import "GooglePlacesDemos/Samples/Autocomplete/AutocompleteWithSearchViewController.h"
 #import "GooglePlacesDemos/Samples/Autocomplete/AutocompleteWithTextFieldController.h"
 #import "GooglePlacesDemos/Samples/PhotosViewController.h"
+#import "GooglePlacesDemos/Samples/PlacePickerViewController.h"
 
 @implementation Demo {
   Class _viewControllerClass;
@@ -45,14 +46,10 @@
   // Construct the demo view controller.
   UIViewController *demoViewController = [[_viewControllerClass alloc] init];
 
-  // Check whether displayModeButtonItem is available (iOS 8+), if not
-  // MainSplitViewControllerBehaviorManager will implement a fallback for iOS 7.
-  if ([splitViewController respondsToSelector:@selector(displayModeButtonItem)]) {
-    // Configure its left bar button item to display the displayModeButtonItem provided by the
-    // splitViewController.
-    demoViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem;
-    demoViewController.navigationItem.leftItemsSupplementBackButton = YES;
-  }
+  // Configure its left bar button item to display the displayModeButtonItem provided by the
+  // splitViewController.
+  demoViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem;
+  demoViewController.navigationItem.leftItemsSupplementBackButton = YES;
 
   // Wrap the demo in a navigation controller.
   UINavigationController *navigationController =
@@ -90,6 +87,7 @@
 
     NSArray<Demo *> *otherDemos = @[
       [[Demo alloc] initWithViewControllerClass:[PhotosViewController class]],
+      [[Demo alloc] initWithViewControllerClass:[PlacePickerViewController class]]
     ];
 
 

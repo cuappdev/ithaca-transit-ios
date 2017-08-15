@@ -1,3 +1,34 @@
+Version 2.4.0 - August 2017
+===========================
+Note:
+  - The Add Place feature is deprecated as of June 30, 2017. This feature will
+    be turned down on June 30, 2018, and will no longer be available after that
+    date.
+  - The armv7s architecture in the frameworks has been removed. Devices which
+    previously used armv7s are still supported using the armv7 architecture.
+    All applications using the default architecture settings in any supported
+    version of Xcode should not notice any change.
+  - The layout of the static frameworks has changed. There is no longer a
+    Versions directory. The contents of Versions/A has been moved to the root
+    directory of the framework. Developers who manually integrate frameworks
+    with their project should take additional care during the upgrade.
+  - Support for Xcode 7.3 will be dropped with 2.5.0.
+
+Version 2.3.1 - June 2017
+========================
+Resolved Issues:
+  - Fixed an issue resulting in a crash when receiving photos for certain
+    places.
+
+Version 2.3.0 - May 2017
+========================
+Notes:
+  - Dropped support for iOS 7.
+  - The armv7s architecture in the frameworks will be removed in 2.4. Devices
+    which previously used armv7s can continue to be supported using the armv7
+    architecture. All applications using the default architecture settings
+    in any supported version of Xcode shouldn't notice any change.
+
 Version 2.2.0 - February 2017
 =============================
 Resolved Issues:

@@ -109,7 +109,7 @@ class RouteDiagram: UIView{
     private func getStopDot(fromStopNums stopNums: [Int], atIndex index: Int) -> Circle {
         let destinationDot = stopNums.count - 1
         
-        let busDestination = -1
+        let busDestination = -2
         let placeDestination = -3
         
         if(index == destinationDot){
@@ -159,7 +159,7 @@ class RouteDiagram: UIView{
     private func getRouteLine(fromStopNums stopNums: [Int], atIndex index: Int) -> RouteLine?{
         let stopNum = stopNums[index]
         
-        let walk = -2
+        let walk = -1
         
         if(stopNum >= 0){
             

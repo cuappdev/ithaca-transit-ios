@@ -332,7 +332,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         // Create and place all bus routes in Directions (account for small screens)
         var icon_maxY: CGFloat = 24; var first = true
-        let mainStopCount = route.mainStopsNums.filter { $0 != -1 }.count
+        let mainStopCount = route.mainStopNums.filter { $0 != -1 }.count
         var center = CGPoint(x: icon_maxY, y: (summaryView.frame.height / 2) + pullerHeight)
         for direction in directions {
             if direction is DepartDirection {

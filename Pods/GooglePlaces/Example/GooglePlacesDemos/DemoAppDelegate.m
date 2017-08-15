@@ -70,28 +70,15 @@
   UINavigationController *masterNavigationController =
       [[UINavigationController alloc] initWithRootViewController:masterViewController];
 
-  // If UISplitViewController is not available (only on iOS 7 running on an iPhone) we need to do
-  // something different with our UI. On iOS 8 and later UISplitViewController is available on iPad
-  // and iPhone so if you were using a UISplitViewController in your own app this check would not be
-  // needed.
-  if (NSFoundationVersionNumber < NSFoundationVersionNumber_iOS_8_0 &&
-      [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-    masterNavigationController.viewControllers = @[ masterViewController ];
-    self.window.rootViewController = masterNavigationController;
-  } else {
-    // UISplitViewController is available, use that.
+  _splitViewManager = [[MainSplitViewControllerBehaviorManager alloc] init];
 
-    _splitViewManager = [[MainSplitViewControllerBehaviorManager alloc] init];
-    masterViewController.mainSplitViewControllerBehaviorManager = _splitViewManager;
-
-    // Setup the split view controller.
-    UISplitViewController *splitViewController = [[UISplitViewController alloc] init];
-    UIViewController *detailViewController =
-        [demoData.firstDemo createViewControllerForSplitView:splitViewController];
-    splitViewController.delegate = _splitViewManager;
-    splitViewController.viewControllers = @[ masterNavigationController, detailViewController ];
-    self.window.rootViewController = splitViewController;
-  }
+  // Setup the split view controller.
+  UISplitViewController *splitViewController = [[UISplitViewController alloc] init];
+  UIViewController *detailViewController =
+      [demoData.firstDemo createViewControllerForSplitView:splitViewController];
+  splitViewController.delegate = _splitViewManager;
+  splitViewController.viewControllers = @[ masterNavigationController, detailViewController ];
+  self.window.rootViewController = splitViewController;
 
   [self.window makeKeyAndVisible];
 

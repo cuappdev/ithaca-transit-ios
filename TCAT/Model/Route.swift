@@ -29,7 +29,7 @@ class Route: NSObject, JSONDecodable {
     var directions: [Direction] = [Direction]()
     var mainStops: [String] = [String]()
     var allStops : [String] = [String]()
-    var mainStopsNums: [Int] = [Int]()//-1 for starting places, -2 for walking, -3 for ending places, -4 for ending bus stops
+    var mainStopNums: [Int] = [Int]() // n > 0 for bus number, -1 for walking, -2 for destinations that are bus stops, -3 for destinations that are places
     var travelDistance: Double = 0.0 // of first stop
     var lastStopTime: Date = Date() // the critical last time a bus route runs
     
@@ -38,10 +38,9 @@ class Route: NSObject, JSONDecodable {
         departureTime = Time.date(from: json["departureTime"].stringValue)
         arrivalTime = Time.date(from: json["arrivalTime"].stringValue)
         directions = directionJSON(json:json["directions"].array!)
-        //We need all stopNames for matt but not monica
         mainStops = json["mainStopNames"].arrayObject as! [String]
         allStops = json["allStopNames"].arrayObject as! [String]
-        mainStopsNums = json["stopNumbers"].arrayObject as! [Int]
+        mainStopNums = json["stopNumbers"].arrayObject as! [Int]
         travelDistance = directions[0] is WalkDirection ? (directions[0] as! WalkDirection).travelDistance : 0.0
         lastStopTime = Date()
     }
@@ -51,7 +50,7 @@ class Route: NSObject, JSONDecodable {
         self.arrivalTime = arrivalTime
         self.directions = directions
         self.mainStops = mainStops
-        self.mainStopsNums = mainStopsNums
+        self.mainStopNums = mainStopsNums
         self.travelDistance = travelDistance
         self.lastStopTime = lastStopTime
     }
@@ -107,9 +106,9 @@ class Route: NSObject, JSONDecodable {
     
     /// Modify mainStops and mainStopsNums to include the destination place result
     func addPlaceDestination(_ placeDestination: PlaceResult){
-        mainStopsNums[mainStops.count - 1] = -2 //to add walk line from last bus stop to place result destination
+        mainStopNums[mainStops.count - 1] = -2 //to add walk line from last bus stop to place result destination
         mainStops.append(placeDestination.name!)
-        mainStopsNums.append(-3) //place result destination dot
+        mainStopNums.append(-3) //place result destination dot
     }
     
     //For debugging purposes
@@ -120,7 +119,7 @@ class Route: NSObject, JSONDecodable {
         }
         mainStopsStr += ")"
         var mainStopsNumsStr = "("
-        for mainStopNum in mainStopsNums{
+        for mainStopNum in mainStopNums{
             mainStopsNumsStr += "\(mainStopNum), "
         }
         mainStopsNumsStr += ")"

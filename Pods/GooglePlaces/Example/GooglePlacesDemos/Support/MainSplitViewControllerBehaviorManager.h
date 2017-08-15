@@ -22,9 +22,6 @@
  * the list. After first launch if the device transitions from regular to compact it will instead
  * show the demo which is currently open.
  */
-@interface MainSplitViewControllerBehaviorManager : NSObject<UISplitViewControllerDelegate>
-
-// Bar button item for use on iOS 7 where displayModeButtonItem is not available.
-@property(nonatomic, readonly) UIBarButtonItem *iOS7DisplayModeButtonItem;
+@interface MainSplitViewControllerBehaviorManager : NSObject <UISplitViewControllerDelegate>
 
 @end
