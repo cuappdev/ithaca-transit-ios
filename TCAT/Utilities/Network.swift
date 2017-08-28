@@ -20,7 +20,7 @@ class AllBusStops: JSONDecodable {
     var allStops : [BusStop] = [BusStop]()
     
     required init(json: JSON) throws {
-        allStops = parseAllStops(json: json.array!)
+        allStops = parseAllStops(json: json.arrayValue)
     }
     
     func parseAllStops(json: [JSON]) -> [BusStop] {
