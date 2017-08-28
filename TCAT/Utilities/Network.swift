@@ -9,27 +9,30 @@ import Foundation
 import SwiftyJSON
 import TRON
 import CoreLocation
+import GooglePlaces
 
 class Error: JSONDecodable {
     required init(json: JSON) {
         //need to talk to shiv about what errors could be possibily returned
     }
 }
-
 class AllBusStops: JSONDecodable {
     var allStops : [BusStop] = [BusStop]()
     
     required init(json: JSON) throws {
-        allStops = parseAllStops(json: json.array!)
+        if json["success"].boolValue {
+            let data = json["data"].arrayValue
+            allStops = parseAllStops(json: data)
+        }
     }
     
     func parseAllStops(json: [JSON]) -> [BusStop] {
         var allStopsArray = [BusStop]()
         for stop in json {
             let name = stop["name"].stringValue
-            let location = stop["location"].arrayObject as! [Double]
-            let lat = location[0]
-            let long = location[1]
+            let location = stop["location"]
+            let lat = location["latitude"].doubleValue
+            let long = location["latitude"].doubleValue
             let busStop = BusStop(name: name, lat: lat, long: long)
             allStopsArray.append(busStop)
         }
@@ -39,9 +42,11 @@ class AllBusStops: JSONDecodable {
 }
 
 class Network {
-    //    TRON(baseURL: "http://rawgit.com/cuappdev/tcat-ios/1194a64/")
-    static let tron = TRON(baseURL: "http://tcat-dev-env-1.bsjzqmpigt.us-west-2.elasticbeanstalk.com/")
+
+    /// Make sure you are running localhost:3000 on your computer!
+    static let tron = TRON(baseURL: "http://localhost:3000/api/v1")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
+    static let placesClient = GMSPlacesClient.shared()
     
     class func getRoutes() -> APIRequest<Route, Error> {
         let request: APIRequest<Route, Error> = tron.request("navigate.json")
@@ -56,60 +61,23 @@ class Network {
         return request
     }
     
-    class func getRoutes(start: BusStop, end: PlaceResult, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error> {
-        let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
-        request.parameters = ["source": "\(start.lat ??? ""),\(start.long ??? "")",
-            "sink": "\(end.placeID ??? "")"]
+    class func getRoutes(start: BusStop, end: BusStop, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error> {
+        
+        let request: APIRequest<Array<Route>, Error> = tron.request("routes")
+        
+        request.parameters = [
+            
+            "start_coords"  :   "\(start.lat ??? ""),\(start.long ??? "")",
+            "end_coords"    :   "\(end.lat ??? ""),\(end.long ??? "")",
+        
+        ]
 
         if type == .arriveBy {
-            request.parameters["depart_time"] = Time.string(from: time)
-        }else{
-            request.parameters["arrive_time"] = Time.string(from: time)
+            request.parameters["depart_time"] = time.timeIntervalSince1970 // Time.string(from: time)
+        } else {
+            request.parameters["leave_by"] = time.timeIntervalSince1970 // Time.string(from: time)
         }
-        print(request.parameters)
-        request.method = .get
-        return request
-    }
-    
-    class func getRoutes(start: BusStop, end: BusStop, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error>{
-        let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
-        request.parameters = ["source": "\(start.lat ??? ""),\(start.long ??? "")",
-            "sink": "\(end.lat ??? ""),\(end.long ??? "")" ]
-
-        if type == .arriveBy {
-            request.parameters["depart_time"] = Time.string(from: time)
-        }else{
-            request.parameters["arrive_time"] = Time.string(from: time)
-        }
-        print(request.parameters)
-        request.method = .get
-        return request
-    }
-    
-    class func getRoutes(start: PlaceResult, end: PlaceResult, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error>{
-        let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
-        request.parameters = ["source": "\(start.placeID ??? "")", "sink": "\(end.placeID ??? "")"]
-
-        if type == .arriveBy {
-            request.parameters["depart_time"] = Time.string(from: time)
-        }else{
-            request.parameters["arrive_time"] = Time.string(from: time)
-        }
-        print(request.parameters)
-        request.method = .get
-        return request
-    }
-    
-    class func getRoutes(start: PlaceResult, end: BusStop, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error>{
-        let request: APIRequest<Array<Route>, Error> = tron.request("navigate")
-        request.parameters = ["source": "\(start.placeID ??? "")",
-            "sink": "\(end.lat ??? ""),\(end.long ??? "")"]
-
-        if type == .arriveBy {
-            request.parameters["depart_time"] = Time.string(from: time)
-        }else{
-            request.parameters["arrive_time"] = Time.string(from: time)
-        }
+        
         print(request.parameters)
         request.method = .get
         return request
@@ -123,6 +91,22 @@ class Network {
         request.method = .get
         return request
     }
+
+    class func getLocationFromPlaceId(placeId: String, callback:@escaping ((CLLocationCoordinate2D) -> Void)) {
+        placesClient.lookUpPlaceID(placeId) { place, error in
+            if let error = error {
+                print("lookup place id query error: \(error.localizedDescription)")
+                return
+            }
+            guard let place = place else {
+                print("No place details for \(placeId)")
+                return
+            }
+            callback(place.coordinate)
+        }
+    }
+
+
 }
 
 extension Array : JSONDecodable {
