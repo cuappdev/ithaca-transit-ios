@@ -280,8 +280,8 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             searchTime = Date()
         }
         
-        let (fromBus, fromPlace) = searchFrom
-        let (toBus, toPlace) = searchTo
+        let (fromBus, _) = searchFrom
+        let (toBus, _) = searchTo
         if let startBus = fromBus, let endBus = toBus{
             routes = loaderroutes
             routeResults.reloadData()
@@ -297,51 +297,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
                 Loader.removeLoaderFrom(self.routeResults)
             })
         }
-        if let startBus = fromBus, let endPlace = toPlace{
-            routes = loaderroutes
-            routeResults.reloadData()
-            Loader.addLoaderTo(routeResults)
-            Network.getRoutes(start: startBus, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = self.getValidRoutes(routes: routes)
-                self.routeResults.reloadData()
-                Loader.removeLoaderFrom(self.routeResults)
-            }, failure: { (error) in
-                print("Error: \(error)")
-                self.routes = []
-                self.routeResults.reloadData()
-                Loader.removeLoaderFrom(self.routeResults)
-            })
-        }
-        if let startPlace = fromPlace, let endBus = toBus{
-            routes = loaderroutes
-            routeResults.reloadData()
-            Loader.addLoaderTo(routeResults)
-            Network.getRoutes(start: startPlace, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = self.getValidRoutes(routes: routes)
-                self.routeResults.reloadData()
-                Loader.removeLoaderFrom(self.routeResults)
-            }, failure: { (error) in
-                print("Error: \(error)")
-                self.routes = []
-                self.routeResults.reloadData()
-                Loader.removeLoaderFrom(self.routeResults)
-            })
-        }
-        if let startPlace = fromPlace, let endPlace = toPlace{
-            routes = loaderroutes
-            routeResults.reloadData()
-            Loader.addLoaderTo(routeResults)
-            Network.getRoutes(start: startPlace, end: endPlace, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = self.getValidRoutes(routes: routes)
-                self.routeResults.reloadData()
-                Loader.removeLoaderFrom(self.routeResults)
-            }, failure: { (error) in
-                print("Error: \(error)")
-                self.routes = []
-                self.routeResults.reloadData()
-                Loader.removeLoaderFrom(self.routeResults)
-            })
-        }
+
     }
     
     //Leave now = all buses that leave at the user's "now" time
