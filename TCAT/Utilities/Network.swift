@@ -20,16 +20,19 @@ class AllBusStops: JSONDecodable {
     var allStops : [BusStop] = [BusStop]()
     
     required init(json: JSON) throws {
-        allStops = parseAllStops(json: json.arrayValue)
+        if json["success"].boolValue {
+            let data = json["data"].arrayValue
+            allStops = parseAllStops(json: data)
+        }
     }
     
     func parseAllStops(json: [JSON]) -> [BusStop] {
         var allStopsArray = [BusStop]()
         for stop in json {
             let name = stop["name"].stringValue
-            let location = stop["location"].arrayObject as! [Double]
-            let lat = location[0]
-            let long = location[1]
+            let location = stop["location"] as! JSON
+            let lat = location["latitude"].doubleValue
+            let long = location["latitude"].doubleValue
             let busStop = BusStop(name: name, lat: lat, long: long)
             allStopsArray.append(busStop)
         }
