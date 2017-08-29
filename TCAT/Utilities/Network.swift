@@ -30,7 +30,7 @@ class AllBusStops: JSONDecodable {
         var allStopsArray = [BusStop]()
         for stop in json {
             let name = stop["name"].stringValue
-            let location = stop["location"] as! JSON
+            let location = stop["location"]
             let lat = location["latitude"].doubleValue
             let long = location["latitude"].doubleValue
             let busStop = BusStop(name: name, lat: lat, long: long)
