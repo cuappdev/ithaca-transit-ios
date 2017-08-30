@@ -61,16 +61,23 @@ class Network {
         return request
     }
     
-    class func getRoutes(start: BusStop, end: BusStop, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error>{
+    class func getRoutes(start: BusStop, end: BusStop, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error> {
+        
         let request: APIRequest<Array<Route>, Error> = tron.request("routes")
-        request.parameters = ["source": "\(start.lat ??? ""),\(start.long ??? "")",
-            "sink": "\(end.lat ??? ""),\(end.long ??? "")" ]
+        
+        request.parameters = [
+            
+            "start_coords"  :   "\(start.lat ??? ""),\(start.long ??? "")",
+            "end_coords"    :   "\(end.lat ??? ""),\(end.long ??? "")",
+        
+        ]
 
         if type == .arriveBy {
-            request.parameters["depart_time"] = Time.string(from: time)
-        }else{
-            request.parameters["arrive_time"] = Time.string(from: time)
+            request.parameters["depart_time"] = time.timeIntervalSince1970 // Time.string(from: time)
+        } else {
+            request.parameters["leave_by"] = time.timeIntervalSince1970 // Time.string(from: time)
         }
+        
         print(request.parameters)
         request.method = .get
         return request
