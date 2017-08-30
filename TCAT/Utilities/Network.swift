@@ -9,13 +9,13 @@ import Foundation
 import SwiftyJSON
 import TRON
 import CoreLocation
+import GooglePlaces
 
 class Error: JSONDecodable {
     required init(json: JSON) {
         //need to talk to shiv about what errors could be possibily returned
     }
 }
-
 class AllBusStops: JSONDecodable {
     var allStops : [BusStop] = [BusStop]()
     
@@ -46,6 +46,7 @@ class Network {
     /// Make sure you are running localhost:3000 on your computer!
     static let tron = TRON(baseURL: "http://localhost:3000/api/v1")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
+    static let placesClient = GMSPlacesClient.shared()
     
     class func getRoutes() -> APIRequest<Route, Error> {
         let request: APIRequest<Route, Error> = tron.request("navigate.json")
@@ -83,6 +84,22 @@ class Network {
         request.method = .get
         return request
     }
+
+    class func getLocationFromPlaceId(placeId: String, callback:@escaping ((CLLocationCoordinate2D) -> Void)) {
+        placesClient.lookUpPlaceID(placeId) { place, error in
+            if let error = error {
+                print("lookup place id query error: \(error.localizedDescription)")
+                return
+            }
+            guard let place = place else {
+                print("No place details for \(placeId)")
+                return
+            }
+            callback(place.coordinate)
+        }
+    }
+
+
 }
 
 extension Array : JSONDecodable {
