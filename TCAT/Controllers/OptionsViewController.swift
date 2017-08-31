@@ -274,26 +274,29 @@ CLLocationManagerDelegate {
     
     func searchForRoutes() {
 
-        let (startingDesintation, endingDestinaton) = getSearchTuple(startingDestinationTuple: searchFrom, endingDestinationTuple: searchTo)
+        let (startingDestination, endingDestination) = getSearchTuple(startingDestinationTuple: searchFrom, endingDestinationTuple: searchTo)
         
-        routes = loaderroutes
-        routeResults.reloadData()
-        Loader.addLoaderTo(routeResults)
-        Network.getRoutes(start: startingDesintation, end: endingDestinaton, time: searchTime!, type: searchTimeType) { request in
-            request.perform(withSuccess: { (routes) in
-                self.routes = routes
-                self.routeResults.reloadData()
-                Loader.removeLoaderFrom(self.routeResults)
-            }, failure: { (error) in
-                print("Error: \(error)")
-                self.routes = []
-                self.routeResults.reloadData()
-                Loader.removeLoaderFrom(self.routeResults)
-            })
+        if let startingDestination = startingDestination, let endingDestination = endingDestination{
+            routes = loaderroutes
+            routeResults.reloadData()
+            Loader.addLoaderTo(routeResults)
+            Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
+                request.perform(withSuccess: { (routes) in
+                    self.routes = routes
+                    self.routeResults.reloadData()
+                    Loader.removeLoaderFrom(self.routeResults)
+                }, failure: { (error) in
+                    print("OptionVC SearchForRoutes Error: \(error)")
+                    self.routes = []
+                    self.routeResults.reloadData()
+                    Loader.removeLoaderFrom(self.routeResults)
+                })
+            }
         }
+        
     }
     
-    private func getSearchTuple(startingDestinationTuple: (BusStop?, PlaceResult?), endingDestinationTuple: (BusStop?, PlaceResult?)) -> (startingDestination: AnyObject, endingDestination: AnyObject){
+    private func getSearchTuple(startingDestinationTuple: (BusStop?, PlaceResult?), endingDestinationTuple: (BusStop?, PlaceResult?)) -> (startingDestination: AnyObject?, endingDestination: AnyObject?){
         
         let (fromBus, fromPlace) = searchFrom
         let (toBus, toPlace) = searchTo
@@ -314,7 +317,7 @@ CLLocationManagerDelegate {
             return (startPlace, endPlace)
         }
         
-        return (fromBus!, toBus!) //should never hit this line
+        return (nil, nil)
 
     }
 
