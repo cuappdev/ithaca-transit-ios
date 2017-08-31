@@ -32,7 +32,7 @@ class AllBusStops: JSONDecodable {
             let name = stop["name"].stringValue
             let location = stop["location"]
             let lat = location["latitude"].doubleValue
-            let long = location["latitude"].doubleValue
+            let long = location["longitude"].doubleValue
             let busStop = BusStop(name: name, lat: lat, long: long)
             allStopsArray.append(busStop)
         }
@@ -44,7 +44,7 @@ class AllBusStops: JSONDecodable {
 class Network {
 
     /// Make sure you are running localhost:3000 on your computer!
-    static let tron = TRON(baseURL: "http://localhost:3000/api/v1")
+    static let tron = TRON(baseURL: "http://localhost:3000/api/v1/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
     
@@ -60,28 +60,72 @@ class Network {
         request.method = .get
         return request
     }
-    
-    class func getRoutes(start: BusStop, end: BusStop, time: Date, type: SearchType) -> APIRequest<Array<Route>, Error> {
-        
-        let request: APIRequest<Array<Route>, Error> = tron.request("routes")
-        
-        request.parameters = [
-            
-            "start_coords"  :   "\(start.lat ??? ""),\(start.long ??? "")",
-            "end_coords"    :   "\(end.lat ??? ""),\(end.long ??? "")",
-        
-        ]
 
-        if type == .arriveBy {
-            request.parameters["depart_time"] = time.timeIntervalSince1970 // Time.string(from: time)
-        } else {
-            request.parameters["leave_by"] = time.timeIntervalSince1970 // Time.string(from: time)
+    class func getStartEndCoords(start: Any, end: Any, callback:@escaping ((CLLocationCoordinate2D, CLLocationCoordinate2D) -> Void)) {
+        var startCoord = CLLocationCoordinate2D()
+        var endCoord = CLLocationCoordinate2D()
+        if let startBusStop = start as? BusStop, let endBusStop = end as? BusStop {
+            startCoord.latitude = startBusStop.lat!
+            startCoord.longitude = startBusStop.long!
+            endCoord.latitude = endBusStop.lat!
+            endCoord.longitude = endBusStop.long!
+            callback(startCoord, endCoord)
         }
-        
-        print(request.parameters)
-        request.method = .get
-        return request
+        else if let startBusStop = start as? BusStop, let endPlaceResult = end as? PlaceResult {
+            startCoord.latitude = startBusStop.lat!
+            startCoord.longitude = startBusStop.long!
+            getLocationFromPlaceId(placeId: endPlaceResult.placeID!) { coords in
+                endCoord.latitude = coords.latitude
+                endCoord.longitude = coords.longitude
+                callback(startCoord, endCoord)
+            }
+
+        }
+        else if let startPlaceResult = start as? PlaceResult, let endBusStop = end as? BusStop {
+            endCoord.latitude = endBusStop.lat!
+            endCoord.longitude = endBusStop.long!
+            getLocationFromPlaceId(placeId: startPlaceResult.placeID!) { coords in
+                startCoord.latitude = coords.latitude
+                startCoord.longitude = coords.longitude
+                callback(startCoord, endCoord)
+            }
+
+        }
+        else if let startPlaceResult = start as? PlaceResult, let endPlaceResult = end as? PlaceResult {
+            getLocationFromPlaceId(placeId: startPlaceResult.placeID!) { coords in
+                startCoord.latitude = coords.latitude
+                startCoord.longitude = coords.longitude
+                getLocationFromPlaceId(placeId: endPlaceResult.placeID!) { coords in
+                    endCoord.latitude = coords.latitude
+                    endCoord.longitude = coords.longitude
+                    callback(startCoord, endCoord)
+                }
+            }
+        }
     }
+    
+    class func getRoutes(start: Any, end: Any, time: Date, type: SearchType, callback:@escaping ((APIRequest<Array<Route>, Error>) -> Void)) {
+        getStartEndCoords(start: start, end: end) {startCoords, endCoords in
+            let request: APIRequest<Array<Route>, Error> = tron.request("routes")
+
+            request.parameters = [
+
+                "start_coords"  :   "\(startCoords.latitude ??? ""),\(startCoords.longitude ??? "")",
+                "end_coords"    :   "\(endCoords.latitude ??? ""),\(endCoords.longitude ??? "")",
+
+            ]
+
+            if type == .arriveBy {
+                request.parameters["depart_time"] = time.timeIntervalSince1970 // Time.string(from: time)
+            } else {
+                request.parameters["leave_by"] = time.timeIntervalSince1970 // Time.string(from: time)
+            }
+            print(request.parameters)
+            request.method = .get
+            callback(request)
+        }
+    }
+    
     
     class func getGooglePlaces(searchText: String) -> APIRequest<JSON, Error> {
         let googleJson = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))

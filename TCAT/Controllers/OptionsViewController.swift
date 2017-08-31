@@ -12,13 +12,13 @@ import CoreLocation
 import SwiftyJSON
 
 /* 2Bringup:
-  * Don't think should limit the search of past or future bus routes (just for that edge case. Also GoogleMaps doesn't do that)
+ * Don't think should limit the search of past or future bus routes (just for that edge case. Also GoogleMaps doesn't do that)
  * 2Do:
-  * work on overflow - datepicker & dist label (maybe put below)
-  * "Sorry no routes" or blank if don't fill in all fields screen
-  * Rename search bar vars? VC? RouteSelectionView? (kind of unclear)
+ * work on overflow - datepicker & dist label (maybe put below)
+ * "Sorry no routes" or blank if don't fill in all fields screen
+ * Rename search bar vars? VC? RouteSelectionView? (kind of unclear)
  * Bugs:
-  * Distance is still 0.0
+ * Distance is still 0.0
  */
 enum SearchBarType: String{
     case from, to
@@ -30,7 +30,7 @@ enum SearchType: String{
 
 class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,
     DestinationDelegate, SearchBarCancelDelegate,UISearchBarDelegate,
-    CLLocationManagerDelegate {
+CLLocationManagerDelegate {
     
     // MARK: Search bar vars
     
@@ -85,13 +85,10 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         setupLoaderData()
         routes = loaderroutes
 
-        //If no date is set then date should be same as today's date
-        if let _ = searchTime{
-        }else{
-            self.searchTime = Date()
-        }
+        // If no date is set then date should be same as today's date
+        self.searchTime = Date()
         
-//        searchForRoutes()
+        //        searchForRoutes()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -145,7 +142,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     // MARK: Route Selection view
     
-    private func setupRouteSelection(){
+    private func setupRouteSelection() {
         routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 150))
         routeSelection.backgroundColor = .lineColor
         routeSelection.positionSubviews()
@@ -212,15 +209,15 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func searchingTo(sender: UIButton){
         searchType = .to
-         //For Austin's search bar to show current location option or not
-//        searchBarView.resultsViewController.shouldShowCurrentLocation = false
+        //For Austin's search bar to show current location option or not
+        //        searchBarView.resultsViewController.shouldShowCurrentLocation = false
         presentSearchBar()
     }
     
     func searchingFrom(sender: UIButton){
         searchType = .from
         //For Austin's search bar to show current location option or not
-//        searchBarView.resultsViewController.shouldShowCurrentLocation = false
+        //        searchBarView.resultsViewController.shouldShowCurrentLocation = false
         presentSearchBar()
     }
     
@@ -240,21 +237,21 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?){
         switch searchType{
-            case .from:
-                if let result = busStop{
-                    searchFrom = (result, nil)
-                    routeSelection.fromSearchbar.setTitle(result.name, for: .normal)
-                }else if let result = placeResult{
-                    searchFrom = (nil, result)
-                    routeSelection.fromSearchbar.setTitle(result.name, for: .normal)                }
-            default:
-                if let result = busStop{
-                    searchTo = (result, nil)
-                    routeSelection.toSearchbar.setTitle(result.name, for: .normal)
-                }else if let result = placeResult{
-                    searchTo = (nil, result)
-                    routeSelection.toSearchbar.setTitle(result.name, for: .normal)
-                }
+        case .from:
+            if let result = busStop{
+                searchFrom = (result, nil)
+                routeSelection.fromSearchbar.setTitle(result.name, for: .normal)
+            }else if let result = placeResult{
+                searchFrom = (nil, result)
+                routeSelection.fromSearchbar.setTitle(result.name, for: .normal)                }
+        default:
+            if let result = busStop{
+                searchTo = (result, nil)
+                routeSelection.toSearchbar.setTitle(result.name, for: .normal)
+            }else if let result = placeResult{
+                searchTo = (nil, result)
+                routeSelection.toSearchbar.setTitle(result.name, for: .normal)
+            }
         }
         hideSearchBar()
         dismissSearchBar()
@@ -275,10 +272,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         searchBarView.searchController?.isActive = true
     }
     
-    func searchForRoutes(){
-        if searchTime == nil && routeSelection.datepickerButton.titleLabel?.text?.lowercased() == "leave now"{
-            searchTime = Date()
-        }
+    func searchForRoutes() {
         
         let (fromBus, _) = searchFrom
         let (toBus, _) = searchTo
@@ -286,18 +280,19 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
             routes = loaderroutes
             routeResults.reloadData()
             Loader.addLoaderTo(routeResults)
-            Network.getRoutes(start: startBus, end: endBus, time: searchTime!, type: searchTimeType).perform(withSuccess: { (routes) in
-                self.routes = self.getValidRoutes(routes: routes)
-                self.routeResults.reloadData()
-                Loader.removeLoaderFrom(self.routeResults)
-            }, failure: { (error) in
-                print("Error: \(error)")
-                self.routes = []
-                self.routeResults.reloadData()
-                Loader.removeLoaderFrom(self.routeResults)
-            })
+            Network.getRoutes(start: startBus, end: endBus, time: searchTime!, type: searchTimeType) { request in
+                request.perform(withSuccess: { (routes) in
+                    self.routes = self.getValidRoutes(routes: routes)
+                    self.routeResults.reloadData()
+                    Loader.removeLoaderFrom(self.routeResults)
+                }, failure: { (error) in
+                    print("Error: \(error)")
+                    self.routes = []
+                    self.routeResults.reloadData()
+                    Loader.removeLoaderFrom(self.routeResults)
+                })
+            }
         }
-
     }
     
     //Leave now = all buses that leave at the user's "now" time
@@ -378,13 +373,29 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = 10
-        locationManager.requestLocation()
+        // locationManager.requestLocation() // one-time call
         locationManager.startUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
+        
         locationManager.stopUpdatingLocation()
-        print("OptionVC locationManager didFailWithError: \(error)")
+        print("OptionVC locationManager didFailWithError: \(error.localizedDescription)")
+        
+        let title = "Couldn't Find Location"
+        let message = "Please ensure you are connected to the internet and have enabled location permissions."
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+       
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        let settings = UIAlertAction(title: "Settings", style: .default) { (_) in
+            UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
+        }
+        
+        alertController.addAction(settings)
+        
+        present(alertController, animated: true, completion: nil)
+        
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
