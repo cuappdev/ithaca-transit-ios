@@ -61,7 +61,7 @@ class Network {
         return request
     }
     
-    class func getStartEndCoords(start: Any, end: Any, callback:@escaping ((CLLocationCoordinate2D, CLLocationCoordinate2D) -> Void)) {
+    class func getStartEndCoords(start: AnyObject, end: AnyObject, callback:@escaping ((CLLocationCoordinate2D, CLLocationCoordinate2D) -> Void)) {
         var startCoord = CLLocationCoordinate2D()
         var endCoord = CLLocationCoordinate2D()
         if let startBusStop = start as? BusStop, let endBusStop = end as? BusStop {

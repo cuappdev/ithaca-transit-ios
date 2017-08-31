@@ -274,96 +274,48 @@ CLLocationManagerDelegate {
     
     func searchForRoutes() {
 
-        let (fromBus, _) = searchFrom
-        let (toBus, _) = searchTo
-        if let startBus = fromBus, let endBus = toBus{
-            routes = loaderroutes
-            routeResults.reloadData()
-            Loader.addLoaderTo(routeResults)
-            Network.getRoutes(start: startBus, end: endBus, time: searchTime!, type: searchTimeType) { request in
-                request.perform(withSuccess: { (routes) in
-                    self.routes = self.getValidRoutes(routes: routes)
-                    self.routeResults.reloadData()
-                    Loader.removeLoaderFrom(self.routeResults)
-                }, failure: { (error) in
-                    print("Error: \(error)")
-                    self.routes = []
-                    self.routeResults.reloadData()
-                    Loader.removeLoaderFrom(self.routeResults)
-                })
-            }
+        let (startingDesintation, endingDestinaton) = getSearchTuple(startingDestinationTuple: searchFrom, endingDestinationTuple: searchTo)
+        
+        routes = loaderroutes
+        routeResults.reloadData()
+        Loader.addLoaderTo(routeResults)
+        Network.getRoutes(start: startingDesintation, end: endingDestinaton, time: searchTime!, type: searchTimeType) { request in
+            request.perform(withSuccess: { (routes) in
+                self.routes = routes
+                self.routeResults.reloadData()
+                Loader.removeLoaderFrom(self.routeResults)
+            }, failure: { (error) in
+                print("Error: \(error)")
+                self.routes = []
+                self.routeResults.reloadData()
+                Loader.removeLoaderFrom(self.routeResults)
+            })
         }
     }
     
-    //Leave now = all buses that leave at the user's "now" time
-    func getValidRoutes(routes: [Route]) -> [Route]{
-        var validroutes: [Route] = []
-        for route in routes{
-            var validRoute = true
-            let directions = route.directions
-            //Check directions to invalidate route
-            for i in 0..<directions.count{
-                if let walkDir = directions[i] as? WalkDirection{
-                    if i == 0{
-                        walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
-                            //this might be sketch for leave now, check logic
-                            if self.searchTimeType == .leaveAt{ //make sure if walk now to stop, get there before leaveat time
-                                let walkToStopDate = Date().addingTimeInterval(walkTimeInterval)
-                                if(walkToStopDate > self.searchTime!){
-                                    validRoute = false
-                                }else{
-                                    route.departureTime.addTimeInterval(-walkTimeInterval)
-                                    route.directions[i].time = route.departureTime
-                                    route.travelDistance = distance
-                                    print("travelDistance should be updated with : \(distance)")
-                                }
-                            }else{ //make sure walk to stop before bus leaves
-                                let walkToStopDate = self.searchTime?.addingTimeInterval(walkTimeInterval)
-                                if(walkToStopDate! > route.directions[1].time){
-                                    validRoute = false
-                                }else{
-                                    route.departureTime.addTimeInterval(-walkTimeInterval)
-                                    route.directions[i].time = route.departureTime
-                                }
-                            }
-                        })
-                    }else if i == (directions.count - 1){
-                        walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
-                            if self.searchTimeType == .arriveBy { //make sure walk to destination before arrive by time
-                                let walkToDestinationDate = route.directions[i-1].time.addingTimeInterval(walkTimeInterval)
-                                if(walkToDestinationDate > self.searchTime!){
-                                    validRoute = false
-                                }else{
-                                    route.arrivalTime.addTimeInterval(walkTimeInterval)
-                                    route.directions[i].time = route.arrivalTime
-                                }
-                            }
-                        })
-                    }else{ //make sure can walk from previous stop and arrive to next stop by the time bus departs
-                        walkDir.calculateWalkingDirections({ (distance, walkTimeInterval) in
-                            let walkToStopDate = route.directions[i-1].time.addingTimeInterval(walkTimeInterval)
-                            if(walkToStopDate > route.directions[i+1].time){
-                                validRoute = false
-                            }else{
-                                route.directions[i].time = walkToStopDate
-                            }
-                        })
-                    }
-                }
-            }
-            if (validRoute) {
-                let (endBus, endPlace) = searchTo
-                var lastDir = route.directions.last
-                if let busStopDestination = endBus{
-                    lastDir?.place = busStopDestination.name!
-                }else if let placeDestination = endPlace{
-                    lastDir?.place = placeDestination.name!
-                    route.addPlaceDestination(placeDestination)
-                }
-                validroutes.append(route)
-            }
+    private func getSearchTuple(startingDestinationTuple: (BusStop?, PlaceResult?), endingDestinationTuple: (BusStop?, PlaceResult?)) -> (startingDestination: AnyObject, endingDestination: AnyObject){
+        
+        let (fromBus, fromPlace) = searchFrom
+        let (toBus, toPlace) = searchTo
+        
+        if let startBus = fromBus, let endBus = toBus{
+            return (startBus, endBus)
         }
-        return validroutes
+        
+        if let startBus = fromBus, let endPlace = toPlace{
+            return (startBus, endPlace)
+        }
+        
+        if let startPlace = fromPlace, let endBus = toBus{
+            return (startPlace, endBus)
+        }
+        
+        if let startPlace = fromPlace, let endPlace = toPlace{
+            return (startPlace, endPlace)
+        }
+        
+        return (fromBus!, toBus!) //should never hit this line
+
     }
 
     // MARK: Location Manager Delegate
