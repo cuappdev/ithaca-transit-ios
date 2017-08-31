@@ -125,17 +125,17 @@ CLLocationManagerDelegate {
     // MARK: Loader
     
     private func setupLoaderData(){
-        let date1 = Time.date(from: "3:45 PM")
-        let date2 = Time.date(from: "3:52 PM")
-        let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -2], travelDistance: 0.1)
+        let date1 = Time.dateForDebug(from: "3:45 PM")
+        let date2 = Time.dateForDebug(from: "3:52 PM")
+        let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -2], path: [], travelDistance: 0.1)
         
-        let date3 = Time.date(from: "3:45 PM")
-        let date4 = Time.date(from: "3:52 PM")
-        let route2 = Route(departureTime: date3, arrivalTime: date4, directions: [], mainStops: ["Baker Flagpole", "Collegetown Crossing", "Commons - Seneca Street"], mainStopsNums: [8, 16, -2], travelDistance: 0.1)
+        let date3 = Time.dateForDebug(from: "3:45 PM")
+        let date4 = Time.dateForDebug(from: "3:52 PM")
+        let route2 = Route(departureTime: date3, arrivalTime: date4, directions: [], mainStops: ["Baker Flagpole", "Collegetown Crossing", "Commons - Seneca Street"], mainStopsNums: [8, 16, -2], path: [], travelDistance: 0.1)
         
-        let date5 = Time.date(from: "3:45 PM")
-        let date6 = Time.date(from: "3:52 PM")
-        let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Jessup Fields", "RPCC", "Commons - Seneca Street"], mainStopsNums: [8, -1, 32, -2], travelDistance: 0.1)
+        let date5 = Time.dateForDebug(from: "3:45 PM")
+        let date6 = Time.dateForDebug(from: "3:52 PM")
+        let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Jessup Fields", "RPCC", "Commons - Seneca Street"], mainStopsNums: [8, -1, 32, -2], path: [], travelDistance: 0.1)
         
         loaderroutes = [route1, route2, route3]
     }
