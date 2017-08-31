@@ -27,8 +27,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
         // Initalize window without storyboard
-        let rootVC = HomeViewController()
-        rootVC.getBusStops()
+        let rootVC = RouteDetailViewController() // HomeViewController()
+        // rootVC.getBusStops()
         let navigationController = UINavigationController(rootViewController: rootVC)
         navigationController.navigationBar.barTintColor = .white
         navigationController.navigationBar.isTranslucent = false
@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             userDefaults.set([Any](), forKey: "recentSearch")
         }
         
-        //Ask for current location
+        // Ask for current location
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         

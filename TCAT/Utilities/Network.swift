@@ -13,7 +13,7 @@ import GooglePlaces
 
 class Error: JSONDecodable {
     required init(json: JSON) {
-        //need to talk to shiv about what errors could be possibily returned
+        // need to talk to shiv about what errors could be possibily returned
     }
 }
 class AllBusStops: JSONDecodable {
@@ -41,10 +41,58 @@ class AllBusStops: JSONDecodable {
     }
 }
 
-class Network {
+class AllBusLocations: JSONDecodable {
+    
+    var allBusLocations : [BusLocation] = [BusLocation]()
+    
+    required init(json: JSON) throws {
+        print("JSON:", json)
+        if json["success"].boolValue {
+            let data = json["data"].arrayValue
+            allBusLocations = parseAllLocations(json: data)
+        }
+    }
+    
+    func parseAllLocations(json: [JSON]) -> [BusLocation] {
+        
+        var allLocationsArray = [BusLocation]()
+        
+        for bus in json {
+            
+            let routeID = bus["routeID"].stringValue
+            let busLocation = BusLocation(routeID: routeID)
+            
+            busLocation.destination = bus["destination"].stringValue
+            busLocation.deviation = bus["deviation"].intValue
+            busLocation.direction = bus["direction"].stringValue
+            busLocation.displayStatus = bus["displayStatus"].stringValue
+            busLocation.gpsStatus = bus["gpsStatus"].intValue
+            busLocation.heading = bus["heading"].intValue
+            busLocation.lastStop = bus["lastStop"].stringValue
+            busLocation.lastUpdated = Date(timeIntervalSince1970: bus["lastUpdated"].doubleValue)
+            busLocation.latitude = bus["latitude"].doubleValue
+            busLocation.longitude = bus["longitude"].doubleValue
+            busLocation.name = bus["name"].intValue
+            busLocation.opStatus = bus["opStatus"].stringValue
+            busLocation.runID = bus["runID"].intValue
+            busLocation.speed = bus["speed"].intValue
+            busLocation.tripID = bus["tripID"].intValue
+            busLocation.vehicleID = bus["vehicleID"].intValue
+            
+            allLocationsArray.append(busLocation)
+            
+        }
+        
+        return allLocationsArray
+        
+    }
+    
+}
 
-    /// Make sure you are running localhost:3000 on your computer!
-    static let tron = TRON(baseURL: "http://localhost:3000/api/v1/")
+class Network {
+    
+    static let source = "localhost" // "10.132.10.30"
+    static let tron = TRON(baseURL: "http://\(source):3000/api/v1/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
     
@@ -60,8 +108,8 @@ class Network {
         request.method = .get
         return request
     }
-
-    class func getStartEndCoords(start: Any, end: Any, callback:@escaping ((CLLocationCoordinate2D, CLLocationCoordinate2D) -> Void)) {
+    
+    class func getStartEndCoords(start: AnyObject, end: AnyObject, callback: @escaping ((CLLocationCoordinate2D, CLLocationCoordinate2D) -> Void)) {
         var startCoord = CLLocationCoordinate2D()
         var endCoord = CLLocationCoordinate2D()
         if let startBusStop = start as? BusStop, let endBusStop = end as? BusStop {
@@ -149,8 +197,16 @@ class Network {
             callback(place.coordinate)
         }
     }
-
-
+    
+    class func getBusLocations(routeID: String) -> APIRequest<AllBusLocations, Error> {
+        
+        let request: APIRequest<AllBusLocations, Error> = tron.request("tracking")
+        request.parameters = ["routeID" : routeID]
+        request.method = .get
+        return request
+        
+    }
+    
 }
 
 extension Array : JSONDecodable {
