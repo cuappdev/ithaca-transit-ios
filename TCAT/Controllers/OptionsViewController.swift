@@ -142,7 +142,7 @@ CLLocationManagerDelegate {
     
     // MARK: Route Selection view
     
-    private func setupRouteSelection(){
+    private func setupRouteSelection() {
         routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 150))
         routeSelection.backgroundColor = .lineColor
         routeSelection.positionSubviews()
