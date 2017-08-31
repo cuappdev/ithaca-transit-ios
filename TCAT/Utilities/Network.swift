@@ -32,7 +32,7 @@ class AllBusStops: JSONDecodable {
             let name = stop["name"].stringValue
             let location = stop["location"]
             let lat = location["latitude"].doubleValue
-            let long = location["latitude"].doubleValue
+            let long = location["longitude"].doubleValue
             let busStop = BusStop(name: name, lat: lat, long: long)
             allStopsArray.append(busStop)
         }
@@ -44,7 +44,7 @@ class AllBusStops: JSONDecodable {
 class Network {
 
     /// Make sure you are running localhost:3000 on your computer!
-    static let tron = TRON(baseURL: "http://localhost:3000/api/v1")
+    static let tron = TRON(baseURL: "http://localhost:3000/api/v1/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
     
@@ -73,9 +73,9 @@ class Network {
         ]
 
         if type == .arriveBy {
-            request.parameters["depart_time"] = time.timeIntervalSince1970 // Time.string(from: time)
+            request.parameters["depart_time"] = time.timeIntervalSince1970
         } else {
-            request.parameters["leave_by"] = time.timeIntervalSince1970 // Time.string(from: time)
+            request.parameters["leave_by"] = time.timeIntervalSince1970
         }
         
         print(request.parameters)

@@ -85,11 +85,8 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         setupLoaderData()
         routes = loaderroutes
 
-        //If no date is set then date should be same as today's date
-        if let _ = searchTime{
-        }else{
-            self.searchTime = Date()
-        }
+        // If no date is set then date should be same as today's date
+        self.searchTime = Date()
         
 //        searchForRoutes()
     }
@@ -275,10 +272,7 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         searchBarView.searchController?.isActive = true
     }
     
-    func searchForRoutes(){
-        if searchTime == nil && routeSelection.datepickerButton.titleLabel?.text?.lowercased() == "leave now"{
-            searchTime = Date()
-        }
+    func searchForRoutes() {
         
         let (fromBus, _) = searchFrom
         let (toBus, _) = searchTo
@@ -378,13 +372,29 @@ class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewD
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = 10
-        locationManager.requestLocation()
+        // locationManager.requestLocation() // one-time call
         locationManager.startUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
+        
         locationManager.stopUpdatingLocation()
-        print("OptionVC locationManager didFailWithError: \(error)")
+        print("OptionVC locationManager didFailWithError: \(error.localizedDescription)")
+        
+        let title = "Couldn't Find Location"
+        let message = "Please ensure you are connected to the internet and have enabled location permissions."
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+       
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        let settings = UIAlertAction(title: "Settings", style: .default) { (_) in
+            UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
+        }
+        
+        alertController.addAction(settings)
+        
+        present(alertController, animated: true, completion: nil)
+        
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
