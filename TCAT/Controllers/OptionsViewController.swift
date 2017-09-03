@@ -177,18 +177,18 @@ CLLocationManagerDelegate {
         let (fromBus, fromPlace) = searchFrom
         let (toBus, toPlace) = searchTo
         
-        if let start = fromBus, let name = start.name{
-            routeSelection.fromSearchbar.setTitle(name, for: .normal)
-        }else if let start = fromPlace, let name = start.name{
-            routeSelection.fromSearchbar.setTitle(name, for: .normal)
+        if let start = fromBus {
+            routeSelection.fromSearchbar.setTitle(start.name, for: .normal)
+        }else if let start = fromPlace {
+            routeSelection.fromSearchbar.setTitle(start.name, for: .normal)
         }else{
             routeSelection.fromSearchbar.setTitle("", for: .normal)
         }
         
-        if let end = toBus, let name = end.name{
-            routeSelection.toSearchbar.setTitle(name, for: .normal)
-        }else if let end = toPlace, let name = end.name{
-            routeSelection.toSearchbar.setTitle(name, for: .normal)
+        if let end = toBus {
+            routeSelection.toSearchbar.setTitle(end.name, for: .normal)
+        }else if let end = toPlace {
+            routeSelection.toSearchbar.setTitle(end.name, for: .normal)
         }else{
             routeSelection.toSearchbar.setTitle("", for: .normal)
         }

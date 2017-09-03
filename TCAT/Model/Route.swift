@@ -119,7 +119,7 @@ class Route: NSObject, JSONDecodable {
     /// Modify mainStops and mainStopsNums to include the destination place result
     func addPlaceDestination(_ placeDestination: PlaceResult){
         mainStopNums[mainStops.count - 1] = -2 //to add walk line from last bus stop to place result destination
-        mainStops.append(placeDestination.name!)
+        mainStops.append(placeDestination.name)
         mainStopNums.append(-3) //place result destination dot
     }
     

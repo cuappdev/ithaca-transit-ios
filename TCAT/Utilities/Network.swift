@@ -36,7 +36,7 @@ class AllBusStops: JSONDecodable {
             let busStop = BusStop(name: name, lat: lat, long: long)
             allStopsArray.append(busStop)
         }
-        let sortedStops = allStopsArray.sorted(by: {$0.name!.uppercased() < $1.name!.uppercased()})
+        let sortedStops = allStopsArray.sorted(by: {$0.name.uppercased() < $1.name.uppercased()})
         return sortedStops
     }
 }
@@ -65,16 +65,16 @@ class Network {
         var startCoord = CLLocationCoordinate2D()
         var endCoord = CLLocationCoordinate2D()
         if let startBusStop = start as? BusStop, let endBusStop = end as? BusStop {
-            startCoord.latitude = startBusStop.lat!
-            startCoord.longitude = startBusStop.long!
-            endCoord.latitude = endBusStop.lat!
-            endCoord.longitude = endBusStop.long!
+            startCoord.latitude = startBusStop.lat
+            startCoord.longitude = startBusStop.long
+            endCoord.latitude = endBusStop.lat
+            endCoord.longitude = endBusStop.long
             callback(startCoord, endCoord)
         }
         else if let startBusStop = start as? BusStop, let endPlaceResult = end as? PlaceResult {
-            startCoord.latitude = startBusStop.lat!
-            startCoord.longitude = startBusStop.long!
-            getLocationFromPlaceId(placeId: endPlaceResult.placeID!) { coords in
+            startCoord.latitude = startBusStop.lat
+            startCoord.longitude = startBusStop.long
+            getLocationFromPlaceId(placeId: endPlaceResult.placeID) { coords in
                 endCoord.latitude = coords.latitude
                 endCoord.longitude = coords.longitude
                 callback(startCoord, endCoord)
@@ -82,9 +82,9 @@ class Network {
             
         }
         else if let startPlaceResult = start as? PlaceResult, let endBusStop = end as? BusStop {
-            endCoord.latitude = endBusStop.lat!
-            endCoord.longitude = endBusStop.long!
-            getLocationFromPlaceId(placeId: startPlaceResult.placeID!) { coords in
+            endCoord.latitude = endBusStop.lat
+            endCoord.longitude = endBusStop.long
+            getLocationFromPlaceId(placeId: startPlaceResult.placeID) { coords in
                 startCoord.latitude = coords.latitude
                 startCoord.longitude = coords.longitude
                 callback(startCoord, endCoord)
@@ -92,10 +92,10 @@ class Network {
             
         }
         else if let startPlaceResult = start as? PlaceResult, let endPlaceResult = end as? PlaceResult {
-            getLocationFromPlaceId(placeId: startPlaceResult.placeID!) { coords in
+            getLocationFromPlaceId(placeId: startPlaceResult.placeID) { coords in
                 startCoord.latitude = coords.latitude
                 startCoord.longitude = coords.longitude
-                getLocationFromPlaceId(placeId: endPlaceResult.placeID!) { coords in
+                getLocationFromPlaceId(placeId: endPlaceResult.placeID) { coords in
                     endCoord.latitude = coords.latitude
                     endCoord.longitude = coords.longitude
                     callback(startCoord, endCoord)

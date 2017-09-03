@@ -76,7 +76,7 @@ func getAllBusStops() -> [BusStop] {
 func prepareAllBusStopItems(allBusStops: [BusStop]) -> [ItemType] {
     var itemArray: [ItemType] = []
     for bus in allBusStops {
-        itemArray.append(.busStop(BusStop(name: bus.name!, lat: bus.lat!, long: bus.long!)))
+        itemArray.append(.busStop(BusStop(name: bus.name, lat: bus.lat, long: bus.long)))
     }
     return itemArray
 }
@@ -87,7 +87,7 @@ func sectionIndexesForBusStop() -> [String: Int] {
     var currentChar: Character = Character("+")
     var currentIndex = 0
     for busStop in allStops {
-        if let firstChar = busStop.name?.capitalized.characters.first {
+        if let firstChar = busStop.name.capitalized.characters.first {
             if currentChar != firstChar {
                 sectionIndexDictionary["\(firstChar)"] = currentIndex
                 currentChar = firstChar
@@ -101,7 +101,7 @@ func sectionIndexesForBusStop() -> [String: Int] {
 func parseGoogleJSON(searchText: String, json: JSON) -> Section {
     var itemTypes: [ItemType] = []
     let filteredBusStops = getAllBusStops().filter({(item: BusStop) -> Bool in
-        let stringMatch = item.name?.lowercased().range(of: searchText.lowercased())
+        let stringMatch = item.name.lowercased().range(of: searchText.lowercased())
         return stringMatch != nil
     })
     let updatedOrderBusStops = sortFilteredBusStops(busStops: filteredBusStops, letter: searchText.capitalized.characters.first!)
@@ -111,7 +111,7 @@ func parseGoogleJSON(searchText: String, json: JSON) -> Section {
         for result in predictionsArray {
             let placeResult = PlaceResult(name: result["structured_formatting"]["main_text"].stringValue, detail: result["structured_formatting"]["secondary_text"].stringValue, placeID: result["place_id"].stringValue)
             let isPlaceABusStop = filteredBusStops.contains(where: {(stop) -> Bool in
-                placeResult.name!.contains(stop.name!)
+                placeResult.name.contains(stop.name)
             })
             if !isPlaceABusStop {
                 itemTypes.append(ItemType.placeResult(placeResult))
