@@ -44,7 +44,7 @@ class AllBusStops: JSONDecodable {
 class Network {
     
     /// Make sure you are running localhost:3000 on your computer!
-    static let tron = TRON(baseURL: "http://localhost:3000/api/v1/")
+    static let tron = TRON(baseURL: "http://10.129.6.149:3000/api/v1/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
     

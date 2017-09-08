@@ -281,7 +281,9 @@ CLLocationManagerDelegate {
             routeResults.reloadData()
             Loader.addLoaderTo(routeResults)
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
+                print(request.parameters)
                 request.perform(withSuccess: { (routes) in
+                    print("GOT ROUTES", routes)
                     self.routes = routes
                     self.routeResults.reloadData()
                     Loader.removeLoaderFrom(self.routeResults)
