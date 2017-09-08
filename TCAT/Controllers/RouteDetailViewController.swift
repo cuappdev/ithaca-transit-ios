@@ -31,6 +31,11 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     var currentLocation: CLLocationCoordinate2D?
     var bounds = GMSCoordinateBounds()
     
+    var networkTimer: Timer? = nil
+    /// Number of seconds to wait before auto-refreshing network call
+    var refreshRate: Double = 10.0
+    var buses = [GMSMarker]()
+    
     var route: Route!
     var directions: [Direction] = []
     
@@ -52,7 +57,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         super.init(nibName: nil, bundle: nil)
         if route == nil {
             let json = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "testNew", withExtension: "json")!))
-            initializeRoute(route: try! Route(json: json.first!.1))
+            initializeRoute(route: try! Route(json: json))
         } else {
             initializeRoute(route: route!)
         }
@@ -152,6 +157,26 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         locationManager.distanceFilter = 10
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if let timer = networkTimer {
+            timer.invalidate()
+        }
+        
+        networkTimer = Timer.scheduledTimer(timeInterval: refreshRate, target: self, selector: #selector(getBusLocations),
+                             userInfo: nil, repeats: true)
+        networkTimer!.fire()
+        
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        networkTimer?.invalidate()
+        networkTimer = nil
     }
     
     override func loadView() {
@@ -197,6 +222,69 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         print(error)
+    }
+    
+    func getBusLocations() {
+        
+        print("[RouteDetailViewController] getBusLocations")
+        
+        guard let firstRoute = route.mainStopNums.first(where: { $0 > 0 })
+            else { print("No valid main stop nums > 0!"); return }
+       
+        Network.getBusLocations(routeID: String(firstRoute)).perform(
+            
+            withSuccess: { (result) in
+            
+                print("[RouteDetailViewController] Success!")
+                self.updateBusLocations(busLocations: result.allBusLocations)
+                
+        }) { (error) in
+            
+            print("Error:", error)
+            
+        }
+        
+
+    }
+    
+    func updateBusLocations(busLocations: [BusLocation]) {
+        
+        print("[RouteDetailViewController] updateBusLocations")
+        
+        for bus in busLocations {
+            
+            let busCoords = CLLocationCoordinate2DMake(bus.latitude, bus.longitude)
+            let existingBus = buses.first(where: {
+                print("$0:", $0)
+                print("$0.userData:", $0.userData)
+                print("$0.userData as? BusLocation:", $0.userData as? BusLocation)
+                print("($0.userData as? BusLocation)?.vehicleID:", ($0.userData as? BusLocation)?.vehicleID)
+                return ($0.userData as? BusLocation)?.vehicleID == bus.vehicleID
+            })
+            
+            print("existingBus ID:", (existingBus?.userData as? BusLocation)?.vehicleID)
+            print("bus ID:", bus.vehicleID)
+            
+            // If bus is already on map, update and animate change
+            if existingBus != nil {
+                UIView.animate(withDuration: 1.0, delay: 0, options: .curveEaseInOut, animations: {
+                    print("Animating!")
+                    existingBus?.userData = bus
+                    existingBus?.position = busCoords
+                })
+            }
+            
+            // Otherwise, add bus to map
+            else {
+                let marker = GMSMarker(position: busCoords)
+                marker.iconView = bus.iconView
+                marker.userData = bus
+                marker.map = mapView
+                buses.append(marker)
+            }
+            
+        }
+        
     }
     
     /** Centers map around all waypoints in routePaths, and animates the map */

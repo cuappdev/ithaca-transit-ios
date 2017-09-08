@@ -40,10 +40,12 @@ class Route: NSObject, JSONDecodable {
         departureTime = Date(timeIntervalSince1970: jsonData["departureTime"].doubleValue)
         arrivalTime = Date(timeIntervalSince1970: jsonData["arrivalTime"].doubleValue)
         // directions = directionJSON(json:json["directions"].arrayValue)
-        mainStops = json["mainStops"].arrayObject as! [String]
-        mainStopNums = json["mainStopNums"].arrayObject as! [Int]
+        mainStops = jsonData["mainStops"].arrayObject as! [String]
+        mainStopNums = jsonData["mainStopNums"].arrayObject as! [Int]
         path = CLLocationCoordinate2D.strToCoords(jsonData["kmls"].stringValue)
-        travelDistance = directions[0] is WalkDirection ? (directions[0] as! WalkDirection).travelDistance : 0.0
+        
+        travelDistance = directions.first != nil ? (directions.first as? WalkDirection)?.travelDistance ?? 0.0 : 0.0
+        
         lastStopTime = Date()
     }
     

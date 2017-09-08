@@ -508,7 +508,7 @@ CLLocationManagerDelegate {
     }
     
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool{
-        navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
+        navigationController?.pushViewController(RouteDetailViewController(route: nil), animated: true) // routes[indexPath.row]
         return false // halts the selection process = don't have selected look
     }
 
