@@ -21,8 +21,6 @@
 		503EC37B1E969ACD00B3D4D4 /* BusStopCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37A1E969ACD00B3D4D4 /* BusStopCell.swift */; };
 		503EC37D1E969ADF00B3D4D4 /* SearchResultsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37C1E969ADF00B3D4D4 /* SearchResultsCell.swift */; };
 		503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */; };
-		503EC3811E969B2F00B3D4D4 /* PlaceResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC3801E969B2F00B3D4D4 /* PlaceResult.swift */; };
-		503EC3831E969B3400B3D4D4 /* BusStop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC3821E969B3400B3D4D4 /* BusStop.swift */; };
 		503EC3871E969B7D00B3D4D4 /* MOCK_DATA.json in Resources */ = {isa = PBXBuildFile; fileRef = 503EC3861E969B7D00B3D4D4 /* MOCK_DATA.json */; };
 		503EC38D1E96B85B00B3D4D4 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC38C1E96B85B00B3D4D4 /* Network.swift */; };
 		505E00E51E9ED56F00F09BAE /* KMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505E00E41E9ED56F00F09BAE /* KMLParser.swift */; };
@@ -31,6 +29,8 @@
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
 		BF48F1111EB6474A00744937 /* routeTestingJSON.json in Resources */ = {isa = PBXBuildFile; fileRef = BF48F1101EB6474A00744937 /* routeTestingJSON.json */; };
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
+		DD034C5A1F5C788100F64B22 /* BusStop.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD034C581F5C788000F64B22 /* BusStop.swift */; };
+		DD034C5B1F5C788100F64B22 /* PlaceResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD034C591F5C788000F64B22 /* PlaceResult.swift */; };
 		DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
 		DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A01E5141D10005F6BC /* Direction.swift */; };
@@ -55,6 +55,7 @@
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
 		DDD33DEF1EC2960400BC6454 /* CircleLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD33DEE1EC2960400BC6454 /* CircleLine.swift */; };
 		DDE0A9311F096A3E005CD01C /* RouteDiagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */; };
+		DDE3BC231F5863D50014D2BB /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE3BC221F5863D50014D2BB /* Place.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,8 +97,6 @@
 		503EC37A1E969ACD00B3D4D4 /* BusStopCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusStopCell.swift; path = Cells/BusStopCell.swift; sourceTree = "<group>"; };
 		503EC37C1E969ADF00B3D4D4 /* SearchResultsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchResultsCell.swift; path = Cells/SearchResultsCell.swift; sourceTree = "<group>"; };
 		503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = SearchResultsTableViewController.swift; path = Controllers/SearchResultsTableViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		503EC3801E969B2F00B3D4D4 /* PlaceResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceResult.swift; path = Model/PlaceResult.swift; sourceTree = "<group>"; };
-		503EC3821E969B3400B3D4D4 /* BusStop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusStop.swift; path = Model/BusStop.swift; sourceTree = "<group>"; };
 		503EC3861E969B7D00B3D4D4 /* MOCK_DATA.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = MOCK_DATA.json; path = Data/MOCK_DATA.json; sourceTree = "<group>"; };
 		503EC38C1E96B85B00B3D4D4 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Network.swift; path = Utilities/Network.swift; sourceTree = "<group>"; };
 		505E00E41E9ED56F00F09BAE /* KMLParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KMLParser.swift; sourceTree = "<group>"; };
@@ -109,6 +108,8 @@
 		BF48F1101EB6474A00744937 /* routeTestingJSON.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = routeTestingJSON.json; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
+		DD034C581F5C788000F64B22 /* BusStop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusStop.swift; path = Model/BusStop.swift; sourceTree = "<group>"; };
+		DD034C591F5C788000F64B22 /* PlaceResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceResult.swift; path = Model/PlaceResult.swift; sourceTree = "<group>"; };
 		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
 		DD2F98A01E5141D10005F6BC /* Direction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Direction.swift; path = Model/Direction.swift; sourceTree = "<group>"; };
@@ -133,6 +134,7 @@
 		DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteTableViewCell.swift; path = Cells/RouteTableViewCell.swift; sourceTree = "<group>"; };
 		DDD33DEE1EC2960400BC6454 /* CircleLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CircleLine.swift; path = Views/CircleLine.swift; sourceTree = "<group>"; };
 		DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDiagram.swift; path = Views/RouteDiagram.swift; sourceTree = "<group>"; };
+		DDE3BC221F5863D50014D2BB /* Place.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Place.swift; path = Model/Place.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E69224A160B2B078827D28A1 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -291,8 +293,9 @@
 		DD2F98911E50D8C90005F6BC /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				503EC3801E969B2F00B3D4D4 /* PlaceResult.swift */,
-				503EC3821E969B3400B3D4D4 /* BusStop.swift */,
+				DDE3BC221F5863D50014D2BB /* Place.swift */,
+				DD034C581F5C788000F64B22 /* BusStop.swift */,
+				DD034C591F5C788000F64B22 /* PlaceResult.swift */,
 				DDB49C9B1E8857FC00A99C35 /* Path.swift */,
 				DDB49C9C1E8857FC00A99C35 /* Waypoint.swift */,
 				DD2F989A1E50F99A0005F6BC /* Route.swift */,
@@ -668,13 +671,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				503EC3831E969B3400B3D4D4 /* BusStop.swift in Sources */,
 				503EC37D1E969ADF00B3D4D4 /* SearchResultsCell.swift in Sources */,
 				DDBCD5E71E989E5800014641 /* Circle.swift in Sources */,
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				5006F7BA1EC0F59A005ACAF2 /* SearchTableViewHelpers.swift in Sources */,
 				5006F7B81EBFC7DE005ACAF2 /* CornellDestinationCell.swift in Sources */,
 				503EC38D1E96B85B00B3D4D4 /* Network.swift in Sources */,
+				DD034C5B1F5C788100F64B22 /* PlaceResult.swift in Sources */,
 				DDB49C9D1E8857FC00A99C35 /* Path.swift in Sources */,
 				DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */,
 				DDA134451EC6A8CB00460B18 /* RouteLine.swift in Sources */,
@@ -687,10 +690,12 @@
 				D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */,
 				503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */,
 				DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */,
+				DDE3BC231F5863D50014D2BB /* Place.swift in Sources */,
 				DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */,
 				DDBFEAA01E787008002BBD96 /* DatepickerView.swift in Sources */,
 				DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */,
 				DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */,
+				DD034C5A1F5C788100F64B22 /* BusStop.swift in Sources */,
 				DD5D233C1E6367A100F8DECE /* Time.swift in Sources */,
 				DDE0A9311F096A3E005CD01C /* RouteDiagram.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
@@ -698,7 +703,6 @@
 				DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */,
 				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
 				DDD33DEF1EC2960400BC6454 /* CircleLine.swift in Sources */,
-				503EC3811E969B2F00B3D4D4 /* PlaceResult.swift in Sources */,
 				505E00E51E9ED56F00F09BAE /* KMLParser.swift in Sources */,
 				DDB49C941E8857D000A99C35 /* RouteDetailViewController.swift in Sources */,
 				DD2F98A31E5150990005F6BC /* OptionsViewController.swift in Sources */,
