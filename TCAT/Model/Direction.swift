@@ -8,7 +8,7 @@
 
 import UIKit
 import CoreLocation
-import MapKit
+import SwiftyJSON
 
 protocol Direction {
     var time: Date {get set}
@@ -26,20 +26,21 @@ enum Bound: String {
     case inbound, outbound
 }
 
-class DepartDirection: Direction {
+enum DirectionType: String {
+    case walk, depart, arrive, unknown
+}
+
+class Direction: NSObject {
     
-    var time: Date
-    var place: String
-    var placeDescription: String {
-        return "at \(place)"
-    }
-    var timeDescription: String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: time)
-    }
-    var location: CLLocation
-    var path: [CLLocationCoordinate2D]
+    var type: DirectionType
+    
+    var locationName: String
+    
+    var startLocation: CLLocation
+    var endLocation: CLLocation
+    
+    var startTime: Date
+    var endTime: Date
     
     var routeNumber: Int
     var bound: Bound
@@ -54,51 +55,117 @@ class DepartDirection: Direction {
     var travelTime: DateComponents {
         return Time.dateComponents(from: time, to: arrivalTime)
     }
-    
-    init(time: Date, place: String, location: CLLocation, path: [CLLocationCoordinate2D] = [], 
-         routeNumber: Int, bound: Bound, stops: [String] = [],  arrivalTime: Date) {
-        self.time = time
-        self.place = place
-        self.location = location
-        self.path = path
+
+    init(type: DirectionType,
+         locationName: String,
+         startLocation: CLLocation,
+         endLocation: CLLocation,
+         startTime: Date,
+         endTime: Date,
+         busStops: [String] = [],
+         routeNumber: Int = 0) {
+        
+        self.type = type
+        self.locationName = locationName
+        self.startLocation = startLocation
+        self.endLocation = endLocation
+        self.startTime = startTime
+        self.endTime = endTime
+        self.busStops = busStops
         self.routeNumber = routeNumber
         self.bound = bound
         self.stops = stops
         self.arrivalTime = arrivalTime
     }
-    
-}
 
-class ArriveDirection: Direction {
-    
-    var time: Date
-    var place: String
-    var placeDescription: String {
-        return "Debark at \(place)"
+    convenience init(name: String) {
+        
+        let location = CLLocation()
+        let time = Date()
+        
+        self.init(type: .arrive,
+                  locationName: name,
+                  startLocation: location,
+                  endLocation: location,
+                  startTime: time,
+                  endTime: time)
+        
     }
-    var timeDescription: String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: time)
+    
+    convenience init(from json: JSON) {
+        
+        func locationJSON(_ json: JSON) -> CLLocation {
+            return CLLocation(latitude: json[0].doubleValue, longitude: json[1].doubleValue)
+        }
+        
+        self.init(
+    
+            type: DirectionType(rawValue: json["type"].stringValue) ?? .unknown,
+            
+            locationName: json["locationName"].stringValue,
+            
+            startLocation: locationJSON(json["startLocation"]),
+            
+            endLocation: locationJSON(json["endLocation"]),
+            
+            startTime: Date(timeIntervalSince1970: json["startTime"].doubleValue),
+            
+            endTime: Date(timeIntervalSince1970: json["endTime"].doubleValue),
+            
+            busStops: json["busStops"].arrayObject as! [String],
+            
+            routeNumber: json["routeNumber"].intValue
+    
+        )
+        
+    }
+    
+    // MARK: Descriptions / Functions
+    
+    /// Returns DateComponents describing difference between start and end time
+    var travelTime: DateComponents {
+        return Time.dateComponents(from: startTime, to: endTime)
+    }
+    
+    /// Distance between start and end locations in miles
+    var travelDistance: Double {
+        let metersInMile = 1609.34
+        var distance =  startLocation.distance(from: endLocation) / metersInMile
+        let numberOfPlaces = distance >= 10 ? 0 : 1
+        return distance.roundToPlaces(places: numberOfPlaces)
     }
     var location: CLLocation
-    
-    init(time: Date, place: String, location: CLLocation) {
-        self.time = time
-        self.place = place
-        self.location = location
-    }
-    
-}
 
-class WalkDirection: Direction {
-    
-    var time: Date
-    var place: String
-    var placeDescription: String {
-        return "Walk to \(place)"
+    /// Returns custom description for locationName based on DirectionType
+    var locationNameDescription: String {
+        switch type {
+            
+        case .depart:
+            return "at \(locationName)"
+            
+        case .arrive:
+            return "Debark at \(locationName)"
+            
+        case .walk:
+            return "Walk to \(locationName)"
+            
+        case .unknown:
+            return locationName
+            
+        }
     }
-    var timeDescription: String {
+    
+    /// Returns readable start time (e.g. 7:49 PM)
+    var startTimeDescription: String {
+        return timeDescription(startTime)
+    }
+    
+    /// Returns readable end time (e.g. 7:49 PM)
+    var endTimeDescription: String {
+        return timeDescription(endTime)
+    }
+    
+    private func timeDescription(_ time: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
         return formatter.string(from: time)
