@@ -39,26 +39,25 @@ class SmallDetailTableViewCell: UITableViewCell {
     
     func setCell(_ direction: Direction, busEnd: Bool, firstStep: Bool, lastStep: Bool) {
         
-        print("Direction of \(direction.place): \(busEnd ? IconType.busEnd : IconType.noBus) - firstStep: \(firstStep) • lastStep: \(lastStep)")
+        print("Direction of \(direction.locationName): \(busEnd ? IconType.busEnd : IconType.noBus) - firstStep: \(firstStep) • lastStep: \(lastStep)")
         
         let shouldAddSubview = iconView == nil
         iconView = DetailIconView(height: cellHeight,
                                   type: busEnd ? IconType.busEnd: IconType.noBus,
-                                  time: direction.timeDescription,
+                                  time: direction.startTimeDescription,
                                   firstStep: firstStep,
                                   lastStep: lastStep)
         
         if shouldAddSubview { contentView.addSubview(iconView!) }
         
         if busEnd {
-            let busDirection = direction as! ArriveDirection
-            titleLabel.attributedText = bold(pattern: busDirection.place, in: busDirection.placeDescription)
+            // Arrive Direction
+            titleLabel.attributedText = bold(pattern: direction.locationName, in: direction.locationNameDescription)
         } else {
-            let walkDirection = direction as! WalkDirection
-            var walkString = lastStep ? "Arrive at \(walkDirection.place)" : walkDirection.placeDescription
-            let roundDigit = walkDirection.travelDistance >= 10 ? 0 : 1
-            walkString += " (\(walkDirection.travelDistance.roundToPlaces(places: roundDigit)) mi)"
-            titleLabel.attributedText = bold(pattern: walkDirection.place, in: walkString)
+            // Walk Direction
+            var walkString = lastStep ? "Arrive at \(direction.locationName)" : direction.locationNameDescription
+            walkString += " (\(direction.travelDistance) mi)"
+            titleLabel.attributedText = bold(pattern: direction.locationName, in: walkString)
         }
         
         titleLabel.sizeToFit()

@@ -8,7 +8,7 @@
 
 import UIKit
 import CoreLocation
-import MapKit
+import SwiftyJSON
 
 /* To get string version of Bound
  * let inbound: String = Bound.inbound.rawValue  // "inbound"
@@ -19,17 +19,17 @@ enum Bound: String {
 }
 
 enum DirectionType: String {
-    case walk, depart, arrive
+    case walk, depart, arrive, unknown
 }
 
 class Direction: NSObject {
     
-    var directionType: DirectionType
+    var type: DirectionType
     
     var locationName: String
     
-    var startLocation: CLLocationCoordinate2D
-    var endLocation: CLLocationCoordinate2D
+    var startLocation: CLLocation
+    var endLocation: CLLocation
     
     var startTime: Date
     var endTime: Date
@@ -39,16 +39,16 @@ class Direction: NSObject {
     var busStops: [String] = []
     var routeNumber: Int = 0
     
-    init(directionType: DirectionType,
+    init(type: DirectionType,
          locationName: String,
-         startLocation: CLLocationCoordinate2D,
-         endLocation: CLLocationCoordinate2D,
+         startLocation: CLLocation,
+         endLocation: CLLocation,
          startTime: Date,
          endTime: Date,
          busStops: [String] = [],
          routeNumber: Int = 0) {
         
-        self.directionType = directionType
+        self.type = type
         self.locationName = locationName
         self.startLocation = startLocation
         self.endLocation = endLocation
@@ -59,19 +59,66 @@ class Direction: NSObject {
         
     }
     
+    convenience init(name: String) {
+        
+        let location = CLLocation()
+        let time = Date()
+        
+        self.init(type: .arrive,
+                  locationName: name,
+                  startLocation: location,
+                  endLocation: location,
+                  startTime: time,
+                  endTime: time)
+        
+    }
+    
+    convenience init(from json: JSON) {
+        
+        func locationJSON(_ json: JSON) -> CLLocation {
+            return CLLocation(latitude: json[0].doubleValue, longitude: json[1].doubleValue)
+        }
+        
+        self.init(
+    
+            type: DirectionType(rawValue: json["type"].stringValue) ?? .unknown,
+            
+            locationName: json["locationName"].stringValue,
+            
+            startLocation: locationJSON(json["startLocation"]),
+            
+            endLocation: locationJSON(json["endLocation"]),
+            
+            startTime: Date(timeIntervalSince1970: json["startTime"].doubleValue),
+            
+            endTime: Date(timeIntervalSince1970: json["endTime"].doubleValue),
+            
+            busStops: json["busStops"].arrayObject as! [String],
+            
+            routeNumber: json["routeNumber"].intValue
+    
+        )
+        
+    }
+    
     // MARK: Descriptions / Functions
     
+    /// Returns DateComponents describing difference between start and end time
     var travelTime: DateComponents {
         return Time.dateComponents(from: startTime, to: endTime)
     }
     
-    // TODO: Implement
+    /// Distance between start and end locations in miles
     var travelDistance: Double {
-        return 0
+        let metersInMile = 1609.34
+        var distance =  startLocation.distance(from: endLocation) / metersInMile
+        let numberOfPlaces = distance >= 10 ? 0 : 1
+        return distance.roundToPlaces(places: numberOfPlaces)
     }
     
+    /// Returns custom description for locationName based on DirectionType
     var locationNameDescription: String {
-        switch directionType {
+        switch type {
             
         case .depart:
             return "at \(locationName)"
@@ -82,10 +129,23 @@ class Direction: NSObject {
         case .walk:
             return "Walk to \(locationName)"
             
+        case .unknown:
+            return locationName
+            
         }
     }
     
-    func timeDescription(_ time: Date) -> String {
+    /// Returns readable start time (e.g. 7:49 PM)
+    var startTimeDescription: String {
+        return timeDescription(startTime)
+    }
+    
+    /// Returns readable end time (e.g. 7:49 PM)
+    var endTimeDescription: String {
+        return timeDescription(endTime)
+    }
+    
+    private func timeDescription(_ time: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
         return formatter.string(from: time)
