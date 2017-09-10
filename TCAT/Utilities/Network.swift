@@ -13,9 +13,10 @@ import GooglePlaces
 
 class Error: JSONDecodable {
     required init(json: JSON) {
-        // need to talk to shiv about what errors could be possibily returned
+        //need to talk to shiv about what errors could be possibily returned
     }
 }
+
 class AllBusStops: JSONDecodable {
     var allStops : [BusStop] = [BusStop]()
     
@@ -36,7 +37,7 @@ class AllBusStops: JSONDecodable {
             let busStop = BusStop(name: name, lat: lat, long: long)
             allStopsArray.append(busStop)
         }
-        let sortedStops = allStopsArray.sorted(by: {$0.name!.uppercased() < $1.name!.uppercased()})
+        let sortedStops = allStopsArray.sorted(by: {$0.name.uppercased() < $1.name.uppercased()})
         return sortedStops
     }
 }
@@ -91,7 +92,8 @@ class AllBusLocations: JSONDecodable {
 
 class Network {
     
-    static let source = "10.132.10.30" // "10.132.10.30" // "localhost"
+    /// Make sure you are running localhost:3000 on your computer!
+    static let source = "localhost"
     static let tron = TRON(baseURL: "http://\(source):3000/api/v1/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
@@ -109,20 +111,20 @@ class Network {
         return request
     }
     
-    class func getStartEndCoords(start: AnyObject, end: AnyObject, callback: @escaping ((CLLocationCoordinate2D, CLLocationCoordinate2D) -> Void)) {
+    class func getStartEndCoords(start: AnyObject, end: AnyObject, callback:@escaping ((CLLocationCoordinate2D, CLLocationCoordinate2D) -> Void)) {
         var startCoord = CLLocationCoordinate2D()
         var endCoord = CLLocationCoordinate2D()
         if let startBusStop = start as? BusStop, let endBusStop = end as? BusStop {
-            startCoord.latitude = startBusStop.lat!
-            startCoord.longitude = startBusStop.long!
-            endCoord.latitude = endBusStop.lat!
-            endCoord.longitude = endBusStop.long!
+            startCoord.latitude = startBusStop.lat
+            startCoord.longitude = startBusStop.long
+            endCoord.latitude = endBusStop.lat
+            endCoord.longitude = endBusStop.long
             callback(startCoord, endCoord)
         }
         else if let startBusStop = start as? BusStop, let endPlaceResult = end as? PlaceResult {
-            startCoord.latitude = startBusStop.lat!
-            startCoord.longitude = startBusStop.long!
-            getLocationFromPlaceId(placeId: endPlaceResult.placeID!) { coords in
+            startCoord.latitude = startBusStop.lat
+            startCoord.longitude = startBusStop.long
+            getLocationFromPlaceId(placeId: endPlaceResult.placeID) { coords in
                 endCoord.latitude = coords.latitude
                 endCoord.longitude = coords.longitude
                 callback(startCoord, endCoord)
@@ -130,9 +132,9 @@ class Network {
             
         }
         else if let startPlaceResult = start as? PlaceResult, let endBusStop = end as? BusStop {
-            endCoord.latitude = endBusStop.lat!
-            endCoord.longitude = endBusStop.long!
-            getLocationFromPlaceId(placeId: startPlaceResult.placeID!) { coords in
+            endCoord.latitude = endBusStop.lat
+            endCoord.longitude = endBusStop.long
+            getLocationFromPlaceId(placeId: startPlaceResult.placeID) { coords in
                 startCoord.latitude = coords.latitude
                 startCoord.longitude = coords.longitude
                 callback(startCoord, endCoord)
@@ -140,10 +142,10 @@ class Network {
             
         }
         else if let startPlaceResult = start as? PlaceResult, let endPlaceResult = end as? PlaceResult {
-            getLocationFromPlaceId(placeId: startPlaceResult.placeID!) { coords in
+            getLocationFromPlaceId(placeId: startPlaceResult.placeID) { coords in
                 startCoord.latitude = coords.latitude
                 startCoord.longitude = coords.longitude
-                getLocationFromPlaceId(placeId: endPlaceResult.placeID!) { coords in
+                getLocationFromPlaceId(placeId: endPlaceResult.placeID) { coords in
                     endCoord.latitude = coords.latitude
                     endCoord.longitude = coords.longitude
                     callback(startCoord, endCoord)
@@ -182,7 +184,7 @@ class Network {
         return request
     }
     
-    class func getLocationFromPlaceId(placeId: String, callback: @escaping ((CLLocationCoordinate2D) -> Void)) {
+    class func getLocationFromPlaceId(placeId: String, callback:@escaping ((CLLocationCoordinate2D) -> Void)) {
         placesClient.lookUpPlaceID(placeId) { place, error in
             if let error = error {
                 print("lookup place id query error: \(error.localizedDescription)")

@@ -44,18 +44,17 @@ class BusLocation: NSObject, NSCoding {
     
     var iconView: UIView {
         
-        let diameter = 22
+        return BusIcon(type: .mapStandard, number: Int(routeID) ?? 0)
         
+        /* Circle
+        let diameter = 22
         let circleView = UIView(frame: CGRect(x: 0, y: 0, width: diameter, height: diameter))
         circleView.center = .zero
         circleView.layer.cornerRadius = circleView.frame.width / 2.0
         circleView.layer.masksToBounds = true
         circleView.backgroundColor = .tcatBlueColor
-        
-        // circleView.layer.borderWidth = 4
-        // circleView.layer.borderColor = borderColor.cgColor
-        
         return circleView
+         */
         
     }
     

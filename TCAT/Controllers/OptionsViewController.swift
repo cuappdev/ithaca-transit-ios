@@ -177,18 +177,18 @@ CLLocationManagerDelegate {
         let (fromBus, fromPlace) = searchFrom
         let (toBus, toPlace) = searchTo
         
-        if let start = fromBus, let name = start.name{
-            routeSelection.fromSearchbar.setTitle(name, for: .normal)
-        }else if let start = fromPlace, let name = start.name{
-            routeSelection.fromSearchbar.setTitle(name, for: .normal)
+        if let start = fromBus {
+            routeSelection.fromSearchbar.setTitle(start.name, for: .normal)
+        }else if let start = fromPlace {
+            routeSelection.fromSearchbar.setTitle(start.name, for: .normal)
         }else{
             routeSelection.fromSearchbar.setTitle("", for: .normal)
         }
         
-        if let end = toBus, let name = end.name{
-            routeSelection.toSearchbar.setTitle(name, for: .normal)
-        }else if let end = toPlace, let name = end.name{
-            routeSelection.toSearchbar.setTitle(name, for: .normal)
+        if let end = toBus {
+            routeSelection.toSearchbar.setTitle(end.name, for: .normal)
+        }else if let end = toPlace {
+            routeSelection.toSearchbar.setTitle(end.name, for: .normal)
         }else{
             routeSelection.toSearchbar.setTitle("", for: .normal)
         }
@@ -281,7 +281,9 @@ CLLocationManagerDelegate {
             routeResults.reloadData()
             Loader.addLoaderTo(routeResults)
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
+                print(request.parameters)
                 request.perform(withSuccess: { (routes) in
+                    print("GOT ROUTES", routes)
                     self.routes = routes
                     self.routeResults.reloadData()
                     Loader.removeLoaderFrom(self.routeResults)
@@ -508,7 +510,7 @@ CLLocationManagerDelegate {
     }
     
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool{
-        navigationController?.pushViewController(RouteDetailViewController(route: nil), animated: true) // routes[indexPath.row]
+        navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
         return false // halts the selection process = don't have selected look
     }
 

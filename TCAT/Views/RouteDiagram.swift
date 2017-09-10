@@ -148,7 +148,7 @@ class RouteDiagram: UIView{
         
         if(busNum >= 0){ //bus numbers cannot be negative
             
-            let busIcon = BusIcon(size: .small, number: busNum)
+            let busIcon = BusIcon(type: .directionSmall, number: busNum)
             
             return busIcon
         }

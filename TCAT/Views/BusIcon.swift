@@ -8,8 +8,10 @@
 
 import UIKit
 
-enum BusIconSize: String {
-    case small, large
+enum BusIconType: String {
+    case directionSmall
+    case directionLarge
+    case mapStandard
 }
 
 class BusIcon: UIView {
@@ -19,39 +21,84 @@ class BusIcon: UIView {
     var label: UILabel!
     var image: UIImageView!
     
-    init(size: BusIconSize, number: Int) {        
+    init(type: BusIconType, number: Int) {
         
-        switch size {
-            case .small : super.init(frame: CGRect(x: 0, y: 0, width: 48, height: 24))
-            case .large : super.init(frame: CGRect(x: 0, y: 0, width: 72, height: 36))
+        switch type {
+            case .directionSmall: super.init(frame: CGRect(x: 0, y: 0, width: 48, height: 24))
+            case .directionLarge : super.init(frame: CGRect(x: 0, y: 0, width: 72, height: 36))
+            case .mapStandard : super.init(frame: CGRect(x: 0, y: 0, width: 48, height: 32))
         }
         
         self.number = number
-        self.backgroundColor = .tcatBlueColor
-        self.layer.cornerRadius = size == .large ? 8 : 4
+        self.backgroundColor = .clear
+        
+        let frame = type == .mapStandard ? CGRect(x: 0, y: 0, width: 48, height: 24) : self.frame
+        let base = UIView(frame: frame)
+        base.backgroundColor = .tcatBlueColor
+        base.layer.cornerRadius = type == .directionLarge ? 8 : 4
+        addSubview(base)
         
         image = UIImageView(image: UIImage(named: "bus"))
-        let constant: CGFloat = size == .large ? 0.9 : 0.6
+        let constant: CGFloat = type == .directionLarge ? 0.9 : 0.6
         image.frame.size = CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
         image.tintColor = .white
-        image.center = center
-        image.center.x -= size == .large ? (image.frame.width / 2) - 2 : image.frame.width / 2
+        image.center = base.center
+        image.center.x -= type == .directionLarge ? (image.frame.width / 2) - 2 : image.frame.width / 2
         addSubview(image)
         
         label = UILabel(frame: CGRect(x: image.frame.maxX, y: 0, width: frame.width - image.frame.maxX, height: frame.height))
         label.text = "\(number)"
-        label.font = UIFont.systemFont(ofSize: size == .large ? 20 : 14, weight: UIFontWeightSemibold)
+        label.font = UIFont.systemFont(ofSize: type == .directionLarge ? 20 : 14, weight: UIFontWeightSemibold)
         label.textColor = .white
         label.textAlignment = .center
-        // label.sizeToFit()
-        // label.center = center
-        // label.center.x += size == .large ? (label.frame.width / 2) + 4 : label.frame.width / 2
+        label.center.y = base.center.y
         addSubview(label)
+        
+        if type == .mapStandard {
+            
+            let size = min(base.frame.width, base.frame.height / 3)
+            let frame = CGRect(x: base.frame.width / 2 - (size / 2), y: base.frame.maxY, width: size, height: size)
+            let tail = TriangleView(frame: frame)
+            addSubview(tail)
+            
+        }
         
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+}
+
+class TriangleView : UIView {
+    
+    var color: UIColor!
+    
+    init(frame: CGRect, color: UIColor = .tcatBlueColor) {
+        self.color = color
+        super.init(frame: frame)
+        self.backgroundColor = .clear
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    override func draw(_ rect: CGRect) {
+        
+        guard let context = UIGraphicsGetCurrentContext()
+            else { return }
+        
+        context.beginPath()
+        context.move(to: CGPoint(x: rect.minX, y: rect.minY))
+        context.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+        context.addLine(to: CGPoint(x: (rect.maxX / 2.0), y: rect.maxY))
+        context.closePath()
+        
+        context.setFillColor(color.cgColor)
+        context.fillPath()
+        
     }
     
 }

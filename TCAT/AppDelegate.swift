@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             userDefaults.set([Any](), forKey: "recentSearch")
         }
         
-        // Ask for current location
+        //Ask for current location
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         

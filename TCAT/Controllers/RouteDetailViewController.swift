@@ -32,9 +32,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     var bounds = GMSCoordinateBounds()
     
     var networkTimer: Timer? = nil
-    /// Number of seconds to wait before auto-refreshing network call
-    var refreshRate: Double = 10.0
     var buses = [GMSMarker]()
+    
+    /// Number of seconds to wait before auto-refreshing network call
+    var refreshRate: Double = 15.0
     
     var route: Route!
     var directions: [Direction] = []
@@ -56,7 +57,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     init (route: Route? = nil) {
         super.init(nibName: nil, bundle: nil)
         if route == nil {
-            let json = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "testNew", withExtension: "json")!))
+            guard let url = Bundle.main.url(forResource: "testNew", withExtension: "json")
+                else { print("Can't Find JSON"); return }
+            let json = try! JSON(data: Data(contentsOf: url))
             initializeRoute(route: try! Route(json: json))
         } else {
             initializeRoute(route: route!)
@@ -69,23 +72,23 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         self.route = route
         self.directions = route.directions
         
-//        print("\nROUTE\n")
-//        print("departureTime \(route.departureTime)")
-//        print("arrivalTime \(route.arrivalTime)")
-//        print("allStops \(route.allStops)")
-//        print("timeUntilDeparture \(route.timeUntilDeparture)")
-//        print("lastStopTime \(route.lastStopTime)")
-//        print("mainStops \(route.mainStops)")
-//        print("mainStopNums \(route.mainStopsNums)")
-          for direction in directions {
-              print("\(direction)")
-          }
- 
+        //        print("\nROUTE\n")
+        //        print("departureTime \(route.departureTime)")
+        //        print("arrivalTime \(route.arrivalTime)")
+        //        print("allStops \(route.allStops)")
+        //        print("timeUntilDeparture \(route.timeUntilDeparture)")
+        //        print("lastStopTime \(route.lastStopTime)")
+        //        print("mainStops \(route.mainStops)")
+        //        print("mainStopNums \(route.mainStopsNums)")
+        for direction in directions {
+            print("\(direction)")
+        }
+        
         // Construct paths in routePaths based on directions
         var skipDirection: Bool = false
         
         if directions.count == 0 { print("Directions array is empty!") }
-
+        
         for index in 0..<directions.count {
             
             // skip parsing of current direction
@@ -147,10 +150,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.formatNavigationController()
         self.initializeDetailView()
-                
+        
         // Set up Location Manager
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
@@ -168,7 +171,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         }
         
         networkTimer = Timer.scheduledTimer(timeInterval: refreshRate, target: self, selector: #selector(getBusLocations),
-                             userInfo: nil, repeats: true)
+                                            userInfo: nil, repeats: true)
         networkTimer!.fire()
         
     }
@@ -207,7 +210,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-                
+        
         if let newCoord = locations.last?.coordinate {
             currentLocation = newCoord
         }
@@ -219,7 +222,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         mapView.animate(with: update)
         
     }
-
+    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         print(error)
     }
@@ -230,11 +233,11 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         guard let firstRoute = route.mainStopNums.first(where: { $0 > 0 })
             else { print("No valid main stop nums > 0!"); return }
-       
+        
         Network.getBusLocations(routeID: String(firstRoute)).perform(
             
             withSuccess: { (result) in
-            
+                
                 print("[RouteDetailViewController] Success!")
                 self.updateBusLocations(busLocations: result.allBusLocations)
                 
@@ -244,7 +247,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             
         }
         
-
+        
     }
     
     func updateBusLocations(busLocations: [BusLocation]) {
@@ -255,26 +258,25 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             
             let busCoords = CLLocationCoordinate2DMake(bus.latitude, bus.longitude)
             let existingBus = buses.first(where: {
-                print("$0:", $0)
-                print("$0.userData:", $0.userData)
-                print("$0.userData as? BusLocation:", $0.userData as? BusLocation)
-                print("($0.userData as? BusLocation)?.vehicleID:", ($0.userData as? BusLocation)?.vehicleID)
+                // print("$0:", $0)
+                // print("$0.userData:", $0.userData)
+                // print("$0.userData as? BusLocation:", $0.userData as? BusLocation)
+                // print("($0.userData as? BusLocation)?.vehicleID:", ($0.userData as? BusLocation)?.vehicleID)
                 return ($0.userData as? BusLocation)?.vehicleID == bus.vehicleID
             })
             
-            print("existingBus ID:", (existingBus?.userData as? BusLocation)?.vehicleID)
-            print("bus ID:", bus.vehicleID)
+            // print("existingBus ID:", (existingBus?.userData as? BusLocation)?.vehicleID)
+            // print("bus ID:", bus.vehicleID)
             
             // If bus is already on map, update and animate change
             if existingBus != nil {
                 UIView.animate(withDuration: 1.0, delay: 0, options: .curveEaseInOut, animations: {
-                    print("Animating!")
                     existingBus?.userData = bus
                     existingBus?.position = busCoords
                 })
             }
-            
-            // Otherwise, add bus to map
+                
+                // Otherwise, add bus to map
             else {
                 let marker = GMSMarker(position: busCoords)
                 marker.iconView = bus.iconView
@@ -317,7 +319,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 bounds = bounds.includingCoordinate(coords)
             }
         }
-
+        
     }
     
     /** Set title, buttons, and style of navigation controller */
@@ -426,8 +428,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             if direction is DepartDirection {
                 let busDirection = direction as! DepartDirection
                 // use smaller icons for small phones or multiple icons
-                let busSize: BusIconSize = mainStopCount > 1 ? .small : .large
-                let busIcon = BusIcon(size: busSize, number: busDirection.routeNumber)
+                let busType: BusIconType = mainStopCount > 1 ? .directionSmall : .directionLarge
+                let busIcon = BusIcon(type: busType, number: busDirection.routeNumber)
                 if first { center.x += busIcon.frame.width / 2; first = false }
                 busIcon.center = center
                 summaryView.addSubview(busIcon)
@@ -529,9 +531,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let isBusStopCell = direction is ArriveDirection && direction.location.coordinate.latitude == 0.0
         let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
         
-//        for index in 0..<directions.count {
-//            print("\(index) • \(directions[index])")
-//        }
+        //        for index in 0..<directions.count {
+        //            print("\(index) • \(directions[index])")
+        //        }
         
         /// Formatting, including selectionStyle, and seperator line fixes
         func format(_ cell: UITableViewCell) -> UITableViewCell {
@@ -693,3 +695,4 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     }
     
 }
+
