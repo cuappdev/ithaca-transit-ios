@@ -8,6 +8,7 @@
 
 import UIKit
 import TRON
+import SwiftyJSON
 
 enum PinType: String{
     case stop, place, currentLocation
@@ -26,15 +27,32 @@ class RouteSummaryObject: NSObject, JSONDecodable {
     
     required init(json: JSON) throws {
         name = json["name"].stringValue
-        type = PinType.init(rawValue: json["type"].stringValue)
+        type = PinType.init(rawValue: json["type"].stringValue)!
         
         if(json["nextDirection"].stringValue != "none"){
-            nextDirection = NextDirection.init(rawValue: json["nextDirection"].stringValue)
+            nextDirection = NextDirection.init(rawValue: json["nextDirection"].stringValue)!
             
             if (nextDirection == .bus){
                 busNumber = json["busNumber"].intValue
             }
         }
         super.init()
+    }
+    
+    init(name: String, type: PinType){
+        self.name = name
+        self.type = type
+    }
+    
+    convenience init(name: String, type: PinType, nextDirection: NextDirection){
+        self.init(name: name, type: type)
+        
+        self.nextDirection = nextDirection
+    }
+    
+    convenience init(name: String, type: PinType, nextDirection: NextDirection, busNumber: Int){
+        self.init(name: name, type: type, nextDirection: nextDirection)
+        
+        self.busNumber = busNumber
     }
 }

@@ -31,9 +31,9 @@ enum SearchType: String{
 class OptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,
     DestinationDelegate, SearchBarCancelDelegate,UISearchBarDelegate,
 CLLocationManagerDelegate {
-    
+
     // MARK: Search bar vars
-    
+
     var searchBarView: SearchBarView!
     var locationManager: CLLocationManager!
     var searchType: SearchBarType = .from
@@ -41,69 +41,69 @@ CLLocationManagerDelegate {
     var searchTo: (BusStop?, PlaceResult?) = (nil, nil)
     var searchTimeType: SearchType = .leaveAt
     var searchTime: Date?
-    
+
     // MARK: View vars
-    
+
     var routeSelection: RouteSelectionView!
     var datePickerView: DatepickerView!
     var datePickerOverlay: UIView!
     var routeResults: UITableView!
-    
+
     let navigationBarTitle: String = "Route Options"
     let routeTableViewCellIdentifier: String = RouteTableViewCell().identifier
     let routeResultsTitle: String = "Route Results"
     let routeResultsHeaderHeight: CGFloat = 57.0
 
     // MARK:  Data vars
-    
+
     var routes: [Route] = []
     var loaderroutes: [Route] = []
-    
+
     // MARK: View Lifecycle
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .tableBackgroundColor
 
         setupNavigationBar()
         setupBackButton()
-        
+
         setupRouteSelection()
         setupSearchBar()
         setupDatepicker()
         setupRouteResultsTableView()
-        
+
         view.addSubview(routeSelection)
         view.addSubview(datePickerOverlay)
         view.sendSubview(toBack: datePickerOverlay)
         view.addSubview(routeResults)
         view.addSubview(datePickerView)//so datePicker can go ontop of other views
-        
+
         setRouteSelectionView(withDestination: searchTo)
         setupLocationManager()
-        
+
         setupLoaderData()
         routes = loaderroutes
 
         // If no date is set then date should be same as today's date
         self.searchTime = Date()
-        
+
         //        searchForRoutes()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: routeTableViewCellIdentifier)
     }
-    
+
     // MARK: Navigation bar
-    
+
     private func setupNavigationBar(){
         let titleAttributes: [String : Any] = [NSFontAttributeName : UIFont(name :".SFUIText", size: 18)!,
                                                NSForegroundColorAttributeName : UIColor.black]
         title = navigationBarTitle
         navigationController?.navigationBar.titleTextAttributes = titleAttributes //so title actually shows up
     }
-    
+
     private func setupBackButton(){
         let backButton = UIButton(type: .system)
         backButton.setImage(UIImage(named: "back"), for: .normal)
@@ -116,32 +116,46 @@ CLLocationManagerDelegate {
         let barButtonBackItem = UIBarButtonItem(customView: backButton)
         self.navigationItem.setLeftBarButton(barButtonBackItem, animated: true)
     }
-    
+
     // Move back one view controller in navigationController stack
     func backAction() {
         navigationController?.popViewController(animated: true)
     }
-    
+
     // MARK: Loader
-    
+
     private func setupLoaderData(){
         let date1 = Time.dateForDebug(from: "3:45 PM")
         let date2 = Time.dateForDebug(from: "3:52 PM")
-        let route1 = Route(departureTime: date1, arrivalTime: date2, directions: [], mainStops: ["Baker Flagpole", "Commons - Seneca Street"], mainStopsNums: [90, -2], path: [], travelDistance: 0.1)
-        
+        let routeObject1 = RouteSummaryObject(name: "Baker Flagpole", type: .stop, nextDirection: .bus, busNumber: 90)
+        let routeObject2 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop)
+        let routeSummary1 = [routeObject1, routeObject2]
+
+        let route1 = Route(departureTime: date1, arrivalTime: date2, routeSummary: routeSummary1, directions: [], path: [], travelDistance: 0.1)
+
         let date3 = Time.dateForDebug(from: "3:45 PM")
         let date4 = Time.dateForDebug(from: "3:52 PM")
-        let route2 = Route(departureTime: date3, arrivalTime: date4, directions: [], mainStops: ["Baker Flagpole", "Collegetown Crossing", "Commons - Seneca Street"], mainStopsNums: [8, 16, -2], path: [], travelDistance: 0.1)
-        
+        let routeObject3 = RouteSummaryObject(name: "Baker Flagpole", type: .stop, nextDirection: .bus, busNumber: 8)
+        let routeObject4 = RouteSummaryObject(name: "Collegetown Crossing", type: .stop, nextDirection: .bus, busNumber: 16)
+        let routeObject5 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop, nextDirection: .walk)
+        let routeObject10 = RouteSummaryObject(name: "Waffle Frolic", type: .place)
+        let routeSummary2 = [routeObject3, routeObject4, routeObject5, routeObject10]
+        let route2 = Route(departureTime: date3, arrivalTime: date4, routeSummary: routeSummary2, directions: [], path: [], travelDistance: 0.1)
+
         let date5 = Time.dateForDebug(from: "3:45 PM")
         let date6 = Time.dateForDebug(from: "3:52 PM")
-        let route3 = Route(departureTime: date5, arrivalTime: date6, directions: [], mainStops: ["Baker Flagpole", "Jessup Fields", "RPCC", "Commons - Seneca Street"], mainStopsNums: [8, -1, 32, -2], path: [], travelDistance: 0.1)
-        
+        let routeObject6 = RouteSummaryObject(name: "Baker Flagpole", type: .stop, nextDirection: .bus, busNumber: 8)
+        let routeObject7 = RouteSummaryObject(name: "Jessup Fields", type: .stop, nextDirection: .walk)
+        let routeObject8 = RouteSummaryObject(name: "RPCC", type: .stop, nextDirection: .bus, busNumber: 32)
+        let routeObject9 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop)
+        let routeSummary3 = [routeObject6, routeObject7, routeObject8, routeObject9]
+        let route3 = Route(departureTime: date5, arrivalTime: date6, routeSummary: routeSummary3, directions: [], path: [], travelDistance: 0.1)
+
         loaderroutes = [route1, route2, route3]
     }
-    
+
     // MARK: Route Selection view
-    
+
     private func setupRouteSelection() {
         routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 150))
         routeSelection.backgroundColor = .lineColor
@@ -150,13 +164,13 @@ CLLocationManagerDelegate {
         var newRSFrame = routeSelection.frame
         newRSFrame.size.height =  routeSelection.lineWidth + routeSelection.searcbarView.frame.height + routeSelection.lineWidth + routeSelection.datepickerButton.frame.height
         routeSelection.frame = newRSFrame
-        
+
         routeSelection.toSearchbar.addTarget(self, action: #selector(self.searchingTo), for: .touchUpInside)
         routeSelection.fromSearchbar.addTarget(self, action: #selector(self.searchingFrom), for: .touchUpInside)
         routeSelection.datepickerButton.addTarget(self, action: #selector(self.showDatepicker), for: .touchUpInside)
         routeSelection.swapButton.addTarget(self, action: #selector(self.swapFromAndTo), for: .touchUpInside)
     }
-    
+
     private func setRouteSelectionView(withDestination destination: (BusStop?, PlaceResult?)){
         let (endBus, endPlace) = destination
         if let destination = endBus{
@@ -166,17 +180,17 @@ CLLocationManagerDelegate {
             routeSelection.toSearchbar.setTitle(destination.name, for: .normal)
         }
     }
-    
+
     func swapFromAndTo(sender: UIButton){
         //Swap data
         let searchFromOld = searchFrom
         searchFrom = searchTo
         searchTo = searchFromOld
-        
+
         //Update UI
         let (fromBus, fromPlace) = searchFrom
         let (toBus, toPlace) = searchTo
-        
+
         if let start = fromBus {
             routeSelection.fromSearchbar.setTitle(start.name, for: .normal)
         }else if let start = fromPlace {
@@ -184,7 +198,7 @@ CLLocationManagerDelegate {
         }else{
             routeSelection.fromSearchbar.setTitle("", for: .normal)
         }
-        
+
         if let end = toBus {
             routeSelection.toSearchbar.setTitle(end.name, for: .normal)
         }else if let end = toPlace {
@@ -192,12 +206,12 @@ CLLocationManagerDelegate {
         }else{
             routeSelection.toSearchbar.setTitle("", for: .normal)
         }
-        
+
         searchForRoutes()
     }
-    
+
     // MARK: Search bar
-    
+
     private func setupSearchBar(){
         searchBarView = SearchBarView()
         searchBarView.resultsViewController?.destinationDelegate = self
@@ -206,21 +220,21 @@ CLLocationManagerDelegate {
         self.definesPresentationContext = true
         hideSearchBar()
     }
-    
+
     func searchingTo(sender: UIButton){
         searchType = .to
         //For Austin's search bar to show current location option or not
         //        searchBarView.resultsViewController.shouldShowCurrentLocation = false
         presentSearchBar()
     }
-    
+
     func searchingFrom(sender: UIButton){
         searchType = .from
         //For Austin's search bar to show current location option or not
         //        searchBarView.resultsViewController.shouldShowCurrentLocation = false
         presentSearchBar()
     }
-    
+
     func presentSearchBar(){
         showSearchBar()
         //Customize placeholder
@@ -230,11 +244,11 @@ CLLocationManagerDelegate {
         //Prompt search
         //searchBarView.searchController?.searchBar.text = (searchType == .from) ? routeSelection.fromSearch.titleLabel?.text : routeSelection.toSearch.titleLabel?.text
     }
-    
+
     private func dismissSearchBar(){
         searchBarView.searchController?.dismiss(animated: true, completion: nil)
     }
-    
+
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?){
         switch searchType{
         case .from:
@@ -257,25 +271,25 @@ CLLocationManagerDelegate {
         dismissSearchBar()
         searchForRoutes()
     }
-    
+
     func didCancel(){
         hideSearchBar()
     }
-    
+
     private func hideSearchBar(){
         navigationItem.titleView = nil
         searchBarView.searchController?.isActive = false
     }
-    
+
     private func showSearchBar(){
         navigationItem.titleView = searchBarView.searchController?.searchBar
         searchBarView.searchController?.isActive = true
     }
-    
+
     func searchForRoutes() {
 
         let (startingDestination, endingDestination) = getSearchTuple(startingDestinationTuple: searchFrom, endingDestinationTuple: searchTo)
-        
+
         if let startingDestination = startingDestination, let endingDestination = endingDestination{
             routes = loaderroutes
             routeResults.reloadData()
@@ -295,36 +309,36 @@ CLLocationManagerDelegate {
                 })
             }
         }
-        
+
     }
-    
+
     private func getSearchTuple(startingDestinationTuple: (BusStop?, PlaceResult?), endingDestinationTuple: (BusStop?, PlaceResult?)) -> (startingDestination: AnyObject?, endingDestination: AnyObject?){
-        
+
         let (fromBus, fromPlace) = searchFrom
         let (toBus, toPlace) = searchTo
-        
+
         if let startBus = fromBus, let endBus = toBus{
             return (startBus, endBus)
         }
-        
+
         if let startBus = fromBus, let endPlace = toPlace{
             return (startBus, endPlace)
         }
-        
+
         if let startPlace = fromPlace, let endBus = toBus{
             return (startPlace, endBus)
         }
-        
+
         if let startPlace = fromPlace, let endPlace = toPlace{
             return (startPlace, endPlace)
         }
-        
+
         return (nil, nil)
 
     }
 
     // MARK: Location Manager Delegate
-    
+
     private func setupLocationManager(){
         locationManager = CLLocationManager()
         locationManager.delegate = self
@@ -333,28 +347,28 @@ CLLocationManagerDelegate {
         // locationManager.requestLocation() // one-time call
         locationManager.startUpdatingLocation()
     }
-    
+
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-        
+
         locationManager.stopUpdatingLocation()
         print("OptionVC locationManager didFailWithError: \(error.localizedDescription)")
-        
+
         let title = "Couldn't Find Location"
         let message = "Please ensure you are connected to the internet and have enabled location permissions."
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-       
+
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        
+
         let settings = UIAlertAction(title: "Settings", style: .default) { (_) in
             UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
         }
-        
+
         alertController.addAction(settings)
-        
+
         present(alertController, animated: true, completion: nil)
-        
+
     }
-    
+
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //If don't have start location, set to current location
         locationManager.stopUpdatingLocation()
@@ -366,43 +380,43 @@ CLLocationManagerDelegate {
             searchForRoutes()
         }
     }
-    
+
     // MARK: Datepicker
-    
+
     private func setupDatepicker(){
         setupDatepickerView()
         setupDatepickerOverlay()
     }
-    
+
     private func setupDatepickerView(){
         datePickerView = DatepickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 305.5))
         datePickerView.positionSubviews()
         datePickerView.addSubviews()
         datePickerView.backgroundColor = .white
-        
+
         datePickerView.cancelButton.addTarget(self, action: #selector(self.dismissDatepicker), for: .touchUpInside)
         datePickerView.doneButton.addTarget(self, action: #selector(self.saveDatepickerDate), for: .touchUpInside)
     }
-    
+
     private func setupDatepickerOverlay(){
         datePickerOverlay = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height))
         datePickerOverlay.backgroundColor = .black
         datePickerOverlay.alpha = 0
-        
+
         datePickerOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissDatepicker)))
     }
-    
+
     func showDatepicker(sender: UIButton){
         view.bringSubview(toFront: datePickerOverlay)
         view.bringSubview(toFront: datePickerView)
-        UIView.animate(withDuration: 0.5) { 
+        UIView.animate(withDuration: 0.5) {
             self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.7
         }
     }
-    
+
     func dismissDatepicker(sender: UIButton){
-        UIView.animate(withDuration: 0.5, animations: { 
+        UIView.animate(withDuration: 0.5, animations: {
             self.datePickerView.center.y = self.view.frame.height + (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.0
         }) { (true) in
@@ -410,7 +424,7 @@ CLLocationManagerDelegate {
             self.view.sendSubview(toBack: self.datePickerView)
         }
     }
-    
+
     func saveDatepickerDate(sender: UIButton){
         let date = datePickerView.datepicker.date
         searchTime = date
@@ -433,43 +447,43 @@ CLLocationManagerDelegate {
             title = "\(verb) \(dateString)"
         }
         routeSelection.datepickerButton.setTitle(title, for: .normal)
-        
+
         dismissDatepicker(sender: sender)
-        
+
         searchForRoutes()
     }
-    
+
     //MARK: Tableview Data Source
-    
+
     func numberOfSections(in tableView: UITableView) -> Int{
         return 1
     }
-    
+
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?{
         return routeResultsTitle
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         return routes.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
         var cell = tableView.dequeueReusableCell(withIdentifier: routeTableViewCellIdentifier, for: indexPath) as? RouteTableViewCell
-        
+
         if cell == nil {
             cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: routeTableViewCellIdentifier)
         }
-        
+
         cell?.route = routes[indexPath.row]
         cell?.setRouteData()
         cell?.positionSubviews()
         cell?.addSubviews()
-        
+
         return cell!
     }
-    
+
     // MARK: Tableview Delegate
-    
+
     private func setupRouteResultsTableView(){
         routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0) - UIApplication.shared.statusBarFrame.height), style: .grouped)
         routeResults.delegate = self
@@ -479,36 +493,36 @@ CLLocationManagerDelegate {
         routeResults.backgroundColor = .tableBackgroundColor
         routeResults.alwaysBounceVertical = false //so table view doesn't scroll over top & bottom
     }
-    
+
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat{
         return routeResultsHeaderHeight
     }
-    
+
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: routeResultsHeaderHeight))
         headerView.backgroundColor = .tableBackgroundColor
-        
+
         let titleLeftSpaceFromSuperview: CGFloat = 16.0
         let titleVeticalSpaceFromSuperview: CGFloat = 24.0
-        
+
         let titleLabel = UILabel(frame: CGRect(x: titleLeftSpaceFromSuperview, y: titleVeticalSpaceFromSuperview, width: 88.0, height: 17.0))
         titleLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
         titleLabel.textColor = UIColor.secondaryTextColor
         titleLabel.text = self.tableView(tableView, titleForHeaderInSection: section)
         titleLabel.sizeToFit()
-        
+
         headerView.addSubview(titleLabel)
-        
+
         return headerView
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let numOfStops = routes[indexPath.row].mainStops.count
+        let numOfStops = routes[indexPath.row].routeSummary.count
         let rowHeight = RouteTableViewCell().heightForCell(withNumOfStops: numOfStops)
-        
+
         return rowHeight
     }
-    
+
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool{
         navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
         return false // halts the selection process = don't have selected look

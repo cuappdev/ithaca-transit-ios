@@ -39,7 +39,7 @@ class Route: NSObject, JSONDecodable {
         let jsonData = json["data"]
         departureTime = Date(timeIntervalSince1970: jsonData["departureTime"].doubleValue)
         arrivalTime = Date(timeIntervalSince1970: jsonData["arrivalTime"].doubleValue)
-        routeSummary = getRouteSummary(fromjson: jsonData["stopSummary"].arrayValue)
+        routeSummary = getRouteSummary(fromJson: jsonData["stopSummary"].arrayValue)
         // directions = directionJSON(json:json["directions"].arrayValue)
         path = CLLocationCoordinate2D.strToCoords(jsonData["kmls"].stringValue)
         
@@ -50,8 +50,8 @@ class Route: NSObject, JSONDecodable {
     
     init(departureTime: Date,
          arrivalTime: Date,
-         directions: [Direction],
          routeSummary: [RouteSummaryObject],
+         directions: [Direction],
          path: [CLLocationCoordinate2D],
          travelDistance: Double,
          lastStopTime: Date = Date()) {
@@ -63,40 +63,22 @@ class Route: NSObject, JSONDecodable {
         self.path = path
         self.travelDistance = travelDistance
         self.lastStopTime = lastStopTime
-        
     }
     
     private func getRouteSummary(fromJson json: [JSON]) -> [RouteSummaryObject] {
-        let routeSummary = [RouteSummaryObject]()
+        var routeSummary = [RouteSummaryObject]()
         for routeSummaryJson in json {
-            let routeSummaryObject = RouteSummaryObject(json: routeSummaryJson)
+            let routeSummaryObject = try! RouteSummaryObject(json: routeSummaryJson)
             routeSummary.append(routeSummaryObject)
         }
         
         return routeSummary
     }
 
-    /// Modify mainStops and mainStopsNums to include the destination place result
-    func addPlaceDestination(_ placeDestination: PlaceResult){
-        mainStopNums[mainStops.count - 1] = -2 //to add walk line from last bus stop to place result destination
-        mainStops.append(placeDestination.name)
-        mainStopNums.append(-3) //place result destination dot
+    /// Modify the last routeSummaryObject to include name of the destination place result
+    func updatePlaceDestination(_ placeDestination: PlaceResult){
+        routeSummary[routeSummary.count - 1].name = placeDestination.name
     }
     
-    //For debugging purposes
-    func printRoute(){
-        var mainStopsStr = "("
-        for mainStop in mainStops{
-            mainStopsStr += "\(mainStop), "
-        }
-        mainStopsStr += ")"
-        var mainStopsNumsStr = "("
-        for mainStopNum in mainStopNums{
-            mainStopsNumsStr += "\(mainStopNum), "
-        }
-        mainStopsNumsStr += ")"
-        print("departureTime: \(departureTime), arrivalTime: \(arrivalTime)")
-        print("mainStops: \(mainStopsStr), mainStopsNums:  \(mainStopsNumsStr)")
-    }
 }
 
