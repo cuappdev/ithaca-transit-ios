@@ -215,7 +215,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         print("[RouteDetailViewController] getBusLocations")
         
-        guard let firstRoute = route.mainStopNums.first(where: { $0 > 0 })
+        guard let firstRoute = route.routeSummary.first?.busNumber
             else { print("No valid main stop nums > 0!"); return }
         Network.getBusLocations(routeID: String(firstRoute)).perform(
             withSuccess: { (result) in
@@ -402,7 +402,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         // Create and place all bus routes in Directions (account for small screens)
         var icon_maxY: CGFloat = 24; var first = true
-        let mainStopCount = route.mainStopNums.filter { $0 != -1 }.count
+        let mainStopCount = route.routeSummary.count
         var center = CGPoint(x: icon_maxY, y: (summaryView.frame.height / 2) + pullerHeight)
         for direction in directions {
             if direction.type == .depart{
@@ -583,7 +583,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             
             // Prepare bus stop data to be inserted / deleted into Directions array
             var busStops: [Direction] = []
-            for stop in direction.busStops {
+            for stop in direction.stops {
                 let stopAsDirection = Direction(name: stop)
                 busStops.append(stopAsDirection)
             }

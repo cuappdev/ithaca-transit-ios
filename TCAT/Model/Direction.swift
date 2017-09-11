@@ -10,14 +10,6 @@ import UIKit
 import CoreLocation
 import SwiftyJSON
 
-/* To get string version of Bound
- * let inbound: String = Bound.inbound.rawValue  // "inbound"
- * let outbound: String = Bound.inbound.rawValue // "outbound"
- */
-enum Bound: String {
-    case inbound, outbound
-}
-
 enum DirectionType: String {
     case walk, depart, arrive, unknown
 }
@@ -34,9 +26,7 @@ class Direction: NSObject {
     var startTime: Date
     var endTime: Date
     var routeNumber: Int
-    var bound: Bound
     var stops: [String]
-    var arrivalTime: Date
     
     /*To extract travelTime's times in day, hour, and minute units:
      * let days: Int = travelTime.day
@@ -44,7 +34,7 @@ class Direction: NSObject {
      * let minutes: Int = travelTime.minute
      */
     var travelTime: DateComponents {
-        return Time.dateComponents(from: time, to: arrivalTime)
+        return Time.dateComponents(from: startTime, to: endTime)
     }
 
     init(type: DirectionType,
@@ -53,7 +43,7 @@ class Direction: NSObject {
          endLocation: CLLocation,
          startTime: Date,
          endTime: Date,
-         busStops: [String] = [],
+         stops: [String] = [],
          routeNumber: Int = 0) {
         
         self.type = type
@@ -62,11 +52,8 @@ class Direction: NSObject {
         self.endLocation = endLocation
         self.startTime = startTime
         self.endTime = endTime
-        self.busStops = busStops
         self.routeNumber = routeNumber
-        self.bound = bound
         self.stops = stops
-        self.arrivalTime = arrivalTime
     }
 
     convenience init(name: String) {
@@ -103,7 +90,7 @@ class Direction: NSObject {
             
             endTime: Date(timeIntervalSince1970: json["endTime"].doubleValue),
             
-            busStops: json["busStops"].arrayObject as! [String],
+            stops: json["busStops"].arrayObject as! [String],
             
             routeNumber: json["routeNumber"].intValue
     
@@ -113,11 +100,6 @@ class Direction: NSObject {
     
     // MARK: Descriptions / Functions
     
-    /// Returns DateComponents describing difference between start and end time
-    var travelTime: DateComponents {
-        return Time.dateComponents(from: startTime, to: endTime)
-    }
-    
     /// Distance between start and end locations in miles
     var travelDistance: Double {
         let metersInMile = 1609.34
@@ -125,7 +107,6 @@ class Direction: NSObject {
         let numberOfPlaces = distance >= 10 ? 0 : 1
         return distance.roundToPlaces(places: numberOfPlaces)
     }
-    var location: CLLocation
 
     /// Returns custom description for locationName based on DirectionType
     var locationNameDescription: String {

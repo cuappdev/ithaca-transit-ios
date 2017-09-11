@@ -195,7 +195,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var itemType: ItemType
-        let optionsVC = OptionsViewController()
+        let optionsVC = SearchForRoutesViewController()
         
         switch sections[indexPath.section].type {
         case .cornellDestination:
