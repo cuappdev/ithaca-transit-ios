@@ -26,10 +26,9 @@ class Route: NSObject, JSONDecodable {
         return Time.dateComponents(from: now, to: departureTime)
     }
     
+    var routeSummary: [RouteSummaryObject] = [RouteSummaryObject]()
     var directions: [Direction] = [Direction]()
-    var mainStops: [String] = [String]()
     var allStops : [String] = [String]()
-    var mainStopNums: [Int] = [Int]() // n > 0 for bus number, -1 for walking, -2 for destinations that are bus stops, -3 for destinations that are places
     var path: [CLLocationCoordinate2D] = [CLLocationCoordinate2D]()
     var travelDistance: Double = 0.0 // of first stop
     var lastStopTime: Date = Date() // the critical last time a bus route runs
@@ -40,9 +39,8 @@ class Route: NSObject, JSONDecodable {
         let jsonData = json["data"]
         departureTime = Date(timeIntervalSince1970: jsonData["departureTime"].doubleValue)
         arrivalTime = Date(timeIntervalSince1970: jsonData["arrivalTime"].doubleValue)
+        routeSummary = getRouteSummary(fromjson: jsonData["stopSummary"].arrayValue)
         // directions = directionJSON(json:json["directions"].arrayValue)
-        mainStops = jsonData["mainStops"].arrayObject as! [String]
-        mainStopNums = jsonData["mainStopNums"].arrayObject as! [Int]
         path = CLLocationCoordinate2D.strToCoords(jsonData["kmls"].stringValue)
         
         travelDistance = directions.first != nil ? directions.first!.travelDistance : 0.0
@@ -53,21 +51,29 @@ class Route: NSObject, JSONDecodable {
     init(departureTime: Date,
          arrivalTime: Date,
          directions: [Direction],
-         mainStops: [String],
-         mainStopsNums: [Int],
+         routeSummary: [RouteSummaryObject],
          path: [CLLocationCoordinate2D],
          travelDistance: Double,
          lastStopTime: Date = Date()) {
         
         self.departureTime = departureTime
         self.arrivalTime = arrivalTime
+        self.routeSummary = routeSummary
         self.directions = directions
-        self.mainStops = mainStops
-        self.mainStopNums = mainStopsNums
         self.path = path
         self.travelDistance = travelDistance
         self.lastStopTime = lastStopTime
         
+    }
+    
+    private func getRouteSummary(fromJson json: [JSON]) -> [RouteSummaryObject] {
+        let routeSummary = [RouteSummaryObject]()
+        for routeSummaryJson in json {
+            let routeSummaryObject = RouteSummaryObject(json: routeSummaryJson)
+            routeSummary.append(routeSummaryObject)
+        }
+        
+        return routeSummary
     }
 
     /// Modify mainStops and mainStopsNums to include the destination place result

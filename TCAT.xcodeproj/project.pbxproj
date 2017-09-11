@@ -57,6 +57,7 @@
 		DDD33DEF1EC2960400BC6454 /* CircleLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD33DEE1EC2960400BC6454 /* CircleLine.swift */; };
 		DDE0A9311F096A3E005CD01C /* RouteDiagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */; };
 		DDE3BC231F5863D50014D2BB /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE3BC221F5863D50014D2BB /* Place.swift */; };
+		DDEC101B1F66192B00834E91 /* RouteSummaryObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEC101A1F66192B00834E91 /* RouteSummaryObject.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -138,6 +139,7 @@
 		DDD33DEE1EC2960400BC6454 /* CircleLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CircleLine.swift; path = Views/CircleLine.swift; sourceTree = "<group>"; };
 		DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDiagram.swift; path = Views/RouteDiagram.swift; sourceTree = "<group>"; };
 		DDE3BC221F5863D50014D2BB /* Place.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Place.swift; path = Model/Place.swift; sourceTree = "<group>"; };
+		DDEC101A1F66192B00834E91 /* RouteSummaryObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RouteSummaryObject.swift; path = Model/RouteSummaryObject.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E69224A160B2B078827D28A1 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -305,6 +307,7 @@
 				DDB49C9C1E8857FC00A99C35 /* Waypoint.swift */,
 				DD2F989A1E50F99A0005F6BC /* Route.swift */,
 				DD2F98A01E5141D10005F6BC /* Direction.swift */,
+				DDEC101A1F66192B00834E91 /* RouteSummaryObject.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -697,6 +700,7 @@
 				503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */,
 				DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */,
 				DDE3BC231F5863D50014D2BB /* Place.swift in Sources */,
+				DDEC101B1F66192B00834E91 /* RouteSummaryObject.swift in Sources */,
 				DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */,
 				DDBFEAA01E787008002BBD96 /* DatepickerView.swift in Sources */,
 				DD2F98A11E5141D10005F6BC /* Direction.swift in Sources */,
