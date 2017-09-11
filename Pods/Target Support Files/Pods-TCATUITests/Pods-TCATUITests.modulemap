@@ -1,6 +1,0 @@
-framework module Pods_TCATUITests {
-  umbrella header "Pods-TCATUITests-umbrella.h"
-
-  export *
-  module * { export * }
-}

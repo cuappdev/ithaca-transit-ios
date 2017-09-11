@@ -109,8 +109,7 @@ class RouteTableViewCell: UITableViewCell {
         guard let departureTime = route?.departureTime,
               let arrivalTime = route?.arrivalTime,
               let travelDistance = route?.travelDistance,
-              let stopNums = route?.mainStopNums,
-              let stopNames = route?.mainStops
+              let routeSummary = route?.routeSummary
               else{
                 print("RouteTableViewCell route object does not have the data needed to fill in the cell")
                 return
@@ -120,7 +119,7 @@ class RouteTableViewCell: UITableViewCell {
         setDepartureTime(withTime: departureTime)
         
         routeDiagram.setTravelDistance(withDistance: travelDistance)
-        routeDiagram.setRouteData(fromStopNums: stopNums, fromStopNames: stopNames)
+        routeDiagram.setRouteData(fromRouteSummary: routeSummary)
     }
     
     private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){

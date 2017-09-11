@@ -55,7 +55,7 @@ class Waypoint: NSObject {
     }
     
     func drawStopIcon() -> UIView {
-        return BusIcon(size: .small, number: self.busNumber)
+        return BusIcon(type: .directionSmall, number: self.busNumber)
     }
     
     func drawCircle(radius: CGFloat, innerColor: UIColor, borderColor: UIColor? = nil) -> UIView {

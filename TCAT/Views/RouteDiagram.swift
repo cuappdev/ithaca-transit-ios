@@ -62,19 +62,19 @@ class RouteDiagram: UIView{
     
     // MARK: Set Data
     
-    func setRouteData(fromStopNums stopNums: [Int], fromStopNames stopNames: [String]){
+    func setRouteData(fromRouteSummary routeSummary: [RouteSummaryObject]){
         
-        for i in 0...(stopNums.count - 1){
+        for i in 0...(routeSummary.count - 1){
             
             let routeDiagramElement = RouteDiagramElement()
             
             routeDiagramElement.stopNameLabel = getStopNameLabel()
-            routeDiagramElement.stopDot = getStopDot(fromStopNums: stopNums, atIndex: i)
-            routeDiagramElement.busIcon = getBusIcon(fromStopNums: stopNums, atIndex: i)
-            routeDiagramElement.routeLine = getRouteLine(fromStopNums: stopNums, atIndex: i)
+            routeDiagramElement.stopDot = getStopDot(fromRouteSummary: routeSummary, atIndex: i)
+            routeDiagramElement.busIcon = getBusIcon(fromRouteSummary: routeSummary, atIndex: i)
+            routeDiagramElement.routeLine = getRouteLine(fromRouteSummary: routeSummary, atIndex: i)
             
             styleStopLabel(routeDiagramElement.stopNameLabel)
-            setStopLabel(routeDiagramElement.stopNameLabel, withStopName: stopNames[i])
+            setStopLabel(routeDiagramElement.stopNameLabel, withStopName: routeSummary[i].name)
             
             routeDiagramElements.append(routeDiagramElement)
         }
@@ -106,49 +106,54 @@ class RouteDiagram: UIView{
         return stopNameLabel
     }
     
-    private func getStopDot(fromStopNums stopNums: [Int], atIndex index: Int) -> Circle {
-        let destinationDot = stopNums.count - 1
+    private func getStopDot(fromRouteSummary routeSummary: [RouteSummaryObject], atIndex index: Int) -> Circle {
+        let pinType = routeSummary[index].type
+        var pin: Circle
+        let destinationDot = routeSummary.count - 1
         
-        let busDestination = -2
-        let placeDestination = -3
-        
-        if(index == destinationDot){
+        switch pinType {
             
-            let destinationNum = stopNums[index]
-            
-            if(destinationNum == busDestination){
-                let framedBlueCircle = Circle(size: .large, color: .tcatBlueColor, style: .bordered)
-                framedBlueCircle.backgroundColor = .white
-
-                return framedBlueCircle
-            }
-            else if(destinationNum == placeDestination){
-                let framedGreyCircle = Circle(size: .large, color: .lineColor, style: .bordered)
-                framedGreyCircle.backgroundColor = .white
+            case .stop:
                 
-                return framedGreyCircle
-            }
+                if(index == destinationDot){
+                    let framedBlueCircle = Circle(size: .large, color: .tcatBlueColor, style: .bordered)
+                    framedBlueCircle.backgroundColor = .white
+                    
+                    pin = framedBlueCircle
+                }else{
+                    let solidBlueCircle = Circle(size: .small, color: .tcatBlueColor, style: .solid)
+                    
+                    pin = solidBlueCircle
+                }
             
-        } else{
+            case .place:
             
-            let solidBlueCircle = Circle(size: .small, color: .tcatBlueColor, style: .solid)
+                if(index == destinationDot){
+                    let framedGreyCircle = Circle(size: .large, color: .lineColor, style: .bordered)
+                    framedGreyCircle.backgroundColor = .white
+                    
+                    pin = framedGreyCircle
+                }else{
+                    let solidGreyCircle = Circle(size: .small, color: .lineColor, style: .solid)
+                    
+                    pin = solidGreyCircle
+                }
             
-            return solidBlueCircle
+            case .currentLocation:
+            
+                let solidGreyCircle = Circle(size: .small, color: .lineColor, style: .solid)
+            
+                pin = solidGreyCircle
+            
         }
         
-        let errorCirlce = Circle(size: .small, color: .lineColor, style: .solid)
-        print("RouteDiagram getStopDot did not return a valid direction circle")
-        
-        return errorCirlce
-        
+        return pin
     }
     
-    private func getBusIcon(fromStopNums stopNums: [Int], atIndex index: Int) -> BusIcon?{
-        let busNum = stopNums[index]
-        
-        if(busNum >= 0){ //bus numbers cannot be negative
+    private func getBusIcon(fromRouteSummary routeSummary: [RouteSummaryObject], atIndex index: Int) -> BusIcon?{
+        if let busNum = routeSummary[index].busNumber {
             
-            let busIcon = BusIcon(size: .small, number: busNum)
+            let busIcon = BusIcon(type: .directionSmall, number: busNum)
             
             return busIcon
         }
@@ -156,27 +161,25 @@ class RouteDiagram: UIView{
         return nil
     }
     
-    private func getRouteLine(fromStopNums stopNums: [Int], atIndex index: Int) -> RouteLine?{
-        let stopNum = stopNums[index]
-        
-        let walk = -1
-        
-        if(stopNum >= 0){
+    private func getRouteLine(fromRouteSummary routeSummary: [RouteSummaryObject], atIndex index: Int) -> RouteLine?{
+        if let nextDirection = routeSummary[index].nextDirection {
             
-            let solidBlueRouteLine = SolidLine(height: RouteDiagram.routeLineHeight, color: .tcatBlueColor)
+            switch nextDirection {
+                
+                case .bus:
+                    let solidBlueRouteLine = SolidLine(height: RouteDiagram.routeLineHeight, color: .tcatBlueColor)
+                    
+                    return solidBlueRouteLine
+                
+                case .walk:
+                    let dashedGreyRouteLine = DashedLine(color: .mediumGrayColor)
+                    
+                    return dashedGreyRouteLine
+            }
             
-            return solidBlueRouteLine
-        }
-        else if(stopNum == walk){
-            
-            let dashedGreyRouteLine = DashedLine(color: .mediumGrayColor)
-            return dashedGreyRouteLine
-        }
-        else{
-
-            return nil
         }
         
+        return nil
     }
 
     // MARK: Style

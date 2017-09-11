@@ -20,7 +20,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
     var cellHeight: CGFloat = RouteDetailCellSize.largeHeight
     
-    var direction: DepartDirection!
+    var direction: Direction!
     var isExpanded: Bool = false
     let edgeSpacing: CGFloat = 16
     let labelSpacing: CGFloat = 4
@@ -77,7 +77,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     /** Precondition: Direction is BoardDirection */
     func setCell(_ direction: Direction, firstStep: Bool) {
                 
-        self.direction = direction as! DepartDirection
+        self.direction = direction
         cellHeight = height()
         
         let shouldAddViews = iconView == nil || busIconView == nil ||
@@ -86,12 +86,12 @@ class LargeDetailTableViewCell: UITableViewCell {
         if shouldAddViews {
             iconView = DetailIconView(height: cellHeight,
                                       type: IconType.busStart,
-                                      time: direction.timeDescription,
+                                      time: direction.startTimeDescription,
                                       firstStep: firstStep,
                                       lastStep: false)
             contentView.addSubview(iconView!)
             
-            busIconView = BusIcon(size: .small, number: self.direction.routeNumber)
+            busIconView = BusIcon(type: .directionSmall, number: self.direction.routeNumber)
             busIconView = formatBusIconView(busIconView, titleLabel)
             contentView.addSubview(busIconView)
             
@@ -110,7 +110,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     /** Abstracted formatting of content for titleLabel */
     func formatTitleLabel(_ label: UILabel) -> UILabel {
         
-        var busIconView = BusIcon(size: .small, number: self.direction.routeNumber)
+        var busIconView = BusIcon(type: .directionSmall, number: self.direction.routeNumber)
         busIconView = formatBusIconView(busIconView, label)
         
         // Add correct amount of spacing to create a gap for the busIcon
@@ -126,8 +126,8 @@ class LargeDetailTableViewCell: UITableViewCell {
         
         // Format and place labels
         let attributedString = NSMutableAttributedString(string: label.text!)
-        attributedString.append(bold(pattern: self.direction.place,
-                                     in: self.direction.placeDescription))
+        attributedString.append(bold(pattern: self.direction.locationName,
+                                     in: self.direction.locationNameDescription))
         label.attributedText = attributedString
         paragraphStyle.lineSpacing = 8
         
