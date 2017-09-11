@@ -39,7 +39,7 @@ class Route: NSObject, JSONDecodable {
         let jsonData = json["data"]
         departureTime = Date(timeIntervalSince1970: jsonData["departureTime"].doubleValue)
         arrivalTime = Date(timeIntervalSince1970: jsonData["arrivalTime"].doubleValue)
-        routeSummary = getRouteSummary(fromJson: jsonData["stopSummary"].arrayValue)
+        routeSummary = getRouteSummary(fromJson: jsonData["routeSummary"].arrayValue)
         // directions = directionJSON(json:json["directions"].arrayValue)
         path = CLLocationCoordinate2D.strToCoords(jsonData["kmls"].stringValue)
         
