@@ -309,7 +309,6 @@ CLLocationManagerDelegate {
                 })
             }
         }
-
     }
 
     private func getSearchTuple(startingDestinationTuple: (BusStop?, PlaceResult?), endingDestinationTuple: (BusStop?, PlaceResult?)) -> (startingDestination: AnyObject?, endingDestination: AnyObject?){
@@ -349,7 +348,6 @@ CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-
         locationManager.stopUpdatingLocation()
         print("OptionVC locationManager didFailWithError: \(error.localizedDescription)")
 
@@ -366,7 +364,6 @@ CLLocationManagerDelegate {
         alertController.addAction(settings)
 
         present(alertController, animated: true, completion: nil)
-
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -524,7 +521,7 @@ CLLocationManagerDelegate {
     }
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool{
-        navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
+        navigationController?.pushViewController(RouteDetailViewController(route: nil), animated: true) // routes[indexPath.row]
         return false // halts the selection process = don't have selected look
     }
 

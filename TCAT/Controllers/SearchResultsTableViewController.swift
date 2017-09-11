@@ -270,16 +270,19 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     }
     
     /* TableViewIndex Functions */
+    
     func tableViewIndex(_ tableViewIndex: TableViewIndex, didSelect item: UIView, at index: Int) {
         let arrayOfKeys = Array(sectionIndexes.keys).sorted()
         let currentLetter = arrayOfKeys[index]
         let indexPath = IndexPath(row: sectionIndexes[currentLetter]!, section: sections.count - 1)
+        // tableView.scrollToRow(at: indexPath, at: .top, animated: false)
         if #available(iOS 10.0, *) {
             let taptic = UIImpactFeedbackGenerator(style: .light)
             taptic.prepare()
             tableView.scrollToRow(at: indexPath, at: .top, animated: false)
             taptic.impactOccurred()
         } else { tableView.scrollToRow(at: indexPath, at: .top, animated: false) }
+        // return true
     }
     
     func indexItems(for tableViewIndex: TableViewIndex) -> [UIView] {
@@ -298,7 +301,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
                 let newYPosition = view.convert(tableViewIndexController.tableViewIndex.indexRect(), from: tableView).minY
                 if ((newYPosition * -1.0) < (secondCell?.frame.minY)! - view.bounds.midY) {
                     let offset = (secondCell?.frame.minY)! - initialTableViewIndexMinY - contentOffsetY - (-1.0 * (searchBar?.frame.midY)!)
-                    tableViewIndexController.tableViewIndex.indexOffset = .init(horizontal: 0.0, vertical: offset)
+                    tableViewIndexController.tableViewIndex.indexOffset = UIOffset(horizontal: 0.0, vertical: offset)
                     tableViewIndexController.setHidden(!visibleSections.contains(allStopsIndex), animated: true)
                 }
             }

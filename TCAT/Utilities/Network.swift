@@ -13,10 +13,9 @@ import GooglePlaces
 
 class Error: JSONDecodable {
     required init(json: JSON) {
-        //need to talk to shiv about what errors could be possibily returned
+        // need to talk to shiv about what errors could be possibily returned
     }
 }
-
 class AllBusStops: JSONDecodable {
     var allStops : [BusStop] = [BusStop]()
     
@@ -92,8 +91,7 @@ class AllBusLocations: JSONDecodable {
 
 class Network {
     
-    /// Make sure you are running localhost:3000 on your computer!
-    static let source = "localhost"
+    static let source = "localhost" // "10.132.10.30"
     static let tron = TRON(baseURL: "http://\(source):3000/api/v1/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
@@ -139,7 +137,6 @@ class Network {
                 startCoord.longitude = coords.longitude
                 callback(startCoord, endCoord)
             }
-            
         }
         else if let startPlaceResult = start as? PlaceResult, let endPlaceResult = end as? PlaceResult {
             getLocationFromPlaceId(placeId: startPlaceResult.placeID) { coords in
@@ -175,6 +172,7 @@ class Network {
         }
     }
     
+    
     class func getGooglePlaces(searchText: String) -> APIRequest<JSON, Error> {
         let googleJson = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
         let urlReadySearch = searchText.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
@@ -183,7 +181,7 @@ class Network {
         request.method = .get
         return request
     }
-    
+
     class func getLocationFromPlaceId(placeId: String, callback:@escaping ((CLLocationCoordinate2D) -> Void)) {
         placesClient.lookUpPlaceID(placeId) { place, error in
             if let error = error {

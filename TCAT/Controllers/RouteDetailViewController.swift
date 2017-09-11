@@ -32,10 +32,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     var bounds = GMSCoordinateBounds()
     
     var networkTimer: Timer? = nil
-    var buses = [GMSMarker]()
-    
     /// Number of seconds to wait before auto-refreshing network call
-    var refreshRate: Double = 15.0
+    var refreshRate: Double = 10.0
+    var buses = [GMSMarker]()
     
     var route: Route!
     var directions: [Direction] = []
@@ -57,9 +56,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     init (route: Route? = nil) {
         super.init(nibName: nil, bundle: nil)
         if route == nil {
-            guard let url = Bundle.main.url(forResource: "testNew", withExtension: "json")
-                else { print("Can't Find JSON"); return }
-            let json = try! JSON(data: Data(contentsOf: url))
+            let json = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "testNew", withExtension: "json")!))
             initializeRoute(route: try! Route(json: json))
         } else {
             initializeRoute(route: route!)
@@ -71,7 +68,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         self.route = route
         self.directions = route.directions
-        
         var accessedDirections = false
         for direction in directions {
             accessedDirections = true
@@ -159,8 +155,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             timer.invalidate()
         }
         
-        networkTimer = Timer.scheduledTimer(timeInterval: refreshRate, target: self, selector: #selector(getBusLocations),
-                                            userInfo: nil, repeats: true)
+        networkTimer = Timer.scheduledTimer(timeInterval: refreshRate, target: self, selector: #selector(getBusLocations),                         userInfo: nil, repeats: true)
         networkTimer!.fire()
         
     }
@@ -222,11 +217,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         guard let firstRoute = route.mainStopNums.first(where: { $0 > 0 })
             else { print("No valid main stop nums > 0!"); return }
-        
         Network.getBusLocations(routeID: String(firstRoute)).perform(
-            
             withSuccess: { (result) in
-                
                 print("[RouteDetailViewController] Success!")
                 self.updateBusLocations(busLocations: result.allBusLocations)
                 
@@ -235,8 +227,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             print("Error:", error)
             
         }
-        
-        
+
     }
     
     func updateBusLocations(busLocations: [BusLocation]) {
@@ -247,25 +238,25 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             
             let busCoords = CLLocationCoordinate2DMake(bus.latitude, bus.longitude)
             let existingBus = buses.first(where: {
-                // print("$0:", $0)
-                // print("$0.userData:", $0.userData)
-                // print("$0.userData as? BusLocation:", $0.userData as? BusLocation)
-                // print("($0.userData as? BusLocation)?.vehicleID:", ($0.userData as? BusLocation)?.vehicleID)
+                print("$0:", $0)
+                print("$0.userData:", $0.userData)
+                print("$0.userData as? BusLocation:", $0.userData as? BusLocation)
+                print("($0.userData as? BusLocation)?.vehicleID:", ($0.userData as? BusLocation)?.vehicleID)
                 return ($0.userData as? BusLocation)?.vehicleID == bus.vehicleID
             })
             
-            // print("existingBus ID:", (existingBus?.userData as? BusLocation)?.vehicleID)
-            // print("bus ID:", bus.vehicleID)
+            print("existingBus ID:", (existingBus?.userData as? BusLocation)?.vehicleID)
+            print("bus ID:", bus.vehicleID)
             
             // If bus is already on map, update and animate change
             if existingBus != nil {
                 UIView.animate(withDuration: 1.0, delay: 0, options: .curveEaseInOut, animations: {
+                    print("Animating!")
                     existingBus?.userData = bus
                     existingBus?.position = busCoords
                 })
             }
-                
-                // Otherwise, add bus to map
+            // Otherwise, add bus to map
             else {
                 let marker = GMSMarker(position: busCoords)
                 marker.iconView = bus.iconView

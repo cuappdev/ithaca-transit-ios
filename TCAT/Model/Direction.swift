@@ -33,12 +33,20 @@ class Direction: NSObject {
     
     var startTime: Date
     var endTime: Date
+    var routeNumber: Int
+    var bound: Bound
+    var stops: [String]
+    var arrivalTime: Date
     
-    // MARK: Special Depart Direction
-    
-    var busStops: [String] = []
-    var routeNumber: Int = 0
-    
+    /*To extract travelTime's times in day, hour, and minute units:
+     * let days: Int = travelTime.day
+     * let hours: Int = travelTime.hour
+     * let minutes: Int = travelTime.minute
+     */
+    var travelTime: DateComponents {
+        return Time.dateComponents(from: time, to: arrivalTime)
+    }
+
     init(type: DirectionType,
          locationName: String,
          startLocation: CLLocation,
@@ -56,9 +64,11 @@ class Direction: NSObject {
         self.endTime = endTime
         self.busStops = busStops
         self.routeNumber = routeNumber
-        
+        self.bound = bound
+        self.stops = stops
+        self.arrivalTime = arrivalTime
     }
-    
+
     convenience init(name: String) {
         
         let location = CLLocation()
@@ -115,7 +125,8 @@ class Direction: NSObject {
         let numberOfPlaces = distance >= 10 ? 0 : 1
         return distance.roundToPlaces(places: numberOfPlaces)
     }
-    
+    var location: CLLocation
+
     /// Returns custom description for locationName based on DirectionType
     var locationNameDescription: String {
         switch type {

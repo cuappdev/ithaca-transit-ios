@@ -222,16 +222,19 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     /* Get all bus stops and store in userDefaults */
     func getBusStops() {
+        print("getBusStops start")
         Network.getAllStops().perform(withSuccess: { stops in
+            print("stops:", stops)
             self.userDefaults.set([BusStop](), forKey: "allBusStops")
             let allBusStops = stops.allStops
             let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
             self.userDefaults.set(data, forKey: "allBusStops")
             self.allStopsSection = Section(type: .allStops, items: prepareAllBusStopItems(allBusStops: getAllBusStops()))
-            self.sections = self.createSections()
-        }, failure: {error in
+            self.sections = self.recentLocations.isEmpty ? [self.cornellDestinationSection,self.allStopsSection] : [self.cornellDestinationSection,self.recentSearchesSection, self.allStopsSection]
+        }, failure: { error in
             print("Error when getting all stops", error)
         })
+        print("getBusStops end")
     }
     
     /* Keyboard Functions */
@@ -308,12 +311,14 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let arrayOfKeys = Array(sectionIndexes.keys).sorted()
         let currentLetter = arrayOfKeys[index]
         let indexPath = IndexPath(row: sectionIndexes[currentLetter]!, section: sections.count - 1)
+        // tableView.scrollToRow(at: indexPath, at: .top, animated: false)
         if #available(iOS 10.0, *) {
             let taptic = UIImpactFeedbackGenerator(style: .light)
             taptic.prepare()
             tableView.scrollToRow(at: indexPath, at: .top, animated: false)
             taptic.impactOccurred()
         } else { tableView.scrollToRow(at: indexPath, at: .top, animated: false) }
+        // return true
     }
     
     func setUpIndexBar(contentOffsetY: CGFloat) {
@@ -324,7 +329,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 let newYPosition = view.convert(tableViewIndexController.tableViewIndex.indexRect(), from: tableView).minY
                 if ((newYPosition * -1.0) < (secondCell?.frame.minY)! - view.bounds.midY) {
                     let offset = (secondCell?.frame.minY)! - initialTableViewIndexMidY - contentOffsetY
-                    tableViewIndexController.tableViewIndex.indexOffset = .init(horizontal: 0.0, vertical: offset)
+                    tableViewIndexController.tableViewIndex.indexOffset = UIOffset(horizontal: 0.0, vertical: offset)
                     tableViewIndexController.setHidden(!visibleSections.contains(allStopsIndex), animated: true)
                 }
             }
