@@ -1,5 +1,5 @@
 PODS:
-  - Alamofire (4.5.0)
+  - Alamofire (4.5.1)
   - DZNEmptyDataSet (1.8.1)
   - GoogleMaps (2.4.0):
     - GoogleMaps/Maps (= 2.4.0)
@@ -40,7 +40,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/mindz-eye/MYTableViewIndex.git
 
 SPEC CHECKSUMS:
-  Alamofire: f28cdffd29de33a7bfa022cbd63ae95a27fae140
+  Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   GoogleMaps: 8436ab5d1c25e36915b2f7416d0c8e3fa2e76c61
   GooglePlaces: aafe5990fa7951e98e078761bbdaaf236d7e0c65
