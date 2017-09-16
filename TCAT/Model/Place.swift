@@ -27,10 +27,8 @@ class Place: NSObject, NSCoding {
     
     // MARK: NSCoding
     
-    required convenience init(coder aDecoder: NSCoder) {
-        let name = aDecoder.decodeObject(forKey: "name") as! String
-        
-        self.init(name: name)
+    required init(coder aDecoder: NSCoder) {
+        name = aDecoder.decodeObject(forKey: "name") as! String
     }
     
     public func encode(with aCoder: NSCoder) {

@@ -222,7 +222,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     /* Get all bus stops and store in userDefaults */
     func getBusStops() {
-        print("getBusStops start")
         Network.getAllStops().perform(withSuccess: { stops in
             print("stops:", stops)
             self.userDefaults.set([BusStop](), forKey: "allBusStops")
@@ -234,7 +233,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         }, failure: { error in
             print("Error when getting all stops", error)
         })
-        print("getBusStops end")
     }
     
     /* Keyboard Functions */

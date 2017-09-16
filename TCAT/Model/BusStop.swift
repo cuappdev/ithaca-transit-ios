@@ -34,18 +34,17 @@ class BusStop: Place {
     
     // MARK: NSCoding
     
-    required convenience init(coder aDecoder: NSCoder) {
-        let name = aDecoder.decodeObject(forKey: "name") as! String
-        let latitude = aDecoder.decodeObject(forKey: "latitude") as! CLLocationDegrees
-        let longitude = aDecoder.decodeObject(forKey: "longitude") as! CLLocationDegrees
+    required init(coder aDecoder: NSCoder) {
+        lat = aDecoder.decodeObject(forKey: "latitude") as! CLLocationDegrees
+        long = aDecoder.decodeObject(forKey: "longitude") as! CLLocationDegrees
         
-        self.init(name: name, lat: latitude, long: longitude)
+        super.init(coder: aDecoder)
     }
     
-    public override func encode(with aCoder: NSCoder) {
-        super.encode(with: aCoder)
-        
+    public override func encode(with aCoder: NSCoder) {        
         aCoder.encode(self.lat, forKey: "latitude")
         aCoder.encode(self.long, forKey: "longitude")
+        
+        super.encode(with: aCoder)
     }
 }
