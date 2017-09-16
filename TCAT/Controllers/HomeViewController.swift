@@ -224,10 +224,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func getBusStops() {
         Network.getAllStops().perform(withSuccess: { stops in
             print("stops:", stops)
-            self.userDefaults.set([BusStop](), forKey: "allBusStops")
+            self.userDefaults.set([BusStop](), forKey: Key.UserDefaults.allBusStops)
             let allBusStops = stops.allStops
             let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
-            self.userDefaults.set(data, forKey: "allBusStops")
+            self.userDefaults.set(data, forKey: Key.UserDefaults.allBusStops)
             self.allStopsSection = Section(type: .allStops, items: prepareAllBusStopItems(allBusStops: getAllBusStops()))
             self.sections = self.recentLocations.isEmpty ? [self.cornellDestinationSection,self.allStopsSection] : [self.cornellDestinationSection,self.recentSearchesSection, self.allStopsSection]
         }, failure: { error in

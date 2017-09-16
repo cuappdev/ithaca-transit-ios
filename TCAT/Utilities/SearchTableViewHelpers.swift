@@ -33,7 +33,7 @@ enum ItemType {
 }
 
 func retrieveRecentLocations() -> [ItemType] {
-    if let recentLocations = userDefaults.value(forKey: "recentSearch") as? Data {
+    if let recentLocations = userDefaults.value(forKey: Key.UserDefaults.recentSearch) as? Data {
         let recentSearches = NSKeyedUnarchiver.unarchiveObject(with: recentLocations) as! [Any]
         var itemTypes: [ItemType] = []
         for search in recentSearches {
@@ -63,11 +63,12 @@ func insertRecentLocation(location: Any) {
     var updatedRecentLocations = [location] + filteredLocations
     if updatedRecentLocations.count > 8 { updatedRecentLocations.remove(at: updatedRecentLocations.count - 1)}
     let data = NSKeyedArchiver.archivedData(withRootObject: updatedRecentLocations)
-    userDefaults.set(data, forKey: "recentSearch")
+    userDefaults.set(data, forKey: Key.UserDefaults.recentSearch)
 }
 
+import CoreLocation.CLLocation
 func getAllBusStops() -> [BusStop] {
-    if let allBusStops = userDefaults.value(forKey: "allBusStops") as? Data,
+    if let allBusStops = userDefaults.value(forKey: Key.UserDefaults.allBusStops) as? Data,
         let busStopArray = NSKeyedUnarchiver.unarchiveObject(with: allBusStops) as? [BusStop] {
             return busStopArray
     }

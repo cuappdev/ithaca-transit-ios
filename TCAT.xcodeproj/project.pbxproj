@@ -40,6 +40,8 @@
 		DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */; };
 		DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */; };
 		DD87F20A1E878CB5000C244B /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD87F2091E878CB5000C244B /* Loader.swift */; };
+		DD99E2F41F6DB0410073E8F7 /* FontConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F31F6DB0410073E8F7 /* FontConstants.swift */; };
+		DD99E2F61F6DB06A0073E8F7 /* KeyConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */; };
 		DDA134451EC6A8CB00460B18 /* RouteLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA134441EC6A8CB00460B18 /* RouteLine.swift */; };
 		DDB49C941E8857D000A99C35 /* RouteDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C921E8857D000A99C35 /* RouteDetailViewController.swift */; };
 		DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */; };
@@ -122,6 +124,8 @@
 		DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Regular.otf"; path = "Resources/SFText-Regular.otf"; sourceTree = "<group>"; };
 		DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Semibold.otf"; path = "Resources/SFText-Semibold.otf"; sourceTree = "<group>"; };
 		DD87F2091E878CB5000C244B /* Loader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Loader.swift; path = Utilities/Loader.swift; sourceTree = "<group>"; };
+		DD99E2F31F6DB0410073E8F7 /* FontConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FontConstants.swift; path = "Supporting Files/FontConstants.swift"; sourceTree = "<group>"; };
+		DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KeyConstants.swift; path = "Supporting Files/KeyConstants.swift"; sourceTree = "<group>"; };
 		DDA134441EC6A8CB00460B18 /* RouteLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteLine.swift; path = Views/RouteLine.swift; sourceTree = "<group>"; };
 		DDB49C921E8857D000A99C35 /* RouteDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDetailViewController.swift; path = Controllers/RouteDetailViewController.swift; sourceTree = "<group>"; };
 		DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LargeDetailTableViewCell.swift; path = Cells/LargeDetailTableViewCell.swift; sourceTree = "<group>"; };
@@ -257,6 +261,8 @@
 		50A19BA81E4BC5BC00AD6768 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */,
+				DD99E2F31F6DB0410073E8F7 /* FontConstants.swift */,
 				505E00E81E9ED6BC00F09BAE /* config.json */,
 				449A7C841D80D0E80019300C /* Info.plist */,
 			);
@@ -702,6 +708,8 @@
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
 				DD87F20A1E878CB5000C244B /* Loader.swift in Sources */,
 				DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */,
+				DD99E2F61F6DB06A0073E8F7 /* KeyConstants.swift in Sources */,
+				DD99E2F41F6DB0410073E8F7 /* FontConstants.swift in Sources */,
 				D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */,
 				503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */,
 				DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */,

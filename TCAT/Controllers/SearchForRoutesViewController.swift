@@ -503,7 +503,7 @@ CLLocationManagerDelegate {
         let titleVeticalSpaceFromSuperview: CGFloat = 24.0
 
         let titleLabel = UILabel(frame: CGRect(x: titleLeftSpaceFromSuperview, y: titleVeticalSpaceFromSuperview, width: 88.0, height: 17.0))
-        titleLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
+        titleLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
         titleLabel.textColor = UIColor.secondaryTextColor
         titleLabel.text = self.tableView(tableView, titleForHeaderInSection: section)
         titleLabel.sizeToFit()

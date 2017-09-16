@@ -185,12 +185,12 @@ class RouteDiagram: UIView{
     // MARK: Style
     
     private func styleStopLabel(_ stopLabel: UILabel){
-        stopLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
+        stopLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
         stopLabel.textColor = .primaryTextColor
     }
     
     private func styleDistanceLabel(){
-        travelDistanceLabel.font = UIFont(name: "SFUIText-Regular", size: 12.0)
+        travelDistanceLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)
         travelDistanceLabel.textColor = .mediumGrayColor
     }
     

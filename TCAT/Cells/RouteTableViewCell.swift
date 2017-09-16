@@ -136,12 +136,12 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Style
     
     private func styleTravelTime(){
-        travelTimeLabel.font = UIFont(name: "SFUIText-Medium", size: 14.0)
+        travelTimeLabel.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 14.0)
         travelTimeLabel.textColor = .primaryTextColor
     }
     
     private func styleDepartureTime(){
-        departureTimeLabel.font = UIFont(name: "SFUIText-Medium", size: 14.0)
+        departureTimeLabel.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 14.0)
         departureTimeLabel.textColor = .tcatBlueColor
     }
     
