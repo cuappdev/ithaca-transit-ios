@@ -14,6 +14,9 @@ class PlaceResult: Place, JSONDecodable {
     var detail: String
     var placeID: String
     
+    private let detailKey = "detail"
+    private let placeIDKey = "placeID"
+    
     init(name: String, detail: String, placeID: String) {
         self.detail = detail
         self.placeID = placeID
@@ -44,15 +47,15 @@ class PlaceResult: Place, JSONDecodable {
     // MARK: NSCoding
     
     required init(coder aDecoder: NSCoder) {
-        detail = aDecoder.decodeObject(forKey: "detail") as! String
-        placeID = aDecoder.decodeObject(forKey: "placeID") as! String
+        detail = aDecoder.decodeObject(forKey: detailKey) as! String
+        placeID = aDecoder.decodeObject(forKey: placeIDKey) as! String
         
         super.init(coder: aDecoder)
     }
     
     public override func encode(with aCoder: NSCoder) {        
-        aCoder.encode(self.detail, forKey: "detail")
-        aCoder.encode(self.placeID, forKey: "placeID")
+        aCoder.encode(self.detail, forKey: detailKey)
+        aCoder.encode(self.placeID, forKey: placeIDKey)
         
         super.encode(with: aCoder)
     }

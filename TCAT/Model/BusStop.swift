@@ -13,6 +13,9 @@ class BusStop: Place {
     var lat: CLLocationDegrees
     var long: CLLocationDegrees
     
+    private let latKey = "latitude"
+    private let longKey = "longitude"
+    
     init(name: String, lat: CLLocationDegrees, long: CLLocationDegrees) {
         self.lat = lat
         self.long = long
@@ -35,15 +38,15 @@ class BusStop: Place {
     // MARK: NSCoding
     
     required init(coder aDecoder: NSCoder) {
-        lat = aDecoder.decodeObject(forKey: "latitude") as! CLLocationDegrees
-        long = aDecoder.decodeObject(forKey: "longitude") as! CLLocationDegrees
+        lat = aDecoder.decodeObject(forKey: latKey) as! CLLocationDegrees
+        long = aDecoder.decodeObject(forKey: longKey) as! CLLocationDegrees
         
         super.init(coder: aDecoder)
     }
     
     public override func encode(with aCoder: NSCoder) {        
-        aCoder.encode(self.lat, forKey: "latitude")
-        aCoder.encode(self.long, forKey: "longitude")
+        aCoder.encode(self.lat, forKey: latKey)
+        aCoder.encode(self.long, forKey: longKey)
         
         super.encode(with: aCoder)
     }

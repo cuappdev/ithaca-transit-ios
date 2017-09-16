@@ -12,6 +12,8 @@ class Place: NSObject, NSCoding {
 
     var name: String
     
+    private let nameKey = "name"
+    
     init(name: String){
         self.name = name
     }
@@ -28,10 +30,10 @@ class Place: NSObject, NSCoding {
     // MARK: NSCoding
     
     required init(coder aDecoder: NSCoder) {
-        name = aDecoder.decodeObject(forKey: "name") as! String
+        name = aDecoder.decodeObject(forKey: nameKey) as! String
     }
     
     public func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.name, forKey: "name")
+        aCoder.encode(self.name, forKey: nameKey)
     }
 }
