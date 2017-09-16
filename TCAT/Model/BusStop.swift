@@ -38,8 +38,8 @@ class BusStop: Place {
     // MARK: NSCoding
     
     required init(coder aDecoder: NSCoder) {
-        lat = aDecoder.decodeObject(forKey: latKey) as! CLLocationDegrees
-        long = aDecoder.decodeObject(forKey: longKey) as! CLLocationDegrees
+        lat = aDecoder.decodeDouble(forKey: latKey)
+        long = aDecoder.decodeDouble(forKey: longKey)
         
         super.init(coder: aDecoder)
     }
