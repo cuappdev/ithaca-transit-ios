@@ -66,7 +66,6 @@ func insertRecentLocation(location: Any) {
     userDefaults.set(data, forKey: Key.UserDefaults.recentSearch)
 }
 
-import CoreLocation.CLLocation
 func getAllBusStops() -> [BusStop] {
     if let allBusStops = userDefaults.value(forKey: Key.UserDefaults.allBusStops) as? Data,
         let busStopArray = NSKeyedUnarchiver.unarchiveObject(with: allBusStops) as? [BusStop] {
