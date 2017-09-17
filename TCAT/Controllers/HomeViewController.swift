@@ -13,19 +13,17 @@ import Alamofire
 import MYTableViewIndex
 import DZNEmptyDataSet
 
-class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, TableViewIndexDelegate, TableViewIndexDataSource {
+class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, TableViewIndexDelegate, TableViewIndexDataSource, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     let userDefaults = UserDefaults.standard
     let cornellDestinations = [(name: "North Campus", stops: "RPCC, Balch Hall, Appel, Helen Newman, Jessup Field"),
                                (name: "West Campus", stops: "Baker Flagpole, Baker Flagpole (Slopeside)"),
                                (name: "Central Campus", stops: "Statler Hall, Uris Hall, Goldwin Smith Hall"),
                                (name: "Collegetown", stops: "Collegetown Crossing, Schwartz Center"),
                                (name: "Ithaca Commons", stops: "Albany @ Salvation Army, State Street, Lot 32")]
-    
-    var cornellDestinationSection: Section!
-    var recentSearchesSection: Section!
-    var allStopsSection: Section!
-    var searchResultsSection: Section!
+
     var timer: Timer?
+    var isNetworkDown = false
+    var searchResultsSection: Section!
     var sectionIndexes: [String: Int]!
     var tableView : UITableView!
     var tableViewIndexController: TableViewIndexController!
@@ -71,6 +69,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
+
         tableView.separatorColor = .lineColor
         tableView.keyboardDismissMode = .onDrag
         tableView.emptyDataSetSource = self
@@ -80,11 +81,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "searchResults")
         tableView.register(CornellDestinationCell.self, forCellReuseIdentifier: "cornellDestinations")
         view.addSubview(tableView)
-        cornellDestinationSection = Section(type: .cornellDestination, items: [.cornellDestination])
-        let allBusStops = getAllBusStops()
-        allStopsSection = Section(type: .allStops, items: prepareAllBusStopItems(allBusStops: allBusStops))
-        recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
-        searchResultsSection = Section(type: .searchResults, items: [])
         sections = createSections()
         
         tableViewIndexController = TableViewIndexController(tableView: tableView)
@@ -97,9 +93,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        print("booo ya")
         recentLocations = retrieveRecentLocations()
-        recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
         if searchBar.showsCancelButton {
             searchBar.becomeFirstResponder()
             tableViewIndexController.setHidden(true, animated: false)
@@ -109,6 +103,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     func createSections() -> [Section] {
         var allSections: [Section] = []
+        let allBusStops = getAllBusStops()
+        let allStopsSection = Section(type: .allStops, items: prepareAllBusStopItems(allBusStops: allBusStops))
+        let recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
+        let cornellDestinationSection = Section(type: .cornellDestination, items: [.cornellDestination])
         allSections.append(cornellDestinationSection)
         allSections.append(recentSearchesSection)
         allSections.append(allStopsSection)
@@ -219,19 +217,45 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.endEditing(true)
         navigationController?.pushViewController(optionsVC, animated: true)
     }
+
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
+        return -80.0
+    }
+
+    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        return #imageLiteral(resourceName: "emptyPin")
+    }
+
+    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        let title = isNetworkDown ? "No network connection" : "Location not found"
+        let attrs = [NSForegroundColorAttributeName: UIColor.mediumGrayColor]
+        return NSAttributedString(string: title, attributes: attrs)
+    }
+
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControlState) -> NSAttributedString! {
+        let buttonTitle = isNetworkDown ? "Try Again" : ""
+        let attrs = [NSForegroundColorAttributeName: UIColor.blue]
+        return NSAttributedString(string: buttonTitle, attributes: attrs)
+    }
+
+    func emptyDataSet(_ scrollView: UIScrollView!, didTap button: UIButton!) {
+        getBusStops()
+    }
+
     
     /* Get all bus stops and store in userDefaults */
     func getBusStops() {
         Network.getAllStops().perform(withSuccess: { stops in
-            print("stops:", stops)
+            self.isNetworkDown = false
             self.userDefaults.set([BusStop](), forKey: Key.UserDefaults.allBusStops)
             let allBusStops = stops.allStops
             let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
             self.userDefaults.set(data, forKey: Key.UserDefaults.allBusStops)
-            self.allStopsSection = Section(type: .allStops, items: prepareAllBusStopItems(allBusStops: getAllBusStops()))
-            self.sections = self.recentLocations.isEmpty ? [self.cornellDestinationSection,self.allStopsSection] : [self.cornellDestinationSection,self.recentSearchesSection, self.allStopsSection]
+            self.sections = self.createSections()
         }, failure: { error in
             print("Error when getting all stops", error)
+            self.isNetworkDown = true
+            self.sections = []
         })
     }
     

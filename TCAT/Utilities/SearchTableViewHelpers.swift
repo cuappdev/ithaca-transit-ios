@@ -124,21 +124,6 @@ func parseGoogleJSON(searchText: String, json: JSON) -> Section {
 
 
 /* DZNEmptyDataSet DataSource */
-extension HomeViewController: DZNEmptyDataSetSource {
-    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
-        return -80.0
-    }
-    
-    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        return #imageLiteral(resourceName: "emptyPin")
-    }
-    
-    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let locationNotFound = "Location not found"
-        let attrs = [NSForegroundColorAttributeName: UIColor.mediumGrayColor]
-        return NSAttributedString(string: locationNotFound, attributes: attrs)
-    }
-}
 
 extension SearchResultsTableViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
