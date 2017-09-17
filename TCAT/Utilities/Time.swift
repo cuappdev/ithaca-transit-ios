@@ -61,8 +61,8 @@ class Time{
      - throws:
      Error if string not formatted in "h:mm a"
      */
-    static func date(from string: String) -> Date{
-        //Get date
+    static func dateForDebug(from string: String) -> Date{
+        // Get date
         if string.isEmpty {
             print("Hey! YOU THE JSON ISN'T FORMATTED CORRECTLY")
             return Date()}

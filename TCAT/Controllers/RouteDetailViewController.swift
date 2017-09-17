@@ -128,10 +128,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.formatNavigationController()
         self.initializeDetailView()
-                
+        
         // Set up Location Manager
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
@@ -148,8 +148,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             timer.invalidate()
         }
         
-        networkTimer = Timer.scheduledTimer(timeInterval: refreshRate, target: self, selector: #selector(getBusLocations),
-                             userInfo: nil, repeats: true)
+        networkTimer = Timer.scheduledTimer(timeInterval: refreshRate, target: self, selector: #selector(getBusLocations),                         userInfo: nil, repeats: true)
         networkTimer!.fire()
         
     }
@@ -188,7 +187,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-                
+        
         if let newCoord = locations.last?.coordinate {
             currentLocation = newCoord
         }
@@ -197,7 +196,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         centerMap(topHalfCentered: true)
         
     }
-
+    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         print(error)
     }
@@ -212,9 +211,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             else { print("[RouteDetailViewController] Couldn't find any valid bus routes"); return }
        
         Network.getBusLocations(routeID: String(firstRoute.routeNumber)).perform(
-            
+        
             withSuccess: { (result) in
-            
                 print("[RouteDetailViewController] Success!")
                 self.updateBusLocations(busLocations: result.allBusLocations)
                 
@@ -223,7 +221,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             print("Error:", error)
             
         }
-        
 
     }
     
@@ -246,7 +243,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                     existingBus?.position = busCoords
                 })
             }
-            
             // Otherwise, add bus to map
             else {
                 let marker = GMSMarker(position: busCoords)
@@ -303,7 +299,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             }
             
         }
-
+        
     }
     
     /** Set title, buttons, and style of navigation controller */
@@ -406,7 +402,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         // Create and place all bus routes in Directions (account for small screens)
         var icon_maxY: CGFloat = 24; var first = true
-        let mainStopCount = route.mainStopNums.filter { $0 != -1 }.count
+        let mainStopCount = route.stop
         var center = CGPoint(x: icon_maxY, y: (summaryView.frame.height / 2) + pullerHeight)
         for direction in directions {
             if direction.type == .depart{
@@ -678,3 +674,4 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     }
     
 }
+

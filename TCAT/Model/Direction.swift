@@ -57,8 +57,8 @@ class Direction: NSObject {
         self.startTime = startTime
         self.path = path
         self.endTime = endTime
-        self.busStops = busStops
         self.routeNumber = routeNumber
+        self.busStops = busStops
     }
 
     convenience init(name: String) {
@@ -110,11 +110,6 @@ class Direction: NSObject {
     
     // MARK: Descriptions / Functions
     
-    /// Returns DateComponents describing difference between start and end time
-    var travelTime: DateComponents {
-        return Time.dateComponents(from: startTime, to: endTime)
-    }
-    
     /// Distance between start and end locations in miles
     var travelDistance: Double {
         let metersInMile = 1609.34
@@ -157,7 +152,7 @@ class Direction: NSObject {
         formatter.timeStyle = .short
         return formatter.string(from: time)
     }
-    
+
     static func coordsEqual(_ lhs: CLLocationCoordinate2D, _ rhs: CLLocationCoordinate2D) -> Bool {
         
         func rnd(_ number: Double, to place: Int = 6) -> Double {

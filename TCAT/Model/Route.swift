@@ -30,12 +30,8 @@ class Route: NSObject, JSONDecodable {
     var startCoords: CLLocationCoordinate2D = CLLocationCoordinate2D()
     var endCoords: CLLocationCoordinate2D = CLLocationCoordinate2D()
     var directions: [Direction] = [Direction]()
-    var mainStops: [String] = [String]()
-    var allStops : [String] = [String]()
-    var mainStopNums: [Int] = [Int]() // n > 0 for bus number, -1 for walking, -2 for destinations that are bus stops, -3 for destinations that are places
-    var travelDistance: Double = 0.0 // of first stop
-    var lastStopTime: Date = Date() // the critical last time a bus route runs
-    
+    var routeSummary [Any] = []
+
     required init(json: JSON) throws {
         super.init()
         
@@ -49,6 +45,7 @@ class Route: NSObject, JSONDecodable {
                                longitude: jsonData["startCoords"]["longitude"].doubleValue)
         endCoords = CLLocationCoordinate2D(latitude: jsonData["endCoords"]["latitude"].doubleValue,
                                            longitude: jsonData["endCoords"]["longitude"].doubleValue)
+        
         
         directions = jsonData["directions"].arrayValue.flatMap { (directionJSON) -> Direction in
             return Direction(from: directionJSON)
@@ -65,37 +62,35 @@ class Route: NSObject, JSONDecodable {
         
     }
     
-    init(departureTime: Date, arrivalTime: Date, directions: [Direction], mainStops: [String], mainStopsNums: [Int], travelDistance: Double, lastStopTime: Date = Date()) {
+    init(departureTime: Date,
+         arrivalTime: Date,
+         routeSummary: [RouteSummaryObject],
+         directions: [Direction],,
+) {
+        
         self.departureTime = departureTime
         self.arrivalTime = arrivalTime
+        self.routeSummary = routeSummary
         self.directions = directions
-        self.mainStops = mainStops
-        self.mainStopNums = mainStopsNums
+        self.path = path
         self.travelDistance = travelDistance
         self.lastStopTime = lastStopTime
     }
+    
+    private func getRouteSummary(fromJson json: [JSON]) -> [RouteSummaryObject] {
+        var routeSummary = [RouteSummaryObject]()
+        for routeSummaryJson in json {
+            let routeSummaryObject = try! RouteSummaryObject(json: routeSummaryJson)
+            routeSummary.append(routeSummaryObject)
+        }
+        
+        return routeSummary
+    }
 
-    /// Modify mainStops and mainStopsNums to include the destination place result
-    func addPlaceDestination(_ placeDestination: PlaceResult){
-        mainStopNums[mainStops.count - 1] = -2 //to add walk line from last bus stop to place result destination
-        mainStops.append(placeDestination.name!)
-        mainStopNums.append(-3) //place result destination dot
+    /// Modify the last routeSummaryObject to include name of the destination place result
+    func updatePlaceDestination(_ placeDestination: PlaceResult){
+        routeSummary[routeSummary.count - 1].name = placeDestination.name
     }
     
-    //For debugging purposes
-    func printRoute(){
-        var mainStopsStr = "("
-        for mainStop in mainStops{
-            mainStopsStr += "\(mainStop), "
-        }
-        mainStopsStr += ")"
-        var mainStopsNumsStr = "("
-        for mainStopNum in mainStopNums{
-            mainStopsNumsStr += "\(mainStopNum), "
-        }
-        mainStopsNumsStr += ")"
-        print("departureTime: \(departureTime), arrivalTime: \(arrivalTime)")
-        print("mainStops: \(mainStopsStr), mainStopsNums:  \(mainStopsNumsStr)")
-    }
 }
 
