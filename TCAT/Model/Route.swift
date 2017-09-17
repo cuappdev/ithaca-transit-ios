@@ -21,11 +21,14 @@ class Route: NSObject, JSONDecodable {
     
     var departureTime: Date = Date()
     var arrivalTime: Date = Date()
+    
     var timeUntilDeparture: DateComponents {
         let now = Date() //curent date
         return Time.dateComponents(from: now, to: departureTime)
     }
     
+    var startCoords: CLLocationCoordinate2D = CLLocationCoordinate2D()
+    var endCoords: CLLocationCoordinate2D = CLLocationCoordinate2D()
     var directions: [Direction] = [Direction]()
     var mainStops: [String] = [String]()
     var allStops : [String] = [String]()
@@ -35,18 +38,31 @@ class Route: NSObject, JSONDecodable {
     
     required init(json: JSON) throws {
         super.init()
+        
         print(json["data"])
+        
         let jsonData = json["data"]
+        
         departureTime = Date(timeIntervalSince1970: jsonData["departureTime"].doubleValue)
         arrivalTime = Date(timeIntervalSince1970: jsonData["arrivalTime"].doubleValue)
-        // directions = directionJSON(json:json["directions"].arrayValue)
-        mainStops = jsonData["mainStops"].arrayObject as! [String]
-        mainStopNums = jsonData["mainStopNums"].arrayObject as! [Int]
-        path = CLLocationCoordinate2D.strToCoords(jsonData["kmls"].stringValue)
+        startCoords = CLLocationCoordinate2D(latitude: jsonData["startCoords"]["latitude"].doubleValue,
+                               longitude: jsonData["startCoords"]["longitude"].doubleValue)
+        endCoords = CLLocationCoordinate2D(latitude: jsonData["endCoords"]["latitude"].doubleValue,
+                                           longitude: jsonData["endCoords"]["longitude"].doubleValue)
         
-        travelDistance = directions.first != nil ? directions.first!.travelDistance : 0.0
+        directions = jsonData["directions"].arrayValue.flatMap { (directionJSON) -> Direction in
+            return Direction(from: directionJSON)
+        }
         
-        lastStopTime = Date()
+        var index = 0
+        var kmlData = jsonData["kmls"].arrayObject as! [String]
+        for direction in directions {
+            if direction.type == .depart {
+                direction.path = CLLocationCoordinate2D.strToCoords(kmlData[index])
+                index += 1
+            }
+        }
+        
     }
     
     init(departureTime: Date, arrivalTime: Date, directions: [Direction], mainStops: [String], mainStopsNums: [Int], travelDistance: Double, lastStopTime: Date = Date()) {

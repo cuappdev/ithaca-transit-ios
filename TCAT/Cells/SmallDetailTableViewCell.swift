@@ -39,8 +39,6 @@ class SmallDetailTableViewCell: UITableViewCell {
     
     func setCell(_ direction: Direction, busEnd: Bool, firstStep: Bool, lastStep: Bool) {
         
-        print("Direction of \(direction.locationName): \(busEnd ? IconType.busEnd : IconType.noBus) - firstStep: \(firstStep) • lastStep: \(lastStep)")
-        
         let shouldAddSubview = iconView == nil
         iconView = DetailIconView(height: cellHeight,
                                   type: busEnd ? IconType.busEnd: IconType.noBus,
@@ -58,6 +56,9 @@ class SmallDetailTableViewCell: UITableViewCell {
             var walkString = lastStep ? "Arrive at \(direction.locationName)" : direction.locationNameDescription
             walkString += " (\(direction.travelDistance) mi)"
             titleLabel.attributedText = bold(pattern: direction.locationName, in: walkString)
+            if lastStep {
+                iconView?.changeTime(direction.endTimeDescription)
+            }
         }
         
         titleLabel.sizeToFit()

@@ -68,61 +68,53 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         self.route = route
         self.directions = route.directions
-
-        var accessedDirections = false
-        for direction in directions {
-            accessedDirections = true
-            print("\(direction)")
-        }; if !accessedDirections { print("Directions array is empty!") }
         
-        var routeWaypoints: [Waypoint] = []
-        
-        // TODO: Finish Refactoring
-        
-        // Plot Bus Directions
-        for index in 0..<route.path.count {
+        // Plot the paths of all directions
+        for (arrayIndex, direction) in directions.enumerated() {
             
-            let point = route.path[index]
+            var waypoints: [Waypoint] = []
             
-            let type: WaypointType = {
-                switch index {
-                    case 0 : return .origin
-                    case (route.path.count / 2) : return .stop
-                    // case index == route.path.count - 1: return .stop
-                    default : return .none
-                } // show stop waypoint in middle of route, origin for start, none otherwise
-            }()
-            
-            let waypoint = Waypoint(lat: point.latitude, long: point.longitude,
-                                    wpType: type, busNumber: 0)
-            // change from 0!
-            
-            routeWaypoints.append(waypoint)
-            let busPath = Path(waypoints: routeWaypoints, pathType: .driving, color: .tcatBlueColor)
-            routePaths.append(busPath)
-            
-        }
-        
-        // Plot Walking Directions
-        for index in 0..<directions.count {
-            
-            let direction = directions[index]
-            
-            if direction.type == .walk {
+            for (pathIndex, point) in direction.path.enumerated() {
                 
-                let path: [CLLocation] = [direction.startLocation, direction.endLocation]
+                var type: WaypointType = .none
                 
-                var walkWaypoints: [Waypoint] = []
-                
-                for i in 0..<path.count {
-                    let type: WaypointType = (i == path.count  - 1) ? .destination : .none
-                    let waypoint = Waypoint(lat: path[i].coordinate.latitude, long: path[i].coordinate.longitude, wpType: type)
-                    walkWaypoints.append(waypoint)
+                if arrayIndex == 0 {
+                    type = .origin
                 }
                 
-                let walkPath = Path(waypoints: walkWaypoints, pathType: .walking, color: .tcatBlueColor)
-                routePaths.append(walkPath)
+                else if arrayIndex == directions.count - 1 {
+                    type = .destination
+                }
                 
+                else if pathIndex == 0 || pathIndex == direction.path.count - 1 {
+                    type = .origin
+                }
+                
+                let waypoint = Waypoint(lat: point.latitude, long: point.longitude, wpType: type)
+                waypoints.append(waypoint)
+                
+            }
+            
+            let pathType: PathType = direction.type == .walk ? .walking : .driving
+            let path = Path(waypoints: waypoints, pathType: pathType, color: .tcatBlueColor)
+            routePaths.append(path)
+            
+            // Temporary walk calculator
+            if direction.type == .walk && direction.path.isEmpty {
+                calculateWalkingDirections(direction) { (path) in
+                    waypoints = path.enumerated().flatMap { (pathIndex, coord) -> Waypoint in
+                        var type: WaypointType = .none
+                        if arrayIndex == 0 && pathIndex == 0 {
+                            type = .origin
+                        }
+                        else if arrayIndex == self.directions.count - 1 && pathIndex == path.count - 1 {
+                            type = .destination
+                        }
+                        return Waypoint(lat: coord.latitude, long: coord.longitude, wpType: type)
+                    }
+                    self.routePaths.append(Path(waypoints: waypoints, pathType: .walking, color: .tcatBlueColor))
+                    self.drawMapRoute(); self.centerMap(topHalfCentered: true)
+                }
             }
             
         }
@@ -202,10 +194,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         }
         
         if isInitialView() { drawMapRoute() }
-        let bottom = (main.height / 2) - (statusNavHeight(includingShadow: false) - 16)
-        let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: 0, bottom: bottom, right: 0)
-        let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
-        mapView.animate(with: update)
+        centerMap(topHalfCentered: true)
         
     }
 
@@ -217,10 +206,12 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         print("[RouteDetailViewController] getBusLocations")
         
-        guard let firstRoute = route.mainStopNums.first(where: { $0 > 0 })
-            else { print("No valid main stop nums > 0!"); return }
+        guard let firstRoute = route.directions.first(where: {
+            return $0.routeNumber > 0
+        })
+            else { print("[RouteDetailViewController] Couldn't find any valid bus routes"); return }
        
-        Network.getBusLocations(routeID: String(firstRoute)).perform(
+        Network.getBusLocations(routeID: String(firstRoute.routeNumber)).perform(
             
             withSuccess: { (result) in
             
@@ -244,15 +235,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             
             let busCoords = CLLocationCoordinate2DMake(bus.latitude, bus.longitude)
             let existingBus = buses.first(where: {
-                print("$0:", $0)
-                print("$0.userData:", $0.userData)
-                print("$0.userData as? BusLocation:", $0.userData as? BusLocation)
-                print("($0.userData as? BusLocation)?.vehicleID:", ($0.userData as? BusLocation)?.vehicleID)
                 return ($0.userData as? BusLocation)?.vehicleID == bus.vehicleID
             })
-            
-            print("existingBus ID:", (existingBus?.userData as? BusLocation)?.vehicleID)
-            print("bus ID:", bus.vehicleID)
             
             // If bus is already on map, update and animate change
             if existingBus != nil {
@@ -277,16 +261,28 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     }
     
     /** Centers map around all waypoints in routePaths, and animates the map */
-    func centerMap() {
-        bounds = GMSCoordinateBounds()
-        for route in routePaths {
-            for waypoint in route.waypoints {
-                let coords = CLLocationCoordinate2DMake(CLLocationDegrees(waypoint.lat), CLLocationDegrees(waypoint.long))
-                bounds = bounds.includingCoordinate(coords)
-            }
+    func centerMap(topHalfCentered: Bool = false) {
+        
+        if topHalfCentered {
+            let constant: CGFloat = 16
+            let bottom = (main.height / 2) - (statusNavHeight(includingShadow: false) - constant)
+            let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: constant, bottom: bottom, right: constant)
+            let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
+            mapView.animate(with: update)
         }
-        let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
-        mapView.animate(with: update)
+        
+        else {
+            bounds = GMSCoordinateBounds()
+            for route in routePaths {
+                for waypoint in route.waypoints {
+                    let coords = CLLocationCoordinate2DMake(CLLocationDegrees(waypoint.lat), CLLocationDegrees(waypoint.long))
+                    bounds = bounds.includingCoordinate(coords)
+                }
+            }
+            let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
+            mapView.animate(with: update)
+        }
+        
     }
     
     /** Draw all waypoints initially for all routes in routePaths, plus fill bounds */
@@ -305,6 +301,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 marker.map = mapView
                 bounds = bounds.includingCoordinate(coords)
             }
+            
         }
 
     }
@@ -517,10 +514,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let isBusStopCell = direction.type == .arrive && direction.startLocation.coordinate.latitude == 0.0
         let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
         
-//        for index in 0..<directions.count {
-//            print("\(index) • \(directions[index])")
-//        }
-        
         /// Formatting, including selectionStyle, and seperator line fixes
         func format(_ cell: UITableViewCell) -> UITableViewCell {
             cell.selectionStyle = .none
@@ -540,14 +533,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         else if direction.type == .walk || direction.type == .arrive {
             let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell") as! SmallDetailTableViewCell
             
-            // print("\(indexPath.row) - iconView.type: \(cell.iconView?.type) [before setCell]")
-            
             cell.setCell(direction, busEnd: direction.type == .arrive,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
-            
-            // print("\(indexPath.row) - iconView.type: \(cell.iconView?.type) [after setCell]")
             
             return format(cell)
         }
@@ -589,7 +578,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             })
             
             // Prepare bus stop data to be inserted / deleted into Directions array
-            var busStops: [Direction] = []
+            var busStops = [Direction]()
             for stop in direction.busStops {
                 let stopAsDirection = Direction(name: stop)
                 busStops.append(stopAsDirection)
@@ -603,9 +592,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             tableView.beginUpdates()
             
             // Insert or remove bus stop data based on selection
-            // for direction in directions { print("direction: \(direction)") }
-            
-            // print("\n--------\n")
             
             if cell.isExpanded {
                 directions.insert(contentsOf: busStops, at: indexPath.row + 1)
@@ -615,13 +601,24 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 tableView.deleteRows(at: indexPathArray, with: .bottom)
             }
             
-            // for direction in directions { print("direction: \(direction)") }
-            
             tableView.endUpdates()
             tableView.scrollToRow(at: indexPath, at: .none, animated: true)
             
         }
         
+    }
+    
+    /** Return an array of coordinates between two points. */
+    func calculateWalkingDirections(_ direction: Direction, _ completion: @escaping ([CLLocationCoordinate2D]) -> Void) {
+        let request = MKDirectionsRequest()
+        request.source = MKMapItem(placemark: MKPlacemark(coordinate: direction.startLocation.coordinate, addressDictionary: [:]))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: direction.endLocation.coordinate, addressDictionary: [:]))
+        request.transportType = .walking
+        request.requestsAlternateRoutes = false
+        let directions = MKDirections(request: request)
+        directions.calculate { (response, error) in
+            completion(response?.routes.first?.polyline.coordinates ?? [])
+        }
     }
     
     /** Animate detailTableView depending on context, centering map */

@@ -152,8 +152,8 @@ class Network {
         }
     }
     
-    class func getRoutes(start: Any, end: Any, time: Date, type: SearchType, callback:@escaping ((APIRequest<Array<Route>, Error>) -> Void)) {
-        getStartEndCoords(start: start, end: end) {startCoords, endCoords in
+    class func getRoutes(start: AnyObject, end: AnyObject, time: Date, type: SearchType, callback:@escaping ((APIRequest<Array<Route>, Error>) -> Void)) {
+        getStartEndCoords(start: start, end: end) { startCoords, endCoords in
             let request: APIRequest<Array<Route>, Error> = tron.request("routes")
 
             request.parameters = [

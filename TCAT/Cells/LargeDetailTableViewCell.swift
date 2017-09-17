@@ -91,7 +91,7 @@ class LargeDetailTableViewCell: UITableViewCell {
                                       lastStep: false)
             contentView.addSubview(iconView!)
             
-            busIconView = BusIcon(size: .small, number: self.direction.routeNumber)
+            busIconView = BusIcon(type: .directionSmall, number: self.direction.routeNumber)
             busIconView = formatBusIconView(busIconView, titleLabel)
             contentView.addSubview(busIconView)
             
@@ -110,7 +110,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     /** Abstracted formatting of content for titleLabel */
     func formatTitleLabel(_ label: UILabel) -> UILabel {
         
-        var busIconView = BusIcon(size: .small, number: self.direction.routeNumber)
+        var busIconView = BusIcon(type: .directionSmall, number: self.direction.routeNumber)
         busIconView = formatBusIconView(busIconView, label)
         
         // Add correct amount of spacing to create a gap for the busIcon
