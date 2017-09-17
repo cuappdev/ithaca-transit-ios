@@ -64,17 +64,14 @@ class Route: NSObject, JSONDecodable {
     
     init(departureTime: Date,
          arrivalTime: Date,
+         startCoords: 
          routeSummary: [RouteSummaryObject],
-         directions: [Direction],,
-) {
+         directions: [Direction]) {
         
         self.departureTime = departureTime
         self.arrivalTime = arrivalTime
         self.routeSummary = routeSummary
         self.directions = directions
-        self.path = path
-        self.travelDistance = travelDistance
-        self.lastStopTime = lastStopTime
     }
     
     private func getRouteSummary(fromJson json: [JSON]) -> [RouteSummaryObject] {
