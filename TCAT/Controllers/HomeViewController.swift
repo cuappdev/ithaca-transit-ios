@@ -62,8 +62,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
         navigationItem.titleView = searchBar
         
-        sectionIndexes = sectionIndexesForBusStop()
-        
         let tableViewFrame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height - (navigationController?.navigationBar.bounds.height)!)
         tableView = UITableView(frame: tableViewFrame, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
@@ -110,6 +108,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         allSections.append(cornellDestinationSection)
         allSections.append(recentSearchesSection)
         allSections.append(allStopsSection)
+        sectionIndexes = sectionIndexesForBusStop()
         return allSections.filter({$0.items.count > 0})
     }
 
@@ -223,18 +222,18 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        return #imageLiteral(resourceName: "emptyPin")
+        return isNetworkDown ? #imageLiteral(resourceName: "noInternet") : #imageLiteral(resourceName: "emptyPin")
     }
 
     func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let title = isNetworkDown ? "No network connection" : "Location not found"
+        let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
         let attrs = [NSForegroundColorAttributeName: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControlState) -> NSAttributedString! {
         let buttonTitle = isNetworkDown ? "Try Again" : ""
-        let attrs = [NSForegroundColorAttributeName: UIColor.blue]
+        let attrs = [NSForegroundColorAttributeName: UIColor.init(red: 0.0, green: 118.0 / 255.0, blue: 255.0 / 255.0, alpha: 1.0)]
         return NSAttributedString(string: buttonTitle, attributes: attrs)
     }
 
@@ -252,9 +251,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
             self.userDefaults.set(data, forKey: Key.UserDefaults.allBusStops)
             self.sections = self.createSections()
+            self.tableViewIndexController.tableViewIndex.reloadData()
         }, failure: { error in
             print("Error when getting all stops", error)
             self.isNetworkDown = true
+            self.sectionIndexes = [:]
+            self.tableViewIndexController.tableViewIndex.reloadData()
             self.sections = []
         })
     }
@@ -301,7 +303,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.endEditing(true)
         searchBar.text = nil
         sections = createSections()
-        print("Cancelled button clicked!!")
         for section in sections {
             print(section.type)
             print(section.items)

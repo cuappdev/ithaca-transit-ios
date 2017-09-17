@@ -96,6 +96,7 @@ func sectionIndexesForBusStop() -> [String: Int] {
             currentIndex += 1
         }
     }
+    print("creating sections", sectionIndexDictionary)
     return sectionIndexDictionary
 }
 
