@@ -146,7 +146,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     
     /** Abstracted formatting of content for detailLabel. Needs titleLabel */
     func formatDetailLabel(_ label: UILabel, _ titleLabel: UILabel) -> UILabel {
-        label.text = "\(self.direction.stops.count) stops"
+        label.text = "\(self.direction.busStops.count) stops"
         label.frame.origin.y = titleLabel.frame.maxY + labelSpacing
         label.sizeToFit()
         return label

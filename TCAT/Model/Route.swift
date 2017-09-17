@@ -23,14 +23,17 @@ class Route: NSObject, JSONDecodable {
     var arrivalTime: Date = Date()
     
     var timeUntilDeparture: DateComponents {
-        let now = Date() //curent date
+        let now = Date()
         return Time.dateComponents(from: now, to: departureTime)
     }
     
     var startCoords: CLLocationCoordinate2D = CLLocationCoordinate2D()
     var endCoords: CLLocationCoordinate2D = CLLocationCoordinate2D()
     var directions: [Direction] = [Direction]()
-    var routeSummary [Any] = []
+    var routeSummary: [RouteSummaryObject] = [RouteSummaryObject]()
+    
+    // to be removed
+    var travelDistance = 0.0
 
     required init(json: JSON) throws {
         super.init()
@@ -45,7 +48,6 @@ class Route: NSObject, JSONDecodable {
                                longitude: jsonData["startCoords"]["longitude"].doubleValue)
         endCoords = CLLocationCoordinate2D(latitude: jsonData["endCoords"]["latitude"].doubleValue,
                                            longitude: jsonData["endCoords"]["longitude"].doubleValue)
-        
         
         directions = jsonData["directions"].arrayValue.flatMap { (directionJSON) -> Direction in
             return Direction(from: directionJSON)
@@ -64,14 +66,17 @@ class Route: NSObject, JSONDecodable {
     
     init(departureTime: Date,
          arrivalTime: Date,
-         startCoords: 
-         routeSummary: [RouteSummaryObject],
-         directions: [Direction]) {
+         startCoords: CLLocationCoordinate2D,
+         endCoords: CLLocationCoordinate2D,
+         directions: [Direction],
+         routeSummary: [RouteSummaryObject]) {
         
         self.departureTime = departureTime
         self.arrivalTime = arrivalTime
-        self.routeSummary = routeSummary
+        self.startCoords = startCoords
+        self.endCoords = endCoords
         self.directions = directions
+        self.routeSummary = routeSummary
     }
     
     private func getRouteSummary(fromJson json: [JSON]) -> [RouteSummaryObject] {
@@ -87,6 +92,19 @@ class Route: NSObject, JSONDecodable {
     /// Modify the last routeSummaryObject to include name of the destination place result
     func updatePlaceDestination(_ placeDestination: PlaceResult){
         routeSummary[routeSummary.count - 1].name = placeDestination.name
+    }
+    
+    func numberOfBusRoutes() -> Int {
+        
+        var numberOfRoutes = 0
+        for direction in directions {
+            if direction.type == .depart {
+                numberOfRoutes += 1
+            }
+        }
+        
+        return numberOfRoutes
+        
     }
     
 }
