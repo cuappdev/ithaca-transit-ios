@@ -98,6 +98,7 @@ CLLocationManagerDelegate {
     // MARK: Navigation bar
 
     private func setupNavigationBar(){
+        self.navigationController?.navigationBar.barTintColor = .red
         let titleAttributes: [String : Any] = [NSFontAttributeName : UIFont(name :".SFUIText", size: 18)!,
                                                NSForegroundColorAttributeName : UIColor.black]
         title = navigationBarTitle
@@ -157,7 +158,7 @@ CLLocationManagerDelegate {
     // MARK: Route Selection view
 
     private func setupRouteSelection() {
-        routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 150))
+        routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: 150)) // offset for -12 for larger views, get rid of black space
         routeSelection.backgroundColor = .lineColor
         routeSelection.positionSubviews()
         routeSelection.addSubviews()
