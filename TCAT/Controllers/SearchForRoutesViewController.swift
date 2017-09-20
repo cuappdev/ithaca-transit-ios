@@ -125,16 +125,16 @@ CLLocationManagerDelegate {
     // MARK: Loader
 
     private func setupLoaderData(){
-        let date1 = Time.dateForDebug(from: "3:45 PM")
-        let date2 = Time.dateForDebug(from: "3:52 PM")
+        let date1 = Time.date(fromTime: "3:45 PM")
+        let date2 = Time.date(fromTime: "3:52 PM")
         let routeObject1 = RouteSummaryObject(name: "Baker Flagpole", type: .stop, nextDirection: .bus, busNumber: 90)
         let routeObject2 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop)
         let routeSummary1 = [routeObject1, routeObject2]
 
         let route1 = Route(departureTime: date1, arrivalTime: date2, routeSummary: routeSummary1, directions: [], path: [], travelDistance: 0.1)
 
-        let date3 = Time.dateForDebug(from: "3:45 PM")
-        let date4 = Time.dateForDebug(from: "3:52 PM")
+        let date3 = Time.date(fromTime: "3:45 PM")
+        let date4 = Time.date(fromTime: "3:52 PM")
         let routeObject3 = RouteSummaryObject(name: "Baker Flagpole", type: .stop, nextDirection: .bus, busNumber: 8)
         let routeObject4 = RouteSummaryObject(name: "Collegetown Crossing", type: .stop, nextDirection: .bus, busNumber: 16)
         let routeObject5 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop, nextDirection: .walk)
@@ -142,8 +142,8 @@ CLLocationManagerDelegate {
         let routeSummary2 = [routeObject3, routeObject4, routeObject5, routeObject10]
         let route2 = Route(departureTime: date3, arrivalTime: date4, routeSummary: routeSummary2, directions: [], path: [], travelDistance: 0.1)
 
-        let date5 = Time.dateForDebug(from: "3:45 PM")
-        let date6 = Time.dateForDebug(from: "3:52 PM")
+        let date5 = Time.date(fromTime: "3:45 PM")
+        let date6 = Time.date(fromTime: "3:52 PM")
         let routeObject6 = RouteSummaryObject(name: "Baker Flagpole", type: .stop, nextDirection: .bus, busNumber: 8)
         let routeObject7 = RouteSummaryObject(name: "Jessup Fields", type: .stop, nextDirection: .walk)
         let routeObject8 = RouteSummaryObject(name: "RPCC", type: .stop, nextDirection: .bus, busNumber: 32)
@@ -425,7 +425,7 @@ CLLocationManagerDelegate {
     func saveDatepickerDate(sender: UIButton){
         let date = datePickerView.datepicker.date
         searchTime = date
-        let dateString = Time.fullString(from: date)
+        let dateString = Time.dateString(from: date)
         let segmentedControl = datePickerView.segmentedControl
         let selectedSegString = (segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)) ?? ""
         if (selectedSegString.lowercased().contains("arrive")){
@@ -438,7 +438,7 @@ CLLocationManagerDelegate {
         if(Calendar.current.isDateInToday(date) || Calendar.current.isDateInTomorrow(date)){
             let verb = (searchTimeType == .arriveBy) ? "Arrive" : "Leave" //Use simply,"arrive" or "leave"
             let day = Calendar.current.isDateInToday(date) ? "" : " tomorrow" //if today don't put day
-            title = "\(verb)\(day) at \(Time.string(from: date))"
+            title = "\(verb)\(day) at \(Time.timeString(from: date))"
         }else{
             let verb = (searchTimeType == .arriveBy) ? "Arrive by" : "Leave on" //Use "arrive by" or "leave on"
             title = "\(verb) \(dateString)"
