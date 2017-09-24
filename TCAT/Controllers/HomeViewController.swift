@@ -206,10 +206,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             print("User Selected Cornell Destination")
         case .busStop(let busStop):
             insertRecentLocation(location: busStop)
-            optionsVC.searchTo = (busStop, nil)
+            optionsVC.searchTo = busStop
         case .placeResult(let placeResult):
             insertRecentLocation(location: placeResult)
-            optionsVC.searchTo = (nil, placeResult)
+            optionsVC.searchTo = placeResult
         }
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)

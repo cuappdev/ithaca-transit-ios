@@ -37,9 +37,9 @@ CLLocationManagerDelegate {
     var searchBarView: SearchBarView!
     var locationManager: CLLocationManager!
     var searchType: SearchBarType = .from
-    var searchFrom: (BusStop?, PlaceResult?) = (nil, nil)
-    var searchTo: (BusStop?, PlaceResult?) = (nil, nil)
     var searchTimeType: SearchType = .leaveAt
+    var searchFrom: Place?
+    var searchTo: Place?
     var searchTime: Date?
 
     // MARK: View vars
@@ -77,18 +77,18 @@ CLLocationManagerDelegate {
         view.addSubview(datePickerOverlay)
         view.sendSubview(toBack: datePickerOverlay)
         view.addSubview(routeResults)
-        view.addSubview(datePickerView)//so datePicker can go ontop of other views
+        view.addSubview(datePickerView) //so datePicker can go ontop of other views
 
         setRouteSelectionView(withDestination: searchTo)
         setupLocationManager()
 
-        setupLoaderData()
-        routes = loaderroutes
+//        setupLoaderData()
+//        routes = loaderroutes
 
         // If no date is set then date should be same as today's date
         self.searchTime = Date()
 
-        //        searchForRoutes()
+        searchForRoutes()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -171,14 +171,8 @@ CLLocationManagerDelegate {
         routeSelection.swapButton.addTarget(self, action: #selector(self.swapFromAndTo), for: .touchUpInside)
     }
 
-    private func setRouteSelectionView(withDestination destination: (BusStop?, PlaceResult?)){
-        let (endBus, endPlace) = destination
-        if let destination = endBus{
-            routeSelection.toSearchbar.setTitle(destination.name, for: .normal)
-        }
-        if let destination = endPlace{
-            routeSelection.toSearchbar.setTitle(destination.name, for: .normal)
-        }
+    private func setRouteSelectionView(withDestination destination: Place?){
+        routeSelection.toSearchbar.setTitle(destination?.name ?? "", for: .normal)
     }
 
     func swapFromAndTo(sender: UIButton){
@@ -188,24 +182,8 @@ CLLocationManagerDelegate {
         searchTo = searchFromOld
 
         //Update UI
-        let (fromBus, fromPlace) = searchFrom
-        let (toBus, toPlace) = searchTo
-
-        if let start = fromBus {
-            routeSelection.fromSearchbar.setTitle(start.name, for: .normal)
-        }else if let start = fromPlace {
-            routeSelection.fromSearchbar.setTitle(start.name, for: .normal)
-        }else{
-            routeSelection.fromSearchbar.setTitle("", for: .normal)
-        }
-
-        if let end = toBus {
-            routeSelection.toSearchbar.setTitle(end.name, for: .normal)
-        }else if let end = toPlace {
-            routeSelection.toSearchbar.setTitle(end.name, for: .normal)
-        }else{
-            routeSelection.toSearchbar.setTitle("", for: .normal)
-        }
+        routeSelection.fromSearchbar.setTitle(searchFrom?.name ?? "", for: .normal)
+        routeSelection.toSearchbar.setTitle(searchTo?.name ?? "", for: .normal)
 
         searchForRoutes()
     }
@@ -253,17 +231,17 @@ CLLocationManagerDelegate {
         switch searchType{
         case .from:
             if let result = busStop{
-                searchFrom = (result, nil)
+                searchFrom = result
                 routeSelection.fromSearchbar.setTitle(result.name, for: .normal)
             }else if let result = placeResult{
-                searchFrom = (nil, result)
+                searchFrom = result
                 routeSelection.fromSearchbar.setTitle(result.name, for: .normal)                }
-        default:
+        case .to:
             if let result = busStop{
-                searchTo = (result, nil)
+                searchTo = result
                 routeSelection.toSearchbar.setTitle(result.name, for: .normal)
             }else if let result = placeResult{
-                searchTo = (nil, result)
+                searchTo = result
                 routeSelection.toSearchbar.setTitle(result.name, for: .normal)
             }
         }
@@ -287,10 +265,7 @@ CLLocationManagerDelegate {
     }
 
     func searchForRoutes() {
-
-        let (startingDestination, endingDestination) = getSearchTuple(startingDestinationTuple: searchFrom, endingDestinationTuple: searchTo)
-
-        if let startingDestination = startingDestination, let endingDestination = endingDestination{
+        if let startingDestination = searchFrom, let endingDestination = searchTo{
             routes = loaderroutes
             routeResults.reloadData()
             Loader.addLoaderTo(routeResults)
@@ -300,38 +275,13 @@ CLLocationManagerDelegate {
                     self.routeResults.reloadData()
                     Loader.removeLoaderFrom(self.routeResults)
                 }, failure: { (error) in
-                    print("OptionVC SearchForRoutes Error: \(error)")
+                    print("RouteOptionVC SearchForRoutes Error: \(error)")
                     self.routes = []
                     self.routeResults.reloadData()
                     Loader.removeLoaderFrom(self.routeResults)
                 })
             }
         }
-    }
-
-    private func getSearchTuple(startingDestinationTuple: (BusStop?, PlaceResult?), endingDestinationTuple: (BusStop?, PlaceResult?)) -> (startingDestination: AnyObject?, endingDestination: AnyObject?){
-
-        let (fromBus, fromPlace) = searchFrom
-        let (toBus, toPlace) = searchTo
-
-        if let startBus = fromBus, let endBus = toBus{
-            return (startBus, endBus)
-        }
-
-        if let startBus = fromBus, let endPlace = toPlace{
-            return (startBus, endPlace)
-        }
-
-        if let startPlace = fromPlace, let endBus = toBus{
-            return (startPlace, endBus)
-        }
-
-        if let startPlace = fromPlace, let endPlace = toPlace{
-            return (startPlace, endPlace)
-        }
-
-        return (nil, nil)
-
     }
 
     // MARK: Location Manager Delegate
@@ -347,7 +297,7 @@ CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         locationManager.stopUpdatingLocation()
-        print("OptionVC locationManager didFailWithError: \(error.localizedDescription)")
+        print("RouteOptionVC locationManager didFailWithError: \(error.localizedDescription)")
 
         let title = "Couldn't Find Location"
         let message = "Please ensure you are connected to the internet and have enabled location permissions."
@@ -367,11 +317,11 @@ CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //If don't have start location, set to current location
         locationManager.stopUpdatingLocation()
-        if searchFrom.0 == nil, let location = manager.location {
+        if searchFrom == nil, let location = manager.location {
             let currentLocationStop =  BusStop(name: "Current Location", lat: location.coordinate.latitude, long: location.coordinate.longitude)
-            searchFrom.0 = currentLocationStop
+            searchFrom = currentLocationStop
             searchBarView.resultsViewController?.currentLocation = currentLocationStop
-            routeSelection.fromSearchbar.setTitle(searchFrom.0?.name, for: .normal)
+            routeSelection.fromSearchbar.setTitle(currentLocationStop.name, for: .normal)
             searchForRoutes()
         }
     }
