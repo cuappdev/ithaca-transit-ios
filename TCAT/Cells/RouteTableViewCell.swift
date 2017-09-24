@@ -19,7 +19,6 @@ class RouteTableViewCell: UITableViewCell {
     
     var travelTimeLabel: UILabel = UILabel()
     var departureTimeLabel: UILabel = UILabel()
-    var travelDistanceLabel: UILabel = UILabel()
 
     var routeDiagram: RouteDiagram = RouteDiagram()
     
@@ -108,7 +107,6 @@ class RouteTableViewCell: UITableViewCell {
         
         guard let departureTime = route?.departureTime,
               let arrivalTime = route?.arrivalTime,
-              let travelDistance = route?.travelDistance,
               let routeSummary = route?.routeSummary
               else{
                 print("RouteTableViewCell route object does not have the data needed to fill in the cell")
@@ -118,12 +116,11 @@ class RouteTableViewCell: UITableViewCell {
         setTravelTime(withDepartureTime: departureTime, withArrivalTime: arrivalTime)
         setDepartureTime(withTime: departureTime)
         
-        routeDiagram.setTravelDistance(withDistance: travelDistance)
         routeDiagram.setRouteData(fromRouteSummary: routeSummary)
     }
     
     private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
-        travelTimeLabel.text = "\(Time.string(from: departureTime)) - \(Time.string(from: arrivalTime))"
+        travelTimeLabel.text = "\(Time.timeString(from: departureTime)) - \(Time.timeString(from: arrivalTime))"
         travelTimeLabel.sizeToFit()
     }
     
@@ -136,12 +133,12 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Style
     
     private func styleTravelTime(){
-        travelTimeLabel.font = UIFont(name: "SFUIText-Medium", size: 14.0)
+        travelTimeLabel.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 14.0)
         travelTimeLabel.textColor = .primaryTextColor
     }
     
     private func styleDepartureTime(){
-        departureTimeLabel.font = UIFont(name: "SFUIText-Medium", size: 14.0)
+        departureTimeLabel.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 14.0)
         departureTimeLabel.textColor = .tcatBlueColor
     }
     

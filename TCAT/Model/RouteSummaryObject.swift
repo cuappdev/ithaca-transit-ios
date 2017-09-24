@@ -55,4 +55,18 @@ class RouteSummaryObject: NSObject, JSONDecodable {
         
         self.busNumber = busNumber
     }
+    
+    func updateNameAndPin(fromPlace place: Place){
+        name = place.name
+        
+        if let busStop = place as? BusStop {
+            if busStop.name == "Current Location" {
+                type = .currentLocation
+            }
+            type = .stop
+        }
+        else if let placeResult = place as? PlaceResult {
+            type = .place
+        }
+    }
 }

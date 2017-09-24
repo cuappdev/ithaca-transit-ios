@@ -34,7 +34,7 @@ class SmallDetailTableViewCell: UITableViewCell {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        print("Something bad happened"); fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) has not been implemented")
     }
     
     func setCell(_ direction: Direction, busEnd: Bool, firstStep: Bool, lastStep: Bool) {

@@ -33,7 +33,7 @@ enum ItemType {
 }
 
 func retrieveRecentLocations() -> [ItemType] {
-    if let recentLocations = userDefaults.value(forKey: "recentSearch") as? Data {
+    if let recentLocations = userDefaults.value(forKey: Key.UserDefaults.recentSearch) as? Data {
         let recentSearches = NSKeyedUnarchiver.unarchiveObject(with: recentLocations) as! [Any]
         var itemTypes: [ItemType] = []
         for search in recentSearches {
@@ -63,11 +63,11 @@ func insertRecentLocation(location: Any) {
     var updatedRecentLocations = [location] + filteredLocations
     if updatedRecentLocations.count > 8 { updatedRecentLocations.remove(at: updatedRecentLocations.count - 1)}
     let data = NSKeyedArchiver.archivedData(withRootObject: updatedRecentLocations)
-    userDefaults.set(data, forKey: "recentSearch")
+    userDefaults.set(data, forKey: Key.UserDefaults.recentSearch)
 }
 
 func getAllBusStops() -> [BusStop] {
-    if let allBusStops = userDefaults.value(forKey: "allBusStops") as? Data,
+    if let allBusStops = userDefaults.value(forKey: Key.UserDefaults.allBusStops) as? Data,
         let busStopArray = NSKeyedUnarchiver.unarchiveObject(with: allBusStops) as? [BusStop] {
             return busStopArray
     }
@@ -106,7 +106,7 @@ func parseGoogleJSON(searchText: String, json: JSON) -> Section {
         return stringMatch != nil
     })
     let updatedOrderBusStops = sortFilteredBusStops(busStops: filteredBusStops, letter: searchText.capitalized.characters.first!)
-    itemTypes = updatedOrderBusStops.map( {ItemType.busStop($0)} )
+    itemTypes = updatedOrderBusStops.map( {ItemType.busStop($0)})
     
     if let predictionsArray = json["predictions"].array {
         for result in predictionsArray {
@@ -124,21 +124,6 @@ func parseGoogleJSON(searchText: String, json: JSON) -> Section {
 
 
 /* DZNEmptyDataSet DataSource */
-extension HomeViewController: DZNEmptyDataSetSource {
-    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
-        return -80.0
-    }
-    
-    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        return #imageLiteral(resourceName: "emptyPin")
-    }
-    
-    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let locationNotFound = "Location not found"
-        let attrs = [NSForegroundColorAttributeName: UIColor.mediumGrayColor]
-        return NSAttributedString(string: locationNotFound, attributes: attrs)
-    }
-}
 
 extension SearchResultsTableViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {

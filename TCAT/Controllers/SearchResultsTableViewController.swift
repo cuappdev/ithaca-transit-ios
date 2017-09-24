@@ -130,7 +130,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-        print(error)
+        print("SearchResultsTableVC CLLocationManager didFailWithError: \(error)")
     }
     
     /* Keyboard Functions */
@@ -192,12 +192,10 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         switch itemType {
         case .busStop(let busStop):
             if busStop.name != "Current Location" {
-                print("inserting recent location")
                 insertRecentLocation(location: busStop)
             }
             destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
         case .placeResult(let placeResult):
-            print("place result recent")
             insertRecentLocation(location: placeResult)
             destinationDelegate?.didSelectDestination(busStop: nil, placeResult: placeResult)
         default: break

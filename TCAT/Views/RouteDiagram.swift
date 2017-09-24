@@ -64,7 +64,7 @@ class RouteDiagram: UIView{
     
     func setRouteData(fromRouteSummary routeSummary: [RouteSummaryObject]){
         
-        for i in 0...(routeSummary.count - 1){
+        for i in routeSummary.indices{
             
             let routeDiagramElement = RouteDiagramElement()
             
@@ -185,20 +185,20 @@ class RouteDiagram: UIView{
     // MARK: Style
     
     private func styleStopLabel(_ stopLabel: UILabel){
-        stopLabel.font = UIFont(name: "SFUIText-Regular", size: 14.0)
+        stopLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
         stopLabel.textColor = .primaryTextColor
     }
     
     private func styleDistanceLabel(){
-        travelDistanceLabel.font = UIFont(name: "SFUIText-Regular", size: 12.0)
+        travelDistanceLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)
         travelDistanceLabel.textColor = .mediumGrayColor
     }
     
     // MARK: Position
     
     func positionSubviews(){
-                
-        for i in 0...(routeDiagramElements.count-1){
+        
+        for i in routeDiagramElements.indices {
             
             let stopDot = routeDiagramElements[i].stopDot
             let stopLabel = routeDiagramElements[i].stopNameLabel

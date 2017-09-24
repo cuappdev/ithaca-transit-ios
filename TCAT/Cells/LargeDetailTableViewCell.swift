@@ -70,7 +70,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        print("Something bad happened"); fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) has not been implemented")
     }
     
     

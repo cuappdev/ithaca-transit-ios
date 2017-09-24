@@ -62,26 +62,26 @@ class DatepickerView: UIView {
     private func styleSegmentedControl(){
         segmentedControl.frame = CGRect(x: 0, y: 0, width: self.frame.width*(343/375), height: segmentedControlHeight)
         segmentedControl.tintColor = .tcatBlueColor
-        let segmentControlFont = UIFont(name: "SFUIText-Regular", size: 13.0)
+        let segmentControlFont = UIFont(name: FontNames.SanFrancisco.Regular, size: 13.0)
         segmentedControl.setTitleTextAttributes([NSFontAttributeName: segmentControlFont!], for: .normal)
     }
     
     private func styleCancelButton(){
         cancelButton.frame = CGRect(x: 0, y: 0, width: 60, height: buttonHeight)
-        cancelButton.titleLabel?.font = UIFont(name: "SFUIText-Regular", size: 17.0)
+        cancelButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 17.0)
         cancelButton.setTitleColor(.mediumGrayColor, for: .normal)
     }
     
     private func styleDoneButton(){
         doneButton.frame = CGRect(x: 0, y: 0, width: 55, height: buttonHeight)
-        doneButton.titleLabel?.font = UIFont(name: "SFUIText-Regular", size: 17.0)
+        doneButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 17.0)
         doneButton.setTitleColor(.tcatBlueColor, for: .normal)
     }
     
     private func styleDisclaimerLabel(){
         disclaimerLabel.frame = CGRect(x: 0, y: 0, width: self.frame.width*(343/375), height: labelHeight)
         disclaimerLabel.textColor = .mediumGrayColor
-        disclaimerLabel.font = UIFont(name: "SFUIText-Regular", size: 12.0)
+        disclaimerLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)
         disclaimerLabel.numberOfLines = 0
         disclaimerLabel.lineBreakMode = .byWordWrapping
         disclaimerLabel.textAlignment = .center
@@ -93,14 +93,14 @@ class DatepickerView: UIView {
         let now = Date()
         datepicker.minimumDate = now
         
-        let next6Days = now.addingTimeInterval(6*24*60*60)
-        datepicker.maximumDate = next6Days //set maximum date to 6 days from now
+        let next7Days = now.addingTimeInterval(7*24*60*60)
+        datepicker.maximumDate = next7Days //set maximum date to 7 days from now
         
         datepicker.minuteInterval = 5
     }
     
     private func setSegmentedControl(withItems titles: [String]){
-        for i in 0...titles.count - 1{
+        for i in titles.indices {
             segmentedControl.insertSegment(withTitle: titles[i], at: i, animated: false)
         }
         segmentedControl.selectedSegmentIndex = 1

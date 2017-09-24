@@ -12,21 +12,20 @@ import SwiftyJSON
 import Alamofire
 import MYTableViewIndex
 import DZNEmptyDataSet
+import NotificationBannerSwift
 
-class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, TableViewIndexDelegate, TableViewIndexDataSource {
+class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, TableViewIndexDelegate, TableViewIndexDataSource, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     let userDefaults = UserDefaults.standard
     let cornellDestinations = [(name: "North Campus", stops: "RPCC, Balch Hall, Appel, Helen Newman, Jessup Field"),
                                (name: "West Campus", stops: "Baker Flagpole, Baker Flagpole (Slopeside)"),
                                (name: "Central Campus", stops: "Statler Hall, Uris Hall, Goldwin Smith Hall"),
                                (name: "Collegetown", stops: "Collegetown Crossing, Schwartz Center"),
                                (name: "Ithaca Commons", stops: "Albany @ Salvation Army, State Street, Lot 32")]
-    
-    var cornellDestinationSection: Section!
-    var recentSearchesSection: Section!
-    var allStopsSection: Section!
-    var searchResultsSection: Section!
+
     var timer: Timer?
-    var sectionIndexes: [String: Int]!
+    var isNetworkDown = false
+    var searchResultsSection: Section!
+    var sectionIndexes: [String: Int]! = [:]
     var tableView : UITableView!
     var tableViewIndexController: TableViewIndexController!
     var initialTableViewIndexMidY: CGFloat!
@@ -38,6 +37,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             tableView.reloadData()
         }
     }
+    let reachability = Reachability(hostname: Network.backendIPAddress)
+    var isBannerShown = false
+    var banner: StatusBarNotificationBanner?
     
     func tctSectionHeaderFont() -> UIFont? {
         return UIFont.systemFont(ofSize: 14)
@@ -64,13 +66,14 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
         navigationItem.titleView = searchBar
         
-        sectionIndexes = sectionIndexesForBusStop()
-        
         let tableViewFrame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height - (navigationController?.navigationBar.bounds.height)!)
         tableView = UITableView(frame: tableViewFrame, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
+
         tableView.separatorColor = .lineColor
         tableView.keyboardDismissMode = .onDrag
         tableView.emptyDataSetSource = self
@@ -80,12 +83,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "searchResults")
         tableView.register(CornellDestinationCell.self, forCellReuseIdentifier: "cornellDestinations")
         view.addSubview(tableView)
-        cornellDestinationSection = Section(type: .cornellDestination, items: [.cornellDestination])
-        let allBusStops = getAllBusStops()
-        allStopsSection = Section(type: .allStops, items: prepareAllBusStopItems(allBusStops: allBusStops))
-        recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
-        searchResultsSection = Section(type: .searchResults, items: [])
-        sections = createSections()
         
         tableViewIndexController = TableViewIndexController(tableView: tableView)
         tableViewIndexController.tableViewIndex.delegate = self
@@ -93,22 +90,62 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         initialTableViewIndexMidY = tableViewIndexController.tableViewIndex.indexRect().minY
         tableViewIndexController.tableViewIndex.backgroundView?.backgroundColor = .clear
         tableViewIndexController.setHidden(true, animated: false)
-        setUpIndexBar(contentOffsetY: 0.0)
+        //setUpIndexBar(contentOffsetY: 0.0)
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        print("booo ya")
+
+    override func viewDidLayoutSubviews() {
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(note:)), name: .reachabilityChanged, object: reachability)
+        do {
+            try reachability?.startNotifier()
+        } catch {
+            print("HomeVC viewDdiLayoutSubviews: Could not start reachability notifier")
+        }
+
         recentLocations = retrieveRecentLocations()
-        recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
         if searchBar.showsCancelButton {
             searchBar.becomeFirstResponder()
             tableViewIndexController.setHidden(true, animated: false)
         }
-        sections = createSections()
+        //sections = createSections()
+    }
+
+    func reachabilityChanged(note: Notification) {
+        if banner == nil {
+            banner = StatusBarNotificationBanner(title: "No Internet Connection", style: .danger)
+            banner?.autoDismiss = false
+        }
+        let reachability = note.object as! Reachability
+        switch reachability.connection {
+            case .none:
+                isBannerShown = true
+                banner?.show(queuePosition: .front, on: self)
+                self.isNetworkDown = true
+                self.sectionIndexes = [:]
+                self.tableViewIndexController.tableViewIndex.reloadData()
+                self.searchBar.isUserInteractionEnabled = false
+                self.sections = []
+            case .cellular, .wifi:
+                if isBannerShown {
+                    banner?.dismiss()
+                    isBannerShown = false
+                }
+                sections = createSections()
+                self.searchBar.isUserInteractionEnabled = true
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        reachability?.stopNotifier()
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
 
     func createSections() -> [Section] {
         var allSections: [Section] = []
+        let allBusStops = getAllBusStops()
+        //sectionIndexes = sectionIndexesForBusStop()
+        let allStopsSection = Section(type: .allStops, items: prepareAllBusStopItems(allBusStops: allBusStops))
+        let recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
+        let cornellDestinationSection = Section(type: .cornellDestination, items: [.cornellDestination])
         allSections.append(cornellDestinationSection)
         allSections.append(recentSearchesSection)
         allSections.append(allStopsSection)
@@ -195,7 +232,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var itemType: ItemType
-        let optionsVC = SearchForRoutesViewController()
+        let optionsVC = RouteOptionsViewController()
         
         switch sections[indexPath.section].type {
         case .cornellDestination:
@@ -209,32 +246,62 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             print("User Selected Cornell Destination")
         case .busStop(let busStop):
             insertRecentLocation(location: busStop)
-            optionsVC.searchTo = (busStop, nil)
+            optionsVC.searchTo = busStop
         case .placeResult(let placeResult):
             insertRecentLocation(location: placeResult)
-            optionsVC.searchTo = (nil, placeResult)
+            optionsVC.searchTo = placeResult
         }
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
         navigationController?.pushViewController(optionsVC, animated: true)
     }
+
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
+        return -80.0
+    }
+
+    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        return isNetworkDown ? #imageLiteral(resourceName: "noInternet") : #imageLiteral(resourceName: "emptyPin")
+    }
+
+    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
+        let attrs = [NSForegroundColorAttributeName: UIColor.mediumGrayColor]
+        return NSAttributedString(string: title, attributes: attrs)
+    }
+
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControlState) -> NSAttributedString! {
+        let buttonTitle = isNetworkDown ? "Try Again" : ""
+        let attrs = [NSForegroundColorAttributeName: UIColor.noInternetTextColor]
+        return NSAttributedString(string: buttonTitle, attributes: attrs)
+    }
+
+    func emptyDataSet(_ scrollView: UIScrollView!, didTap button: UIButton!) {
+        getBusStops()
+    }
+
+
     
     /* Get all bus stops and store in userDefaults */
     func getBusStops() {
-        print("getBusStops start")
         Network.getAllStops().perform(withSuccess: { stops in
-            print("stops:", stops)
-            self.userDefaults.set([BusStop](), forKey: "allBusStops")
+            self.isNetworkDown = false
+            self.userDefaults.set([BusStop](), forKey: Key.UserDefaults.allBusStops)
             let allBusStops = stops.allStops
             let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
-            self.userDefaults.set(data, forKey: "allBusStops")
-            self.allStopsSection = Section(type: .allStops, items: prepareAllBusStopItems(allBusStops: getAllBusStops()))
-            self.sections = self.recentLocations.isEmpty ? [self.cornellDestinationSection,self.allStopsSection] : [self.cornellDestinationSection,self.recentSearchesSection, self.allStopsSection]
+            self.userDefaults.set(data, forKey: Key.UserDefaults.allBusStops)
+            self.tableViewIndexController.tableViewIndex.reloadData()
+            self.searchBar.isUserInteractionEnabled = true
+            //self.sectionIndexes = sectionIndexesForBusStop()
         }, failure: { error in
-            print("Error when getting all stops", error)
+            print("HomeVC getBusStops error:", error)
+            self.isNetworkDown = true
+            self.sectionIndexes = [:]
+            self.tableViewIndexController.tableViewIndex.reloadData()
+            self.searchBar.isUserInteractionEnabled = false
+            self.sections = []
         })
-        print("getBusStops end")
     }
     
     /* Keyboard Functions */
@@ -259,7 +326,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
         let contentOffsetY = scrollView.contentOffset.y
         if scrollView == tableView && searchBar.text == "" && !isKeyboardVisible {
-            setUpIndexBar(contentOffsetY: contentOffsetY)
+            //setUpIndexBar(contentOffsetY: contentOffsetY)
         }
     }
     
@@ -279,11 +346,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.endEditing(true)
         searchBar.text = nil
         sections = createSections()
-        print("Cancelled button clicked!!")
-        for section in sections {
-            print(section.type)
-            print(section.items)
-        }
         tableViewIndexController.setHidden(false, animated: false)
         tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
         

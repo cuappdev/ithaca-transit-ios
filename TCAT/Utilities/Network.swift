@@ -18,14 +18,14 @@ class Error: JSONDecodable {
 }
 class AllBusStops: JSONDecodable {
     var allStops : [BusStop] = [BusStop]()
-    
+
     required init(json: JSON) throws {
         if json["success"].boolValue {
             let data = json["data"].arrayValue
             allStops = parseAllStops(json: data)
         }
     }
-    
+
     func parseAllStops(json: [JSON]) -> [BusStop] {
         var allStopsArray = [BusStop]()
         for stop in json {
@@ -42,26 +42,25 @@ class AllBusStops: JSONDecodable {
 }
 
 class AllBusLocations: JSONDecodable {
-    
+
     var allBusLocations : [BusLocation] = [BusLocation]()
-    
+
     required init(json: JSON) throws {
-        print("JSON:", json)
         if json["success"].boolValue {
             let data = json["data"].arrayValue
             allBusLocations = parseAllLocations(json: data)
         }
     }
-    
+
     func parseAllLocations(json: [JSON]) -> [BusLocation] {
-        
+
         var allLocationsArray = [BusLocation]()
-        
+
         for bus in json {
-            
+
             let routeID = bus["routeID"].stringValue
             let busLocation = BusLocation(routeID: routeID)
-            
+
             busLocation.destination = bus["destination"].stringValue
             busLocation.deviation = bus["deviation"].intValue
             busLocation.direction = bus["direction"].stringValue
@@ -78,37 +77,38 @@ class AllBusLocations: JSONDecodable {
             busLocation.speed = bus["speed"].intValue
             busLocation.tripID = bus["tripID"].intValue
             busLocation.vehicleID = bus["vehicleID"].intValue
-            
+
             allLocationsArray.append(busLocation)
-            
+
         }
-        
+
         return allLocationsArray
-        
+
     }
-    
+
 }
 
 class Network {
-    
-    static let source = "10.132.6.69" // "localhost"
+
+    static let source = "localhost" // "10.132.10.30"  // MO - 10.132.1.223
     static let tron = TRON(baseURL: "http://\(source):3000/api/v1/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
-    
+    static let backendIPAddress = "10.132.7.249"
+
     class func getRoutes() -> APIRequest<Route, Error> {
         let request: APIRequest<Route, Error> = tron.request("navigate.json")
         request.method = .get
-        print(request.errorParser)
+        print("Network getRoutes errorParser: \(request.errorParser)")
         return request
     }
-    
+
     class func getAllStops() -> APIRequest<AllBusStops, Error> {
         let request: APIRequest<AllBusStops, Error> = tron.request("stops")
         request.method = .get
         return request
     }
-    
+
     class func getStartEndCoords(start: AnyObject, end: AnyObject, callback:@escaping ((CLLocationCoordinate2D, CLLocationCoordinate2D) -> Void)) {
         var startCoord = CLLocationCoordinate2D()
         var endCoord = CLLocationCoordinate2D()
@@ -127,7 +127,7 @@ class Network {
                 endCoord.longitude = coords.longitude
                 callback(startCoord, endCoord)
             }
-            
+
         }
         else if let startPlaceResult = start as? PlaceResult, let endBusStop = end as? BusStop {
             endCoord.latitude = endBusStop.lat
@@ -150,29 +150,27 @@ class Network {
             }
         }
     }
-    
-    class func getRoutes(start: AnyObject, end: AnyObject, time: Date, type: SearchType, callback:@escaping ((APIRequest<Array<Route>, Error>) -> Void)) {
-        getStartEndCoords(start: start, end: end) { startCoords, endCoords in
-            let request: APIRequest<Array<Route>, Error> = tron.request("routes")
-            
+
+    class func getRoutes(start: AnyObject, end: AnyObject, time: Date, type: SearchType, callback:@escaping ((APIRequest<JSON, Error>) -> Void)) {
+        getStartEndCoords(start: start, end: end) {startCoords, endCoords in
+            let request: APIRequest<JSON, Error> = tron.request("routes")
             request.parameters = [
-                
+
                 "start_coords"  :   "\(startCoords.latitude ??? ""),\(startCoords.longitude ??? "")",
                 "end_coords"    :   "\(endCoords.latitude ??? ""),\(endCoords.longitude ??? "")",
             ]
-            
+
             if type == .arriveBy {
                 request.parameters["depart_time"] = time.timeIntervalSince1970
             } else {
                 request.parameters["leave_by"] = time.timeIntervalSince1970
             }
-            print(request.parameters)
             request.method = .get
             callback(request)
         }
     }
-    
-    
+
+
     class func getGooglePlaces(searchText: String) -> APIRequest<JSON, Error> {
         let googleJson = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
         let urlReadySearch = searchText.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
@@ -185,26 +183,26 @@ class Network {
     class func getLocationFromPlaceId(placeId: String, callback:@escaping ((CLLocationCoordinate2D) -> Void)) {
         placesClient.lookUpPlaceID(placeId) { place, error in
             if let error = error {
-                print("lookup place id query error: \(error.localizedDescription)")
+                print("Network getLocationFromPlaceId lookup place id query error: \(error.localizedDescription)")
                 return
             }
             guard let place = place else {
-                print("No place details for \(placeId)")
+                print("Network getLocationFromPlaceId: No place details for \(placeId)")
                 return
             }
             callback(place.coordinate)
         }
     }
-    
+
     class func getBusLocations(routeID: String) -> APIRequest<AllBusLocations, Error> {
-        
+
         let request: APIRequest<AllBusLocations, Error> = tron.request("tracking")
         request.parameters = ["routeID" : routeID]
         request.method = .get
         return request
-        
+
     }
-    
+
 }
 
 extension Array : JSONDecodable {
