@@ -21,6 +21,7 @@ extension UIColor {
     @nonobjc static let summaryBackgroundColor = UIColor(white: 248 / 255, alpha: 1.0)
     @nonobjc static let optionsTimeBackgroundColor = UIColor(white: 252 / 255, alpha: 1.0)
     @nonobjc static let searchBarPlaceholderTextColor = UIColor(red: 214.0 / 255.0, green: 216.0 / 255.0, blue: 220.0 / 255.0, alpha: 1.0)
+    @nonobjc static let noInternetTextColor = UIColor(red: 0.0, green: 118.0 / 255.0, blue: 255.0 / 255.0, alpha: 1.0)
     
     // Get color from hex code
     public static func colorFromCode(_ code: Int, alpha: CGFloat) -> UIColor {
