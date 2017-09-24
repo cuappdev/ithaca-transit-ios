@@ -502,20 +502,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         return NSAttributedString(string: message, attributes: attrs)
     }
     
-//    func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
-//        if(currentlySearching){
-//            let activityView = UIActivityIndicatorView()
-//            activityView.startAnimating()
-//            
-//            return activityView
-//        }
-//        
-//        let imageView = UIImageView(image: #imageLiteral(resourceName: "reload"))
-//        imageView.frame = CGRect(origin: routeResults.frame.origin, size: CGSize(width: 110.0, height: 80))
-//        
-//        return imageView
-//    }
-    
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
         if(currentlySearching){
             return #imageLiteral(resourceName: "reload")

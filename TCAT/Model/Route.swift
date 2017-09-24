@@ -57,7 +57,7 @@ class Route: NSObject, JSONDecodable {
     }
     
     static func getRoutesArray(fromJson json: JSON) -> [Route] {
-        if (json["success"]=="false") {
+        if (!json["success"].boolValue) {
             return []
         }
         

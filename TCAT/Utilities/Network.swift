@@ -95,6 +95,7 @@ class Network {
     static let tron = TRON(baseURL: "http://\(source):3000/api/v1/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
+    static let backendIPAddress = "10.132.7.249"
     
     class func getRoutes() -> APIRequest<Route, Error> {
         let request: APIRequest<Route, Error> = tron.request("navigate.json")
