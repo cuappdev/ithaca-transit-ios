@@ -109,19 +109,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         sections = createSections()
     }
 
-    func showBanner() {
-        if let banner = banner {
-            if isBannerShown {
-                banner.dismiss()
-            } else {
-                banner.show(queuePosition: .front, bannerPosition: .top, on: self)
-            }
-        } else {
-            print("Banner is nil")
-        }
-
-    }
-
     func reachabilityChanged(note: Notification) {
 //        if banner == nil {
 //            banner = StatusBarNotificationBanner(title: "No Internet Connection")
@@ -359,10 +346,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.endEditing(true)
         searchBar.text = nil
         sections = createSections()
-        for section in sections {
-            print(section.type)
-            print(section.items)
-        }
         tableViewIndexController.setHidden(false, animated: false)
         tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
         
