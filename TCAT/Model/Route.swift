@@ -28,10 +28,11 @@ class Route: NSObject, JSONDecodable {
     }
     
     var routeSummary: [RouteSummaryObject] = [RouteSummaryObject]()
-    var directions: [Direction] = [Direction]()
-    var allStops : [String] = [String]()
-    var paths: [CLLocationCoordinate2D] = [CLLocationCoordinate2D]()
     var travelDistance: Double = 0.0 // of first stop
+
+    var directions: [Direction] = []
+    var allStops : [String] = []
+    var paths: [CLLocationCoordinate2D] = []
     var lastStopTime: Date = Date() // the critical last time a bus route runs
     
     required init(json: JSON) throws {

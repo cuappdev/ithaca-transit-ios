@@ -325,11 +325,11 @@ CLLocationManagerDelegate {
     
     private func processRoutes(_ routes: [Route]) -> [Route]{
         // Update ending place to include place name
-//        if let startingPlace = searchFrom as? PlaceResult {
-//            for route in routes {
-//                route.updateStartingDestination(startingPlace)
-//            }
-//        }
+        if let startingPlace = searchFrom as? PlaceResult {
+            for route in routes {
+                route.updateStartingDestination(startingPlace)
+            }
+        }
         if let endingPlace = searchTo as? PlaceResult {
             for route in routes{
                 route.updateEndingDestinationName(endingPlace)
