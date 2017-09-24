@@ -7,9 +7,9 @@
 //
 
 import UIKit
-import MapKit
 import CoreLocation
 import SwiftyJSON
+import DZNEmptyDataSet
 
 enum SearchBarType: String{
     case from, to
@@ -20,8 +20,9 @@ enum SearchType: String{
 }
 
 class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,
-    DestinationDelegate, SearchBarCancelDelegate,UISearchBarDelegate,
-CLLocationManagerDelegate {
+                                  DestinationDelegate, SearchBarCancelDelegate,
+                                  DZNEmptyDataSetSource, DZNEmptyDataSetDelegate,
+                                  CLLocationManagerDelegate {
 
     // MARK: Search bar vars
 
@@ -63,6 +64,7 @@ CLLocationManagerDelegate {
         setupSearchBar()
         setupDatepicker()
         setupRouteResultsTableView()
+        setupEmptyDataSet()
 
         view.addSubview(routeSelection)
         view.addSubview(datePickerOverlay)
@@ -297,6 +299,7 @@ CLLocationManagerDelegate {
                     
                     let rawRoutes = Route.getRoutesArray(fromJson: routeJson)
                     self.routes = self.processRoutes(rawRoutes)
+                    
                     self.routeResults.reloadData()
                     Loader.removeLoaderFrom(self.routeResults)
                 },
@@ -477,6 +480,25 @@ CLLocationManagerDelegate {
         cell?.addSubviews()
 
         return cell!
+    }
+    
+    // MARK: DZNEmptyDataSet
+    
+    private func setupEmptyDataSet() {
+        routeResults.emptyDataSetSource = self
+        routeResults.emptyDataSetDelegate = self
+        routeResults.tableFooterView = UIView()
+    }
+
+    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        let message = "No Routes Found"
+        let attrs = [NSFontAttributeName: UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0), NSForegroundColorAttributeName: UIColor.mediumGrayColor]
+        
+        return NSAttributedString(string: message, attributes: attrs)
+    }
+    
+    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        return #imageLiteral(resourceName: "road")
     }
 
     // MARK: Tableview Delegate
