@@ -201,26 +201,44 @@ CLLocationManagerDelegate {
 
     func searchingTo(sender: UIButton){
         searchType = .to
-        //For Austin's search bar to show current location option or not
-        //        searchBarView.resultsViewController.shouldShowCurrentLocation = false
         presentSearchBar()
     }
 
     func searchingFrom(sender: UIButton){
         searchType = .from
-        //For Austin's search bar to show current location option or not
-        //        searchBarView.resultsViewController.shouldShowCurrentLocation = false
+        searchBarView.resultsViewController?.shouldShowCurrentLocation = true
         presentSearchBar()
     }
 
     func presentSearchBar(){
-        showSearchBar()
-        //Customize placeholder
-        let placeholder = (searchType == .from) ? "Search start locations" : "Search destination"
+        var placeholder = ""
+        
+        switch searchType {
+            
+        case .from:
+            
+            if let startingDestinationName = searchFrom?.name {
+                placeholder = startingDestinationName
+            }
+            else {
+                placeholder = "Search start locations"
+            }
+        
+        case .to:
+            
+            if let endingDestinationName = searchTo?.name {
+                placeholder = endingDestinationName
+            }
+            else {
+                placeholder = "Search destination"
+            }
+            
+        }
+        
         let textFieldInsideSearchBar = searchBarView.searchController?.searchBar.value(forKey: "searchField") as? UITextField
         textFieldInsideSearchBar?.attributedPlaceholder = NSAttributedString(string: placeholder) //make placeholder invisible
-        //Prompt search
-        //searchBarView.searchController?.searchBar.text = (searchType == .from) ? routeSelection.fromSearch.titleLabel?.text : routeSelection.toSearch.titleLabel?.text
+        
+        showSearchBar()
     }
 
     private func dismissSearchBar(){
@@ -228,15 +246,21 @@ CLLocationManagerDelegate {
     }
 
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?){
+        
         switch searchType{
+            
         case .from:
+            
             if let result = busStop{
                 searchFrom = result
                 routeSelection.fromSearchbar.setTitle(result.name, for: .normal)
             }else if let result = placeResult{
                 searchFrom = result
-                routeSelection.fromSearchbar.setTitle(result.name, for: .normal)                }
+                routeSelection.fromSearchbar.setTitle(result.name, for: .normal)
+            }
+            
         case .to:
+            
             if let result = busStop{
                 searchTo = result
                 routeSelection.toSearchbar.setTitle(result.name, for: .normal)
@@ -244,7 +268,9 @@ CLLocationManagerDelegate {
                 searchTo = result
                 routeSelection.toSearchbar.setTitle(result.name, for: .normal)
             }
+            
         }
+        
         hideSearchBar()
         dismissSearchBar()
         searchForRoutes()
@@ -263,25 +289,59 @@ CLLocationManagerDelegate {
         navigationItem.titleView = searchBarView.searchController?.searchBar
         searchBarView.searchController?.isActive = true
     }
+    
+    // MARK: Process data
 
     func searchForRoutes() {
         if let startingDestination = searchFrom, let endingDestination = searchTo{
+            
             routes = loaderroutes
             routeResults.reloadData()
             Loader.addLoaderTo(routeResults)
+            
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
+                
                 request.perform(withSuccess: { (routeJson) in
-                    self.routes = Route.getRoutesArray(fromJson: routeJson)
+                    print("RouteOptionVC routeJson: \(routeJson)")
+                    
+                    let rawRoutes = Route.getRoutesArray(fromJson: routeJson)
+                    self.routes = self.processRoutes(rawRoutes)
                     self.routeResults.reloadData()
                     Loader.removeLoaderFrom(self.routeResults)
-                }, failure: { (error) in
+                },
+                                
+                failure: { (error) in
                     print("RouteOptionVC SearchForRoutes Error: \(error)")
                     self.routes = []
                     self.routeResults.reloadData()
                     Loader.removeLoaderFrom(self.routeResults)
                 })
+                
+            }
+            
+        }
+        
+    }
+    
+    private func processRoutes(_ routes: [Route]) -> [Route]{
+        // Update ending place to include place name
+//        if let startingPlace = searchFrom as? PlaceResult {
+//            for route in routes {
+//                route.updateStartingDestination(startingPlace)
+//            }
+//        }
+        if let endingPlace = searchTo as? PlaceResult {
+            for route in routes{
+                route.updateEndingDestinationName(endingPlace)
             }
         }
+        
+        // Add directions array
+        for route in routes {
+            route.addWalkingDirections()
+        }
+        
+        return routes
     }
 
     // MARK: Location Manager Delegate
@@ -315,7 +375,7 @@ CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        //If don't have start location, set to current location
+        // If don't have start location, set to current location
         locationManager.stopUpdatingLocation()
         if searchFrom == nil, let location = manager.location {
             let currentLocationStop =  BusStop(name: "Current Location", lat: location.coordinate.latitude, long: location.coordinate.longitude)
@@ -375,14 +435,17 @@ CLLocationManagerDelegate {
         searchTime = date
         let dateString = Time.dateString(from: date)
         let segmentedControl = datePickerView.segmentedControl
+        
+        // Get selected time type
         let selectedSegString = (segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)) ?? ""
         if (selectedSegString.lowercased().contains("arrive")){
             searchTimeType = .arriveBy
         }else{
             searchTimeType = .leaveAt
         }
+        
+        // Customize string based on date
         var title = ""
-        //Customize string based on date
         if(Calendar.current.isDateInToday(date) || Calendar.current.isDateInTomorrow(date)){
             let verb = (searchTimeType == .arriveBy) ? "Arrive" : "Leave" //Use simply,"arrive" or "leave"
             let day = Calendar.current.isDateInToday(date) ? "" : " tomorrow" //if today don't put day
@@ -398,7 +461,7 @@ CLLocationManagerDelegate {
         searchForRoutes()
     }
 
-    //MARK: Tableview Data Source
+    // MARK: Tableview Data Source
 
     func numberOfSections(in tableView: UITableView) -> Int{
         return 1
@@ -469,8 +532,9 @@ CLLocationManagerDelegate {
     }
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool{
-        navigationController?.pushViewController(RouteDetailViewController(route: nil), animated: true) // routes[indexPath.row]
-        return false // halts the selection process = don't have selected look
+        navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
+        
+        return false // halts the selection process, so don't have selected look
     }
 
 }
