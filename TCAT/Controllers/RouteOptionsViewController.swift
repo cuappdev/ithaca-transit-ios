@@ -1,5 +1,5 @@
 //
-//  SearchForRoutesViewController.swift
+//  RouteOptionsViewController.swift
 //  TCAT
 //
 //  Created by Monica Ong on 2/12/17.
@@ -28,7 +28,7 @@ enum SearchType: String{
     case arriveBy, leaveAt
 }
 
-class SearchForRoutesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,
+class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,
     DestinationDelegate, SearchBarCancelDelegate,UISearchBarDelegate,
 CLLocationManagerDelegate {
 
