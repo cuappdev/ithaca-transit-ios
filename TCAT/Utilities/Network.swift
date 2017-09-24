@@ -80,7 +80,7 @@ class AllBusLocations: JSONDecodable {
             busLocation.vehicleID = bus["vehicleID"].intValue
             
             allLocationsArray.append(busLocation)
-            
+
         }
         
         return allLocationsArray

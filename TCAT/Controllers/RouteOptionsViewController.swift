@@ -301,8 +301,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
                 
                 request.perform(withSuccess: { (routeJson) in
-                    print("RouteOptionVC routeJson: \(routeJson)")
-                    
                     let rawRoutes = Route.getRoutesArray(fromJson: routeJson)
                     self.routes = self.processRoutes(rawRoutes)
                     self.currentlySearching = false
