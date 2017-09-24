@@ -21,48 +21,63 @@ class Route: NSObject, JSONDecodable {
     
     var departureTime: Date = Date()
     var arrivalTime: Date = Date()
+    
     var timeUntilDeparture: DateComponents {
-        let now = Date() //curent date
+        let now = Date()
         return Time.dateComponents(from: now, to: departureTime)
     }
     
-    var routeSummary: [RouteSummaryObject] = [RouteSummaryObject]()
+    var startCoords: CLLocationCoordinate2D = CLLocationCoordinate2D()
+    var endCoords: CLLocationCoordinate2D = CLLocationCoordinate2D()
     var directions: [Direction] = [Direction]()
-    var allStops : [String] = [String]()
-    var path: [CLLocationCoordinate2D] = [CLLocationCoordinate2D]()
-    var travelDistance: Double = 0.0 // of first stop
-    var lastStopTime: Date = Date() // the critical last time a bus route runs
+    var routeSummary: [RouteSummaryObject] = [RouteSummaryObject]()
     
+    // to be removed
+    var travelDistance = 0.0
+
     required init(json: JSON) throws {
         super.init()
+        
         print(json["data"])
+        
         let jsonData = json["data"]
+        
         departureTime = Date(timeIntervalSince1970: jsonData["departureTime"].doubleValue)
         arrivalTime = Date(timeIntervalSince1970: jsonData["arrivalTime"].doubleValue)
-        routeSummary = getRouteSummary(fromJson: jsonData["routeSummary"].arrayValue)
-        // directions = directionJSON(json:json["directions"].arrayValue)
-        path = CLLocationCoordinate2D.strToCoords(jsonData["kmls"].stringValue)
+
+        startCoords = CLLocationCoordinate2D(latitude: jsonData["startCoords"]["latitude"].doubleValue,
+                               longitude: jsonData["startCoords"]["longitude"].doubleValue)
+        endCoords = CLLocationCoordinate2D(latitude: jsonData["endCoords"]["latitude"].doubleValue,
+                                           longitude: jsonData["endCoords"]["longitude"].doubleValue)
         
-        travelDistance = directions.first != nil ? directions.first!.travelDistance : 0.0
+        directions = jsonData["directions"].arrayValue.flatMap { (directionJSON) -> Direction in
+            return Direction(from: directionJSON)
+        }
         
-        lastStopTime = Date()
+        var index = 0
+        var kmlData = jsonData["kmls"].arrayObject as! [String]
+        for direction in directions {
+            if direction.type == .depart {
+                direction.path = CLLocationCoordinate2D.strToCoords(kmlData[index])
+                index += 1
+            }
+        }
+        
     }
     
     init(departureTime: Date,
          arrivalTime: Date,
-         routeSummary: [RouteSummaryObject],
+         startCoords: CLLocationCoordinate2D,
+         endCoords: CLLocationCoordinate2D,
          directions: [Direction],
-         path: [CLLocationCoordinate2D],
-         travelDistance: Double,
-         lastStopTime: Date = Date()) {
+         routeSummary: [RouteSummaryObject]) {
         
         self.departureTime = departureTime
         self.arrivalTime = arrivalTime
-        self.routeSummary = routeSummary
+        self.startCoords = startCoords
+        self.endCoords = endCoords
         self.directions = directions
-        self.path = path
-        self.travelDistance = travelDistance
-        self.lastStopTime = lastStopTime
+        self.routeSummary = routeSummary
     }
     
     private func getRouteSummary(fromJson json: [JSON]) -> [RouteSummaryObject] {
@@ -78,6 +93,19 @@ class Route: NSObject, JSONDecodable {
     /// Modify the last routeSummaryObject to include name of the destination place result
     func updatePlaceDestination(_ placeDestination: PlaceResult){
         routeSummary[routeSummary.count - 1].name = placeDestination.name
+    }
+    
+    func numberOfBusRoutes() -> Int {
+        
+        var numberOfRoutes = 0
+        for direction in directions {
+            if direction.type == .depart {
+                numberOfRoutes += 1
+            }
+        }
+        
+        return numberOfRoutes
+        
     }
     
 }

@@ -91,7 +91,7 @@ class AllBusLocations: JSONDecodable {
 
 class Network {
     
-    static let source = "localhost" // "10.132.10.30"
+    static let source = "10.132.6.69" // "localhost"
     static let tron = TRON(baseURL: "http://\(source):3000/api/v1/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
@@ -152,7 +152,7 @@ class Network {
     }
     
     class func getRoutes(start: AnyObject, end: AnyObject, time: Date, type: SearchType, callback:@escaping ((APIRequest<Array<Route>, Error>) -> Void)) {
-        getStartEndCoords(start: start, end: end) {startCoords, endCoords in
+        getStartEndCoords(start: start, end: end) { startCoords, endCoords in
             let request: APIRequest<Array<Route>, Error> = tron.request("routes")
             
             request.parameters = [

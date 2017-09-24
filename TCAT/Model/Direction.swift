@@ -8,7 +8,16 @@
 
 import UIKit
 import CoreLocation
+import MapKit
 import SwiftyJSON
+
+/* To get string version of Bound
+ * let inbound: String = Bound.inbound.rawValue  //"inbound"
+ * let outbound: String = Bound.inbound.rawValue //"outbound"
+ */
+enum Bound: String {
+    case inbound, outbound
+}
 
 enum DirectionType: String {
     case walk, depart, arrive, unknown
@@ -25,25 +34,20 @@ class Direction: NSObject {
     
     var startTime: Date
     var endTime: Date
-    var routeNumber: Int
-    var stops: [String]
     
-    /*To extract travelTime's times in day, hour, and minute units:
-     * let days: Int = travelTime.day
-     * let hours: Int = travelTime.hour
-     * let minutes: Int = travelTime.minute
-     */
-    var travelTime: DateComponents {
-        return Time.dateComponents(from: startTime, to: endTime)
-    }
-
+    var path: [CLLocationCoordinate2D]
+    
+    var routeNumber: Int
+    var busStops: [String]
+    
     init(type: DirectionType,
          locationName: String,
          startLocation: CLLocation,
          endLocation: CLLocation,
          startTime: Date,
          endTime: Date,
-         stops: [String] = [],
+         path: [CLLocationCoordinate2D],
+         busStops: [String] = [],
          routeNumber: Int = 0) {
         
         self.type = type
@@ -51,29 +55,33 @@ class Direction: NSObject {
         self.startLocation = startLocation
         self.endLocation = endLocation
         self.startTime = startTime
+        self.path = path
         self.endTime = endTime
         self.routeNumber = routeNumber
-        self.stops = stops
+        self.busStops = busStops
     }
 
     convenience init(name: String) {
         
-        let location = CLLocation()
-        let time = Date()
+        let blankLocation = CLLocation()
+        let blankTime = Date()
         
-        self.init(type: .arrive,
-                  locationName: name,
-                  startLocation: location,
-                  endLocation: location,
-                  startTime: time,
-                  endTime: time)
+        self.init(
+            type: .arrive,
+            locationName: name,
+            startLocation: blankLocation,
+            endLocation: blankLocation,
+            startTime: blankTime,
+            endTime: blankTime,
+            path: []
+        )
         
     }
     
     convenience init(from json: JSON) {
         
         func locationJSON(_ json: JSON) -> CLLocation {
-            return CLLocation(latitude: json[0].doubleValue, longitude: json[1].doubleValue)
+            return CLLocation(latitude: json["latitude"].doubleValue, longitude: json["longitude"].doubleValue)
         }
         
         self.init(
@@ -90,7 +98,9 @@ class Direction: NSObject {
             
             endTime: Date(timeIntervalSince1970: json["endTime"].doubleValue),
             
-            stops: json["busStops"].arrayObject as! [String],
+            path: CLLocationCoordinate2D.strToCoords(json["path"].stringValue),
+            
+            busStops: json["busStops"].arrayObject as! [String],
             
             routeNumber: json["routeNumber"].intValue
     
@@ -141,6 +151,17 @@ class Direction: NSObject {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
         return formatter.string(from: time)
+    }
+
+    static func coordsEqual(_ lhs: CLLocationCoordinate2D, _ rhs: CLLocationCoordinate2D) -> Bool {
+        
+        func rnd(_ number: Double, to place: Int = 6) -> Double {
+            return round(number * pow(10.0, Double(place))) / pow(10.0, Double(place))
+        }
+        
+        let result = rnd(rhs.latitude) == rnd(lhs.latitude) && rnd(rhs.longitude) == rnd(lhs.longitude)
+        return result
+        
     }
     
 }

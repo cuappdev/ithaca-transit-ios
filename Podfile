@@ -13,6 +13,7 @@ target 'TCAT' do
   pod 'TRON', '~> 3.0.0'
   pod 'DZNEmptyDataSet'
   pod 'MYTableViewIndex', :git => 'https://github.com/mindz-eye/MYTableViewIndex.git', :commit => 'ef6119e2b0cd5968e2e24397cd59ab8080858054'
+  pod 'NotificationBannerSwift'
 
   target 'TCATTests' do
     inherit! :search_paths

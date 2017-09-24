@@ -131,7 +131,8 @@ CLLocationManagerDelegate {
         let routeObject2 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop)
         let routeSummary1 = [routeObject1, routeObject2]
 
-        let route1 = Route(departureTime: date1, arrivalTime: date2, routeSummary: routeSummary1, directions: [], path: [], travelDistance: 0.1)
+        let route1 = Route(departureTime: date1, arrivalTime: date2, startCoords: CLLocation().coordinate,
+                           endCoords: CLLocation().coordinate, directions: [], routeSummary: routeSummary1)
 
         let date3 = Time.dateForDebug(from: "3:45 PM")
         let date4 = Time.dateForDebug(from: "3:52 PM")
@@ -140,7 +141,8 @@ CLLocationManagerDelegate {
         let routeObject5 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop, nextDirection: .walk)
         let routeObject10 = RouteSummaryObject(name: "Waffle Frolic", type: .place)
         let routeSummary2 = [routeObject3, routeObject4, routeObject5, routeObject10]
-        let route2 = Route(departureTime: date3, arrivalTime: date4, routeSummary: routeSummary2, directions: [], path: [], travelDistance: 0.1)
+        let route2 = Route(departureTime: date3, arrivalTime: date4, startCoords: CLLocation().coordinate,
+                           endCoords: CLLocation().coordinate, directions: [], routeSummary: routeSummary2)
 
         let date5 = Time.dateForDebug(from: "3:45 PM")
         let date6 = Time.dateForDebug(from: "3:52 PM")
@@ -149,7 +151,8 @@ CLLocationManagerDelegate {
         let routeObject8 = RouteSummaryObject(name: "RPCC", type: .stop, nextDirection: .bus, busNumber: 32)
         let routeObject9 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop)
         let routeSummary3 = [routeObject6, routeObject7, routeObject8, routeObject9]
-        let route3 = Route(departureTime: date5, arrivalTime: date6, routeSummary: routeSummary3, directions: [], path: [], travelDistance: 0.1)
+        let route3 = Route(departureTime: date5, arrivalTime: date6, startCoords: CLLocation().coordinate,
+                           endCoords: CLLocation().coordinate, directions: [], routeSummary: routeSummary3)
 
         loaderroutes = [route1, route2, route3]
     }

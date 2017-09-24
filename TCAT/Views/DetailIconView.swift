@@ -78,16 +78,20 @@ class DetailIconView: UIView {
         // Format and place time label
         timeLabel.font = UIFont.systemFont(ofSize: 14)
         timeLabel.textColor = .primaryTextColor
-        timeLabel.text = time
-        timeLabel.sizeToFit()
-        timeLabel.center = self.center
-        timeLabel.center.x = statusCircle.frame.maxX + (frame.width - statusCircle.frame.maxX) / 2.0
+        changeTime(time)
         addSubview(timeLabel)
         
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    func changeTime(_ time: String) {
+        timeLabel.text = time
+        timeLabel.sizeToFit()
+        timeLabel.center = self.center
+        timeLabel.center.x = statusCircle.frame.maxX + (frame.width - statusCircle.frame.maxX) / 2.0
     }
     
 }
