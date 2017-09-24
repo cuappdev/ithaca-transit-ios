@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "route.png",
+      "filename" : "reload.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "route@2x.png",
+      "filename" : "reload@2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "route@3x.png",
+      "filename" : "reload@3x.png",
       "scale" : "3x"
     }
   ],

@@ -75,7 +75,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setRouteSelectionView(withDestination: searchTo)
         setupLocationManager()
 
-//        setupLoaderData()
+        setupLoaderData()
 //        routes = loaderroutes
 
         // If no date is set then date should be same as today's date
@@ -285,13 +285,23 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     
     // MARK: Process data
 
+    var currentlySearching: Bool = false
+    
     func searchForRoutes() {
+        if(!currentlySearching){
+            routes = []
+            routeResults.reloadData()
+            
+            Loader.removeLoaderFrom(routeResults)
+        }
+        
         if let startingDestination = searchFrom, let endingDestination = searchTo{
             
             routes = loaderroutes
             routeResults.reloadData()
             Loader.addLoaderTo(routeResults)
             
+            currentlySearching = true
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
                 
                 request.perform(withSuccess: { (routeJson) in
@@ -299,16 +309,21 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     
                     let rawRoutes = Route.getRoutesArray(fromJson: routeJson)
                     self.routes = self.processRoutes(rawRoutes)
-                    
                     self.routeResults.reloadData()
+                    
                     Loader.removeLoaderFrom(self.routeResults)
+                    
+                    self.currentlySearching = false
                 },
                                 
                 failure: { (error) in
                     print("RouteOptionVC SearchForRoutes Error: \(error)")
                     self.routes = []
                     self.routeResults.reloadData()
+                    
                     Loader.removeLoaderFrom(self.routeResults)
+                    
+                    self.currentlySearching = false
                 })
                 
             }
@@ -416,7 +431,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         UIView.animate(withDuration: 0.5, animations: {
             self.datePickerView.center.y = self.view.frame.height + (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.0
-        }) { (true) in
+        }) { (completion) in
             self.view.sendSubview(toBack: self.datePickerOverlay)
             self.view.sendSubview(toBack: self.datePickerView)
         }
@@ -483,6 +498,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     // MARK: DZNEmptyDataSet
+    
     
     private func setupEmptyDataSet() {
         routeResults.emptyDataSetSource = self

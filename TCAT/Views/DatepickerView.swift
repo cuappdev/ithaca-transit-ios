@@ -93,8 +93,8 @@ class DatepickerView: UIView {
         let now = Date()
         datepicker.minimumDate = now
         
-        let next14Days = now.addingTimeInterval(14*24*60*60)
-        datepicker.maximumDate = next14Days //set maximum date to 14 days from now
+        let next7Days = now.addingTimeInterval(7*24*60*60)
+        datepicker.maximumDate = next7Days //set maximum date to 7 days from now
         
         datepicker.minuteInterval = 5
     }
