@@ -8,7 +8,12 @@ PODS:
     - GoogleMaps/Base
   - GooglePlaces (2.4.0):
     - GoogleMaps/Base (= 2.4.0)
+  - MarqueeLabel/Swift (3.1.3)
   - MYTableViewIndex (0.2.0)
+  - NotificationBannerSwift (1.4.5):
+    - MarqueeLabel/Swift
+    - SnapKit (~> 3.2)
+  - SnapKit (3.2.0)
   - SwiftyJSON (3.1.4)
   - TRON (3.0.3):
     - Alamofire (~> 4.1)
@@ -26,6 +31,7 @@ DEPENDENCIES:
   - GoogleMaps (~> 2.2)
   - GooglePlaces (~> 2.2)
   - MYTableViewIndex (from `https://github.com/mindz-eye/MYTableViewIndex.git`, commit `ef6119e2b0cd5968e2e24397cd59ab8080858054`)
+  - NotificationBannerSwift
   - SwiftyJSON (~> 3.1.4)
   - TRON (~> 3.0.0)
 
@@ -44,10 +50,13 @@ SPEC CHECKSUMS:
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   GoogleMaps: 8436ab5d1c25e36915b2f7416d0c8e3fa2e76c61
   GooglePlaces: aafe5990fa7951e98e078761bbdaaf236d7e0c65
+  MarqueeLabel: baa5753dcbd36dca080e1f5c589a665aa5c906f1
   MYTableViewIndex: 9b8c20c6edb693c67be3cf1246629ea9af3602f7
+  NotificationBannerSwift: 8e0d142c34406800e5a98d1535fbfca43da49f17
+  SnapKit: 1ca44df72cfa543218d177cb8aab029d10d86ea7
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   TRON: dd43f2d37b70ae245e5fef4a52f1ab8a5eaac3a5
 
-PODFILE CHECKSUM: 8bf998eff2eaeed1b59a5dd470b9929c2df57d78
+PODFILE CHECKSUM: bb746cecb7ec2bf11ce703bf1dd46177d392b81d
 
 COCOAPODS: 1.2.0
