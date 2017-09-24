@@ -64,7 +64,7 @@ class RouteDiagram: UIView{
     
     func setRouteData(fromRouteSummary routeSummary: [RouteSummaryObject]){
         
-        for i in 0...(routeSummary.count - 1){
+        for i in routeSummary.indices{
             
             let routeDiagramElement = RouteDiagramElement()
             
@@ -197,8 +197,8 @@ class RouteDiagram: UIView{
     // MARK: Position
     
     func positionSubviews(){
-                
-        for i in 0...(routeDiagramElements.count-1){
+        
+        for i in routeDiagramElements.indices {
             
             let stopDot = routeDiagramElements[i].stopDot
             let stopLabel = routeDiagramElements[i].stopNameLabel

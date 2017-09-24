@@ -32,7 +32,7 @@
 		DC114CD61F72F8D50060BDE1 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC114CD51F72F8D40060BDE1 /* Reachability.swift */; };
 		DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
-		DD2F98A31E5150990005F6BC /* SearchForRoutesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A21E5150990005F6BC /* SearchForRoutesViewController.swift */; };
+		DD2F98A31E5150990005F6BC /* RouteOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */; };
 		DD36A6FF1F66378C00E4789E /* BusStop.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36A6FD1F66378B00E4789E /* BusStop.swift */; };
 		DD36A7001F66378C00E4789E /* PlaceResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36A6FE1F66378C00E4789E /* PlaceResult.swift */; };
 		DD36A7021F6637CA00E4789E /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36A7011F6637C900E4789E /* Direction.swift */; };
@@ -117,7 +117,7 @@
 		DC114CD51F72F8D40060BDE1 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
-		DD2F98A21E5150990005F6BC /* SearchForRoutesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchForRoutesViewController.swift; path = Controllers/SearchForRoutesViewController.swift; sourceTree = "<group>"; };
+		DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteOptionsViewController.swift; path = Controllers/RouteOptionsViewController.swift; sourceTree = "<group>"; };
 		DD36A6FD1F66378B00E4789E /* BusStop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusStop.swift; path = Model/BusStop.swift; sourceTree = "<group>"; };
 		DD36A6FE1F66378C00E4789E /* PlaceResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceResult.swift; path = Model/PlaceResult.swift; sourceTree = "<group>"; };
 		DD36A7011F6637C900E4789E /* Direction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Direction.swift; path = Model/Direction.swift; sourceTree = "<group>"; };
@@ -373,7 +373,7 @@
 				503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */,
 				DDB49C921E8857D000A99C35 /* RouteDetailViewController.swift */,
 				50A19BAD1E4C214000AD6768 /* HomeViewController.swift */,
-				DD2F98A21E5150990005F6BC /* SearchForRoutesViewController.swift */,
+				DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -739,7 +739,7 @@
 				DD36A7021F6637CA00E4789E /* Direction.swift in Sources */,
 				DDB49C941E8857D000A99C35 /* RouteDetailViewController.swift in Sources */,
 				DC114CD61F72F8D50060BDE1 /* Reachability.swift in Sources */,
-				DD2F98A31E5150990005F6BC /* SearchForRoutesViewController.swift in Sources */,
+				DD2F98A31E5150990005F6BC /* RouteOptionsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

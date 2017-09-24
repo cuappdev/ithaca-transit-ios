@@ -16,6 +16,7 @@ import UIKit
 import TRON
 import SwiftyJSON
 import CoreLocation
+import MapKit
 
 class Route: NSObject, JSONDecodable {
     
@@ -27,21 +28,20 @@ class Route: NSObject, JSONDecodable {
     }
     
     var routeSummary: [RouteSummaryObject] = [RouteSummaryObject]()
-    var directions: [Direction] = [Direction]()
-    var allStops : [String] = [String]()
-    var path: [CLLocationCoordinate2D] = [CLLocationCoordinate2D]()
     var travelDistance: Double = 0.0 // of first stop
+
+    var directions: [Direction] = []
+    var allStops : [String] = []
+    var paths: [CLLocationCoordinate2D] = []
     var lastStopTime: Date = Date() // the critical last time a bus route runs
     
     required init(json: JSON) throws {
         super.init()
-        print(json["data"])
-        let jsonData = json["data"]
-        departureTime = Date(timeIntervalSince1970: jsonData["departureTime"].doubleValue)
-        arrivalTime = Date(timeIntervalSince1970: jsonData["arrivalTime"].doubleValue)
-        routeSummary = getRouteSummary(fromJson: jsonData["routeSummary"].arrayValue)
+        departureTime = Date(timeIntervalSince1970: json["departureTime"].doubleValue)
+        arrivalTime = Date(timeIntervalSince1970: json["arrivalTime"].doubleValue)
+        routeSummary = getRouteSummary(fromJson: json["routeSummary"].arrayValue)
         // directions = directionJSON(json:json["directions"].arrayValue)
-        path = CLLocationCoordinate2D.strToCoords(jsonData["kmls"].stringValue)
+        paths = CLLocationCoordinate2D.strToCoords(json["kmls"].stringValue)
         
         travelDistance = directions.first != nil ? directions.first!.travelDistance : 0.0
         
@@ -60,9 +60,25 @@ class Route: NSObject, JSONDecodable {
         self.arrivalTime = arrivalTime
         self.routeSummary = routeSummary
         self.directions = directions
-        self.path = path
+        self.paths = path
         self.travelDistance = travelDistance
         self.lastStopTime = lastStopTime
+    }
+    
+    static func getRoutesArray(fromJson json: JSON) -> [Route] {
+        if (json["success"]=="false") {
+            return []
+        }
+        
+        let routeJsonArray = json["data"].arrayValue
+        var routes: [Route] = []
+
+        for routeJson in routeJsonArray {
+            let route = try! Route(json: routeJson)
+            routes.append(route)
+        }
+
+        return routes
     }
     
     private func getRouteSummary(fromJson json: [JSON]) -> [RouteSummaryObject] {
@@ -75,9 +91,40 @@ class Route: NSObject, JSONDecodable {
         return routeSummary
     }
 
-    /// Modify the last routeSummaryObject to include name of the destination place result
-    func updatePlaceDestination(_ placeDestination: PlaceResult){
-        routeSummary[routeSummary.count - 1].name = placeDestination.name
+    // MARK: Process raw routes
+    
+    /// Modify the first routeSummaryObject to include name of the starting destination place result
+    func updateStartingDestination(_ placeResult: PlaceResult) {
+        routeSummary.first?.name = placeResult.name
+    }
+    
+    /// Modify the last routeSummaryObject to include name of the ending place result
+    func updateEndingDestinationName(_ placeResult: PlaceResult) {
+        routeSummary.last?.name = placeResult.name
+    }
+    
+    /// Add walking directions
+    func addWalkingDirections(){
+        for index in 0..<directions.count {
+            let direction = directions[index]
+            if direction.type == .walk {
+                calculateWalkingDirections(direction) { (path) in
+//                   paths.insert(path, at: index)
+                }
+            }
+        }
+    }
+    
+    private func calculateWalkingDirections(_ direction: Direction, _ completion: @escaping ([CLLocationCoordinate2D]) -> Void) {
+        let request = MKDirectionsRequest()
+        request.source = MKMapItem(placemark: MKPlacemark(coordinate: direction.startLocation.coordinate, addressDictionary: [:]))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: direction.endLocation.coordinate, addressDictionary: [:]))
+        request.transportType = .walking
+        request.requestsAlternateRoutes = false
+        let directions = MKDirections(request: request)
+        directions.calculate { (response, error) in
+            completion(response?.routes.first?.polyline.coordinates ?? [])
+        }
     }
     
 }

@@ -123,7 +123,7 @@ class RouteTableViewCell: UITableViewCell {
     }
     
     private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
-        travelTimeLabel.text = "\(Time.string(from: departureTime)) - \(Time.string(from: arrivalTime))"
+        travelTimeLabel.text = "\(Time.timeString(from: departureTime)) - \(Time.timeString(from: arrivalTime))"
         travelTimeLabel.sizeToFit()
     }
     
