@@ -342,7 +342,6 @@ CLLocationManagerDelegate {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = 10
-        // locationManager.requestLocation() // one-time call
         locationManager.startUpdatingLocation()
     }
 
@@ -366,8 +365,7 @@ CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        // If don't have start location, set to current location
-        locationManager.stopUpdatingLocation()
+        // If haven't selected start location, set to current location
         if searchFrom == nil, let location = manager.location {
             let currentLocationStop =  BusStop(name: "Current Location", lat: location.coordinate.latitude, long: location.coordinate.longitude)
             searchFrom = currentLocationStop

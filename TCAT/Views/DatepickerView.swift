@@ -93,14 +93,14 @@ class DatepickerView: UIView {
         let now = Date()
         datepicker.minimumDate = now
         
-        let next6Days = now.addingTimeInterval(6*24*60*60)
-        datepicker.maximumDate = next6Days //set maximum date to 6 days from now
+        let next14Days = now.addingTimeInterval(14*24*60*60)
+        datepicker.maximumDate = next14Days //set maximum date to 14 days from now
         
         datepicker.minuteInterval = 5
     }
     
     private func setSegmentedControl(withItems titles: [String]){
-        for i in 0...titles.count - 1{
+        for i in titles.indices {
             segmentedControl.insertSegment(withTitle: titles[i], at: i, animated: false)
         }
         segmentedControl.selectedSegmentIndex = 1
