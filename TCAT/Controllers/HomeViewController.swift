@@ -106,31 +106,31 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             searchBar.becomeFirstResponder()
             tableViewIndexController.setHidden(true, animated: false)
         }
-        sections = createSections()
+        //sections = createSections()
     }
 
     func reachabilityChanged(note: Notification) {
-//        if banner == nil {
-//            banner = StatusBarNotificationBanner(title: "No Internet Connection")
-//            banner?.autoDismiss = false
-//        }
+        if banner == nil {
+            banner = StatusBarNotificationBanner(title: "No Internet Connection", style: .danger)
+            banner?.autoDismiss = false
+        }
         let reachability = note.object as! Reachability
         switch reachability.connection {
             case .none:
-                //isBannerShown = true
-                //banner?.show(queuePosition: .front, on: self)
+                isBannerShown = true
+                banner?.show(queuePosition: .front, on: self)
                 self.isNetworkDown = true
                 self.sectionIndexes = [:]
                 self.tableViewIndexController.tableViewIndex.reloadData()
                 self.searchBar.isUserInteractionEnabled = false
                 self.sections = []
             case .cellular, .wifi:
-                //if isBannerShown {
-                    //print("Banner is currently displayed")
-                    //banner?.dismiss()
-                    //isBannerShown = false
-                //}
+                if isBannerShown {
+                    banner?.dismiss()
+                    isBannerShown = false
+                }
                 sections = createSections()
+                self.searchBar.isUserInteractionEnabled = true
         }
     }
 
@@ -273,7 +273,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControlState) -> NSAttributedString! {
         let buttonTitle = isNetworkDown ? "Try Again" : ""
-        let attrs = [NSForegroundColorAttributeName: UIColor.init(red: 0.0, green: 118.0 / 255.0, blue: 255.0 / 255.0, alpha: 1.0)]
+        let attrs = [NSForegroundColorAttributeName: UIColor.noInternetTextColor]
         return NSAttributedString(string: buttonTitle, attributes: attrs)
     }
 
