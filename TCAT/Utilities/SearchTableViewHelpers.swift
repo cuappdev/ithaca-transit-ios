@@ -96,7 +96,6 @@ func sectionIndexesForBusStop() -> [String: Int] {
             currentIndex += 1
         }
     }
-    print("creating sections", sectionIndexDictionary)
     return sectionIndexDictionary
 }
 
@@ -107,7 +106,7 @@ func parseGoogleJSON(searchText: String, json: JSON) -> Section {
         return stringMatch != nil
     })
     let updatedOrderBusStops = sortFilteredBusStops(busStops: filteredBusStops, letter: searchText.capitalized.characters.first!)
-    itemTypes = updatedOrderBusStops.map( {ItemType.busStop($0)} )
+    itemTypes = updatedOrderBusStops.map( {ItemType.busStop($0)})
     
     if let predictionsArray = json["predictions"].array {
         for result in predictionsArray {
