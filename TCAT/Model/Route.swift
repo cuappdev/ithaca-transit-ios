@@ -28,11 +28,9 @@ class Route: NSObject, JSONDecodable {
     }
     
     var routeSummary: [RouteSummaryObject] = [RouteSummaryObject]()
-    var travelDistance: Double = 0.0 // of first stop
 
     var directions: [Direction] = []
     var allStops : [String] = []
-    var paths: [CLLocationCoordinate2D] = []
     var lastStopTime: Date = Date() // the critical last time a bus route runs
     
     required init(json: JSON) throws {
@@ -41,10 +39,7 @@ class Route: NSObject, JSONDecodable {
         arrivalTime = Date(timeIntervalSince1970: json["arrivalTime"].doubleValue)
         routeSummary = getRouteSummary(fromJson: json["routeSummary"].arrayValue)
         // directions = directionJSON(json:json["directions"].arrayValue)
-        paths = CLLocationCoordinate2D.strToCoords(json["kmls"].stringValue)
-        
-        travelDistance = directions.first != nil ? directions.first!.travelDistance : 0.0
-        
+                
         lastStopTime = Date()
     }
     
@@ -52,16 +47,12 @@ class Route: NSObject, JSONDecodable {
          arrivalTime: Date,
          routeSummary: [RouteSummaryObject],
          directions: [Direction],
-         path: [CLLocationCoordinate2D],
-         travelDistance: Double,
          lastStopTime: Date = Date()) {
         
         self.departureTime = departureTime
         self.arrivalTime = arrivalTime
         self.routeSummary = routeSummary
         self.directions = directions
-        self.paths = path
-        self.travelDistance = travelDistance
         self.lastStopTime = lastStopTime
     }
     
@@ -109,7 +100,7 @@ class Route: NSObject, JSONDecodable {
             let direction = directions[index]
             if direction.type == .walk {
                 calculateWalkingDirections(direction) { (path) in
-//                   paths.insert(path, at: index)
+                    direction.path = path
                 }
             }
         }

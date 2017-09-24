@@ -28,6 +28,8 @@ class Direction: NSObject {
     var routeNumber: Int
     var stops: [String]
     
+    var path = [CLLocationCoordinate2D]()
+    
     /*To extract travelTime's times in day, hour, and minute units:
      * let days: Int = travelTime.day
      * let hours: Int = travelTime.hour

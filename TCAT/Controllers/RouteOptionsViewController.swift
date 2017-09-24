@@ -125,7 +125,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         let routeObject2 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop)
         let routeSummary1 = [routeObject1, routeObject2]
 
-        let route1 = Route(departureTime: date1, arrivalTime: date2, routeSummary: routeSummary1, directions: [], path: [], travelDistance: 0.1)
+        let route1 = Route(departureTime: date1, arrivalTime: date2, routeSummary: routeSummary1, directions: [])
 
         let date3 = Time.date(fromTime: "3:45 PM")
         let date4 = Time.date(fromTime: "3:52 PM")
@@ -134,7 +134,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         let routeObject5 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop, nextDirection: .walk)
         let routeObject10 = RouteSummaryObject(name: "Waffle Frolic", type: .place)
         let routeSummary2 = [routeObject3, routeObject4, routeObject5, routeObject10]
-        let route2 = Route(departureTime: date3, arrivalTime: date4, routeSummary: routeSummary2, directions: [], path: [], travelDistance: 0.1)
+        let route2 = Route(departureTime: date3, arrivalTime: date4, routeSummary: routeSummary2, directions: [])
 
         let date5 = Time.date(fromTime: "3:45 PM")
         let date6 = Time.date(fromTime: "3:52 PM")
@@ -143,7 +143,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         let routeObject8 = RouteSummaryObject(name: "RPCC", type: .stop, nextDirection: .bus, busNumber: 32)
         let routeObject9 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop)
         let routeSummary3 = [routeObject6, routeObject7, routeObject8, routeObject9]
-        let route3 = Route(departureTime: date5, arrivalTime: date6, routeSummary: routeSummary3, directions: [], path: [], travelDistance: 0.1)
+        let route3 = Route(departureTime: date5, arrivalTime: date6, routeSummary: routeSummary3, directions: [])
 
         loaderroutes = [route1, route2, route3]
     }
@@ -359,7 +359,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         locationManager.stopUpdatingLocation()
         print("RouteOptionVC locationManager didFailWithError: \(error.localizedDescription)")
 
-        let title = "Couldn't Find Location"
+        let title = "Couldn't Find Current Location"
         let message = "Please ensure you are connected to the internet and have enabled location permissions."
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 

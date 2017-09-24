@@ -78,30 +78,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         // TODO: Finish Refactoring
         
-        // Plot Bus Directions
-        for index in 0..<route.paths.count {
-            
-            let point = route.paths[index]
-            
-            let type: WaypointType = {
-                switch index {
-                    case 0 : return .origin
-                    case (route.paths.count / 2) : return .stop
-                    // case index == route.path.count - 1: return .stop
-                    default : return .none
-                } // show stop waypoint in middle of route, origin for start, none otherwise
-            }()
-            
-            let waypoint = Waypoint(lat: point.latitude, long: point.longitude,
-                                    wpType: type, busNumber: 0)
-            // change from 0!
-            
-            routeWaypoints.append(waypoint)
-            let busPath = Path(waypoints: routeWaypoints, pathType: .driving, color: .tcatBlueColor)
-            routePaths.append(busPath)
-            
-        }
-        
         // Plot Walking Directions
         for index in 0..<directions.count {
             
