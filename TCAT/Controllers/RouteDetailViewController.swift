@@ -80,16 +80,32 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 
                 var type: WaypointType = .none
                 
-                if arrayIndex == 0 {
-                    type = .origin
+                if direction.type == .depart {
+                    
+                    if arrayIndex == 0 {
+                        type = .origin
+                    }
+                        
+                    else if arrayIndex == directions.count - 1 {
+                        type = .destination
+                    }
+                        
+                    else if pathIndex == 0 || pathIndex == direction.path.count - 1 {
+                        type = .origin
+                    }
+
                 }
                 
-                else if arrayIndex == directions.count - 1 {
-                    type = .destination
-                }
-                
-                else if pathIndex == 0 || pathIndex == direction.path.count - 1 {
-                    type = .origin
+                else if direction.type == .walk {
+                    
+                    if arrayIndex == 0 && pathIndex == 0 {
+                        type = .origin
+                    }
+                        
+                    else if arrayIndex == self.directions.count - 1 && pathIndex == direction.path.count - 1 {
+                        type = .destination
+                    }
+                    
                 }
                 
                 let waypoint = Waypoint(lat: point.latitude, long: point.longitude, wpType: type)
@@ -100,24 +116,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             let pathType: PathType = direction.type == .walk ? .walking : .driving
             let path = Path(waypoints: waypoints, pathType: pathType, color: .tcatBlueColor)
             routePaths.append(path)
-            
-            // Temporary walk calculator
-            if direction.type == .walk && direction.path.isEmpty {
-                calculateWalkingDirections(direction) { (path) in
-                    waypoints = path.enumerated().flatMap { (pathIndex, coord) -> Waypoint in
-                        var type: WaypointType = .none
-                        if arrayIndex == 0 && pathIndex == 0 {
-                            type = .origin
-                        }
-                        else if arrayIndex == self.directions.count - 1 && pathIndex == path.count - 1 {
-                            type = .destination
-                        }
-                        return Waypoint(lat: coord.latitude, long: coord.longitude, wpType: type)
-                    }
-                    self.routePaths.append(Path(waypoints: waypoints, pathType: .walking, color: .tcatBlueColor))
-                    self.drawMapRoute(); self.centerMap(topHalfCentered: true)
-                }
-            }
             
         }
         
