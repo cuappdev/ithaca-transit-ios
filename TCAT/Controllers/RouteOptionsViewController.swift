@@ -11,15 +11,6 @@ import MapKit
 import CoreLocation
 import SwiftyJSON
 
-/* 2Bringup:
- * Don't think should limit the search of past or future bus routes (just for that edge case. Also GoogleMaps doesn't do that)
- * 2Do:
- * work on overflow - datepicker & dist label (maybe put below)
- * "Sorry no routes" or blank if don't fill in all fields screen
- * Rename search bar vars? VC? RouteSelectionView? (kind of unclear)
- * Bugs:
- * Distance is still 0.0
- */
 enum SearchBarType: String{
     case from, to
 }
