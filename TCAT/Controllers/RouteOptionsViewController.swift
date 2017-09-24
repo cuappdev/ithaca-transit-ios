@@ -33,6 +33,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     var searchFrom: Place?
     var searchTo: Place?
     var searchTime: Date?
+    var currentlySearching: Bool = false
 
     // MARK: View vars
 
@@ -75,7 +76,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setRouteSelectionView(withDestination: searchTo)
         setupLocationManager()
 
-        setupLoaderData()
+//        setupLoaderData()
 //        routes = loaderroutes
 
         // If no date is set then date should be same as today's date
@@ -284,24 +285,19 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     // MARK: Process data
-
-    var currentlySearching: Bool = false
     
     func searchForRoutes() {
-        if(!currentlySearching){
-            routes = []
-            routeResults.reloadData()
-            
-            Loader.removeLoaderFrom(routeResults)
-        }
-        
         if let startingDestination = searchFrom, let endingDestination = searchTo{
             
-            routes = loaderroutes
-            routeResults.reloadData()
-            Loader.addLoaderTo(routeResults)
-            
+            routes = []
             currentlySearching = true
+            routeResults.reloadData()
+            
+//            routes = loaderroutes
+//            routeResults.reloadData()
+//            Loader.addLoaderTo(routeResults)
+            
+            
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
                 
                 request.perform(withSuccess: { (routeJson) in
@@ -309,21 +305,17 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     
                     let rawRoutes = Route.getRoutesArray(fromJson: routeJson)
                     self.routes = self.processRoutes(rawRoutes)
-                    self.routeResults.reloadData()
-                    
-                    Loader.removeLoaderFrom(self.routeResults)
-                    
                     self.currentlySearching = false
+                    self.routeResults.reloadData()
+//                    Loader.removeLoaderFrom(self.routeResults)
                 },
                                 
                 failure: { (error) in
                     print("RouteOptionVC SearchForRoutes Error: \(error)")
                     self.routes = []
-                    self.routeResults.reloadData()
-                    
-                    Loader.removeLoaderFrom(self.routeResults)
-                    
                     self.currentlySearching = false
+                    self.routeResults.reloadData()
+//                    Loader.removeLoaderFrom(self.routeResults)
                 })
                 
             }
@@ -499,7 +491,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     
     // MARK: DZNEmptyDataSet
     
-    
     private func setupEmptyDataSet() {
         routeResults.emptyDataSetSource = self
         routeResults.emptyDataSetDelegate = self
@@ -507,13 +498,31 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let message = "No Routes Found"
+        let message = currentlySearching ? "Looking for routes..." : "No Routes Found"
         let attrs = [NSFontAttributeName: UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0), NSForegroundColorAttributeName: UIColor.mediumGrayColor]
         
         return NSAttributedString(string: message, attributes: attrs)
     }
     
+//    func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
+//        if(currentlySearching){
+//            let activityView = UIActivityIndicatorView()
+//            activityView.startAnimating()
+//            
+//            return activityView
+//        }
+//        
+//        let imageView = UIImageView(image: #imageLiteral(resourceName: "reload"))
+//        imageView.frame = CGRect(origin: routeResults.frame.origin, size: CGSize(width: 110.0, height: 80))
+//        
+//        return imageView
+//    }
+    
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        if(currentlySearching){
+            return #imageLiteral(resourceName: "reload")
+        }
+        
         return #imageLiteral(resourceName: "road")
     }
 
