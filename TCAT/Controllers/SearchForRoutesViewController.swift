@@ -98,7 +98,6 @@ CLLocationManagerDelegate {
     // MARK: Navigation bar
 
     private func setupNavigationBar(){
-        self.navigationController?.navigationBar.barTintColor = .red
         let titleAttributes: [String : Any] = [NSFontAttributeName : UIFont(name :".SFUIText", size: 18)!,
                                                NSForegroundColorAttributeName : UIColor.black]
         title = navigationBarTitle
@@ -296,10 +295,8 @@ CLLocationManagerDelegate {
             routeResults.reloadData()
             Loader.addLoaderTo(routeResults)
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
-                print(request.parameters)
-                request.perform(withSuccess: { (routes) in
-                    print("GOT ROUTES", routes)
-                    self.routes = routes
+                request.perform(withSuccess: { (routeJson) in
+                    self.routes = Route.getRoutesArray(fromJson: routeJson)
                     self.routeResults.reloadData()
                     Loader.removeLoaderFrom(self.routeResults)
                 }, failure: { (error) in

@@ -91,7 +91,7 @@ class AllBusLocations: JSONDecodable {
 
 class Network {
     
-    static let source = "localhost" // "10.132.10.30"
+    static let source = "localhost" // "10.132.10.30"  // MO - 10.132.1.223
     static let tron = TRON(baseURL: "http://\(source):3000/api/v1/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
@@ -151,10 +151,9 @@ class Network {
         }
     }
     
-    class func getRoutes(start: AnyObject, end: AnyObject, time: Date, type: SearchType, callback:@escaping ((APIRequest<Array<Route>, Error>) -> Void)) {
+    class func getRoutes(start: AnyObject, end: AnyObject, time: Date, type: SearchType, callback:@escaping ((APIRequest<JSON, Error>) -> Void)) {
         getStartEndCoords(start: start, end: end) {startCoords, endCoords in
-            let request: APIRequest<Array<Route>, Error> = tron.request("routes")
-            
+            let request: APIRequest<JSON, Error> = tron.request("routes")
             request.parameters = [
                 
                 "start_coords"  :   "\(startCoords.latitude ??? ""),\(startCoords.longitude ??? "")",
@@ -166,7 +165,6 @@ class Network {
             } else {
                 request.parameters["leave_by"] = time.timeIntervalSince1970
             }
-            print(request.parameters)
             request.method = .get
             callback(request)
         }

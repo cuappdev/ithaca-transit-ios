@@ -35,13 +35,11 @@ class Route: NSObject, JSONDecodable {
     
     required init(json: JSON) throws {
         super.init()
-        print(json["data"])
-        let jsonData = json["data"]
-        departureTime = Date(timeIntervalSince1970: jsonData["departureTime"].doubleValue)
-        arrivalTime = Date(timeIntervalSince1970: jsonData["arrivalTime"].doubleValue)
-        routeSummary = getRouteSummary(fromJson: jsonData["routeSummary"].arrayValue)
+        departureTime = Date(timeIntervalSince1970: json["departureTime"].doubleValue)
+        arrivalTime = Date(timeIntervalSince1970: json["arrivalTime"].doubleValue)
+        routeSummary = getRouteSummary(fromJson: json["routeSummary"].arrayValue)
         // directions = directionJSON(json:json["directions"].arrayValue)
-        path = CLLocationCoordinate2D.strToCoords(jsonData["kmls"].stringValue)
+        path = CLLocationCoordinate2D.strToCoords(json["kmls"].stringValue)
         
         travelDistance = directions.first != nil ? directions.first!.travelDistance : 0.0
         
@@ -63,6 +61,22 @@ class Route: NSObject, JSONDecodable {
         self.path = path
         self.travelDistance = travelDistance
         self.lastStopTime = lastStopTime
+    }
+    
+    static func getRoutesArray(fromJson json: JSON) -> [Route] {
+        if (json["success"]=="false") {
+            return []
+        }
+        
+        let routeJsonArray = json["data"].arrayValue
+        var routes: [Route] = []
+
+        for routeJson in routeJsonArray {
+            let route = try! Route(json: routeJson)
+            routes.append(route)
+        }
+
+        return routes
     }
     
     private func getRouteSummary(fromJson json: [JSON]) -> [RouteSummaryObject] {
