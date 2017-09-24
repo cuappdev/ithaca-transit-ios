@@ -12,6 +12,7 @@ import MapKit
 extension UIColor {
     
     @nonobjc static let tcatBlueColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1.0)
+    
     @nonobjc static let buttonColor = UIColor(red: 0 / 255, green: 118 / 255, blue: 255 / 255, alpha: 1)
     @nonobjc static let primaryTextColor = UIColor(white: 34 / 255, alpha: 1.0)
     @nonobjc static let secondaryTextColor = UIColor(white: 74 / 255, alpha: 1.0)

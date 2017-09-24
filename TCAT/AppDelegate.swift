@@ -26,13 +26,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         GMSServices.provideAPIKey(json["google-maps"].stringValue)
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
+        
         if userDefaults.value(forKey: "onboardingShown") == nil {
             userDefaults.set(false, forKey: "onboardingShown")
         }
         
         // Initalize window without storyboard
-        let rootVC: UIViewController = userDefaults.bool(forKey: "onboardingShown") ? HomeViewController() :
+        /* let rootVC: UIViewController = userDefaults.bool(forKey: "onboardingShown") ? HomeViewController() :
             OnboardPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+         */
+        let rootVC: UIViewController = HomeViewController() // HomeViewController()
         let navigationController = UINavigationController(rootViewController: rootVC)
         navigationController.navigationBar.barTintColor = .white
         navigationController.navigationBar.isTranslucent = false

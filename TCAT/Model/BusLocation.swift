@@ -44,7 +44,7 @@ class BusLocation: NSObject, NSCoding {
     
     var iconView: UIView {
         
-        return BusIcon(type: .mapStandard, number: Int(routeID) ?? 0)
+        return BusLocationView(number: Int(routeID) ?? 0)
         
     }
     

@@ -11,6 +11,7 @@ import GoogleMaps
 import CoreLocation
 import MapKit
 import SwiftyJSON
+import NotificationBannerSwift
 
 struct RouteDetailCellSize {
     static let smallHeight: CGFloat = 60
@@ -35,6 +36,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     /// Number of seconds to wait before auto-refreshing network call
     var refreshRate: Double = 10.0
     var buses = [GMSMarker]()
+    var banner: StatusBarNotificationBanner? = nil
     
     var route: Route!
     var directions: [Direction] = []
@@ -157,6 +159,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         super.viewDidDisappear(animated)
         networkTimer?.invalidate()
         networkTimer = nil
+        banner = nil
     }
     
     override func loadView() {
@@ -213,12 +216,21 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         Network.getBusLocations(routeID: String(firstRoute.routeNumber)).perform(
         
             withSuccess: { (result) in
+                
                 print("[RouteDetailViewController] Success!")
+                self.banner?.dismiss()
+                self.banner = nil
                 self.updateBusLocations(busLocations: result.allBusLocations)
                 
         }) { (error) in
             
             print("Error:", error)
+            if self.banner == nil {
+                let title = "Can not connect to live tracking"
+                self.banner = StatusBarNotificationBanner(title: title, style: .warning)
+                self.banner!.autoDismiss = false
+                self.banner!.show(queuePosition: .front, on: self)
+            }
             
         }
 
@@ -655,12 +667,14 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         if y + translation.y >= largeDetailHeight && y + translation.y <= smallDetailHeight {
             self.detailView.frame = CGRect(x: 0, y: y + translation.y, width: detailView.frame.width, height: detailView.frame.height)
-            recognizer.setTranslation(CGPoint.zero, in: self.detailView)
+            recognizer.setTranslation(.zero, in: self.detailView)
         }
         
         if recognizer.state == .ended {
             
-            let visibleScreen = self.main.height - UIApplication.shared.statusBarFrame.height - self.navigationController!.navigationBar.frame.height
+            // to make sure call bar doesn't mess up view
+            let statusHeight: CGFloat = 20 // UIApplication.shared.statusBarFrame.height
+            let visibleScreen = self.main.height - statusHeight - self.navigationController!.navigationBar.frame.height
             
             var duration = Double(abs(visibleScreen - y)) / Double(abs(velocity.y))
             duration = duration > 1.3 ? 1 : duration
