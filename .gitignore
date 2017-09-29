@@ -5,6 +5,12 @@
 *.xcodeproj/project.xcworkspace/xcuserdata/
 *.xcodeproj/xcuserdata/
 *.xcworkspace/xcuserdata/
+
+# Fastlane
+
+*.cer
+*.mobileprovision
+*.dSYM.zip
   
 # Xcode
 #
