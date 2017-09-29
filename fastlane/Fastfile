@@ -1,0 +1,129 @@
+# Customise this file, documentation can be found here:
+# https://github.com/fastlane/fastlane/tree/master/fastlane/docs
+# All available actions: https://docs.fastlane.tools/actions
+# can also be listed using the `fastlane actions` command
+
+# Change the syntax highlighting to Ruby
+# All lines starting with a # are ignored when running `fastlane`
+
+# If you want to automatically update fastlane if a new version is available:
+# update_fastlane
+
+# This is the minimum version number required.
+# Update this, if you use features of a newer version
+fastlane_version "2.59.0"
+
+default_platform :ios
+
+platform :ios do
+  before_all do
+
+    ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
+    
+  end
+
+  desc "Runs all the tests"
+  lane :test do
+    scan
+  end
+
+  desc "Creating a code signing certificate and provisioning profile"
+  lane :provision do
+
+    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+    apple_id = CredentialsManager::AppfileConfig.try_fetch_value(:apple_id)
+
+    produce(
+      username: apple_id,
+      app_identifier: app_identifier,
+      app_name: 'TCAT',
+      language: 'English',
+      app_version: '1.0',
+      sku: '123',
+    )
+
+    cert
+
+    sigh(force: true)
+
+  end
+
+  desc "Account for 120px AppIcon asset validation bug in Xcode 9 + iTunes Transporter"
+  desc "Modify the .xcarchive Info.plist before uploading"
+  lane :asset_bug_fix do
+
+    sh("./archive_fix.sh")
+
+  end
+
+  desc "Submit a new Beta Build to Apple TestFlight"
+  desc "This will also make sure the profile is up to date"
+  lane :beta do |options|
+    # match(type: "appstore") # more information: https://codesigning.guide
+
+    cocoapods
+
+    gym(scheme: "TCAT") # Build your app - more options available
+
+    # asset_bug_fix # attempt to use shell script to solve, but timing isn't right
+
+    # have to paste ...
+    # `find Products/ -name Info.plist -print0 | xargs -0n1 plutil -replace BuildMachineOSBuild -string 16A323`
+    # ... as soon as latest archive appears in ~/Library/Developer/Xcode/Archives
+
+    increment_build_number
+
+    # provision # for first time uploads
+
+    pilot(
+       changelog: options[:changes], 
+       distribute_external: true,
+       groups: ["v0 Beta"],
+       beta_app_feedback_email: "cuappdev@gmail.com"
+    )
+
+    slack(
+      message: "Build #{get_build_number} has been released on TestFlight! 🚀",
+      success: true
+    )
+
+    # sh "your_script.sh"
+    # You can also use other beta testing services here (run `fastlane actions`)
+  end
+
+  desc "Deploy a new version to the App Store"
+  lane :release do
+    # match(type: "appstore")
+    # snapshot
+    gym # Build your app - more options available
+    deliver(force: true)
+    # frameit
+  end
+
+  # You can define as many lanes as you want
+
+  after_all do |lane|
+    # This block is called, only if the executed lane was successful
+
+    # slack(
+    #   message: "Successfully deployed new App Update."
+    # )
+  end
+
+  error do |lane, exception|
+
+    # slack(
+    #     message: exception.message,
+    #     success: false
+    # )
+
+  end
+
+end
+
+
+# More information about multiple platforms in fastlane: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Platforms.md
+# All available actions: https://docs.fastlane.tools/actions
+
+# fastlane reports which actions are used. No personal data is recorded. 
+# Learn more at https://github.com/fastlane/fastlane#metrics
