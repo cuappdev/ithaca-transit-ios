@@ -500,17 +500,16 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let message = currentlySearching ? "Looking for routes..." : "No Routes Found"
-        let attrs = [NSFontAttributeName: UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0), NSForegroundColorAttributeName: UIColor.mediumGrayColor]
+        let attrs: [String : Any] = [
+            NSFontAttributeName : UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)!,
+            NSForegroundColorAttributeName : UIColor.mediumGrayColor
+        ]
 
         return NSAttributedString(string: message, attributes: attrs)
     }
 
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        if(currentlySearching){
-            return #imageLiteral(resourceName: "reload")
-        }
-
-        return #imageLiteral(resourceName: "road")
+        return currentlySearching ? #imageLiteral(resourceName: "reload") : #imageLiteral(resourceName: "road")
     }
 
     // MARK: Tableview Delegate

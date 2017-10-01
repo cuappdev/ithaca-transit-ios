@@ -324,9 +324,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         if let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
             cancelButton.isEnabled = true
         }
-        let contentOffsetY = scrollView.contentOffset.y
+        // let contentOffsetY = scrollView.contentOffset.y
         if scrollView == tableView && searchBar.text == "" && !isKeyboardVisible {
-            //setUpIndexBar(contentOffsetY: contentOffsetY)
+            // setUpIndexBar(contentOffsetY: contentOffsetY)
         }
     }
     

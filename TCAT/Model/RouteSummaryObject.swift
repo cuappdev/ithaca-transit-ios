@@ -65,7 +65,7 @@ class RouteSummaryObject: NSObject, JSONDecodable {
             }
             type = .stop
         }
-        else if let placeResult = place as? PlaceResult {
+        else if place is PlaceResult {
             type = .place
         }
     }
