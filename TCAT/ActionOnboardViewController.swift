@@ -19,6 +19,8 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     
     var locationManager = CLLocationManager()
     
+    let button = UIButton()
+    
     init(type: OnboardType) {
         self.type = type
         super.init(nibName: nil, bundle: nil)
@@ -33,7 +35,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         
         locationManager.delegate = self
         
-        self.view.backgroundColor = .purple
+        self.view.backgroundColor = .white
         
         createView()
         
@@ -42,64 +44,106 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     func createView() {
         
         let spacing: CGFloat = 16
+        let edgeInset: CGFloat = 2
         
         let title = UILabel()
-        title.font = UIFont.boldSystemFont(ofSize: 18)
-        title.text = getTitle()
-        title.center = view.center
-        title.sizeToFit()
-        view.addSubview(title)
-        
         let description = UITextView()
-        description.text = getDescription()
-        description.center = view.center
-        description.sizeToFit()
-        description.frame.origin.y = title.frame.maxX + spacing
+        
+        view.addSubview(button)
+        view.addSubview(title)
         view.addSubview(description)
         
-        let button = UIButton()
-        button.titleLabel?.text = getButtonText()
-        button.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-        button.backgroundColor = .buttonColor
+        title.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 28)
+        title.text = getTitle()
+        title.center = view.center
+        title.textAlignment = .center
+        title.snp.makeConstraints { (make) in
+            make.centerY.equalToSuperview().offset(28)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.equalTo(50)
+        }
+        
+        description.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        description.text = getDescription()
+        description.textAlignment = .center
+        description.snp.makeConstraints { (make) in
+            make.top.equalTo(title.snp.bottom).offset(spacing)
+            make.width.equalToSuperview().offset(-60)
+            make.height.equalTo(80)
+            make.centerX.equalToSuperview()
+        }
+        description.isEditable = false
+        
+        button.setTitle(getButtonText(), for: .normal)
+        button.setTitleColor(.buttonColor, for: .normal)
+        button.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)!
+        button.backgroundColor = .white
         button.layer.cornerRadius = 4
-        button.center = view.center
-        button.frame.origin.y = view.bounds.height - 100 - button.frame.height
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.buttonColor.cgColor
+        self.button.snp.makeConstraints { (make) in
+            make.top.equalTo(description.snp.bottom).offset(50)
+            make.height.equalTo(45)
+            make.centerX.equalToSuperview()
+        }
+        setButtonConstraints()
+        
         if getAction() != nil {
             button.addTarget(self, action: getAction()!, for: .touchUpInside)
         }
-        view.addSubview(button)
         
     }
     
     func getTitle() -> String {
         switch type {
-            case .locationServices: return "Location Services"
-            case .welcome: return "Welcome!"
-            default: return ""
+        case .locationServices: return "Location Services"
+        case .welcome: return "Welcome!"
+        default: return ""
+        }
+    }
+    
+    func setButtonConstraints() {
+        switch type {
+        case .locationServices:
+            self.button.snp.makeConstraints { (make) in
+                make.width.equalTo(200)
+            }
+            return
+        case .welcome:
+            self.button.snp.makeConstraints { (make) in
+                make.width.equalTo(100)
+            }
+            return
+        default: return
         }
     }
     
     func getDescription() -> String {
         switch type {
-            case .locationServices: return "Lots of good information about location services!"
-            case .welcome: return "This is the best app ever."
-            default: return ""
+        case .locationServices:
+            return "We need location services to serve you. "
+        case .welcome:
+            return "This is the magic school bus. If you need to get to somewhere in Ithaca, then use this."
+        default: return ""
         }
     }
     
     func getButtonText() -> String {
         switch type {
-            case .locationServices: return "Enable"
-            case .welcome: return "Let's Go!"
-            default: return ""
+        case .locationServices:
+            return "Enable Location Services"
+        case .welcome:
+            return "Get started"
+        default: return ""
         }
     }
     
     func getAction() -> Selector? {
         switch type {
-            case .locationServices: return #selector(enableLocation)
-            case .welcome: return #selector(dismissOnboarding)
-            default: return nil
+        case .locationServices: return #selector(enableLocation)
+        case .welcome: return #selector(dismissOnboarding)
+        default: return nil
         }
     }
     
@@ -128,10 +172,13 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     func enableLocation() {
         
         locationManager.requestWhenInUseAuthorization()
-        
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        
+        if status == .authorizedWhenInUse {
+            dismissOnboarding()
+        }
         
         // if denied while onboarding...
         if status == .denied && !userDefaults.bool(forKey: "onboardingShown") {
@@ -152,5 +199,5 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
+    
 }
-

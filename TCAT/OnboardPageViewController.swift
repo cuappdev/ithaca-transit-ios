@@ -14,14 +14,23 @@ class OnboardPageViewController: UIPageViewController, UIPageViewControllerDataS
         
         ActionOnboardViewController(type: .welcome),
         ActionOnboardViewController(type: .locationServices)
-    
+        
     ]
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         dataSource = self
         delegate = self
+        
+        let appearance = UIPageControl.appearance()
+        appearance.backgroundColor = .white
+        appearance.pageIndicatorTintColor = .lightGray
+        appearance.currentPageIndicatorTintColor = .darkGray
         
         for view in self.view.subviews {
             if view is UIPageControl { view.backgroundColor = .clear }
@@ -54,5 +63,6 @@ class OnboardPageViewController: UIPageViewController, UIPageViewControllerDataS
     func presentationIndex(for pageViewController: UIPageViewController) -> Int {
         return 0
     }
-
+    
 }
+
