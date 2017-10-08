@@ -90,18 +90,10 @@ class AllBusLocations: JSONDecodable {
 
 class Network {
 
-    static let source = "localhost" // "10.132.10.30"  // MO - 10.132.1.223
-    static let tron = TRON(baseURL: "http://\(source):3000/api/v1/")
+    static let source = "34.235.128.17"
+    static let tron = TRON(baseURL: "http://\(source)/api/v1/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
-    static let backendIPAddress = "10.132.7.249"
-
-    class func getRoutes() -> APIRequest<Route, Error> {
-        let request: APIRequest<Route, Error> = tron.request("navigate.json")
-        request.method = .get
-        print("Network getRoutes errorParser: \(request.errorParser)")
-        return request
-    }
 
     class func getAllStops() -> APIRequest<AllBusStops, Error> {
         let request: APIRequest<AllBusStops, Error> = tron.request("stops")
@@ -110,8 +102,10 @@ class Network {
     }
 
     class func getStartEndCoords(start: AnyObject, end: AnyObject, callback:@escaping ((CLLocationCoordinate2D, CLLocationCoordinate2D) -> Void)) {
+        
         var startCoord = CLLocationCoordinate2D()
         var endCoord = CLLocationCoordinate2D()
+        
         if let startBusStop = start as? BusStop, let endBusStop = end as? BusStop {
             startCoord.latitude = startBusStop.lat
             startCoord.longitude = startBusStop.long
@@ -119,6 +113,7 @@ class Network {
             endCoord.longitude = endBusStop.long
             callback(startCoord, endCoord)
         }
+            
         else if let startBusStop = start as? BusStop, let endPlaceResult = end as? PlaceResult {
             startCoord.latitude = startBusStop.lat
             startCoord.longitude = startBusStop.long
@@ -129,6 +124,7 @@ class Network {
             }
 
         }
+            
         else if let startPlaceResult = start as? PlaceResult, let endBusStop = end as? BusStop {
             endCoord.latitude = endBusStop.lat
             endCoord.longitude = endBusStop.long
@@ -138,6 +134,7 @@ class Network {
                 callback(startCoord, endCoord)
             }
         }
+            
         else if let startPlaceResult = start as? PlaceResult, let endPlaceResult = end as? PlaceResult {
             getLocationFromPlaceId(placeId: startPlaceResult.placeID) { coords in
                 startCoord.latitude = coords.latitude
@@ -149,6 +146,7 @@ class Network {
                 }
             }
         }
+        
     }
 
     class func getRoutes(start: AnyObject, end: AnyObject, time: Date, type: SearchType, callback:@escaping ((APIRequest<JSON, Error>) -> Void)) {
@@ -158,6 +156,7 @@ class Network {
 
                 "start_coords"  :   "\(startCoords.latitude ??? ""),\(startCoords.longitude ??? "")",
                 "end_coords"    :   "\(endCoords.latitude ??? ""),\(endCoords.longitude ??? "")",
+                
             ]
 
             if type == .arriveBy {

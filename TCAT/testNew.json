@@ -1,100 +1,100 @@
+
 {
-    "success": 1,
-    
+    "success": true,
     "data": {
-        
-        "startCoords": {
-            
-            "latitude": 42.444756,
-            "longitude": -76.493771
-            
-        },
-        
-        "endCoords": {
-            
-            "latitude": 42.447555,
-            "longitude": -76.474431
-            
-        },
-        
-        "departureTime": 1505588400,
-        
-        "arrivalTime": 1505589300,
-        
-        "directions": [
-                       
-                       {
-                       "type": "walk",
-                       "locationName": "Ithaca Graveyard",
-                       "startLocation": {
-                       "latitude": 42.444756,
-                       "longitude": -76.493771
-                       },
-                       "endLocation": {
-                       "latitude": 42.447257,
-                       "longitude": -76.493089
-                       },
-                       "startTime": 1505588400,
-                       "endTime": 1505588700,
-                       "busStops": [],
-                       "routeNumber": 90
-                       },
-                       
-                       {
-                       "type": "depart",
-                       "locationName": "University Ave. / Cornell Ave.",
-                       "startLocation": {
-                       "latitude": 42.447257,
-                       "longitude": -76.493089
-                       },
-                       "endLocation": {
-                       "latitude": 42.449716,
-                       "longitude": -76.482959
-                       },
-                       "startTime": 1505588700,
-                       "endTime": 1505589000,
-                       "busStops": ["University Ave. / Lake St.", "West Campus (Gothics)", "Milstein Hall"],
-                       "routeNumber": 10
-                       },
-                       
-                       {
-                       "type": "arrive",
-                       "locationName": "Goldwin-Smith Hall",
-                       "startLocation": {
-                       "latitude": 42.449716,
-                       "longitude": -76.482959
-                       },
-                       "endLocation": {
-                       "latitude": 42.449716,
-                       "longitude": -76.482959
-                       },
-                       "startTime": 1505589000,
-                       "endTime": 1505589000,
-                       "busStops": [],
-                       "routeNumber": 0
-                       },
-                       
-                       {
-                       "type": "walk",
-                       "locationName": "Alumni Fields",
-                       "startLocation": {
-                       "latitude": 42.449716,
-                       "longitude": -76.482959
-                       },
-                       "endLocation": {
-                       "latitude": 42.447555,
-                       "longitude": -76.474431
-                       },
-                       "startTime": 1505589000,
-                       "endTime": 1505589300,
-                       "busStops": [],
-                       "routeNumber": 0
-                       }
-                       
-                       ],
-        
-        "kmls": ["<Placemark>\n\t\t<name>Rt. 70</name>\n\t\t<styleUrl>#msn_ylw-pushpin27</styleUrl>\n\t\t<LineString>\n\t\t\t<tessellate>1</tessellate>\n\t\t\t<coordinates>\n\t\t\t\t-76.493089,42.447257,0 -76.491998,42.449579,0 -76.489189,42.449253,0 -76.483459,42.451367,0 -76.482925,42.449715,0\n\t\t\t</coordinates>\n\t\t</LineString>\n\t</Placemark>\n"]
-        
+        "baseTime": 1507334400,
+        "results": [
+                    {
+                    "arrivalTime": 29336.2,
+                    "path": [
+                             
+                             {
+                             "busPath": null,
+                             "end": {
+                             "location": {
+                             "latitude": 42.439339,
+                             "longitude": -76.490433
+                             },
+                             "name": "State @ Stewart"
+                             },
+                             "endTime": 26822.8,
+                             "k": -1,
+                             "start": {
+                             "location": {
+                             "latitude": 42.4424,
+                             "longitude": -76.4849
+                             },
+                             "name": "Start"
+                             },
+                             "startTime": 25600
+                             },
+                             
+                             {
+                             "busPath": {
+                             "cutoff": {
+                             "location": {
+                             "latitude": 42.439247,
+                             "longitude": -76.490463
+                             },
+                             "name": "State @ Stewart"
+                             },
+                             "isForward": true,
+                             "lineNumber": 70,
+                             "path": {
+                             "_stopToIndex": {
+                             "Green @ Commons": 0,
+                             "State @ Stewart": 1
+                             },
+                             "shape": [
+                                       {
+                                       "latitude": 42.48262,
+                                       "longitude": -76.48986
+                                       },
+                                       {
+                                       "latitude": 42.447257,
+                                       "longitude": -76.493089
+                                       },
+                                       
+                                       ],
+                             "timedStops": [
+
+                                            {
+                                            "isTimepoint": true,
+                                            "stop": {
+                                            "location": {
+                                            "latitude": 42.438618,
+                                            "longitude": -76.497658
+                                            },
+                                            "name": "Green @ Commons"
+                                            },
+                                            "time": 27000
+                                            },
+                                           
+                                            ]
+                             }
+                             },
+                             "end": {
+                             "location": {
+                             "latitude": 42.48262,
+                             "longitude": -76.489914
+                             },
+                             "name": "The Shops At Ithaca Mall"
+                             },
+                             "endTime": 28680,
+                             "k": 1,
+                             "start": {
+                             "location": {
+                             "latitude": 42.439247,
+                             "longitude": -76.490463
+                             },
+                             "name": "State @ Stewart"
+                             },
+                             "startTime": 27095.6
+                             },
+                             
+                             ]
+                    },
+                   
+                    ]
     }
-    
 }

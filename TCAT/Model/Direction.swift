@@ -46,7 +46,7 @@ class Direction: NSObject {
          endLocation: CLLocation,
          startTime: Date,
          endTime: Date,
-         path: [CLLocationCoordinate2D],
+         path: [CLLocationCoordinate2D] = [],
          busStops: [String] = [],
          routeNumber: Int = 0) {
 
@@ -78,33 +78,65 @@ class Direction: NSObject {
 
     }
 
-    convenience init(from json: JSON) {
+    convenience init(from json: JSON, baseTime: Double) {
+    
+        // Fill path of direction if busPath exists (Depart Direction)
+        // Return [CLLocationCoordinate2D]
+        func jsonToPathArray() -> [CLLocationCoordinate2D] {
 
-        func locationJSON(_ json: JSON) -> CLLocation {
-            return CLLocation(latitude: json["latitude"].doubleValue, longitude: json["longitude"].doubleValue)
+            var pathArray: [CLLocationCoordinate2D] = []
+            
+            if json["busPath"] != JSON.null {
+                let busPathShape = json["busPath"]["path"]["shape"].arrayValue
+                for location in busPathShape {
+                    let coordinate = CLLocationCoordinate2D(latitude: location["latitude"].doubleValue,
+                                                            longitude: location["longitude"].doubleValue)
+                    pathArray.append(coordinate)
+                }
+            }
+            
+            return pathArray
+            
         }
-
+        
+        // Return [String] of name of timed bus stops
+        func jsonToStopArray() -> [String] {
+            return json["busPath"]["path"]["timedStops"].arrayValue.flatMap {
+                $0["name"].stringValue
+            }
+        }
+        
+        // Precondition: passed in json with 'start' or 'end'
+        func locationJSON(from json: JSON) -> CLLocation {
+            return CLLocation(latitude: json["location"]["latitude"].doubleValue,
+                              longitude: json["location"]["longitude"].doubleValue)
+        }
+        
+        let type: DirectionType = json["busPath"] != JSON.null ? .depart : .walk
+        
         self.init(
 
-            type: DirectionType(rawValue: json["type"].stringValue) ?? .unknown,
+            type: type,
 
-            locationName: json["locationName"].stringValue,
+            locationName: json["\(type == .depart ? "start" : "end")"]["name"].stringValue,
 
-            startLocation: locationJSON(json["startLocation"]),
+            startLocation: locationJSON(from: json["start"]),
 
-            endLocation: locationJSON(json["endLocation"]),
+            endLocation: locationJSON(from: json["end"]),
 
-            startTime: Date(timeIntervalSince1970: json["startTime"].doubleValue),
+            startTime: Date(timeIntervalSince1970: baseTime + json["startTime"].doubleValue),
 
-            endTime: Date(timeIntervalSince1970: json["endTime"].doubleValue),
+            endTime: Date(timeIntervalSince1970: baseTime + json["endTime"].doubleValue),
 
-            path: CLLocationCoordinate2D.strToCoords(json["path"].stringValue),
+            path: jsonToPathArray(),
 
-            busStops: json["busStops"].arrayObject as! [String],
+            busStops: jsonToStopArray(),
 
-            routeNumber: json["routeNumber"].intValue
+            routeNumber: json["busPath"]["lineNumber"].intValue
 
         )
+        
+
 
     }
 

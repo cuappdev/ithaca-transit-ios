@@ -27,7 +27,8 @@
 		50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A19BAD1E4C214000AD6768 /* HomeViewController.swift */; };
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
 		BF1209FB1F7759C200A7C930 /* BusLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1209FA1F7759C200A7C930 /* BusLocationView.swift */; };
-		BF52F5491F5B553B000DEDF0 /* testNew.json in Resources */ = {isa = PBXBuildFile; fileRef = BF52F5481F5B553B000DEDF0 /* testNew.json */; };
+		BF4F831C1F89B9180097A052 /* testNew.json in Resources */ = {isa = PBXBuildFile; fileRef = BF4F831B1F89B9180097A052 /* testNew.json */; };
+		BF52F5491F5B553B000DEDF0 /* testOld.json in Resources */ = {isa = PBXBuildFile; fileRef = BF52F5481F5B553B000DEDF0 /* testOld.json */; };
 		BF662F341F731DD200B21109 /* OnboardPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F331F731DD200B21109 /* OnboardPageViewController.swift */; };
 		BF662F361F7323B400B21109 /* ActionOnboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */; };
 		BF73F0F31F60B0BD003B479D /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF73F0F21F60B0BD003B479D /* BusLocation.swift */; };
@@ -113,7 +114,8 @@
 		97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
 		BF1209FA1F7759C200A7C930 /* BusLocationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocationView.swift; path = Views/BusLocationView.swift; sourceTree = "<group>"; };
 		BF172A131F65AB9C006790B1 /* config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
-		BF52F5481F5B553B000DEDF0 /* testNew.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = testNew.json; sourceTree = "<group>"; };
+		BF4F831B1F89B9180097A052 /* testNew.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = testNew.json; sourceTree = "<group>"; };
+		BF52F5481F5B553B000DEDF0 /* testOld.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = testOld.json; sourceTree = "<group>"; };
 		BF662F331F731DD200B21109 /* OnboardPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardPageViewController.swift; sourceTree = "<group>"; };
 		BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionOnboardViewController.swift; sourceTree = "<group>"; };
 		BF73F0F21F60B0BD003B479D /* BusLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocation.swift; path = Model/BusLocation.swift; sourceTree = "<group>"; };
@@ -303,7 +305,8 @@
 		DD2F98901E50D8C50005F6BC /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				BF52F5481F5B553B000DEDF0 /* testNew.json */,
+				BF52F5481F5B553B000DEDF0 /* testOld.json */,
+				BF4F831B1F89B9180097A052 /* testNew.json */,
 			);
 			name = Data;
 			sourceTree = "<group>";
@@ -508,10 +511,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF4F831C1F89B9180097A052 /* testNew.json in Resources */,
 				505E00E91E9ED6BC00F09BAE /* config.json in Resources */,
 				DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */,
 				449A7C831D80D0E80019300C /* LaunchScreen.storyboard in Resources */,
-				BF52F5491F5B553B000DEDF0 /* testNew.json in Resources */,
+				BF52F5491F5B553B000DEDF0 /* testOld.json in Resources */,
 				DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */,
 				DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */,
 				449A7C801D80D0E80019300C /* Assets.xcassets in Resources */,
