@@ -25,31 +25,6 @@ class RouteSummaryObject: NSObject /* , JSONDecodable */ {
     var busNumber: Int?
     var nextDirection: NextDirection?
     
-//    required init(json: JSON) throws {
-//
-//        name = json["name"].stringValue
-//        type = PinType(rawValue: json["type"].stringValue)!
-//
-//        if json["nextDirection"].stringValue != "none" {
-//
-//            nextDirection = NextDirection(rawValue: json["nextDirection"].stringValue)!
-//
-//            if nextDirection == .bus {
-//                busNumber = json["busNumber"].intValue
-//            }
-//
-//        }
-//
-//        //
-//
-//        if json["busPath"] != JSON.null {
-//            busNumber = json["busPath"]["lineNumber"].intValue
-//        }
-//
-//        super.init()
-//
-//    }
-    
     init(name: String, type: PinType) {
         self.name = name
         self.type = type
@@ -75,7 +50,7 @@ class RouteSummaryObject: NSObject /* , JSONDecodable */ {
             }
             type = .stop
         }
-            
+
         else if place is PlaceResult {
             type = .place
         }
