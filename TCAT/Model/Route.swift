@@ -37,15 +37,23 @@ class Route: NSObject, JSONDecodable {
         
         super.init()
         
-        let baseTime = json["baseTime"].doubleValue
+        print("json:", json)
         
-        departureTime = Date(timeIntervalSince1970: baseTime)
+        let baseTime = json["baseTime"].doubleValue
+        let data = json["path"]
+        
+        let pathStart = 0
+        let pathEnd = data.arrayValue.count - 1
+        
+        // Peek at first direction to get start time
+        // MARK: Can this be provided at top level of each route?
+        departureTime = Date(timeIntervalSince1970: baseTime + data[pathStart]["startTime"].doubleValue)
         arrivalTime = Date(timeIntervalSince1970: baseTime + json["arrivalTime"].doubleValue)
-
-        startCoords = CLLocationCoordinate2D(latitude: json["start"]["location"]["latitude"].doubleValue,
-                               longitude: json["start"]["location"]["longitude"].doubleValue)
-        endCoords = CLLocationCoordinate2D(latitude: json["end"]["location"]["latitude"].doubleValue,
-                                           longitude: json["end"]["location"]["longitude"].doubleValue)
+        
+        startCoords = CLLocationCoordinate2D(latitude: data[pathStart]["start"]["location"]["latitude"].doubleValue,
+                               longitude: data[pathStart]["start"]["location"]["longitude"].doubleValue)
+        endCoords = CLLocationCoordinate2D(latitude: data[pathEnd]["end"]["location"]["latitude"].doubleValue,
+                                           longitude: data[pathEnd]["end"]["location"]["longitude"].doubleValue)
         
         
         /// Append RouteSummaryObject based on path entry and resulting direction

@@ -29,16 +29,19 @@ class Time{
     static func timeString(from startTime: Date, to endTime: Date) -> String{
         let time = dateComponents(from: startTime, to: endTime)
         var timeStr = ""
-        if(time.day! > 0){
+        if time.day! > 0 {
             timeStr += "\(time.day!) d "
         }
-        if(time.hour! > 0){
+        
+        if time.hour! > 0 {
             timeStr += "\(time.hour!) hr "
         }
-        if(time.minute! > 0 ){
+        
+        if time.minute! > 0 {
             timeStr += "\(time.minute!) min"
         }
-        if timeStr.isEmpty{
+        
+        if timeStr.isEmpty {
             timeStr = "0 min"
         }
         

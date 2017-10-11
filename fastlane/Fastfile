@@ -65,18 +65,12 @@ platform :ios do
 
     gym(scheme: "TCAT") # Build your app - more options available
 
-    # asset_bug_fix # attempt to use shell script to solve, but timing isn't right
-
-    # have to paste ...
-    # `find Products/ -name Info.plist -print0 | xargs -0n1 plutil -replace BuildMachineOSBuild -string 16A323`
-    # ... as soon as latest archive appears in ~/Library/Developer/Xcode/Archives
-
     increment_build_number
 
-    # provision # for first time uploads
+    # provision # run `provision` for first time uploads
 
     pilot(
-       changelog: options[:changes], 
+       changelog: options[:changelog], 
        distribute_external: true,
        groups: ["v0 Beta"],
        beta_app_feedback_email: "cuappdev@gmail.com"
@@ -112,10 +106,10 @@ platform :ios do
 
   error do |lane, exception|
 
-    # slack(
-    #     message: exception.message,
-    #     success: false
-    # )
+    slack(
+       message: exception.message,
+       success: false
+    )
 
   end
 

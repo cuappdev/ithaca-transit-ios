@@ -71,6 +71,11 @@ class DetailIconView: UIView {
             }
         }
         
+        if firstStep && lastStep {
+            connectorTop.backgroundColor = .clear
+            connectorBottom.backgroundColor = .clear
+        }
+        
         statusCircle.center = self.center
         statusCircle.frame.origin.x = 20 - (statusCircle.frame.width / 2)
         addSubview(statusCircle)
