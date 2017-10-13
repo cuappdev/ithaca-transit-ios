@@ -16,7 +16,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     
     var window: UIWindow?
     let userDefaults = UserDefaults.standard
-    let locationManager = CLLocationManager()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -34,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         // Initalize window without storyboard
         let rootVC: UIViewController = userDefaults.bool(forKey: "onboardingShown") ? HomeViewController() :
-            OnboardPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+            OnboardViewController()
  
 //        let rootVC: UIViewController = HomeViewController() // HomeViewController()
         let navigationController = UINavigationController(rootViewController: rootVC)
@@ -53,8 +52,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         }
         
         // Ask for current location
-        locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
         
         return true
     }

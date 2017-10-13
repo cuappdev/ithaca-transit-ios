@@ -58,6 +58,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         super.viewDidLoad()
         self.view.backgroundColor = .tableBackgroundColor
 
+        edgesForExtendedLayout = []
+        
         setupNavigationBar()
         setupBackButton()
 
@@ -464,7 +466,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Tableview Data Source
 
     func numberOfSections(in tableView: UITableView) -> Int{
-        return 1
+        return 0
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?{

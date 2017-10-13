@@ -1,4 +1,4 @@
-//
+ //
 //  ActionOnboardViewController.swift
 //  TCAT
 //
@@ -13,13 +13,20 @@ enum OnboardType: String {
     case locationServices, welcome
 }
 
+protocol OnboardingDelegate {
+    func moveToNextViewController(vc: ActionOnboardViewController)
+}
+
 class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     
     var type: OnboardType!
-    
     var locationManager = CLLocationManager()
-    
+    var onboardingDelegate: OnboardingDelegate!
+
     let button = UIButton()
+    let secondButton = UIButton()
+    
+    // working on DELEGATION
     
     init(type: OnboardType) {
         self.type = type
@@ -35,7 +42,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         
         locationManager.delegate = self
         
-        self.view.backgroundColor = .white
+        view.backgroundColor = .white
         
         createView()
         
@@ -46,48 +53,74 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         let spacing: CGFloat = 16
         let edgeInset: CGFloat = 2
         
+        let descriptionColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1)
+        let titleColor = UIColor(red: 34/255, green: 34/255, blue: 34/255, alpha: 1)
+        let mainColor = UIColor(red: 7/255, green: 157/255, blue: 220/255, alpha: 1)
+        
         let title = UILabel()
         let description = UITextView()
+        let image = UIImageView()
         
         view.addSubview(button)
         view.addSubview(title)
         view.addSubview(description)
+        view.addSubview(image)
+        view.addSubview(secondButton)
         
-        title.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 28)
+        image.backgroundColor = .clear
+        image.snp.makeConstraints { (make) in
+            make.width.equalTo(311)
+            make.height.equalTo(325.5)
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(32)
+        }
+        
+        title.font = UIFont(name: FontNames.SanFrancisco.Bold, size: 28)
+        title.textColor = titleColor
         title.text = getTitle()
         title.center = view.center
         title.textAlignment = .center
         title.snp.makeConstraints { (make) in
-            make.centerY.equalToSuperview().offset(28)
+            make.bottom.equalToSuperview().offset(-244)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview()
             make.height.equalTo(50)
         }
         
         description.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        description.textColor = descriptionColor
         description.text = getDescription()
         description.textAlignment = .center
         description.snp.makeConstraints { (make) in
-            make.top.equalTo(title.snp.bottom).offset(spacing)
-            make.width.equalToSuperview().offset(-60)
+            make.top.equalTo(title.snp.bottom).offset(12)
+            make.width.equalTo(311.5)
             make.height.equalTo(80)
             make.centerX.equalToSuperview()
         }
         description.isEditable = false
         
         button.setTitle(getButtonText(), for: .normal)
-        button.setTitleColor(.buttonColor, for: .normal)
-        button.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)!
-        button.backgroundColor = .white
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)!
+        button.backgroundColor = mainColor
         button.layer.cornerRadius = 4
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.buttonColor.cgColor
         self.button.snp.makeConstraints { (make) in
-            make.top.equalTo(description.snp.bottom).offset(50)
-            make.height.equalTo(45)
+            make.bottom.equalToSuperview().offset(-64)
             make.centerX.equalToSuperview()
+            make.height.equalTo(44)
         }
         setButtonConstraints()
+        
+        secondButton.setTitle("Don't Allow", for: .normal)
+        secondButton.setTitleColor(mainColor, for: .normal)
+        secondButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)
+        secondButton.backgroundColor = .clear
+        secondButton.snp.makeConstraints { (make) in
+            make.top.equalTo(button.snp.bottom).offset(12)
+            make.width.equalTo(100)
+            make.centerX.equalToSuperview()
+        }
+        secondButton.addTarget(self, action: #selector(dismissOnboarding), for: .touchUpInside)
         
         if getAction() != nil {
             button.addTarget(self, action: getAction()!, for: .touchUpInside)
@@ -107,13 +140,15 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         switch type {
         case .locationServices:
             self.button.snp.makeConstraints { (make) in
-                make.width.equalTo(200)
+                make.width.equalTo(224)
             }
+            secondButton.isHidden = false
             return
         case .welcome:
             self.button.snp.makeConstraints { (make) in
-                make.width.equalTo(100)
+                make.width.equalTo(128)
             }
+            secondButton.isHidden = true
             return
         default: return
         }
@@ -142,9 +177,13 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     func getAction() -> Selector? {
         switch type {
         case .locationServices: return #selector(enableLocation)
-        case .welcome: return #selector(dismissOnboarding)
+        case .welcome: return #selector(moveToNextViewController)
         default: return nil
         }
+    }
+    
+    func moveToNextViewController() {
+        onboardingDelegate.moveToNextViewController(vc: self)
     }
     
     func dismissOnboarding() {

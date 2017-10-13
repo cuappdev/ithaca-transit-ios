@@ -250,7 +250,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
             })
         } else {
             sections = createSections()
-            tableView.scrollToRow(at: IndexPath(row: 0, section: 1), at: .top, animated: false)
+            tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
             self.tableViewIndexController.setHidden(false, animated: false)
             
         }

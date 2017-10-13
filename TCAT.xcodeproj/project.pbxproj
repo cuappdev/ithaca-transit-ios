@@ -63,6 +63,7 @@
 		DDE0A9311F096A3E005CD01C /* RouteDiagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */; };
 		DDE3BC231F5863D50014D2BB /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE3BC221F5863D50014D2BB /* Place.swift */; };
 		DDEC101B1F66192B00834E91 /* RouteSummaryObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEC101A1F66192B00834E91 /* RouteSummaryObject.swift */; };
+		E34490CD1F8EF00A0064D284 /* SFText-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -151,6 +152,7 @@
 		DDE3BC221F5863D50014D2BB /* Place.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Place.swift; path = Model/Place.swift; sourceTree = "<group>"; };
 		DDEC101A1F66192B00834E91 /* RouteSummaryObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RouteSummaryObject.swift; path = Model/RouteSummaryObject.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Bold.otf"; path = "Resources/SFText-Bold.otf"; sourceTree = "<group>"; };
 		E69224A160B2B078827D28A1 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -330,6 +332,7 @@
 				DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */,
 				DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */,
 				DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */,
+				E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -507,6 +510,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E34490CD1F8EF00A0064D284 /* SFText-Bold.otf in Resources */,
 				505E00E91E9ED6BC00F09BAE /* config.json in Resources */,
 				DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */,
 				449A7C831D80D0E80019300C /* LaunchScreen.storyboard in Resources */,
