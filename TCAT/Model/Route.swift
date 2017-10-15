@@ -32,32 +32,93 @@ class Route: NSObject, JSONDecodable {
     var endCoords: CLLocationCoordinate2D = CLLocationCoordinate2D()
     var directions: [Direction] = [Direction]()
     var routeSummary: [RouteSummaryObject] = [RouteSummaryObject]()
-
+    
     required init(json: JSON) throws {
+        
         super.init()
-        departureTime = Date(timeIntervalSince1970: json["departureTime"].doubleValue)
-        arrivalTime = Date(timeIntervalSince1970: json["arrivalTime"].doubleValue)
-
-        startCoords = CLLocationCoordinate2D(latitude: json["startCoords"]["latitude"].doubleValue,
-                               longitude: json["startCoords"]["longitude"].doubleValue)
-        endCoords = CLLocationCoordinate2D(latitude: json["endCoords"]["latitude"].doubleValue,
-                                           longitude: json["endCoords"]["longitude"].doubleValue)
         
-        routeSummary = getRouteSummary(fromJson: json["routeSummary"].arrayValue)
+        print("json:", json)
         
-        directions = json["directions"].arrayValue.flatMap { (directionJSON) -> Direction in
-            return Direction(from: directionJSON)
-        }
-
-        var index = 0
-        var kmlData = json["kmls"].arrayObject as! [String]
-        for direction in directions {
-            if direction.type == .depart {
-                direction.path = CLLocationCoordinate2D.strToCoords(kmlData[index])
-                index += 1
+        let baseTime = json["baseTime"].doubleValue
+        let data = json["path"]
+        
+        let pathStart = 0
+        let pathEnd = data.arrayValue.count - 1
+        
+        // Peek at first direction to get start time
+        // MARK: Can this be provided at top level of each route?
+        departureTime = Date(timeIntervalSince1970: baseTime + data[pathStart]["startTime"].doubleValue)
+        arrivalTime = Date(timeIntervalSince1970: baseTime + json["arrivalTime"].doubleValue)
+        
+        startCoords = CLLocationCoordinate2D(latitude: data[pathStart]["start"]["location"]["latitude"].doubleValue,
+                               longitude: data[pathStart]["start"]["location"]["longitude"].doubleValue)
+        endCoords = CLLocationCoordinate2D(latitude: data[pathEnd]["end"]["location"]["latitude"].doubleValue,
+                                           longitude: data[pathEnd]["end"]["location"]["longitude"].doubleValue)
+        
+        
+        /// Append RouteSummaryObject based on path entry and resulting direction
+        func createRouteSummaryObject(at pathIndex: Int, direction: Direction) {
+            
+            // PinType: stop, place, currentLocation
+            // NextDirection: bus, walk
+            
+            var routeSummaryObject: RouteSummaryObject? = nil
+            let name: String = direction.locationName
+            // MARK: DO NOT HAVE THIS INFORMATION
+            let type: PinType = .stop
+            
+            // Assumption: walk follows arrival, a bus direction follows walk, depart. Last direction accounted for.
+            let nextDirection: NextDirection? = { () -> NextDirection? in
+                if pathIndex != json["path"].arrayValue.count - 1 {
+                    switch direction.type {
+                    case .walk, .depart: return .bus
+                    case .arrive: return .walk
+                    default: return nil
+                    }
+                } else {
+                    return nil
+                }
+            }()
+            
+            // Determine correct initalizer based on data
+            if let next = nextDirection {
+                if json["busPath"] != JSON.null {
+                    let busNumber = json["busPath"]["lineNumber"].intValue
+                    routeSummaryObject = RouteSummaryObject(name: name, type: type, nextDirection: next, busNumber: busNumber)
+                } else {
+                    routeSummaryObject = RouteSummaryObject(name: name, type: type, nextDirection: next)
+                }
+            } else {
+                routeSummaryObject = RouteSummaryObject(name: name, type: type)
             }
+            
+            if let object = routeSummaryObject {
+                routeSummary.append(object)
+            }
+        
         }
-
+        
+        // Create directions
+        for (index, path) in json["path"].arrayValue.enumerated() {
+            
+            let direction = Direction(from: path, baseTime: baseTime)
+            directions.append(direction)
+            createRouteSummaryObject(at: index, direction: direction)
+            
+            // Create pair ArriveDirection after DepartDirection
+            if direction.type == .depart {
+                let arriveDirection = direction
+                arriveDirection.type = .arrive
+                arriveDirection.startTime = arriveDirection.endTime
+                arriveDirection.startLocation = arriveDirection.endLocation
+                arriveDirection.busStops = []
+                arriveDirection.locationName = path["end"]["name"].stringValue
+                directions.append(arriveDirection)
+                createRouteSummaryObject(at: index, direction: arriveDirection)
+            }
+            
+        }
+        
     }
 
     init(departureTime: Date,
@@ -78,30 +139,25 @@ class Route: NSObject, JSONDecodable {
     // MARK: Parse JSON
     
     static func getRoutesArray(fromJson json: JSON) -> [Route] {
-        if (!json["success"].boolValue) {
+        
+        if !json["success"].boolValue {
             return []
         }
 
-        let routeJsonArray = json["data"].arrayValue
+        let jsonData = json["data"]
         var routes: [Route] = []
 
-        for routeJson in routeJsonArray {
-            let route = try! Route(json: routeJson)
+        for resultsJSON in jsonData["results"].arrayValue {
+            var routeJSON = resultsJSON
+            routeJSON["baseTime"] = jsonData["baseTime"]
+            let route = try! Route(json: routeJSON)
             routes.append(route)
         }
 
         return routes
+        
     }
 
-    private func getRouteSummary(fromJson json: [JSON]) -> [RouteSummaryObject] {
-        var routeSummary = [RouteSummaryObject]()
-        for routeSummaryJson in json {
-            let routeSummaryObject = try! RouteSummaryObject(json: routeSummaryJson)
-            routeSummary.append(routeSummaryObject)
-        }
-
-        return routeSummary
-    }
 
     // MARK: Process raw routes
 

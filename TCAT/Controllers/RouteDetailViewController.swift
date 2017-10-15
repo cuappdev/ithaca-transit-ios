@@ -70,7 +70,39 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
         self.route = route
         self.directions = route.directions
-
+        
+        // Print Route Information
+        
+        print("\n\n--- Route ---\n")
+        print("departureTime:", route.departureTime)
+        print("arrivalTime:", route.arrivalTime)
+        print("startCoords:", route.startCoords)
+        print("endCoords:", route.endCoords)
+        print("timeUntilDeparture:", route.timeUntilDeparture)
+        print("\nrouteSummary:")
+        for (index, object) in route.routeSummary.enumerated() {
+            print("--- RouteSummary[\(index)] ---")
+            print("name:", object.name)
+            print("type:", object.type)
+            print("number:", object.busNumber ?? -1)
+            print("nextDirection:", object.nextDirection as Any)
+        }
+        print("\ndirections:")
+        for (index, object) in route.directions.enumerated() {
+            print("--- Direction[\(index)] ---")
+            print("type:", object.type)
+            print("startTime:", object.startTime)
+            print("endTime:", object.endTime)
+            print("startLocation:", object.startLocation)
+            print("endLocation:", object.endLocation)
+            print("busStops:", object.busStops)
+            print("travelDistance:", object.travelDistance)
+            print("locationNameDescription", object.locationNameDescription)
+            print("locationName", object.locationName)
+            // print("path:", object.path)
+        }
+        print("\n-------\n")
+        
         // Plot the paths of all directions
         for (arrayIndex, direction) in directions.enumerated() {
 
@@ -224,7 +256,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
             print("RouteDetailVC getBusLocations Error:", error)
             if self.banner == nil {
-                let title = "Can not connect to live tracking"
+                let title = "Cannot connect to live tracking"
                 self.banner = StatusBarNotificationBanner(title: title, style: .warning)
                 self.banner!.autoDismiss = false
                 self.banner!.show(queuePosition: .front, on: self)
@@ -272,7 +304,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         if topHalfCentered {
             let constant: CGFloat = 16
             let bottom = (main.height / 2) - (statusNavHeight(includingShadow: false) - constant)
-            let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: constant, bottom: bottom, right: constant)
+            let edgeInsets = UIEdgeInsets(top: mapPadding /* / 2 */, left: constant, bottom: bottom, right: constant)
             let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
             mapView.animate(with: update)
         }
@@ -430,9 +462,11 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         // Place and format top summary label
         let textLabelPadding: CGFloat = 16
         let summaryTopLabel = UILabel()
-        if let firstDirection = (directions.filter { $0.type == .depart }).first {
-            summaryTopLabel.text = "Departs at \(firstDirection.startTimeDescription)"
-        } else { summaryTopLabel.text = "Summary Top Label" }
+        if let departDirection = (directions.filter { $0.type == .depart }).first {
+            summaryTopLabel.text = "Depart at \(departDirection.startTimeDescription) from \(departDirection.locationName)"
+        } else {
+            summaryTopLabel.text = directions.first?.locationNameDescription ?? "Route Directions"
+        }
         summaryTopLabel.font = UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular)
         summaryTopLabel.textColor = .primaryTextColor
         summaryTopLabel.sizeToFit()
