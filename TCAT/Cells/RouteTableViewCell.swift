@@ -127,7 +127,7 @@ class RouteTableViewCell: UITableViewCell {
     private func setDepartureTime(withTime departureTime: Date){
         let time = Time.timeString(from: Date(), to: departureTime)
         if time == "0 min" {
-            departureTimeLabel.text = "Departing Now"
+            departureTimeLabel.text = "Departing now"
         } else {
            departureTimeLabel.text = "Departs in \(time)"
         }

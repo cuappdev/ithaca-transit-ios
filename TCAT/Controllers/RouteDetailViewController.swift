@@ -256,7 +256,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
             print("RouteDetailVC getBusLocations Error:", error)
             if self.banner == nil {
-                let title = "Can not connect to live tracking"
+                let title = "Cannot connect to live tracking"
                 self.banner = StatusBarNotificationBanner(title: title, style: .warning)
                 self.banner!.autoDismiss = false
                 self.banner!.show(queuePosition: .front, on: self)
