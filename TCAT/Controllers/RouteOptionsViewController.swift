@@ -510,6 +510,33 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
         return currentlySearching ? #imageLiteral(resourceName: "reload") : #imageLiteral(resourceName: "road")
     }
+    
+    func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
+        let emptyView = UIView()
+        emptyView.backgroundColor = .red
+        
+        let circularProgress = RPCircularProgress()
+        circularProgress.enableIndeterminate()
+        circularProgress.trackTintColor = .green
+        circularProgress.progressTintColor = .blue
+        
+        emptyView.addSubview(circularProgress)
+        
+        emptyView.snp.makeConstraints { (make) in
+            make.height.equalTo(50)
+        }
+        
+        circularProgress.snp.makeConstraints{ (make) in
+            make.center.equalTo(emptyView)
+            make.width.equalTo(40)
+            make.height.equalTo(40)
+        }
+//        label.snp.makeConstraints { (make) in
+//            make.center.equalTo(emptyView)
+//        }
+        
+        return emptyView
+    }
 
     // MARK: Tableview Delegate
 

@@ -41,6 +41,7 @@
 		DD36A7021F6637CA00E4789E /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36A7011F6637C900E4789E /* Direction.swift */; };
 		DD3D9C211F94297100B164D4 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C201F94297100B164D4 /* Reachability.swift */; };
 		DD3D9C341F942CF000B164D4 /* CoordinateVisitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */; };
+		DD3D9C361F945F2A00B164D4 /* RPCircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */; };
 		DD5D233C1E6367A100F8DECE /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5D233B1E6367A100F8DECE /* Time.swift */; };
 		DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */; };
 		DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */; };
@@ -129,6 +130,7 @@
 		DD36A7011F6637C900E4789E /* Direction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Direction.swift; path = Model/Direction.swift; sourceTree = "<group>"; };
 		DD3D9C201F94297100B164D4 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Reachability.swift; path = Utilities/Reachability.swift; sourceTree = "<group>"; };
 		DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoordinateVisitor.swift; path = Utilities/CoordinateVisitor.swift; sourceTree = "<group>"; };
+		DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPCircularProgress.swift; sourceTree = "<group>"; };
 		DD5D233B1E6367A100F8DECE /* Time.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Time.swift; path = Utilities/Time.swift; sourceTree = "<group>"; };
 		DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Medium.otf"; path = "Resources/SFText-Medium.otf"; sourceTree = "<group>"; };
 		DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Regular.otf"; path = "Resources/SFText-Regular.otf"; sourceTree = "<group>"; };
@@ -355,6 +357,7 @@
 		DD2F98951E50D8E60005F6BC /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */,
 				DDBCD5E61E989E5800014641 /* Circle.swift */,
 				DDD33DEE1EC2960400BC6454 /* CircleLine.swift */,
 				DDB49CA11E88584B00A99C35 /* DetailIconView.swift */,
@@ -756,6 +759,7 @@
 				DD36A7021F6637CA00E4789E /* Direction.swift in Sources */,
 				DDB49C941E8857D000A99C35 /* RouteDetailViewController.swift in Sources */,
 				BF1209FB1F7759C200A7C930 /* BusLocationView.swift in Sources */,
+				DD3D9C361F945F2A00B164D4 /* RPCircularProgress.swift in Sources */,
 				DD2F98A31E5150990005F6BC /* RouteOptionsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
