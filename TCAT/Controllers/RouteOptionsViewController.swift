@@ -514,7 +514,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Tableview Delegate
 
     private func setupRouteResultsTableView(){
-        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0) - UIApplication.shared.statusBarFrame.height), style: .grouped)
+        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0)), style: .grouped)
         routeResults.delegate = self
         routeResults.allowsSelection = true
         routeResults.dataSource = self
