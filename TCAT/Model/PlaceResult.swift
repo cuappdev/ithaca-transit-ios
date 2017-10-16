@@ -9,8 +9,9 @@
 import UIKit
 import TRON
 import SwiftyJSON
+import CoreLocation
 
-class PlaceResult: Place, JSONDecodable {
+class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
     var detail: String
     var placeID: String
     
@@ -58,5 +59,11 @@ class PlaceResult: Place, JSONDecodable {
         aCoder.encode(self.placeID, forKey: placeIDKey)
         
         super.encode(with: aCoder)
+    }
+    
+    // MARK: Visitor pattern
+    
+    func accept(visitor: CoordinateVisitor, callback: @escaping (CLLocationCoordinate2D?) -> Void) {
+        visitor.getCoordinate(from: self, callback: callback)
     }
 }

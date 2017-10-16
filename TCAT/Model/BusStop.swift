@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-class BusStop: Place {
+class BusStop: Place, CoordinateAcceptor {
     var lat: CLLocationDegrees
     var long: CLLocationDegrees
     
@@ -49,5 +49,11 @@ class BusStop: Place {
         aCoder.encode(self.long, forKey: longKey)
         
         super.encode(with: aCoder)
+    }
+    
+    // MARK:  Visitor pattern
+    
+    func accept(visitor: CoordinateVisitor, callback: @escaping (CLLocationCoordinate2D?) -> Void) {
+        visitor.getCoordinate(from: self, callback: callback)
     }
 }

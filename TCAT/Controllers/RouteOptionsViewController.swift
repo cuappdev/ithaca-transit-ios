@@ -290,7 +290,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Process data
 
     func searchForRoutes() {
-        if let startingDestination = searchFrom, let endingDestination = searchTo{
+        if let startingDestination = searchFrom as? CoordinateAcceptor, let endingDestination = searchTo as? CoordinateAcceptor{
 
             routes = []
             currentlySearching = true
@@ -299,7 +299,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 //            routes = loaderroutes
 //            routeResults.reloadData()
 //            Loader.addLoaderTo(routeResults)
-
 
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
 

@@ -101,62 +101,24 @@ class Network {
         return request
     }
 
-    class func getStartEndCoords(start: AnyObject, end: AnyObject, callback:@escaping ((CLLocationCoordinate2D, CLLocationCoordinate2D) -> Void)) {
-        
-        var startCoord = CLLocationCoordinate2D()
-        var endCoord = CLLocationCoordinate2D()
-        
-        if let startBusStop = start as? BusStop, let endBusStop = end as? BusStop {
-            startCoord.latitude = startBusStop.lat
-            startCoord.longitude = startBusStop.long
-            endCoord.latitude = endBusStop.lat
-            endCoord.longitude = endBusStop.long
-            callback(startCoord, endCoord)
-        }
-            
-        else if let startBusStop = start as? BusStop, let endPlaceResult = end as? PlaceResult {
-            startCoord.latitude = startBusStop.lat
-            startCoord.longitude = startBusStop.long
-            getLocationFromPlaceId(placeId: endPlaceResult.placeID) { coords in
-                endCoord.latitude = coords.latitude
-                endCoord.longitude = coords.longitude
-                callback(startCoord, endCoord)
-            }
-
-        }
-            
-        else if let startPlaceResult = start as? PlaceResult, let endBusStop = end as? BusStop {
-            endCoord.latitude = endBusStop.lat
-            endCoord.longitude = endBusStop.long
-            getLocationFromPlaceId(placeId: startPlaceResult.placeID) { coords in
-                startCoord.latitude = coords.latitude
-                startCoord.longitude = coords.longitude
+    class func getStartEndCoords(start: CoordinateAcceptor, end: CoordinateAcceptor, callback:@escaping ((CLLocationCoordinate2D?, CLLocationCoordinate2D?) -> Void)) {
+        print("")
+        let visitor = CoordinateVisitor()
+        start.accept(visitor: visitor) { startCoord in
+            end.accept(visitor: visitor) { endCoord in
                 callback(startCoord, endCoord)
             }
         }
-            
-        else if let startPlaceResult = start as? PlaceResult, let endPlaceResult = end as? PlaceResult {
-            getLocationFromPlaceId(placeId: startPlaceResult.placeID) { coords in
-                startCoord.latitude = coords.latitude
-                startCoord.longitude = coords.longitude
-                getLocationFromPlaceId(placeId: endPlaceResult.placeID) { coords in
-                    endCoord.latitude = coords.latitude
-                    endCoord.longitude = coords.longitude
-                    callback(startCoord, endCoord)
-                }
-            }
-        }
-        
     }
 
-    class func getRoutes(start: AnyObject, end: AnyObject, time: Date, type: SearchType, callback:@escaping ((APIRequest<JSON, Error>) -> Void)) {
+    class func getRoutes(start: CoordinateAcceptor, end: CoordinateAcceptor, time: Date, type: SearchType, callback:@escaping ((APIRequest<JSON, Error>) -> Void)) {
         getStartEndCoords(start: start, end: end) {startCoords, endCoords in
+            
             let request: APIRequest<JSON, Error> = tron.request("routes")
+            
             request.parameters = [
-
-                "start_coords"  :   "\(startCoords.latitude ??? ""),\(startCoords.longitude ??? "")",
-                "end_coords"    :   "\(endCoords.latitude ??? ""),\(endCoords.longitude ??? "")",
-                
+                "start_coords"  :   "\(startCoords?.latitude ??? ""),\(startCoords?.longitude ??? "")",
+                "end_coords"    :   "\(endCoords?.latitude ??? ""),\(endCoords?.longitude ??? "")",
             ]
 
             if type == .arriveBy {
@@ -164,7 +126,9 @@ class Network {
             } else {
                 request.parameters["leave_by"] = time.timeIntervalSince1970
             }
+            
             request.method = .get
+            
             callback(request)
         }
     }
@@ -177,20 +141,6 @@ class Network {
         request.parameters = ["strictbounds": "", "location": "42.4440,-76.5019", "radius": 24140, "input": urlReadySearch, "key": googleJson["google-places"].stringValue]
         request.method = .get
         return request
-    }
-
-    class func getLocationFromPlaceId(placeId: String, callback:@escaping ((CLLocationCoordinate2D) -> Void)) {
-        placesClient.lookUpPlaceID(placeId) { place, error in
-            if let error = error {
-                print("Network getLocationFromPlaceId lookup place id query error: \(error.localizedDescription)")
-                return
-            }
-            guard let place = place else {
-                print("Network getLocationFromPlaceId: No place details for \(placeId)")
-                return
-            }
-            callback(place.coordinate)
-        }
     }
 
     class func getBusLocations(routeID: String) -> APIRequest<AllBusLocations, Error> {
