@@ -35,11 +35,9 @@ class CoordinateVisitor: NSObject {
             
             callback(result.coordinate)
         }
-        
     }
     
     func getCoordinate(from busStop: BusStop, callback: @escaping (CLLocationCoordinate2D?) -> Void) {
         callback(CLLocationCoordinate2D(latitude: busStop.lat, longitude: busStop.long))
-    
     }
 }

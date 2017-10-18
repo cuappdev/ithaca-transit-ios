@@ -102,7 +102,6 @@ class Network {
     }
 
     class func getStartEndCoords(start: CoordinateAcceptor, end: CoordinateAcceptor, callback:@escaping ((CLLocationCoordinate2D?, CLLocationCoordinate2D?) -> Void)) {
-        print("")
         let visitor = CoordinateVisitor()
         start.accept(visitor: visitor) { startCoord in
             end.accept(visitor: visitor) { endCoord in
@@ -112,7 +111,7 @@ class Network {
     }
 
     class func getRoutes(start: CoordinateAcceptor, end: CoordinateAcceptor, time: Date, type: SearchType, callback:@escaping ((APIRequest<JSON, Error>) -> Void)) {
-        getStartEndCoords(start: start, end: end) {startCoords, endCoords in
+        getStartEndCoords(start: start, end: end) { startCoords, endCoords in
             
             let request: APIRequest<JSON, Error> = tron.request("routes")
             
@@ -144,12 +143,10 @@ class Network {
     }
 
     class func getBusLocations(routeID: String) -> APIRequest<AllBusLocations, Error> {
-
         let request: APIRequest<AllBusLocations, Error> = tron.request("tracking")
         request.parameters = ["routeID" : routeID]
         request.method = .get
         return request
-
     }
 
 }
