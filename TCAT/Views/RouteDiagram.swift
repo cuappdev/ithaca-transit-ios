@@ -139,12 +139,6 @@ class RouteDiagram: UIView{
                     pin = solidGreyCircle
                 }
             
-            case .currentLocation:
-            
-                let solidGreyCircle = Circle(size: .small, color: .lineColor, style: .solid)
-            
-                pin = solidGreyCircle
-            
         }
         
         return pin

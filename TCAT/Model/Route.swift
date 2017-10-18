@@ -37,7 +37,7 @@ class Route: NSObject, JSONDecodable {
         
         super.init()
         
-        print("json:", json)
+        print("Route json:", json)
         
         let baseTime = json["baseTime"].doubleValue
         let data = json["path"]
@@ -55,55 +55,11 @@ class Route: NSObject, JSONDecodable {
         endCoords = CLLocationCoordinate2D(latitude: data[pathEnd]["end"]["location"]["latitude"].doubleValue,
                                            longitude: data[pathEnd]["end"]["location"]["longitude"].doubleValue)
         
-        
-        /// Append RouteSummaryObject based on path entry and resulting direction
-        func createRouteSummaryObject(at pathIndex: Int, direction: Direction) {
-            
-            // PinType: stop, place, currentLocation
-            // NextDirection: bus, walk
-            
-            var routeSummaryObject: RouteSummaryObject? = nil
-            let name: String = direction.locationName
-            // MARK: DO NOT HAVE THIS INFORMATION
-            let type: PinType = .stop
-            
-            // Assumption: walk follows arrival, a bus direction follows walk, depart. Last direction accounted for.
-            let nextDirection: NextDirection? = { () -> NextDirection? in
-                if pathIndex != json["path"].arrayValue.count - 1 {
-                    switch direction.type {
-                    case .walk, .depart: return .bus
-                    case .arrive: return .walk
-                    default: return nil
-                    }
-                } else {
-                    return nil
-                }
-            }()
-            
-            // Determine correct initalizer based on data
-            if let next = nextDirection {
-                if json["busPath"] != JSON.null {
-                    let busNumber = json["busPath"]["lineNumber"].intValue
-                    routeSummaryObject = RouteSummaryObject(name: name, type: type, nextDirection: next, busNumber: busNumber)
-                } else {
-                    routeSummaryObject = RouteSummaryObject(name: name, type: type, nextDirection: next)
-                }
-            } else {
-                routeSummaryObject = RouteSummaryObject(name: name, type: type)
-            }
-            
-            if let object = routeSummaryObject {
-                routeSummary.append(object)
-            }
-        
-        }
-        
         // Create directions
         for (index, path) in json["path"].arrayValue.enumerated() {
             
             let direction = Direction(from: path, baseTime: baseTime)
             directions.append(direction)
-            createRouteSummaryObject(at: index, direction: direction)
             
             // Create pair ArriveDirection after DepartDirection
             if direction.type == .depart {
@@ -114,11 +70,10 @@ class Route: NSObject, JSONDecodable {
                 arriveDirection.busStops = []
                 arriveDirection.locationName = path["end"]["name"].stringValue
                 directions.append(arriveDirection)
-                createRouteSummaryObject(at: index, direction: arriveDirection)
             }
-            
         }
         
+        routeSummary = getRouteSummary(from: json["path"].arrayValue)
     }
 
     init(departureTime: Date,
@@ -157,18 +112,34 @@ class Route: NSObject, JSONDecodable {
         return routes
         
     }
+    
+    private func getRouteSummary(from json: [JSON]) -> [RouteSummaryObject] {
+        var routeSummary = [RouteSummaryObject]()
+        
+        for routeSummaryJson in json {
+            let routeSummaryObject = try! RouteSummaryObject(json: routeSummaryJson)
+            routeSummary.append(routeSummaryObject)
+        }
+
+        return routeSummary
+    }
 
 
     // MARK: Process raw routes
 
-    /// Modify the first routeSummaryObject to include name of the starting place
+    /// Modify the first routeSummaryObject so that it is the first bus stop in route
     func updateStartingDestination(_ place: Place) {
-        routeSummary.first?.updateNameAndPin(fromPlace: place)
+        if place is PlaceResult || place is BusStop && place.name == "Current Location" {
+            routeSummary.remove(at: 0)
+        } else {
+          routeSummary.first?.updateName(from: place)
+        }
     }
 
-    /// Modify the last routeSummaryObject to include name of the ending place
-    func updateEndingDestination(_ place: Place) {
-        routeSummary.last?.updateNameAndPin(fromPlace: place)
+    /// Add ending destination to route summary object array
+    func addEndingDestination(_ place: Place) {
+        let type = place is BusStop ? PinType.stop : PinType.place
+        routeSummary.append(RouteSummaryObject(name: place.name, type: type))
     }
 
     /// Add walking directions

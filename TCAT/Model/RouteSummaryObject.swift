@@ -11,19 +11,31 @@ import TRON
 import SwiftyJSON
 
 enum PinType: String {
-    case stop, place, currentLocation
+    case stop, place
 }
 
 enum NextDirection: String {
     case bus, walk
 }
 
-class RouteSummaryObject: NSObject /* , JSONDecodable */ {
+class RouteSummaryObject: NSObject, JSONDecodable {
 
     var name: String
     var type: PinType
     var busNumber: Int?
     var nextDirection: NextDirection?
+    
+    required init(json: JSON) throws {
+        name = json["start"]["name"].stringValue
+        type = .stop
+        
+        if(json["busPath"] != JSON.null){
+            nextDirection = .bus
+            busNumber = json["busPath"]["lineNumber"].intValue
+        }else{
+            nextDirection = .walk
+        }
+    }
     
     init(name: String, type: PinType) {
         self.name = name
@@ -40,20 +52,7 @@ class RouteSummaryObject: NSObject /* , JSONDecodable */ {
         self.busNumber = busNumber
     }
     
-    func updateNameAndPin(fromPlace place: Place) {
-        
+    func updateName(from place: Place) {
         name = place.name
-        
-        if let busStop = place as? BusStop {
-            if busStop.name == "Current Location" {
-                type = .currentLocation
-            }
-            type = .stop
-        }
-
-        else if place is PlaceResult {
-            type = .place
-        }
-        
     }
 }
