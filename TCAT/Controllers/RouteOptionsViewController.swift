@@ -496,46 +496,50 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.emptyDataSetDelegate = self
         routeResults.tableFooterView = UIView()
     }
-
-    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let message = currentlySearching ? "Looking for routes..." : "No Routes Found"
-        let attrs: [String : Any] = [
-            NSFontAttributeName : UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)!,
-            NSForegroundColorAttributeName : UIColor.mediumGrayColor
-        ]
-
-        return NSAttributedString(string: message, attributes: attrs)
-    }
-
-    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        return currentlySearching ? #imageLiteral(resourceName: "reload") : #imageLiteral(resourceName: "road")
-    }
     
     func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
-        let emptyView = UIView()
-        emptyView.backgroundColor = .red
+        let customView = UIView()
         
-        let circularProgress = RPCircularProgress()
-        circularProgress.enableIndeterminate()
-        circularProgress.trackTintColor = .green
-        circularProgress.progressTintColor = .blue
+        var symbolView = UIView()
         
-        emptyView.addSubview(circularProgress)
-        
-        emptyView.snp.makeConstraints { (make) in
-            make.height.equalTo(50)
+        if currentlySearching {
+            let circularProgress = RPCircularProgress()
+            circularProgress.enableIndeterminate()
+            circularProgress.trackTintColor = .mediumGrayColor
+            circularProgress.progressTintColor = .searchBarPlaceholderTextColor
+            circularProgress.thicknessRatio = 0.25
+            
+            symbolView = circularProgress
+        }
+        else {
+            let imageView = UIImageView(image: #imageLiteral(resourceName: "road"))
+            imageView.contentMode = .scaleAspectFit
+            
+            symbolView = imageView
         }
         
-        circularProgress.snp.makeConstraints{ (make) in
-            make.center.equalTo(emptyView)
-            make.width.equalTo(40)
-            make.height.equalTo(40)
-        }
-//        label.snp.makeConstraints { (make) in
-//            make.center.equalTo(emptyView)
-//        }
+        let titleLabel = UILabel()
+        titleLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
+        titleLabel.textColor = .mediumGrayColor
+        titleLabel.text = currentlySearching ? "Looking for routes..." : "No Routes Found"
+        titleLabel.sizeToFit()
         
-        return emptyView
+        customView.addSubview(symbolView)
+        customView.addSubview(titleLabel)
+        
+        symbolView.snp.makeConstraints{ (make) in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(currentlySearching ? -20 : -22.5)
+            make.width.equalTo(currentlySearching ? 40 : 45)
+            make.height.equalTo(currentlySearching ? 40 : 45)
+        }
+        
+        titleLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(symbolView.snp.bottom).offset(10)
+            make.centerX.equalTo(symbolView.snp.centerX)
+        }
+        
+        return customView
     }
 
     // MARK: Tableview Delegate
