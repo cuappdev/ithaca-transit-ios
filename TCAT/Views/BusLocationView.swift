@@ -24,7 +24,7 @@ class BusLocationView: UIView {
     
     init(number: Int) {
         
-        self.busIcon = BusIcon(type: .directionSmall, number: number)
+        self.busIcon = BusIcon(type: .liveTracking, number: number)
         
         let padding: CGFloat = 6
         let tailHeight: CGFloat = 12

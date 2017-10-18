@@ -33,8 +33,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     var bounds = GMSCoordinateBounds()
 
     var networkTimer: Timer? = nil
-    /// Number of seconds to wait before auto-refreshing network call
-    var refreshRate: Double = 10.0
+    /// Number of seconds to wait before auto-refreshing network call, timed with live indicator
+    var refreshRate: Double = LiveIndicator.INTERVAL * 3.0
     var buses = [GMSMarker]()
     var banner: StatusBarNotificationBanner? = nil
 
@@ -237,13 +237,19 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     func getBusLocations() {
 
         print("[RouteDetailViewController] getBusLocations")
-
+// /*
         guard let firstRoute = route.directions.first(where: {
             return $0.routeNumber > 0
         })
-            else { print("[RouteDetailViewController] Couldn't find any valid bus routes"); return }
-
-        Network.getBusLocations(routeID: String(firstRoute.routeNumber)).perform(
+        else {
+            print("[RouteDetailViewController] Couldn't find any valid bus routes")
+            return
+        }
+// */
+        
+        // Network.getBusLocations(routeID: "92").perform(
+        
+        Network.getBusLocations(routeID: /*"92"*/ String(firstRoute.routeNumber)).perform(
 
             withSuccess: { (result) in
 

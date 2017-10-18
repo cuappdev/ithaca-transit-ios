@@ -26,12 +26,17 @@
 		505E00E91E9ED6BC00F09BAE /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = 505E00E81E9ED6BC00F09BAE /* config.json */; };
 		50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A19BAD1E4C214000AD6768 /* HomeViewController.swift */; };
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
+		BF101FE21F93D9BB00C58769 /* LiveIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF101FE11F93D9BB00C58769 /* LiveIndicator.swift */; };
 		BF1209FB1F7759C200A7C930 /* BusLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1209FA1F7759C200A7C930 /* BusLocationView.swift */; };
+		BF274E3D1F971A9B00981C34 /* DirectionPathHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF274E3C1F971A9B00981C34 /* DirectionPathHelper.swift */; };
 		BF4F831C1F89B9180097A052 /* testNew.json in Resources */ = {isa = PBXBuildFile; fileRef = BF4F831B1F89B9180097A052 /* testNew.json */; };
 		BF52F5491F5B553B000DEDF0 /* testOld.json in Resources */ = {isa = PBXBuildFile; fileRef = BF52F5481F5B553B000DEDF0 /* testOld.json */; };
 		BF662F341F731DD200B21109 /* OnboardPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F331F731DD200B21109 /* OnboardPageViewController.swift */; };
 		BF662F361F7323B400B21109 /* ActionOnboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */; };
 		BF73F0F31F60B0BD003B479D /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF73F0F21F60B0BD003B479D /* BusLocation.swift */; };
+		BF74AC1A1F945D7D00AFD4E4 /* GoogleMapsBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */; };
+		BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */; };
+		BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */; };
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
 		DC114CD61F72F8D50060BDE1 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC114CD51F72F8D40060BDE1 /* Reachability.swift */; };
 		DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
@@ -112,15 +117,20 @@
 		81725F2EBEBD3D184BFD0635 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
 		8236DFFA6C5F3AB1E6E1B0E4 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
 		97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
+		BF101FE11F93D9BB00C58769 /* LiveIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LiveIndicator.swift; path = Views/LiveIndicator.swift; sourceTree = "<group>"; };
 		BF1209FA1F7759C200A7C930 /* BusLocationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocationView.swift; path = Views/BusLocationView.swift; sourceTree = "<group>"; };
+		BF274E3C1F971A9B00981C34 /* DirectionPathHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DirectionPathHelper.swift; path = Model/DirectionPathHelper.swift; sourceTree = "<group>"; };
 		BF4F831B1F89B9180097A052 /* testNew.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = testNew.json; path = Data/testNew.json; sourceTree = "<group>"; };
 		BF52F5481F5B553B000DEDF0 /* testOld.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = testOld.json; path = Data/testOld.json; sourceTree = "<group>"; };
 		BF662F331F731DD200B21109 /* OnboardPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardPageViewController.swift; path = Controllers/OnboardPageViewController.swift; sourceTree = "<group>"; };
 		BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActionOnboardViewController.swift; path = Controllers/ActionOnboardViewController.swift; sourceTree = "<group>"; };
 		BF73F0F21F60B0BD003B479D /* BusLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocation.swift; path = Model/BusLocation.swift; sourceTree = "<group>"; };
+		BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsBase.framework; path = Pods/GoogleMaps/Base/Frameworks/GoogleMapsBase.framework; sourceTree = "<group>"; };
+		BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsCore.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMapsCore.framework; sourceTree = "<group>"; };
+		BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMaps.framework; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
-		DC114CD51F72F8D40060BDE1 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		DC114CD51F72F8D40060BDE1 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Reachability.swift; path = Utilities/Reachability.swift; sourceTree = "<group>"; };
 		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
 		DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteOptionsViewController.swift; path = Controllers/RouteOptionsViewController.swift; sourceTree = "<group>"; };
@@ -160,6 +170,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */,
+				BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */,
+				BF74AC1A1F945D7D00AFD4E4 /* GoogleMapsBase.framework in Frameworks */,
 				9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -186,6 +199,9 @@
 		12F774CEB5023E6938BDCF3A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */,
+				BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */,
+				BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */,
 				E69224A160B2B078827D28A1 /* Pods_TCAT.framework */,
 				C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */,
 				E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */,
@@ -313,6 +329,7 @@
 			isa = PBXGroup;
 			children = (
 				DD36A7011F6637C900E4789E /* Direction.swift */,
+				BF274E3C1F971A9B00981C34 /* DirectionPathHelper.swift */,
 				DD36A6FD1F66378B00E4789E /* BusStop.swift */,
 				DD36A6FE1F66378C00E4789E /* PlaceResult.swift */,
 				DDE3BC221F5863D50014D2BB /* Place.swift */,
@@ -359,6 +376,7 @@
 				DDBFEA9E1E787008002BBD96 /* DatepickerView.swift */,
 				DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */,
 				DD16B8E41E7046390089B7B2 /* BusIcon.swift */,
+				BF101FE11F93D9BB00C58769 /* LiveIndicator.swift */,
 				BF1209FA1F7759C200A7C930 /* BusLocationView.swift */,
 				DDA134441EC6A8CB00460B18 /* RouteLine.swift */,
 				DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */,
@@ -711,6 +729,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				503EC37D1E969ADF00B3D4D4 /* SearchResultsCell.swift in Sources */,
+				BF274E3D1F971A9B00981C34 /* DirectionPathHelper.swift in Sources */,
 				DDBCD5E71E989E5800014641 /* Circle.swift in Sources */,
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				5006F7BA1EC0F59A005ACAF2 /* SearchTableViewHelpers.swift in Sources */,
@@ -719,6 +738,7 @@
 				DDB49C9D1E8857FC00A99C35 /* Path.swift in Sources */,
 				DD36A7001F66378C00E4789E /* PlaceResult.swift in Sources */,
 				BF73F0F31F60B0BD003B479D /* BusLocation.swift in Sources */,
+				BF101FE21F93D9BB00C58769 /* LiveIndicator.swift in Sources */,
 				DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */,
 				DDA134451EC6A8CB00460B18 /* RouteLine.swift in Sources */,
 				BF662F341F731DD200B21109 /* OnboardPageViewController.swift in Sources */,
@@ -907,6 +927,11 @@
 				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/GoogleMaps/Base/Frameworks",
+					"$(PROJECT_DIR)/Pods/GoogleMaps/Maps/Frameworks",
+				);
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
@@ -928,6 +953,11 @@
 				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/GoogleMaps/Base/Frameworks",
+					"$(PROJECT_DIR)/Pods/GoogleMaps/Maps/Frameworks",
+				);
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
