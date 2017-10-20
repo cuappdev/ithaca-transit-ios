@@ -120,6 +120,12 @@ class Route: NSObject, JSONDecodable {
             let routeSummaryObject = try! RouteSummaryObject(json: routeSummaryJson)
             routeSummary.append(routeSummaryObject)
         }
+        
+        if let lastRouteSummaryJson = json.last {
+            let endingDestination = RouteSummaryObject(name: lastRouteSummaryJson["end"]["name"].stringValue, type: .stop)
+            
+            routeSummary.append(endingDestination)
+        }
 
         return routeSummary
     }
@@ -127,19 +133,35 @@ class Route: NSObject, JSONDecodable {
 
     // MARK: Process raw routes
 
-    /// Modify the first routeSummaryObject so that it is the first bus stop in route
+    /**
+     * Modify the first routeSummaryObject if the name is "Start"
+     *  If the starting place is a place result or current location
+     *      AND the route summary array count is more than 2 (has a route that is more than simply walking)
+     *      remove the first routeSummaryObject
+     *  Else (the first routeSummaryObject is a bus stop), so simply update the name to the name the user searched for
+     */
     func updateStartingDestination(_ place: Place) {
-        if place is PlaceResult || place is BusStop && place.name == "Current Location" {
-            routeSummary.remove(at: 0)
-        } else {
-          routeSummary.first?.updateName(from: place)
+        if let firstRouteSummaryObject = routeSummary.first {
+            if firstRouteSummaryObject.name == "Start" {
+                if (place is PlaceResult || (place is BusStop && place.name == "Current Location")) && routeSummary.count > 2 {
+                    routeSummary.remove(at: 0)
+                } else {
+                    routeSummary.first?.updateName(from: place)
+                }
+            }
         }
     }
 
-    /// Add ending destination to route summary object array
-    func addEndingDestination(_ place: Place) {
-        let type = place is BusStop ? PinType.stop : PinType.place
-        routeSummary.append(RouteSummaryObject(name: place.name, type: type))
+    /** Update pin type of the last routeSummaryObject if routeSummaryObject has the same name as the user searched for
+     *   OR if the routeSummaryObject's name is "End"
+     */
+    func updateEndingDestination(_ place: Place) {
+        if let lastRouteSummaryObject = routeSummary.last {
+            if(lastRouteSummaryObject.name == place.name || lastRouteSummaryObject.name == "End") {
+                let type = place is BusStop ? PinType.stop : PinType.place
+                lastRouteSummaryObject.type = type
+            }
+        }
     }
 
     /// Add walking directions

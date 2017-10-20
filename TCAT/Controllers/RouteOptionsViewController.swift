@@ -333,7 +333,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
         if let endDestination = searchTo {
             for route in routes{
-                route.addEndingDestination(endDestination)
+                route.updateEndingDestination(endDestination)
             }
         }
         
