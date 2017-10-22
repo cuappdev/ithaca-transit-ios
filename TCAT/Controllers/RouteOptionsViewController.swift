@@ -89,6 +89,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setRouteSelectionView(withDestination: searchTo)
         setupLocationManager()
 
+        setupReachability()
 //        setupLoaderData()
 //        routes = loaderroutes
 
@@ -104,10 +105,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     
     override func viewWillDisappear(_ animated: Bool) {
         takedownReachability()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        setupReachability()
     }
 
     // MARK: Navigation bar
