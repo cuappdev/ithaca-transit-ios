@@ -245,18 +245,17 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
 // /*
         
-        print("[RouteDetailViewController] getBusLocations")
         guard let firstRoute = route.directions.first(where: {
             return $0.routeNumber > 0
         })
         else {
-            print("[RouteDetailViewController] Couldn't find any valid bus routes")
+            print("[RouteDetailViewController] getBusLocations: Couldn't find valid routes")
             return
         }
 // */
         // Network.getBusLocations(routeID: "30").perform(
         
-        Network.getBusLocations(routeID: /*"92"*/ String(firstRoute.routeNumber)).perform(
+        Network.getBusLocations(routeID: String(firstRoute.routeNumber)).perform(
 
             withSuccess: { (result) in
 
