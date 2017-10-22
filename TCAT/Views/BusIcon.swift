@@ -44,7 +44,7 @@ class BusIcon: UIView {
         image.frame.size = CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
         image.tintColor = .white
         image.center.y = base.center.y
-        image.frame.origin.x = 16
+        image.frame.origin.x = 4
         addSubview(image)
         
         label = UILabel(frame: CGRect(x: image.frame.maxX, y: 0, width: frame.width - image.frame.maxX, height: frame.height))
@@ -63,7 +63,7 @@ class BusIcon: UIView {
             label.sizeToFit()
             image.frame.origin.x = 4
             label.center.y = base.center.y
-            label.frame.origin.x = image.frame.maxX + 2
+            label.frame.origin.x = image.frame.maxX
             
             liveIndicator = LiveIndicator()
             liveIndicator.frame.origin = CGPoint(x: label.frame.maxX + 7, y: label.frame.origin.y)
