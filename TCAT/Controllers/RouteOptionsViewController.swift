@@ -10,6 +10,7 @@ import UIKit
 import CoreLocation
 import SwiftyJSON
 import DZNEmptyDataSet
+import NotificationBannerSwift
 
 enum SearchBarType: String{
     case from, to
@@ -51,6 +52,18 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     var routes: [Route] = []
     var loaderroutes: [Route] = []
+    
+    // MARK: Reachability vars
+    
+    let reachability: Reachability? = Reachability(hostname: Network.source)
+    var banner: StatusBarNotificationBanner = {
+        let banner = StatusBarNotificationBanner(title: "No Internet Connection", style: .danger)
+        banner.autoDismiss = false
+        
+        return banner
+    }()
+    var isBannerShown: Bool = false
+    var cellUserInteraction: Bool = true
 
     // MARK: View Lifecycle
 
@@ -66,7 +79,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setupDatepicker()
         setupRouteResultsTableView()
         setupEmptyDataSet()
-
+        
         view.addSubview(routeSelection)
         view.addSubview(datePickerOverlay)
         view.sendSubview(toBack: datePickerOverlay)
@@ -87,6 +100,14 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     override func viewWillAppear(_ animated: Bool) {
         routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: routeTableViewCellIdentifier)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        takedownReachability()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        setupReachability()
     }
 
     // MARK: Navigation bar
@@ -496,10 +517,66 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         cell?.setRouteData()
         cell?.positionSubviews()
         cell?.addSubviews()
-
+        
+        setCellUserInteraction(cell, to: cellUserInteraction)
+        
         return cell!
     }
-
+    
+    // MARK: Reachability
+    
+    private func setupReachability() {
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityDidChange(_:)), name: .reachabilityChanged, object: reachability)
+        
+        do {
+            try reachability?.startNotifier()
+        } catch {
+            print("RouteOptionsVC setupReachability: Could not start reachability notifier")
+        }
+    }
+    
+    private func takedownReachability() {
+        reachability?.stopNotifier()
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+    }
+    
+    @objc private func reachabilityDidChange(_ notification: Notification) {
+        let reachability = notification.object as! Reachability
+        
+        switch reachability.connection {
+            
+            case .none:
+                banner.show(queuePosition: .front, bannerPosition: .bottom, on: self)
+                isBannerShown = true
+                setUserInteraction(to: false)
+            
+            case .cellular, .wifi:
+                if isBannerShown {
+                    banner.dismiss()
+                    isBannerShown = false
+                }
+                
+                setUserInteraction(to: true)
+            
+        }
+        
+    }
+    
+    private func setUserInteraction(to userInteraction: Bool) {
+        cellUserInteraction = userInteraction
+        
+        for cell in routeResults.visibleCells {
+            setCellUserInteraction(cell, to: userInteraction)
+        }
+        
+        routeSelection.isUserInteractionEnabled = userInteraction
+    }
+    
+    private func setCellUserInteraction(_ cell: UITableViewCell?, to userInteraction: Bool) {
+        cell?.isUserInteractionEnabled = userInteraction
+        cell?.selectionStyle = userInteraction ? .default : .none
+    }
+    
     // MARK: DZNEmptyDataSet
 
     private func setupEmptyDataSet() {
