@@ -51,7 +51,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK:  Data vars
 
     var routes: [Route] = []
-    var loaderroutes: [Route] = []
     
     // MARK: Reachability vars
     
@@ -90,8 +89,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setupLocationManager()
 
         setupReachability()
-//        setupLoaderData()
-//        routes = loaderroutes
 
         // If no date is set then date should be same as today's date
         self.searchTime = Date()
@@ -133,41 +130,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func backAction() {
         navigationController?.popViewController(animated: true)
     }
-
-    // MARK: Loader
-
-//    private func setupLoaderData(){
-//        let date1 = Time.date(fromTime: "3:45 PM")
-//        let date2 = Time.date(fromTime: "3:52 PM")
-//        let routeObject1 = RouteSummaryObject(name: "Baker Flagpole", type: .stop, nextDirection: .bus, busNumber: 90)
-//        let routeObject2 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop)
-//        let routeSummary1 = [routeObject1, routeObject2]
-//
-//        let route1 = Route(departureTime: date1, arrivalTime: date2, startCoords: CLLocation().coordinate,
-//                           endCoords: CLLocation().coordinate, directions: [], routeSummary: routeSummary1)
-//
-//        let date3 = Time.date(fromTime: "3:45 PM")
-//        let date4 = Time.date(fromTime: "3:52 PM")
-//        let routeObject3 = RouteSummaryObject(name: "Baker Flagpole", type: .stop, nextDirection: .bus, busNumber: 8)
-//        let routeObject4 = RouteSummaryObject(name: "Collegetown Crossing", type: .stop, nextDirection: .bus, busNumber: 16)
-//        let routeObject5 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop, nextDirection: .walk)
-//        let routeObject10 = RouteSummaryObject(name: "Waffle Frolic", type: .place)
-//        let routeSummary2 = [routeObject3, routeObject4, routeObject5, routeObject10]
-//        let route2 = Route(departureTime: date3, arrivalTime: date4, startCoords: CLLocation().coordinate,
-//                           endCoords: CLLocation().coordinate, directions: [], routeSummary: routeSummary2)
-//
-//        let date5 = Time.date(fromTime: "3:45 PM")
-//        let date6 = Time.date(fromTime: "3:52 PM")
-//        let routeObject6 = RouteSummaryObject(name: "Baker Flagpole", type: .stop, nextDirection: .bus, busNumber: 8)
-//        let routeObject7 = RouteSummaryObject(name: "Jessup Fields", type: .stop, nextDirection: .walk)
-//        let routeObject8 = RouteSummaryObject(name: "RPCC", type: .stop, nextDirection: .bus, busNumber: 32)
-//        let routeObject9 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop)
-//        let routeSummary3 = [routeObject6, routeObject7, routeObject8, routeObject9]
-//        let route3 = Route(departureTime: date5, arrivalTime: date6, startCoords: CLLocation().coordinate,
-//                           endCoords: CLLocation().coordinate, directions: [], routeSummary: routeSummary3)
-//
-//        loaderroutes = [route1, route2, route3]
-//    }
 
     // MARK: Route Selection view
 
@@ -314,10 +276,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             currentlySearching = true
             routeResults.reloadData()
 
-//            routes = loaderroutes
-//            routeResults.reloadData()
-//            Loader.addLoaderTo(routeResults)
-
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
 
                 request.perform(withSuccess: { (routeJson) in
@@ -325,7 +283,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     self.routes = self.processRoutes(rawRoutes)
                     self.currentlySearching = false
                     self.routeResults.reloadData()
-//                    Loader.removeLoaderFrom(self.routeResults)
                 },
 
                 failure: { (error) in
@@ -333,7 +290,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     self.routes = []
                     self.currentlySearching = false
                     self.routeResults.reloadData()
-//                    Loader.removeLoaderFrom(self.routeResults)
                 })
 
             }
