@@ -38,7 +38,7 @@ class PathHelper {
             
             // Find start of path
             
-            let nearStartPoints = path.filter { pointWithinLocation(point: $0, location:start) }
+            let nearStartPoints = path.filter { PathHelper.pointWithinLocation(point: $0, location:start) }
             let nearStartBearing = generalBearing(of: nearStartPoints)
             
             var closestDistance = Double.infinity
@@ -64,7 +64,7 @@ class PathHelper {
             
             // Find end of path
             
-            let nearEndPoints = path.filter { pointWithinLocation(point: $0, location: end) }
+            let nearEndPoints = path.filter { PathHelper.pointWithinLocation(point: $0, location: end) }
             let nearEndBearing = generalBearing(of: nearEndPoints)
             
             closestDistance = Double.infinity
@@ -75,11 +75,11 @@ class PathHelper {
             
             if nearEndPoints.count > 1 {
                 for i in 1..<nearEndPoints.count {
-                    let distance = self.distance(from: nearStartPoints[i], to: end)
-                    let bearing = self.bearing(from: nearStartPoints[i], to: end)
+                    let distance = self.distance(from: nearEndPoints[i], to: end)
+                    let bearing = self.bearing(from: nearEndPoints[i], to: end)
                     if distance < closestDistance && bearing == nearEndBearing {
                         closestDistance = distance
-                        busPathEndIndex = path.index(where: { Direction.coordsEqual($0, nearStartPoints[i]) })!
+                        busPathEndIndex = path.index(where: { Direction.coordsEqual($0, nearEndPoints[i]) })!
                     }
                 }
             } else {
@@ -88,9 +88,14 @@ class PathHelper {
                 }
             }
             
-            let subsection = Array(path[busPathStartIndex...busPathEndIndex])
-            return [start] + subsection + [end]
-            
+            if busPathStartIndex > busPathEndIndex {
+                print("\n\n============\n[DirectionPathHelper] PATH FILTER FAILED\n==============\n\n")
+                return path
+            } else {
+                let subsection = Array(path[busPathStartIndex...busPathEndIndex])
+                return [start] + subsection + [end]
+            }
+        
         }
         
         return []
@@ -104,10 +109,10 @@ class PathHelper {
     }
     
     /// Determine if a point is close enough to the bus stop to start drawing the path
-    private func pointWithinLocation(point: CLLocationCoordinate2D, location: CLLocationCoordinate2D) -> Bool {
+    class func pointWithinLocation(point: CLLocationCoordinate2D, location: CLLocationCoordinate2D) -> Bool {
         
         /// The amount of "error" or size of the acceptable region near the bus location to
-        let radius: Double = 0.002
+        let radius: Double = 0.0025
         
         let minLatitude = location.latitude - radius
         let maxLatitude = location.latitude + radius

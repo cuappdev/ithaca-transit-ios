@@ -125,6 +125,13 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                     else if pathIndex == 0 || pathIndex == direction.path.count - 1 {
                         type = .origin
                     }
+                        
+                    else if PathHelper.pointWithinLocation(point: point, location: direction.startLocation.coordinate) ||
+                        PathHelper.pointWithinLocation(point: point, location: direction.endLocation.coordinate) {
+                        
+                        type = .stop
+                        
+                    }
 
                 }
 
@@ -236,7 +243,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
     func getBusLocations() {
 
-/*
+// /*
         
         print("[RouteDetailViewController] getBusLocations")
         guard let firstRoute = route.directions.first(where: {
@@ -246,10 +253,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             print("[RouteDetailViewController] Couldn't find any valid bus routes")
             return
         }
-*/
-        Network.getBusLocations(routeID: "30").perform(
+// */
+        // Network.getBusLocations(routeID: "30").perform(
         
-        // Network.getBusLocations(routeID: /*"92"*/ String(firstRoute.routeNumber)).perform(
+        Network.getBusLocations(routeID: /*"92"*/ String(firstRoute.routeNumber)).perform(
 
             withSuccess: { (result) in
 
@@ -453,7 +460,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         let mainStopCount = route.numberOfBusRoutes()
         var center = CGPoint(x: icon_maxY, y: (summaryView.frame.height / 2) + pullerHeight)
         for direction in directions {
-            if direction.type == .depart{
+            if direction.type == .depart {
                 // use smaller icons for small phones or multiple icons
                 let busType: BusIconType = mainStopCount > 1 ? .directionSmall : .directionLarge
                 let busIcon = BusIcon(type: busType, number: direction.routeNumber)
@@ -652,19 +659,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
         }
 
-    }
-
-    /** Return an array of coordinates between two points. */
-    func calculateWalkingDirections(_ direction: Direction, _ completion: @escaping ([CLLocationCoordinate2D]) -> Void) {
-        let request = MKDirectionsRequest()
-        request.source = MKMapItem(placemark: MKPlacemark(coordinate: direction.startLocation.coordinate, addressDictionary: [:]))
-        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: direction.endLocation.coordinate, addressDictionary: [:]))
-        request.transportType = .walking
-        request.requestsAlternateRoutes = false
-        let directions = MKDirections(request: request)
-        directions.calculate { (response, error) in
-            completion(response?.routes.first?.polyline.coordinates ?? [])
-        }
     }
 
     /** Animate detailTableView depending on context, centering map */
