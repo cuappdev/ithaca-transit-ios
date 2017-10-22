@@ -33,11 +33,14 @@ class Route: NSObject, JSONDecodable {
     var directions: [Direction] = [Direction]()
     var routeSummary: [RouteSummaryObject] = [RouteSummaryObject]()
     
+    var travelDistance: Double?
+    weak var travelDistanceDelegate: TravelDistanceDelegate?
+    
     required init(json: JSON) throws {
         
         super.init()
         
-        print("json:", json)
+        print("Route json:", json)
         
         let baseTime = json["baseTime"].doubleValue
         let data = json["path"]
@@ -55,55 +58,11 @@ class Route: NSObject, JSONDecodable {
         endCoords = CLLocationCoordinate2D(latitude: data[pathEnd]["end"]["location"]["latitude"].doubleValue,
                                            longitude: data[pathEnd]["end"]["location"]["longitude"].doubleValue)
         
-        
-        /// Append RouteSummaryObject based on path entry and resulting direction
-        func createRouteSummaryObject(at pathIndex: Int, direction: Direction) {
-            
-            // PinType: stop, place, currentLocation
-            // NextDirection: bus, walk
-            
-            var routeSummaryObject: RouteSummaryObject? = nil
-            let name: String = direction.locationName
-            // MARK: DO NOT HAVE THIS INFORMATION
-            let type: PinType = .stop
-            
-            // Assumption: walk follows arrival, a bus direction follows walk, depart. Last direction accounted for.
-            let nextDirection: NextDirection? = { () -> NextDirection? in
-                if pathIndex != json["path"].arrayValue.count - 1 {
-                    switch direction.type {
-                    case .walk, .depart: return .bus
-                    case .arrive: return .walk
-                    default: return nil
-                    }
-                } else {
-                    return nil
-                }
-            }()
-            
-            // Determine correct initalizer based on data
-            if let next = nextDirection {
-                if json["busPath"] != JSON.null {
-                    let busNumber = json["busPath"]["lineNumber"].intValue
-                    routeSummaryObject = RouteSummaryObject(name: name, type: type, nextDirection: next, busNumber: busNumber)
-                } else {
-                    routeSummaryObject = RouteSummaryObject(name: name, type: type, nextDirection: next)
-                }
-            } else {
-                routeSummaryObject = RouteSummaryObject(name: name, type: type)
-            }
-            
-            if let object = routeSummaryObject {
-                routeSummary.append(object)
-            }
-        
-        }
-        
         // Create directions
         for (index, path) in json["path"].arrayValue.enumerated() {
             
             let direction = Direction(from: path, baseTime: baseTime)
             directions.append(direction)
-            createRouteSummaryObject(at: index, direction: direction)
             
             // Create pair ArriveDirection after DepartDirection
             if direction.type == .depart {
@@ -114,11 +73,10 @@ class Route: NSObject, JSONDecodable {
                 arriveDirection.busStops = []
                 arriveDirection.locationName = path["end"]["name"].stringValue
                 directions.append(arriveDirection)
-                createRouteSummaryObject(at: index, direction: arriveDirection)
             }
-            
         }
         
+        routeSummary = getRouteSummary(from: json["path"].arrayValue)
     }
 
     init(departureTime: Date,
@@ -157,18 +115,97 @@ class Route: NSObject, JSONDecodable {
         return routes
         
     }
+    
+    private func getRouteSummary(from json: [JSON]) -> [RouteSummaryObject] {
+        var routeSummary = [RouteSummaryObject]()
+        
+        for routeSummaryJson in json {
+            let routeSummaryObject = try! RouteSummaryObject(json: routeSummaryJson)
+            routeSummary.append(routeSummaryObject)
+        }
+        
+        if let lastRouteSummaryJson = json.last {
+            let long = lastRouteSummaryJson["end"]["location"]["longitude"].doubleValue
+            let lat = lastRouteSummaryJson["end"]["location"]["latitude"].doubleValue
+            let location = CLLocationCoordinate2D(latitude: lat, longitude: long)
+            
+            let endingDestination = RouteSummaryObject(name: lastRouteSummaryJson["end"]["name"].stringValue, type: .stop, location: location)
+            
+            routeSummary.append(endingDestination)
+        }
+
+        return routeSummary
+    }
 
 
     // MARK: Process raw routes
 
-    /// Modify the first routeSummaryObject to include name of the starting place
+    /**
+     * Modify the first routeSummaryObject if the name is "Start"
+     *  If the starting place is a place result or current location
+     *      AND the route summary array count is more than 2 (has a route that is more than simply walking)
+     *      remove the first routeSummaryObject
+     *  Else (the first routeSummaryObject is a bus stop), so simply update the name to the name the user searched for
+     */
     func updateStartingDestination(_ place: Place) {
-        routeSummary.first?.updateNameAndPin(fromPlace: place)
+        if let firstRouteSummaryObject = routeSummary.first {
+            if firstRouteSummaryObject.name == "Start" {
+                if (place is PlaceResult || (place is BusStop && place.name == "Current Location")) && routeSummary.count > 2 {
+                    routeSummary.remove(at: 0)
+                } else {
+                    routeSummary.first?.updateName(from: place)
+                    
+                    if(place is PlaceResult || (place is BusStop && place.name == "Current Location")) {
+                        routeSummary.first?.type = .place // current location & place result should have grey dot
+                    }
+                }
+            }
+        }
+    }
+    
+    /** Calculate travel distance from location passed in to first route summary object and updates travel distance of route
+     */
+    func calculateTravelDistance(fromLocation location: CLLocationCoordinate2D) {
+        guard let firstRouteSummary = routeSummary.first else {
+            return
+        }
+        
+        let start = MKMapItem(placemark: MKPlacemark(coordinate: location, addressDictionary: [:]))
+        let end = MKMapItem(placemark: MKPlacemark(coordinate: firstRouteSummary.location, addressDictionary: [:]))
+        
+        let request = MKDirectionsRequest()
+        request.source = start
+        request.destination = end
+        request.transportType = .walking
+        
+        let directions = MKDirections(request: request)
+        directions.calculate { (response, error) in
+            guard let response = response else {
+                print("Route calculateTravelDistance() error: \(error.debugDescription)")
+                return
+            }
+            
+            if let walkingDistance = response.routes.first?.distance {
+                self.travelDistance = walkingDistance
+                self.travelDistanceDelegate?.travelDistanceUpdated(withDistance: walkingDistance)
+            }
+        }
     }
 
-    /// Modify the last routeSummaryObject to include name of the ending place
+    /** Update pin type of the last routeSummaryObject if routeSummaryObject has the same name as the user searched for
+     *   OR if the routeSummaryObject's name is "End"
+     */
     func updateEndingDestination(_ place: Place) {
-        routeSummary.last?.updateNameAndPin(fromPlace: place)
+        if let lastRouteSummaryObject = routeSummary.last {
+            if(lastRouteSummaryObject.name == place.name || lastRouteSummaryObject.name == "End") {
+                let type = place is BusStop ? PinType.stop : PinType.place
+                lastRouteSummaryObject.type = type
+                
+                if(lastRouteSummaryObject.name == "End") {
+                    lastRouteSummaryObject.updateName(from: place)
+                }
+            }
+        }
     }
 
     /// Add walking directions
