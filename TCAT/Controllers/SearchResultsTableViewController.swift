@@ -56,9 +56,6 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        if #available(iOS 11.0, *) {
-            searchBar?.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        }
         searchBar?.sizeToFit()
     }
 
