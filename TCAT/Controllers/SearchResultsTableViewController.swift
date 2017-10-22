@@ -54,10 +54,16 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     convenience init() {
         self.init(style: .grouped)
     }
-    
+
+    override func viewWillAppear(_ animated: Bool) {
+        if #available(iOS 11.0, *) {
+            searchBar?.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        }
+        searchBar?.sizeToFit()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         // Subscribe to Keyboard Notifications
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
@@ -97,12 +103,13 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         
         
         // Set Up Index Bar
-        tableViewIndexController = TableViewIndexController(tableView: tableView)
-        tableViewIndexController.tableViewIndex.delegate = self
-        tableViewIndexController.tableViewIndex.dataSource = self
-        tableViewIndexController.tableViewIndex.backgroundView?.backgroundColor = .clear
-        initialTableViewIndexMinY = tableViewIndexController.tableViewIndex.indexRect().minY
-        setUpIndexBar(contentOffsetY: 0.0)
+//        tableViewIndexController = TableViewIndexController(tableView: tableView)
+//        tableViewIndexController.tableViewIndex.delegate = self
+//        tableViewIndexController.tableViewIndex.dataSource = self
+//        tableViewIndexController.tableViewIndex.backgroundView?.backgroundColor = .clear
+//        initialTableViewIndexMinY = tableViewIndexController.tableViewIndex.indexRect().minY
+//        setUpIndexBar(contentOffsetY: 0.0)
+        sections = createSections()
 
     }
     
@@ -244,14 +251,14 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
             Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
                 self.searchResultsSection = parseGoogleJSON(searchText: searchText, json: responseJson)
                 self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
-                self.tableViewIndexController.setHidden(true, animated: false)
+                //self.tableViewIndexController.setHidden(true, animated: false)
                 if !self.sections.isEmpty {
                     self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false) }
             })
         } else {
             sections = createSections()
             tableView.scrollToRow(at: IndexPath(row: 0, section: 1), at: .top, animated: false)
-            self.tableViewIndexController.setHidden(false, animated: false)
+            //self.tableViewIndexController.setHidden(false, animated: false)
             
         }
     }
@@ -263,7 +270,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         }
         let contentOffsetY = scrollView.contentOffset.y
         if scrollView == tableView && searchBar?.text == "" && !isKeyboardVisible {
-            setUpIndexBar(contentOffsetY: contentOffsetY)
+            //setUpIndexBar(contentOffsetY: contentOffsetY)
         }
     }
     
@@ -300,7 +307,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
                 if ((newYPosition * -1.0) < (secondCell?.frame.minY)! - view.bounds.midY) {
                     let offset = (secondCell?.frame.minY)! - initialTableViewIndexMinY - contentOffsetY - (-1.0 * (searchBar?.frame.midY)!)
                     tableViewIndexController.tableViewIndex.indexOffset = UIOffset(horizontal: 0.0, vertical: offset)
-                    tableViewIndexController.setHidden(!visibleSections.contains(allStopsIndex), animated: true)
+                    //tableViewIndexController.setHidden(!visibleSections.contains(allStopsIndex), animated: true)
                 }
             }
         }
@@ -312,7 +319,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        tableViewIndexController.setHidden(true, animated: false)
+        //tableViewIndexController.setHidden(true, animated: false)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {

@@ -120,7 +120,7 @@
 		BF73F0F21F60B0BD003B479D /* BusLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocation.swift; path = Model/BusLocation.swift; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
-		DC114CD51F72F8D40060BDE1 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		DC114CD51F72F8D40060BDE1 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Reachability.swift; path = Utilities/Reachability.swift; sourceTree = "<group>"; };
 		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
 		DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteOptionsViewController.swift; path = Controllers/RouteOptionsViewController.swift; sourceTree = "<group>"; };
