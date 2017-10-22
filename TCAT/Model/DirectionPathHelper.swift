@@ -47,12 +47,18 @@ class PathHelper {
             // Find the closest point to the start that matches the general bearing
             // a.k.a the first point after the start
             
-            for i in 1..<nearStartPoints.count {
-                let distance = self.distance(from: start, to: nearStartPoints[i])
-                let bearing = self.bearing(from: start, to: nearStartPoints[i])
-                if distance < closestDistance && bearing == nearStartBearing {
-                    closestDistance = distance
-                    busPathStartIndex = path.index(where: { Direction.coordsEqual($0, nearStartPoints[i]) })!
+            if nearStartPoints.count > 1 {
+                for i in 1..<nearStartPoints.count {
+                    let distance = self.distance(from: start, to: nearStartPoints[i])
+                    let bearing = self.bearing(from: start, to: nearStartPoints[i])
+                    if distance < closestDistance && bearing == nearStartBearing {
+                        closestDistance = distance
+                        busPathStartIndex = path.index(where: { Direction.coordsEqual($0, nearStartPoints[i]) })!
+                    }
+                }
+            } else {
+                if let index = path.index(where: { Direction.coordsEqual($0, nearStartPoints.first ?? CLLocationCoordinate2D()) }) {
+                    busPathStartIndex = index
                 }
             }
             
@@ -67,12 +73,18 @@ class PathHelper {
             // Find the cloest point to the end that matches the general bearing
             // a.k.a. the last point before the end
             
-            for i in 1..<nearEndPoints.count {
-                let distance = self.distance(from: nearStartPoints[i], to: end)
-                let bearing = self.bearing(from: nearStartPoints[i], to: end)
-                if distance < closestDistance && bearing == nearEndBearing {
-                    closestDistance = distance
-                    busPathEndIndex = path.index(where: { Direction.coordsEqual($0, nearStartPoints[i]) })!
+            if nearEndPoints.count > 1 {
+                for i in 1..<nearEndPoints.count {
+                    let distance = self.distance(from: nearStartPoints[i], to: end)
+                    let bearing = self.bearing(from: nearStartPoints[i], to: end)
+                    if distance < closestDistance && bearing == nearEndBearing {
+                        closestDistance = distance
+                        busPathEndIndex = path.index(where: { Direction.coordsEqual($0, nearStartPoints[i]) })!
+                    }
+                }
+            } else {
+                if let index = path.index(where: { Direction.coordsEqual($0, nearEndPoints.first ?? CLLocationCoordinate2D()) }) {
+                    busPathEndIndex = index
                 }
             }
             
