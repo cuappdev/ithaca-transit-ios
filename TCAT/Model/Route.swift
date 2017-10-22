@@ -154,6 +154,10 @@ class Route: NSObject, JSONDecodable {
                     routeSummary.remove(at: 0)
                 } else {
                     routeSummary.first?.updateName(from: place)
+                    
+                    if(place is PlaceResult || (place is BusStop && place.name == "Current Location")) {
+                        routeSummary.first?.type = .place // current location & place result should have grey dot
+                    }
                 }
             }
         }
