@@ -8,7 +8,10 @@
 
 import UIKit
 
-class RouteTableViewCell: UITableViewCell {
+protocol TravelDistanceDelegate: NSObjectProtocol {
+    func travelDistanceUpdated(withDistance distance: Double)
+}
+class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
 
     // MARK: Data var
     
@@ -101,6 +104,12 @@ class RouteTableViewCell: UITableViewCell {
         bottomBorder.removeFromSuperview()
     }
     
+    // MARK: Travel Distance Delegate
+    
+    func travelDistanceUpdated(withDistance distance: Double) {
+        routeDiagram.setTravelDistance(withDistance: distance)
+    }
+    
     // MARK: Set Data
         
     func setRouteData(){
@@ -116,7 +125,7 @@ class RouteTableViewCell: UITableViewCell {
         setTravelTime(withDepartureTime: departureTime, withArrivalTime: arrivalTime)
         setDepartureTime(withTime: departureTime)
         
-        routeDiagram.setRouteData(fromRouteSummary: routeSummary)
+        routeDiagram.setRouteData(fromRouteSummary: routeSummary, fromTravelDistance: route?.travelDistance)
     }
     
     private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){

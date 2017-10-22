@@ -63,7 +63,7 @@ class RouteDiagram: UIView {
     
     // MARK: Set Data
     
-    func setRouteData(fromRouteSummary routeSummary: [RouteSummaryObject]) {
+    func setRouteData(fromRouteSummary routeSummary: [RouteSummaryObject], fromTravelDistance travelDistance: Double?) {
         
         for i in routeSummary.indices {
             
@@ -77,6 +77,10 @@ class RouteDiagram: UIView {
             styleStopLabel(routeDiagramElement.stopNameLabel)
             setStopLabel(routeDiagramElement.stopNameLabel, withStopName: routeSummary[i].name)
             
+            if let distance = travelDistance {
+                setTravelDistance(withDistance: distance)
+            }
+            
             routeDiagramElements.append(routeDiagramElement)
         }
     
@@ -87,11 +91,14 @@ class RouteDiagram: UIView {
         setDistanceLabel(withDistance: distance)
     }
     
+    // only set distance if distance > 0
     private func setDistanceLabel(withDistance distance: Double) {
-        let roundDigit = (distance >= 10.0) ? 0 : 1
-        var distanceMutable = distance
-        travelDistanceLabel.text = "\(distanceMutable.roundToPlaces(places: roundDigit)) mi away"
-        travelDistanceLabel.sizeToFit()
+        if distance > 0  {
+            let roundDigit = (distance >= 10.0) ? 0 : 1
+            var distanceMutable = distance
+            travelDistanceLabel.text = "\(distanceMutable.roundToPlaces(places: roundDigit)) mi away"
+            travelDistanceLabel.sizeToFit()
+        }
     }
     
     private func setStopLabel(_ stopLabel: UILabel, withStopName stopName: String) {

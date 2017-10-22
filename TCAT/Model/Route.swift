@@ -33,6 +33,9 @@ class Route: NSObject, JSONDecodable {
     var directions: [Direction] = [Direction]()
     var routeSummary: [RouteSummaryObject] = [RouteSummaryObject]()
     
+    var travelDistance: Double?
+    weak var travelDistanceDelegate: TravelDistanceDelegate?
+    
     required init(json: JSON) throws {
         
         super.init()
@@ -122,7 +125,11 @@ class Route: NSObject, JSONDecodable {
         }
         
         if let lastRouteSummaryJson = json.last {
-            let endingDestination = RouteSummaryObject(name: lastRouteSummaryJson["end"]["name"].stringValue, type: .stop)
+            let long = lastRouteSummaryJson["end"]["location"]["longitude"].doubleValue
+            let lat = lastRouteSummaryJson["end"]["location"]["latitude"].doubleValue
+            let location = CLLocationCoordinate2D(latitude: lat, longitude: long)
+            
+            let endingDestination = RouteSummaryObject(name: lastRouteSummaryJson["end"]["name"].stringValue, type: .stop, location: location)
             
             routeSummary.append(endingDestination)
         }
@@ -151,6 +158,35 @@ class Route: NSObject, JSONDecodable {
             }
         }
     }
+    
+    /** Calculate travel distance from location passed in to first route summary object and updates travel distance of route
+     */
+    func calculateTravelDistance(fromLocation location: CLLocationCoordinate2D) {
+        guard let firstRouteSummary = routeSummary.first else {
+            return
+        }
+        
+        let start = MKMapItem(placemark: MKPlacemark(coordinate: location, addressDictionary: [:]))
+        let end = MKMapItem(placemark: MKPlacemark(coordinate: firstRouteSummary.location, addressDictionary: [:]))
+        
+        let request = MKDirectionsRequest()
+        request.source = start
+        request.destination = end
+        request.transportType = .walking
+        
+        let directions = MKDirections(request: request)
+        directions.calculate { (response, error) in
+            guard let response = response else {
+                print("Route calculateTravelDistance() error: \(error.debugDescription)")
+                return
+            }
+            
+            if let walkingDistance = response.routes.first?.distance {
+                self.travelDistance = walkingDistance
+                self.travelDistanceDelegate?.travelDistanceUpdated(withDistance: walkingDistance)
+            }
+        }
+    }
 
     /** Update pin type of the last routeSummaryObject if routeSummaryObject has the same name as the user searched for
      *   OR if the routeSummaryObject's name is "End"
@@ -160,6 +196,10 @@ class Route: NSObject, JSONDecodable {
             if(lastRouteSummaryObject.name == place.name || lastRouteSummaryObject.name == "End") {
                 let type = place is BusStop ? PinType.stop : PinType.place
                 lastRouteSummaryObject.type = type
+                
+                if(lastRouteSummaryObject.name == "End") {
+                    lastRouteSummaryObject.updateName(from: place)
+                }
             }
         }
     }
