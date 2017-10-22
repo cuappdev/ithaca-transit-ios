@@ -50,13 +50,6 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     
     func createView() {
         
-        let spacing: CGFloat = 16
-        let edgeInset: CGFloat = 2
-        
-        let descriptionColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1)
-        let titleColor = UIColor(red: 34/255, green: 34/255, blue: 34/255, alpha: 1)
-        let mainColor = UIColor(red: 7/255, green: 157/255, blue: 220/255, alpha: 1)
-        
         let title = UILabel()
         let description = UITextView()
         let image = UIImageView()
@@ -76,7 +69,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         }
         
         title.font = UIFont(name: FontNames.SanFrancisco.Bold, size: 28)
-        title.textColor = titleColor
+        title.textColor = UIColor.primaryTextColor
         title.text = getTitle()
         title.center = view.center
         title.textAlignment = .center
@@ -88,7 +81,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         }
         
         description.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
-        description.textColor = descriptionColor
+        description.textColor = UIColor.mediumGrayColor
         description.text = getDescription()
         description.textAlignment = .center
         description.snp.makeConstraints { (make) in
@@ -102,7 +95,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         button.setTitle(getButtonText(), for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)!
-        button.backgroundColor = mainColor
+        button.backgroundColor = UIColor.tcatBlueColor
         button.layer.cornerRadius = 4
         self.button.snp.makeConstraints { (make) in
             make.bottom.equalToSuperview().offset(-64)
@@ -112,7 +105,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         setButtonConstraints()
         
         secondButton.setTitle("Don't Allow", for: .normal)
-        secondButton.setTitleColor(mainColor, for: .normal)
+        secondButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
         secondButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)
         secondButton.backgroundColor = .clear
         secondButton.snp.makeConstraints { (make) in
@@ -129,56 +122,49 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func getTitle() -> String {
-        switch type {
+        switch type! {
         case .locationServices: return "Location Services"
         case .welcome: return "Welcome!"
-        default: return ""
         }
     }
     
     func setButtonConstraints() {
-        switch type {
+        switch type! {
         case .locationServices:
             self.button.snp.makeConstraints { (make) in
                 make.width.equalTo(224)
             }
             secondButton.isHidden = false
-            return
         case .welcome:
             self.button.snp.makeConstraints { (make) in
                 make.width.equalTo(128)
             }
             secondButton.isHidden = true
-            return
-        default: return
         }
     }
     
     func getDescription() -> String {
-        switch type {
+        switch type! {
         case .locationServices:
             return "We need location services to serve you. "
         case .welcome:
             return "This is the magic school bus. If you need to get to somewhere in Ithaca, then use this."
-        default: return ""
         }
     }
     
     func getButtonText() -> String {
-        switch type {
+        switch type! {
         case .locationServices:
             return "Enable Location Services"
         case .welcome:
             return "Get started"
-        default: return ""
         }
     }
     
     func getAction() -> Selector? {
-        switch type {
+        switch type! {
         case .locationServices: return #selector(enableLocation)
         case .welcome: return #selector(moveToNextViewController)
-        default: return nil
         }
     }
     
