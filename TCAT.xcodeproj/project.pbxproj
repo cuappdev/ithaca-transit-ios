@@ -38,13 +38,15 @@
 		BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */; };
 		BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */; };
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
-		DC114CD61F72F8D50060BDE1 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC114CD51F72F8D40060BDE1 /* Reachability.swift */; };
 		DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
 		DD2F98A31E5150990005F6BC /* RouteOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */; };
 		DD36A6FF1F66378C00E4789E /* BusStop.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36A6FD1F66378B00E4789E /* BusStop.swift */; };
 		DD36A7001F66378C00E4789E /* PlaceResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36A6FE1F66378C00E4789E /* PlaceResult.swift */; };
 		DD36A7021F6637CA00E4789E /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36A7011F6637C900E4789E /* Direction.swift */; };
+		DD3D9C211F94297100B164D4 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C201F94297100B164D4 /* Reachability.swift */; };
+		DD3D9C341F942CF000B164D4 /* CoordinateVisitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */; };
+		DD3D9C361F945F2A00B164D4 /* RPCircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */; };
 		DD5D233C1E6367A100F8DECE /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5D233B1E6367A100F8DECE /* Time.swift */; };
 		DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */; };
 		DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */; };
@@ -131,13 +133,15 @@
 		BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMaps.framework; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
-		DC114CD51F72F8D40060BDE1 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Reachability.swift; path = Utilities/Reachability.swift; sourceTree = "<group>"; };
 		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
 		DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteOptionsViewController.swift; path = Controllers/RouteOptionsViewController.swift; sourceTree = "<group>"; };
 		DD36A6FD1F66378B00E4789E /* BusStop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusStop.swift; path = Model/BusStop.swift; sourceTree = "<group>"; };
 		DD36A6FE1F66378C00E4789E /* PlaceResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceResult.swift; path = Model/PlaceResult.swift; sourceTree = "<group>"; };
 		DD36A7011F6637C900E4789E /* Direction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Direction.swift; path = Model/Direction.swift; sourceTree = "<group>"; };
+		DD3D9C201F94297100B164D4 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Reachability.swift; path = Utilities/Reachability.swift; sourceTree = "<group>"; };
+		DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoordinateVisitor.swift; path = Utilities/CoordinateVisitor.swift; sourceTree = "<group>"; };
+		DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPCircularProgress.swift; sourceTree = "<group>"; };
 		DD5D233B1E6367A100F8DECE /* Time.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Time.swift; path = Utilities/Time.swift; sourceTree = "<group>"; };
 		DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Medium.otf"; path = "Resources/SFText-Medium.otf"; sourceTree = "<group>"; };
 		DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Regular.otf"; path = "Resources/SFText-Regular.otf"; sourceTree = "<group>"; };
@@ -358,13 +362,14 @@
 		DD2F98941E50D8DC0005F6BC /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				DC114CD51F72F8D40060BDE1 /* Reachability.swift */,
+				DD3D9C201F94297100B164D4 /* Reachability.swift */,
 				505E00E41E9ED56F00F09BAE /* KMLParser.swift */,
 				DD87F2091E878CB5000C244B /* Loader.swift */,
 				503EC38C1E96B85B00B3D4D4 /* Network.swift */,
 				5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */,
 				DD5D233B1E6367A100F8DECE /* Time.swift */,
 				D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */,
+				DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -372,6 +377,7 @@
 		DD2F98951E50D8E60005F6BC /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */,
 				DDBCD5E61E989E5800014641 /* Circle.swift */,
 				DDD33DEE1EC2960400BC6454 /* CircleLine.swift */,
 				DDB49CA11E88584B00A99C35 /* DetailIconView.swift */,
@@ -573,7 +579,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		292FC78093845444B1E8A99C /* [CP] Copy Pods Resources */ = {
@@ -610,7 +616,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		43F72825CF93E880E7B1217D /* [CP] Embed Pods Frameworks */ = {
@@ -705,7 +711,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		C2CF2DD167AF2DF4E89FC4E1 /* [CP] Embed Pods Frameworks */ = {
@@ -750,6 +756,8 @@
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
 				BF662F361F7323B400B21109 /* ActionOnboardViewController.swift in Sources */,
 				DD87F20A1E878CB5000C244B /* Loader.swift in Sources */,
+				DD3D9C341F942CF000B164D4 /* CoordinateVisitor.swift in Sources */,
+				DD3D9C211F94297100B164D4 /* Reachability.swift in Sources */,
 				DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */,
 				DD99E2F61F6DB06A0073E8F7 /* KeyConstants.swift in Sources */,
 				DD99E2F41F6DB0410073E8F7 /* FontConstants.swift in Sources */,
@@ -773,7 +781,7 @@
 				DD36A7021F6637CA00E4789E /* Direction.swift in Sources */,
 				DDB49C941E8857D000A99C35 /* RouteDetailViewController.swift in Sources */,
 				BF1209FB1F7759C200A7C930 /* BusLocationView.swift in Sources */,
-				DC114CD61F72F8D50060BDE1 /* Reachability.swift in Sources */,
+				DD3D9C361F945F2A00B164D4 /* RPCircularProgress.swift in Sources */,
 				DD2F98A31E5150990005F6BC /* RouteOptionsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

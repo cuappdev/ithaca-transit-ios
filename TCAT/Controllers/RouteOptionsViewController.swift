@@ -10,6 +10,7 @@ import UIKit
 import CoreLocation
 import SwiftyJSON
 import DZNEmptyDataSet
+import NotificationBannerSwift
 
 enum SearchBarType: String{
     case from, to
@@ -50,7 +51,18 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK:  Data vars
 
     var routes: [Route] = []
-    var loaderroutes: [Route] = []
+    
+    // MARK: Reachability vars
+    
+    let reachability: Reachability? = Reachability(hostname: Network.source)
+    var banner: StatusBarNotificationBanner = {
+        let banner = StatusBarNotificationBanner(title: "No Internet Connection", style: .danger)
+        banner.autoDismiss = false
+        
+        return banner
+    }()
+    var isBannerShown: Bool = false
+    var cellUserInteraction: Bool = true
 
     // MARK: View Lifecycle
 
@@ -68,7 +80,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setupDatepicker()
         setupRouteResultsTableView()
         setupEmptyDataSet()
-
+        
         view.addSubview(routeSelection)
         view.addSubview(datePickerOverlay)
         view.sendSubview(toBack: datePickerOverlay)
@@ -78,8 +90,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setRouteSelectionView(withDestination: searchTo)
         setupLocationManager()
 
-//        setupLoaderData()
-//        routes = loaderroutes
+        setupReachability()
 
         // If no date is set then date should be same as today's date
         self.searchTime = Date()
@@ -89,6 +100,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     override func viewWillAppear(_ animated: Bool) {
         routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: routeTableViewCellIdentifier)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        takedownReachability()
     }
 
     // MARK: Navigation bar
@@ -116,41 +131,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // Move back one view controller in navigationController stack
     func backAction() {
         navigationController?.popViewController(animated: true)
-    }
-
-    // MARK: Loader
-
-    private func setupLoaderData(){
-        let date1 = Time.date(fromTime: "3:45 PM")
-        let date2 = Time.date(fromTime: "3:52 PM")
-        let routeObject1 = RouteSummaryObject(name: "Baker Flagpole", type: .stop, nextDirection: .bus, busNumber: 90)
-        let routeObject2 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop)
-        let routeSummary1 = [routeObject1, routeObject2]
-
-        let route1 = Route(departureTime: date1, arrivalTime: date2, startCoords: CLLocation().coordinate,
-                           endCoords: CLLocation().coordinate, directions: [], routeSummary: routeSummary1)
-
-        let date3 = Time.date(fromTime: "3:45 PM")
-        let date4 = Time.date(fromTime: "3:52 PM")
-        let routeObject3 = RouteSummaryObject(name: "Baker Flagpole", type: .stop, nextDirection: .bus, busNumber: 8)
-        let routeObject4 = RouteSummaryObject(name: "Collegetown Crossing", type: .stop, nextDirection: .bus, busNumber: 16)
-        let routeObject5 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop, nextDirection: .walk)
-        let routeObject10 = RouteSummaryObject(name: "Waffle Frolic", type: .place)
-        let routeSummary2 = [routeObject3, routeObject4, routeObject5, routeObject10]
-        let route2 = Route(departureTime: date3, arrivalTime: date4, startCoords: CLLocation().coordinate,
-                           endCoords: CLLocation().coordinate, directions: [], routeSummary: routeSummary2)
-
-        let date5 = Time.date(fromTime: "3:45 PM")
-        let date6 = Time.date(fromTime: "3:52 PM")
-        let routeObject6 = RouteSummaryObject(name: "Baker Flagpole", type: .stop, nextDirection: .bus, busNumber: 8)
-        let routeObject7 = RouteSummaryObject(name: "Jessup Fields", type: .stop, nextDirection: .walk)
-        let routeObject8 = RouteSummaryObject(name: "RPCC", type: .stop, nextDirection: .bus, busNumber: 32)
-        let routeObject9 = RouteSummaryObject(name: "Commons - Seneca Street", type: .stop)
-        let routeSummary3 = [routeObject6, routeObject7, routeObject8, routeObject9]
-        let route3 = Route(departureTime: date5, arrivalTime: date6, startCoords: CLLocation().coordinate,
-                           endCoords: CLLocation().coordinate, directions: [], routeSummary: routeSummary3)
-
-        loaderroutes = [route1, route2, route3]
     }
 
     // MARK: Route Selection view
@@ -280,28 +260,35 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     private func hideSearchBar(){
-        navigationItem.titleView = nil
+        if #available(iOS 11.0, *) {
+            navigationItem.searchController = nil
+        } else {
+            navigationItem.titleView = nil
+        }
+        setupBackButton()
         searchBarView.searchController?.isActive = false
     }
 
     private func showSearchBar(){
-        navigationItem.titleView = searchBarView.searchController?.searchBar
+        if #available(iOS 11.0, *) {
+            navigationItem.searchController = searchBarView.searchController
+        } else {
+            // Fallback on earlier versions
+            navigationItem.titleView = searchBarView.searchController?.searchBar
+        }
+        navigationItem.setLeftBarButton(nil, animated: false)
+        navigationItem.hidesBackButton = true
         searchBarView.searchController?.isActive = true
     }
 
     // MARK: Process data
 
     func searchForRoutes() {
-        if let startingDestination = searchFrom, let endingDestination = searchTo{
+        if let startingDestination = searchFrom as? CoordinateAcceptor, let endingDestination = searchTo as? CoordinateAcceptor{
 
             routes = []
             currentlySearching = true
             routeResults.reloadData()
-
-//            routes = loaderroutes
-//            routeResults.reloadData()
-//            Loader.addLoaderTo(routeResults)
-
 
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
 
@@ -310,7 +297,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     self.routes = self.processRoutes(rawRoutes)
                     self.currentlySearching = false
                     self.routeResults.reloadData()
-//                    Loader.removeLoaderFrom(self.routeResults)
                 },
 
                 failure: { (error) in
@@ -318,7 +304,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     self.routes = []
                     self.currentlySearching = false
                     self.routeResults.reloadData()
-//                    Loader.removeLoaderFrom(self.routeResults)
                 })
 
             }
@@ -337,6 +322,17 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         if let endDestination = searchTo {
             for route in routes{
                 route.updateEndingDestination(endDestination)
+            }
+        }
+        
+        // Calculate walking distance
+        let start = searchFrom as! CoordinateAcceptor
+        let visitor = CoordinateVisitor()
+        start.accept(visitor: visitor) { startCoord in
+            if let startLocation = startCoord {
+                for route in routes {
+                    route.calculateTravelDistance(fromLocation: startLocation)
+                }
             }
         }
         
@@ -488,10 +484,66 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         cell?.setRouteData()
         cell?.positionSubviews()
         cell?.addSubviews()
-
+        
+        setCellUserInteraction(cell, to: cellUserInteraction)
+        
         return cell!
     }
-
+    
+    // MARK: Reachability
+    
+    private func setupReachability() {
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityDidChange(_:)), name: .reachabilityChanged, object: reachability)
+        
+        do {
+            try reachability?.startNotifier()
+        } catch {
+            print("RouteOptionsVC setupReachability: Could not start reachability notifier")
+        }
+    }
+    
+    private func takedownReachability() {
+        reachability?.stopNotifier()
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+    }
+    
+    @objc private func reachabilityDidChange(_ notification: Notification) {
+        let reachability = notification.object as! Reachability
+        
+        switch reachability.connection {
+            
+            case .none:
+                banner.show(queuePosition: .front, bannerPosition: .bottom, on: self)
+                isBannerShown = true
+                setUserInteraction(to: false)
+            
+            case .cellular, .wifi:
+                if isBannerShown {
+                    banner.dismiss()
+                    isBannerShown = false
+                }
+                
+                setUserInteraction(to: true)
+            
+        }
+        
+    }
+    
+    private func setUserInteraction(to userInteraction: Bool) {
+        cellUserInteraction = userInteraction
+        
+        for cell in routeResults.visibleCells {
+            setCellUserInteraction(cell, to: userInteraction)
+        }
+        
+        routeSelection.isUserInteractionEnabled = userInteraction
+    }
+    
+    private func setCellUserInteraction(_ cell: UITableViewCell?, to userInteraction: Bool) {
+        cell?.isUserInteractionEnabled = userInteraction
+        cell?.selectionStyle = userInteraction ? .default : .none
+    }
+    
     // MARK: DZNEmptyDataSet
 
     private func setupEmptyDataSet() {
@@ -499,25 +551,56 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.emptyDataSetDelegate = self
         routeResults.tableFooterView = UIView()
     }
-
-    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let message = currentlySearching ? "Looking for routes..." : "No Routes Found"
-        let attrs: [String : Any] = [
-            NSFontAttributeName : UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)!,
-            NSForegroundColorAttributeName : UIColor.mediumGrayColor
-        ]
-
-        return NSAttributedString(string: message, attributes: attrs)
-    }
-
-    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        return currentlySearching ? #imageLiteral(resourceName: "reload") : #imageLiteral(resourceName: "road")
+    
+    func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
+        let customView = UIView()
+        
+        var symbolView = UIView()
+        
+        if currentlySearching {
+            let circularProgress = RPCircularProgress()
+            circularProgress.enableIndeterminate()
+            circularProgress.trackTintColor = .mediumGrayColor
+            circularProgress.progressTintColor = .searchBarPlaceholderTextColor
+            circularProgress.thicknessRatio = 0.25
+            
+            symbolView = circularProgress
+        }
+        else {
+            let imageView = UIImageView(image: #imageLiteral(resourceName: "road"))
+            imageView.contentMode = .scaleAspectFit
+            
+            symbolView = imageView
+        }
+        
+        let titleLabel = UILabel()
+        titleLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
+        titleLabel.textColor = .mediumGrayColor
+        titleLabel.text = currentlySearching ? "Looking for routes..." : "No Routes Found"
+        titleLabel.sizeToFit()
+        
+        customView.addSubview(symbolView)
+        customView.addSubview(titleLabel)
+        
+        symbolView.snp.makeConstraints{ (make) in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(currentlySearching ? -20 : -22.5)
+            make.width.equalTo(currentlySearching ? 40 : 45)
+            make.height.equalTo(currentlySearching ? 40 : 45)
+        }
+        
+        titleLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(symbolView.snp.bottom).offset(10)
+            make.centerX.equalTo(symbolView.snp.centerX)
+        }
+        
+        return customView
     }
 
     // MARK: Tableview Delegate
 
     private func setupRouteResultsTableView(){
-        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0) - UIApplication.shared.statusBarFrame.height), style: .grouped)
+        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0)), style: .grouped)
         routeResults.delegate = self
         routeResults.allowsSelection = true
         routeResults.dataSource = self
