@@ -70,6 +70,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         super.viewDidLoad()
         self.view.backgroundColor = .tableBackgroundColor
 
+        edgesForExtendedLayout = []
+        
         setupNavigationBar()
         setupBackButton()
 

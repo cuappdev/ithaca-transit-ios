@@ -36,6 +36,7 @@
 		<string>SFText-Medium.otf</string>
 		<string>SFText-Regular.otf</string>
 		<string>SFText-Semibold.otf</string>
+		<string>SFText-Bold.otf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

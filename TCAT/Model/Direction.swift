@@ -79,25 +79,8 @@ class Direction: NSObject {
     }
 
     convenience init(from json: JSON, baseTime: Double) {
-    
-        // Fill path of direction if busPath exists (Depart Direction)
-        // Return [CLLocationCoordinate2D]
-        func jsonToPathArray() -> [CLLocationCoordinate2D] {
+        
 
-            var pathArray: [CLLocationCoordinate2D] = []
-            
-            if json["busPath"] != JSON.null {
-                let busPathShape = json["busPath"]["path"]["shape"].arrayValue
-                for location in busPathShape {
-                    let coordinate = CLLocationCoordinate2D(latitude: location["latitude"].doubleValue,
-                                                            longitude: location["longitude"].doubleValue)
-                    pathArray.append(coordinate)
-                }
-            }
-            
-            return pathArray
-            
-        }
         
         // Return [String] of name of timed bus stops
         func jsonToStopArray() -> [String] {
@@ -112,7 +95,10 @@ class Direction: NSObject {
                               longitude: json["location"]["longitude"].doubleValue)
         }
         
+        let pathHelper = PathHelper()
         let type: DirectionType = json["busPath"] != JSON.null ? .depart : .walk
+        let startLocation = locationJSON(from: json["start"])
+        let endLocation = locationJSON(from: json["end"])
         
         self.init(
 
@@ -120,15 +106,15 @@ class Direction: NSObject {
 
             locationName: json["\(type == .depart ? "start" : "end")"]["name"].stringValue,
 
-            startLocation: locationJSON(from: json["start"]),
+            startLocation: startLocation,
 
-            endLocation: locationJSON(from: json["end"]),
+            endLocation: endLocation,
 
             startTime: Date(timeIntervalSince1970: baseTime + json["startTime"].doubleValue),
 
             endTime: Date(timeIntervalSince1970: baseTime + json["endTime"].doubleValue),
 
-            path: jsonToPathArray(),
+            path: pathHelper.filterPath(in: json, from: startLocation.coordinate, to: endLocation.coordinate),
 
             busStops: jsonToStopArray(),
 
@@ -140,8 +126,9 @@ class Direction: NSObject {
 
     }
 
-    // MARK: Descriptions / Functions
 
+    // MARK: Descriptions / Functions
+    
     /// Distance between start and end locations in miles
     var travelDistance: Double {
         let metersInMile = 1609.34
@@ -195,5 +182,7 @@ class Direction: NSObject {
         return result
 
     }
+    
+ 
 
 }

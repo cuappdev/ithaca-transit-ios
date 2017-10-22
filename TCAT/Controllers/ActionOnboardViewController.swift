@@ -1,4 +1,4 @@
-//
+ //
 //  ActionOnboardViewController.swift
 //  TCAT
 //
@@ -13,11 +13,20 @@ enum OnboardType: String {
     case locationServices, welcome
 }
 
+protocol OnboardingDelegate {
+    func moveToNextViewController(vc: ActionOnboardViewController)
+}
+
 class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     
     var type: OnboardType!
-    
     var locationManager = CLLocationManager()
+    var onboardingDelegate: OnboardingDelegate!
+
+    let button = UIButton()
+    let secondButton = UIButton()
+    
+    // working on DELEGATION
     
     init(type: OnboardType) {
         self.type = type
@@ -33,7 +42,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         
         locationManager.delegate = self
         
-        self.view.backgroundColor = .purple
+        view.backgroundColor = .white
         
         createView()
         
@@ -41,66 +50,126 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     
     func createView() {
         
-        let spacing: CGFloat = 16
-        
         let title = UILabel()
-        title.font = UIFont.boldSystemFont(ofSize: 18)
+        let description = UITextView()
+        let image = UIImageView()
+        
+        view.addSubview(button)
+        view.addSubview(title)
+        view.addSubview(description)
+        view.addSubview(image)
+        view.addSubview(secondButton)
+        
+        image.backgroundColor = .clear
+        image.snp.makeConstraints { (make) in
+            make.width.equalTo(311)
+            make.height.equalTo(325.5)
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(32)
+        }
+        
+        title.font = UIFont(name: FontNames.SanFrancisco.Bold, size: 28)
+        title.textColor = UIColor.primaryTextColor
         title.text = getTitle()
         title.center = view.center
-        title.sizeToFit()
-        view.addSubview(title)
+        title.textAlignment = .center
+        title.snp.makeConstraints { (make) in
+            make.bottom.equalToSuperview().offset(-244)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.equalTo(50)
+        }
         
-        let description = UITextView()
+        description.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        description.textColor = UIColor.mediumGrayColor
         description.text = getDescription()
-        description.center = view.center
-        description.sizeToFit()
-        description.frame.origin.y = title.frame.maxX + spacing
-        view.addSubview(description)
+        description.textAlignment = .center
+        description.snp.makeConstraints { (make) in
+            make.top.equalTo(title.snp.bottom).offset(12)
+            make.width.equalTo(311.5)
+            make.height.equalTo(80)
+            make.centerX.equalToSuperview()
+        }
+        description.isEditable = false
         
-        let button = UIButton()
-        button.titleLabel?.text = getButtonText()
-        button.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-        button.backgroundColor = .buttonColor
+        button.setTitle(getButtonText(), for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)!
+        button.backgroundColor = UIColor.tcatBlueColor
         button.layer.cornerRadius = 4
-        button.center = view.center
-        button.frame.origin.y = view.bounds.height - 100 - button.frame.height
+        self.button.snp.makeConstraints { (make) in
+            make.bottom.equalToSuperview().offset(-64)
+            make.centerX.equalToSuperview()
+            make.height.equalTo(44)
+        }
+        setButtonConstraints()
+        
+        secondButton.setTitle("Don't Allow", for: .normal)
+        secondButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
+        secondButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)
+        secondButton.backgroundColor = .clear
+        secondButton.snp.makeConstraints { (make) in
+            make.top.equalTo(button.snp.bottom).offset(12)
+            make.width.equalTo(100)
+            make.centerX.equalToSuperview()
+        }
+        secondButton.addTarget(self, action: #selector(dismissOnboarding), for: .touchUpInside)
+        
         if getAction() != nil {
             button.addTarget(self, action: getAction()!, for: .touchUpInside)
         }
-        view.addSubview(button)
         
     }
     
     func getTitle() -> String {
-        switch type {
-            case .locationServices: return "Location Services"
-            case .welcome: return "Welcome!"
-            default: return ""
+        switch type! {
+        case .locationServices: return "Location Services"
+        case .welcome: return "Welcome!"
+        }
+    }
+    
+    func setButtonConstraints() {
+        switch type! {
+        case .locationServices:
+            self.button.snp.makeConstraints { (make) in
+                make.width.equalTo(224)
+            }
+            secondButton.isHidden = false
+        case .welcome:
+            self.button.snp.makeConstraints { (make) in
+                make.width.equalTo(128)
+            }
+            secondButton.isHidden = true
         }
     }
     
     func getDescription() -> String {
-        switch type {
-            case .locationServices: return "Lots of good information about location services!"
-            case .welcome: return "This is the best app ever."
-            default: return ""
+        switch type! {
+        case .locationServices:
+            return "We need location services to serve you. "
+        case .welcome:
+            return "This is the magic school bus. If you need to get to somewhere in Ithaca, then use this."
         }
     }
     
     func getButtonText() -> String {
-        switch type {
-            case .locationServices: return "Enable"
-            case .welcome: return "Let's Go!"
-            default: return ""
+        switch type! {
+        case .locationServices:
+            return "Enable Location Services"
+        case .welcome:
+            return "Get started"
         }
     }
     
     func getAction() -> Selector? {
-        switch type {
-            case .locationServices: return #selector(enableLocation)
-            case .welcome: return #selector(dismissOnboarding)
-            default: return nil
+        switch type! {
+        case .locationServices: return #selector(enableLocation)
+        case .welcome: return #selector(moveToNextViewController)
         }
+    }
+    
+    func moveToNextViewController() {
+        onboardingDelegate.moveToNextViewController(vc: self)
     }
     
     func dismissOnboarding() {
@@ -128,10 +197,13 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     func enableLocation() {
         
         locationManager.requestWhenInUseAuthorization()
-        
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        
+        if status == .authorizedWhenInUse {
+            dismissOnboarding()
+        }
         
         // if denied while onboarding...
         if status == .denied && !userDefaults.bool(forKey: "onboardingShown") {
@@ -152,5 +224,5 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
+    
 }
-
