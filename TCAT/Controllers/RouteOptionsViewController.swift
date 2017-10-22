@@ -466,7 +466,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Tableview Data Source
 
     func numberOfSections(in tableView: UITableView) -> Int{
-        return 0
+        return 1
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?{
