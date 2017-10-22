@@ -8,51 +8,37 @@
 
 import UIKit
 
-class OnboardPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+class OnboardViewController: UIViewController, OnboardingDelegate {
     
-    let controllers: [UIViewController] = [
+    let controllers: [ActionOnboardViewController] = [
         
         ActionOnboardViewController(type: .welcome),
         ActionOnboardViewController(type: .locationServices)
-    
+        
     ]
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        dataSource = self
-        delegate = self
-        
-        for view in self.view.subviews {
-            if view is UIPageControl { view.backgroundColor = .clear }
-        }
-        
-        setViewControllers([controllers.first!], direction: .forward, animated: true)
-        
+        let controller = controllers.first!
+        controller.view.bounds = view.bounds
+        controller.onboardingDelegate = self
+        addChildViewController(controller)
+        view.addSubview(controller.view)
+        didMove(toParentViewController: controller)
     }
     
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard var index = controllers.index(of: viewController)
-            else { return nil }
-        if index == 0 { return nil }
-        index -= 1
-        return controllers[index]
+    func moveToNextViewController(vc: ActionOnboardViewController) {
+        let controller = controllers[1]
+        addChildViewController(controller)
+        vc.navigationController?.pushViewController(controller, animated: true)
+        didMove(toParentViewController: controller)
+        vc.removeFromParentViewController()
     }
     
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard var index = controllers.index(of: viewController)
-            else { return nil }
-        if index == controllers.count - 1 { return nil }
-        index += 1
-        return controllers[index]
-    }
-    
-    func presentationCount(for pageViewController: UIPageViewController) -> Int {
-        return controllers.count
-    }
-    
-    func presentationIndex(for pageViewController: UIPageViewController) -> Int {
-        return 0
-    }
-
 }
+

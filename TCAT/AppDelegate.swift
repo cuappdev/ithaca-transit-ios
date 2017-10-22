@@ -16,7 +16,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     
     var window: UIWindow?
     let userDefaults = UserDefaults.standard
-    let locationManager = CLLocationManager()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -26,16 +25,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         GMSServices.provideAPIKey(json["google-maps"].stringValue)
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
-        
+        userDefaults.set(false, forKey: "onboardingShown")
         if userDefaults.value(forKey: "onboardingShown") == nil {
             userDefaults.set(false, forKey: "onboardingShown")
         }
         
         // Initalize window without storyboard
-        /* let rootVC: UIViewController = userDefaults.bool(forKey: "onboardingShown") ? HomeViewController() :
-            OnboardPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-         */
-        let rootVC: UIViewController = RouteDetailViewController() // HomeViewController()
+        let rootVC: UIViewController = userDefaults.bool(forKey: "onboardingShown") ? HomeViewController() :
+            OnboardViewController()
         let navigationController = UINavigationController(rootViewController: rootVC)
         navigationController.navigationBar.barTintColor = .white
         navigationController.navigationBar.isTranslucent = false
@@ -52,8 +49,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         }
         
         // Ask for current location
-        locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
         
         return true
     }
