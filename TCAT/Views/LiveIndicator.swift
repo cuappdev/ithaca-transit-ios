@@ -30,21 +30,21 @@ class LiveIndicator: UIView {
     
     init() {
         
-        super.init(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
+        super.init(frame: CGRect(x: 0, y: 0, width: 12, height: 12))
         
-        dot = UIView(frame: CGRect(x: 0, y: frame.maxY - 4, width: 4, height: 4))
+        dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - 3, width: 3, height: 3))
         dot.layer.cornerRadius = dot.frame.width / 2
         dot.clipsToBounds = true
         dot.backgroundColor = .white
         addSubview(dot)
         
         let arcOrigin = CGPoint(x: 1, y: frame.maxY - 1)
-        let constant: CGFloat = 3
+        let constant: CGFloat = 2
         
-        smallArcLayer = createTopToLeftArc(origin: arcOrigin, radius: 9, lineWidth: constant)
+        smallArcLayer = createTopToLeftArc(origin: arcOrigin, radius: 7, lineWidth: constant)
         self.layer.addSublayer(smallArcLayer)
         
-        largeArcLayer = createTopToLeftArc(origin: arcOrigin, radius: 9 + 2 * constant, lineWidth: constant)
+        largeArcLayer = createTopToLeftArc(origin: arcOrigin, radius: 7 + 2 * constant, lineWidth: constant)
         self.layer.addSublayer(largeArcLayer)
         
         views = [dot, smallArcLayer, largeArcLayer]

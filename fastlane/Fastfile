@@ -11,14 +11,14 @@
 
 # This is the minimum version number required.
 # Update this, if you use features of a newer version
-fastlane_version "2.59.0"
+fastlane_version "2.62.0"
 
 default_platform :ios
 
 platform :ios do
   before_all do
 
-    ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
+    ENV["SLACK_URL"] = CredentialsManager::AppfileConfig.try_fetch_value(:slack_url)
     
   end
 
@@ -31,28 +31,22 @@ platform :ios do
   lane :provision do
 
     app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+    app_name = CredentialsManager::AppfileConfig.try_fetch_value(:app_name)
     apple_id = CredentialsManager::AppfileConfig.try_fetch_value(:apple_id)
+    apple_id = CredentialsManager::AppfileConfig.try_fetch_value(:version)
 
     produce(
       username: apple_id,
       app_identifier: app_identifier,
-      app_name: 'TCAT',
+      app_name: app_name,
       language: 'English',
-      app_version: '1.0',
+      app_version: version,
       sku: '123',
     )
 
     cert
 
     sigh(force: true)
-
-  end
-
-  desc "Account for 120px AppIcon asset validation bug in Xcode 9 + iTunes Transporter"
-  desc "Modify the .xcarchive Info.plist before uploading"
-  lane :asset_bug_fix do
-
-    sh("./archive_fix.sh")
 
   end
 
@@ -63,7 +57,9 @@ platform :ios do
 
     cocoapods
 
-    gym(scheme: "TCAT") # Build your app - more options available
+    scheme = CredentialsManager::AppfileConfig.try_fetch_value(:scheme_name)
+
+    gym(scheme: scheme) # Build your app - more options available
 
     increment_build_number
 
@@ -72,8 +68,8 @@ platform :ios do
     pilot(
        changelog: options[:changelog], 
        distribute_external: true,
-       groups: ["v0 Beta"],
-       beta_app_feedback_email: "cuappdev@gmail.com"
+       groups: ["Beta Testers"],
+       beta_app_feedback_email: "cornellappdev@gmail.com"
     )
 
     slack(
@@ -87,11 +83,15 @@ platform :ios do
 
   desc "Deploy a new version to the App Store"
   lane :release do
+
     # match(type: "appstore")
     # snapshot
+
     gym # Build your app - more options available
     deliver(force: true)
+
     # frameit
+
   end
 
   # You can define as many lanes as you want

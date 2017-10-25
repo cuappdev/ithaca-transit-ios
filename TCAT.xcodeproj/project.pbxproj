@@ -29,8 +29,6 @@
 		BF101FE21F93D9BB00C58769 /* LiveIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF101FE11F93D9BB00C58769 /* LiveIndicator.swift */; };
 		BF1209FB1F7759C200A7C930 /* BusLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1209FA1F7759C200A7C930 /* BusLocationView.swift */; };
 		BF274E3D1F971A9B00981C34 /* DirectionPathHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF274E3C1F971A9B00981C34 /* DirectionPathHelper.swift */; };
-		BF4F831C1F89B9180097A052 /* testNew.json in Resources */ = {isa = PBXBuildFile; fileRef = BF4F831B1F89B9180097A052 /* testNew.json */; };
-		BF52F5491F5B553B000DEDF0 /* testOld.json in Resources */ = {isa = PBXBuildFile; fileRef = BF52F5481F5B553B000DEDF0 /* testOld.json */; };
 		BF662F341F731DD200B21109 /* OnboardPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F331F731DD200B21109 /* OnboardPageViewController.swift */; };
 		BF662F361F7323B400B21109 /* ActionOnboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */; };
 		BF73F0F31F60B0BD003B479D /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF73F0F21F60B0BD003B479D /* BusLocation.swift */; };
@@ -579,7 +577,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		292FC78093845444B1E8A99C /* [CP] Copy Pods Resources */ = {
@@ -616,7 +614,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		43F72825CF93E880E7B1217D /* [CP] Embed Pods Frameworks */ = {
@@ -711,7 +709,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C2CF2DD167AF2DF4E89FC4E1 /* [CP] Embed Pods Frameworks */ = {
@@ -934,7 +932,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 25;
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -960,7 +958,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 25;
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				FRAMEWORK_SEARCH_PATHS = (

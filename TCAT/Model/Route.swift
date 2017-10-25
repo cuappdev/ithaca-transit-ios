@@ -59,19 +59,23 @@ class Route: NSObject, JSONDecodable {
                                            longitude: data[pathEnd]["end"]["location"]["longitude"].doubleValue)
         
         // Create directions
-        for (index, path) in json["path"].arrayValue.enumerated() {
-            
+        for (_, path) in json["path"].arrayValue.enumerated() {
+
             let direction = Direction(from: path, baseTime: baseTime)
             directions.append(direction)
             
             // Create pair ArriveDirection after DepartDirection
             if direction.type == .depart {
-                let arriveDirection = direction
+                let arriveDirection = direction.copy() as! Direction
                 arriveDirection.type = .arrive
                 arriveDirection.startTime = arriveDirection.endTime
                 arriveDirection.startLocation = arriveDirection.endLocation
                 arriveDirection.busStops = []
                 arriveDirection.locationName = path["end"]["name"].stringValue
+                print("\n\n")
+                print("OG Direction:", direction.debugDescription)
+                print("Arrive Directoins:", arriveDirection.debugDescription)
+                print("\n\n")
                 directions.append(arriveDirection)
             }
         }
@@ -230,6 +234,31 @@ class Route: NSObject, JSONDecodable {
         directions.calculate { (response, error) in
             completion(response?.routes.first?.polyline.coordinates ?? [])
         }
+    }
+    
+    override var debugDescription: String {
+        
+        let mainDescription = """
+            departtureTime: \(self.departureTime)\n
+            arrivalTime: \(self.arrivalTime)\n
+            startCoords: \(self.startCoords)\n
+            endCoords: \(self.endCoords)\n
+            timeUntilDeparture: \(self.timeUntilDeparture)\n
+        """
+
+//        mainDescription += "routeSummary:\n"
+//        for (index, object) in self.routeSummary.enumerated() {
+//            mainDescription += """
+//                --- RouteSummary[\(index)] ---\n
+//                name: \(object.name)\n
+//                type: \(object.type)\n
+//                number: \(object.busNumber ?? -1)\n
+//                nextDirection: \(object.nextDirection as Any)
+//            """
+//        }
+        
+        return mainDescription
+        
     }
 
     func numberOfBusRoutes() -> Int {

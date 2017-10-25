@@ -109,10 +109,10 @@ class PathHelper {
     }
     
     /// Determine if a point is close enough to the bus stop to start drawing the path
-    class func pointWithinLocation(point: CLLocationCoordinate2D, location: CLLocationCoordinate2D) -> Bool {
+    class func pointWithinLocation(point: CLLocationCoordinate2D, location: CLLocationCoordinate2D, exact: Bool = false) -> Bool {
         
         /// The amount of "error" or size of the acceptable region near the bus location to
-        let radius: Double = 0.0025
+        let radius: Double = exact ? 0.00025 : 0.0025
         
         let minLatitude = location.latitude - radius
         let maxLatitude = location.latitude + radius

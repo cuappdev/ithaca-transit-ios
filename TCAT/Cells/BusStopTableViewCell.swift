@@ -32,12 +32,12 @@ class BusStopTableViewCell: UITableViewCell {
         titleLabel.center.y = cellHeight / 2
         contentView.addSubview(titleLabel)
         
-        connectorTop = UIView(frame: CGRect(x: 20, y: 0, width: 2, height: cellHeight / 2))
+        connectorTop = UIView(frame: CGRect(x: 20, y: 0, width: 4, height: cellHeight / 2))
         connectorTop.frame.origin.x -= connectorTop.frame.width / 2
         connectorTop.backgroundColor = .tcatBlueColor
         contentView.addSubview(connectorTop)
         
-        connectorBottom = UIView(frame: CGRect(x: 20, y: cellHeight / 2, width: 2, height: cellHeight / 2))
+        connectorBottom = UIView(frame: CGRect(x: 20, y: cellHeight / 2, width: 4, height: cellHeight / 2))
         connectorBottom.frame.origin.x -= connectorBottom.frame.width / 2
         connectorBottom.backgroundColor = .tcatBlueColor
         contentView.addSubview(connectorBottom)

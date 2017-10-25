@@ -23,7 +23,7 @@ enum DirectionType: String {
     case walk, depart, arrive, unknown
 }
 
-class Direction: NSObject {
+class Direction: NSObject, NSCopying {
 
     var type: DirectionType
 
@@ -40,7 +40,7 @@ class Direction: NSObject {
     var routeNumber: Int
     var busStops: [String]
 
-    init(type: DirectionType,
+    required init(type: DirectionType,
          locationName: String,
          startLocation: CLLocation,
          endLocation: CLLocation,
@@ -80,12 +80,10 @@ class Direction: NSObject {
 
     convenience init(from json: JSON, baseTime: Double) {
         
-
-        
-        // Return [String] of name of timed bus stops
+        // Return [String] filed with names of bus stops
         func jsonToStopArray() -> [String] {
             return json["busPath"]["path"]["timedStops"].arrayValue.flatMap {
-                $0["name"].stringValue
+                $0["stop"]["name"].stringValue
             }
         }
         
@@ -125,6 +123,20 @@ class Direction: NSObject {
 
 
     }
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        
+        return type(of: self).init(
+            type: type,
+            locationName: locationName,
+            startLocation: startLocation,
+            endLocation: endLocation,
+            startTime: startTime,
+            endTime: endTime,
+            path: path
+        )
+        
+    }
 
 
     // MARK: Descriptions / Functions
@@ -154,6 +166,21 @@ class Direction: NSObject {
             return locationName
 
         }
+    }
+    
+    override var debugDescription: String {
+        return """
+            type: \(self.type)\n
+            startTime: \(self.startTime)\n
+            endTime: \(self.endTime)\n
+            startLocation: \(self.startLocation)\n
+            endLocation: \(self.endLocation)\n
+            busStops: \(self.busStops)\n
+            travelDistance: \(self.travelDistance)\n
+            locationNameDescription: \(self.locationNameDescription)\n
+            locationName: \(self.locationName)\n
+            stops: \(self.busStops)
+        """
     }
 
     /// Returns readable start time (e.g. 7:49 PM)

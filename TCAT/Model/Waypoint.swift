@@ -47,7 +47,7 @@ class Waypoint: NSObject {
     }
     
     func drawOriginIcon() -> UIView {
-        return drawCircle(radius: smallDiameter / 2, innerColor: .tcatBlueColor)
+        return drawCircle(radius: largeDiameter / 2, innerColor: .tcatBlueColor, borderColor: .white)
     }
     
     func drawDestinationIcon() -> UIView {
@@ -55,7 +55,7 @@ class Waypoint: NSObject {
     }
     
     func drawStopIcon() -> UIView {
-        return BusIcon(type: .directionSmall, number: self.busNumber)
+        return drawCircle(radius: smallDiameter / 2, innerColor: .tcatBlueColor)
     }
     
     func drawCircle(radius: CGFloat, innerColor: UIColor, borderColor: UIColor? = nil) -> UIView {
