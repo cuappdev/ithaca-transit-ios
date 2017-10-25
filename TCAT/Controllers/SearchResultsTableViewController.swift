@@ -57,6 +57,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
 
     override func viewWillAppear(_ animated: Bool) {
         searchBar?.sizeToFit()
+        searchBar?.tintColor = UIColor.primaryTextColor
     }
 
     override func viewDidLoad() {
