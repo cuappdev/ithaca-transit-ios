@@ -42,6 +42,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     var datePickerView: DatepickerView!
     var datePickerOverlay: UIView!
     var routeResults: UITableView!
+    var refreshControl = UIRefreshControl()
 
     let navigationBarTitle: String = "Route Options"
     let routeTableViewCellIdentifier: String = RouteTableViewCell().identifier
@@ -288,10 +289,17 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
             routes = []
             currentlySearching = true
+            routeResults.contentOffset = .zero
             routeResults.reloadData()
 
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
-
+                
+                if #available(iOS 10.0, *) {
+                    self.routeResults.refreshControl?.endRefreshing()
+                } else {
+                    self.refreshControl.endRefreshing()
+                }
+                
                 request.perform(withSuccess: { (routeJson) in
                     let rawRoutes = Route.getRoutesArray(fromJson: routeJson, endingAt: self.searchTo?.name ?? "")
                     self.routes = self.processRoutes(rawRoutes)
@@ -392,7 +400,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     private func setupDatepickerView(){
-        datePickerView = DatepickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 305.5))
+        datePickerView = DatepickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 254))
         datePickerView.positionSubviews()
         datePickerView.addSubviews()
         datePickerView.backgroundColor = .white
@@ -402,7 +410,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     private func setupDatepickerOverlay(){
-        datePickerOverlay = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height))
+        datePickerOverlay = UIView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: view.frame.height + 12)) // 12 for sliver that shows up when click datepicker immediately after transition from HomeVC
         datePickerOverlay.backgroundColor = .black
         datePickerOverlay.alpha = 0
 
@@ -550,6 +558,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.emptyDataSetSource = self
         routeResults.emptyDataSetDelegate = self
         routeResults.tableFooterView = UIView()
+        routeResults.contentOffset = .zero
     }
     
     func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
@@ -606,7 +615,15 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.dataSource = self
         routeResults.separatorStyle = .none
         routeResults.backgroundColor = .tableBackgroundColor
-        routeResults.alwaysBounceVertical = false //so table view doesn't scroll over top & bottom
+        routeResults.alwaysBounceVertical = true //so table view doesn't scroll over top & bottom
+        
+        refreshControl.isHidden = true
+        
+        if #available(iOS 10.0, *) {
+            routeResults.refreshControl = refreshControl
+        } else {
+            routeResults.addSubview(refreshControl)
+        }
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat{
@@ -643,5 +660,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         return false // halts the selection process, so don't have selected look
     }
-
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if refreshControl.isRefreshing {
+            searchForRoutes()
+        }
+    }
 }
