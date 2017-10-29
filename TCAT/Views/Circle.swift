@@ -34,7 +34,7 @@ class Circle: UIView {
             
             case .bordered:
                 
-                backgroundColor = .clear
+                backgroundColor = .white
                 layer.borderColor = color.cgColor
                 layer.borderWidth = 1.0
                 

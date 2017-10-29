@@ -38,10 +38,10 @@ class PathHelper {
             
             // Find start of path
             
-            let nearStartPoints = path.filter { PathHelper.pointWithinLocation(point: $0, location:start) }
+            let nearStartPoints = path.filter { PathHelper.pointWithinLocation(point: $0, location: start) }
             let nearStartBearing = generalBearing(of: nearStartPoints)
             
-            var closestDistance = Double.infinity
+            var closestDistance: Double = .infinity
             var busPathStartIndex = 0
             
             // Find the closest point to the start that matches the general bearing
@@ -67,7 +67,7 @@ class PathHelper {
             let nearEndPoints = path.filter { PathHelper.pointWithinLocation(point: $0, location: end) }
             let nearEndBearing = generalBearing(of: nearEndPoints)
             
-            closestDistance = Double.infinity
+            closestDistance = .infinity
             var busPathEndIndex = 0
             
             // Find the cloest point to the end that matches the general bearing
@@ -90,6 +90,8 @@ class PathHelper {
             
             if busPathStartIndex > busPathEndIndex {
                 print("\n\n============\n[DirectionPathHelper] PATH FILTER FAILED\n==============\n\n")
+                print("startIndex:", busPathStartIndex)
+                print("endIndex:", busPathEndIndex)
                 return path
             } else {
                 let subsection = Array(path[busPathStartIndex...busPathEndIndex])
@@ -99,6 +101,31 @@ class PathHelper {
         }
         
         return []
+        
+    }
+    
+    func filterStops(in stops: [String], along path: [CLLocationCoordinate2D]) -> [String] {
+        
+        var filteredStops = [String]()
+        
+        print("[PathHelper] original stops size:", stops.count)
+        
+        for point in path {
+            
+            if let stop = getAllBusStops().first(where: { (stop) -> Bool in
+                let stopCoordinates = CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.long)
+                return PathHelper.pointWithinLocation(point: point, location: stopCoordinates, exact: true)
+            }) {
+                if !filteredStops.contains(stop.name) {
+                    filteredStops.append(stop.name)
+                }
+            }
+            
+        }
+        
+        print("[PathHelper] filtered stops size:", filteredStops.count)
+        
+        return filteredStops
         
     }
     
@@ -112,7 +139,7 @@ class PathHelper {
     class func pointWithinLocation(point: CLLocationCoordinate2D, location: CLLocationCoordinate2D, exact: Bool = false) -> Bool {
         
         /// The amount of "error" or size of the acceptable region near the bus location to
-        let radius: Double = exact ? 0.00025 : 0.0025
+        let radius: Double = exact ? 0.00025 : 0.003
         
         let minLatitude = location.latitude - radius
         let maxLatitude = location.latitude + radius

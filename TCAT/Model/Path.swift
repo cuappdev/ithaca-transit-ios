@@ -57,7 +57,7 @@ class Path: GMSPolyline {
             let untraveledDashStyles = dashColors.flatMap { (color) -> GMSStrokeStyle in
                 return .solidColor(color)
             }
-            self.spans = GMSStyleSpans(untraveledPath!, untraveledDashStyles, dashLengths, .geodesic)
+            self.spans = GMSStyleSpans(untraveledPath!, untraveledDashStyles, dashLengths, .projected)
             // self.strokeWidth -= 2
         }
         

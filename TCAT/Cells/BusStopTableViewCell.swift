@@ -10,6 +10,8 @@ import UIKit
 
 class BusStopTableViewCell: UITableViewCell {
     
+    let linePosition: CGFloat = 98 // max of DetailIconView (114) - constant (16)
+    
     var titleLabel: UILabel!
     let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
     let cellWidth: CGFloat = RouteDetailCellSize.indentedWidth
@@ -32,12 +34,12 @@ class BusStopTableViewCell: UITableViewCell {
         titleLabel.center.y = cellHeight / 2
         contentView.addSubview(titleLabel)
         
-        connectorTop = UIView(frame: CGRect(x: 20, y: 0, width: 4, height: cellHeight / 2))
+        connectorTop = UIView(frame: CGRect(x: linePosition, y: 0, width: 4, height: cellHeight / 2))
         connectorTop.frame.origin.x -= connectorTop.frame.width / 2
         connectorTop.backgroundColor = .tcatBlueColor
         contentView.addSubview(connectorTop)
         
-        connectorBottom = UIView(frame: CGRect(x: 20, y: cellHeight / 2, width: 4, height: cellHeight / 2))
+        connectorBottom = UIView(frame: CGRect(x: linePosition, y: cellHeight / 2, width: 4, height: cellHeight / 2))
         connectorBottom.frame.origin.x -= connectorBottom.frame.width / 2
         connectorBottom.backgroundColor = .tcatBlueColor
         contentView.addSubview(connectorBottom)
@@ -45,7 +47,7 @@ class BusStopTableViewCell: UITableViewCell {
         statusCircle = Circle(size: .small, color: .tcatBlueColor, style: .outline)
         statusCircle.center = self.center
         statusCircle.center.y = cellHeight / 2
-        statusCircle.frame.origin.x = 20 - (statusCircle.frame.width / 2)
+        statusCircle.frame.origin.x = linePosition - (statusCircle.frame.width / 2)
         contentView.addSubview(statusCircle)
         
     }

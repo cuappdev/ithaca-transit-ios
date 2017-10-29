@@ -102,14 +102,18 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                         type = .destination
                     }
 
-                    else if pathIndex == 0 || pathIndex == direction.path.count - 1 {
-                        type = .origin
+                    else if pathIndex == 0 {
+                        type = .busStart
+                    }
+                        
+                    else if pathIndex == direction.path.count - 1  {
+                        type = .busEnd
                     }
                         
                     else if PathHelper.pointWithinLocation(point: point, location: direction.startLocation.coordinate, exact: true) ||
                         PathHelper.pointWithinLocation(point: point, location: direction.endLocation.coordinate, exact: true) {
                         
-                        type = .stop
+                        // type = .stop
                         
                     }
 
@@ -122,6 +126,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                     }
 
                     else if arrayIndex == self.directions.count - 1 && pathIndex == direction.path.count - 1 {
+                        print("destination achieved!")
                         type = .destination
                     }
 
@@ -167,7 +172,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             timer.invalidate()
         }
 
-        networkTimer = Timer.scheduledTimer(timeInterval: refreshRate, target: self, selector: #selector(getBusLocations),                         userInfo: nil, repeats: true)
+        networkTimer = Timer.scheduledTimer(timeInterval: refreshRate, target: self, selector: #selector(getBusLocations),
+                                            userInfo: nil, repeats: true)
         networkTimer!.fire()
 
     }
@@ -265,18 +271,28 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             let existingBus = buses.first(where: {
                 return ($0.userData as? BusLocation)?.vehicleID == bus.vehicleID
             })
+            
+            print("")
 
             // If bus is already on map, update and animate change
-            if existingBus != nil {
+            if let newBus = existingBus {
+
+                print("(if) updating with bearing:", bus.heading)
+                (newBus.iconView as? BusLocationView)?.setBearing(bus.heading)
+                
                 UIView.animate(withDuration: 1.0, delay: 0, options: .curveEaseInOut, animations: {
-                    existingBus?.userData = bus
-                    existingBus?.position = busCoords
+                    newBus.userData = bus
+                    newBus.position = busCoords
                 })
+                
             }
             // Otherwise, add bus to map
             else {
                 let marker = GMSMarker(position: busCoords)
+                print("(else) updating with bearing:", bus.heading)
+                (bus.iconView as? BusLocationView)?.setBearing(bus.heading)
                 marker.iconView = bus.iconView
+
                 marker.userData = bus
                 marker.map = mapView
                 buses.append(marker)
@@ -459,8 +475,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         summaryTopLabel.textColor = .primaryTextColor
         summaryTopLabel.sizeToFit()
         summaryTopLabel.frame.origin.x = icon_maxY + textLabelPadding
+        summaryTopLabel.frame.size.width = summaryView.frame.maxX - summaryTopLabel.frame.origin.x - textLabelPadding
         summaryTopLabel.center.y = (summaryView.bounds.height / 2) + pullerHeight - (summaryTopLabel.frame.height / 2)
-        summaryTopLabel.frame.size.width = view.frame.width - summaryTopLabel.frame.origin.x - textLabelPadding
         summaryTopLabel.allowsDefaultTighteningForTruncation = true
         summaryTopLabel.lineBreakMode = .byTruncatingTail
         summaryView.addSubview(summaryTopLabel)
@@ -611,7 +627,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             // Prepare bus stop data to be inserted / deleted into Directions array
             var busStops = [Direction]()
             for stop in direction.busStops {
-                let stopAsDirection = Direction(name: stop)
+                let stopAsDirection = Direction(locationName: stop)
                 busStops.append(stopAsDirection)
             }
             var indexPathArray: [IndexPath] = []

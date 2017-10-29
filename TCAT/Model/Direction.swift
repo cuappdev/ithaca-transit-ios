@@ -38,7 +38,9 @@ class Direction: NSObject, NSCopying {
     var path: [CLLocationCoordinate2D]
 
     var routeNumber: Int
+    
     var busStops: [String]
+    var stopLocations: [CLLocationCoordinate2D]
 
     required init(type: DirectionType,
          locationName: String,
@@ -48,6 +50,7 @@ class Direction: NSObject, NSCopying {
          endTime: Date,
          path: [CLLocationCoordinate2D] = [],
          busStops: [String] = [],
+         stopLocations: [CLLocationCoordinate2D] = [],
          routeNumber: Int = 0) {
 
         self.type = type
@@ -59,21 +62,22 @@ class Direction: NSObject, NSCopying {
         self.endTime = endTime
         self.routeNumber = routeNumber
         self.busStops = busStops
+        self.stopLocations = stopLocations
+        
     }
 
-    convenience init(name: String) {
+    convenience init(locationName: String) {
 
         let blankLocation = CLLocation()
         let blankTime = Date()
 
         self.init(
             type: .arrive,
-            locationName: name,
+            locationName: locationName,
             startLocation: blankLocation,
             endLocation: blankLocation,
             startTime: blankTime,
-            endTime: blankTime,
-            path: []
+            endTime: blankTime
         )
 
     }
@@ -81,10 +85,26 @@ class Direction: NSObject, NSCopying {
     convenience init(from json: JSON, baseTime: Double) {
         
         // Return [String] filed with names of bus stops
-        func jsonToStopArray() -> [String] {
+        func jsonToStopNames() -> [String] {
             return json["busPath"]["path"]["timedStops"].arrayValue.flatMap {
                 $0["stop"]["name"].stringValue
             }
+        }
+        
+        func jsonToStopLocations(filterWith stops: [String] = []) -> [CLLocationCoordinate2D] {
+            
+            var jsonArray = json["busPath"]["path"]["timedStops"].arrayValue
+            
+            if !stops.isEmpty {
+                jsonArray = jsonArray.filter {
+                    stops.contains($0["stop"]["name"].stringValue)
+                }
+            }
+            
+            return jsonArray.flatMap {
+                locationJSON(from: $0["stop"]).coordinate
+            }
+
         }
         
         // Precondition: passed in json with 'start' or 'end'
@@ -97,6 +117,8 @@ class Direction: NSObject, NSCopying {
         let type: DirectionType = json["busPath"] != JSON.null ? .depart : .walk
         let startLocation = locationJSON(from: json["start"])
         let endLocation = locationJSON(from: json["end"])
+        let filteredPath = pathHelper.filterPath(in: json, from: startLocation.coordinate, to: endLocation.coordinate)
+        let filteredStops = pathHelper.filterStops(in: jsonToStopNames(), along: filteredPath)
         
         self.init(
 
@@ -112,9 +134,12 @@ class Direction: NSObject, NSCopying {
 
             endTime: Date(timeIntervalSince1970: baseTime + json["endTime"].doubleValue),
 
-            path: pathHelper.filterPath(in: json, from: startLocation.coordinate, to: endLocation.coordinate),
+            path: filteredPath,
 
-            busStops: jsonToStopArray(),
+            busStops: filteredStops,
+            
+            stopLocations: jsonToStopLocations(filterWith: filteredStops),
+            
 
             routeNumber: json["busPath"]["lineNumber"].intValue
 

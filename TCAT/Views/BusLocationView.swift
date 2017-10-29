@@ -21,36 +21,41 @@ extension UIView {
 class BusLocationView: UIView {
     
     var busIcon: BusIcon!
+    var bearingIndicator = UIImageView()
     
     init(number: Int) {
         
-        self.busIcon = BusIcon(type: .liveTracking, number: number)
+        let background = UIImageView(image: #imageLiteral(resourceName: "liveBusBackground"))
+        background.frame.size = CGSize(width: background.frame.width * 1.25, height: background.frame.height * 1.25)
+
+        super.init(frame: CGRect(x: 0, y: 0, width: background.frame.width, height: background.frame.height))
         
-        let padding: CGFloat = 6
-        let tailHeight: CGFloat = 12
-        let width = self.busIcon.frame.width + 2 * padding
-        let height = self.busIcon.frame.height + padding * 2
-        
-        super.init(frame: CGRect(x: 0, y: 0, width: width, height: height + tailHeight + 2))
-        
-        let base = UIView(frame: CGRect(x: 0, y: 0, width: width, height: height))
-        base.backgroundColor = .white
-        base.layer.cornerRadius = 6
-        base.addShadow(shadowOffset: CGSize(width: 0, height: 4), shadowRadius: 2)
+        let base = background
         addSubview(base)
         
-        busIcon.center = base.center
+        busIcon = BusIcon(type: .liveTracking, number: number)
+        busIcon.center.x = base.center.x
+        busIcon.frame.origin.y = 6
         addSubview(busIcon)
-
-        let frame = CGRect(x: base.frame.width / 2 - (tailHeight / 2), y: base.frame.maxY, width: tailHeight, height: tailHeight)
-        let tail = TriangleView(frame: frame)
-        tail.addShadow(shadowOffset: CGSize(width: 0, height: 4), shadowRadius: 2)
-        addSubview(tail)
+        
+        bearingIndicator = UIImageView(image: #imageLiteral(resourceName: "bearing"))
+        bearingIndicator.center.x = center.x
+        bearingIndicator.frame.origin.y = 44 - (bearingIndicator.frame.width / 2)
+        addSubview(bearingIndicator)
         
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    /// Animate a change in bearing of bus
+    func setBearing(_ degrees: Int) {
+        let angle: CGFloat = CGFloat(Double(degrees) / 360) * .pi * 2
+        print("angle:", angle)
+        UIView.animate(withDuration: 0.2) {
+            self.bearingIndicator.transform = CGAffineTransform(rotationAngle: angle)
+        }
     }
     
 }
