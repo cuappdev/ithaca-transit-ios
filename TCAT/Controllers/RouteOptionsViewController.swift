@@ -42,6 +42,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     var datePickerView: DatepickerView!
     var datePickerOverlay: UIView!
     var routeResults: UITableView!
+    var refreshControl = UIRefreshControl()
 
     let navigationBarTitle: String = "Route Options"
     let routeTableViewCellIdentifier: String = RouteTableViewCell().identifier
@@ -288,10 +289,17 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
             routes = []
             currentlySearching = true
+            routeResults.contentOffset = .zero
             routeResults.reloadData()
 
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
-
+                
+                if #available(iOS 10.0, *) {
+                    self.routeResults.refreshControl?.endRefreshing()
+                } else {
+                    self.refreshControl.endRefreshing()
+                }
+                
                 request.perform(withSuccess: { (routeJson) in
                     let rawRoutes = Route.getRoutesArray(fromJson: routeJson)
                     self.routes = self.processRoutes(rawRoutes)
@@ -550,6 +558,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.emptyDataSetSource = self
         routeResults.emptyDataSetDelegate = self
         routeResults.tableFooterView = UIView()
+        routeResults.contentOffset = .zero
     }
     
     func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
@@ -606,7 +615,15 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.dataSource = self
         routeResults.separatorStyle = .none
         routeResults.backgroundColor = .tableBackgroundColor
-        routeResults.alwaysBounceVertical = false //so table view doesn't scroll over top & bottom
+        routeResults.alwaysBounceVertical = true //so table view doesn't scroll over top & bottom
+        
+        refreshControl.isHidden = true
+        
+        if #available(iOS 10.0, *) {
+            routeResults.refreshControl = refreshControl
+        } else {
+            routeResults.addSubview(refreshControl)
+        }
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat{
@@ -643,5 +660,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         return false // halts the selection process, so don't have selected look
     }
-
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if refreshControl.isRefreshing {
+            searchForRoutes()
+        }
+    }
 }

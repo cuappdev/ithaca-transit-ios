@@ -333,6 +333,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     /* SearchBar Delegates */
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(true, animated: true)
+        searchBar.placeholder = nil
         tableViewIndexController.setHidden(true, animated: false)
         if sections.count > 1 {
             let scrollToSection = tableView.numberOfRows(inSection: 1) == 0 ? 0 : 1
@@ -342,6 +343,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.placeholder = "Search (e.g Balch Hall, 312 College Ave)"
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.endEditing(true)
         searchBar.text = nil
@@ -353,7 +355,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
+        timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
