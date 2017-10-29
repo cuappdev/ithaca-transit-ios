@@ -617,7 +617,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.backgroundColor = .tableBackgroundColor
         routeResults.alwaysBounceVertical = true //so table view doesn't scroll over top & bottom
         
-//        refreshControl.addTarget(self, action: #selector(refreshControlValueChanged), for: .valueChanged)
         refreshControl.isHidden = true
         
         if #available(iOS 10.0, *) {
@@ -667,11 +666,4 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             searchForRoutes()
         }
     }
-    
-//    internal func refreshControlValueChanged() {
-////        if !routeResults.isDragging {
-////            refreshControl.beginRefreshing()
-////        }
-//    }
-
 }
