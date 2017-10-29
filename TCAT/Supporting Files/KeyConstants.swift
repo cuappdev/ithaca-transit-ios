@@ -14,4 +14,8 @@ struct Key {
         static let recentSearch = "recentSearch"
         static let allBusStops = "allBusStops"
     }
+
+    struct FuzzySearch {
+        static let minimumValue = 75
+    }
 }

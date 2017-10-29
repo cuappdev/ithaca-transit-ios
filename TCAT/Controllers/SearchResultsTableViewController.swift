@@ -108,7 +108,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
 //        setUpIndexBar(contentOffsetY: 0.0)
         sections = createSections()
         searchBar?.becomeFirstResponder()
-        searchBar?.tintColor = .black
+        searchBar?.tintColor = .searchBarCursorColor
 
     }
     

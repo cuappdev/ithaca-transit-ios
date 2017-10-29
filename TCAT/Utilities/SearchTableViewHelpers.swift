@@ -103,7 +103,7 @@ func parseGoogleJSON(searchText: String, json: JSON) -> Section {
     var itemTypes: [ItemType] = []
     let filteredBusStops = getAllBusStops().filter({(item: BusStop) -> Bool in
         let levenshteinScore = String.fuzzPartialRatio(str1: item.name.lowercased(), str2: searchText.lowercased())
-        return levenshteinScore > 75
+        return levenshteinScore > Key.FuzzySearch.minimumValue
     })
 
     let updatedOrderBusStops = sortFilteredBusStops(busStops: filteredBusStops, letter: searchText.capitalized.characters.first!)
