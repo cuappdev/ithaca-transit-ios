@@ -60,7 +60,6 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     }
 
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         // Subscribe to Keyboard Notifications
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
@@ -320,8 +319,6 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         //tableViewIndexController.setHidden(true, animated: false)
-        print("did press search bar!")
-
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
