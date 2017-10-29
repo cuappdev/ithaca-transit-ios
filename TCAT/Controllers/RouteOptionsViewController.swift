@@ -402,7 +402,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     private func setupDatepickerOverlay(){
-        datePickerOverlay = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height))
+        datePickerOverlay = UIView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: view.frame.height + 12)) // 12 for sliver that shows up when click datepicker immediately after transition from HomeVC
         datePickerOverlay.backgroundColor = .black
         datePickerOverlay.alpha = 0
 
