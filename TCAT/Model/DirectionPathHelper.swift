@@ -90,8 +90,8 @@ class PathHelper {
             
             if busPathStartIndex > busPathEndIndex {
                 print("\n\n============\n[DirectionPathHelper] PATH FILTER FAILED\n==============\n\n")
-                print("startIndex:", busPathStartIndex)
-                print("endIndex:", busPathEndIndex)
+                // print("startIndex:", busPathStartIndex)
+                // print("endIndex:", busPathEndIndex)
                 return path
             } else {
                 let subsection = Array(path[busPathStartIndex...busPathEndIndex])
@@ -108,7 +108,7 @@ class PathHelper {
         
         var filteredStops = [String]()
         
-        print("[PathHelper] original stops size:", stops.count)
+        // print("[PathHelper] original stops size:", stops.count)
         
         for point in path {
             
@@ -123,7 +123,7 @@ class PathHelper {
             
         }
         
-        print("[PathHelper] filtered stops size:", filteredStops.count)
+        // print("[PathHelper] filtered stops size:", filteredStops.count)
         
         return filteredStops
         

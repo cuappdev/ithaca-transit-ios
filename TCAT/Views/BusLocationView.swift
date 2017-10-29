@@ -52,7 +52,6 @@ class BusLocationView: UIView {
     /// Animate a change in bearing of bus
     func setBearing(_ degrees: Int) {
         let angle: CGFloat = CGFloat(Double(degrees) / 360) * .pi * 2
-        print("angle:", angle)
         UIView.animate(withDuration: 0.2) {
             self.bearingIndicator.transform = CGAffineTransform(rotationAngle: angle)
         }

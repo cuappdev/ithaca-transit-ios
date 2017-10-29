@@ -73,15 +73,15 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         
         // Print Route Information
         
-        print("\n\n--- Route ---\n")
-        print(route.debugDescription)
-        print("\ndirections:")
-        for (index, object) in route.directions.enumerated() {
-            print("--- Direction[\(index)] ---")
-            print(object.debugDescription)
-            // print("path:", object.path)
-        }
-        print("\n-------\n")
+//        print("\n\n--- Route ---\n")
+//        print(route.debugDescription)
+//        print("\ndirections:")
+//        for (index, object) in route.directions.enumerated() {
+//            print("--- Direction[\(index)] ---")
+//            print(object.debugDescription)
+//            // print("path:", object.path)
+//        }
+//        print("\n-------\n")
         
         // Plot the paths of all directions
         for (arrayIndex, direction) in directions.enumerated() {
@@ -126,7 +126,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                     }
 
                     else if arrayIndex == self.directions.count - 1 && pathIndex == direction.path.count - 1 {
-                        print("destination achieved!")
                         type = .destination
                     }
 
@@ -271,13 +270,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             let existingBus = buses.first(where: {
                 return ($0.userData as? BusLocation)?.vehicleID == bus.vehicleID
             })
-            
-            print("")
 
             // If bus is already on map, update and animate change
             if let newBus = existingBus {
 
-                print("(if) updating with bearing:", bus.heading)
                 (newBus.iconView as? BusLocationView)?.setBearing(bus.heading)
                 
                 UIView.animate(withDuration: 1.0, delay: 0, options: .curveEaseInOut, animations: {
@@ -289,7 +285,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             // Otherwise, add bus to map
             else {
                 let marker = GMSMarker(position: busCoords)
-                print("(else) updating with bearing:", bus.heading)
                 (bus.iconView as? BusLocationView)?.setBearing(bus.heading)
                 marker.iconView = bus.iconView
 
