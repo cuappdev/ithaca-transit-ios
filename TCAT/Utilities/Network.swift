@@ -46,6 +46,7 @@ class AllBusLocations: JSONDecodable {
     var allBusLocations : [BusLocation] = [BusLocation]()
 
     required init(json: JSON) throws {
+        
         if json["success"].boolValue {
             let data = json["data"].arrayValue
             allBusLocations = parseAllLocations(json: data)
@@ -105,6 +106,7 @@ class Network {
         let visitor = CoordinateVisitor()
         start.accept(visitor: visitor) { startCoord in
             end.accept(visitor: visitor) { endCoord in
+        
                 callback(startCoord, endCoord)
             }
         }

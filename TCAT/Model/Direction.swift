@@ -23,7 +23,7 @@ enum DirectionType: String {
     case walk, depart, arrive, unknown
 }
 
-class Direction: NSObject {
+class Direction: NSObject, NSCopying {
 
     var type: DirectionType
 
@@ -38,9 +38,11 @@ class Direction: NSObject {
     var path: [CLLocationCoordinate2D]
 
     var routeNumber: Int
+    
     var busStops: [String]
+    var stopLocations: [CLLocationCoordinate2D]
 
-    init(type: DirectionType,
+    required init(type: DirectionType,
          locationName: String,
          startLocation: CLLocation,
          endLocation: CLLocation,
@@ -48,6 +50,7 @@ class Direction: NSObject {
          endTime: Date,
          path: [CLLocationCoordinate2D] = [],
          busStops: [String] = [],
+         stopLocations: [CLLocationCoordinate2D] = [],
          routeNumber: Int = 0) {
 
         self.type = type
@@ -59,34 +62,49 @@ class Direction: NSObject {
         self.endTime = endTime
         self.routeNumber = routeNumber
         self.busStops = busStops
+        self.stopLocations = stopLocations
+        
     }
 
-    convenience init(name: String) {
+    convenience init(locationName: String) {
 
         let blankLocation = CLLocation()
         let blankTime = Date()
 
         self.init(
             type: .arrive,
-            locationName: name,
+            locationName: locationName,
             startLocation: blankLocation,
             endLocation: blankLocation,
             startTime: blankTime,
-            endTime: blankTime,
-            path: []
+            endTime: blankTime
         )
 
     }
 
     convenience init(from json: JSON, baseTime: Double) {
         
-
-        
-        // Return [String] of name of timed bus stops
-        func jsonToStopArray() -> [String] {
+        // Return [String] filed with names of bus stops
+        func jsonToStopNames() -> [String] {
             return json["busPath"]["path"]["timedStops"].arrayValue.flatMap {
-                $0["name"].stringValue
+                $0["stop"]["name"].stringValue
             }
+        }
+        
+        func jsonToStopLocations(filterWith stops: [String] = []) -> [CLLocationCoordinate2D] {
+            
+            var jsonArray = json["busPath"]["path"]["timedStops"].arrayValue
+            
+            if !stops.isEmpty {
+                jsonArray = jsonArray.filter {
+                    stops.contains($0["stop"]["name"].stringValue)
+                }
+            }
+            
+            return jsonArray.flatMap {
+                locationJSON(from: $0["stop"]).coordinate
+            }
+
         }
         
         // Precondition: passed in json with 'start' or 'end'
@@ -99,6 +117,8 @@ class Direction: NSObject {
         let type: DirectionType = json["busPath"] != JSON.null ? .depart : .walk
         let startLocation = locationJSON(from: json["start"])
         let endLocation = locationJSON(from: json["end"])
+        let filteredPath = pathHelper.filterPath(in: json, from: startLocation.coordinate, to: endLocation.coordinate)
+        let filteredStops = pathHelper.filterStops(in: jsonToStopNames(), along: filteredPath)
         
         self.init(
 
@@ -114,9 +134,12 @@ class Direction: NSObject {
 
             endTime: Date(timeIntervalSince1970: baseTime + json["endTime"].doubleValue),
 
-            path: pathHelper.filterPath(in: json, from: startLocation.coordinate, to: endLocation.coordinate),
+            path: filteredPath,
 
-            busStops: jsonToStopArray(),
+            busStops: filteredStops,
+            
+            stopLocations: jsonToStopLocations(filterWith: filteredStops),
+            
 
             routeNumber: json["busPath"]["lineNumber"].intValue
 
@@ -124,6 +147,20 @@ class Direction: NSObject {
         
 
 
+    }
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        
+        return type(of: self).init(
+            type: type,
+            locationName: locationName,
+            startLocation: startLocation,
+            endLocation: endLocation,
+            startTime: startTime,
+            endTime: endTime,
+            path: path
+        )
+        
     }
 
 
@@ -154,6 +191,21 @@ class Direction: NSObject {
             return locationName
 
         }
+    }
+    
+    override var debugDescription: String {
+        return """
+            type: \(self.type)\n
+            startTime: \(self.startTime)\n
+            endTime: \(self.endTime)\n
+            startLocation: \(self.startLocation)\n
+            endLocation: \(self.endLocation)\n
+            busStops: \(self.busStops)\n
+            travelDistance: \(self.travelDistance)\n
+            locationNameDescription: \(self.locationNameDescription)\n
+            locationName: \(self.locationName)\n
+            stops: \(self.busStops)
+        """
     }
 
     /// Returns readable start time (e.g. 7:49 PM)

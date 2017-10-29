@@ -8,7 +8,7 @@
 
 import UIKit
 
-class RouteLine: UIView{
+class RouteLine: UIView {
     
     let width: CGFloat = 1.0
     
@@ -25,9 +25,9 @@ class RouteLine: UIView{
     
 }
 
-class SolidLine: RouteLine{
+class SolidLine: RouteLine {
         
-    init(x: CGFloat, y: CGFloat, height: CGFloat, color: UIColor){
+    init(x: CGFloat, y: CGFloat, height: CGFloat, color: UIColor) {
         super.init(x: x, y: y, height: height)
         
         backgroundColor = color

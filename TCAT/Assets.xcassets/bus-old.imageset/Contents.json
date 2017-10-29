@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "chevronDownCopy.png",
+      "filename" : "Bus Symbol.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "chevronDownCopy@2x.png",
+      "filename" : "Bus Symbol@2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "chevronDownCopy@3x.png",
+      "filename" : "Bus Symbol@3x.png",
       "scale" : "3x"
     }
   ],

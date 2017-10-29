@@ -301,7 +301,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 }
                 
                 request.perform(withSuccess: { (routeJson) in
-                    let rawRoutes = Route.getRoutesArray(fromJson: routeJson)
+                    let rawRoutes = Route.getRoutesArray(fromJson: routeJson, endingAt: self.searchTo?.name ?? "")
                     self.routes = self.processRoutes(rawRoutes)
                     self.currentlySearching = false
                     self.routeResults.reloadData()

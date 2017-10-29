@@ -40,9 +40,7 @@ class Route: NSObject, JSONDecodable {
     required init(json: JSON) throws {
         
         super.init()
-        
-//        print("Route json:", json)
-        
+      
         baseTime = json["baseTime"].doubleValue
         let data = json["path"]
         
@@ -59,15 +57,18 @@ class Route: NSObject, JSONDecodable {
         endCoords = CLLocationCoordinate2D(latitude: data[pathEnd]["end"]["location"]["latitude"].doubleValue,
                                            longitude: data[pathEnd]["end"]["location"]["longitude"].doubleValue)
         
+        var busInvolved = false
+        
         // Create directions
-        for (index, path) in json["path"].arrayValue.enumerated() {
-            
+        for (_, path) in json["path"].arrayValue.enumerated() {
+
             let direction = Direction(from: path, baseTime: baseTime)
             directions.append(direction)
             
             // Create pair ArriveDirection after DepartDirection
             if direction.type == .depart {
-                let arriveDirection = direction
+                busInvolved = true
+                let arriveDirection = direction.copy() as! Direction
                 arriveDirection.type = .arrive
                 arriveDirection.startTime = arriveDirection.endTime
                 arriveDirection.startLocation = arriveDirection.endLocation
@@ -75,8 +76,30 @@ class Route: NSObject, JSONDecodable {
                 arriveDirection.locationName = path["end"]["name"].stringValue
                 directions.append(arriveDirection)
             }
+            
         }
         
+        // Create final direction to walk (if destination not a bus stop) from last bus option to final destination
+        
+        let isBusStop = getAllBusStops().first(where: { (stop) -> Bool in
+            let stopCoordinates = CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.long)
+            return Direction.coordsEqual(stopCoordinates, endCoords)
+        }) != nil
+        
+        if busInvolved && !isBusStop {
+           
+            let finalDirection = Direction(locationName: json["end"]["name"].string ?? "Null")
+            finalDirection.type = .walk
+            finalDirection.startLocation = directions.last!.endLocation
+            finalDirection.endLocation = CLLocation(latitude: endCoords.latitude, longitude: endCoords.longitude)
+            finalDirection.startTime = directions.last!.endTime
+            finalDirection.endTime = arrivalTime
+            // path should be set in bulk walk calculations
+            directions.append(finalDirection)
+            
+        }
+        
+
         routeSummary = getRouteSummary(from: json["path"].arrayValue)
     }
 
@@ -97,7 +120,7 @@ class Route: NSObject, JSONDecodable {
 
     // MARK: Parse JSON
     
-    static func getRoutesArray(fromJson json: JSON) -> [Route] {
+    static func getRoutesArray(fromJson json: JSON, endingAt endName: String) -> [Route] {
         
         if !json["success"].boolValue {
             return []
@@ -109,6 +132,7 @@ class Route: NSObject, JSONDecodable {
         for resultsJSON in jsonData["results"].arrayValue {
             var routeJSON = resultsJSON
             routeJSON["baseTime"] = jsonData["baseTime"]
+            routeJSON["end"]["name"].string = endName
             let route = try! Route(json: routeJSON)
             routes.append(route)
         }
@@ -221,6 +245,31 @@ class Route: NSObject, JSONDecodable {
         directions.calculate { (response, error) in
             completion(response?.routes.first?.polyline.coordinates ?? [])
         }
+    }
+    
+    override var debugDescription: String {
+        
+        let mainDescription = """
+            departtureTime: \(self.departureTime)\n
+            arrivalTime: \(self.arrivalTime)\n
+            startCoords: \(self.startCoords)\n
+            endCoords: \(self.endCoords)\n
+            timeUntilDeparture: \(self.timeUntilDeparture)\n
+        """
+
+//        mainDescription += "routeSummary:\n"
+//        for (index, object) in self.routeSummary.enumerated() {
+//            mainDescription += """
+//                --- RouteSummary[\(index)] ---\n
+//                name: \(object.name)\n
+//                type: \(object.type)\n
+//                number: \(object.busNumber ?? -1)\n
+//                nextDirection: \(object.nextDirection as Any)
+//            """
+//        }
+        
+        return mainDescription
+        
     }
 
     func numberOfBusRoutes() -> Int {
