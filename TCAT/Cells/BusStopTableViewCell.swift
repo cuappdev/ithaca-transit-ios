@@ -55,7 +55,6 @@ class BusStopTableViewCell: UITableViewCell {
     }
     
     func setCell(_ name: String) {
-        
         titleLabel.text = name
         titleLabel.sizeToFit()
         titleLabel.frame.size.width = UIScreen.main.bounds.width - cellWidth - 20
