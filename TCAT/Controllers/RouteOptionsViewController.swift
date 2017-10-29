@@ -289,9 +289,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
             routes = []
             currentlySearching = true
-            UIView.animate(withDuration: 0.8, animations: {
-                self.routeResults.contentOffset = .zero
-            })
+            routeResults.contentOffset = .zero
             routeResults.reloadData()
 
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
@@ -617,9 +615,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.dataSource = self
         routeResults.separatorStyle = .none
         routeResults.backgroundColor = .tableBackgroundColor
-        routeResults.alwaysBounceVertical = false //so table view doesn't scroll over top & bottom
+        routeResults.alwaysBounceVertical = true //so table view doesn't scroll over top & bottom
         
-        refreshControl.addTarget(self, action: #selector(searchForRoutes), for: .valueChanged)
+//        refreshControl.addTarget(self, action: #selector(refreshControlValueChanged), for: .valueChanged)
         refreshControl.isHidden = true
         
         if #available(iOS 10.0, *) {
@@ -663,5 +661,17 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         return false // halts the selection process, so don't have selected look
     }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if refreshControl.isRefreshing {
+            searchForRoutes()
+        }
+    }
+    
+//    internal func refreshControlValueChanged() {
+////        if !routeResults.isDragging {
+////            refreshControl.beginRefreshing()
+////        }
+//    }
 
 }
