@@ -46,7 +46,7 @@ class DatepickerView: UIView {
         setSegmentedControl(withItems: segmentedControlOptions)
         setCancelButton(withTitle: "Cancel")
         setDoneButton(withTitle: "Done")
-        setDisclaimerLabel(withText: "Results are shown for buses departing up to 30 minutes after the selected time")
+//        setDisclaimerLabel(withText: "Results are shown for buses departing up to 30 minutes after the selected time")
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -173,7 +173,7 @@ class DatepickerView: UIView {
         addSubview(doneButton)
         addSubview(segmentedControl)
         addSubview(datepicker)
-        addSubview(disclaimerLabel)
+//        addSubview(disclaimerLabel)
     }
 
 }

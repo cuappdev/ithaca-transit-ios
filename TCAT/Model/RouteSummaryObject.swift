@@ -27,6 +27,7 @@ class RouteSummaryObject: NSObject, JSONDecodable {
     var nextDirection: NextDirection?
     
     var location: CLLocationCoordinate2D
+    var time: Date
     
     required init(json: JSON) throws {
         name = json["start"]["name"].stringValue
@@ -42,21 +43,24 @@ class RouteSummaryObject: NSObject, JSONDecodable {
         let long = json["start"]["location"]["longitude"].doubleValue
         let lat = json["start"]["location"]["latitude"].doubleValue
         location = CLLocationCoordinate2D(latitude: lat, longitude: long)
+        
+        time = Date(timeIntervalSince1970: json["startTime"].doubleValue)
     }
     
-    init(name: String, type: PinType, location: CLLocationCoordinate2D) {
+    init(name: String, type: PinType, location: CLLocationCoordinate2D, time: Date) {
         self.name = name
         self.type = type
         self.location = location
+        self.time = time
     }
     
-    convenience init(name: String, type: PinType, location: CLLocationCoordinate2D, nextDirection: NextDirection) {
-        self.init(name: name, type: type, location: location)
+    convenience init(name: String, type: PinType, location: CLLocationCoordinate2D, time: Date, nextDirection: NextDirection) {
+        self.init(name: name, type: type, location: location, time: time)
         self.nextDirection = nextDirection
     }
     
-    convenience init(name: String, type: PinType, location: CLLocationCoordinate2D, nextDirection: NextDirection, busNumber: Int) {
-        self.init(name: name, type: type, location: location, nextDirection: nextDirection)
+    convenience init(name: String, type: PinType, location: CLLocationCoordinate2D, time: Date, nextDirection: NextDirection, busNumber: Int) {
+        self.init(name: name, type: type, location: location, time: time, nextDirection: nextDirection)
         self.busNumber = busNumber
     }
     

@@ -20,6 +20,7 @@ import MapKit
 
 class Route: NSObject, JSONDecodable {
 
+    var baseTime: Double!
     var departureTime: Date = Date()
     var arrivalTime: Date = Date()
 
@@ -40,9 +41,9 @@ class Route: NSObject, JSONDecodable {
         
         super.init()
         
-        print("Route json:", json)
+//        print("Route json:", json)
         
-        let baseTime = json["baseTime"].doubleValue
+        baseTime = json["baseTime"].doubleValue
         let data = json["path"]
         
         let pathStart = 0
@@ -121,6 +122,7 @@ class Route: NSObject, JSONDecodable {
         
         for routeSummaryJson in json {
             let routeSummaryObject = try! RouteSummaryObject(json: routeSummaryJson)
+            routeSummaryObject.time = Date(timeIntervalSince1970: baseTime + routeSummaryJson["startTime"].doubleValue) // fix time to include base time
             routeSummary.append(routeSummaryObject)
         }
         
@@ -128,8 +130,9 @@ class Route: NSObject, JSONDecodable {
             let long = lastRouteSummaryJson["end"]["location"]["longitude"].doubleValue
             let lat = lastRouteSummaryJson["end"]["location"]["latitude"].doubleValue
             let location = CLLocationCoordinate2D(latitude: lat, longitude: long)
+            let time = Date(timeIntervalSince1970: baseTime + lastRouteSummaryJson["endTime"].doubleValue)
             
-            let endingDestination = RouteSummaryObject(name: lastRouteSummaryJson["end"]["name"].stringValue, type: .stop, location: location)
+            let endingDestination = RouteSummaryObject(name: lastRouteSummaryJson["end"]["name"].stringValue, type: .stop, location: location, time: time)
             
             routeSummary.append(endingDestination)
         }
@@ -144,7 +147,7 @@ class Route: NSObject, JSONDecodable {
      * Modify the first routeSummaryObject if the name is "Start"
      *  If the starting place is a place result or current location
      *      AND the route summary array count is more than 2 (has a route that is more than simply walking)
-     *      remove the first routeSummaryObject
+     *      remove the first routeSummaryObject and update the time
      *  Else (the first routeSummaryObject is a bus stop), so simply update the name to the name the user searched for
      */
     func updateStartingDestination(_ place: Place) {
@@ -152,6 +155,9 @@ class Route: NSObject, JSONDecodable {
             if firstRouteSummaryObject.name == "Start" {
                 if (place is PlaceResult || (place is BusStop && place.name == "Current Location")) && routeSummary.count > 2 {
                     routeSummary.remove(at: 0)
+                    departureTime = (routeSummary.first?.time)!
+                    print("departureTime for \(routeSummary.first?.name) is \(departureTime). The time string is \(Time.timeString(from: departureTime))")
+                    print("arrivalTime is \(arrivalTime). The time string is \(Time.timeString(from: arrivalTime))")
                 } else {
                     routeSummary.first?.updateName(from: place)
                     
@@ -170,40 +176,25 @@ class Route: NSObject, JSONDecodable {
             return
         }
         
-        let start = MKMapItem(placemark: MKPlacemark(coordinate: location, addressDictionary: [:]))
-        let end = MKMapItem(placemark: MKPlacemark(coordinate: firstRouteSummary.location, addressDictionary: [:]))
+        let fromLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+        let endLocation = CLLocation(latitude: firstRouteSummary.location.latitude, longitude: firstRouteSummary.location.longitude)
         
-        let request = MKDirectionsRequest()
-        request.source = start
-        request.destination = end
-        request.transportType = .walking
-        
-        let directions = MKDirections(request: request)
-        directions.calculate { (response, error) in
-            guard let response = response else {
-                print("Route calculateTravelDistance() error: \(error.debugDescription)")
-                return
-            }
-            
-            if let walkingDistance = response.routes.first?.distance {
-                self.travelDistance = walkingDistance
-                self.travelDistanceDelegate?.travelDistanceUpdated(withDistance: walkingDistance)
-            }
-        }
+        let distance = fromLocation.distance(from: endLocation)
+        self.travelDistance = distance * 0.000621371192 // convert meters to miles
+        self.travelDistanceDelegate?.travelDistanceUpdated(withDistance: distance)
     }
 
     /** Update pin type of the last routeSummaryObject if routeSummaryObject has the same name as the user searched for
-     *   OR if the routeSummaryObject's name is "End"
      */
     func updateEndingDestination(_ place: Place) {
         if let lastRouteSummaryObject = routeSummary.last {
-            if(lastRouteSummaryObject.name == place.name || lastRouteSummaryObject.name == "End") {
+            if(lastRouteSummaryObject.name == place.name /*|| lastRouteSummaryObject.name == "End"*/) {
                 let type = place is BusStop ? PinType.stop : PinType.place
                 lastRouteSummaryObject.type = type
                 
-                if(lastRouteSummaryObject.name == "End") {
-                    lastRouteSummaryObject.updateName(from: place)
-                }
+//                if(lastRouteSummaryObject.name == "End") {
+//                    lastRouteSummaryObject.updateName(from: place)
+//                }
             }
         }
     }
