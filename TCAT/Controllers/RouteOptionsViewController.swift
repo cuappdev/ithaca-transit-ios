@@ -392,7 +392,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     private func setupDatepickerView(){
-        datePickerView = DatepickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 305.5))
+        datePickerView = DatepickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 254))
         datePickerView.positionSubviews()
         datePickerView.addSubviews()
         datePickerView.backgroundColor = .white
