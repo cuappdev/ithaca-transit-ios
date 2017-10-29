@@ -335,11 +335,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         tableViewIndexController.setHidden(true, animated: false)
-        if sections.count > 1 {
-            let scrollToSection = tableView.numberOfRows(inSection: 1) == 0 ? 0 : 1
-            let secondSection = IndexPath(row: 0, section: scrollToSection)
-            tableView.scrollToRow(at: secondSection, at: .top, animated: true)
-        }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {

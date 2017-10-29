@@ -9,7 +9,7 @@
 import Foundation
 import SwiftyJSON
 import DZNEmptyDataSet
-
+import Fuzzywuzzy_swift
 let userDefaults = UserDefaults.standard
 
 struct Section {
@@ -102,9 +102,10 @@ func sectionIndexesForBusStop() -> [String: Int] {
 func parseGoogleJSON(searchText: String, json: JSON) -> Section {
     var itemTypes: [ItemType] = []
     let filteredBusStops = getAllBusStops().filter({(item: BusStop) -> Bool in
-        let stringMatch = item.name.lowercased().range(of: searchText.lowercased())
-        return stringMatch != nil
+        let levenshteinScore = String.fuzzPartialRatio(str1: item.name.lowercased(), str2: searchText.lowercased())
+        return levenshteinScore > Key.FuzzySearch.minimumValue
     })
+
     let updatedOrderBusStops = sortFilteredBusStops(busStops: filteredBusStops, letter: searchText.capitalized.characters.first!)
     itemTypes = updatedOrderBusStops.map( {ItemType.busStop($0)})
     
@@ -140,6 +141,7 @@ extension SearchResultsTableViewController: DZNEmptyDataSetSource {
         return NSAttributedString(string: locationNotFound, attributes: attrs)
     }
 }
+
 
 
 

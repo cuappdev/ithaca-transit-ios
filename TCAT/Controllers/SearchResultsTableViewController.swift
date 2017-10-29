@@ -108,6 +108,8 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
 //        initialTableViewIndexMinY = tableViewIndexController.tableViewIndex.indexRect().minY
 //        setUpIndexBar(contentOffsetY: 0.0)
         sections = createSections()
+        searchBar?.becomeFirstResponder()
+        searchBar?.tintColor = .searchBarCursorColor
 
     }
     
