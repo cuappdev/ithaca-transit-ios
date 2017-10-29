@@ -20,6 +20,7 @@ import MapKit
 
 class Route: NSObject, JSONDecodable {
 
+    var baseTime: Double!
     var departureTime: Date = Date()
     var arrivalTime: Date = Date()
 
@@ -42,7 +43,7 @@ class Route: NSObject, JSONDecodable {
         
 //        print("Route json:", json)
         
-        let baseTime = json["baseTime"].doubleValue
+        baseTime = json["baseTime"].doubleValue
         let data = json["path"]
         
         let pathStart = 0
@@ -121,6 +122,7 @@ class Route: NSObject, JSONDecodable {
         
         for routeSummaryJson in json {
             let routeSummaryObject = try! RouteSummaryObject(json: routeSummaryJson)
+            routeSummaryObject.time = Date(timeIntervalSince1970: baseTime + routeSummaryJson["startTime"].doubleValue) // fix time to include base time
             routeSummary.append(routeSummaryObject)
         }
         
@@ -128,7 +130,7 @@ class Route: NSObject, JSONDecodable {
             let long = lastRouteSummaryJson["end"]["location"]["longitude"].doubleValue
             let lat = lastRouteSummaryJson["end"]["location"]["latitude"].doubleValue
             let location = CLLocationCoordinate2D(latitude: lat, longitude: long)
-            let time = Date(timeIntervalSince1970: lastRouteSummaryJson["endTime"].doubleValue)
+            let time = Date(timeIntervalSince1970: baseTime + lastRouteSummaryJson["endTime"].doubleValue)
             
             let endingDestination = RouteSummaryObject(name: lastRouteSummaryJson["end"]["name"].stringValue, type: .stop, location: location, time: time)
             
