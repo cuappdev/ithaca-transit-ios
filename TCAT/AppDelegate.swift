@@ -10,6 +10,8 @@ import UIKit
 import GoogleMaps
 import GooglePlaces
 import SwiftyJSON
+import Fabric
+import Crashlytics
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
@@ -48,7 +50,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             userDefaults.set([Any](), forKey: "recentSearch")
         }
         
-        // Ask for current location
+        #if DEBUG
+            print ("DEBUG MODE")
+        #else
+            print ("RELEASE MODE")
+            Fabric.with(Crashlytics.self)
+        #endif
         
         return true
     }
