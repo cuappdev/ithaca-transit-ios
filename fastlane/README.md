@@ -40,13 +40,6 @@ Runs all the tests
 fastlane ios provision
 ```
 Creating a code signing certificate and provisioning profile
-### ios asset_bug_fix
-```
-fastlane ios asset_bug_fix
-```
-Account for 120px AppIcon asset validation bug in Xcode 9 + iTunes Transporter
-
-Modify the .xcarchive Info.plist before uploading
 ### ios beta
 ```
 fastlane ios beta

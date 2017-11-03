@@ -19,7 +19,7 @@ platform :ios do
   before_all do
 
     ENV["SLACK_URL"] = CredentialsManager::AppfileConfig.try_fetch_value(:slack_url)
-    
+
   end
 
   desc "Runs all the tests"
@@ -33,7 +33,7 @@ platform :ios do
     app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
     app_name = CredentialsManager::AppfileConfig.try_fetch_value(:app_name)
     apple_id = CredentialsManager::AppfileConfig.try_fetch_value(:apple_id)
-    apple_id = CredentialsManager::AppfileConfig.try_fetch_value(:version)
+    version = CredentialsManager::AppfileConfig.try_fetch_value(:version)
 
     produce(
       username: apple_id,
@@ -59,14 +59,14 @@ platform :ios do
 
     scheme = CredentialsManager::AppfileConfig.try_fetch_value(:scheme_name)
 
+    provision # run `provision` for first time uploads
+
     gym(scheme: scheme) # Build your app - more options available
 
     increment_build_number
 
-    # provision # run `provision` for first time uploads
-
     pilot(
-       changelog: options[:changelog], 
+       changelog: options[:changelog],
        distribute_external: true,
        groups: ["Beta Testers"],
        beta_app_feedback_email: "cornellappdev@gmail.com"
@@ -119,5 +119,5 @@ end
 # More information about multiple platforms in fastlane: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Platforms.md
 # All available actions: https://docs.fastlane.tools/actions
 
-# fastlane reports which actions are used. No personal data is recorded. 
+# fastlane reports which actions are used. No personal data is recorded.
 # Learn more at https://github.com/fastlane/fastlane#metrics
