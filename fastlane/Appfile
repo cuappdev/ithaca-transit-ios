@@ -1,12 +1,13 @@
 
 # The bundle identifier of your app
-app_identifier = "com.cornellappdev.tcat" 
 
-# Your Apple email address
-apple_id = "walker.m.white@gmail.com" 
+app_identifier "com.cornellappdev.tcat" 
+
+# Your Apple ID email address
+apple_id "walker.m.white@gmail.com" 
 
  # Developer Portal Team ID
-team_id = "ZGMCXU7X3U"
+team_id "ZGMCXU7X3U"
 
 
 
@@ -15,16 +16,22 @@ team_id = "ZGMCXU7X3U"
 
 
 # Name of Application
-app_name = 'TCAT'
+app_name 'TCAT'
 
 # Version Number
-version = '1.0'
+version '1.0'
 
 # Name of scheme within Xcode (usually just the app name)
-scheme_name = 'TCAT'
+scheme_name 'TCAT'
 
 # WebHooks URL (see cuappdev/fastlane README)
+<<<<<<< HEAD
 slack_url = "https://hooks.slack.com/services/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"
+
+
+=======
+slack_url "https://hooks.slack.com/services/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"
+>>>>>>> master
 
 
 

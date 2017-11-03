@@ -43,6 +43,9 @@ class BusLocationView: UIView {
         bearingIndicator.frame.origin.y = 44 - (bearingIndicator.frame.width / 2)
         addSubview(bearingIndicator)
         
+        // Set initial point to North
+        self.bearingIndicator.transform = CGAffineTransform(rotationAngle: .pi)
+        
     }
     
     required init?(coder aDecoder: NSCoder) {

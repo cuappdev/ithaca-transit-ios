@@ -1,68 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
   <testsuite name="fastlane.lanes">
-    
-    
-    
-      
-      <testcase classname="fastlane.lanes" name="00: Verifying required fastlane version" time="0.002296">
-        
+
+
+
+
+      <testcase classname="fastlane.lanes" name="0: Verifying required fastlane version" time="0.008167">
+
+      </testcase>
+
+
+      <testcase classname="fastlane.lanes" name="1: default_platform" time="0.007031">
+
       </testcase>
     
-      
-      <testcase classname="fastlane.lanes" name="01: default_platform" time="0.002165">
-        
+
+      <testcase classname="fastlane.lanes" name="2: cocoapods" time="12.690567">
+
       </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="02: cocoapods" time="2.411178">
-        
+
+
+      <testcase classname="fastlane.lanes" name="3: gym" time="3.084014">
+
       </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="03: Switch to ios provision lane" time="0.001276">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="04: produce" time="71.448105">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="05: cert" time="15.468424">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="06: sigh" time="30.67462">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="07: gym" time="159.905274">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="08: increment_build_number" time="3.472172">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="09: pilot" time="1600.954539">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="10: get_build_number" time="0.526036">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="11: slack" time="16.570816">
-        
-      </testcase>
-    
+
   </testsuite>
 </testsuites>
