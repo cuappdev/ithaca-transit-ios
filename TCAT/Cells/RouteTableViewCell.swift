@@ -22,6 +22,7 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
     
     var travelTimeLabel: UILabel = UILabel()
     var departureTimeLabel: UILabel = UILabel()
+    var arrowImageView: UIImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
 
     var routeDiagram: RouteDiagram = RouteDiagram()
     
@@ -34,7 +35,8 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
     let timeLabelLeftSpaceFromSuperview: CGFloat = 18.0
     let timeLabelVerticalSpaceFromSuperview: CGFloat = 18.0
     
-    let departLabelRightSpaceFromSuperview: CGFloat = 12.0
+    let arrowImageViewRightSpaceFromSuperview: CGFloat = 12.0
+    let departureLabelSpaceFromArrowImageView: CGFloat = 8.0
 
     let timeLabelAndRouteDiagramVerticalSpace: CGFloat = 20.5
     
@@ -54,10 +56,12 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
         
         positionTravelTime()
         positionDepartureTimeVertically()
+        positionArrowVertically(usingDepartureTime: departureTimeLabel)
         positionTopBorder()
         
         contentView.addSubview(travelTimeLabel)
         contentView.addSubview(departureTimeLabel)
+        contentView.addSubview(arrowImageView)
         contentView.addSubview(topBorder)
     }
     
@@ -136,9 +140,9 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
     private func setDepartureTime(withTime departureTime: Date){
         let time = Time.timeString(from: Date(), to: departureTime)
         if time == "0 min" {
-            departureTimeLabel.text = "Departing now"
+            departureTimeLabel.text = "Board now"
         } else {
-           departureTimeLabel.text = "Departs in \(time)"
+           departureTimeLabel.text = "Board in \(time)"
         }
         departureTimeLabel.sizeToFit()
     }
@@ -146,12 +150,12 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
     // MARK: Style
     
     private func styleTravelTime(){
-        travelTimeLabel.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 14.0)
+        travelTimeLabel.font = UIFont(name: FontNames.SanFrancisco.Semibold, size: 14.0)
         travelTimeLabel.textColor = .primaryTextColor
     }
     
     private func styleDepartureTime(){
-        departureTimeLabel.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 14.0)
+        departureTimeLabel.font = UIFont(name: FontNames.SanFrancisco.Semibold, size: 14.0)
         departureTimeLabel.textColor = .tcatBlueColor
     }
     
@@ -171,7 +175,8 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
     
     func positionSubviews(){
         
-        positionDepartureTimeHorizontally()
+        positionArrowHorizontally()
+        positionDepartureTimeHorizontally(usingArrowImageView: arrowImageView)
         positionRouteDiagram(usingTravelTimeLabel: travelTimeLabel)
         
         routeDiagram.positionSubviews()
@@ -191,12 +196,20 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
         departureTimeLabel.frame = CGRect(x: 0, y: travelTimeLabel.frame.minY, width: 135, height: 20)
     }
     
+    private func positionArrowVertically(usingDepartureTime departueTimeLabel: UILabel) {
+        arrowImageView.center.y = departureTimeLabel.center.y
+    }
+    
     private func positionTopBorder(){
         topBorder.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: cellBorderHeight)
     }
     
-    private func positionDepartureTimeHorizontally(){
-        departureTimeLabel.center.x = contentView.frame.width - departLabelRightSpaceFromSuperview - (departureTimeLabel.frame.width/2)
+    private func positionArrowHorizontally() {
+        arrowImageView.center.x = contentView.frame.width - arrowImageViewRightSpaceFromSuperview - (arrowImageView.frame.width/2)
+    }
+    
+    private func positionDepartureTimeHorizontally(usingArrowImageView arrowImageView: UIImageView){
+        departureTimeLabel.center.x = arrowImageView.frame.minX - departureLabelSpaceFromArrowImageView - (departureTimeLabel.frame.width/2)
     }
     
     private func positionRouteDiagram(usingTravelTimeLabel travelTimeLabel: UILabel){

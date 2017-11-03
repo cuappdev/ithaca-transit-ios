@@ -33,7 +33,7 @@ class RouteDiagram: UIView {
     static let routeLineHeight: CGFloat = 25.0
     let busIconLeftSpaceFromSuperview: CGFloat = 18.0
     let walkIconAndRouteLineHorizontalSpace: CGFloat = 38.0
-    let stopDotAndStopLabelHorizontalSpace: CGFloat = 17.5
+    let stopDotAndStopLabelHorizontalSpace: CGFloat = 14.0
     let stopLabelAndDistLabelHorizontalSpace: CGFloat = 5.5
     
     // MARK: Init
@@ -218,7 +218,15 @@ class RouteDiagram: UIView {
             let stopLabel = routeDiagramElements[i].stopNameLabel
             
             positionStopDot(stopDot, atIndex: i)
-            positionStopLabel(stopLabel, usingStopDot: stopDot)
+            positionStopLabelVertically(stopLabel, usingStopDot: stopDot)
+            
+            let first = 0
+            if(i == first) {
+                positionFirstStopLabelHorizontally(stopLabel, usingStopDot: stopDot)
+            } else{
+                let prevStopLabel = routeDiagramElements[i-1].stopNameLabel
+                positionStopLabelHorizontally(stopLabel, usingPrevStopLabel: prevStopLabel)
+            }
             
             if let routeLine = routeDiagramElements[i].routeLine {
                 positionRouteLine(routeLine, usingStopDot: stopDot)
@@ -257,13 +265,22 @@ class RouteDiagram: UIView {
         
     }
     
-    private func positionStopLabel(_ stopLabel: UILabel, usingStopDot stopDot: Circle) {
+    private func positionFirstStopLabelHorizontally(_ stopLabel: UILabel, usingStopDot stopDot: Circle) {
         let oldFrame = stopLabel.frame
         let newFrame = CGRect(x: stopDot.frame.maxX + stopDotAndStopLabelHorizontalSpace, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height)
         
         stopLabel.frame = newFrame
-        
+    }
+    
+    private func positionStopLabelVertically(_ stopLabel: UILabel, usingStopDot stopDot: Circle) {
         stopLabel.center.y = stopDot.center.y
+    }
+    
+    private func positionStopLabelHorizontally(_ stopLabel: UILabel, usingPrevStopLabel prevStopLabel: UILabel) {
+        let oldFrame = stopLabel.frame
+        let newFrame = CGRect(x: prevStopLabel.frame.minX, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height)
+        
+        stopLabel.frame = newFrame
     }
     
     private func positionRouteLine(_ routeLine: RouteLine, usingStopDot stopDot: Circle) {
@@ -322,7 +339,9 @@ class RouteDiagram: UIView {
             }
         }
         
-        addSubview(travelDistanceLabel)
+        if(travelDistanceLabel.text != "0.0 mi away") {
+            addSubview(travelDistanceLabel)
+        }
     }
     
     private func resizeHeight() {
