@@ -29,10 +29,10 @@ class RouteDiagram: UIView {
     
     // MARK: Spacing vars
     
-    let stopDotLeftSpaceFromSuperview: CGFloat = 81.0
-    static let routeLineHeight: CGFloat = 25.0
-    let busIconLeftSpaceFromSuperview: CGFloat = 18.0
-    let walkIconAndRouteLineHorizontalSpace: CGFloat = 38.0
+    let stopDotLeftSpaceFromSuperview: CGFloat = 77.0
+    static let routeLineHeight: CGFloat = 20.0
+    let busIconLeftSpaceFromSuperview: CGFloat = 16.0
+    let walkIconAndRouteLineHorizontalSpace: CGFloat = 36.0
     let stopDotAndStopLabelHorizontalSpace: CGFloat = 14.0
     let stopLabelAndDistLabelHorizontalSpace: CGFloat = 5.5
     
@@ -186,7 +186,7 @@ class RouteDiagram: UIView {
                     return solidBlueRouteLine
                 
                 case .walk:
-                    let dashedGreyRouteLine = DashedLine(color: .mediumGrayColor)
+                    let dashedGreyRouteLine = DottedLine(height: RouteDiagram.routeLineHeight, color: .mediumGrayColor)
                     
                     return dashedGreyRouteLine
             }
@@ -259,7 +259,7 @@ class RouteDiagram: UIView {
             let previousStopDot = routeDiagramElements[index-1].stopDot
             
             stopDot.center.x = previousStopDot.center.x
-            stopDot.center.y = (previousRouteLine?.frame.maxY ?? (previousStopDot.frame.maxY + RouteDiagram.routeLineHeight)) + (previousStopDot.frame.height/2)
+            stopDot.center.y = (previousRouteLine?.frame.maxY ?? (previousStopDot.frame.maxY + RouteDiagram.routeLineHeight)) + (stopDot.frame.height/2)
             
         }
         

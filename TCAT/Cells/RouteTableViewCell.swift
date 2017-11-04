@@ -79,19 +79,18 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
     
     func heightForCell(withNumOfStops numOfStops: Int) -> CGFloat{
         let numOfSolidStopDots = numOfStops - 1
-        let numOfRouteLines = numOfSolidStopDots - 1
+        let numOfRouteLines = numOfSolidStopDots
         
         let timeLabelHeight: CGFloat = 17.0
         
         let headerHeight = timeLabelVerticalSpaceFromSuperview + timeLabelHeight  + timeLabelAndRouteDiagramVerticalSpace
         
-        let solidStopDotDiameter: CGFloat = 8.0
+        let solidStopDotDiameter: CGFloat = 12.0
         let routeLineHeight: CGFloat = RouteDiagram.routeLineHeight
-        let destinationDotRouteLineHeight: CGFloat = 21.0
         let destinationDotHeight: CGFloat = Circle(size: .large, color: .tcatBlueColor, style: .bordered).frame.height
         
         let routeDiagramHeight = (CGFloat(numOfSolidStopDots)*solidStopDotDiameter) +
-        (CGFloat(numOfRouteLines)*routeLineHeight) + destinationDotRouteLineHeight + destinationDotHeight
+        (CGFloat(numOfRouteLines)*routeLineHeight) + destinationDotHeight
         
         let footerHeight = routeDiagramAndCellSeparatorVerticalSpace + cellSeperatorHeight
         

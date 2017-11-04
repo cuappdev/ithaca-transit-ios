@@ -422,7 +422,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         view.bringSubview(toFront: datePickerView)
         UIView.animate(withDuration: 0.5) {
             self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
-            self.datePickerOverlay.alpha = 0.7
+            self.datePickerOverlay.alpha = 0.59
         }
     }
 
