@@ -14,7 +14,8 @@ class DatepickerView: UIView {
     
     var datepicker: UIDatePicker = UIDatePicker()
     var segmentedControl: UISegmentedControl = UISegmentedControl()
-    let segmentedControlOptions: [String] = ["Arrive By", "Leave At"]
+    let segmentedControlOptions: [String] = ["Leave Now", "Leave At", "Arrive By"]
+    var prevSelectedIndex: Int = 1
     var cancelButton: UIButton = UIButton()
     var doneButton: UIButton = UIButton()
     var disclaimerLabel: UILabel = UILabel()
@@ -51,6 +52,18 @@ class DatepickerView: UIView {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Segement Control
+    
+    func segmentedControlValueChanged(segmentControl: UISegmentedControl) {
+        let leaveNow = 0
+        if (segmentedControl.selectedSegmentIndex == leaveNow) {
+            datepicker.date = Date()
+            segmentedControl.selectedSegmentIndex = prevSelectedIndex
+        }
+        
+        prevSelectedIndex = segmentedControl.selectedSegmentIndex
     }
     
     // MARK: Style
@@ -95,15 +108,16 @@ class DatepickerView: UIView {
         
         let next7Days = now.addingTimeInterval(7*24*60*60)
         datepicker.maximumDate = next7Days //set maximum date to 7 days from now
-        
-        datepicker.minuteInterval = 5
     }
     
     private func setSegmentedControl(withItems titles: [String]){
         for i in titles.indices {
             segmentedControl.insertSegment(withTitle: titles[i], at: i, animated: false)
         }
-        segmentedControl.selectedSegmentIndex = 1
+        
+        segmentedControl.selectedSegmentIndex = prevSelectedIndex
+        
+        segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged(segmentControl:)), for: .valueChanged)
     }
     
     private func setCancelButton(withTitle title: String){
