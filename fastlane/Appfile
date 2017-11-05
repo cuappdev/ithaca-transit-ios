@@ -1,5 +1,6 @@
 
 # The bundle identifier of your app
+
 app_identifier "com.cornellappdev.tcat" 
 
 # Your Apple ID email address
@@ -24,7 +25,13 @@ version '1.0'
 scheme_name 'TCAT'
 
 # WebHooks URL (see cuappdev/fastlane README)
+<<<<<<< HEAD
+slack_url = "https://hooks.slack.com/services/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"
+
+
+=======
 slack_url "https://hooks.slack.com/services/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"
+>>>>>>> master
 
 
 

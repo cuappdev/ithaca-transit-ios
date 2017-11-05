@@ -20,7 +20,7 @@ class CircleLine: UIView {
     
     let superviewWidth: CGFloat = 16
     let superviewHeight: CGFloat = 56
-    let lineHeight: CGFloat = 32
+    let lineHeight: CGFloat = 27
     
     init(color: UIColor){
         super.init(frame: CGRect(x: 0, y: 0, width: superviewWidth, height: superviewHeight))

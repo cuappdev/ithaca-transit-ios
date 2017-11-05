@@ -209,16 +209,17 @@ class Route: NSObject, JSONDecodable {
     }
 
     /** Update pin type of the last routeSummaryObject if routeSummaryObject has the same name as the user searched for
+     * OR update name and pin type if last routeSummaryObject is "End"
      */
     func updateEndingDestination(_ place: Place) {
         if let lastRouteSummaryObject = routeSummary.last {
-            if(lastRouteSummaryObject.name == place.name /*|| lastRouteSummaryObject.name == "End"*/) {
+            if lastRouteSummaryObject.name == place.name || lastRouteSummaryObject.name == "End" {
                 let type = place is BusStop ? PinType.stop : PinType.place
                 lastRouteSummaryObject.type = type
                 
-//                if(lastRouteSummaryObject.name == "End") {
-//                    lastRouteSummaryObject.updateName(from: place)
-//                }
+                if lastRouteSummaryObject.name == "End" {
+                    lastRouteSummaryObject.updateName(from: place)
+                }
             }
         }
     }

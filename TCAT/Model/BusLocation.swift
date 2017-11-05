@@ -33,6 +33,7 @@ class BusLocation: NSObject, NSCoding {
     }
     
     // MARK: NSCoding
+    
     required convenience init(coder aDecoder: NSCoder) {
         let routeID = aDecoder.decodeObject(forKey: "routeID") as! String
         self.init(routeID: routeID)
