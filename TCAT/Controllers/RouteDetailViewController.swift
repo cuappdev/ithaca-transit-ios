@@ -51,6 +51,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
     let markerRadius: CGFloat = 8
     let mapPadding: CGFloat = 40
+    let minZoom: Float = 12
+    let defaultZoom: Float = 15.5
+    let maxZoom: Float = 25
 
     /** Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
      * dummy data will be used. The directions parameter have logical assumptions,
@@ -110,8 +113,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                         type = .busEnd
                     }
                         
-                    else if PathHelper.pointWithinLocation(point: point, location: direction.startLocation.coordinate, exact: true) ||
-                        PathHelper.pointWithinLocation(point: point, location: direction.endLocation.coordinate, exact: true) {
+                    else if pointWithinLocation(point: point, location: direction.startLocation.coordinate, exact: true) ||
+                        pointWithinLocation(point: point, location: direction.endLocation.coordinate, exact: true) {
                         
                         // type = .stop
                         
@@ -136,8 +139,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
             }
 
-            let pathType: PathType = direction.type == .walk ? .walking : .driving
-            let path = Path(waypoints: waypoints, pathType: pathType)
+            let path = direction.type == .walk ? WalkPath(waypoints) : BusPath(waypoints)
             routePaths.append(path)
 
         }
@@ -187,14 +189,14 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     override func loadView() {
 
         // set mapView with settings
-        let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: 15.5)
+        let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: defaultZoom)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: summaryViewHeight, right: 0)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
         mapView.settings.compassButton = true
         mapView.settings.myLocationButton = true
-        mapView.setMinZoom(12, maxZoom: 25)
+        mapView.setMinZoom(minZoom, maxZoom: maxZoom)
 
         // most extreme points on TCAT Route map
         let north = 42.61321283145329
@@ -228,7 +230,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
     func getBusLocations() {
 
-// /*
+ // /*
         
         guard let firstRoute = route.directions.first(where: {
             return $0.routeNumber > 0
@@ -238,7 +240,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             return
         }
 // */
-        // Network.getBusLocations(routeID: "30").perform(
+        // Network.getBusLocations(routeID: "90").perform(
         
         Network.getBusLocations(routeID: String(firstRoute.routeNumber)).perform(
 
@@ -274,10 +276,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             // If bus is already on map, update and animate change
             if let newBus = existingBus {
 
-                (newBus.iconView as? BusLocationView)?.setBearing(bus.heading)
-                
                 UIView.animate(withDuration: 1.0, delay: 0, options: .curveEaseInOut, animations: {
                     newBus.userData = bus
+                    (newBus.iconView as? BusLocationView)?.setBearing(bus.heading, start: existingBus!.position, end: busCoords)
                     newBus.position = busCoords
                 })
                 
@@ -312,8 +313,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             bounds = GMSCoordinateBounds()
             for route in routePaths {
                 for waypoint in route.waypoints {
-                    let coords = CLLocationCoordinate2DMake(CLLocationDegrees(waypoint.lat), CLLocationDegrees(waypoint.long))
-                    bounds = bounds.includingCoordinate(coords)
+                    bounds = bounds.includingCoordinate(waypoint.coordinate)
                 }
             }
             let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
@@ -331,11 +331,20 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             routePath.map = mapView
 
             for waypoint in routePath.waypoints {
-                let coords = CLLocationCoordinate2DMake(CLLocationDegrees(waypoint.lat), CLLocationDegrees(waypoint.long))
-                let marker = GMSMarker(position: coords)
-                marker.iconView = waypoint.iconView
-                marker.userData = waypoint
-                marker.map = mapView
+                let coords = waypoint.coordinate
+                
+                
+//                if routePath is WalkPath {
+//                    (routePath as! WalkPath).circles.forEach { (circle) in
+//                        circle.map = mapView
+//                    }
+//                } else {
+                    let marker = GMSMarker(position: coords)
+                    marker.iconView = waypoint.iconView
+                    marker.userData = waypoint
+                    marker.map = mapView
+                // }
+
                 bounds = bounds.includingCoordinate(coords)
             }
 
@@ -479,7 +488,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         // Place and format bottom summary label
         let summaryBottomLabel = UILabel()
         if let totalTime = Time.dateComponents(from: route.departureTime, to: route.arrivalTime).minute {
-            summaryBottomLabel.text = "Trip Duration: \(abs(totalTime)) minutes"
+            summaryBottomLabel.text = "Trip Duration: \(abs(totalTime)) minute\(totalTime == 1 ? "" : "s")"
         } else { summaryBottomLabel.text = "Summary Bottom Label" }
         summaryBottomLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular)
         summaryBottomLabel.textColor = .mediumGrayColor

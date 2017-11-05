@@ -83,7 +83,7 @@ class Route: NSObject, JSONDecodable {
         
         let isBusStop = getAllBusStops().first(where: { (stop) -> Bool in
             let stopCoordinates = CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.long)
-            return Direction.coordsEqual(stopCoordinates, endCoords)
+            return stopCoordinates == endCoords
         }) != nil
         
         if busInvolved && !isBusStop {
@@ -180,8 +180,8 @@ class Route: NSObject, JSONDecodable {
                 if (place is PlaceResult || (place is BusStop && place.name == "Current Location")) && routeSummary.count > 2 {
                     routeSummary.remove(at: 0)
                     departureTime = (routeSummary.first?.time)!
-                    print("departureTime for \(routeSummary.first?.name) is \(departureTime). The time string is \(Time.timeString(from: departureTime))")
-                    print("arrivalTime is \(arrivalTime). The time string is \(Time.timeString(from: arrivalTime))")
+//                    print("departureTime for \(routeSummary.first?.name) is \(departureTime). The time string is \(Time.timeString(from: departureTime))")
+//                    print("arrivalTime is \(arrivalTime). The time string is \(Time.timeString(from: arrivalTime))")
                 } else {
                     routeSummary.first?.updateName(from: place)
                     
@@ -233,18 +233,6 @@ class Route: NSObject, JSONDecodable {
                     direction.path = path
                 }
             }
-        }
-    }
-
-    private func calculateWalkingDirections(_ direction: Direction, _ completion: @escaping ([CLLocationCoordinate2D]) -> Void) {
-        let request = MKDirectionsRequest()
-        request.source = MKMapItem(placemark: MKPlacemark(coordinate: direction.startLocation.coordinate, addressDictionary: [:]))
-        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: direction.endLocation.coordinate, addressDictionary: [:]))
-        request.transportType = .walking
-        request.requestsAlternateRoutes = false
-        let directions = MKDirections(request: request)
-        directions.calculate { (response, error) in
-            completion(response?.routes.first?.polyline.coordinates ?? [])
         }
     }
     

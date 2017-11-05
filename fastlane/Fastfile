@@ -17,9 +17,7 @@ default_platform :ios
 
 platform :ios do
   before_all do
-
-    ENV["SLACK_URL"] = CredentialsManager::AppfileConfig.try_fetch_value(:slack_url)
-
+    
   end
 
   desc "Runs all the tests"
@@ -30,49 +28,53 @@ platform :ios do
   desc "Creating a code signing certificate and provisioning profile"
   lane :provision do
 
-    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
-    app_name = CredentialsManager::AppfileConfig.try_fetch_value(:app_name)
-    apple_id = CredentialsManager::AppfileConfig.try_fetch_value(:apple_id)
-    version = CredentialsManager::AppfileConfig.try_fetch_value(:version)
-
     produce(
-      username: apple_id,
-      app_identifier: app_identifier,
-      app_name: app_name,
+      username: ENV["APPLE_ID"],
+      app_identifier: ENV["IDENTIFIER"],
+      app_name: ENV["APP_NAME"],
       language: 'English',
-      app_version: version,
+      app_version: ENV["VERSION"],
       sku: '123',
     )
 
-    cert
+    cert(
+      username: ENV["APPLE_ID"]
+    )
 
-    sigh(force: true)
+    sigh(
+      username: ENV["APPLE_ID"],
+      app_identifier: ENV["IDENTIFIER"],
+      force: true
+    )
 
   end
 
   desc "Submit a new Beta Build to Apple TestFlight"
   desc "This will also make sure the profile is up to date"
   lane :beta do |options|
+
     # match(type: "appstore") # more information: https://codesigning.guide
 
     cocoapods
 
-    scheme = CredentialsManager::AppfileConfig.try_fetch_value(:scheme_name)
+    if options[:initial]
+      provision
+    end
 
-    provision # run `provision` for first time uploads
-
-    gym(scheme: scheme) # Build your app - more options available
+    gym(scheme: ENV["SCHEME_NAME"]) # Build your app - more options available
 
     increment_build_number
 
     pilot(
-       changelog: options[:changelog],
+       username: ENV["APPLE_ID"],
+       changelog: options[:changelog], 
        distribute_external: true,
        groups: ["Beta Testers"],
-       beta_app_feedback_email: "cornellappdev@gmail.com"
+       beta_app_feedback_email: ENV["FEEDBACK_EMAIL"]
     )
 
     slack(
+      slack_url: ENV["SLACK_URL"],
       message: "Build #{get_build_number} has been released on TestFlight! 🚀",
       success: true
     )
@@ -100,16 +102,20 @@ platform :ios do
     # This block is called, only if the executed lane was successful
 
     # slack(
-    #   message: "Successfully deployed new App Update."
+    #   slack_url: ENV["SLACK_URL"],
+    #   message: "Successfully deployed new App Update.",
+    #   success: true
     # )
+
   end
 
   error do |lane, exception|
 
-    slack(
-       message: exception.message,
-       success: false
-    )
+    # slack(
+    #    slack_url: ENV["SLACK_URL"],
+    #    message: exception.message,
+    #    success: false
+    # )
 
   end
 
@@ -119,5 +125,5 @@ end
 # More information about multiple platforms in fastlane: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Platforms.md
 # All available actions: https://docs.fastlane.tools/actions
 
-# fastlane reports which actions are used. No personal data is recorded.
+# fastlane reports which actions are used. No personal data is recorded. 
 # Learn more at https://github.com/fastlane/fastlane#metrics

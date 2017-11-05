@@ -30,6 +30,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         chevron.frame.size = CGSize(width: 13.5, height: 8)
         chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
         chevron.image = UIImage(named: "arrow")
+        chevron.tintColor = .mediumGrayColor
         return chevron
     }
     
@@ -109,9 +110,6 @@ class LargeDetailTableViewCell: UITableViewCell {
     
     /** Abstracted formatting of content for titleLabel */
     func formatTitleLabel(_ label: UILabel) -> UILabel {
-        
-        var busIconView = BusIcon(type: .directionSmall, number: self.direction.routeNumber)
-        busIconView = formatBusIconView(busIconView, label)
         
         // Add correct amount of spacing to create a gap for the busIcon
         // Using constant always returned from
