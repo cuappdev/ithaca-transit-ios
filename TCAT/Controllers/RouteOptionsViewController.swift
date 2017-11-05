@@ -11,6 +11,7 @@ import CoreLocation
 import SwiftyJSON
 import DZNEmptyDataSet
 import NotificationBannerSwift
+import Crashlytics
 
 enum SearchBarType: String{
     case from, to
@@ -292,6 +293,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             routeResults.contentOffset = .zero
             routeResults.reloadData()
 
+            //Crashlytics answers
+            if let destination = searchTo?.name { Answers.destinationSearched(destination: destination) }
+            
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
                 
                 if #available(iOS 10.0, *) {
@@ -494,6 +498,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         cell?.addSubviews()
         
         setCellUserInteraction(cell, to: cellUserInteraction)
+        
+        //Crashlytics Answers
+        Answers.userTappedRouteResultsCell()
         
         return cell!
     }

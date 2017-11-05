@@ -15,6 +15,8 @@ target 'TCAT' do
   pod 'DZNEmptyDataSet'
   pod 'MYTableViewIndex', :git => 'https://github.com/mindz-eye/MYTableViewIndex.git', :commit => 'ef6119e2b0cd5968e2e24397cd59ab8080858054'
   pod 'NotificationBannerSwift'
+  pod 'Fabric'
+  pod 'Crashlytics'
 
 post_install do |installer|
     installer.pods_project.targets.each do |target|
