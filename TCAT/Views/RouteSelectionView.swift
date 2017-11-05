@@ -27,8 +27,8 @@ class RouteSelectionView: UIView {
     let lineWidth: CGFloat = 1.0
     let leadingSpace: CGFloat = 16.0
     let topSpace: CGFloat = 21.5
-    let routeLineLeftSpace: CGFloat = 13.0
-    let routeLineRightSpace: CGFloat = 16.0
+    let routeLineLeftSpace: CGFloat = 11.0
+    let routeLineRightSpace: CGFloat = 14.0
     let searchbarTextSpaceFromLeft: CGFloat = 12.0
     let searchbarHeight: CGFloat = 28
     let swapPadding: CGFloat = 16.0
@@ -193,7 +193,7 @@ class RouteSelectionView: UIView {
     
     private func positionRouteLineVertically(usingFromLabel fromLabel: UILabel){
         let oldFrame = routeLine.frame
-        let newFrame = CGRect(x: oldFrame.minX, y: fromLabel.frame.midY - 4, width: oldFrame.width, height: oldFrame.height)
+        let newFrame = CGRect(x: oldFrame.minX, y: fromLabel.frame.minY + 4, width: oldFrame.width, height: oldFrame.height)
         
         routeLine.frame = newFrame
     }

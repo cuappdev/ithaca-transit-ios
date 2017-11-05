@@ -55,22 +55,6 @@ class BusPath: Path {
         self.path = untraveledPath
         self.strokeColor = color
         self.strokeWidth = polylineWidth
-        
-//        if pathType == .walking {
-//
-//            let untraveledDashStyles = dashColors.flatMap { (color) -> GMSStrokeStyle in
-//                return .solidColor(color)
-//            }
-//
-//            self.spans = GMSStyleSpans(untraveledPath!, untraveledDashStyles, dashLengths, .projected)
-//
-//            self.geodesic = false
-//
-//            self.dashLengths = [NSNumber(value: self.untraveledPath!.length(of: .geodesic) / 100.0)]
-//            setupStyle(with: color)
-//            tick(untraveledDashStyles)
-//
-//        }
     
     }
     

@@ -74,16 +74,19 @@ class BusLocationView: UIView {
             let latDelta = end.latitude - start.latitude
             let longDelta = end.longitude - start.longitude
             if latDelta == 0 || longDelta == 0 {
-                print("Bus Not Moving"); return
+                return
             }
         }
         
+        self.bearingIndicator.transform = .identity
+        
         UIView.animate(withDuration: 0.2) {
-            let degrees = Double(degrees) - self.currentBearing
+            // let newDegrees = Double(degrees) - self.currentBearing
             let currentAngle: CGFloat = CGFloat(-1) * self.radians(degrees)
             self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
-            self.currentBearing = Double(degrees)
+            // self.currentBearing = Double(degrees)
         }
+        
     }
     
     func setBetterBearing(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D) {
@@ -96,7 +99,6 @@ class BusLocationView: UIView {
         let longDelta = end.longitude - start.longitude
         
         if latDelta == 0 || longDelta == 0 {
-            print("ZEROs")
             return
         }
         
@@ -109,14 +111,10 @@ class BusLocationView: UIView {
         degrees = Double(radians(degrees))
         degrees = (degrees + 360.0).truncatingRemainder(dividingBy: 360)
         
-        print("degrees:", degrees)
-        let adjustedDegrees = (currentBearing + degrees).truncatingRemainder(dividingBy: 360)
-        print("adjusted", adjustedDegrees)
-        let offsetDegrees = adjustedDegrees - currentBearing
-        print("offset", offsetDegrees)
-        let currentAngle: CGFloat = self.radians(offsetDegrees)
+        let currentAngle: CGFloat = CGFloat(-1) * self.radians(degrees)
+        self.bearingIndicator.transform = .identity
         self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
-        self.currentBearing = adjustedDegrees
+        // self.currentBearing = adjustedDegrees
     
     }
     
