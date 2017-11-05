@@ -22,10 +22,8 @@ class Path: GMSPolyline {
     var color: UIColor = .clear
     
     init(waypoints: [Waypoint]) {
-        
         self.waypoints = waypoints
         super.init()
-        
     }
     
 }

@@ -28,7 +28,7 @@ class BusLocation: NSObject, NSCoding {
     var tripID: Int = 0
     var vehicleID: Int = 0
     
-    var _iconView: UIView? = nil
+    fileprivate var _iconView: UIView? = nil
     
     init(routeID: String) {
         self.routeID = routeID
