@@ -213,11 +213,11 @@ class Route: NSObject, JSONDecodable {
      */
     func updateEndingDestination(_ place: Place) {
         if let lastRouteSummaryObject = routeSummary.last {
-            if(lastRouteSummaryObject.name == place.name || lastRouteSummaryObject.name == "End") {
+            if lastRouteSummaryObject.name == place.name || lastRouteSummaryObject.name == "End" {
                 let type = place is BusStop ? PinType.stop : PinType.place
                 lastRouteSummaryObject.type = type
                 
-                if(lastRouteSummaryObject.name == "End") {
+                if lastRouteSummaryObject.name == "End" {
                     lastRouteSummaryObject.updateName(from: place)
                 }
             }

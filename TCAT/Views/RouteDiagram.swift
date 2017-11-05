@@ -221,7 +221,7 @@ class RouteDiagram: UIView {
             positionStopLabelVertically(stopLabel, usingStopDot: stopDot)
             
             let first = 0
-            if(i == first) {
+            if i == first {
                 positionFirstStopLabelHorizontally(stopLabel, usingStopDot: stopDot)
             } else{
                 let prevStopLabel = routeDiagramElements[i-1].stopNameLabel
@@ -339,7 +339,7 @@ class RouteDiagram: UIView {
             }
         }
         
-        if(travelDistanceLabel.text != "0.0 mi away") {
+        if travelDistanceLabel.text != "0.0 mi away" {
             addSubview(travelDistanceLabel)
         }
     }

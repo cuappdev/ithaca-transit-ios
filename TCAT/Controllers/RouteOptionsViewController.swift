@@ -422,7 +422,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         view.bringSubview(toFront: datePickerView)
         UIView.animate(withDuration: 0.5) {
             self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
-            self.datePickerOverlay.alpha = 0.59
+            self.datePickerOverlay.alpha = 0.59 // darken screen when pull up datepicker
         }
     }
 
@@ -444,7 +444,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         // Get selected time type
         let selectedSegString = (segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)) ?? ""
-        if (selectedSegString.lowercased().contains("arrive")){
+        if selectedSegString.lowercased().contains("arrive") {
             searchTimeType = .arriveBy
         }else{
             searchTimeType = .leaveAt
@@ -452,7 +452,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         // Customize string based on date
         var title = ""
-        if(Calendar.current.isDateInToday(date) || Calendar.current.isDateInTomorrow(date)){
+        if Calendar.current.isDateInToday(date) || Calendar.current.isDateInTomorrow(date) {
             let verb = (searchTimeType == .arriveBy) ? "Arrive" : "Leave" //Use simply,"arrive" or "leave"
             let day = Calendar.current.isDateInToday(date) ? "" : " tomorrow" //if today don't put day
             title = "\(verb)\(day) at \(Time.timeString(from: date))"

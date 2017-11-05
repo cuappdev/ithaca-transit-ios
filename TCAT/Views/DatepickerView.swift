@@ -58,7 +58,7 @@ class DatepickerView: UIView {
     
     func segmentedControlValueChanged(segmentControl: UISegmentedControl) {
         let leaveNow = 0
-        if (segmentedControl.selectedSegmentIndex == leaveNow) {
+        if segmentedControl.selectedSegmentIndex == leaveNow {
             datepicker.date = Date()
             segmentedControl.selectedSegmentIndex = prevSelectedIndex
         }
