@@ -223,18 +223,5 @@ class Direction: NSObject, NSCopying {
         formatter.timeStyle = .short
         return formatter.string(from: time)
     }
-
-    static func coordsEqual(_ lhs: CLLocationCoordinate2D, _ rhs: CLLocationCoordinate2D) -> Bool {
-
-        func rnd(_ number: Double, to place: Int = 6) -> Double {
-            return round(number * pow(10.0, Double(place))) / pow(10.0, Double(place))
-        }
-
-        let result = rnd(rhs.latitude) == rnd(lhs.latitude) && rnd(rhs.longitude) == rnd(lhs.longitude)
-        return result
-
-    }
     
- 
-
 }

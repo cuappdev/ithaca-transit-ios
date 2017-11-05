@@ -5,7 +5,9 @@
 //  Created by Matthew Barker on 2/26/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
+
 import UIKit
+import CoreLocation
 
 extension UIView {
     
@@ -23,12 +25,17 @@ class BusLocationView: UIView {
     var busIcon: BusIcon!
     var bearingIndicator = UIImageView()
     
-    init(number: Int) {
+    /// The current position of the bearing icon
+    var currentBearing: Double = 0
+    
+    init(number: Int, bearing: Int) {
         
-        let background = UIImageView(image: #imageLiteral(resourceName: "liveBusBackground"))
-        background.frame.size = CGSize(width: background.frame.width * 1.25, height: background.frame.height * 1.25)
-
-        super.init(frame: CGRect(x: 0, y: 0, width: background.frame.width, height: background.frame.height))
+        let background = UIImageView(image: #imageLiteral(resourceName: "busBackground"))
+        // xepbackground.frame.size = CGSize(width: background.frame.width, height: background.frame.height)
+        
+        let indicator = UIImageView(image: #imageLiteral(resourceName: "bearing"))
+        
+        super.init(frame: CGRect(x: 0, y: -1 * indicator.frame.height, width: background.frame.width, height: background.frame.height))
         
         let base = background
         addSubview(base)
@@ -38,13 +45,15 @@ class BusLocationView: UIView {
         busIcon.frame.origin.y = 6
         addSubview(busIcon)
         
-        bearingIndicator = UIImageView(image: #imageLiteral(resourceName: "bearing"))
+        bearingIndicator = indicator
         bearingIndicator.center.x = center.x
         bearingIndicator.frame.origin.y = 44 - (bearingIndicator.frame.width / 2)
         addSubview(bearingIndicator)
         
         // Set initial point to North
         self.bearingIndicator.transform = CGAffineTransform(rotationAngle: .pi)
+        self.setBearing(bearing)
+        currentBearing = Double(bearing)
         
     }
     
@@ -52,12 +61,63 @@ class BusLocationView: UIView {
         super.init(coder: aDecoder)
     }
     
+    private func radians(_ degrees: Any) -> CGFloat {
+        let value = degrees as? Double ?? Double(degrees as! Int)
+        return CGFloat(value / 360) * .pi * 2
+    }
+    
     /// Animate a change in bearing of bus
-    func setBearing(_ degrees: Int) {
-        let angle: CGFloat = CGFloat(Double(degrees) / 360) * .pi * 2
-        UIView.animate(withDuration: 0.2) {
-            self.bearingIndicator.transform = CGAffineTransform(rotationAngle: angle)
+    func setBearing(_ degrees: Int, start: CLLocationCoordinate2D? = nil, end: CLLocationCoordinate2D? = nil) {
+
+        // If bus stays in same location, don't update bearing
+        if let start = start, let end = end {
+            let latDelta = end.latitude - start.latitude
+            let longDelta = end.longitude - start.longitude
+            if latDelta == 0 || longDelta == 0 {
+                print("Bus Not Moving"); return
+            }
         }
+        
+        UIView.animate(withDuration: 0.2) {
+            let degrees = Double(degrees) - self.currentBearing
+            let currentAngle: CGFloat = CGFloat(-1) * self.radians(degrees)
+            self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
+            self.currentBearing = Double(degrees)
+        }
+    }
+    
+    func setBetterBearing(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D) {
+        
+        print("start:", start)
+        print("end:", end)
+        
+        // Latitude: North / South, Longitude: East / West
+        let latDelta = end.latitude - start.latitude
+        let longDelta = end.longitude - start.longitude
+        
+        if latDelta == 0 || longDelta == 0 {
+            print("ZEROs")
+            return
+        }
+        
+        // Calulcate bearing from start and end points
+        // Source: https://stackoverflow.com/questions/3932502/calculate-angle-between-two-latitude-longitude-points
+        
+        let y = sin(longDelta) * cos(end.latitude)
+        let x = cos(start.latitude) * sin(end.latitude) - sin(start.latitude) * cos(end.latitude) * cos(longDelta)
+        var degrees = atan2(y, x)
+        degrees = Double(radians(degrees))
+        degrees = (degrees + 360.0).truncatingRemainder(dividingBy: 360)
+        
+        print("degrees:", degrees)
+        let adjustedDegrees = (currentBearing + degrees).truncatingRemainder(dividingBy: 360)
+        print("adjusted", adjustedDegrees)
+        let offsetDegrees = adjustedDegrees - currentBearing
+        print("offset", offsetDegrees)
+        let currentAngle: CGFloat = self.radians(offsetDegrees)
+        self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
+        self.currentBearing = adjustedDegrees
+    
     }
     
 }

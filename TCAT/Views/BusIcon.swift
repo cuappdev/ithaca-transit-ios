@@ -20,7 +20,6 @@ class BusIcon: UIView {
     var label: UILabel!
     var image: UIImageView!
     var liveIndicator: LiveIndicator!
-    var bearingIndicator: BearingIndicator!
     
     init(type: BusIconType, number: Int) {
         

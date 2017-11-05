@@ -32,7 +32,7 @@ class LiveIndicator: UIView {
         
         super.init(frame: CGRect(x: 0, y: 0, width: 12, height: 12))
         
-        dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - 3, width: 3, height: 3))
+        dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - 3.5, width: 4, height: 4))
         dot.layer.cornerRadius = dot.frame.width / 2
         dot.clipsToBounds = true
         dot.backgroundColor = .white

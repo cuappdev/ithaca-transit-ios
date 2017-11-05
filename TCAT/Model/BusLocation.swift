@@ -28,6 +28,8 @@ class BusLocation: NSObject, NSCoding {
     var tripID: Int = 0
     var vehicleID: Int = 0
     
+    var _iconView: UIView? = nil
+    
     init(routeID: String) {
         self.routeID = routeID
     }
@@ -44,7 +46,12 @@ class BusLocation: NSObject, NSCoding {
     
     var iconView: UIView {
         
-        return BusLocationView(number: Int(routeID) ?? 0)
+        if let iconView = _iconView {
+            return iconView
+        } else {
+            _iconView = BusLocationView(number: Int(routeID) ?? 0, bearing: heading)
+            return _iconView!
+        }
         
     }
     

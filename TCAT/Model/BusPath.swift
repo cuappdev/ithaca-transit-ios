@@ -17,35 +17,38 @@ enum PathType: String {
 
 class Path: GMSPolyline {
     
+    var waypoints: [Waypoint] = []
+    var traveledPolyline: GMSPolyline = GMSPolyline()
+    var color: UIColor = .clear
+    
+    init(waypoints: [Waypoint]) {
+        
+        self.waypoints = waypoints
+        super.init()
+        
+    }
+    
+}
+
+class BusPath: Path {
+    
     // Length of dash corresponding to position in dashColors
-    let dashLengths: [NSNumber] = [6, 4]
+    var dashLengths: [NSNumber] = [6, 4]
     // To be initialized with dash colors
     var dashColors = [UIColor]()
     
     var polylineWidth: CGFloat!
-    var waypoints: [Waypoint] = []
-    var traveledPolyline: GMSPolyline = GMSPolyline()
     var traveledPath: GMSMutablePath? = nil
     var untraveledPath: GMSMutablePath? = nil
-    var pathType: PathType = .driving
-    var color: UIColor = .black
     
-    init(waypoints: [Waypoint], pathType: PathType) {
+    init(_ waypoints: [Waypoint]) {
         
-        super.init()
-        self.waypoints = waypoints
-        self.pathType = pathType
-        
-        self.color = {
-            switch pathType {
-                case .driving: return .tcatBlueColor
-                case .walking: return .mediumGrayColor
-            }
-        }()
+        super.init(waypoints: waypoints)
+        self.color = .tcatBlueColor
         
         dashColors = [color, .clear]
         
-        self.polylineWidth = pathType == .driving ? 4 : 6
+        self.polylineWidth = 8
         self.untraveledPath = createPathFromWaypoints(waypoints: waypoints)
         self.traveledPath = untraveledPath
         
@@ -53,20 +56,28 @@ class Path: GMSPolyline {
         self.strokeColor = color
         self.strokeWidth = polylineWidth
         
-        if pathType == .walking {
-            let untraveledDashStyles = dashColors.flatMap { (color) -> GMSStrokeStyle in
-                return .solidColor(color)
-            }
-            self.spans = GMSStyleSpans(untraveledPath!, untraveledDashStyles, dashLengths, .projected)
-            // self.strokeWidth -= 2
-        }
-        
+//        if pathType == .walking {
+//
+//            let untraveledDashStyles = dashColors.flatMap { (color) -> GMSStrokeStyle in
+//                return .solidColor(color)
+//            }
+//
+//            self.spans = GMSStyleSpans(untraveledPath!, untraveledDashStyles, dashLengths, .projected)
+//
+//            self.geodesic = false
+//
+//            self.dashLengths = [NSNumber(value: self.untraveledPath!.length(of: .geodesic) / 100.0)]
+//            setupStyle(with: color)
+//            tick(untraveledDashStyles)
+//
+//        }
+    
     }
     
     func createPathFromWaypoints(waypoints: [Waypoint]) -> GMSMutablePath {
         let path = GMSMutablePath()
         for waypoint in waypoints {
-            path.add(CLLocationCoordinate2D(latitude: waypoint.lat, longitude: waypoint.long))
+            path.add(waypoint.coordinate)
         }
         return path
     }

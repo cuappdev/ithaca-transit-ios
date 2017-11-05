@@ -1,30 +1,33 @@
 
-# The bundle identifier of your app
-app_identifier "com.cornellappdev.tcat" 
-
-# Your Apple ID email address
-apple_id "walker.m.white@gmail.com" 
-
- # Developer Portal Team ID
-team_id "ZGMCXU7X3U"
-
-
-
 ## Custom App Details ##
 
-
+# The bundle identifier of your app
+ENV["IDENTIFIER"] = "com.cornellappdev.tcat" 
 
 # Name of Application
-app_name 'TCAT'
+ENV["APP_NAME"] = "TCAT"
 
 # Version Number
-version '1.0'
+ENV["VERSION"] = "1.0"
 
 # Name of scheme within Xcode (usually just the app name)
-scheme_name 'TCAT'
+ENV["SCHEME_NAME"] = "TCAT"
 
 # WebHooks URL (see cuappdev/fastlane README)
-slack_url "https://hooks.slack.com/services/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"
+ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
+
+
+## AppDev Information ##
+
+
+# Your Apple ID email address
+ENV["APPLE_ID"] = "walker.m.white@gmail.com" 
+
+# Developer Portal Team ID
+ENV["TEAM_ID"] = "ZGMCXU7X3U"
+
+# Email address for TestFlight users to send feedback to
+ENV["FEEDBACK_EMAIL"] = "cornellappdev@gmail.com"
 
 
 

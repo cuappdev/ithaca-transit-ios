@@ -38,7 +38,7 @@ class PathHelper {
             
             // Find start of path
             
-            let nearStartPoints = path.filter { PathHelper.pointWithinLocation(point: $0, location: start) }
+            let nearStartPoints = path.filter { pointWithinLocation(point: $0, location: start) }
             let nearStartBearing = generalBearing(of: nearStartPoints)
             
             var closestDistance: Double = .infinity
@@ -49,22 +49,22 @@ class PathHelper {
             
             if nearStartPoints.count > 1 {
                 for i in 1..<nearStartPoints.count {
-                    let distance = self.distance(from: start, to: nearStartPoints[i])
-                    let bearing = self.bearing(from: start, to: nearStartPoints[i])
+                    let distance = calculateDistanceCoordinates(from: start, to: nearStartPoints[i])
+                    let bearing = calculateBearing(from: start, to: nearStartPoints[i])
                     if distance < closestDistance && bearing == nearStartBearing {
                         closestDistance = distance
-                        busPathStartIndex = path.index(where: { Direction.coordsEqual($0, nearStartPoints[i]) })!
+                        busPathStartIndex = path.index(where: { $0 == nearStartPoints[i] })!
                     }
                 }
             } else {
-                if let index = path.index(where: { Direction.coordsEqual($0, nearStartPoints.first ?? CLLocationCoordinate2D()) }) {
+                if let index = path.index(where: { $0 == nearStartPoints.first ?? CLLocationCoordinate2D() }) {
                     busPathStartIndex = index
                 }
             }
             
             // Find end of path
             
-            let nearEndPoints = path.filter { PathHelper.pointWithinLocation(point: $0, location: end) }
+            let nearEndPoints = path.filter { pointWithinLocation(point: $0, location: end) }
             let nearEndBearing = generalBearing(of: nearEndPoints)
             
             closestDistance = .infinity
@@ -75,15 +75,15 @@ class PathHelper {
             
             if nearEndPoints.count > 1 {
                 for i in 1..<nearEndPoints.count {
-                    let distance = self.distance(from: nearEndPoints[i], to: end)
-                    let bearing = self.bearing(from: nearEndPoints[i], to: end)
+                    let distance = calculateDistanceCoordinates(from: nearEndPoints[i], to: end)
+                    let bearing = calculateBearing(from: nearEndPoints[i], to: end)
                     if distance < closestDistance && bearing == nearEndBearing {
                         closestDistance = distance
-                        busPathEndIndex = path.index(where: { Direction.coordsEqual($0, nearEndPoints[i]) })!
+                        busPathEndIndex = path.index(where: { $0 == nearEndPoints[i] })!
                     }
                 }
             } else {
-                if let index = path.index(where: { Direction.coordsEqual($0, nearEndPoints.first ?? CLLocationCoordinate2D()) }) {
+                if let index = path.index(where: { $0 == nearEndPoints.first ?? CLLocationCoordinate2D() }) {
                     busPathEndIndex = index
                 }
             }
@@ -114,7 +114,7 @@ class PathHelper {
             
             if let stop = getAllBusStops().first(where: { (stop) -> Bool in
                 let stopCoordinates = CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.long)
-                return PathHelper.pointWithinLocation(point: point, location: stopCoordinates, exact: true)
+                return pointWithinLocation(point: point, location: stopCoordinates, exact: true)
             }) {
                 if !filteredStops.contains(stop.name) {
                     filteredStops.append(stop.name)
@@ -126,73 +126,6 @@ class PathHelper {
         // print("[PathHelper] filtered stops size:", filteredStops.count)
         
         return filteredStops
-        
-    }
-    
-    private func distance(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Double {
-        let latDelta = to.latitude - from.latitude
-        let longDelta = to.longitude - from.longitude
-        return pow(pow(latDelta, 2) + pow(longDelta, 2), 0.5)
-    }
-    
-    /// Determine if a point is close enough to the bus stop to start drawing the path
-    class func pointWithinLocation(point: CLLocationCoordinate2D, location: CLLocationCoordinate2D, exact: Bool = false) -> Bool {
-        
-        /// The amount of "error" or size of the acceptable region near the bus location to
-        let radius: Double = exact ? 0.00025 : 0.003
-        
-        let minLatitude = location.latitude - radius
-        let maxLatitude = location.latitude + radius
-        let minLongitude = location.longitude - radius
-        let maxLongitude = location.longitude + radius
-        
-        let latitudeInRange = minLatitude <= point.latitude && point.latitude <= maxLatitude
-        let longitudeInRange = minLongitude <= point.longitude && point.longitude <= maxLongitude
-        return latitudeInRange && longitudeInRange
-        
-    }
-    
-    /// Return bearing from one location to another
-    private func bearing(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Bearing {
-        
-        let latDelta = to.latitude - from.latitude
-        let longDelta = to.longitude - from.longitude
-        
-        // North / South dominant
-        if latDelta >= longDelta {
-            return latDelta > 0  ? .north : .south
-        }
-            
-        // East / West dominant
-        else {
-            return longDelta > 0 ? .east : .west
-        }
-        
-    }
-    
-    private func generalBearing(of points: [CLLocationCoordinate2D]) -> Bearing {
-        
-        var topBearing: Bearing = .north
-        
-        var bearings: [Bearing : Int] = [
-            .north : 0,
-            .east : 0,
-            .south : 0,
-            .west : 0
-        ]
-        
-        for i in 0..<points.count - 1 {
-            
-            let instance = bearing(from: points[i], to: points[i+1])
-            bearings[instance]! += 1
-            
-            if bearings[instance]! > bearings[topBearing]! {
-                topBearing = instance
-            }
-            
-        }
-        
-        return topBearing
         
     }
 

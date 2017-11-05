@@ -29,13 +29,14 @@
 		BF101FE21F93D9BB00C58769 /* LiveIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF101FE11F93D9BB00C58769 /* LiveIndicator.swift */; };
 		BF1209FB1F7759C200A7C930 /* BusLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1209FA1F7759C200A7C930 /* BusLocationView.swift */; };
 		BF274E3D1F971A9B00981C34 /* DirectionPathHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF274E3C1F971A9B00981C34 /* DirectionPathHelper.swift */; };
+		BF453F851FAE7DCA001E5481 /* Location+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF453F841FAE7DCA001E5481 /* Location+Shared.swift */; };
 		BF662F341F731DD200B21109 /* OnboardPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F331F731DD200B21109 /* OnboardPageViewController.swift */; };
 		BF662F361F7323B400B21109 /* ActionOnboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */; };
 		BF73F0F31F60B0BD003B479D /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF73F0F21F60B0BD003B479D /* BusLocation.swift */; };
 		BF74AC1A1F945D7D00AFD4E4 /* GoogleMapsBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */; };
 		BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */; };
 		BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */; };
-		BF9E4A661FA5926A00E09113 /* BearingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9E4A651FA5926A00E09113 /* BearingIndicator.swift */; };
+		BFD5B4E41FAADFAE00955C37 /* WalkPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */; };
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
 		DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
@@ -58,7 +59,7 @@
 		DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */; };
 		DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C961E8857E000A99C35 /* SmallDetailTableViewCell.swift */; };
 		DDB49C9A1E8857E000A99C35 /* BusStopTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C971E8857E000A99C35 /* BusStopTableViewCell.swift */; };
-		DDB49C9D1E8857FC00A99C35 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C9B1E8857FC00A99C35 /* Path.swift */; };
+		DDB49C9D1E8857FC00A99C35 /* BusPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C9B1E8857FC00A99C35 /* BusPath.swift */; };
 		DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C9C1E8857FC00A99C35 /* Waypoint.swift */; };
 		DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49CA11E88584B00A99C35 /* DetailIconView.swift */; };
 		DDBCD5E71E989E5800014641 /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBCD5E61E989E5800014641 /* Circle.swift */; };
@@ -122,6 +123,7 @@
 		BF101FE11F93D9BB00C58769 /* LiveIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LiveIndicator.swift; path = Views/LiveIndicator.swift; sourceTree = "<group>"; };
 		BF1209FA1F7759C200A7C930 /* BusLocationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocationView.swift; path = Views/BusLocationView.swift; sourceTree = "<group>"; };
 		BF274E3C1F971A9B00981C34 /* DirectionPathHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DirectionPathHelper.swift; path = Model/DirectionPathHelper.swift; sourceTree = "<group>"; };
+		BF453F841FAE7DCA001E5481 /* Location+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Location+Shared.swift"; path = "Utilities/Location+Shared.swift"; sourceTree = "<group>"; };
 		BF4F831B1F89B9180097A052 /* testNew.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = testNew.json; path = Data/testNew.json; sourceTree = "<group>"; };
 		BF52F5481F5B553B000DEDF0 /* testOld.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = testOld.json; path = Data/testOld.json; sourceTree = "<group>"; };
 		BF662F331F731DD200B21109 /* OnboardPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardPageViewController.swift; path = Controllers/OnboardPageViewController.swift; sourceTree = "<group>"; };
@@ -130,7 +132,7 @@
 		BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsBase.framework; path = Pods/GoogleMaps/Base/Frameworks/GoogleMapsBase.framework; sourceTree = "<group>"; };
 		BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsCore.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMapsCore.framework; sourceTree = "<group>"; };
 		BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMaps.framework; sourceTree = "<group>"; };
-		BF9E4A651FA5926A00E09113 /* BearingIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BearingIndicator.swift; path = Views/BearingIndicator.swift; sourceTree = "<group>"; };
+		BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WalkPath.swift; path = Model/WalkPath.swift; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
 		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
@@ -154,7 +156,7 @@
 		DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LargeDetailTableViewCell.swift; path = Cells/LargeDetailTableViewCell.swift; sourceTree = "<group>"; };
 		DDB49C961E8857E000A99C35 /* SmallDetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SmallDetailTableViewCell.swift; path = Cells/SmallDetailTableViewCell.swift; sourceTree = "<group>"; };
 		DDB49C971E8857E000A99C35 /* BusStopTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusStopTableViewCell.swift; path = Cells/BusStopTableViewCell.swift; sourceTree = "<group>"; };
-		DDB49C9B1E8857FC00A99C35 /* Path.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Path.swift; path = Model/Path.swift; sourceTree = "<group>"; };
+		DDB49C9B1E8857FC00A99C35 /* BusPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusPath.swift; path = Model/BusPath.swift; sourceTree = "<group>"; };
 		DDB49C9C1E8857FC00A99C35 /* Waypoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Waypoint.swift; path = Model/Waypoint.swift; sourceTree = "<group>"; };
 		DDB49CA11E88584B00A99C35 /* DetailIconView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DetailIconView.swift; path = Views/DetailIconView.swift; sourceTree = "<group>"; };
 		DDBCD5E61E989E5800014641 /* Circle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Circle.swift; path = Views/Circle.swift; sourceTree = "<group>"; };
@@ -340,7 +342,8 @@
 				DD36A6FE1F66378C00E4789E /* PlaceResult.swift */,
 				DDE3BC221F5863D50014D2BB /* Place.swift */,
 				BF73F0F21F60B0BD003B479D /* BusLocation.swift */,
-				DDB49C9B1E8857FC00A99C35 /* Path.swift */,
+				DDB49C9B1E8857FC00A99C35 /* BusPath.swift */,
+				BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */,
 				DDB49C9C1E8857FC00A99C35 /* Waypoint.swift */,
 				DD2F989A1E50F99A0005F6BC /* Route.swift */,
 				DDEC101A1F66192B00834E91 /* RouteSummaryObject.swift */,
@@ -367,6 +370,7 @@
 				DD87F2091E878CB5000C244B /* Loader.swift */,
 				503EC38C1E96B85B00B3D4D4 /* Network.swift */,
 				5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */,
+				BF453F841FAE7DCA001E5481 /* Location+Shared.swift */,
 				DD5D233B1E6367A100F8DECE /* Time.swift */,
 				D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */,
 				DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */,
@@ -386,7 +390,6 @@
 				DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */,
 				DD16B8E41E7046390089B7B2 /* BusIcon.swift */,
 				BF101FE11F93D9BB00C58769 /* LiveIndicator.swift */,
-				BF9E4A651FA5926A00E09113 /* BearingIndicator.swift */,
 				BF1209FA1F7759C200A7C930 /* BusLocationView.swift */,
 				DDA134441EC6A8CB00460B18 /* RouteLine.swift */,
 				DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */,
@@ -746,7 +749,7 @@
 				5006F7BA1EC0F59A005ACAF2 /* SearchTableViewHelpers.swift in Sources */,
 				5006F7B81EBFC7DE005ACAF2 /* CornellDestinationCell.swift in Sources */,
 				503EC38D1E96B85B00B3D4D4 /* Network.swift in Sources */,
-				DDB49C9D1E8857FC00A99C35 /* Path.swift in Sources */,
+				DDB49C9D1E8857FC00A99C35 /* BusPath.swift in Sources */,
 				DD36A7001F66378C00E4789E /* PlaceResult.swift in Sources */,
 				BF73F0F31F60B0BD003B479D /* BusLocation.swift in Sources */,
 				BF101FE21F93D9BB00C58769 /* LiveIndicator.swift in Sources */,
@@ -769,6 +772,7 @@
 				DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */,
 				DDE3BC231F5863D50014D2BB /* Place.swift in Sources */,
 				DDEC101B1F66192B00834E91 /* RouteSummaryObject.swift in Sources */,
+				BF453F851FAE7DCA001E5481 /* Location+Shared.swift in Sources */,
 				DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */,
 				DDBFEAA01E787008002BBD96 /* DatepickerView.swift in Sources */,
 				DD36A6FF1F66378C00E4789E /* BusStop.swift in Sources */,
@@ -777,13 +781,13 @@
 				DDE0A9311F096A3E005CD01C /* RouteDiagram.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
 				DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */,
-				BF9E4A661FA5926A00E09113 /* BearingIndicator.swift in Sources */,
 				DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */,
 				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
 				DDD33DEF1EC2960400BC6454 /* CircleLine.swift in Sources */,
 				505E00E51E9ED56F00F09BAE /* KMLParser.swift in Sources */,
 				DD36A7021F6637CA00E4789E /* Direction.swift in Sources */,
 				DDB49C941E8857D000A99C35 /* RouteDetailViewController.swift in Sources */,
+				BFD5B4E41FAADFAE00955C37 /* WalkPath.swift in Sources */,
 				BF1209FB1F7759C200A7C930 /* BusLocationView.swift in Sources */,
 				DD3D9C361F945F2A00B164D4 /* RPCircularProgress.swift in Sources */,
 				DD2F98A31E5150990005F6BC /* RouteOptionsViewController.swift in Sources */,
@@ -938,7 +942,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -964,7 +968,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
