@@ -70,6 +70,7 @@
 		DDE3BC231F5863D50014D2BB /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE3BC221F5863D50014D2BB /* Place.swift */; };
 		DDEC101B1F66192B00834E91 /* RouteSummaryObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEC101A1F66192B00834E91 /* RouteSummaryObject.swift */; };
 		E34490CD1F8EF00A0064D284 /* SFText-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */; };
+		E3FCA3C91FAA67250069BD0F /* Crashlytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FCA3C81FAA67250069BD0F /* Crashlytics.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -166,6 +167,7 @@
 		DDEC101A1F66192B00834E91 /* RouteSummaryObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RouteSummaryObject.swift; path = Model/RouteSummaryObject.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Bold.otf"; path = "Resources/SFText-Bold.otf"; sourceTree = "<group>"; };
+		E3FCA3C81FAA67250069BD0F /* Crashlytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crashlytics.swift; sourceTree = "<group>"; };
 		E69224A160B2B078827D28A1 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -368,6 +370,7 @@
 				DD5D233B1E6367A100F8DECE /* Time.swift */,
 				D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */,
 				DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */,
+				E3FCA3C81FAA67250069BD0F /* Crashlytics.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -755,6 +758,7 @@
 				DDBCD5E71E989E5800014641 /* Circle.swift in Sources */,
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				5006F7BA1EC0F59A005ACAF2 /* SearchTableViewHelpers.swift in Sources */,
+				E3FCA3C91FAA67250069BD0F /* Crashlytics.swift in Sources */,
 				5006F7B81EBFC7DE005ACAF2 /* CornellDestinationCell.swift in Sources */,
 				503EC38D1E96B85B00B3D4D4 /* Network.swift in Sources */,
 				DDB49C9D1E8857FC00A99C35 /* Path.swift in Sources */,
@@ -958,6 +962,8 @@
 				);
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DDEBUG";
+				"OTHER_SWIFT_FLAGS[arch=*]" = "$(inherited) \"-D\" \"COCOAPODS\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

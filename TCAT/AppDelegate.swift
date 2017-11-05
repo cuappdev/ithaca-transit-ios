@@ -50,11 +50,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             userDefaults.set([Any](), forKey: "recentSearch")
         }
         
+        Fabric.with([Crashlytics.self])
         #if DEBUG
             print ("DEBUG MODE")
         #else
             print ("RELEASE MODE")
-            Fabric.with(Crashlytics.self)
         #endif
         
         return true
