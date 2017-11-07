@@ -265,6 +265,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     
     // MARK: Programmatic Layout Constants
     
+    /** Set proper layout constraints based on version (iOS 11 & safeArea support) */
     func setHeights() {
         
         summaryViewHeight = 80
