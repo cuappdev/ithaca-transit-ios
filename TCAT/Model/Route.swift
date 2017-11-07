@@ -73,7 +73,7 @@ class Route: NSObject, JSONDecodable {
                 arriveDirection.startTime = arriveDirection.endTime
                 arriveDirection.startLocation = arriveDirection.endLocation
                 arriveDirection.busStops = []
-                arriveDirection.locationName = path["end"]["name"].stringValue
+                arriveDirection.locationName = path["endName"].stringValue
                 directions.append(arriveDirection)
             }
             
@@ -87,8 +87,10 @@ class Route: NSObject, JSONDecodable {
         }) != nil
         
         if busInvolved && !isBusStop {
+            
+            print("json with route", json["end"])
            
-            let finalDirection = Direction(locationName: json["end"]["name"].string ?? "Null")
+            let finalDirection = Direction(locationName: json["endName"].string ?? "Null")
             finalDirection.type = .walk
             finalDirection.startLocation = directions.last!.endLocation
             finalDirection.endLocation = CLLocation(latitude: endCoords.latitude, longitude: endCoords.longitude)
@@ -132,7 +134,7 @@ class Route: NSObject, JSONDecodable {
         for resultsJSON in jsonData["results"].arrayValue {
             var routeJSON = resultsJSON
             routeJSON["baseTime"] = jsonData["baseTime"]
-            routeJSON["end"]["name"].string = endName
+            routeJSON["endName"].string = endName
             let route = try! Route(json: routeJSON)
             routes.append(route)
         }
