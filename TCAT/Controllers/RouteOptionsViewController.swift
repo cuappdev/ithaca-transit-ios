@@ -343,11 +343,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 }
             }
         }
-        
-        // Add directions array
-        for route in routes {
-            route.addWalkingDirections()
-        }
 
         return routes
     }
@@ -655,7 +650,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         return rowHeight
     }
 
-    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool{
+    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        locationManager.stopUpdatingLocation()
         navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
 
         return false // halts the selection process, so don't have selected look
