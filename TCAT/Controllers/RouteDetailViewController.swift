@@ -265,7 +265,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     
     func createLoadingScreen() {
         
-        loadingView = UIView(frame: navigationController!.view.frame)
+        loadingView = UIView(frame: navigationController?.view.frame ?? CGRect())
         loadingView.frame.origin.y += statusNavHeight()
         loadingView.frame.size.height -= statusNavHeight()
         loadingView.backgroundColor = .tableBackgroundColor
@@ -810,7 +810,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 self.detailView.frame = CGRect(origin: point, size: self.view.frame.size)
             }
             
-            if withinMiddle {
+            if withinMiddle && velocity.y > 0 {
                 centerMap()
                 withinMiddle = false
             }
