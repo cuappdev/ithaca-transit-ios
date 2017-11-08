@@ -324,10 +324,21 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     
     /** Return height of status bar and possible navigation controller */
     func statusNavHeight(includingShadow: Bool = false) -> CGFloat {
-        // UIApplication.shared.statusBarFrame.height == safeAreaInsets.top
-        return UIApplication.shared.statusBarFrame.height +
-            (navigationController?.navigationBar.frame.height ?? 0) +
-            (includingShadow ? 4 : 0)
+        
+        if #available(iOS 11.0, *) {
+            
+            return (navigationController?.view.safeAreaInsets.top ?? 0) +
+                (navigationController?.navigationBar.frame.height ?? 0) +
+                (includingShadow ? 4 : 0)
+            
+        } else {
+            
+            return UIApplication.shared.statusBarFrame.height +
+                (navigationController?.navigationBar.frame.height ?? 0) +
+                (includingShadow ? 4 : 0)
+            
+        }
+
     }
     
     // MARK: Location Manager Functions
@@ -428,9 +439,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     func centerMap(topHalfCentered: Bool = false) {
 
         if topHalfCentered {
-            let constant: CGFloat = 16
+            let constant: CGFloat = 20
             let bottom = (main.height / 2) - (statusNavHeight(includingShadow: false) - constant)
-            let edgeInsets = UIEdgeInsets(top: mapPadding /* / 2 */, left: constant, bottom: bottom, right: constant)
+            let edgeInsets = UIEdgeInsets(top: mapPadding / 2 , left: constant, bottom: bottom, right: constant)
             let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
             mapView.animate(with: update)
         }
@@ -477,6 +488,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 
             }
             
+        }
+        
+        if newPaths != nil {
+            centerMap(topHalfCentered: true)
         }
 
     }
