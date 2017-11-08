@@ -82,11 +82,9 @@ class Route: NSObject, JSONDecodable {
                 arriveDirection.startTime = arriveDirection.endTime
                 arriveDirection.startLocation = arriveDirection.endLocation
                 arriveDirection.busStops = []
-                
                 arriveDirection.locationName = index == json["path"].arrayValue.count - 1 && lastIsBusStop ?
                     json["endName"].stringValue :
                     path["end"]["name"].stringValue
-                
                 directions.append(arriveDirection)
             }
             
@@ -95,8 +93,6 @@ class Route: NSObject, JSONDecodable {
         // Create final direction to walk (if destination not a bus stop) from last bus option to final destination
         
         if busInvolved && !lastIsBusStop {
-            
-            print("FINAL DIRECTION")
             let finalDirection = Direction(locationName: json["endName"].string ?? "Null")
             finalDirection.type = .walk
             finalDirection.startLocation = directions.last!.endLocation
