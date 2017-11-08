@@ -13,6 +13,7 @@ import Alamofire
 import MYTableViewIndex
 import DZNEmptyDataSet
 import NotificationBannerSwift
+import Crashlytics
 
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, TableViewIndexDelegate, TableViewIndexDataSource, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     let userDefaults = UserDefaults.standard
@@ -335,6 +336,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         tableViewIndexController.setHidden(true, animated: false)
+        
+        //Crashlytics Answers
+        Answers.searchBarTappedInHome()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
