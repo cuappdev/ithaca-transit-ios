@@ -58,10 +58,20 @@ class Route: NSObject, JSONDecodable {
         
         var busInvolved = false
         
+        let lastIsBusStop = getAllBusStops().first(where: { (stop) -> Bool in
+            let stopCoordinates = CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.long)
+            return stopCoordinates == endCoords
+        }) != nil
+        
         // Create directions
-        for (_, path) in json["path"].arrayValue.enumerated() {
+        for (index, path) in json["path"].arrayValue.enumerated() {
+            
+            // print("\(index), path:", path)
             
             let direction = Direction(from: path, baseTime: baseTime)
+            if index == json["path"].arrayValue.count - 1 {
+                direction.locationName = json["endName"].string ?? "Null"
+            }
             directions.append(direction)
             
             // Create pair ArriveDirection after DepartDirection
@@ -72,7 +82,11 @@ class Route: NSObject, JSONDecodable {
                 arriveDirection.startTime = arriveDirection.endTime
                 arriveDirection.startLocation = arriveDirection.endLocation
                 arriveDirection.busStops = []
-                arriveDirection.locationName = path["endName"].stringValue
+                
+                arriveDirection.locationName = index == json["path"].arrayValue.count - 1 && lastIsBusStop ?
+                    json["endName"].stringValue :
+                    path["end"]["name"].stringValue
+                
                 directions.append(arriveDirection)
             }
             
@@ -80,28 +94,23 @@ class Route: NSObject, JSONDecodable {
         
         // Create final direction to walk (if destination not a bus stop) from last bus option to final destination
         
-        let isBusStop = getAllBusStops().first(where: { (stop) -> Bool in
-            let stopCoordinates = CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.long)
-            return stopCoordinates == endCoords
-        }) != nil
-        
-        if busInvolved && !isBusStop {
+        if busInvolved && !lastIsBusStop {
             
-            print("json with route", json["end"])
-            
+            print("FINAL DIRECTION")
             let finalDirection = Direction(locationName: json["endName"].string ?? "Null")
             finalDirection.type = .walk
             finalDirection.startLocation = directions.last!.endLocation
             finalDirection.endLocation = CLLocation(latitude: endCoords.latitude, longitude: endCoords.longitude)
             finalDirection.startTime = directions.last!.endTime
             finalDirection.endTime = arrivalTime
+            
             // path should be set in bulk walk calculations
             directions.append(finalDirection)
             
         }
         
-        
         routeSummary = getRouteSummary(from: json["path"].arrayValue)
+        
     }
     
     init(departureTime: Date,

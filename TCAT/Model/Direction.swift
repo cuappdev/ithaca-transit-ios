@@ -113,12 +113,11 @@ class Direction: NSObject, NSCopying {
                               longitude: json["location"]["longitude"].doubleValue)
         }
         
-        let pathHelper = PathHelper()
         let type: DirectionType = json["busPath"] != JSON.null ? .depart : .walk
         let startLocation = locationJSON(from: json["start"])
         let endLocation = locationJSON(from: json["end"])
-        let filteredPath = pathHelper.filterPath(in: json, from: startLocation.coordinate, to: endLocation.coordinate)
-        let filteredStops = pathHelper.filterStops(in: jsonToStopNames(), along: filteredPath)
+        let filteredPath = PathHelper.shared.filterPath(in: json, from: startLocation.coordinate, to: endLocation.coordinate)
+        let filteredStops = PathHelper.shared.filterStops(in: jsonToStopNames(), along: filteredPath)
         
         self.init(
 

@@ -368,7 +368,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
         let settings = UIAlertAction(title: "Settings", style: .default) { (_) in
-            UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
+            UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
         }
 
         alertController.addAction(settings)
@@ -562,13 +562,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         var symbolView = UIView()
         
         if currentlySearching {
-            let circularProgress = RPCircularProgress()
-            circularProgress.enableIndeterminate()
-            circularProgress.trackTintColor = .mediumGrayColor
-            circularProgress.progressTintColor = .searchBarPlaceholderTextColor
-            circularProgress.thicknessRatio = 0.25
-            
-            symbolView = circularProgress
+            symbolView = LoadingIndicator()
         }
         else {
             let imageView = UIImageView(image: #imageLiteral(resourceName: "road"))

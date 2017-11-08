@@ -10,16 +10,17 @@ import UIKit
 import CoreLocation
 import MapKit
 
-/// Caluclate walking directions for a Direction
-func calculateWalkingDirections(_ direction: Direction, _ completion: @escaping ([CLLocationCoordinate2D]) -> Void) {
+/// Caluclate walking directions for a Direction. Returns (path: [CLLocationCoordinate2D], time: TimeInterval), with time in minutes.
+func calculateWalkingDirections(_ direction: Direction, _ completion: @escaping (_ path: [CLLocationCoordinate2D], _ time: TimeInterval) -> Void) {
     let request = MKDirectionsRequest()
     request.source = MKMapItem(placemark: MKPlacemark(coordinate: direction.startLocation.coordinate, addressDictionary: [:]))
     request.destination = MKMapItem(placemark: MKPlacemark(coordinate: direction.endLocation.coordinate, addressDictionary: [:]))
     request.transportType = .walking
     request.requestsAlternateRoutes = false
-    let directions = MKDirections(request: request)
-    directions.calculate { (response, error) in
-        completion(response?.routes.first?.polyline.coordinates ?? [])
+    MKDirections(request: request).calculate { (response, error) in
+        guard let route = response?.routes.first
+            else { completion([], 0); return }
+        completion(route.polyline.coordinates, round(route.expectedTravelTime / 60))
     }
 }
 

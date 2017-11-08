@@ -15,11 +15,9 @@ enum Bearing: String {
     case west, east, north, south
 }
 
-class PathHelper {
+struct PathHelper {
     
-    init() {
-        
-    }
+    static let shared = PathHelper()
     
     // Create subection of path based on start and end
     // of direction if busPath exists (Depart Direction)
@@ -39,59 +37,45 @@ class PathHelper {
             // Find start of path
             
             let nearStartPoints = path.filter { pointWithinLocation(point: $0, location: start) }
-            let nearStartBearing = generalBearing(of: nearStartPoints)
+            // let nearStartBearing = generalBearing(of: nearStartPoints)
             
             var closestDistance: Double = .infinity
             var busPathStartIndex = 0
             
-            // Find the closest point to the start that matches the general bearing
+            // Find the closest point to the start that matches the general bearing (removed)
             // a.k.a the first point after the start
             
-            if nearStartPoints.count > 1 {
-                for i in 1..<nearStartPoints.count {
-                    let distance = calculateDistanceCoordinates(from: start, to: nearStartPoints[i])
-                    let bearing = calculateBearing(from: start, to: nearStartPoints[i])
-                    if distance < closestDistance && bearing == nearStartBearing {
-                        closestDistance = distance
-                        busPathStartIndex = path.index(where: { $0 == nearStartPoints[i] })!
-                    }
-                }
-            } else {
-                if let index = path.index(where: { $0 == nearStartPoints.first ?? CLLocationCoordinate2D() }) {
-                    busPathStartIndex = index
+            for i in 0..<nearStartPoints.count {
+                let distance = calculateDistanceCoordinates(from: start, to: nearStartPoints[i])
+                // let bearing = calculateBearing(from: start, to: nearStartPoints[i])
+                if distance < closestDistance /* && bearing == nearStartBearing */ {
+                    closestDistance = distance
+                    busPathStartIndex = path.index(where: { $0 == nearStartPoints[i] })!
                 }
             }
             
             // Find end of path
             
             let nearEndPoints = path.filter { pointWithinLocation(point: $0, location: end) }
-            let nearEndBearing = generalBearing(of: nearEndPoints)
+            // let nearEndBearing = generalBearing(of: nearEndPoints)
             
             closestDistance = .infinity
-            var busPathEndIndex = 0
+            var busPathEndIndex = 0 // path.endIndex - 1
             
-            // Find the cloest point to the end that matches the general bearing
+            // Find the cloest point to the end that matches the general bearing (removed)
             // a.k.a. the last point before the end
             
-            if nearEndPoints.count > 1 {
-                for i in 1..<nearEndPoints.count {
-                    let distance = calculateDistanceCoordinates(from: nearEndPoints[i], to: end)
-                    let bearing = calculateBearing(from: nearEndPoints[i], to: end)
-                    if distance < closestDistance && bearing == nearEndBearing {
-                        closestDistance = distance
-                        busPathEndIndex = path.index(where: { $0 == nearEndPoints[i] })!
-                    }
-                }
-            } else {
-                if let index = path.index(where: { $0 == nearEndPoints.first ?? CLLocationCoordinate2D() }) {
-                    busPathEndIndex = index
+            for i in 0..<nearEndPoints.count {
+                let distance = calculateDistanceCoordinates(from: nearEndPoints[i], to: end)
+                // let bearing = calculateBearing(from: nearEndPoints[i], to: end)
+                if distance < closestDistance /* && bearing == nearEndBearing */ {
+                    closestDistance = distance
+                    busPathEndIndex = path.index(where: { $0 == nearEndPoints[i] })!
                 }
             }
             
-            if busPathStartIndex > busPathEndIndex {
-                print("\n\n============\n[DirectionPathHelper] PATH FILTER FAILED\n==============\n\n")
-                // print("startIndex:", busPathStartIndex)
-                // print("endIndex:", busPathEndIndex)
+            if busPathStartIndex >= busPathEndIndex {
+                print("\n\n==============\n[DirectionPathHelper] PATH FILTER FAILED\n==============\n\n")
                 return path
             } else {
                 let subsection = Array(path[busPathStartIndex...busPathEndIndex])
