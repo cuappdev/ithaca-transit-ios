@@ -42,7 +42,6 @@ class SmallDetailTableViewCell: UITableViewCell {
         let shouldAddSubview = iconView == nil
 
         if shouldAddSubview {
-            print("changing icon view!")
             iconView = DetailIconView(height: cellHeight,
                                       type: busEnd ? IconType.busEnd: IconType.noBus,
                                       time: direction.startTimeDescription,
