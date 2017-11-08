@@ -40,13 +40,15 @@ class SmallDetailTableViewCell: UITableViewCell {
     func setCell(_ direction: Direction, busEnd: Bool, firstStep: Bool, lastStep: Bool) {
         
         let shouldAddSubview = iconView == nil
-        iconView = DetailIconView(height: cellHeight,
-                                  type: busEnd ? IconType.busEnd: IconType.noBus,
-                                  time: direction.startTimeDescription,
-                                  firstStep: firstStep,
-                                  lastStep: lastStep)
-        
-        if shouldAddSubview { contentView.addSubview(iconView!) }
+
+        if shouldAddSubview {
+            iconView = DetailIconView(height: cellHeight,
+                                      type: busEnd ? IconType.busEnd: IconType.noBus,
+                                      time: direction.startTimeDescription,
+                                      firstStep: firstStep,
+                                      lastStep: lastStep)
+            contentView.addSubview(iconView!)
+        }
         
         if busEnd {
             // Arrive Direction
@@ -54,7 +56,7 @@ class SmallDetailTableViewCell: UITableViewCell {
         } else {
             // Walk Direction
             var walkString = lastStep ? "Arrive at \(direction.locationName)" : direction.locationNameDescription
-            walkString += " (\(direction.travelDistance) mi)"
+            if direction.travelDistance > 0 { walkString += " (\(direction.travelDistance) mi)" }
             titleLabel.attributedText = bold(pattern: direction.locationName, in: walkString)
             if lastStep {
                 iconView?.changeTime(direction.endTimeDescription)

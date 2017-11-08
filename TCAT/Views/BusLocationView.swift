@@ -31,8 +31,6 @@ class BusLocationView: UIView {
     init(number: Int, bearing: Int) {
         
         let background = UIImageView(image: #imageLiteral(resourceName: "busBackground"))
-        // xepbackground.frame.size = CGSize(width: background.frame.width, height: background.frame.height)
-        
         let indicator = UIImageView(image: #imageLiteral(resourceName: "bearing"))
         
         super.init(frame: CGRect(x: 0, y: -1 * indicator.frame.height, width: background.frame.width, height: background.frame.height))
@@ -78,13 +76,15 @@ class BusLocationView: UIView {
             }
         }
         
-        self.bearingIndicator.transform = .identity
+        self.bearingIndicator.transform = self.bearingIndicator.transform.inverted()
         
         UIView.animate(withDuration: 0.2) {
+            // print("degrees:", degrees)
             // let newDegrees = Double(degrees) - self.currentBearing
             let currentAngle: CGFloat = CGFloat(-1) * self.radians(degrees)
             self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
-            // self.currentBearing = Double(degrees)
+            self.currentBearing = Double(degrees)
+            // print("===")
         }
         
     }

@@ -61,7 +61,6 @@ class BusStopTableViewCell: UITableViewCell {
         titleLabel.sizeToFit()
         titleLabel.frame.size.width = UIScreen.main.bounds.width - cellWidth - 20
         titleLabel.center.y = cellHeight / 2
-        
     }
     
 }
