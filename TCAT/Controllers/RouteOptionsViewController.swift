@@ -292,9 +292,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             currentlySearching = true
             routeResults.contentOffset = .zero
             routeResults.reloadData()
-
-            //Crashlytics answers
-            if let destination = searchTo?.name { Answers.destinationSearched(destination: destination) }
             
             Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
                 
@@ -498,9 +495,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         cell?.addSubviews()
         
         setCellUserInteraction(cell, to: cellUserInteraction)
-        
-        //Crashlytics Answers
-        Answers.userTappedRouteResultsCell()
         
         return cell!
     }

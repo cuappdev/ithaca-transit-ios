@@ -12,6 +12,7 @@ import Alamofire
 import CoreLocation
 import DZNEmptyDataSet
 import MYTableViewIndex
+import Crashlytics
 
 protocol DestinationDelegate {
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?)
@@ -201,9 +202,15 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
             if busStop.name != "Current Location" {
                 insertRecentLocation(location: busStop)
             }
+            //Crashlytics Answers
+            Answers.destinationSearched(destination: busStop.name, stopType: "bus stop")
+            
             destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
         case .placeResult(let placeResult):
             insertRecentLocation(location: placeResult)
+            //Crashlytics Answers
+            Answers.destinationSearched(destination: placeResult.name, stopType: "google place")
+            
             destinationDelegate?.didSelectDestination(busStop: nil, placeResult: placeResult)
         default: break
         }
@@ -241,6 +248,8 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         cell.separatorInset = .zero
         cell.layoutMargins = .zero
         cell.layoutSubviews()
+        
+        
         return cell
     }
     
