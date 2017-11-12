@@ -12,6 +12,7 @@ import GooglePlaces
 import SwiftyJSON
 import Fabric
 import Crashlytics
+import SafariServices
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
@@ -87,5 +88,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     }
     
     
+}
+
+extension UIWindow {
+    
+    open override func motionBegan(_ motion: UIEventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            
+            let title = "Submit Beta Feedback"
+            let message = "You can help us make our app even better! Take screenshots within the app and tap below to submit."
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            
+            let action = UIAlertAction(title: "Submit Feedback", style: .default, handler: { _ in
+                self.openFeedback()
+            })
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+            
+            alertController.addAction(action)
+            alertController.addAction(cancel)
+            presentInApp(alertController)
+            
+        }
+    }
+    
+    private func openFeedback() {
+        let betaFormURL = "https://goo.gl/forms/u2shinl8ddNyFuZ23"
+        let safariViewController = SFSafariViewController(url: URL(string: betaFormURL)!)
+        presentInApp(safariViewController)
+    }
+    
+    /// Find the visible view controller in the root navigation controller and present passed in view controlelr.
+    func presentInApp(_ viewController: UIViewController) {
+        (rootViewController as? UINavigationController)?.visibleViewController?.present(viewController, animated: true)
+    }
+
 }
 
