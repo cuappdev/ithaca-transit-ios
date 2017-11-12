@@ -93,10 +93,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setupLocationManager()
 
         setupReachability()
-
-        // If no date is set then date should be same as today's date
-        self.searchTime = Date()
-
+        
         searchForRoutes()
     }
 
@@ -286,7 +283,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Process data
 
     func searchForRoutes() {
-        if let startingDestination = searchFrom as? CoordinateAcceptor, let endingDestination = searchTo as? CoordinateAcceptor{
+        // If no date is set then date should be same as today's date
+        if routeSelection.datepickerButton.titleLabel?.text == "Leave now" {
+            searchTime = Date()
+        }
+        
+        if let time = searchTime, let startingDestination = searchFrom as? CoordinateAcceptor, let endingDestination = searchTo as? CoordinateAcceptor{
 
             routes = []
             currentlySearching = true
@@ -296,7 +298,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             //Crashlytics answers
             if let destination = searchTo?.name { Answers.destinationSearched(destination: destination) }
             
-            Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
+            Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
                 
                 if #available(iOS 10.0, *) {
                     self.routeResults.refreshControl?.endRefreshing()
