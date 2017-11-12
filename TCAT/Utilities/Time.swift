@@ -48,6 +48,11 @@ class Time{
         return timeStr
     }
     
+    /// Check whether 2 dates are equal (to the minute precision)
+    static func compare(date1: Date, date2: Date) -> ComparisonResult {
+        return Calendar.current.compare(date1, to: date2, toGranularity: .minute)
+    }
+    
     /// Calculates time bt 2 dates, returns DateComponents
     static func dateComponents(from startTime: Date, to endTime: Date) -> DateComponents{
         return Calendar.current.dateComponents([.hour, .minute, .day], from: startTime, to: endTime)

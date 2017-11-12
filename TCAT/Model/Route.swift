@@ -6,8 +6,7 @@
 //      Data model to represent both route options screen (Monica) and route detail screen (Matt)
 //
 //  Note:
-//      - mainStops is for route options screen (Monica) and directions is for route detail screen (Matt)
-//      - departureTime and arrivalTime are for the entire route, while each direction has their own departure (and possibly arrival time)
+//      - routeSummary is for route options screen (Monica) and directions is for route detail screen (Matt)
 //  Created by Monica Ong on 2/12/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
@@ -172,6 +171,7 @@ class Route: NSObject, JSONDecodable {
     
     
     // MARK: Process raw routes
+    
     /**
      * Modify the first routeSummaryObject if the name is "Start"
      *  If the starting place is a place result or current location
@@ -196,6 +196,16 @@ class Route: NSObject, JSONDecodable {
                 }
             }
         }
+    }
+    
+    func isWalkingRoute() -> Bool {
+        for routeSummaryObj in routeSummary {
+            if routeSummaryObj.nextDirection != .walk {
+                return false
+            }
+        }
+        
+        return true
     }
     
     /** Calculate travel distance from location passed in to first route summary object and updates travel distance of route

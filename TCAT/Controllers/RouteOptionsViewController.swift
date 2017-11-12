@@ -93,10 +93,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setupLocationManager()
 
         setupReachability()
-
-        // If no date is set then date should be same as today's date
-        self.searchTime = Date()
-
+        
         searchForRoutes()
     }
 
@@ -286,7 +283,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Process data
 
     func searchForRoutes() {
-        if let startingDestination = searchFrom as? CoordinateAcceptor, let endingDestination = searchTo as? CoordinateAcceptor{
+        // If no date is set then date should be same as today's date
+        if routeSelection.datepickerButton.titleLabel?.text?.lowercased() == "leave now" {
+            searchTime = Date()
+        }
+        
+        if let time = searchTime, let startingDestination = searchFrom as? CoordinateAcceptor, let endingDestination = searchTo as? CoordinateAcceptor{
 
             routes = []
             currentlySearching = true
@@ -296,7 +298,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             //Crashlytics answers
             if let destination = searchTo?.name { Answers.destinationSearched(destination: destination) }
             
-            Network.getRoutes(start: startingDestination, end: endingDestination, time: searchTime!, type: searchTimeType) { request in
+            Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
                 
                 if #available(iOS 10.0, *) {
                     self.routeResults.refreshControl?.endRefreshing()
@@ -419,6 +421,17 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func showDatepicker(sender: UIButton){
         view.bringSubview(toFront: datePickerOverlay)
         view.bringSubview(toFront: datePickerView)
+        
+        // set up date on datepicker view
+        if routeSelection.datepickerButton.titleLabel?.text?.lowercased() == "leave now" {
+            datePickerView.setDatepickerDate(date: Date())
+        }
+        else if let time = searchTime  {
+            datePickerView.setDatepickerDate(date: time)
+        }
+        
+        datePickerView.setDatepickerTimeType(searchTimeType: searchTimeType)
+        
         UIView.animate(withDuration: 0.5) {
             self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.59 // darken screen when pull up datepicker
@@ -439,7 +452,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         let date = datePickerView.datepicker.date
         searchTime = date
         let dateString = Time.dateString(from: date)
-        let segmentedControl = datePickerView.segmentedControl
+        let segmentedControl = datePickerView.timeTypeSegmentedControl
 
         // Get selected time type
         let selectedSegString = (segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)) ?? ""
@@ -517,26 +530,31 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
     
+    override var prefersStatusBarHidden: Bool {
+        return isBannerShown
+    }
+    
     @objc private func reachabilityDidChange(_ notification: Notification) {
         let reachability = notification.object as! Reachability
         
         switch reachability.connection {
             
             case .none:
-                banner.show(queuePosition: .front, bannerPosition: .bottom, on: self)
-                isBannerShown = true
+                isBannerShown = true // hides status bar
+                setNeedsStatusBarAppearanceUpdate()
+                banner.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
                 setUserInteraction(to: false)
             
             case .cellular, .wifi:
                 if isBannerShown {
                     banner.dismiss()
-                    isBannerShown = false
+                    isBannerShown = false // unhides status bar
+                    setNeedsStatusBarAppearanceUpdate()
                 }
                 
                 setUserInteraction(to: true)
             
         }
-        
     }
     
     private func setUserInteraction(to userInteraction: Bool) {
