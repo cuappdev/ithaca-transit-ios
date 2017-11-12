@@ -75,7 +75,7 @@ class DatepickerView: UIView {
     
     func datepickerValueChanged(datepicker: UIDatePicker) {
         let now = Date()
-        if Time.equalToMinute(date1: datepicker.date, date2: now) {
+        if Time.compare(date1: datepicker.date, date2: now) == ComparisonResult.orderedSame {
             let leaveNow = 0
             leaveNowSegmentedControl.selectedSegmentIndex = leaveNow
         } else {

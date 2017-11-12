@@ -49,31 +49,8 @@ class Time{
     }
     
     /// Check whether 2 dates are equal (to the minute precision)
-    static func equalToMinute(date1: Date, date2: Date) -> Bool {
-        let dateComp1 = Calendar.current.dateComponents([.year,.month,.day, .hour, .minute], from: date1)
-        let dateComp2 = Calendar.current.dateComponents([.year,.month,.day, .hour, .minute], from: date2)
-        
-        if dateComp1.year != dateComp2.year {
-            return false
-        }
-        
-        if dateComp1.month != dateComp2.month {
-            return false
-        }
-        
-        if dateComp1.day != dateComp2.day {
-            return false
-        }
-        
-        if dateComp1.hour != dateComp2.hour {
-            return false
-        }
-        
-        if dateComp1.minute != dateComp2.minute {
-            return false
-        }
-        
-        return true
+    static func compare(date1: Date, date2: Date) -> ComparisonResult {
+        return Calendar.current.compare(date1, to: date2, toGranularity: .minute)
     }
     
     /// Calculates time bt 2 dates, returns DateComponents
