@@ -294,6 +294,16 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             currentlySearching = true
             routeResults.contentOffset = .zero
             routeResults.reloadData()
+
+            // Check if to and from location is the same
+            if searchFrom?.name == searchTo?.name {
+                let title = "You're here!"
+                let message = "Thank you for using our TCAT Teleporation™ feature (beta)."
+                let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                let action = UIAlertAction(title: "😐😒🙄", style: .cancel, handler: nil)
+                alertController.addAction(action)
+                present(alertController, animated: true, completion: nil)
+            } else {
             
             Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
                 
@@ -316,6 +326,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     self.currentlySearching = false
                     self.routeResults.reloadData()
                 })
+
+            }
 
             }
 
