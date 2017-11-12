@@ -284,7 +284,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func searchForRoutes() {
         // If no date is set then date should be same as today's date
-        if routeSelection.datepickerButton.titleLabel?.text == "Leave now" {
+        if routeSelection.datepickerButton.titleLabel?.text?.lowercased() == "leave now" {
             searchTime = Date()
         }
         
@@ -423,9 +423,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         view.bringSubview(toFront: datePickerView)
         
         // set up date on datepicker view
-        if routeSelection.datepickerButton.titleLabel?.text == "Leave now" {
-            let now = Date()
-            datePickerView.setDatepickerDate(date: now)
+        if routeSelection.datepickerButton.titleLabel?.text?.lowercased() == "leave now" {
+            datePickerView.setDatepickerDate(date: Date())
         }
         else if let time = searchTime  {
             datePickerView.setDatepickerDate(date: time)
@@ -532,11 +531,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     override var prefersStatusBarHidden: Bool {
-        if isBannerShown {
-            return true
-        }
-        
-        return false
+        return isBannerShown
     }
     
     @objc private func reachabilityDidChange(_ notification: Notification) {

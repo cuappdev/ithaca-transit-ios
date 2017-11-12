@@ -67,8 +67,7 @@ class DatepickerView: UIView {
     // MARK: Segement Control
     
     func leaveNowSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
-        let now = Date()
-        datepicker.date = now
+        datepicker.date = Date()
     }
     
     // MARK: Datepicker

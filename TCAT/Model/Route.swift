@@ -199,7 +199,13 @@ class Route: NSObject, JSONDecodable {
     }
     
     func isWalkingRoute() -> Bool {
-        return routeSummary.count == 2 && routeSummary.first?.nextDirection == .walk
+        for routeSummaryObj in routeSummary {
+            if routeSummaryObj.nextDirection != .walk {
+                return false
+            }
+        }
+        
+        return true
     }
     
     /** Calculate travel distance from location passed in to first route summary object and updates travel distance of route
