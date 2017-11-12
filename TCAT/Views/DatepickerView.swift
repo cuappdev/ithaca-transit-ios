@@ -13,9 +13,10 @@ class DatepickerView: UIView {
     // MARK:  View vars
     
     var datepicker: UIDatePicker = UIDatePicker()
-    var segmentedControl: UISegmentedControl = UISegmentedControl()
-    let segmentedControlOptions: [String] = ["Leave Now", "Leave At", "Arrive By"]
-    var prevSelectedIndex: Int = 1
+    var leaveNowSegmentedControl: UISegmentedControl = UISegmentedControl()
+    let leaveNowSegmentedControlOptions: [String] = ["Leave Now"]
+    var timeTypeSegmentedControl: UISegmentedControl = UISegmentedControl()
+    let timeTypeSegmentedControlOptions: [String] = ["Leave At", "Arrive By"]
     var cancelButton: UIButton = UIButton()
     var doneButton: UIButton = UIButton()
     var disclaimerLabel: UILabel = UILabel()
@@ -31,6 +32,7 @@ class DatepickerView: UIView {
     let spaceBtButtonAndSuperviewSide: CGFloat = 12.0
     let spaceBtButtonAndSegmentedControl: CGFloat = 16.0
     let spaceBtSegmentControlAndDatePicker: CGFloat = 8.0
+    let spaceBtSegmentControls: CGFloat = 8.0
     
     // MARK: Init
     
@@ -38,13 +40,21 @@ class DatepickerView: UIView {
         super.init(frame: frame)
         
         styleDatepicker()
-        styleSegmentedControl()
+        styleSegmentedControl(timeTypeSegmentedControl)
+        styleSegmentedControl(leaveNowSegmentedControl)
         styleCancelButton()
         styleDoneButton()
-        styleDisclaimerLabel()
+//        styleDisclaimerLabel()
 
         setDatepickerSettings()
-        setSegmentedControl(withItems: segmentedControlOptions)
+        
+        setSegmentedControl(timeTypeSegmentedControl, withItems: timeTypeSegmentedControlOptions)
+        let leaveAt = 0
+        timeTypeSegmentedControl.selectedSegmentIndex = leaveAt
+        
+        setSegmentedControl(leaveNowSegmentedControl, withItems: leaveNowSegmentedControlOptions)
+        leaveNowSegmentedControl.addTarget(self, action: #selector(leaveNowSegmentedControlValueChanged(segmentControl:)), for: .valueChanged)
+
         setCancelButton(withTitle: "Cancel")
         setDoneButton(withTitle: "Done")
 //        setDisclaimerLabel(withText: "Results are shown for buses departing up to 30 minutes after the selected time")
@@ -56,14 +66,37 @@ class DatepickerView: UIView {
     
     // MARK: Segement Control
     
-    func segmentedControlValueChanged(segmentControl: UISegmentedControl) {
-        let leaveNow = 0
-        if segmentedControl.selectedSegmentIndex == leaveNow {
-            datepicker.date = Date()
-            segmentedControl.selectedSegmentIndex = prevSelectedIndex
+    func leaveNowSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
+        let now = Date()
+        datepicker.date = now
+    }
+    
+    // MARK: Datepicker
+    
+    func datepickerValueChanged(datepicker: UIDatePicker) {
+        let now = Date()
+        if Time.equalToMinute(date1: datepicker.date, date2: now) {
+            let leaveNow = 0
+            leaveNowSegmentedControl.selectedSegmentIndex = leaveNow
+        } else {
+            leaveNowSegmentedControl.selectedSegmentIndex = UISegmentedControlNoSegment
         }
-        
-        prevSelectedIndex = segmentedControl.selectedSegmentIndex
+    }
+    
+    // MARK: Setters
+    
+    func setDatepickerDate(date: Date) {
+        datepicker.date = date
+        datepickerValueChanged(datepicker: datepicker)
+    }
+    
+    func setDatepickerTimeType(searchTimeType: SearchType) {
+        switch searchTimeType {
+        case .leaveAt:
+            timeTypeSegmentedControl.selectedSegmentIndex = 0
+        case .arriveBy:
+            timeTypeSegmentedControl.selectedSegmentIndex = 1
+        }
     }
     
     // MARK: Style
@@ -72,8 +105,7 @@ class DatepickerView: UIView {
         datepicker.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: datePickerHeight)
     }
     
-    private func styleSegmentedControl(){
-        segmentedControl.frame = CGRect(x: 0, y: 0, width: self.frame.width*(343/375), height: segmentedControlHeight)
+    private func styleSegmentedControl(_ segmentedControl: UISegmentedControl){
         segmentedControl.tintColor = .tcatBlueColor
         let segmentControlFont = UIFont(name: FontNames.SanFrancisco.Regular, size: 13.0)
         segmentedControl.setTitleTextAttributes([NSFontAttributeName: segmentControlFont!], for: .normal)
@@ -108,16 +140,14 @@ class DatepickerView: UIView {
         
         let next7Days = now.addingTimeInterval(7*24*60*60)
         datepicker.maximumDate = next7Days //set maximum date to 7 days from now
+        
+        datepicker.addTarget(self, action: #selector(datepickerValueChanged(datepicker:)), for: .valueChanged)
     }
     
-    private func setSegmentedControl(withItems titles: [String]){
+    private func setSegmentedControl(_ segmentedContol: UISegmentedControl, withItems titles: [String]){
         for i in titles.indices {
-            segmentedControl.insertSegment(withTitle: titles[i], at: i, animated: false)
+            segmentedContol.insertSegment(withTitle: titles[i], at: i, animated: false)
         }
-        
-        segmentedControl.selectedSegmentIndex = prevSelectedIndex
-        
-        segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged(segmentControl:)), for: .valueChanged)
     }
     
     private func setCancelButton(withTitle title: String){
@@ -138,8 +168,9 @@ class DatepickerView: UIView {
     func positionSubviews(){
         positionCancelButton()
         positionDoneButton()
-        positionSegmentedControl(usingCancelButton: cancelButton)
-        positionDatepicker(usingSegmentedControl: segmentedControl)
+        positionTimeTypeSegmentedControl(usingCancelButton: cancelButton)
+        positionLeaveNowSegmentedControl(usingTimeTypeSegmentedControl: timeTypeSegmentedControl)
+        positionDatepicker(usingSegmentedControl: timeTypeSegmentedControl)
         positionDisclaimerLabel(usingDatepicker: datepicker)
      }
     
@@ -157,13 +188,15 @@ class DatepickerView: UIView {
         doneButton.frame = newFrame
     }
     
-    private func positionSegmentedControl(usingCancelButton cancelButton: UIButton){
-        let oldFrame = segmentedControl.frame
-        let newFrame = CGRect(x: 0, y: cancelButton.frame.maxY + spaceBtButtonAndSegmentedControl, width: oldFrame.width, height: oldFrame.height)
+    private func positionTimeTypeSegmentedControl(usingCancelButton cancelButton: UIButton){
+        timeTypeSegmentedControl.frame = CGRect(x: 0, y: cancelButton.frame.maxY + spaceBtButtonAndSegmentedControl, width: (self.frame.width*(343/375) - spaceBtSegmentControls)*(2/3), height: segmentedControlHeight)
         
-        segmentedControl.frame = newFrame
-        
-        segmentedControl.center.x = self.frame.width/2
+        timeTypeSegmentedControl.center.x = self.frame.width/2 + timeTypeSegmentedControl.frame.width/4 + spaceBtSegmentControls/2
+    }
+    
+    private func positionLeaveNowSegmentedControl(usingTimeTypeSegmentedControl timeTypeSegmentedControl: UISegmentedControl) {
+        let width = (self.frame.width*(343/375) - spaceBtSegmentControls)*(1/3)
+        leaveNowSegmentedControl.frame = CGRect(x: timeTypeSegmentedControl.frame.minX - spaceBtSegmentControls - width, y: timeTypeSegmentedControl.frame.minY, width: width, height: segmentedControlHeight)
     }
     
     private func positionDatepicker(usingSegmentedControl segmentedControl: UISegmentedControl){
@@ -185,7 +218,8 @@ class DatepickerView: UIView {
     func addSubviews(){
         addSubview(cancelButton)
         addSubview(doneButton)
-        addSubview(segmentedControl)
+        addSubview(timeTypeSegmentedControl)
+        addSubview(leaveNowSegmentedControl)
         addSubview(datepicker)
 //        addSubview(disclaimerLabel)
     }

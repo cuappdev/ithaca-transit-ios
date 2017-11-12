@@ -421,6 +421,18 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func showDatepicker(sender: UIButton){
         view.bringSubview(toFront: datePickerOverlay)
         view.bringSubview(toFront: datePickerView)
+        
+        // set up date on datepicker view
+        if routeSelection.datepickerButton.titleLabel?.text == "Leave now" {
+            let now = Date()
+            datePickerView.setDatepickerDate(date: now)
+        }
+        else if let time = searchTime  {
+            datePickerView.setDatepickerDate(date: time)
+        }
+        
+        datePickerView.setDatepickerTimeType(searchTimeType: searchTimeType)
+        
         UIView.animate(withDuration: 0.5) {
             self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.59 // darken screen when pull up datepicker
@@ -441,7 +453,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         let date = datePickerView.datepicker.date
         searchTime = date
         let dateString = Time.dateString(from: date)
-        let segmentedControl = datePickerView.segmentedControl
+        let segmentedControl = datePickerView.timeTypeSegmentedControl
 
         // Get selected time type
         let selectedSegString = (segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)) ?? ""
