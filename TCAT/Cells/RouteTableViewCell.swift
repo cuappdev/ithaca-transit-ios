@@ -119,6 +119,7 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
         
         guard let departureTime = route?.departureTime,
               let arrivalTime = route?.arrivalTime,
+              let isWalkingRoute = route?.isWalkingRoute(),
               let routeSummary = route?.routeSummary
               else{
                 print("RouteTableViewCell route object does not have the data needed to fill in the cell")
@@ -126,7 +127,7 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
               }
         
         setTravelTime(withDepartureTime: departureTime, withArrivalTime: arrivalTime)
-        setDepartureTime(withTime: departureTime)
+        setDepartureTime(withTime: departureTime, isWalkingRoute: isWalkingRoute)
         
         routeDiagram.setRouteData(fromRouteSummary: routeSummary, fromTravelDistance: route?.travelDistance)
     }
@@ -136,8 +137,14 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
         travelTimeLabel.sizeToFit()
     }
     
-    private func setDepartureTime(withTime departureTime: Date){
+    private func setDepartureTime(withTime departureTime: Date, isWalkingRoute: Bool){
+        if isWalkingRoute {
+            departureTimeLabel.text = ""
+            return
+        }
+        
         let time = Time.timeString(from: Date(), to: departureTime)
+        
         if time == "0 min" {
             departureTimeLabel.text = "Board now"
         } else {
