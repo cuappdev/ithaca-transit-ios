@@ -519,26 +519,35 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
     
+    override var prefersStatusBarHidden: Bool {
+        if isBannerShown {
+            return true
+        }
+        
+        return false
+    }
+    
     @objc private func reachabilityDidChange(_ notification: Notification) {
         let reachability = notification.object as! Reachability
         
         switch reachability.connection {
             
             case .none:
-                banner.show(queuePosition: .front, bannerPosition: .bottom, on: self)
-                isBannerShown = true
+                isBannerShown = true // hides status bar
+                setNeedsStatusBarAppearanceUpdate()
+                banner.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
                 setUserInteraction(to: false)
             
             case .cellular, .wifi:
                 if isBannerShown {
                     banner.dismiss()
-                    isBannerShown = false
+                    isBannerShown = false // unhides status bar
+                    setNeedsStatusBarAppearanceUpdate()
                 }
                 
                 setUserInteraction(to: true)
             
         }
-        
     }
     
     private func setUserInteraction(to userInteraction: Bool) {
