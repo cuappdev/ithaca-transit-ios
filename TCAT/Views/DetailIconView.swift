@@ -45,10 +45,6 @@ class DetailIconView: UIView {
         connectorTop.frame.origin.x -= connectorTop.frame.width / 2
         connectorBottom = UIView(frame: CGRect(x: linePosition, y: self.frame.height / 2, width: 4, height: self.frame.height / 2))
         connectorBottom.frame.origin.x -= connectorBottom.frame.width / 2
-
-        print("type:", type)
-        print("firstStep:", firstStep)
-        print("lastStep:", lastStep)
         
         if type == .noBus {
             if lastStep {

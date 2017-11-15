@@ -692,7 +692,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
         else if direction.type == .walk || direction.type == .arrive {
             let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell") as! SmallDetailTableViewCell
-            print("index:", indexPath.row)
             cell.setCell(direction, busEnd: direction.type == .arrive,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
