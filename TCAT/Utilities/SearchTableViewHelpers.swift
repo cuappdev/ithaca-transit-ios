@@ -100,6 +100,7 @@ func sectionIndexesForBusStop() -> [String: Int] {
 }
 
 func parseGoogleJSON(searchText: String, json: JSON) -> Section {
+    
     var itemTypes: [ItemType] = []
     let filteredBusStops = getAllBusStops().filter({(item: BusStop) -> Bool in
         let levenshteinScore = String.fuzzPartialRatio(str1: item.name.lowercased(), str2: searchText.lowercased())
