@@ -13,7 +13,6 @@ target 'TCAT' do
   pod 'TRON', '~> 3.0.0'
   pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/AAAstorga/Fuzzywuzzy_swift.git', :commit => '7f51e2b3c0eef8e5b46291f7ea3d483093b5ade9'
   pod 'DZNEmptyDataSet'
-  pod 'MYTableViewIndex', :git => 'https://github.com/mindz-eye/MYTableViewIndex.git', :commit => 'ef6119e2b0cd5968e2e24397cd59ab8080858054'
   pod 'NotificationBannerSwift'
   pod 'Fabric'
   pod 'Crashlytics'

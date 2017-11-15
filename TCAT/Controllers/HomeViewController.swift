@@ -10,12 +10,11 @@ import UIKit
 import GooglePlaces
 import SwiftyJSON
 import Alamofire
-import MYTableViewIndex
 import DZNEmptyDataSet
 import NotificationBannerSwift
 import Crashlytics
 
-class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, TableViewIndexDelegate, TableViewIndexDataSource, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
+class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     let userDefaults = UserDefaults.standard
     let cornellDestinations = [(name: "North Campus", stops: "RPCC, Balch Hall, Appel, Helen Newman, Jessup Field"),
                                (name: "West Campus", stops: "Baker Flagpole, Baker Flagpole (Slopeside)"),
@@ -28,7 +27,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var searchResultsSection: Section!
     var sectionIndexes: [String: Int]! = [:]
     var tableView : UITableView!
-    var tableViewIndexController: TableViewIndexController!
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
     var recentLocations: [ItemType] = []
@@ -83,15 +81,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.register(BusStopCell.self, forCellReuseIdentifier: "busStop")
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "searchResults")
         tableView.register(CornellDestinationCell.self, forCellReuseIdentifier: "cornellDestinations")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "seeAllStops")
         view.addSubview(tableView)
-        
-        tableViewIndexController = TableViewIndexController(tableView: tableView)
-        tableViewIndexController.tableViewIndex.delegate = self
-        tableViewIndexController.tableViewIndex.dataSource = self
-        initialTableViewIndexMidY = tableViewIndexController.tableViewIndex.indexRect().minY
-        tableViewIndexController.tableViewIndex.backgroundView?.backgroundColor = .clear
-        tableViewIndexController.setHidden(true, animated: false)
-        //setUpIndexBar(contentOffsetY: 0.0)
     }
 
     override func viewDidLayoutSubviews() {
@@ -105,7 +96,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         recentLocations = retrieveRecentLocations()
         if searchBar.showsCancelButton {
             searchBar.becomeFirstResponder()
-            tableViewIndexController.setHidden(true, animated: false)
         }
         //sections = createSections()
     }
@@ -122,7 +112,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 banner?.show(queuePosition: .front, on: self)
                 self.isNetworkDown = true
                 self.sectionIndexes = [:]
-                self.tableViewIndexController.tableViewIndex.reloadData()
                 self.searchBar.isUserInteractionEnabled = false
                 self.sections = []
             case .cellular, .wifi:
@@ -142,14 +131,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     func createSections() -> [Section] {
         var allSections: [Section] = []
-        let allBusStops = getAllBusStops()
-        //sectionIndexes = sectionIndexesForBusStop()
-        let allStopsSection = Section(type: .allStops, items: prepareAllBusStopItems(allBusStops: allBusStops))
         let recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
 //        let cornellDestinationSection = Section(type: .cornellDestination, items: [.cornellDestination])
 //        allSections.append(cornellDestinationSection)
+        let seeAllStopsSection = Section(type: .seeAllStops, items: [.seeAllStops])
         allSections.append(recentSearchesSection)
-        allSections.append(allStopsSection)
+        allSections.append(seeAllStopsSection)
         return allSections.filter({$0.items.count > 0})
     }
 
@@ -164,8 +151,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         switch sections[section].type {
         case .cornellDestination: header.textLabel?.text = "Get There Now"
         case .recentSearches: header.textLabel?.text = "Recent Searches"
-        case .allStops: header.textLabel?.text = "All Stops"
-        case .searchResults: header.textLabel?.text = nil
+        case .seeAllStops, .searchResults: header.textLabel?.text = nil
         default: break
         }
     }
@@ -174,8 +160,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         switch sections[section].type {
         case .cornellDestination: return "Get There Now"
         case .recentSearches: return "Recent Searches"
-        case .allStops: return "All Stops"
-        case .searchResults: return nil
+        case .seeAllStops, .searchResults: return nil
         default: return nil
         }
     }
@@ -191,7 +176,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         switch sections[indexPath.section].type {
         case .cornellDestination:
             itemType = .cornellDestination
-        case .recentSearches, .allStops, .searchResults:
+        case .recentSearches, .seeAllStops, .searchResults:
             itemType = sections[indexPath.section].items[indexPath.row]
         default: break
         }
@@ -209,6 +194,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 cell = tableView.dequeueReusableCell(withIdentifier: "cornellDestinations") as! CornellDestinationCell
                 cell.textLabel?.text = cornellDestinations[indexPath.row].name
                 cell.detailTextLabel?.text = cornellDestinations[indexPath.row].stops
+            case .seeAllStops:
+                cell = tableView.dequeueReusableCell(withIdentifier: "seeAllStops")
+                cell.textLabel?.text = "See All Stops"
+                cell.imageView?.image = #imageLiteral(resourceName: "list")
+                cell.accessoryType = .disclosureIndicator
             }
         }
         
@@ -225,7 +215,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         switch sections[section].type {
         case .cornellDestination: return cornellDestinations.count
         case .recentSearches: return recentLocations.count
-        case .allStops: return sections[section].items.count
+        case .seeAllStops: return sections[section].items.count
         case .searchResults: return sections[section].items.count
         default: return 0
         }
@@ -234,17 +224,22 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var itemType: ItemType
         let optionsVC = RouteOptionsViewController()
+        let allStopsTVC = AllStopsTableViewController()
+        var didSelectAllStops = false
         
         switch sections[indexPath.section].type {
         case .cornellDestination:
             itemType = .cornellDestination
-        case .recentSearches, .searchResults, .allStops:
+        case .recentSearches, .searchResults, .seeAllStops:
             itemType = sections[indexPath.section].items[indexPath.row]
         default: itemType = ItemType.cornellDestination
         }
         switch itemType {
         case .cornellDestination:
             print("User Selected Cornell Destination")
+        case .seeAllStops:
+            didSelectAllStops = true
+            allStopsTVC.allStops = getAllBusStops()
         case .busStop(let busStop):
             insertRecentLocation(location: busStop)
             optionsVC.searchTo = busStop
@@ -255,7 +250,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
-        navigationController?.pushViewController(optionsVC, animated: true)
+        let vcToPush = didSelectAllStops ? allStopsTVC : optionsVC
+        navigationController?.pushViewController(vcToPush, animated: true)
     }
 
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
@@ -292,14 +288,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             let allBusStops = stops.allStops
             let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
             self.userDefaults.set(data, forKey: Key.UserDefaults.allBusStops)
-            self.tableViewIndexController.tableViewIndex.reloadData()
             self.searchBar.isUserInteractionEnabled = true
             //self.sectionIndexes = sectionIndexesForBusStop()
         }, failure: { error in
             print("HomeVC getBusStops error:", error)
             self.isNetworkDown = true
             self.sectionIndexes = [:]
-            self.tableViewIndexController.tableViewIndex.reloadData()
             self.searchBar.isUserInteractionEnabled = false
             self.sections = []
         })
@@ -325,18 +319,13 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         if let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
             cancelButton.isEnabled = true
         }
-        // let contentOffsetY = scrollView.contentOffset.y
-        if scrollView == tableView && searchBar.text == "" && !isKeyboardVisible {
-            // setUpIndexBar(contentOffsetY: contentOffsetY)
-        }
     }
     
     /* SearchBar Delegates */
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
-        tableViewIndexController.setHidden(true, animated: false)
-        
+
         //Crashlytics Answers
         Answers.searchBarTappedInHome()
     }
@@ -347,7 +336,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.endEditing(true)
         searchBar.text = nil
         sections = createSections()
-        tableViewIndexController.setHidden(false, animated: false)
         tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
         
     }
@@ -360,45 +348,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.endEditing(true)
     }
-    
-    /* TableViewIndex Functions */
-    func indexItems(for tableViewIndex: TableViewIndex) -> [UIView] {
-        let arrayOfKeys = Array(sectionIndexes.keys).sorted()
-        return arrayOfKeys.map( { character -> UIView in
-            let letter = StringItem(text: character)
-            letter.tintColor = .tcatBlueColor
-            return letter })
-    }
-    
-    func tableViewIndex(_ tableViewIndex: TableViewIndex, didSelect item: UIView, at index: Int) {
-        let arrayOfKeys = Array(sectionIndexes.keys).sorted()
-        let currentLetter = arrayOfKeys[index]
-        let indexPath = IndexPath(row: sectionIndexes[currentLetter]!, section: sections.count - 1)
-        // tableView.scrollToRow(at: indexPath, at: .top, animated: false)
-        if #available(iOS 10.0, *) {
-            let taptic = UIImpactFeedbackGenerator(style: .light)
-            taptic.prepare()
-            tableView.scrollToRow(at: indexPath, at: .top, animated: false)
-            taptic.impactOccurred()
-        } else { tableView.scrollToRow(at: indexPath, at: .top, animated: false) }
-        // return true
-    }
-    
-    func setUpIndexBar(contentOffsetY: CGFloat) {
-        if let visibleRows = tableView.indexPathsForVisibleRows {
-            let visibleSections = visibleRows.map({$0.section})
-            if let allStopsIndex = sections.index(where: {$0.type == SectionType.allStops}), let firstAllStopCellIndexPath = visibleRows.filter({$0.section == allStopsIndex && $0.row == 1}).first {
-                let secondCell = tableView.cellForRow(at: firstAllStopCellIndexPath)
-                let newYPosition = view.convert(tableViewIndexController.tableViewIndex.indexRect(), from: tableView).minY
-                if ((newYPosition * -1.0) < (secondCell?.frame.minY)! - view.bounds.midY) {
-                    let offset = (secondCell?.frame.minY)! - initialTableViewIndexMidY - contentOffsetY
-                    tableViewIndexController.tableViewIndex.indexOffset = UIOffset(horizontal: 0.0, vertical: offset)
-                    tableViewIndexController.setHidden(!visibleSections.contains(allStopsIndex), animated: true)
-                }
-            }
-        }
-    }
-    
+
     /* Get Search Results */
     func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
@@ -407,14 +357,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 self.searchResultsSection = parseGoogleJSON(searchText: searchText, json: responseJson)
                 self.tableView.contentOffset = .zero
                 self.sections = [self.searchResultsSection]
-                self.tableViewIndexController.setHidden(true, animated: false)
-                //if !self.sections[0].items.isEmpty {
-                    //self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false) }
             })
         } else {
             sections = createSections()
             tableView.scrollToRow(at: IndexPath(row: 0, section: 1), at: .top, animated: false)
-            self.tableViewIndexController.setHidden(false, animated: false)
         }
     }
 }

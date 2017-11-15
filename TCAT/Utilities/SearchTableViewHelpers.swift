@@ -21,7 +21,7 @@ struct Section {
 enum SectionType {
     case cornellDestination
     case recentSearches
-    case allStops
+    case seeAllStops
     case searchResults
     case currentLocation
 }
@@ -30,6 +30,7 @@ enum ItemType {
     case busStop(BusStop)
     case placeResult(PlaceResult)
     case cornellDestination
+    case seeAllStops
 }
 
 func retrieveRecentLocations() -> [ItemType] {
