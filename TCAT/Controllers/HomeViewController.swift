@@ -31,6 +31,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var tableViewIndexController: TableViewIndexController!
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
+//    var submitBugButton: UIBarButtonItem!
     var recentLocations: [ItemType] = []
     var isKeyboardVisible = false
     var sections: [Section] = [] {
@@ -66,6 +67,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
         textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
         navigationItem.titleView = searchBar
+        
+        
         
         let tableViewFrame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height - (navigationController?.navigationBar.bounds.height)!)
         tableView = UITableView(frame: tableViewFrame, style: .grouped)
