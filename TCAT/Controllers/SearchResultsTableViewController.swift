@@ -22,7 +22,7 @@ protocol SearchBarCancelDelegate {
 }
 
 
-class SearchResultsTableViewController: UITableViewController, UISearchBarDelegate, UISearchResultsUpdating, CLLocationManagerDelegate {
+class SearchResultsTableViewController: UITableViewController, UISearchBarDelegate, UISearchResultsUpdating, CLLocationManagerDelegate, UnwindAllStopsTVCDelegate, UINavigationControllerDelegate {
     
     let userDefaults = UserDefaults.standard
     let locationManager = CLLocationManager()
@@ -41,6 +41,8 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     var initialTableViewIndexMinY: CGFloat!
     var isKeyboardVisible = false
     var shouldShowCurrentLocation = true
+    var returningFromAllStopsTVC = false
+    var returningFromAllStopsBusStop: BusStop?
     var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
@@ -191,10 +193,9 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         
         switch itemType {
         case .seeAllStops:
-            print("DID SELECT SEE ALL STOPS")
             didSelectAllStops = true
-
-
+            allStopsTVC.allStops = getAllBusStops()
+            allStopsTVC.unwindAllStopsTVCDelegate = self
         case .busStop(let busStop):
             if busStop.name != "Current Location" {
                 insertRecentLocation(location: busStop)
@@ -215,7 +216,12 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar?.endEditing(true)
         if didSelectAllStops {
-            navigationController?.pushViewController(allStopsTVC, animated: true)
+            if let parentIsSearch = self.parent?.isKind(of: UISearchController.self), parentIsSearch {
+                let navController = self.parent?.presentingViewController?.navigationController
+                navController?.delegate = self
+                allStopsTVC.navController = navController
+                navController?.pushViewController(allStopsTVC, animated: true)
+            }
         }
     }
     
@@ -271,9 +277,6 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
             })
         } else {
             sections = createSections()
-            tableView.scrollToRow(at: IndexPath(row: 0, section: 1), at: .top, animated: false)
-            //self.tableViewIndexController.setHidden(false, animated: false)
-            
         }
     }
     
@@ -300,5 +303,16 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         timer?.invalidate()
         timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
+    }
+
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        if returningFromAllStopsTVC, let busStop = returningFromAllStopsBusStop {
+            destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
+        }
+    }
+
+    func dismissSearchResultsVC(busStop: BusStop) {
+        returningFromAllStopsBusStop = busStop
+        returningFromAllStopsTVC = true
     }
 }

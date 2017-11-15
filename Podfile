@@ -11,7 +11,7 @@ target 'TCAT' do
   pod 'SwiftyJSON', '~> 3.1.4'
   pod 'Alamofire', '~> 4.4'
   pod 'TRON', '~> 3.0.0', :inhibit_warnings => true
-  pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/AAAstorga/Fuzzywuzzy_swift.git', :commit => 'dd72a06abaebc6c67ed3eb28ce53df240c2e3038'
+  pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/AAAstorga/Fuzzywuzzy_swift.git', :commit => '9c94253b2e83abffcce5014808fe1a22c6b97d90'
   pod 'DZNEmptyDataSet'
   pod 'NotificationBannerSwift'
   pod 'Fabric'

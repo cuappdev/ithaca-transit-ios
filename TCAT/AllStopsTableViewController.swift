@@ -8,16 +8,25 @@
 
 import UIKit
 
+protocol UnwindAllStopsTVCDelegate {
+    func dismissSearchResultsVC(busStop: BusStop)
+}
+
 class AllStopsTableViewController: UITableViewController {
 
     var allStops: [BusStop]!
     var sectionIndexes: [String: [BusStop]]!
     var sortedKeys: [String]!
+    var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
+    var navController: UINavigationController!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.edgesForExtendedLayout = []
         sectionIndexes = sectionIndexesForBusStop()
-        sortedKeys = Array(sectionIndexes.keys).sorted()
+
+        sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
+        sortedKeys.append("#")
 
         title = "All Stops"
         tableView.sectionIndexColor = UIColor(white: 34.0 / 255.0, alpha: 1.0)
@@ -28,8 +37,11 @@ class AllStopsTableViewController: UITableViewController {
         title = "All Stops"
         navigationController?.navigationBar.titleTextAttributes = titleAttributes
 
-        navigationController?.navigationItem.titleView = nil
-
+        if #available(iOS 11.0, *) {
+            navigationItem.searchController = nil
+        } else {
+            navigationItem.titleView = nil
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -41,17 +53,25 @@ class AllStopsTableViewController: UITableViewController {
         var sectionIndexDictionary: [String: [BusStop]] = [:]
         var currentChar: Character = allStops[0].name.capitalized.first!
         var currBusStopArray: [BusStop] = []
+        var numberBusStops: [BusStop] = []
         for busStop in allStops {
             if let firstChar = busStop.name.capitalized.first {
                 if currentChar != firstChar {
-                    sectionIndexDictionary["\(currentChar)"] = currBusStopArray
-                    currBusStopArray = []
+                    if !CharacterSet.decimalDigits.contains(currentChar.unicodeScalars.first!) {
+                        sectionIndexDictionary["\(currentChar)"] = currBusStopArray
+                        currBusStopArray = []
+                    }
                     currentChar = firstChar
                 } else {
+                    if CharacterSet.decimalDigits.contains(currentChar.unicodeScalars.first!) {
+                        numberBusStops.append(busStop)
+                    } else {
                     currBusStopArray.append(busStop)
+                    }
                 }
             }
         }
+        sectionIndexDictionary["#"] = numberBusStops
         return sectionIndexDictionary
     }
 
@@ -93,7 +113,13 @@ class AllStopsTableViewController: UITableViewController {
         optionsVC.searchTo = busStopSelected
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)
+
+        if let unwindDelegate = unwindAllStopsTVCDelegate {
+            unwindDelegate.dismissSearchResultsVC(busStop: busStopSelected)
+            navigationController?.popViewController(animated: true)
+        } else {
         navigationController?.pushViewController(optionsVC, animated: true)
+        }
     }
 
 }

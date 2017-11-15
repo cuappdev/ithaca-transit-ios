@@ -63,6 +63,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.searchBarStyle = .default
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
         textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
+        
         navigationItem.titleView = searchBar
         
         let tableViewFrame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height - (navigationController?.navigationBar.bounds.height)!)
@@ -360,7 +361,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             })
         } else {
             sections = createSections()
-            tableView.scrollToRow(at: IndexPath(row: 0, section: 1), at: .top, animated: false)
         }
     }
 }

@@ -223,7 +223,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         searchBarView.searchController?.dismiss(animated: true, completion: nil)
     }
 
-    func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?){
+    func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?) {
+        //navigationController?.pushViewController(UIViewController(), animated: false)
+        //navigationController?.popViewController(animated: false)
+
+        //self.edgesForExtendedLayout = .top
 
         switch searchType{
 
@@ -246,7 +250,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 searchTo = result
                 routeSelection.toSearchbar.setTitle(result.name, for: .normal)
             }
-
         }
 
         hideSearchBar()
@@ -277,6 +280,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
         navigationItem.setLeftBarButton(nil, animated: false)
         navigationItem.hidesBackButton = true
+        //searchBarView.resultsViewController?.returningFromAllStopsBusStop = nil
+        //searchBarView.resultsViewController?.returningFromAllStopsTVC = false
         searchBarView.searchController?.isActive = true
     }
 
@@ -636,7 +641,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.separatorStyle = .none
         routeResults.backgroundColor = .tableBackgroundColor
         routeResults.alwaysBounceVertical = true //so table view doesn't scroll over top & bottom
-        
+
         refreshControl.isHidden = true
         
         if #available(iOS 10.0, *) {
