@@ -101,6 +101,18 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: routeTableViewCellIdentifier)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        var safeAreaHeight: CGFloat = 0
+        if #available(iOS 11, *) {
+            safeAreaHeight = view.safeAreaInsets.bottom
+        }
+        else {
+            safeAreaHeight = 0
+        }
+        
+        updateDatepickerHeight(safeAreaBottomHeight: safeAreaHeight)
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         takedownReachability()
     }
@@ -411,6 +423,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     private func setupDatepickerView(){
         datePickerView = DatepickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 254))
+        
         datePickerView.positionSubviews()
         datePickerView.addSubviews()
         datePickerView.backgroundColor = .white
@@ -427,6 +440,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         datePickerOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissDatepicker)))
     }
 
+    private func updateDatepickerHeight(safeAreaBottomHeight safeAreaHeight: CGFloat) {
+        let oldFrame = datePickerView.frame
+        let newFrame = CGRect(x: oldFrame.minX, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height + safeAreaHeight)
+        
+        datePickerView.frame = newFrame
+    }
+    
     func showDatepicker(sender: UIButton){
         view.bringSubview(toFront: datePickerOverlay)
         view.bringSubview(toFront: datePickerView)
