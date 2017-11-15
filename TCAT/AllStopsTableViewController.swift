@@ -39,10 +39,10 @@ class AllStopsTableViewController: UITableViewController {
 
     func sectionIndexesForBusStop() -> [String: [BusStop]] {
         var sectionIndexDictionary: [String: [BusStop]] = [:]
-        var currentChar: Character = Character("\(allStops[0].name.capitalized.characters.first!)")
+        var currentChar: Character = allStops[0].name.capitalized.first!
         var currBusStopArray: [BusStop] = []
         for busStop in allStops {
-            if let firstChar = busStop.name.capitalized.characters.first {
+            if let firstChar = busStop.name.capitalized.first {
                 if currentChar != firstChar {
                     sectionIndexDictionary["\(currentChar)"] = currBusStopArray
                     currBusStopArray = []

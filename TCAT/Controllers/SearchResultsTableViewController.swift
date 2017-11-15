@@ -261,7 +261,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     /* Fetch Search Results*/
     func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
-        if searchText.characters.count > 0 {
+        if searchText.count > 0 {
             Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
                 self.searchResultsSection = parseGoogleJSON(searchText: searchText, json: responseJson)
                 self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
@@ -281,10 +281,6 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if let cancelButton = searchBar?.value(forKey: "_cancelButton") as? UIButton {
             cancelButton.isEnabled = true
-        }
-        let contentOffsetY = scrollView.contentOffset.y
-        if scrollView == tableView && searchBar?.text == "" && !isKeyboardVisible {
-            //setUpIndexBar(contentOffsetY: contentOffsetY)
         }
     }
     

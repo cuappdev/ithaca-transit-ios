@@ -214,7 +214,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
             
             alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             let settings = UIAlertAction(title: "Settings", style: .default) { (_) in
-                UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
+                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
             }
             
             alertController.addAction(settings)

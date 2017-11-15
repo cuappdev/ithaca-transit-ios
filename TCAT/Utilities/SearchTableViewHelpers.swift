@@ -89,7 +89,7 @@ func sectionIndexesForBusStop() -> [String: Int] {
     var currentChar: Character = Character("+")
     var currentIndex = 0
     for busStop in allStops {
-        if let firstChar = busStop.name.capitalized.characters.first {
+        if let firstChar = busStop.name.capitalized.first {
             if currentChar != firstChar {
                 sectionIndexDictionary["\(firstChar)"] = currentIndex
                 currentChar = firstChar
@@ -107,7 +107,7 @@ func parseGoogleJSON(searchText: String, json: JSON) -> Section {
         return levenshteinScore > Key.FuzzySearch.minimumValue
     })
 
-    let updatedOrderBusStops = sortFilteredBusStops(busStops: filteredBusStops, letter: searchText.capitalized.characters.first!)
+    let updatedOrderBusStops = sortFilteredBusStops(busStops: filteredBusStops, letter: searchText.capitalized.first!)
     itemTypes = updatedOrderBusStops.map( {ItemType.busStop($0)})
     
     if let predictionsArray = json["predictions"].array {

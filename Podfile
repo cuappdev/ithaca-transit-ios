@@ -10,8 +10,8 @@ target 'TCAT' do
   pod 'GooglePlaces', '~> 2.2'
   pod 'SwiftyJSON', '~> 3.1.4'
   pod 'Alamofire', '~> 4.4'
-  pod 'TRON', '~> 3.0.0'
-  pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/AAAstorga/Fuzzywuzzy_swift.git', :commit => '7f51e2b3c0eef8e5b46291f7ea3d483093b5ade9'
+  pod 'TRON', '~> 3.0.0', :inhibit_warnings => true
+  pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/AAAstorga/Fuzzywuzzy_swift.git', :commit => 'dd72a06abaebc6c67ed3eb28ce53df240c2e3038'
   pod 'DZNEmptyDataSet'
   pod 'NotificationBannerSwift'
   pod 'Fabric'
