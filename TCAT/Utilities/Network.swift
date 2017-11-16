@@ -97,7 +97,7 @@ class Network {
     static let placesClient = GMSPlacesClient.shared()
 
     class func getAllStops() -> APIRequest<AllBusStops, Error> {
-        let request: APIRequest<AllBusStops, Error> = tron.request("stops")
+        let request: APIRequest<AllBusStops, Error> = tron.swiftyJSON.request("stops")
         request.method = .get
         return request
     }
@@ -115,7 +115,7 @@ class Network {
     class func getRoutes(start: CoordinateAcceptor, end: CoordinateAcceptor, time: Date, type: SearchType, callback:@escaping ((APIRequest<JSON, Error>) -> Void)) {
         getStartEndCoords(start: start, end: end) { startCoords, endCoords in
             
-            let request: APIRequest<JSON, Error> = tron.request("routes")
+            let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routes")
             
             request.parameters = [
                 "start_coords"  :   "\(startCoords?.latitude ??? ""),\(startCoords?.longitude ??? "")",
@@ -137,7 +137,7 @@ class Network {
 
     class func getGooglePlaces(searchText: String) -> APIRequest<JSON, Error> {
         let googleJson = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
-        let request: APIRequest<JSON, Error> = googleTron.request("json")
+        let request: APIRequest<JSON, Error> = googleTron.swiftyJSON.request("json")
         request.parameters = [
             "strictbounds" : "",
             "location" : "42.4440,-76.5019",
@@ -150,7 +150,7 @@ class Network {
     }
 
     class func getBusLocations(routeID: String) -> APIRequest<AllBusLocations, Error> {
-        let request: APIRequest<AllBusLocations, Error> = tron.request("tracking")
+        let request: APIRequest<AllBusLocations, Error> = tron.swiftyJSON.request("tracking")
         request.parameters = ["routeID" : routeID]
         request.method = .get
         return request
