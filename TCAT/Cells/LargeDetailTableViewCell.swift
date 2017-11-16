@@ -134,7 +134,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         label.frame.size.width = (chevron.frame.minX - 12) - cellWidth
         label.frame.origin.y = edgeSpacing // - paragraphStyle.lineSpacing
         
-        attributedString.addAttribute(NSParagraphStyleAttributeName,
+        attributedString.addAttribute(NSAttributedStringKey.paragraphStyle,
                                       value: paragraphStyle,
                                       range: NSMakeRange(0, attributedString.length))
         label.attributedText = attributedString

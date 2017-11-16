@@ -168,11 +168,11 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         }
     }
     
-    func moveToNextViewController() {
+    @objc func moveToNextViewController() {
         onboardingDelegate.moveToNextViewController(vc: self)
     }
     
-    func dismissOnboarding() {
+    @objc func dismissOnboarding() {
         
         let rootVC = HomeViewController()
         let desiredViewController = UINavigationController(rootViewController: rootVC)
@@ -194,7 +194,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
-    func enableLocation() {
+    @objc func enableLocation() {
         
         locationManager.requestWhenInUseAuthorization()
     }
@@ -214,7 +214,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
             
             alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             let settings = UIAlertAction(title: "Settings", style: .default) { (_) in
-                UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
+                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
             }
             
             alertController.addAction(settings)

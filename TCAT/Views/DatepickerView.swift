@@ -66,13 +66,13 @@ class DatepickerView: UIView {
     
     // MARK: Segement Control
     
-    func leaveNowSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
+    @objc func leaveNowSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
         datepicker.date = Date()
     }
     
     // MARK: Datepicker
     
-    func datepickerValueChanged(datepicker: UIDatePicker) {
+    @objc func datepickerValueChanged(datepicker: UIDatePicker) {
         let now = Date()
         if Time.compare(date1: datepicker.date, date2: now) == ComparisonResult.orderedSame {
             let leaveNow = 0
@@ -107,7 +107,7 @@ class DatepickerView: UIView {
     private func styleSegmentedControl(_ segmentedControl: UISegmentedControl){
         segmentedControl.tintColor = .tcatBlueColor
         let segmentControlFont = UIFont(name: FontNames.SanFrancisco.Regular, size: 13.0)
-        segmentedControl.setTitleTextAttributes([NSFontAttributeName: segmentControlFont!], for: .normal)
+        segmentedControl.setTitleTextAttributes([NSAttributedStringKey.font: segmentControlFont!], for: .normal)
     }
     
     private func styleCancelButton(){

@@ -150,7 +150,7 @@ class Direction: NSObject, NSCopying {
     
     func copy(with zone: NSZone? = nil) -> Any {
         
-        return type(of: self).init(
+        return Swift.type(of: self).init(
             type: type,
             locationName: locationName,
             startLocation: startLocation,
