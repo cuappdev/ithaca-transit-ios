@@ -67,4 +67,8 @@ class RouteSummaryObject: NSObject, JSONDecodable {
     func updateName(from place: Place) {
         name = place.name
     }
+    
+    func removeNextDirection() {
+        nextDirection = nil
+    }
 }

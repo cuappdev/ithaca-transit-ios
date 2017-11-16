@@ -232,7 +232,12 @@ class Route: NSObject, JSONDecodable {
                 let type = place is BusStop ? PinType.stop : PinType.place
                 lastRouteSummaryObject.type = type
                 
-                if lastRouteSummaryObject.name == "End" {
+                // Remove “End” if 2nd-to-last stop has same name as ending destination
+                let secondToLastStop = routeSummary.count-2
+                if lastRouteSummaryObject.name == "End" && routeSummary.count > 2 && routeSummary[secondToLastStop].name.lowercased() == place.name.lowercased() {
+                    routeSummary.removeLast()
+                    routeSummary.last?.removeNextDirection() // remove 2nd-to-last stop next direction (so it behaves like ending stop)
+                } else if(lastRouteSummaryObject.name == "End") {
                     lastRouteSummaryObject.updateName(from: place)
                 }
             }
