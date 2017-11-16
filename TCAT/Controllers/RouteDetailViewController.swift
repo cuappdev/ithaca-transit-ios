@@ -96,8 +96,15 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 var waypoints: [Waypoint] = []
                 for point in path {
                     var type: WaypointType = .none
-                    if point == path.first ?? CLLocationCoordinate2D() { type = .origin }
-                    else if point == path.last ?? CLLocationCoordinate2D() { type = .destination }
+                    if direction == self.directions.first && point == path.first! {
+                        type = .origin
+                    }
+                    else if direction == self.directions.last && point == path.last! {
+                        type = .destination
+                    }
+//                    else if point == path.first! || point == path.last! {
+//                        type = .walk
+//                    }
                     let waypoint = Waypoint(lat: point.latitude, long: point.longitude, wpType: type)
                     waypoints.append(waypoint)
                 }
@@ -141,20 +148,12 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
                 if direction.type == .depart {
 
-                    if arrayIndex == 0 {
-                        type = .origin
-                    }
-
-                    else if arrayIndex == directions.count - 1 {
-                        type = .destination
-                    }
-
-                    else if pathIndex == 0 {
-                        type = .busStart
+                    if pathIndex == 0 {
+                        type = arrayIndex == 0 ? .origin : .bus
                     }
                         
-                    else if pathIndex == direction.path.count - 1  {
-                        type = .busEnd
+                    else if pathIndex == direction.path.count - 1 {
+                        type = arrayIndex == directions.count - 1 ? .destination : .bus
                     }
                         
                     else if pointWithinLocation(point: point, location: direction.startLocation.coordinate, exact: true) ||
@@ -166,6 +165,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
                 }
 
+                // can probably delete
                 else if direction.type == .walk {
 
                     if arrayIndex == 0 && pathIndex == 0 {
@@ -692,12 +692,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
         else if direction.type == .walk || direction.type == .arrive {
             let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell") as! SmallDetailTableViewCell
-
             cell.setCell(direction, busEnd: direction.type == .arrive,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
-
             return format(cell)
         }
 

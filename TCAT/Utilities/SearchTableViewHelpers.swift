@@ -101,6 +101,7 @@ func sectionIndexesForBusStop() -> [String: Int] {
 }
 
 func parseGoogleJSON(searchText: String, json: JSON) -> Section {
+    
     var itemTypes: [ItemType] = []
 
     //dont keep calling getAllBusStops()
