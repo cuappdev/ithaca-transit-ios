@@ -40,13 +40,14 @@ class SmallDetailTableViewCell: UITableViewCell {
     func setCell(_ direction: Direction, busEnd: Bool, firstStep: Bool, lastStep: Bool) {
         
         let shouldAddSubview = iconView == nil
-
+        
+        iconView = DetailIconView(height: cellHeight,
+                                  type: busEnd ? IconType.busEnd: IconType.noBus,
+                                  time: direction.startTimeDescription,
+                                  firstStep: firstStep,
+                                  lastStep: lastStep)
+        
         if shouldAddSubview {
-            iconView = DetailIconView(height: cellHeight,
-                                      type: busEnd ? IconType.busEnd: IconType.noBus,
-                                      time: direction.startTimeDescription,
-                                      firstStep: firstStep,
-                                      lastStep: lastStep)
             contentView.addSubview(iconView!)
         }
         

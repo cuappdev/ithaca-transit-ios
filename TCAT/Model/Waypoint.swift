@@ -13,15 +13,15 @@ enum WaypointType: String {
     case origin
     case destination
     case stop
-    case busStart
-    case busEnd
+    case bus
+    case walk
     case none
 }
 
 class Waypoint: NSObject {
     
     let smallDiameter: CGFloat = 12
-    let largeDiameter: CGFloat = 16
+    let largeDiameter: CGFloat = 24
     
     var latitude: CLLocationDegrees = 0
     var longitude: CLLocationDegrees = 0
@@ -43,10 +43,10 @@ class Waypoint: NSObject {
             self.iconView = drawDestinationIcon()
         case .stop:
             self.iconView = drawStopIcon()
-        case .busStart:
+        case .bus:
             self.iconView = drawBusPointIcon()
-        case .busEnd:
-            self.iconView = drawBusPointIcon()
+        case .walk:
+            self.iconView = drawWalkPointIcon()
         case .none:
             self.iconView = UIView()
         }
@@ -57,7 +57,7 @@ class Waypoint: NSObject {
     }
     
     func drawOriginIcon() -> UIView {
-        return drawCircle(radius: largeDiameter / 2, innerColor: .mediumGrayColor)
+        return drawCircle(radius: largeDiameter / 2, innerColor: .mediumGrayColor, borderColor: .white)
     }
     
     func drawDestinationIcon() -> UIView {
@@ -70,6 +70,10 @@ class Waypoint: NSObject {
 
     func drawBusPointIcon() -> UIView {
         return drawCircle(radius: smallDiameter / 2, innerColor: .tcatBlueColor)
+    }
+    
+    func drawWalkPointIcon() -> UIView {
+        return drawCircle(radius: smallDiameter / 2, innerColor: .mediumGrayColor)
     }
     
     // Draw waypoint meant to be placed as an iconView on map
@@ -104,7 +108,7 @@ class Waypoint: NSObject {
         switch wpType {
         case .destination:
             iconView.layer.borderColor = color.cgColor
-        case .origin, .stop, .busStart, .busEnd:
+        case .origin, .stop, .bus, .walk:
             iconView.backgroundColor = color
         case .none:
             break

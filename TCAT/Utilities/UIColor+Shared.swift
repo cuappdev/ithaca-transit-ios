@@ -63,12 +63,12 @@ extension UIView {
 func bold(pattern: String, in string: String) -> NSMutableAttributedString {
     let fontSize = UIFont.systemFontSize
     let attributedString = NSMutableAttributedString(string: string,
-                                                     attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: fontSize)])
-    let boldFontAttribute = [NSFontAttributeName: UIFont.boldSystemFont(ofSize: fontSize)]
+                                                     attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: fontSize)])
+    let boldFontAttribute = [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: fontSize)]
     
     do {
         let regex = try NSRegularExpression(pattern: pattern, options: [])
-        let ranges = regex.matches(in: string, options: [], range: NSMakeRange(0, string.characters.count)).map {$0.range}
+        let ranges = regex.matches(in: string, options: [], range: NSMakeRange(0, string.count)).map {$0.range}
         for range in ranges { attributedString.addAttributes(boldFontAttribute, range: range) }
     } catch { }
     
@@ -77,8 +77,9 @@ func bold(pattern: String, in string: String) -> NSMutableAttributedString {
 
 extension String {
     func capitalizingFirstLetter() -> String {
-        let first = String(characters.prefix(1)).capitalized
-        let other = String(characters.dropFirst()).lowercased()
+
+        let first = String(prefix(1)).capitalized
+        let other = String(dropFirst()).lowercased()
         return first + other
     }
 }
@@ -109,7 +110,7 @@ func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop]{
     var nonLetterArray = [BusStop]()
     var letterArray = [BusStop]()
     for stop in busStops {
-        if stop.name.characters.first! == letter {
+        if stop.name.first! == letter {
             letterArray.append(stop)
         } else {
             nonLetterArray.append(stop)

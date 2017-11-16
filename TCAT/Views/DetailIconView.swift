@@ -17,6 +17,7 @@ enum IconType: String {
 class DetailIconView: UIView {
     
     fileprivate let constant: CGFloat = 16
+    fileprivate var shouldAddSubviews: Bool = true
     
     var type: IconType!
     var time: String!
@@ -26,7 +27,7 @@ class DetailIconView: UIView {
     var connectorBottom: UIView!
     var statusCircle: Circle!
     
-    init (height: CGFloat, type: IconType, time: String, firstStep: Bool, lastStep: Bool) {
+    init(height: CGFloat, type: IconType, time: String, firstStep: Bool, lastStep: Bool) {
         
         self.type = type
         self.time = time
@@ -38,16 +39,12 @@ class DetailIconView: UIView {
         timeLabel.textColor = .primaryTextColor
         changeTime(time)
         
-        addSubview(timeLabel)
-        
         let linePosition = frame.maxX - constant
         
         connectorTop = UIView(frame: CGRect(x: linePosition, y: 0, width: 4, height: self.frame.height / 2))
         connectorTop.frame.origin.x -= connectorTop.frame.width / 2
         connectorBottom = UIView(frame: CGRect(x: linePosition, y: self.frame.height / 2, width: 4, height: self.frame.height / 2))
         connectorBottom.frame.origin.x -= connectorBottom.frame.width / 2
-        addSubview(connectorTop)
-        addSubview(connectorBottom)
         
         if type == .noBus {
             if lastStep {
@@ -89,7 +86,14 @@ class DetailIconView: UIView {
         
         statusCircle.center = self.center
         statusCircle.frame.origin.x = linePosition - (statusCircle.frame.width / 2)
-        addSubview(statusCircle)
+        
+        if shouldAddSubviews {
+            addSubview(timeLabel)
+            addSubview(connectorTop)
+            addSubview(connectorBottom)
+            addSubview(statusCircle)
+            shouldAddSubviews = false
+        }
         
     }
     

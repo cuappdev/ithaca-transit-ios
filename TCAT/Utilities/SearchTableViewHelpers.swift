@@ -21,7 +21,7 @@ struct Section {
 enum SectionType {
     case cornellDestination
     case recentSearches
-    case allStops
+    case seeAllStops
     case searchResults
     case currentLocation
 }
@@ -30,6 +30,7 @@ enum ItemType {
     case busStop(BusStop)
     case placeResult(PlaceResult)
     case cornellDestination
+    case seeAllStops
 }
 
 func retrieveRecentLocations() -> [ItemType] {
@@ -88,7 +89,7 @@ func sectionIndexesForBusStop() -> [String: Int] {
     var currentChar: Character = Character("+")
     var currentIndex = 0
     for busStop in allStops {
-        if let firstChar = busStop.name.capitalized.characters.first {
+        if let firstChar = busStop.name.capitalized.first {
             if currentChar != firstChar {
                 sectionIndexDictionary["\(firstChar)"] = currentIndex
                 currentChar = firstChar
@@ -100,27 +101,28 @@ func sectionIndexesForBusStop() -> [String: Int] {
 }
 
 func parseGoogleJSON(searchText: String, json: JSON) -> Section {
-    var itemTypes: [ItemType] = []
-    let filteredBusStops = getAllBusStops().filter({(item: BusStop) -> Bool in
-        let levenshteinScore = String.fuzzPartialRatio(str1: item.name.lowercased(), str2: searchText.lowercased())
-        return levenshteinScore > Key.FuzzySearch.minimumValue
-    })
-
-    let updatedOrderBusStops = sortFilteredBusStops(busStops: filteredBusStops, letter: searchText.capitalized.characters.first!)
-    itemTypes = updatedOrderBusStops.map( {ItemType.busStop($0)})
     
+    var itemTypes: [ItemType] = []
+
+    //dont keep calling getAllBusStops()
+    let busStopsWithLevenshtein: [(BusStop, Int)] = getAllBusStops().map({ ($0, String.fuzzPartialRatio(str1: $0.name.lowercased(), str2: searchText.lowercased())) })
+    var filteredBusStops = busStopsWithLevenshtein.filter({$0.1 > Key.FuzzySearch.minimumValue})
+    filteredBusStops.sort(by: {$0.1 > $1.1})
+    itemTypes = filteredBusStops.map( {ItemType.busStop($0.0)})
+
+    var googleResults: [ItemType] = []
     if let predictionsArray = json["predictions"].array {
         for result in predictionsArray {
             let placeResult = PlaceResult(name: result["structured_formatting"]["main_text"].stringValue, detail: result["structured_formatting"]["secondary_text"].stringValue, placeID: result["place_id"].stringValue)
             let isPlaceABusStop = filteredBusStops.contains(where: {(stop) -> Bool in
-                placeResult.name.contains(stop.name)
+                placeResult.name.contains(stop.0.name)
             })
             if !isPlaceABusStop {
-                itemTypes.append(ItemType.placeResult(placeResult))
+                googleResults.append(ItemType.placeResult(placeResult))
             }
         }
     }
-    return Section(type: .searchResults, items: itemTypes)
+    return Section(type: .searchResults, items: googleResults + itemTypes)
 }
 
 
@@ -137,7 +139,7 @@ extension SearchResultsTableViewController: DZNEmptyDataSetSource {
     
     func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let locationNotFound = "Location not found"
-        let attrs = [NSForegroundColorAttributeName: UIColor.mediumGrayColor]
+        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: locationNotFound, attributes: attrs)
     }
 }

@@ -96,8 +96,15 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 var waypoints: [Waypoint] = []
                 for point in path {
                     var type: WaypointType = .none
-                    if point == path.first ?? CLLocationCoordinate2D() { type = .origin }
-                    else if point == path.last ?? CLLocationCoordinate2D() { type = .destination }
+                    if direction == self.directions.first && point == path.first! {
+                        type = .origin
+                    }
+                    else if direction == self.directions.last && point == path.last! {
+                        type = .destination
+                    }
+//                    else if point == path.first! || point == path.last! {
+//                        type = .walk
+//                    }
                     let waypoint = Waypoint(lat: point.latitude, long: point.longitude, wpType: type)
                     waypoints.append(waypoint)
                 }
@@ -141,20 +148,12 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
                 if direction.type == .depart {
 
-                    if arrayIndex == 0 {
-                        type = .origin
-                    }
-
-                    else if arrayIndex == directions.count - 1 {
-                        type = .destination
-                    }
-
-                    else if pathIndex == 0 {
-                        type = .busStart
+                    if pathIndex == 0 {
+                        type = arrayIndex == 0 ? .origin : .bus
                     }
                         
-                    else if pathIndex == direction.path.count - 1  {
-                        type = .busEnd
+                    else if pathIndex == direction.path.count - 1 {
+                        type = arrayIndex == directions.count - 1 ? .destination : .bus
                     }
                         
                     else if pointWithinLocation(point: point, location: direction.startLocation.coordinate, exact: true) ||
@@ -166,6 +165,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
                 }
 
+                // can probably delete
                 else if direction.type == .walk {
 
                     if arrayIndex == 0 && pathIndex == 0 {
@@ -361,7 +361,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     // MARK: Live Tracking Functions
 
     /** Fetch live-tracking information for the first direction's bus route. Handles connection issues with banners. */
-    func getBusLocations() {
+    @objc func getBusLocations() {
 
  // /* debugging
         
@@ -499,9 +499,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     /** Set title, buttons, and style of navigation controller */
     func formatNavigationController() {
 
-        let otherAttributes = [NSFontAttributeName: UIFont(name :".SFUIText", size: 14)!]
-        let titleAttributes: [String : Any] = [NSFontAttributeName : UIFont(name :".SFUIText", size: 18)!,
-                                               NSForegroundColorAttributeName : UIColor.black]
+        let otherAttributes = [NSAttributedStringKey.font: UIFont(name :".SFUIText", size: 14)!]
+        let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!,
+                                                             .foregroundColor : UIColor.black]
 
         // general
         title = "Route Details"
@@ -524,7 +524,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         backButton.setImage(UIImage(named: "back"), for: .normal)
         let attributedString = NSMutableAttributedString(string: "  Back")
         // raise back button text a hair - attention to detail, baby
-        attributedString.addAttribute(NSBaselineOffsetAttributeName, value: 0.3, range: NSMakeRange(0, attributedString.length))
+        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
         backButton.setAttributedTitle(attributedString, for: .normal)
         backButton.sizeToFit()
         backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
@@ -539,12 +539,12 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     }
 
     /** Return app to home page */
-    func exitAction() {
+    @objc func exitAction() {
         navigationController?.popToRootViewController(animated: true)
     }
 
     /** Move back one view controller in navigationController stack */
-    func backAction() {
+    @objc func backAction() {
         navigationController?.popViewController(animated: true)
     }
 
@@ -608,7 +608,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         } else {
             summaryTopLabel.text = directions.first?.locationNameDescription ?? "Route Directions"
         }
-        summaryTopLabel.font = UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular)
+        summaryTopLabel.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.regular)
         summaryTopLabel.textColor = .primaryTextColor
         summaryTopLabel.sizeToFit()
         summaryTopLabel.frame.origin.x = icon_maxY + textLabelPadding
@@ -623,7 +623,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             totalDuration = totalTime >= 0 ? totalTime : 0
             summaryBottomLabel.text = "Trip Duration: \(totalDuration) minute\(totalDuration == 1 ? "" : "s")"
         } else { summaryBottomLabel.text = "Summary Bottom Label" }
-        summaryBottomLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular)
+        summaryBottomLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)
         summaryBottomLabel.textColor = .mediumGrayColor
         summaryBottomLabel.sizeToFit()
         summaryBottomLabel.frame.origin.x = icon_maxY + textLabelPadding
@@ -692,12 +692,10 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
         else if direction.type == .walk || direction.type == .arrive {
             let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell") as! SmallDetailTableViewCell
-
             cell.setCell(direction, busEnd: direction.type == .arrive,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
-
             return format(cell)
         }
 
@@ -771,7 +769,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     // MARK: Gesture Recognizers and Interaction-Related Functions
 
     /** Animate detailTableView depending on context, centering map */
-    func summaryTapped(_ sender: UITapGestureRecognizer? = nil) {
+    @objc func summaryTapped(_ sender: UITapGestureRecognizer? = nil) {
 
         let isSmall = self.detailView.frame.minY == self.smallDetailHeight
 
@@ -798,7 +796,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         }
     }
 
-    func panGesture(recognizer: UIPanGestureRecognizer) {
+    @objc func panGesture(recognizer: UIPanGestureRecognizer) {
 
         if contentOffset != 0 { return }
 

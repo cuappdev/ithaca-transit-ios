@@ -53,14 +53,14 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK:  Data vars
 
     var routes: [Route] = []
-    
+
     // MARK: Reachability vars
-    
+
     let reachability: Reachability? = Reachability(hostname: Network.source)
     var banner: StatusBarNotificationBanner = {
         let banner = StatusBarNotificationBanner(title: "No Internet Connection", style: .danger)
         banner.autoDismiss = false
-        
+
         return banner
     }()
     var isBannerShown: Bool = false
@@ -73,7 +73,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         self.view.backgroundColor = .tableBackgroundColor
 
         edgesForExtendedLayout = []
-        
+
         setupNavigationBar()
         setupBackButton()
 
@@ -82,7 +82,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setupDatepicker()
         setupRouteResultsTableView()
         setupEmptyDataSet()
-        
+
         view.addSubview(routeSelection)
         view.addSubview(datePickerOverlay)
         view.sendSubview(toBack: datePickerOverlay)
@@ -93,14 +93,14 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setupLocationManager()
 
         setupReachability()
-        
+
         searchForRoutes()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: routeTableViewCellIdentifier)
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         var safeAreaHeight: CGFloat = 0
         if #available(iOS 11, *) {
@@ -109,10 +109,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         else {
             safeAreaHeight = 0
         }
-        
+
         updateDatepickerHeight(safeAreaBottomHeight: safeAreaHeight)
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         takedownReachability()
     }
@@ -120,8 +120,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Navigation bar
 
     private func setupNavigationBar(){
-        let titleAttributes: [String : Any] = [NSFontAttributeName : UIFont(name :".SFUIText", size: 18)!,
-                                               NSForegroundColorAttributeName : UIColor.black]
+        let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!,
+                                               .foregroundColor : UIColor.black]
         title = navigationBarTitle
         navigationController?.navigationBar.titleTextAttributes = titleAttributes //so title actually shows up
     }
@@ -131,7 +131,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         backButton.setImage(UIImage(named: "back"), for: .normal)
         let attributedString = NSMutableAttributedString(string: "  Back")
         // raise back button text a hair - attention to detail, baby
-        attributedString.addAttribute(NSBaselineOffsetAttributeName, value: 0.3, range: NSMakeRange(0, attributedString.length))
+        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
         backButton.setAttributedTitle(attributedString, for: .normal)
         backButton.sizeToFit()
         backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
@@ -140,7 +140,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     // Move back one view controller in navigationController stack
-    func backAction() {
+    @objc func backAction() {
         navigationController?.popViewController(animated: true)
     }
 
@@ -165,7 +165,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeSelection.toSearchbar.setTitle(destination?.name ?? "", for: .normal)
     }
 
-    func swapFromAndTo(sender: UIButton){
+    @objc func swapFromAndTo(sender: UIButton){
         //Swap data
         let searchFromOld = searchFrom
         searchFrom = searchTo
@@ -189,12 +189,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         hideSearchBar()
     }
 
-    func searchingTo(sender: UIButton){
+    @objc func searchingTo(sender: UIButton){
         searchType = .to
         presentSearchBar()
     }
 
-    func searchingFrom(sender: UIButton){
+    @objc func searchingFrom(sender: UIButton){
         searchType = .from
         searchBarView.resultsViewController?.shouldShowCurrentLocation = true
         presentSearchBar()
@@ -235,7 +235,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         searchBarView.searchController?.dismiss(animated: true, completion: nil)
     }
 
-    func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?){
+    func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?) {
 
         switch searchType{
 
@@ -258,7 +258,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 searchTo = result
                 routeSelection.toSearchbar.setTitle(result.name, for: .normal)
             }
-
         }
 
         hideSearchBar()
@@ -299,7 +298,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         if routeSelection.datepickerButton.titleLabel?.text?.lowercased() == "leave now" {
             searchTime = Date()
         }
-        
+
         if let time = searchTime, let startingDestination = searchFrom as? CoordinateAcceptor, let endingDestination = searchTo as? CoordinateAcceptor{
 
             routes = []
@@ -316,15 +315,15 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 alertController.addAction(action)
                 present(alertController, animated: true, completion: nil)
             } else {
-            
+
             Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
-                
+
                 if #available(iOS 10.0, *) {
                     self.routeResults.refreshControl?.endRefreshing()
                 } else {
                     self.refreshControl.endRefreshing()
                 }
-                
+
                 request.perform(withSuccess: { (routeJson) in
                     let rawRoutes = Route.getRoutesArray(fromJson: routeJson, endingAt: self.searchTo?.name ?? "")
                     self.routes = self.processRoutes(rawRoutes)
@@ -359,7 +358,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 route.updateEndingDestination(endDestination)
             }
         }
-        
+
         // Calculate walking distance
         let start = searchFrom as! CoordinateAcceptor
         let visitor = CoordinateVisitor()
@@ -423,7 +422,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     private func setupDatepickerView(){
         datePickerView = DatepickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 254))
-        
+
         datePickerView.positionSubviews()
         datePickerView.addSubviews()
 
@@ -442,14 +441,14 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     private func updateDatepickerHeight(safeAreaBottomHeight safeAreaHeight: CGFloat) {
         let oldFrame = datePickerView.frame
         let newFrame = CGRect(x: oldFrame.minX, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height + safeAreaHeight)
-        
+
         datePickerView.frame = newFrame
     }
-    
-    func showDatepicker(sender: UIButton){
+
+    @objc func showDatepicker(sender: UIButton){
         view.bringSubview(toFront: datePickerOverlay)
         view.bringSubview(toFront: datePickerView)
-        
+
         // set up date on datepicker view
         if routeSelection.datepickerButton.titleLabel?.text?.lowercased() == "leave now" {
             datePickerView.setDatepickerDate(date: Date())
@@ -457,16 +456,16 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         else if let time = searchTime  {
             datePickerView.setDatepickerDate(date: time)
         }
-        
+
         datePickerView.setDatepickerTimeType(searchTimeType: searchTimeType)
-        
+
         UIView.animate(withDuration: 0.5) {
             self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.59 // darken screen when pull up datepicker
         }
     }
 
-    func dismissDatepicker(sender: UIButton){
+    @objc func dismissDatepicker(sender: UIButton){
         UIView.animate(withDuration: 0.5, animations: {
             self.datePickerView.center.y = self.view.frame.height + (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.0
@@ -476,7 +475,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
     }
 
-    func saveDatepickerDate(sender: UIButton){
+    @objc func saveDatepickerDate(sender: UIButton){
         let date = datePickerView.getDate()
         searchTime = date
         let dateString = Time.dateString(from: date)
@@ -532,71 +531,71 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         cell?.setRouteData()
         cell?.positionSubviews()
         cell?.addSubviews()
-        
+
         setCellUserInteraction(cell, to: cellUserInteraction)
-        
+
         return cell!
     }
-    
+
     // MARK: Reachability
-    
+
     private func setupReachability() {
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityDidChange(_:)), name: .reachabilityChanged, object: reachability)
-        
+
         do {
             try reachability?.startNotifier()
         } catch {
             print("RouteOptionsVC setupReachability: Could not start reachability notifier")
         }
     }
-    
+
     private func takedownReachability() {
         reachability?.stopNotifier()
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
-    
+
     override var prefersStatusBarHidden: Bool {
         return isBannerShown
     }
-    
+
     @objc private func reachabilityDidChange(_ notification: Notification) {
         let reachability = notification.object as! Reachability
-        
+
         switch reachability.connection {
-            
+
             case .none:
                 isBannerShown = true // hides status bar
                 setNeedsStatusBarAppearanceUpdate()
                 banner.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
                 setUserInteraction(to: false)
-            
+
             case .cellular, .wifi:
                 if isBannerShown {
                     banner.dismiss()
                     isBannerShown = false // unhides status bar
                     setNeedsStatusBarAppearanceUpdate()
                 }
-                
+
                 setUserInteraction(to: true)
-            
+
         }
     }
-    
+
     private func setUserInteraction(to userInteraction: Bool) {
         cellUserInteraction = userInteraction
-        
+
         for cell in routeResults.visibleCells {
             setCellUserInteraction(cell, to: userInteraction)
         }
-        
+
         routeSelection.isUserInteractionEnabled = userInteraction
     }
-    
+
     private func setCellUserInteraction(_ cell: UITableViewCell?, to userInteraction: Bool) {
         cell?.isUserInteractionEnabled = userInteraction
         cell?.selectionStyle = userInteraction ? .default : .none
     }
-    
+
     // MARK: DZNEmptyDataSet
 
     private func setupEmptyDataSet() {
@@ -605,43 +604,43 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.tableFooterView = UIView()
         routeResults.contentOffset = .zero
     }
-    
+
     func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
         let customView = UIView()
-        
+
         var symbolView = UIView()
-        
+
         if currentlySearching {
             symbolView = LoadingIndicator()
         }
         else {
             let imageView = UIImageView(image: #imageLiteral(resourceName: "road"))
             imageView.contentMode = .scaleAspectFit
-            
+
             symbolView = imageView
         }
-        
+
         let titleLabel = UILabel()
         titleLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
         titleLabel.textColor = .mediumGrayColor
         titleLabel.text = currentlySearching ? "Looking for routes..." : "No Routes Found"
         titleLabel.sizeToFit()
-        
+
         customView.addSubview(symbolView)
         customView.addSubview(titleLabel)
-        
+
         symbolView.snp.makeConstraints{ (make) in
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview().offset(currentlySearching ? -20 : -22.5)
             make.width.equalTo(currentlySearching ? 40 : 45)
             make.height.equalTo(currentlySearching ? 40 : 45)
         }
-        
+
         titleLabel.snp.makeConstraints { (make) in
             make.top.equalTo(symbolView.snp.bottom).offset(10)
             make.centerX.equalTo(symbolView.snp.centerX)
         }
-        
+
         return customView
     }
 
@@ -655,9 +654,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.separatorStyle = .none
         routeResults.backgroundColor = .tableBackgroundColor
         routeResults.alwaysBounceVertical = true //so table view doesn't scroll over top & bottom
-        
+
         refreshControl.isHidden = true
-        
+
         if #available(iOS 10.0, *) {
             routeResults.refreshControl = refreshControl
         } else {
@@ -699,7 +698,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
         return false // halts the selection process, so don't have selected look
     }
-    
+
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if refreshControl.isRefreshing {
             searchForRoutes()
