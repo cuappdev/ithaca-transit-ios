@@ -23,6 +23,7 @@ class AllStopsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.edgesForExtendedLayout = []
+        self.extendedLayoutIncludesOpaqueBars = true
         sectionIndexes = sectionIndexesForBusStop()
 
         sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
@@ -32,8 +33,8 @@ class AllStopsTableViewController: UITableViewController {
         tableView.sectionIndexColor = UIColor(white: 34.0 / 255.0, alpha: 1.0)
         tableView.register(BusStopCell.self, forCellReuseIdentifier: "BusStop")
 
-        let titleAttributes: [String : Any] = [NSFontAttributeName : UIFont(name :".SFUIText", size: 18)!,
-                                               NSForegroundColorAttributeName : UIColor.black]
+        let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!,
+                                                             .foregroundColor : UIColor.black]
         title = "All Stops"
         navigationController?.navigationBar.titleTextAttributes = titleAttributes
 

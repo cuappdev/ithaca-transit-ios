@@ -136,11 +136,11 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     }
     
     /* Keyboard Functions */
-    func keyboardWillShow(_ notification: Notification) {
+    @objc func keyboardWillShow(_ notification: Notification) {
         isKeyboardVisible = true
     }
     
-    func keyboardWillHide(_ notification: Notification) {
+    @objc func keyboardWillHide(_ notification: Notification) {
         isKeyboardVisible = false
     }
     
@@ -265,7 +265,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     }
     
     /* Fetch Search Results*/
-    func getPlaces(timer: Timer) {
+    @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if searchText.count > 0 {
             Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in

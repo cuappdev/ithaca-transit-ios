@@ -79,7 +79,7 @@ class KMLParser: NSObject, XMLParserDelegate {
         for placemark in _placemarks {
             if placemark.style == nil, let styleUrl = placemark.styleUrl {
                 if styleUrl.hasPrefix("#") {
-                    let styleID = styleUrl.substring(from: styleUrl.index(styleUrl.startIndex, offsetBy: 1))
+                    let styleID = String(styleUrl[styleUrl.index(styleUrl.startIndex, offsetBy: 1)...])
                     let style = _styles[styleID]
                     placemark.style = style
                 }

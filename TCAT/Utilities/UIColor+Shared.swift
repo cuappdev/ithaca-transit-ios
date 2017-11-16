@@ -63,8 +63,8 @@ extension UIView {
 func bold(pattern: String, in string: String) -> NSMutableAttributedString {
     let fontSize = UIFont.systemFontSize
     let attributedString = NSMutableAttributedString(string: string,
-                                                     attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: fontSize)])
-    let boldFontAttribute = [NSFontAttributeName: UIFont.boldSystemFont(ofSize: fontSize)]
+                                                     attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: fontSize)])
+    let boldFontAttribute = [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: fontSize)]
     
     do {
         let regex = try NSRegularExpression(pattern: pattern, options: [])

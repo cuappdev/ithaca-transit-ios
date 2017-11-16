@@ -108,8 +108,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Navigation bar
 
     private func setupNavigationBar(){
-        let titleAttributes: [String : Any] = [NSFontAttributeName : UIFont(name :".SFUIText", size: 18)!,
-                                               NSForegroundColorAttributeName : UIColor.black]
+        let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!,
+                                               .foregroundColor : UIColor.black]
         title = navigationBarTitle
         navigationController?.navigationBar.titleTextAttributes = titleAttributes //so title actually shows up
     }
@@ -119,7 +119,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         backButton.setImage(UIImage(named: "back"), for: .normal)
         let attributedString = NSMutableAttributedString(string: "  Back")
         // raise back button text a hair - attention to detail, baby
-        attributedString.addAttribute(NSBaselineOffsetAttributeName, value: 0.3, range: NSMakeRange(0, attributedString.length))
+        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
         backButton.setAttributedTitle(attributedString, for: .normal)
         backButton.sizeToFit()
         backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
@@ -128,7 +128,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     // Move back one view controller in navigationController stack
-    func backAction() {
+    @objc func backAction() {
         navigationController?.popViewController(animated: true)
     }
 
@@ -153,7 +153,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeSelection.toSearchbar.setTitle(destination?.name ?? "", for: .normal)
     }
 
-    func swapFromAndTo(sender: UIButton){
+    @objc func swapFromAndTo(sender: UIButton){
         //Swap data
         let searchFromOld = searchFrom
         searchFrom = searchTo
@@ -177,12 +177,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         hideSearchBar()
     }
 
-    func searchingTo(sender: UIButton){
+    @objc func searchingTo(sender: UIButton){
         searchType = .to
         presentSearchBar()
     }
 
-    func searchingFrom(sender: UIButton){
+    @objc func searchingFrom(sender: UIButton){
         searchType = .from
         searchBarView.resultsViewController?.shouldShowCurrentLocation = true
         presentSearchBar()
@@ -432,7 +432,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         datePickerOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissDatepicker)))
     }
 
-    func showDatepicker(sender: UIButton){
+    @objc func showDatepicker(sender: UIButton){
         view.bringSubview(toFront: datePickerOverlay)
         view.bringSubview(toFront: datePickerView)
         
@@ -452,7 +452,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
     }
 
-    func dismissDatepicker(sender: UIButton){
+    @objc func dismissDatepicker(sender: UIButton){
         UIView.animate(withDuration: 0.5, animations: {
             self.datePickerView.center.y = self.view.frame.height + (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.0
@@ -462,7 +462,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
     }
 
-    func saveDatepickerDate(sender: UIButton){
+    @objc func saveDatepickerDate(sender: UIButton){
         let date = datePickerView.datepicker.date
         searchTime = date
         let dateString = Time.dateString(from: date)

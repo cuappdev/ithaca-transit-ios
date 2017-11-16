@@ -46,13 +46,14 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.edgesForExtendedLayout = []
         //Add Notification Observers
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
         
         recentLocations = retrieveRecentLocations()
         navigationController?.navigationBar.barTintColor = .white
-        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
         view.backgroundColor = .tableBackgroundColor
         definesPresentationContext = true
         let searchBarFrame = CGRect(x: 0, y: 0, width: view.bounds.width * 0.934, height: 80)
@@ -101,7 +102,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         //sections = createSections()
     }
 
-    func reachabilityChanged(note: Notification) {
+    @objc func reachabilityChanged(note: Notification) {
         if banner == nil {
             banner = StatusBarNotificationBanner(title: "No Internet Connection", style: .danger)
             banner?.autoDismiss = false
@@ -265,13 +266,13 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
-        let attrs = [NSForegroundColorAttributeName: UIColor.mediumGrayColor]
+        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControlState) -> NSAttributedString! {
         let buttonTitle = isNetworkDown ? "Try Again" : ""
-        let attrs = [NSForegroundColorAttributeName: UIColor.noInternetTextColor]
+        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.noInternetTextColor]
         return NSAttributedString(string: buttonTitle, attributes: attrs)
     }
 
@@ -301,7 +302,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     /* Keyboard Functions */
-    func keyboardWillShow(_ notification: Notification) {
+    @objc func keyboardWillShow(_ notification: Notification) {
         isKeyboardVisible = true
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
             let contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height, 0.0)
@@ -309,7 +310,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    func keyboardWillHide(_ notification: Notification) {
+    @objc func keyboardWillHide(_ notification: Notification) {
         isKeyboardVisible = false
         tableView.contentInset = .zero
         tableView.scrollIndicatorInsets = .zero
@@ -351,7 +352,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     /* Get Search Results */
-    func getPlaces(timer: Timer) {
+    @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if searchText.count > 0 {
             Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
