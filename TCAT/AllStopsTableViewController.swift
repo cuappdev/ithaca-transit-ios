@@ -30,7 +30,7 @@ class AllStopsTableViewController: UITableViewController {
         sortedKeys.append("#")
 
         title = "All Stops"
-        tableView.sectionIndexColor = UIColor(white: 34.0 / 255.0, alpha: 1.0)
+        tableView.sectionIndexColor = .primaryTextColor
         tableView.register(BusStopCell.self, forCellReuseIdentifier: "BusStop")
 
         let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!,
@@ -91,7 +91,7 @@ class AllStopsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return (sectionIndexes[sortedKeys[section]]?.count)!
+        return sectionIndexes[sortedKeys[section]]?.count ?? 0
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

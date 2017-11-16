@@ -224,10 +224,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?) {
-        //navigationController?.pushViewController(UIViewController(), animated: false)
-        //navigationController?.popViewController(animated: false)
-
-        //self.edgesForExtendedLayout = .top
 
         switch searchType{
 
@@ -280,8 +276,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
         navigationItem.setLeftBarButton(nil, animated: false)
         navigationItem.hidesBackButton = true
-        //searchBarView.resultsViewController?.returningFromAllStopsBusStop = nil
-        //searchBarView.resultsViewController?.returningFromAllStopsTVC = false
         searchBarView.searchController?.isActive = true
     }
 
