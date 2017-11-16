@@ -426,7 +426,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         
         datePickerView.positionSubviews()
         datePickerView.addSubviews()
-        datePickerView.backgroundColor = .white
 
         datePickerView.cancelButton.addTarget(self, action: #selector(self.dismissDatepicker), for: .touchUpInside)
         datePickerView.doneButton.addTarget(self, action: #selector(self.saveDatepickerDate), for: .touchUpInside)
@@ -478,7 +477,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     func saveDatepickerDate(sender: UIButton){
-        let date = datePickerView.datepicker.date
+        let date = datePickerView.getDate()
         searchTime = date
         let dateString = Time.dateString(from: date)
         let segmentedControl = datePickerView.timeTypeSegmentedControl

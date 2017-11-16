@@ -39,6 +39,8 @@ class DatepickerView: UIView {
     override init(frame: CGRect){
         super.init(frame: frame)
         
+        backgroundColor = .white
+        
         styleDatepicker()
         styleSegmentedControl(timeTypeSegmentedControl)
         styleSegmentedControl(leaveNowSegmentedControl)
@@ -66,13 +68,13 @@ class DatepickerView: UIView {
     
     // MARK: Segement Control
     
-    func leaveNowSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
+    @objc private func leaveNowSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
         datepicker.date = Date()
     }
     
     // MARK: Datepicker
     
-    func datepickerValueChanged(datepicker: UIDatePicker) {
+    @objc private func datepickerValueChanged(datepicker: UIDatePicker) {
         let now = Date()
         if Time.compare(date1: datepicker.date, date2: now) == ComparisonResult.orderedSame {
             let leaveNow = 0
@@ -96,6 +98,11 @@ class DatepickerView: UIView {
         case .arriveBy:
             timeTypeSegmentedControl.selectedSegmentIndex = 1
         }
+    }
+    
+    // MARK: Getters
+    func getDate() -> Date {
+        return datepicker.date
     }
     
     // MARK: Style
