@@ -16,8 +16,8 @@ extension Answers {
         Answers.logCustomEvent(withName: "Search bar used in home", customAttributes: nil)
     }
     
-    static func destinationSearched(destination: String, stopType: String? = "", requestUrl: String? = "") {
-        Answers.logCustomEvent(withName: "Destination searched", customAttributes: ["destination": destination, "stop type": stopType, "request url": requestUrl])
+    static func destinationSearched(destination: String, stopType: String?, requestUrl: String?) {
+        Answers.logCustomEvent(withName: "Destination searched", customAttributes: ["destination": destination, "stop type": stopType ?? "nil", "request url": requestUrl ?? "nil"])
     }
     
     static func userTappedRouteResultsCell() {

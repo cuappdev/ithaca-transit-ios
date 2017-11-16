@@ -137,9 +137,10 @@ class Network {
 
     class func getGooglePlaces(searchText: String) -> APIRequest<JSON, Error> {
         let googleJson = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
-        let urlReadySearch = searchText.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+        // Caused "20" to appear in results. Maybe need to use different enum?
+        // let urlReadySearch = searchText.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
         let request: APIRequest<JSON, Error> = googleTron.request("json")
-        request.parameters = ["strictbounds": "", "location": "42.4440,-76.5019", "radius": 24140, "input": urlReadySearch, "key": googleJson["google-places"].stringValue]
+        request.parameters = ["strictbounds": "", "location": "42.4440,-76.5019", "radius": 24140, "input": searchText, "key": googleJson["google-places"].stringValue]
         request.method = .get
         return request
     }
