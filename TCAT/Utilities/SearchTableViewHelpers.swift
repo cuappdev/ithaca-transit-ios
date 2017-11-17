@@ -24,6 +24,7 @@ enum SectionType {
     case seeAllStops
     case searchResults
     case currentLocation
+    case favorites
 }
 
 enum ItemType {
@@ -33,46 +34,49 @@ enum ItemType {
     case seeAllStops
 }
 
-func retrieveRecentLocations() -> [ItemType] {
-    if let recentLocations = userDefaults.value(forKey: Key.UserDefaults.recentSearch) as? Data {
-        let recentSearches = NSKeyedUnarchiver.unarchiveObject(with: recentLocations) as! [Any]
+func retrieveRecentPlaces(for key: String) -> [ItemType] {
+    if let storedPlaces = userDefaults.value(forKey: key) as? Data {
+        let places = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as! [Any]
         var itemTypes: [ItemType] = []
-        for search in recentSearches {
-            if let busStop = search as? BusStop {
+        for place in places {
+            if let busStop = place as? BusStop {
                 itemTypes.append(.busStop(busStop))
             }
-            if let searchResult = search as? PlaceResult {
+            if let searchResult = place as? PlaceResult {
                 itemTypes.append(.placeResult(searchResult))
             }
         }
+         //make a default cell if there are no favorites
+        if key == Key.UserDefaults.favorites && itemTypes.isEmpty {
+            let addFavorites = BusStop(name: "Add Your First Favorite!", lat: 0.0, long: 0.0)
+            itemTypes.append(.busStop(addFavorites))
+        }
         return itemTypes
     }
+
+    if key == Key.UserDefaults.favorites {
+        let addFavorites = BusStop(name: "Add Your First Favorite!", lat: 0.0, long: 0.0)
+        return [.busStop(addFavorites)]
+    }
+    
     return [ItemType]()
 }
 
-func insertRecentLocation(location: Any) {
-    let recentLocationsItemTypes = retrieveRecentLocations()
-    let convertedRecentLocations = recentLocationsItemTypes.map( { item -> Any in
+func insertPlace(for key: String, location: Any, limit: Int) {
+    let placeItemTypes = retrieveRecentPlaces(for: key)
+    let convertedPlaces = placeItemTypes.map( { item -> Any in
         switch item {
         case .busStop(let busStop): return busStop
         case .placeResult(let placeResult): return placeResult
         default: return "this shouldn't ever fire"
         }
     })
-    let filteredLocations = location is BusStop ? convertedRecentLocations.filter({ !areObjectsEqual(type: BusStop.self, a: location, b: $0)}) : convertedRecentLocations.filter({ !areObjectsEqual(type: PlaceResult.self, a: location, b: $0)})
+    let filteredPlaces = location is BusStop ? convertedPlaces.filter({ !areObjectsEqual(type: BusStop.self, a: location, b: $0)}) : convertedPlaces.filter({ !areObjectsEqual(type: PlaceResult.self, a: location, b: $0)})
     
-    var updatedRecentLocations = [location] + filteredLocations
-    if updatedRecentLocations.count > 8 { updatedRecentLocations.remove(at: updatedRecentLocations.count - 1)}
-    let data = NSKeyedArchiver.archivedData(withRootObject: updatedRecentLocations)
-    userDefaults.set(data, forKey: Key.UserDefaults.recentSearch)
-}
-
-func getAllBusStops() -> [BusStop] {
-    if let allBusStops = userDefaults.value(forKey: Key.UserDefaults.allBusStops) as? Data,
-        let busStopArray = NSKeyedUnarchiver.unarchiveObject(with: allBusStops) as? [BusStop] {
-            return busStopArray
-    }
-    return [BusStop]()
+    var updatedPlaces = [location] + filteredPlaces
+    if updatedPlaces.count > limit { updatedPlaces.remove(at: updatedPlaces.count - 1)}
+    let data = NSKeyedArchiver.archivedData(withRootObject: updatedPlaces)
+    userDefaults.set(data, forKey: key)
 }
 
 func prepareAllBusStopItems(allBusStops: [BusStop]) -> [ItemType] {
@@ -85,7 +89,7 @@ func prepareAllBusStopItems(allBusStops: [BusStop]) -> [ItemType] {
 
 func sectionIndexesForBusStop() -> [String: Int] {
     var sectionIndexDictionary: [String: Int] = [:]
-    let allStops = getAllBusStops()
+    let allStops = FetchBusStops.shared.getAllStops()
     var currentChar: Character = Character("+")
     var currentIndex = 0
     for busStop in allStops {
@@ -104,7 +108,7 @@ func parseGoogleJSON(searchText: String, json: JSON) -> Section {
     var itemTypes: [ItemType] = []
 
     //dont keep calling getAllBusStops()
-    let busStopsWithLevenshtein: [(BusStop, Int)] = getAllBusStops().map({ ($0, String.fuzzPartialRatio(str1: $0.name.lowercased(), str2: searchText.lowercased())) })
+    let busStopsWithLevenshtein: [(BusStop, Int)] = FetchBusStops.shared.getAllStops().map({ ($0, String.fuzzPartialRatio(str1: $0.name.lowercased(), str2: searchText.lowercased())) })
     var filteredBusStops = busStopsWithLevenshtein.filter({$0.1 > Key.FuzzySearch.minimumValue})
     filteredBusStops.sort(by: {$0.1 > $1.1})
     itemTypes = filteredBusStops.map( {ItemType.busStop($0.0)})
@@ -140,6 +144,29 @@ extension SearchResultsTableViewController: DZNEmptyDataSetSource {
         let locationNotFound = "Location not found"
         let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: locationNotFound, attributes: attrs)
+    }
+}
+
+class FetchBusStops {
+    static let shared = FetchBusStops()
+    private var allStops: [BusStop]?
+
+    private init(){}
+    func getAllStops() -> [BusStop] {
+        if let stops = allStops {
+            return stops
+        }
+        let stops = getAllBusStops()
+        allStops = stops
+        return stops
+    }
+
+    private func getAllBusStops() -> [BusStop] {
+        if let allBusStops = userDefaults.value(forKey: Key.UserDefaults.allBusStops) as? Data,
+            let busStopArray = NSKeyedUnarchiver.unarchiveObject(with: allBusStops) as? [BusStop] {
+            return busStopArray
+        }
+        return [BusStop]()
     }
 }
 

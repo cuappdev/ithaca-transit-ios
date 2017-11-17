@@ -109,8 +109,7 @@ class AllStopsTableViewController: UITableViewController {
                 print("Could not find bus stop")
                 return
         }
-
-        insertRecentLocation(location: busStopSelected)
+        insertPlace(for: Key.UserDefaults.recentSearch, location: busStopSelected, limit: 8)
         optionsVC.searchTo = busStopSelected
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)

@@ -47,9 +47,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         self.window!.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
         
-        if userDefaults.value(forKey: "recentSearch") == nil {
-            userDefaults.set([Any](), forKey: "recentSearch")
+        if userDefaults.value(forKey: Key.UserDefaults.recentSearch) == nil {
+            userDefaults.set([Any](), forKey: Key.UserDefaults.recentSearch)
         }
+        if userDefaults.value(forKey: Key.UserDefaults.favorites) == nil {
+            userDefaults.set([Any](), forKey: Key.UserDefaults.favorites)
+        }
+
         
         #if DEBUG
             print ("DEBUG MODE")

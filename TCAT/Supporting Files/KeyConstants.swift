@@ -13,6 +13,7 @@ struct Key {
     struct UserDefaults {
         static let recentSearch = "recentSearch"
         static let allBusStops = "allBusStops"
+        static let favorites = "favorites"
     }
 
     struct FuzzySearch {

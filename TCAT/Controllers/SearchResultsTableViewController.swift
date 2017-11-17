@@ -36,8 +36,9 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     var seeAllStopsSection: Section!
     var searchResultsSection: Section!
     var currentLocationSection: Section!
-    var sectionIndexes: [String: Int]!
+    var favoritesSection: Section!
     var recentLocations: [ItemType] = []
+    var favorites: [ItemType] = []
     var initialTableViewIndexMinY: CGFloat!
     var isKeyboardVisible = false
     var shouldShowCurrentLocation = true
@@ -68,9 +69,9 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
         
-        //Create SectionIndexes & Fetch RecentLocations
-        sectionIndexes = sectionIndexesForBusStop()
-        recentLocations = retrieveRecentLocations()
+        //Fetch RecentLocation and Favorites
+        recentLocations = retrieveRecentPlaces(for: Key.UserDefaults.recentSearch)
+        //favorites = retrieveFavorites()
         
         // Set Up TableView
         tableView.register(BusStopCell.self, forCellReuseIdentifier: "busStops")
@@ -94,9 +95,9 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         }
         
         //Set Up Sections For TableView
-//        let allBusStops = getAllBusStops()
         seeAllStopsSection = Section(type: .seeAllStops, items: [.seeAllStops])
         recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
+        favoritesSection = Section(type: .favorites, items: favorites)
         searchResultsSection = Section(type: .searchResults, items: [])
         if let currentLocation = currentLocation {
             currentLocationSection = Section(type: .currentLocation, items: [.busStop(currentLocation)])
@@ -117,6 +118,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         if currentLocationSection != nil {
             allSections.append(currentLocationSection)
         }
+        allSections.append(favoritesSection)
         allSections.append(recentSearchesSection)
         allSections.append(seeAllStopsSection)
         return allSections.filter({$0.items.count > 0})
@@ -153,6 +155,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         switch sections[section].type {
         case .cornellDestination: return 0
         case .recentSearches: return recentLocations.count
+        case .favorites: return favorites.count
         case .seeAllStops, .searchResults, .currentLocation: return sections[section].items.count
         }
     }
@@ -163,6 +166,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         header.textLabel?.font = tctSectionHeaderFont()
         switch sections[section].type {
         case .recentSearches: header.textLabel?.text = "Recent Searches"
+        case .favorites: header.textLabel?.text = "Favorites"
         case .searchResults, .seeAllStops, .currentLocation, .cornellDestination: header.textLabel?.text = nil
         }
     }
@@ -170,6 +174,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch sections[section].type {
         case .cornellDestination: return "Get There Now"
+        case .favorites: return "Favorites"
         case .recentSearches: return "Recent Searches"
         case .searchResults, .seeAllStops, .currentLocation: return nil
         }
@@ -187,25 +192,25 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         switch sections[indexPath.section].type {
         case .cornellDestination:
             itemType = .cornellDestination
-        case .recentSearches, .searchResults, .seeAllStops, .currentLocation:
+        case .recentSearches, .searchResults, .seeAllStops, .currentLocation, .favorites:
             itemType = sections[indexPath.section].items[indexPath.row]
         }
         
         switch itemType {
         case .seeAllStops:
             didSelectAllStops = true
-            allStopsTVC.allStops = getAllBusStops()
+            allStopsTVC.allStops = FetchBusStops.shared.getAllStops()
             allStopsTVC.unwindAllStopsTVCDelegate = self
         case .busStop(let busStop):
             if busStop.name != "Current Location" {
-                insertRecentLocation(location: busStop)
+                insertPlace(for: Key.UserDefaults.recentSearch, location: busStop, limit: 8)
             }
             //Crashlytics Answers
             Answers.destinationSearched(destination: busStop.name, stopType: "bus stop")
             
             destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
         case .placeResult(let placeResult):
-            insertRecentLocation(location: placeResult)
+            insertPlace(for: Key.UserDefaults.recentSearch, location: placeResult, limit: 8)
             //Crashlytics Answers
             Answers.destinationSearched(destination: placeResult.name, stopType: "google place")
             
@@ -232,7 +237,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         switch sections[indexPath.section].type {
         case .cornellDestination:
             itemType = .cornellDestination
-        case .recentSearches, .seeAllStops, .searchResults, .currentLocation:
+        case .recentSearches, .seeAllStops, .searchResults, .currentLocation, .favorites:
             itemType = sections[indexPath.section].items[indexPath.row]
         }
         

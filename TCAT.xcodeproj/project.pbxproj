@@ -40,6 +40,7 @@
 		BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */; };
 		BFD5B4E41FAADFAE00955C37 /* WalkPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */; };
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
+		DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */; };
 		DCB717101FB76EA600BE4D26 /* AllStopsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */; };
 		DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
@@ -141,6 +142,7 @@
 		BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WalkPath.swift; path = Model/WalkPath.swift; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
+		DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesTableViewController.swift; sourceTree = "<group>"; };
 		DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllStopsTableViewController.swift; sourceTree = "<group>"; };
 		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
@@ -425,6 +427,7 @@
 				BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */,
 				DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */,
 				DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */,
+				DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -793,6 +796,7 @@
 				DD3D9C211F94297100B164D4 /* Reachability.swift in Sources */,
 				DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */,
 				DD99E2F61F6DB06A0073E8F7 /* KeyConstants.swift in Sources */,
+				DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */,
 				DD99E2F41F6DB0410073E8F7 /* FontConstants.swift in Sources */,
 				D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */,
 				503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */,

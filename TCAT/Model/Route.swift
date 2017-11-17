@@ -57,7 +57,7 @@ class Route: NSObject, JSONDecodable {
         
         var busInvolved = false
         
-        let lastIsBusStop = getAllBusStops().first(where: { (stop) -> Bool in
+        let lastIsBusStop = FetchBusStops.shared.getAllStops().first(where: { (stop) -> Bool in
             let stopCoordinates = CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.long)
             return stopCoordinates == endCoords
         }) != nil

@@ -13,6 +13,7 @@ import Alamofire
 import DZNEmptyDataSet
 import NotificationBannerSwift
 import Crashlytics
+import SnapKit
 
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     let userDefaults = UserDefaults.standard
@@ -30,6 +31,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
     var recentLocations: [ItemType] = []
+    var favorites: [ItemType] = []
     var isKeyboardVisible = false
     var sections: [Section] = [] {
         didSet {
@@ -51,7 +53,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
         
-        recentLocations = retrieveRecentLocations()
+        recentLocations = retrieveRecentPlaces(for: Key.UserDefaults.recentSearch)
+        favorites = retrieveRecentPlaces(for: Key.UserDefaults.favorites)
+        print("FAVES", favorites)
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
         view.backgroundColor = .tableBackgroundColor
@@ -94,12 +98,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         } catch {
             print("HomeVC viewDdiLayoutSubviews: Could not start reachability notifier")
         }
-
-        recentLocations = retrieveRecentLocations()
         if searchBar.showsCancelButton {
             searchBar.becomeFirstResponder()
         }
-        //sections = createSections()
     }
 
     @objc func reachabilityChanged(note: Notification) {
@@ -134,9 +135,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func createSections() -> [Section] {
         var allSections: [Section] = []
         let recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
-//        let cornellDestinationSection = Section(type: .cornellDestination, items: [.cornellDestination])
-//        allSections.append(cornellDestinationSection)
         let seeAllStopsSection = Section(type: .seeAllStops, items: [.seeAllStops])
+        let favoritesSection = Section(type: .favorites, items: favorites)
+        allSections.append(favoritesSection)
         allSections.append(recentSearchesSection)
         allSections.append(seeAllStopsSection)
         return allSections.filter({$0.items.count > 0})
@@ -153,15 +154,34 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         switch sections[section].type {
         case .cornellDestination: header.textLabel?.text = "Get There Now"
         case .recentSearches: header.textLabel?.text = "Recent Searches"
+        case .favorites:
+            header.textLabel?.text = "Favorite Destinations"
+            let addButton = UIButton(type: .system)
+            addButton.setTitle("Add", for: .normal)
+            addButton.setTitleColor(.tcatBlueColor, for: .normal)
+            addButton.addTarget(self, action: #selector(addNewFavorite), for: .touchUpInside)
+            header.addSubview(addButton)
+            addButton.snp.makeConstraints({ (make) in
+                make.right.equalToSuperview().offset(-12)
+                make.centerY.equalTo((header.textLabel?.snp.centerY)!)
+            })
+
         case .seeAllStops, .searchResults: header.textLabel?.text = nil
         default: break
         }
+    }
+
+    @objc func addNewFavorite(sender: UIButton) {
+        let favoritesTVC = FavoritesTableViewController()
+        let navController = UINavigationController(rootViewController: favoritesTVC)
+        present(navController, animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch sections[section].type {
         case .cornellDestination: return "Get There Now"
         case .recentSearches: return "Recent Searches"
+            case .favorites: return "Favorite Destinations"
         case .seeAllStops, .searchResults: return nil
         default: return nil
         }
@@ -178,7 +198,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         switch sections[indexPath.section].type {
         case .cornellDestination:
             itemType = .cornellDestination
-        case .recentSearches, .seeAllStops, .searchResults:
+        case .recentSearches, .seeAllStops, .searchResults, .favorites:
             itemType = sections[indexPath.section].items[indexPath.row]
         default: break
         }
@@ -217,8 +237,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         switch sections[section].type {
         case .cornellDestination: return cornellDestinations.count
         case .recentSearches: return recentLocations.count
-        case .seeAllStops: return sections[section].items.count
-        case .searchResults: return sections[section].items.count
+        case .favorites: return favorites.count
+        case .seeAllStops, .searchResults: return sections[section].items.count
         default: return 0
         }
     }
@@ -232,7 +252,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         switch sections[indexPath.section].type {
         case .cornellDestination:
             itemType = .cornellDestination
-        case .recentSearches, .searchResults, .seeAllStops:
+        case .recentSearches, .searchResults, .seeAllStops, .favorites:
             itemType = sections[indexPath.section].items[indexPath.row]
         default: itemType = ItemType.cornellDestination
         }
@@ -241,12 +261,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             print("User Selected Cornell Destination")
         case .seeAllStops:
             didSelectAllStops = true
-            allStopsTVC.allStops = getAllBusStops()
+            allStopsTVC.allStops = FetchBusStops.shared.getAllStops()
         case .busStop(let busStop):
-            insertRecentLocation(location: busStop)
+            insertPlace(for: Key.UserDefaults.recentSearch, location: busStop, limit: 8)
             optionsVC.searchTo = busStop
         case .placeResult(let placeResult):
-            insertRecentLocation(location: placeResult)
+            insertPlace(for: Key.UserDefaults.recentSearch, location: placeResult, limit: 8)
             optionsVC.searchTo = placeResult
         }
         definesPresentationContext = false
