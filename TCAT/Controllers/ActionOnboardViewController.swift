@@ -67,6 +67,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
             make.centerX.equalToSuperview()
             make.top.equalToSuperview().offset(32)
         }
+        image.image = getImage()
         
         title.font = UIFont(name: FontNames.SanFrancisco.Bold, size: 28)
         title.textColor = UIColor.primaryTextColor
@@ -119,6 +120,17 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
             button.addTarget(self, action: getAction()!, for: .touchUpInside)
         }
         
+    }
+    
+    func getImage() -> UIImage? {
+        switch type! {
+        case .locationServices:
+            //set image here
+            return nil
+        case .welcome:
+            //set image here
+            return nil
+        }
     }
     
     func getTitle() -> String {
