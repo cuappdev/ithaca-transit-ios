@@ -201,13 +201,13 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
                 insertRecentLocation(location: busStop)
             }
             //Crashlytics Answers
-            Answers.destinationSearched(destination: busStop.name, stopType: "bus stop")
+//            Answers.destinationSearched(destination: busStop.name, stopType: "bus stop", requestUrl: <#String?#>)
             
             destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
         case .placeResult(let placeResult):
             insertRecentLocation(location: placeResult)
             //Crashlytics Answers
-            Answers.destinationSearched(destination: placeResult.name, stopType: "google place")
+//            Answers.destinationSearched(destination: placeResult.name, stopType: "google place", requestUrl: <#String?#>)
             
             destinationDelegate?.didSelectDestination(busStop: nil, placeResult: placeResult)
         default: break

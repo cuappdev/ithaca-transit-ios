@@ -13,6 +13,7 @@ import Alamofire
 import DZNEmptyDataSet
 import NotificationBannerSwift
 import Crashlytics
+import SafariServices
 
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     let userDefaults = UserDefaults.standard
@@ -29,7 +30,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var tableView : UITableView!
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
-//    var submitBugButton: UIBarButtonItem!
     var recentLocations: [ItemType] = []
     var isKeyboardVisible = false
     var sections: [Section] = [] {
@@ -65,6 +65,17 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.searchBarStyle = .default
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
         textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
+        
+        let submitBugButton = UIButton(type: .infoLight)
+        submitBugButton.addTarget(self, action: #selector(openInformationScreen), for: .touchUpInside)
+        submitBugButton.snp.makeConstraints { (make) in
+            make.width.equalTo(30)
+            make.height.equalTo(38)
+        }
+        submitBugButton.imageEdgeInsets = UIEdgeInsetsMake(14, -7, 0, 0)
+        
+        let submitBugBarButton = UIBarButtonItem(customView: submitBugButton)
+        navigationItem.setLeftBarButton(submitBugBarButton, animated: false)
         
         navigationItem.titleView = searchBar
         
@@ -366,6 +377,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         } else {
             sections = createSections()
         }
+    }
+    
+    /* Open information screen */
+    @objc func openInformationScreen() {
+        let informationViewController = InformationViewController()
+        self.navigationController?.pushViewController(informationViewController, animated: false)
     }
 }
 
