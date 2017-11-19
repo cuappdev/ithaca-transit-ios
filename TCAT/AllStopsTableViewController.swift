@@ -19,11 +19,19 @@ class AllStopsTableViewController: UITableViewController {
     var sortedKeys: [String]!
     var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
     var navController: UINavigationController!
+    var height: CGFloat?
+
+    override func viewWillLayoutSubviews() {
+        if let y = navigationController?.navigationBar.frame.maxY {
+            if height == nil {
+                height = tableView.bounds.height
+            }
+            tableView.frame = CGRect(x: 0.0, y: y, width: view.bounds.width, height: height! - y)
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.edgesForExtendedLayout = []
-        self.extendedLayoutIncludesOpaqueBars = true
         sectionIndexes = sectionIndexesForBusStop()
 
         sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
@@ -37,12 +45,21 @@ class AllStopsTableViewController: UITableViewController {
                                                              .foregroundColor : UIColor.black]
         title = "All Stops"
         navigationController?.navigationBar.titleTextAttributes = titleAttributes
+        setupBackButton()
 
         if #available(iOS 11.0, *) {
             navigationItem.searchController = nil
         } else {
             navigationItem.titleView = nil
         }
+
+        if #available(iOS 11.0, *) {
+            self.tableView.contentInsetAdjustmentBehavior = .never
+        } else {
+            self.automaticallyAdjustsScrollViewInsets = false
+        }
+
+        tableView.tableFooterView = UIView()
     }
 
     override func didReceiveMemoryWarning() {
@@ -120,6 +137,23 @@ class AllStopsTableViewController: UITableViewController {
         } else {
         navigationController?.pushViewController(optionsVC, animated: true)
         }
+    }
+
+    private func setupBackButton(){
+        let backButton = UIButton(type: .system)
+        backButton.setImage(UIImage(named: "back"), for: .normal)
+        let attributedString = NSMutableAttributedString(string: "  Back")
+        // raise back button text a hair - attention to detail, baby
+        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
+        backButton.setAttributedTitle(attributedString, for: .normal)
+        backButton.sizeToFit()
+        backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
+        let barButtonBackItem = UIBarButtonItem(customView: backButton)
+        self.navigationItem.setLeftBarButton(barButtonBackItem, animated: true)
+    }
+
+    @objc func backAction() {
+        navigationController?.popViewController(animated: true)
     }
 
 }

@@ -46,23 +46,46 @@ func retrieveRecentPlaces(for key: String) -> [ItemType] {
                 itemTypes.append(.placeResult(searchResult))
             }
         }
-         //make a default cell if there are no favorites
-        if key == Key.UserDefaults.favorites && itemTypes.isEmpty {
-            let addFavorites = BusStop(name: "Add Your First Favorite!", lat: 0.0, long: 0.0)
-            itemTypes.append(.busStop(addFavorites))
-        }
         return itemTypes
     }
-
-    if key == Key.UserDefaults.favorites {
-        let addFavorites = BusStop(name: "Add Your First Favorite!", lat: 0.0, long: 0.0)
-        return [.busStop(addFavorites)]
-    }
-    
     return [ItemType]()
 }
 
-func insertPlace(for key: String, location: Any, limit: Int) {
+//returns the rest so we don't have to re-unarchive it
+func deleteFavorite(favorite: Any, allFavorites: [ItemType]) -> [ItemType] {
+    var newFavoritesList: [ItemType] = []
+    for item in allFavorites {
+        switch item {
+        case .busStop(let busStop):
+            if let fav = favorite as? BusStop, areObjectsEqual(type: BusStop.self, a: busStop, b: fav) {
+                continue
+            } else {
+                newFavoritesList.append(item)
+            }
+        case .placeResult(let placeResult):
+            if let fav = favorite as? PlaceResult, areObjectsEqual(type: PlaceResult.self, a: placeResult, b: fav) {
+                continue
+            } else {
+                newFavoritesList.append(item)
+            }
+        default: break
+        }
+    }
+    let itemsToStore = newFavoritesList.map { (item) -> Any in
+        switch item {
+        case .busStop(let busStop):
+            return busStop
+        case .placeResult(let placeResult):
+            return placeResult
+        default: return ""
+        }
+    }
+    let data = NSKeyedArchiver.archivedData(withRootObject: itemsToStore)
+    userDefaults.set(data, forKey: Key.UserDefaults.favorites)
+    return newFavoritesList
+}
+
+func insertPlace(for key: String, location: Any, limit: Int, bottom: Bool = false) {
     let placeItemTypes = retrieveRecentPlaces(for: key)
     let convertedPlaces = placeItemTypes.map( { item -> Any in
         switch item {
@@ -72,8 +95,13 @@ func insertPlace(for key: String, location: Any, limit: Int) {
         }
     })
     let filteredPlaces = location is BusStop ? convertedPlaces.filter({ !areObjectsEqual(type: BusStop.self, a: location, b: $0)}) : convertedPlaces.filter({ !areObjectsEqual(type: PlaceResult.self, a: location, b: $0)})
-    
-    var updatedPlaces = [location] + filteredPlaces
+
+    var updatedPlaces: [Any]!
+    if bottom {
+        updatedPlaces = filteredPlaces + [location]
+    } else {
+        updatedPlaces = [location] + filteredPlaces
+    }
     if updatedPlaces.count > limit { updatedPlaces.remove(at: updatedPlaces.count - 1)}
     let data = NSKeyedArchiver.archivedData(withRootObject: updatedPlaces)
     userDefaults.set(data, forKey: key)

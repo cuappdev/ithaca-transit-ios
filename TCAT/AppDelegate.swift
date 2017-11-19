@@ -34,14 +34,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         }
         
         // Initalize window without storyboard
+        getBusStops()
+
         let rootVC: UIViewController = userDefaults.bool(forKey: "onboardingShown") ? HomeViewController() :
             OnboardViewController()
         let navigationController = UINavigationController(rootViewController: rootVC)
         navigationController.navigationBar.barTintColor = .white
-        navigationController.navigationBar.isTranslucent = false
+        //navigationController.navigationBar.isTranslucent = false
         navigationController.navigationBar.tintColor = .black
-        
-        (rootVC as? HomeViewController)?.getBusStops()
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = navigationController
@@ -90,6 +90,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
+
+    /* Get all bus stops and store in userDefaults */
+    func getBusStops() {
+        Network.getAllStops().perform(withSuccess: { stops in
+            let allBusStops = stops.allStops
+            let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
+            self.userDefaults.set(data, forKey: Key.UserDefaults.allBusStops)
+        }, failure: { error in
+            print("getBusStops error:", error)
+        })
+    }
+
     
     
 }

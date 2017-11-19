@@ -160,26 +160,33 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         }
     }
     
-    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        let header = view as! UITableViewHeaderFooterView
-        header.textLabel?.textColor = .secondaryTextColor
-        header.textLabel?.font = tctSectionHeaderFont()
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = HeaderView()
+
         switch sections[section].type {
-        case .recentSearches: header.textLabel?.text = "Recent Searches"
-        case .favorites: header.textLabel?.text = "Favorites"
-        case .searchResults, .seeAllStops, .currentLocation, .cornellDestination: header.textLabel?.text = nil
+        case .cornellDestination:
+            header.setupView(labelText: "Get There Now", displayAddButton: false)
+        case .recentSearches:
+            header.setupView(labelText: "Recent Searches", displayAddButton: false)
+        case .favorites,.seeAllStops, .searchResults:
+            return nil
+        default: break
+        }
+
+        return header
+    }
+
+   override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+
+   override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch sections[section].type {
+        case .favorites, .recentSearches: return 50
+        default: return 24
         }
     }
-    
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch sections[section].type {
-        case .cornellDestination: return "Get There Now"
-        case .favorites: return "Favorites"
-        case .recentSearches: return "Recent Searches"
-        case .searchResults, .seeAllStops, .currentLocation: return nil
-        }
-    }
-    
+
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50.0
     }
@@ -202,7 +209,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
             allStopsTVC.allStops = FetchBusStops.shared.getAllStops()
             allStopsTVC.unwindAllStopsTVCDelegate = self
         case .busStop(let busStop):
-            if busStop.name != "Current Location" {
+            if busStop.name != "Current Location" && busStop.name != "Add Your First Favorite!" {
                 insertPlace(for: Key.UserDefaults.recentSearch, location: busStop, limit: 8)
             }
             //Crashlytics Answers

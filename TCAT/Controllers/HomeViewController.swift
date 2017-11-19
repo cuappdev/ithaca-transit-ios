@@ -15,7 +15,7 @@ import NotificationBannerSwift
 import Crashlytics
 import SnapKit
 
-class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
+class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate, AddFavoritesDelegate {
     let userDefaults = UserDefaults.standard
     let cornellDestinations = [(name: "North Campus", stops: "RPCC, Balch Hall, Appel, Helen Newman, Jessup Field"),
                                (name: "West Campus", stops: "Baker Flagpole, Baker Flagpole (Slopeside)"),
@@ -48,31 +48,18 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.edgesForExtendedLayout = []
+
         //Add Notification Observers
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
         
         recentLocations = retrieveRecentPlaces(for: Key.UserDefaults.recentSearch)
         favorites = retrieveRecentPlaces(for: Key.UserDefaults.favorites)
-        print("FAVES", favorites)
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
         view.backgroundColor = .tableBackgroundColor
-        definesPresentationContext = true
-        let searchBarFrame = CGRect(x: 0, y: 0, width: view.bounds.width * 0.934, height: 80)
-        searchBar = UISearchBar(frame: searchBarFrame)
-        searchBar.placeholder = "Search (e.g Balch Hall, 312 College Ave)"
-        searchBar.delegate = self
-        searchBar.isTranslucent = false
-        searchBar.searchBarStyle = .default
-        let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
-        textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
-        
-        navigationItem.titleView = searchBar
-        
-        let tableViewFrame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height - (navigationController?.navigationBar.bounds.height)!)
-        tableView = UITableView(frame: tableViewFrame, style: .grouped)
+
+        tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
@@ -81,7 +68,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
 
         tableView.separatorColor = .lineColor
         tableView.keyboardDismissMode = .onDrag
-        tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
         tableView.showsVerticalScrollIndicator = false
         tableView.register(BusStopCell.self, forCellReuseIdentifier: "busStop")
@@ -89,14 +75,43 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.register(CornellDestinationCell.self, forCellReuseIdentifier: "cornellDestinations")
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "seeAllStops")
         view.addSubview(tableView)
+
+        tableView.snp.makeConstraints { (make) in
+            make.top.leading.trailing.bottom.equalToSuperview()
+        }
+
+        searchBar = UISearchBar()
+        searchBar.placeholder = "Search (e.g Balch Hall, 312 College Ave)"
+        searchBar.delegate = self
+        searchBar.searchBarStyle = .default
+        let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
+        textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
+        navigationItem.titleView = searchBar
+    }
+
+    func displayFavoritesTVC() {
+        if favorites.count < 5 {
+        let favoritesTVC = FavoritesTableViewController()
+        let navController = UINavigationController(rootViewController: favoritesTVC)
+        present(navController, animated: true, completion: nil)
+        } else {
+            let title = "Only 5 Favorites Are Allowed"
+            let message = "To add more favorites, please swipe left and delete one first."
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let done = UIAlertAction(title: "Got It", style: .default)
+            alertController.addAction(done)
+            present(alertController, animated: true, completion: nil)
+        }
     }
 
     override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(note:)), name: .reachabilityChanged, object: reachability)
         do {
             try reachability?.startNotifier()
         } catch {
-            print("HomeVC viewDdiLayoutSubviews: Could not start reachability notifier")
+            print("HomeVC viewDidLayoutSubviews: Could not start reachability notifier")
         }
         if searchBar.showsCancelButton {
             searchBar.becomeFirstResponder()
@@ -132,11 +147,22 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        recentLocations = retrieveRecentPlaces(for: Key.UserDefaults.recentSearch)
+        favorites = retrieveRecentPlaces(for: Key.UserDefaults.favorites)
+        sections = createSections()
+    }
+
     func createSections() -> [Section] {
         var allSections: [Section] = []
         let recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
         let seeAllStopsSection = Section(type: .seeAllStops, items: [.seeAllStops])
-        let favoritesSection = Section(type: .favorites, items: favorites)
+        var favoritesSection = Section(type: .favorites, items: favorites)
+
+        if favoritesSection.items.isEmpty {
+            let addFavorites = BusStop(name: "Add Your First Favorite!", lat: 0.0, long: 0.0)
+            favoritesSection = Section(type: .favorites, items: [.busStop(addFavorites)])
+        }
         allSections.append(favoritesSection)
         allSections.append(recentSearchesSection)
         allSections.append(seeAllStopsSection)
@@ -146,28 +172,38 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
     }
-    
-    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        let header = view as! UITableViewHeaderFooterView
-        header.textLabel?.textColor = .secondaryTextColor
-        header.textLabel?.font = tctSectionHeaderFont()
-        switch sections[section].type {
-        case .cornellDestination: header.textLabel?.text = "Get There Now"
-        case .recentSearches: header.textLabel?.text = "Recent Searches"
-        case .favorites:
-            header.textLabel?.text = "Favorite Destinations"
-            let addButton = UIButton(type: .system)
-            addButton.setTitle("Add", for: .normal)
-            addButton.setTitleColor(.tcatBlueColor, for: .normal)
-            addButton.addTarget(self, action: #selector(addNewFavorite), for: .touchUpInside)
-            header.addSubview(addButton)
-            addButton.snp.makeConstraints({ (make) in
-                make.right.equalToSuperview().offset(-12)
-                make.centerY.equalTo((header.textLabel?.snp.centerY)!)
-            })
 
-        case .seeAllStops, .searchResults: header.textLabel?.text = nil
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = HeaderView()
+
+        switch sections[section].type {
+        case .cornellDestination:
+            header.setupView(labelText: "Get There Now", displayAddButton: false)
+        case .recentSearches:
+            header.setupView(labelText: "Recent Searches", displayAddButton: false)
+        case .favorites:
+            header.setupView(labelText: "Favorite Destinations", displayAddButton: true)
+            header.addFavoritesDelegate = self
+        case .seeAllStops, .searchResults:
+            return nil
         default: break
+        }
+
+        return header
+    }
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+         switch sections[section].type {
+         case .favorites, .recentSearches: return 50
+         default: return 24
         }
     }
 
@@ -177,24 +213,31 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         present(navController, animated: true, completion: nil)
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch sections[section].type {
-        case .cornellDestination: return "Get There Now"
-        case .recentSearches: return "Recent Searches"
-            case .favorites: return "Favorite Destinations"
-        case .seeAllStops, .searchResults: return nil
-        default: return nil
-        }
-    }
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50.0
+    }
+
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section == 0 && !favorites.isEmpty
+    }
+
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let itemTypeToDelete = sections[indexPath.section].items[indexPath.row]
+            switch itemTypeToDelete {
+            case .busStop(let busStop):
+                favorites = deleteFavorite(favorite: busStop, allFavorites: favorites)
+            case .placeResult(let placeResult):
+                favorites = deleteFavorite(favorite: placeResult, allFavorites: favorites)
+            default: break
+            }
+            sections = createSections()
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var itemType : ItemType?
         var cell: UITableViewCell!
-        
         switch sections[indexPath.section].type {
         case .cornellDestination:
             itemType = .cornellDestination
@@ -237,7 +280,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         switch sections[section].type {
         case .cornellDestination: return cornellDestinations.count
         case .recentSearches: return recentLocations.count
-        case .favorites: return favorites.count
+        case .favorites: return favorites.isEmpty ? 1 : favorites.count
         case .seeAllStops, .searchResults: return sections[section].items.count
         default: return 0
         }
@@ -248,6 +291,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let optionsVC = RouteOptionsViewController()
         let allStopsTVC = AllStopsTableViewController()
         var didSelectAllStops = false
+        var presentOptionsVC = true
         
         switch sections[indexPath.section].type {
         case .cornellDestination:
@@ -263,17 +307,26 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             didSelectAllStops = true
             allStopsTVC.allStops = FetchBusStops.shared.getAllStops()
         case .busStop(let busStop):
+            if busStop.name == "Add Your First Favorite!" { //we want to go to favoritesvc
+                presentOptionsVC = false
+                let favoritesTVC = FavoritesTableViewController()
+                let navController = UINavigationController(rootViewController: favoritesTVC)
+                present(navController, animated: true, completion: nil)
+            } else {
             insertPlace(for: Key.UserDefaults.recentSearch, location: busStop, limit: 8)
             optionsVC.searchTo = busStop
+            }
         case .placeResult(let placeResult):
             insertPlace(for: Key.UserDefaults.recentSearch, location: placeResult, limit: 8)
             optionsVC.searchTo = placeResult
         }
-        definesPresentationContext = false
+
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
         let vcToPush = didSelectAllStops ? allStopsTVC : optionsVC
+        if presentOptionsVC {
         navigationController?.pushViewController(vcToPush, animated: true)
+        }
     }
 
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
@@ -297,43 +350,16 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     func emptyDataSet(_ scrollView: UIScrollView!, didTap button: UIButton!) {
-        getBusStops()
-    }
-
-
-    
-    /* Get all bus stops and store in userDefaults */
-    func getBusStops() {
-        Network.getAllStops().perform(withSuccess: { stops in
-            self.isNetworkDown = false
-            self.userDefaults.set([BusStop](), forKey: Key.UserDefaults.allBusStops)
-            let allBusStops = stops.allStops
-            let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
-            self.userDefaults.set(data, forKey: Key.UserDefaults.allBusStops)
-            self.searchBar.isUserInteractionEnabled = true
-            //self.sectionIndexes = sectionIndexesForBusStop()
-        }, failure: { error in
-            print("HomeVC getBusStops error:", error)
-            self.isNetworkDown = true
-            self.sectionIndexes = [:]
-            self.searchBar.isUserInteractionEnabled = false
-            self.sections = []
-        })
+        //getBusStops()
     }
     
     /* Keyboard Functions */
     @objc func keyboardWillShow(_ notification: Notification) {
         isKeyboardVisible = true
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-            let contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height, 0.0)
-            tableView.contentInset = contentInsets
-        }
     }
     
     @objc func keyboardWillHide(_ notification: Notification) {
         isKeyboardVisible = false
-        tableView.contentInset = .zero
-        tableView.scrollIndicatorInsets = .zero
     }
     
     /* ScrollView Delegate */

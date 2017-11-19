@@ -18,6 +18,7 @@ extension UIColor {
     @nonobjc static let secondaryTextColor = UIColor(white: 74 / 255, alpha: 1.0)
     @nonobjc static let tableHeaderColor = UIColor(white: 100 / 255, alpha: 1.0)
     @nonobjc static let mediumGrayColor = UIColor(white: 155 / 255, alpha: 1.0)
+    @nonobjc static let tableViewHeaderTextColor = UIColor(white: 71 / 255, alpha: 1.0)
     @nonobjc static let lineColor = UIColor(white: 230 / 255, alpha: 1.0)
     @nonobjc static let lineDarkColor = UIColor(white: 216 / 255, alpha: 1)
     @nonobjc static let tableBackgroundColor = UIColor(white: 242 / 255, alpha: 1.0)

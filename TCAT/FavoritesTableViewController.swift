@@ -8,22 +8,34 @@
 
 import UIKit
 
-class FavoritesTableViewController: UITableViewController {
+class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
 
+    var timer: Timer?
     var allStops: [BusStop]!
+    var resultsSection: Section! {
+        didSet {
+            tableView.reloadData()
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         title = "Add Favorite"
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissVC))
-        let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!,
-                                                             .foregroundColor : UIColor.black]
+        let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!, .foregroundColor : UIColor.black]
         navigationController?.navigationBar.titleTextAttributes = titleAttributes
         navigationController?.navigationBar.tintColor = .black
+        navigationController?.navigationBar.barTintColor = .white
+        navigationController?.navigationBar.isTranslucent = false
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
 
         allStops = FetchBusStops.shared.getAllStops()
-         tableView.register(BusStopCell.self, forCellReuseIdentifier: "BusStop")
+        tableView.register(BusStopCell.self, forCellReuseIdentifier: "BusStop")
+        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "SearchResults")
+
+        resultsSection = Section(type: .searchResults, items: [ItemType]())
     }
 
     override func didReceiveMemoryWarning() {
@@ -38,71 +50,89 @@ class FavoritesTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return allStops.count
+        return resultsSection.items.isEmpty ? allStops.count : resultsSection.items.count
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let searchBar = UISearchBar()
+        searchBar.isTranslucent = true
+        searchBar.backgroundImage = UIImage()
+        searchBar.alpha = 1.0
+        let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
+        textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
+        textFieldInsideSearchBar?.attributedPlaceholder = NSAttributedString(string: "Search", attributes: [NSAttributedStringKey.foregroundColor: UIColor.searchBarPlaceholderTextColor])
+       searchBar.backgroundColor = .white
+        searchBar.delegate = self
         return searchBar
 
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell: UITableViewCell!
+        if resultsSection.items.isEmpty {
          let cell = tableView.dequeueReusableCell(withIdentifier: "BusStop", for: indexPath) as! BusStopCell
         cell.textLabel?.text = allStops[indexPath.row].name
         return cell
+        }
+
+        let item = resultsSection.items[indexPath.row]
+
+        switch item {
+        case .busStop(let busStop):
+            cell = tableView.dequeueReusableCell(withIdentifier: "BusStop", for: indexPath) as! BusStopCell
+            cell.textLabel?.text = busStop.name
+        case .placeResult(let placeResult):
+            cell = tableView.dequeueReusableCell(withIdentifier: "SearchResults", for: indexPath) as! SearchResultsCell
+            cell.textLabel?.text = placeResult.name
+            cell.detailTextLabel?.text = placeResult.detail
+        default:
+            return UITableViewCell()
+        }
+        cell.preservesSuperviewLayoutMargins = false
+        cell.separatorInset = .zero
+        cell.layoutMargins = .zero
+        cell.layoutSubviews()
+        return cell
     }
 
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if resultsSection.items.isEmpty { //we selected from allStops array
+            let busStopSelected = allStops[indexPath.row]
+            insertPlace(for: Key.UserDefaults.favorites, location: busStopSelected, limit: 5, bottom: true)
+        } else {
+            switch resultsSection.items[indexPath.row] {
+            case .busStop(let busStop):
+                insertPlace(for: Key.UserDefaults.favorites, location: busStop, limit: 5, bottom: true)
+            case .placeResult(let placeResult):
+                insertPlace(for: Key.UserDefaults.favorites, location: placeResult, limit: 5, bottom: true)
+            default:
+                break
+            }
+        }
+        dismissVC()
     }
-    */
 
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
     }
-    */
 
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
+    /* Get Search Results */
+    @objc func getPlaces(timer: Timer) {
+        let searchText = (timer.userInfo as! [String: String])["searchText"]!
+        if searchText.count > 0 {
+            Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
+                self.resultsSection = parseGoogleJSON(searchText: searchText, json: responseJson)
+                self.tableView.contentOffset = .zero
+            })
+        } else {
+            resultsSection = Section(type: .searchResults, items: [ItemType]())
+        }
     }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
