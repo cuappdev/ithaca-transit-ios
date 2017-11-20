@@ -286,12 +286,13 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         summaryViewHeight = 80
         
         if #available(iOS 11.0, *) {
+            
             let topPadding = navigationController?.view.safeAreaInsets.top ?? 0
             let bottomPadding = navigationController?.view.safeAreaInsets.bottom ?? 0
 
-            largeDetailHeight = topPadding
-            mediumDetailHeight = (main.height / 2) - statusNavHeight()
-            smallDetailHeight = main.height - summaryViewHeight - bottomPadding*2 - topPadding
+            largeDetailHeight = topPadding + summaryViewHeight
+            mediumDetailHeight = main.height / 2
+            smallDetailHeight = main.height - summaryViewHeight - bottomPadding
 
         } else {
 
