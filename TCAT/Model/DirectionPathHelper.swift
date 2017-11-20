@@ -96,7 +96,7 @@ struct PathHelper {
         
         for point in path {
             
-            if let stop = getAllBusStops().first(where: { (stop) -> Bool in
+            if let stop = SearchTableViewManager.shared.getAllStops().first(where: { (stop) -> Bool in
                 let stopCoordinates = CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.long)
                 return pointWithinLocation(point: point, location: stopCoordinates, exact: true)
             }) {

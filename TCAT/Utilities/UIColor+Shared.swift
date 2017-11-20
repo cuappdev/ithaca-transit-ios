@@ -18,6 +18,7 @@ extension UIColor {
     @nonobjc static let secondaryTextColor = UIColor(white: 74 / 255, alpha: 1.0)
     @nonobjc static let tableHeaderColor = UIColor(white: 100 / 255, alpha: 1.0)
     @nonobjc static let mediumGrayColor = UIColor(white: 155 / 255, alpha: 1.0)
+    @nonobjc static let tableViewHeaderTextColor = UIColor(white: 71 / 255, alpha: 1.0)
     @nonobjc static let lineColor = UIColor(white: 230 / 255, alpha: 1.0)
     @nonobjc static let lineDarkColor = UIColor(white: 216 / 255, alpha: 1)
     @nonobjc static let tableBackgroundColor = UIColor(white: 242 / 255, alpha: 1.0)
@@ -81,6 +82,26 @@ extension String {
         let first = String(prefix(1)).capitalized
         let other = String(dropFirst()).lowercased()
         return first + other
+    }
+}
+
+extension CLLocationCoordinate2D {
+    // MARK: CLLocationCoordinate2D+MidPoint
+    func middleLocationWith(location:CLLocationCoordinate2D) -> CLLocationCoordinate2D {
+
+        let lon1 = longitude * .pi / 180
+        let lon2 = location.longitude * .pi / 180
+        let lat1 = latitude * .pi / 180
+        let lat2 = location.latitude * .pi / 180
+        let dLon = lon2 - lon1
+        let x = cos(lat2) * cos(dLon)
+        let y = cos(lat2) * sin(dLon)
+
+        let lat3 = atan2( sin(lat1) + sin(lat2), sqrt((cos(lat1) + x) * (cos(lat1) + x) + y * y) )
+        let lon3 = lon1 + atan2(y, cos(lat1) + x)
+
+        let center:CLLocationCoordinate2D = CLLocationCoordinate2DMake(lat3 * 180 / .pi, lon3 * 180 / .pi)
+        return center
     }
 }
 

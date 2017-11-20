@@ -36,8 +36,9 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     var seeAllStopsSection: Section!
     var searchResultsSection: Section!
     var currentLocationSection: Section!
-    var sectionIndexes: [String: Int]!
+    var favoritesSection: Section!
     var recentLocations: [ItemType] = []
+    var favorites: [ItemType] = []
     var initialTableViewIndexMinY: CGFloat!
     var isKeyboardVisible = false
     var shouldShowCurrentLocation = true
@@ -68,15 +69,15 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
         
-        //Create SectionIndexes & Fetch RecentLocations
-        sectionIndexes = sectionIndexesForBusStop()
-        recentLocations = retrieveRecentLocations()
+        //Fetch RecentLocation and Favorites
+        recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Key.UserDefaults.recentSearch)
+        favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Key.UserDefaults.favorites)
         
         // Set Up TableView
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: "busStops")
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: "currentLocation")
-        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "searchResults")
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "seeAllStops")
+        tableView.register(BusStopCell.self, forCellReuseIdentifier: Key.Cells.busIdentifier)
+        tableView.register(BusStopCell.self, forCellReuseIdentifier: Key.Cells.currentLocationIdentifier)
+        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Key.Cells.searchResultsIdentifier)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Key.Cells.seeAllStopsIdentifier)
         tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
         tableView.sectionIndexBackgroundColor = .clear
@@ -94,9 +95,9 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         }
         
         //Set Up Sections For TableView
-//        let allBusStops = getAllBusStops()
         seeAllStopsSection = Section(type: .seeAllStops, items: [.seeAllStops])
         recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
+        favoritesSection = Section(type: .favorites, items: favorites)
         searchResultsSection = Section(type: .searchResults, items: [])
         if let currentLocation = currentLocation {
             currentLocationSection = Section(type: .currentLocation, items: [.busStop(currentLocation)])
@@ -117,6 +118,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         if currentLocationSection != nil {
             allSections.append(currentLocationSection)
         }
+        allSections.append(favoritesSection)
         allSections.append(recentSearchesSection)
         allSections.append(seeAllStopsSection)
         return allSections.filter({$0.items.count > 0})
@@ -153,28 +155,40 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         switch sections[section].type {
         case .cornellDestination: return 0
         case .recentSearches: return recentLocations.count
+        case .favorites: return favorites.count
         case .seeAllStops, .searchResults, .currentLocation: return sections[section].items.count
         }
     }
     
-    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        let header = view as! UITableViewHeaderFooterView
-        header.textLabel?.textColor = .secondaryTextColor
-        header.textLabel?.font = tctSectionHeaderFont()
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = HeaderView()
+
         switch sections[section].type {
-        case .recentSearches: header.textLabel?.text = "Recent Searches"
-        case .searchResults, .seeAllStops, .currentLocation, .cornellDestination: header.textLabel?.text = nil
+        case .cornellDestination:
+            header.setupView(labelText: "Get There Now", displayAddButton: false)
+        case .recentSearches:
+            header.setupView(labelText: "Recent Searches", displayAddButton: false)
+        case .favorites:
+            header.setupView(labelText: "Favorite Destinations", displayAddButton: false)
+        case .seeAllStops, .searchResults:
+            return nil
+        default: break
+        }
+
+        return header
+    }
+
+   override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+
+   override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch sections[section].type {
+        case .favorites, .recentSearches: return 50
+        default: return 24
         }
     }
-    
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch sections[section].type {
-        case .cornellDestination: return "Get There Now"
-        case .recentSearches: return "Recent Searches"
-        case .searchResults, .seeAllStops, .currentLocation: return nil
-        }
-    }
-    
+
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50.0
     }
@@ -187,25 +201,25 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         switch sections[indexPath.section].type {
         case .cornellDestination:
             itemType = .cornellDestination
-        case .recentSearches, .searchResults, .seeAllStops, .currentLocation:
+        case .recentSearches, .searchResults, .seeAllStops, .currentLocation, .favorites:
             itemType = sections[indexPath.section].items[indexPath.row]
         }
         
         switch itemType {
         case .seeAllStops:
             didSelectAllStops = true
-            allStopsTVC.allStops = getAllBusStops()
+            allStopsTVC.allStops = SearchTableViewManager.shared.getAllStops()
             allStopsTVC.unwindAllStopsTVCDelegate = self
         case .busStop(let busStop):
-            if busStop.name != "Current Location" {
-                insertRecentLocation(location: busStop)
+            if busStop.name != "Current Location" && busStop.name != Key.Favorites.first {
+                SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.recentSearch, location: busStop, limit: 8)
             }
             //Crashlytics Answers
             Answers.destinationSearched(destination: busStop.name, stopType: "bus stop")
             
             destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
         case .placeResult(let placeResult):
-            insertRecentLocation(location: placeResult)
+            SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.recentSearch, location: placeResult, limit: 8)
             //Crashlytics Answers
             Answers.destinationSearched(destination: placeResult.name, stopType: "google place")
             
@@ -232,22 +246,22 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         switch sections[indexPath.section].type {
         case .cornellDestination:
             itemType = .cornellDestination
-        case .recentSearches, .seeAllStops, .searchResults, .currentLocation:
+        case .recentSearches, .seeAllStops, .searchResults, .currentLocation, .favorites:
             itemType = sections[indexPath.section].items[indexPath.row]
         }
         
         if let itemType = itemType {
             switch itemType {
             case .busStop(let busStop):
-                let identifier = busStop.name == "Current Location" ? "currentLocation" : "busStops"
+                let identifier = busStop.name == "Current Location" ? Key.Cells.currentLocationIdentifier : Key.Cells.busIdentifier
                 cell = tableView.dequeueReusableCell(withIdentifier: identifier) as! BusStopCell
                 cell.textLabel?.text = busStop.name
             case .placeResult(let placeResult):
-                cell = tableView.dequeueReusableCell(withIdentifier: "searchResults") as! SearchResultsCell
+                cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.searchResultsIdentifier) as! SearchResultsCell
                 cell.textLabel?.text = placeResult.name
                 cell.detailTextLabel?.text = placeResult.detail
             case .seeAllStops:
-                cell = tableView.dequeueReusableCell(withIdentifier: "seeAllStops")
+                cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.seeAllStopsIdentifier)
                 cell.textLabel?.text = "See All Stops"
                 cell.imageView?.image = #imageLiteral(resourceName: "list")
                 cell.accessoryType = .disclosureIndicator
@@ -269,7 +283,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if searchText.count > 0 {
             Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
-                self.searchResultsSection = parseGoogleJSON(searchText: searchText, json: responseJson)
+                self.searchResultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
                 self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
                 //self.tableViewIndexController.setHidden(true, animated: false)
                 if !self.sections.isEmpty {
