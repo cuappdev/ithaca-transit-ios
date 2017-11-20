@@ -71,6 +71,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         
         //Fetch RecentLocation and Favorites
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Key.UserDefaults.recentSearch)
+        favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Key.UserDefaults.favorites)
         
         // Set Up TableView
         tableView.register(BusStopCell.self, forCellReuseIdentifier: Key.Cells.busIdentifier)
@@ -167,7 +168,9 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
             header.setupView(labelText: "Get There Now", displayAddButton: false)
         case .recentSearches:
             header.setupView(labelText: "Recent Searches", displayAddButton: false)
-        case .favorites,.seeAllStops, .searchResults:
+        case .favorites:
+            header.setupView(labelText: "Favorite Destinations", displayAddButton: false)
+        case .seeAllStops, .searchResults:
             return nil
         default: break
         }
