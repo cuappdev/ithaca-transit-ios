@@ -22,7 +22,7 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
         super.viewDidLoad()
 
         title = "Add Favorite"
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissVC))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissVC))
         let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!, .foregroundColor : UIColor.black]
         navigationController?.navigationBar.titleTextAttributes = titleAttributes
         navigationController?.navigationBar.tintColor = .black
@@ -31,9 +31,9 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
 
-        allStops = FetchBusStops.shared.getAllStops()
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: "BusStop")
-        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "SearchResults")
+        allStops = SearchTableViewManager.shared.getAllStops()
+        tableView.register(BusStopCell.self, forCellReuseIdentifier: Key.Cells.busIdentifier)
+        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Key.Cells.searchResultsIdentifier)
 
         resultsSection = Section(type: .searchResults, items: [ItemType]())
     }
@@ -68,13 +68,12 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
        searchBar.backgroundColor = .white
         searchBar.delegate = self
         return searchBar
-
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell!
         if resultsSection.items.isEmpty {
-         let cell = tableView.dequeueReusableCell(withIdentifier: "BusStop", for: indexPath) as! BusStopCell
+         let cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.busIdentifier, for: indexPath) as! BusStopCell
         cell.textLabel?.text = allStops[indexPath.row].name
         return cell
         }
@@ -83,10 +82,10 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
 
         switch item {
         case .busStop(let busStop):
-            cell = tableView.dequeueReusableCell(withIdentifier: "BusStop", for: indexPath) as! BusStopCell
+            cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.busIdentifier, for: indexPath) as! BusStopCell
             cell.textLabel?.text = busStop.name
         case .placeResult(let placeResult):
-            cell = tableView.dequeueReusableCell(withIdentifier: "SearchResults", for: indexPath) as! SearchResultsCell
+            cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.searchResultsIdentifier, for: indexPath) as! SearchResultsCell
             cell.textLabel?.text = placeResult.name
             cell.detailTextLabel?.text = placeResult.detail
         default:
@@ -103,13 +102,13 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         if resultsSection.items.isEmpty { //we selected from allStops array
             let busStopSelected = allStops[indexPath.row]
-            insertPlace(for: Key.UserDefaults.favorites, location: busStopSelected, limit: 5, bottom: true)
+            SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.favorites, location: busStopSelected, limit: 5, bottom: true)
         } else {
             switch resultsSection.items[indexPath.row] {
             case .busStop(let busStop):
-                insertPlace(for: Key.UserDefaults.favorites, location: busStop, limit: 5, bottom: true)
+                SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.favorites, location: busStop, limit: 5, bottom: true)
             case .placeResult(let placeResult):
-                insertPlace(for: Key.UserDefaults.favorites, location: placeResult, limit: 5, bottom: true)
+                SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.favorites, location: placeResult, limit: 5, bottom: true)
             default:
                 break
             }
@@ -127,7 +126,7 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if searchText.count > 0 {
             Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
-                self.resultsSection = parseGoogleJSON(searchText: searchText, json: responseJson)
+                self.resultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
                 self.tableView.contentOffset = .zero
             })
         } else {

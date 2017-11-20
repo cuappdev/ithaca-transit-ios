@@ -23,4 +23,16 @@ struct Key {
     struct Distance {
         static let maxBetweenStops = 160.0
     }
+
+    struct Cells {
+        static let busIdentifier = "BusStop"
+        static let searchResultsIdentifier = "SearchResults"
+        static let cornellDestinationsIdentifier = "CornellDestinations"
+        static let seeAllStopsIdentifier = "SeeAllStops"
+        static let currentLocationIdentifier = "CurrentLocation"
+    }
+
+    struct Favorites {
+        static let first = "Add Your First Favorite!"
+    }
 }

@@ -70,14 +70,13 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
         
         //Fetch RecentLocation and Favorites
-        recentLocations = retrieveRecentPlaces(for: Key.UserDefaults.recentSearch)
-        //favorites = retrieveFavorites()
+        recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Key.UserDefaults.recentSearch)
         
         // Set Up TableView
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: "busStops")
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: "currentLocation")
-        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: "searchResults")
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "seeAllStops")
+        tableView.register(BusStopCell.self, forCellReuseIdentifier: Key.Cells.busIdentifier)
+        tableView.register(BusStopCell.self, forCellReuseIdentifier: Key.Cells.currentLocationIdentifier)
+        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Key.Cells.searchResultsIdentifier)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Key.Cells.seeAllStopsIdentifier)
         tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
         tableView.sectionIndexBackgroundColor = .clear
@@ -206,18 +205,18 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         switch itemType {
         case .seeAllStops:
             didSelectAllStops = true
-            allStopsTVC.allStops = FetchBusStops.shared.getAllStops()
+            allStopsTVC.allStops = SearchTableViewManager.shared.getAllStops()
             allStopsTVC.unwindAllStopsTVCDelegate = self
         case .busStop(let busStop):
-            if busStop.name != "Current Location" && busStop.name != "Add Your First Favorite!" {
-                insertPlace(for: Key.UserDefaults.recentSearch, location: busStop, limit: 8)
+            if busStop.name != "Current Location" && busStop.name != Key.Favorites.first {
+                SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.recentSearch, location: busStop, limit: 8)
             }
             //Crashlytics Answers
             Answers.destinationSearched(destination: busStop.name, stopType: "bus stop")
             
             destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
         case .placeResult(let placeResult):
-            insertPlace(for: Key.UserDefaults.recentSearch, location: placeResult, limit: 8)
+            SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.recentSearch, location: placeResult, limit: 8)
             //Crashlytics Answers
             Answers.destinationSearched(destination: placeResult.name, stopType: "google place")
             
@@ -251,15 +250,15 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         if let itemType = itemType {
             switch itemType {
             case .busStop(let busStop):
-                let identifier = busStop.name == "Current Location" ? "currentLocation" : "busStops"
+                let identifier = busStop.name == "Current Location" ? Key.Cells.currentLocationIdentifier : Key.Cells.busIdentifier
                 cell = tableView.dequeueReusableCell(withIdentifier: identifier) as! BusStopCell
                 cell.textLabel?.text = busStop.name
             case .placeResult(let placeResult):
-                cell = tableView.dequeueReusableCell(withIdentifier: "searchResults") as! SearchResultsCell
+                cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.searchResultsIdentifier) as! SearchResultsCell
                 cell.textLabel?.text = placeResult.name
                 cell.detailTextLabel?.text = placeResult.detail
             case .seeAllStops:
-                cell = tableView.dequeueReusableCell(withIdentifier: "seeAllStops")
+                cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.seeAllStopsIdentifier)
                 cell.textLabel?.text = "See All Stops"
                 cell.imageView?.image = #imageLiteral(resourceName: "list")
                 cell.accessoryType = .disclosureIndicator
@@ -281,7 +280,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if searchText.count > 0 {
             Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
-                self.searchResultsSection = parseGoogleJSON(searchText: searchText, json: responseJson)
+                self.searchResultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
                 self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
                 //self.tableViewIndexController.setHidden(true, animated: false)
                 if !self.sections.isEmpty {

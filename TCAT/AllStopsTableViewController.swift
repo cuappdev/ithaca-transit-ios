@@ -69,9 +69,18 @@ class AllStopsTableViewController: UITableViewController {
 
     func sectionIndexesForBusStop() -> [String: [BusStop]] {
         var sectionIndexDictionary: [String: [BusStop]] = [:]
-        var currentChar: Character = allStops[0].name.capitalized.first!
         var currBusStopArray: [BusStop] = []
-        var numberBusStops: [BusStop] = [allStops[0]]
+
+        var currentChar: Character = {
+            guard let firstChar = allStops.first?.name.capitalized.first else { return Character("") }
+            return firstChar
+        }()
+
+        var numberBusStops: [BusStop] = {
+            guard let firstStop = allStops.first else { return [] }
+            return [firstStop]
+        }()
+
         for busStop in allStops {
             if let firstChar = busStop.name.capitalized.first {
                 if currentChar != firstChar {
@@ -127,7 +136,7 @@ class AllStopsTableViewController: UITableViewController {
                 print("Could not find bus stop")
                 return
         }
-        insertPlace(for: Key.UserDefaults.recentSearch, location: busStopSelected, limit: 8)
+        SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.recentSearch, location: busStopSelected, limit: 8)
         optionsVC.searchTo = busStopSelected
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)
