@@ -15,6 +15,8 @@ enum WaypointType: String {
     case stop
     case bus
     case walk
+    case walking
+    case bussing
     case none
 }
 
@@ -47,7 +49,7 @@ class Waypoint: NSObject {
             self.iconView = drawBusPointIcon()
         case .walk:
             self.iconView = drawWalkPointIcon()
-        case .none:
+        case .none, .walking, .bussing:
             self.iconView = UIView()
         }
     }
@@ -108,7 +110,7 @@ class Waypoint: NSObject {
         switch wpType {
         case .destination:
             iconView.layer.borderColor = color.cgColor
-        case .origin, .stop, .bus, .walk:
+        case .origin, .stop, .bus, .walk, .bussing, .walking:
             iconView.backgroundColor = color
         case .none:
             break
