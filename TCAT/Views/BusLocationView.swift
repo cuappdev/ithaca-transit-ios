@@ -50,8 +50,8 @@ class BusLocationView: UIView {
         
         // Set initial point to North
         self.bearingIndicator.transform = CGAffineTransform(rotationAngle: .pi)
-        // self.setBearing(bearing)
-        // currentBearing = Double(bearing)
+        self.setBearing(bearing)
+        currentBearing = Double(bearing)
         
     }
     
@@ -99,9 +99,7 @@ class BusLocationView: UIView {
         }
         
         UIView.animate(withDuration: 0.2) {
-            print("OG Degrees:", degrees)
             let newDegrees = Double(degrees) - self.currentBearing
-            print("newDegrees:", newDegrees)
             let currentAngle: CGFloat = CGFloat(-1) * CGFloat(self.degreesToRadians(newDegrees))
             self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
             self.currentBearing = Double(degrees)
@@ -123,8 +121,8 @@ class BusLocationView: UIView {
         
         let degrees = getBearingBetweenTwoPoints(point1: start, point2: end)
         
-        print("calculated degrees:", degrees)
-        print("actual degrees:", 360 + debugDegrees!)
+//        print("calculated degrees:", degrees)
+//        print("actual degrees:", 360 + debugDegrees!)
         
         let newDegrees = degrees - self.currentBearing
         let currentAngle = CGFloat(-1) * CGFloat(self.degreesToRadians(newDegrees))

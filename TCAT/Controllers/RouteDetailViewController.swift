@@ -304,11 +304,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             
         }
         
-//        print("summaryViewHeight:", summaryViewHeight)
-//        print("largeDetailHeight:", largeDetailHeight)
-//        print("mediumDetailHeight:", mediumDetailHeight)
-//        print("smallDetailHeight:", smallDetailHeight)
-        
     }
     
     /** Return height of status bar and possible navigation controller */
