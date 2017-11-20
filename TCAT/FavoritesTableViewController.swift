@@ -10,6 +10,7 @@ import UIKit
 
 class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
 
+    var fromOnboarding = false
     var timer: Timer?
     var allStops: [BusStop]!
     var resultsSection: Section! {
@@ -20,9 +21,9 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        title = "Add Favorite"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissVC))
+        title = fromOnboarding ? "Add Favorites" : "Add Favorite"
+        let systemItem: UIBarButtonSystemItem = fromOnboarding ? .done : .cancel
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem, target: self, action: #selector(dismissVC))
         let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!, .foregroundColor : UIColor.black]
         navigationController?.navigationBar.titleTextAttributes = titleAttributes
         navigationController?.navigationBar.tintColor = .black
@@ -44,7 +45,26 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
     }
 
     @objc func dismissVC() {
-        dismiss(animated: true, completion: nil)
+        if fromOnboarding {
+            let rootVC = HomeViewController()
+            let desiredViewController = UINavigationController(rootViewController: rootVC)
+
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let snapshot: UIView = appDelegate.window!.snapshotView(afterScreenUpdates: true)!
+            desiredViewController.view.addSubview(snapshot)
+
+            appDelegate.window?.rootViewController = desiredViewController
+            userDefaults.setValue(true, forKey: "onboardingShown")
+
+            UIView.animate(withDuration: 0.5, animations: {
+                snapshot.layer.opacity = 0
+                snapshot.layer.transform = CATransform3DMakeScale(1.5, 1.5, 1.5)
+            }, completion: { _ in
+                snapshot.removeFromSuperview()
+            })
+        } else {
+            dismiss(animated: true, completion: nil)
+        }
     }
 
     // MARK: - Table view data source
@@ -65,7 +85,7 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
         textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
         textFieldInsideSearchBar?.attributedPlaceholder = NSAttributedString(string: "Search", attributes: [NSAttributedStringKey.foregroundColor: UIColor.searchBarPlaceholderTextColor])
-       searchBar.backgroundColor = .white
+        searchBar.backgroundColor = .white
         searchBar.delegate = self
         return searchBar
     }
@@ -73,9 +93,9 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell!
         if resultsSection.items.isEmpty {
-         let cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.busIdentifier, for: indexPath) as! BusStopCell
-        cell.textLabel?.text = allStops[indexPath.row].name
-        return cell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.busIdentifier, for: indexPath) as! BusStopCell
+            cell.textLabel?.text = allStops[indexPath.row].name
+            return cell
         }
 
         let item = resultsSection.items[indexPath.row]

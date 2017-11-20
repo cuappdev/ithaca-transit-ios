@@ -44,7 +44,7 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow the app to calculate bus routes using your location</string>
+	<string>Allow the app to calculate navigation routes using your current location.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>SFText-Medium.otf</string>

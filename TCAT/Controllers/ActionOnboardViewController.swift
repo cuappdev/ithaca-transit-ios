@@ -10,7 +10,7 @@ import UIKit
 import CoreLocation
 
 enum OnboardType: String {
-    case locationServices, welcome
+    case locationServices, welcome, favorites
 }
 
 protocol OnboardingDelegate {
@@ -103,8 +103,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
             make.height.equalTo(44)
         }
         setButtonConstraints()
-        
-        secondButton.setTitle("Don't Allow", for: .normal)
+
         secondButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
         secondButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)
         secondButton.backgroundColor = .clear
@@ -125,16 +124,19 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         switch type! {
         case .locationServices: return "Location Services"
         case .welcome: return "Welcome!"
+        case .favorites: return "Favorites"
         }
     }
     
     func setButtonConstraints() {
         switch type! {
-        case .locationServices:
+        case .locationServices, .favorites:
             self.button.snp.makeConstraints { (make) in
                 make.width.equalTo(224)
             }
             secondButton.isHidden = false
+            let title = type == .locationServices ? "Don't Allow" : "Not Now"
+            secondButton.setTitle(title, for: .normal)
         case .welcome:
             self.button.snp.makeConstraints { (make) in
                 make.width.equalTo(128)
@@ -146,9 +148,11 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     func getDescription() -> String {
         switch type! {
         case .locationServices:
-            return "We need location services to serve you. "
+            return "Please enable location services to allow the app to use your current location."
         case .welcome:
-            return "This is the magic school bus. If you need to get to somewhere in Ithaca, then use this."
+            return "Welcome to Ithaca’s first end-to-end transit navigation service. Made by Cornell App Development."
+        case .favorites:
+            return "Add some favorites so you can ride the magical school bus faster!"
         }
     }
     
@@ -158,6 +162,8 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
             return "Enable Location Services"
         case .welcome:
             return "Get started"
+        case .favorites:
+            return "Add Favorites"
         }
     }
     
@@ -165,22 +171,30 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         switch type! {
         case .locationServices: return #selector(enableLocation)
         case .welcome: return #selector(moveToNextViewController)
+        case .favorites: return #selector(presentFavoritesTVC)
         }
     }
     
     @objc func moveToNextViewController() {
         onboardingDelegate.moveToNextViewController(vc: self)
     }
+
+    @objc func presentFavoritesTVC() {
+        let favoritesTVC = FavoritesTableViewController()
+        favoritesTVC.fromOnboarding = true
+        let navController = UINavigationController(rootViewController: favoritesTVC)
+        present(navController, animated: true, completion: nil)
+
+    }
     
     @objc func dismissOnboarding() {
         
         let rootVC = HomeViewController()
         let desiredViewController = UINavigationController(rootViewController: rootVC)
-        // desiredViewController.getBusStops()
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let snapshot: UIView = appDelegate.window!.snapshotView(afterScreenUpdates: true)!
-        desiredViewController.view.addSubview(snapshot);
+        desiredViewController.view.addSubview(snapshot)
         
         appDelegate.window?.rootViewController = desiredViewController
         userDefaults.setValue(true, forKey: "onboardingShown")
@@ -201,28 +215,29 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         
-        if status == .authorizedWhenInUse {
+        if status == .authorizedWhenInUse && type == .locationServices {
             dismissOnboarding()
+            //moveToNextViewController()
         }
-        
+
         // if denied while onboarding...
-        if status == .denied && !userDefaults.bool(forKey: "onboardingShown") {
+        if status == .denied && !userDefaults.bool(forKey: "onboardingShown") && type == .locationServices {
             
             let title = "Location Services Disabled"
             let message = "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services."
             let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            
-            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
+                self.dismissOnboarding()
+            }
             let settings = UIAlertAction(title: "Settings", style: .default) { (_) in
                 UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
             }
-            
+
+            alertController.addAction(cancel)
             alertController.addAction(settings)
             present(alertController, animated: true, completion: nil)
             
-        }
-        
+        }        
     }
-    
-    
 }
