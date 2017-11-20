@@ -453,7 +453,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             case .destination: return 3
             case .stop: return 1
             case .walking: return 0
-            case .bussing: return 999
+            case .bussing: return 999 // large constant to place above other elements
             default: return 0
             }
         }()
