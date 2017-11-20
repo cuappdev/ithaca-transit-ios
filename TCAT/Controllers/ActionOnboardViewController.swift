@@ -10,7 +10,7 @@ import UIKit
 import CoreLocation
 
 enum OnboardType: String {
-    case locationServices, welcome, favorites
+    case locationServices, welcome, favorites, tracking, destination
 }
 
 protocol OnboardingDelegate {
@@ -59,14 +59,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         view.addSubview(description)
         view.addSubview(image)
         view.addSubview(secondButton)
-        
-        image.backgroundColor = .clear
-        image.snp.makeConstraints { (make) in
-            make.width.equalTo(311)
-            make.height.equalTo(325.5)
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(32)
-        }
+
         
         title.font = UIFont(name: FontNames.SanFrancisco.Bold, size: 28)
         title.textColor = UIColor.primaryTextColor
@@ -79,8 +72,20 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
             make.width.equalToSuperview()
             make.height.equalTo(50)
         }
+
+        image.backgroundColor = .clear
+        image.contentMode = .scaleAspectFit
+        image.image = getImage()
+        image.snp.makeConstraints { (make) in
+            make.left.equalToSuperview().offset(32)
+            make.right.equalToSuperview().inset(32)
+            make.height.equalTo(325.5)
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(32)
+            make.bottom.equalTo(title.snp.top).offset(-32)
+        }
         
-        description.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        description.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 16)
         description.textColor = UIColor.mediumGrayColor
         description.text = getDescription()
         description.textAlignment = .center
@@ -122,9 +127,11 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     
     func getTitle() -> String {
         switch type! {
-        case .locationServices: return "Location Services"
-        case .welcome: return "Welcome!"
-        case .favorites: return "Favorites"
+        case .welcome: return "Never miss the bus again."
+        case .tracking: return "Track buses in real time."
+        case .destination: return "Search any destination."
+        case .locationServices: return "Simplify your transit."
+         case .favorites: return "Favorites"
         }
     }
     
@@ -137,7 +144,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
             secondButton.isHidden = false
             let title = type == .locationServices ? "Don't Allow" : "Not Now"
             secondButton.setTitle(title, for: .normal)
-        case .welcome:
+        case .welcome, .tracking, .destination:
             self.button.snp.makeConstraints { (make) in
                 make.width.equalTo(128)
             }
@@ -147,31 +154,47 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     
     func getDescription() -> String {
         switch type! {
-        case .locationServices:
-            return "Please enable location services to allow the app to use your current location."
         case .welcome:
-            return "Welcome to Ithaca’s first end-to-end transit navigation service. Made by Cornell App Development."
+            return "Welcome to Ithaca’s first end-to-end navigation service for the TCAT, made by Cornell AppDev."
+        case .tracking:
+            return "No more uncertainty. Know exactly where your bus is, updated every 30 seconds."
+        case .destination:
+            return "From Teagle Hall to Taughannock Falls, search any location and get there fast."
         case .favorites:
             return "Add some favorites so you can ride the magical school bus faster!"
+        case .locationServices:
+            return "Enable location services to allow the app to use your current location. It’s really handy."
         }
     }
     
     func getButtonText() -> String {
         switch type! {
-        case .locationServices:
-            return "Enable Location Services"
         case .welcome:
-            return "Get started"
+            return "Get Started"
+        case .tracking, .destination:
+            return "Continue"
         case .favorites:
             return "Add Favorites"
+        case .locationServices:
+            return "Enable Location Services"
+        }
+    }
+
+    func getImage() -> UIImage {
+        switch type! {
+        case .welcome: return #imageLiteral(resourceName: "welcome")
+        case .tracking: return #imageLiteral(resourceName: "tracking")
+        case .destination: return #imageLiteral(resourceName: "destination")
+        case .favorites: return #imageLiteral(resourceName: "welcome")
+        case .locationServices: return #imageLiteral(resourceName: "locationServices")
         }
     }
     
     func getAction() -> Selector? {
         switch type! {
-        case .locationServices: return #selector(enableLocation)
-        case .welcome: return #selector(moveToNextViewController)
+        case .welcome, .tracking, .destination: return #selector(moveToNextViewController)
         case .favorites: return #selector(presentFavoritesTVC)
+        case .locationServices: return #selector(enableLocation)
         }
     }
     

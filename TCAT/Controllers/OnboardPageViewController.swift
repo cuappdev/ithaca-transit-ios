@@ -15,6 +15,8 @@ class OnboardViewController: UIViewController, OnboardingDelegate {
     let controllers: [ActionOnboardViewController] = [
         
         ActionOnboardViewController(type: .welcome),
+        ActionOnboardViewController(type: .tracking),
+        ActionOnboardViewController(type: .destination),
         ActionOnboardViewController(type: .locationServices)
         //ActionOnboardViewController(type: .favorites)
         
