@@ -36,7 +36,41 @@ class AllBusStops: JSONDecodable {
             let busStop = BusStop(name: name, lat: lat, long: long)
             allStopsArray.append(busStop)
         }
-        let sortedStops = allStopsArray.sorted(by: {$0.name.uppercased() < $1.name.uppercased()})
+
+        /* These next few lines take duplicate stops and find the middle coordinate between
+         * them and will use that as the condensed bus stop if they are less than 0.1 miles apart
+         * else just use both stops because they are far apart
+         */
+        let crossReference = allStopsArray.reduce(into: [String: [BusStop]]()) {
+            $0[$1.name, default: []].append($1)
+        }
+
+        var nonDuplicateStops = crossReference.filter {$1.count == 1}.map { (key, value) -> BusStop in
+            return value.first!
+        }
+        let duplicates = crossReference
+            .filter { $1.count > 1 }
+
+        //160 meters = 0.1 miles
+        var middleGroundBusStops: [BusStop] = []
+        for key in duplicates.keys {
+            if let currentBusStops = duplicates[key], let first = currentBusStops.first, let second = currentBusStops.last {
+                let firstStopLocation = CLLocation(latitude: first.lat, longitude: first.long)
+                let secondStopLocation = CLLocation(latitude: second.lat, longitude: second.long)
+
+                let distanceBetween = firstStopLocation.distance(from: secondStopLocation)
+                let middleCoordinate = firstStopLocation.coordinate.middleLocationWith(location: secondStopLocation.coordinate)
+                if distanceBetween < Key.Distance.maxBetweenStops {
+                    let middleBusStop = BusStop(name: first.name, lat: middleCoordinate.latitude, long: middleCoordinate.longitude)
+                    middleGroundBusStops.append(middleBusStop)
+                } else {
+                    nonDuplicateStops.append(contentsOf: [first, second])
+                }
+            }
+        }
+        nonDuplicateStops.append(contentsOf: middleGroundBusStops)
+
+        let sortedStops = nonDuplicateStops.sorted(by: {$0.name.uppercased() < $1.name.uppercased()})
         return sortedStops
     }
 }

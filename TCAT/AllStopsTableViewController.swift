@@ -71,7 +71,7 @@ class AllStopsTableViewController: UITableViewController {
         var sectionIndexDictionary: [String: [BusStop]] = [:]
         var currentChar: Character = allStops[0].name.capitalized.first!
         var currBusStopArray: [BusStop] = []
-        var numberBusStops: [BusStop] = []
+        var numberBusStops: [BusStop] = [allStops[0]]
         for busStop in allStops {
             if let firstChar = busStop.name.capitalized.first {
                 if currentChar != firstChar {
@@ -80,6 +80,7 @@ class AllStopsTableViewController: UITableViewController {
                         currBusStopArray = []
                     }
                     currentChar = firstChar
+                    currBusStopArray.append(busStop)
                 } else {
                     if CharacterSet.decimalDigits.contains(currentChar.unicodeScalars.first!) {
                         numberBusStops.append(busStop)

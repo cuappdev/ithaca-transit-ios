@@ -19,4 +19,8 @@ struct Key {
     struct FuzzySearch {
         static let minimumValue = 75
     }
+
+    struct Distance {
+        static let maxBetweenStops = 160.0
+    }
 }
