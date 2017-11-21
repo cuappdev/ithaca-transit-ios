@@ -124,7 +124,6 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
 
         }
         
-
         setButtonConstraints()
         
         if getAction() != nil {
