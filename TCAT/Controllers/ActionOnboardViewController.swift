@@ -60,64 +60,72 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         view.addSubview(image)
         view.addSubview(secondButton)
 
-        
-        title.font = UIFont(name: FontNames.SanFrancisco.Bold, size: 28)
-        title.textColor = UIColor.primaryTextColor
-        title.text = getTitle()
-        title.center = view.center
-        title.textAlignment = .center
-        title.snp.makeConstraints { (make) in
-            make.bottom.equalToSuperview().offset(-244)
+        secondButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
+        secondButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)
+        secondButton.backgroundColor = .clear
+        secondButton.snp.makeConstraints { (make) in
+            if #available(iOS 11.0, *) {
+                make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-16)
+            } else {
+                make.bottom.equalToSuperview().offset(-16)
+            }
+            make.width.equalTo(100)
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview()
-            make.height.equalTo(50)
+            make.height.equalTo(21)
         }
+        secondButton.addTarget(self, action: #selector(dismissOnboarding), for: .touchUpInside)
 
-        image.backgroundColor = .clear
-        image.contentMode = .scaleAspectFit
-        image.image = getImage()
-        image.snp.makeConstraints { (make) in
-            make.left.equalToSuperview().offset(32)
-            make.right.equalToSuperview().inset(32)
-            make.height.equalTo(325.5)
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(32)
-            make.bottom.equalTo(title.snp.top).offset(-32)
-        }
-        
-        description.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 16)
-        description.textColor = UIColor.mediumGrayColor
-        description.text = getDescription()
-        description.textAlignment = .center
-        description.snp.makeConstraints { (make) in
-            make.top.equalTo(title.snp.bottom).offset(12)
-            make.width.equalTo(311.5)
-            make.height.equalTo(80)
-            make.centerX.equalToSuperview()
-        }
-        description.isEditable = false
-        
         button.setTitle(getButtonText(), for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)!
         button.backgroundColor = UIColor.tcatBlueColor
         button.layer.cornerRadius = 4
         self.button.snp.makeConstraints { (make) in
-            make.bottom.equalToSuperview().offset(-64)
+            make.bottom.equalTo(secondButton.snp.top).offset(-12)
             make.centerX.equalToSuperview()
             make.height.equalTo(44)
         }
-        setButtonConstraints()
 
-        secondButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
-        secondButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)
-        secondButton.backgroundColor = .clear
-        secondButton.snp.makeConstraints { (make) in
-            make.top.equalTo(button.snp.bottom).offset(12)
-            make.width.equalTo(100)
+        description.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 16)
+        description.textColor = UIColor.mediumGrayColor
+        description.text = getDescription()
+        description.textAlignment = .center
+        description.isEditable = false
+        description.isScrollEnabled = false
+        description.snp.makeConstraints { (make) in
+            make.leading.equalToSuperview().offset(32)
+            make.trailing.equalToSuperview().offset(-32)
+            make.bottom.lessThanOrEqualTo(button.snp.top).offset(-8)
             make.centerX.equalToSuperview()
         }
-        secondButton.addTarget(self, action: #selector(dismissOnboarding), for: .touchUpInside)
+
+        title.font = UIFont(name: FontNames.SanFrancisco.Bold, size: 26)
+        title.textColor = UIColor.primaryTextColor
+        title.text = getTitle()
+        title.center = view.center
+        title.textAlignment = .center
+        title.adjustsFontSizeToFitWidth = true
+        title.snp.makeConstraints { (make) in
+            make.bottom.equalTo(description.snp.top).offset(-12)
+            make.centerX.equalToSuperview()
+            make.leading.equalToSuperview().offset(18)
+            make.trailing.equalToSuperview().offset(-18)
+        }
+
+        image.backgroundColor = .clear
+        image.image = getImage()
+        image.contentMode = .scaleAspectFit
+        image.snp.makeConstraints { (make) in
+            make.width.equalTo(image.snp.height)
+            make.leading.equalToSuperview().offset(32)
+            make.trailing.equalToSuperview().offset(-32)
+            make.top.equalToSuperview().offset(32)
+            make.bottom.equalTo(title.snp.top).offset(-32)
+
+        }
+        
+
+        setButtonConstraints()
         
         if getAction() != nil {
             button.addTarget(self, action: getAction()!, for: .touchUpInside)
