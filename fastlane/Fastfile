@@ -63,7 +63,7 @@ platform :ios do
 
     gym(scheme: ENV["SCHEME_NAME"]) # Build your app - more options available
 
-    increment_build_number(build_number: 44)
+    increment_build_number
 
     pilot(
        username: ENV["APPLE_ID"],
