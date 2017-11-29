@@ -12,30 +12,27 @@ import CoreLocation
 import MapKit
 import SwiftyJSON
 import NotificationBannerSwift
+import DrawerKit
 
-struct RouteDetailCellSize {
-    static let smallHeight: CGFloat = 60
-    static let largeHeight: CGFloat = 80
-    static let regularWidth: CGFloat = 120
-    static let indentedWidth: CGFloat = 140
-}
+//struct RouteDetailCellSize {
+//    static let smallHeight: CGFloat = 60
+//    static let largeHeight: CGFloat = 80
+//    static let regularWidth: CGFloat = 120
+//    static let indentedWidth: CGFloat = 140
+//}
 
-class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate, UIGestureRecognizerDelegate, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
-
-    var detailView = UIView()
-    var detailTableView: UITableView!
+class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate, DrawerCoordinating {
     
-    var summaryView = UIView()
-    var summaryBottomLabel = UILabel()
+    var drawerDisplayController: DrawerDisplayController?
     
     var loadingView: UIView!
     var isLoading: Bool = true
     var withinMiddle: Bool = true
+    var justLoaded: Bool = true
     
     var locationManager = CLLocationManager()
 
     var mapView: GMSMapView!
-    var routePaths: [Path] = []
     var currentLocation: CLLocationCoordinate2D?
     var bounds = GMSCoordinateBounds()
 
@@ -47,7 +44,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
     var route: Route!
     var directions: [Direction] = []
-    var totalDuration: Int = 0
 
     let main = UIScreen.main.bounds
     // to be initialized programmatically
@@ -55,8 +51,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     var largeDetailHeight: CGFloat = 0
     var mediumDetailHeight: CGFloat = 0
     var smallDetailHeight: CGFloat = 0
-
-    var contentOffset: CGFloat = 0
 
     let markerRadius: CGFloat = 8
     let mapPadding: CGFloat = 40
@@ -91,7 +85,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             calculateWalkingDirections(direction) { (path, time) in
                 
                 direction.path = path
-                self.totalDuration += Int(time)
+                route.totalDuration = route.totalDuration + Int(time)
                 
                 var waypoints: [Waypoint] = []
                 for point in path {
@@ -111,13 +105,12 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 
                 let walkingPath = WalkPath(waypoints)
                 walkingPaths.append(walkingPath)
-                self.routePaths.append(walkingPath)
+                route.paths.append(walkingPath)
                 
                 // Update rest of app with on walking direction load completion
                 if walkingPaths.count == walkingDirections.count {
                     self.isLoading = false
-                    self.summaryBottomLabel.text = "Trip Duration: \(self.totalDuration) minute\(self.totalDuration == 1 ? "" : "s")"
-                    self.summaryBottomLabel.sizeToFit()
+                    self.createDrawer(with: route)
                     self.drawMapRoute(walkingPaths)
                     self.dismissLoadingScreen()
                 }
@@ -173,7 +166,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             }
 
             let path = direction.type == .walk ? WalkPath(waypoints) : BusPath(waypoints)
-            routePaths.append(path)
+            route.paths.append(path)
 
         }
 
@@ -190,7 +183,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         setHeights()
         formatNavigationController()
         createLoadingScreen()
-        initializeDetailView()
         
         // Set up Location Manager
         locationManager.delegate = self
@@ -334,7 +326,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             currentLocation = newCoord
         }
         
-        if isInitialView() { drawMapRoute() }
+        if justLoaded { drawMapRoute(); justLoaded = false }
         centerMap(topHalfCentered: true)
         
     }
@@ -434,7 +426,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
         else {
             bounds = GMSCoordinateBounds()
-            for route in routePaths {
+            for route in route.paths {
                 for waypoint in route.waypoints {
                     bounds = bounds.includingCoordinate(waypoint.coordinate)
                 }
@@ -463,7 +455,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     /** Draw all waypoints initially for all paths in [Path] or [[CLLocationCoordinate2D]], plus fill bounds */
     func drawMapRoute(_ newPaths: [Path]? = nil) {
 
-        let paths = newPaths ?? routePaths
+        let paths = newPaths ?? route.paths
         
         for path in paths {
             
@@ -535,11 +527,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
     }
 
-    /** Check if screen is in inital view of half map, half detailView */
-    func isInitialView() -> Bool {
-        return mediumDetailHeight == detailView.frame.minY
-    }
-
     /** Return app to home page */
     @objc func exitAction() {
         navigationController?.popToRootViewController(animated: true)
@@ -549,284 +536,54 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     @objc func backAction() {
         navigationController?.popViewController(animated: true)
     }
+    
+    func createDrawer(with route: Route) {
+        
+        let drawerViewController = RouteDetailTableViewController(route: route)
+        
+        var configuration = DrawerConfiguration()
+        configuration.totalDurationInSeconds = 0.4
+        configuration.durationIsProportionalToDistanceTraveled = false
+        configuration.timingCurveProvider = UISpringTimingParameters()
+        configuration.fullExpansionBehaviour = .leavesCustomGap(gap: drawerViewController.topGap)
+        configuration.supportsPartialExpansion = true
+        configuration.dismissesInStages = true
+        configuration.isDrawerDraggable = true
+        configuration.isFullyPresentableByDrawerTaps = true
+        configuration.numberOfTapsForFullDrawerPresentation = 1
+        configuration.isDismissableByOutsideDrawerTaps = true
+        configuration.numberOfTapsForOutsideDrawerDismissal = 1
+        configuration.flickSpeedThreshold = 3
+        configuration.upperMarkGap = 20
+        configuration.lowerMarkGap = 20 // 100000000 // large constant to prohibit disappearing .partiallyExpanded view
+        configuration.maximumCornerRadius = 16
+        
+        var handleViewConfiguration = HandleViewConfiguration()
+        handleViewConfiguration.backgroundColor = .mediumGrayColor
+        handleViewConfiguration.size = CGSize(width: 40, height: 4)
+        handleViewConfiguration.top = 8
+        handleViewConfiguration.cornerRadius = .automatic
+        handleViewConfiguration.autoAnimatesDimming = false
+        configuration.handleViewConfiguration = handleViewConfiguration
+        
+        configuration.drawerShadowConfiguration = DrawerShadowConfiguration(shadowOpacity: 0.25,
+                                                                                shadowRadius: 4,
+                                                                                shadowOffset: .zero,
+                                                                                shadowColor: .black)
+        
+        drawerDisplayController = DrawerDisplayController(presentingViewController: self,
+                                                          presentedViewController: drawerViewController,
+                                                          configuration: configuration,
+                                                          inDebugMode: false)
 
-    /** Create and configure detailView, summaryView, tableView */
-    func initializeDetailView() {
-
-        // Format the Detail View (color, shadow, gestures)
-        detailView.backgroundColor = .white
-        detailView.frame = CGRect(x: 0, y: mediumDetailHeight, width: main.width, height: main.height - largeDetailHeight)
-        detailView.layer.cornerRadius = 12
-        detailView.layer.shadowColor = UIColor.black.cgColor
-        detailView.layer.shadowOpacity = 0.5
-        detailView.layer.shadowOffset = .zero
-        detailView.layer.shadowRadius = 4
-        detailView.layer.shadowPath = UIBezierPath(rect: detailView.bounds).cgPath
-
-        let gesture = UIPanGestureRecognizer(target: self, action: #selector(panGesture))
-        gesture.delegate = self
-        detailView.addGestureRecognizer(gesture)
-
-        // Place and format the summary view
-        summaryView.backgroundColor = .summaryBackgroundColor
-        summaryView.frame = CGRect(x: 0, y: 0, width: main.width, height: summaryViewHeight)
-        summaryView.roundCorners(corners: [.topLeft, .topRight], radius: 12)
-        let summaryTapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
-        summaryTapGesture.delegate = self
-        summaryView.addGestureRecognizer(summaryTapGesture)
-        detailView.addSubview(summaryView)
-
-        // Create puller tab
-        let puller = UIView(frame: CGRect(x: 0, y: 6, width: 32, height: 4))
-        // value to help center items below
-        let pullerHeight = (puller.frame.origin.y + puller.frame.height) / 2
-        puller.center.x = summaryView.center.x
-        puller.backgroundColor = .mediumGrayColor
-        puller.layer.cornerRadius = puller.frame.height / 2
-        summaryView.addSubview(puller)
-
-        // Create and place all bus routes in Directions (account for small screens)
-        var icon_maxY: CGFloat = 24; var first = true
-        let mainStopCount = route.numberOfBusRoutes()
-        var center = CGPoint(x: icon_maxY, y: (summaryView.frame.height / 2) + pullerHeight)
-        for direction in directions {
-            if direction.type == .depart {
-                // use smaller icons for small phones or multiple icons
-                let busType: BusIconType = mainStopCount > 1 ? .directionSmall : .directionLarge
-                let busIcon = BusIcon(type: busType, number: direction.routeNumber)
-                if first { center.x += busIcon.frame.width / 2; first = false }
-                busIcon.center = center
-                summaryView.addSubview(busIcon)
-                center.x += busIcon.frame.width + 12
-                icon_maxY += busIcon.frame.width + 12
-            }
-        }
-
-        // Place and format top summary label
-        let textLabelPadding: CGFloat = 16
-        let summaryTopLabel = UILabel()
-        if let departDirection = (directions.filter { $0.type == .depart }).first {
-            summaryTopLabel.text = "Depart at \(departDirection.startTimeDescription) from \(departDirection.locationName)"
-        } else {
-            summaryTopLabel.text = directions.first?.locationNameDescription ?? "Route Directions"
-        }
-        summaryTopLabel.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.regular)
-        summaryTopLabel.textColor = .primaryTextColor
-        summaryTopLabel.sizeToFit()
-        summaryTopLabel.frame.origin.x = icon_maxY + textLabelPadding
-        summaryTopLabel.frame.size.width = summaryView.frame.maxX - summaryTopLabel.frame.origin.x - textLabelPadding
-        summaryTopLabel.center.y = (summaryView.bounds.height / 2) + pullerHeight - (summaryTopLabel.frame.height / 2)
-        summaryTopLabel.allowsDefaultTighteningForTruncation = true
-        summaryTopLabel.lineBreakMode = .byTruncatingTail
-        summaryView.addSubview(summaryTopLabel)
-
-        // Place and format bottom summary label
-        if let totalTime = Time.dateComponents(from: route.departureTime, to: route.arrivalTime).minute {
-            totalDuration = totalTime >= 0 ? totalTime : 0
-            summaryBottomLabel.text = "Trip Duration: \(totalDuration) minute\(totalDuration == 1 ? "" : "s")"
-        } else { summaryBottomLabel.text = "Summary Bottom Label" }
-        summaryBottomLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)
-        summaryBottomLabel.textColor = .mediumGrayColor
-        summaryBottomLabel.sizeToFit()
-        summaryBottomLabel.frame.origin.x = icon_maxY + textLabelPadding
-        summaryBottomLabel.center.y = (summaryView.bounds.height / 2) + pullerHeight + (summaryBottomLabel.frame.height / 2)
-        summaryView.addSubview(summaryBottomLabel)
-
-        // Create Detail Table View
-        detailTableView = UITableView()
-        detailTableView.frame.origin = CGPoint(x: 0, y: summaryViewHeight)
-        detailTableView.frame.size = CGSize(width: main.width, height: smallDetailHeight)
-        detailTableView.bounces = false
-        detailTableView.estimatedRowHeight = RouteDetailCellSize.smallHeight
-        detailTableView.rowHeight = UITableViewAutomaticDimension
-        detailTableView.register(SmallDetailTableViewCell.self, forCellReuseIdentifier: "smallCell")
-        detailTableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: "largeCell")
-        detailTableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: "busStopCell")
-        detailTableView.dataSource = self
-        detailTableView.delegate = self
-        detailTableView.tableFooterView = UIView()
-        detailView.addSubview(detailTableView)
-        view.addSubview(detailView)
-
+        drawerCreated(drawerViewController)
+        
     }
     
-    // MARK: TableView Data Source and Delegate Functions
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return directions.count
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-
-        let direction = directions[indexPath.row]
-
-        if direction.type == .depart {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "largeCell")! as! LargeDetailTableViewCell
-            cell.setCell(direction, firstStep: indexPath.row == 0)
-            return cell.height()
-        } else {
-            return RouteDetailCellSize.smallHeight
-        }
-
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-        let direction = directions[indexPath.row]
-        let isBusStopCell = direction.type == .arrive && direction.startLocation.coordinate.latitude == 0.0
-        let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
-
-        /// Formatting, including selectionStyle, and seperator line fixes
-        func format(_ cell: UITableViewCell) -> UITableViewCell {
-            cell.selectionStyle = .none
-            if indexPath.row == directions.count - 1 {
-                cell.layoutMargins = UIEdgeInsets(top: 0, left: main.width, bottom: 0, right: 0)
-            }
-            return cell
-        }
-
-        if isBusStopCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "busStopCell") as! BusStopTableViewCell
-            cell.setCell(direction.locationName)
-            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
-            return format(cell)
-        }
-
-        else if direction.type == .walk || direction.type == .arrive {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell") as! SmallDetailTableViewCell
-            cell.setCell(direction, busEnd: direction.type == .arrive,
-                         firstStep: indexPath.row == 0,
-                         lastStep: indexPath.row == directions.count - 1)
-            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
-            return format(cell)
-        }
-
-        else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "largeCell") as! LargeDetailTableViewCell
-            cell.setCell(direction, firstStep: indexPath.row == 0)
-            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
-            return format(cell)
-        }
-
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
-        let direction = directions[indexPath.row]
-
-        // Check if cell starts a bus direction, and should be expandable
-        if direction.type == .depart {
-
-            if isInitialView() { summaryTapped() }
-
-            let cell = tableView.cellForRow(at: indexPath) as! LargeDetailTableViewCell
-            cell.isExpanded = !cell.isExpanded
-
-            // Flip arrow
-            cell.chevron.layer.removeAllAnimations()
-
-            let transitionOptionsOne: UIViewAnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
-            UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsOne, animations: {
-                cell.chevron.isHidden = true
-            })
-
-            cell.chevron.transform = cell.chevron.transform.rotated(by: CGFloat.pi)
-
-            let transitionOptionsTwo: UIViewAnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
-            UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsTwo, animations: {
-                cell.chevron.isHidden = false
-            })
-
-            // Prepare bus stop data to be inserted / deleted into Directions array
-            var busStops = [Direction]()
-            for stop in direction.busStops {
-                let stopAsDirection = Direction(locationName: stop)
-                busStops.append(stopAsDirection)
-            }
-            var indexPathArray: [IndexPath] = []
-            let busStopRange = (indexPath.row + 1)..<(indexPath.row + 1) + busStops.count
-            for i in busStopRange {
-                indexPathArray.append(IndexPath(row: i, section: 0))
-            }
-
-            tableView.beginUpdates()
-
-            // Insert or remove bus stop data based on selection
-
-            if cell.isExpanded {
-                directions.insert(contentsOf: busStops, at: indexPath.row + 1)
-                tableView.insertRows(at: indexPathArray, with: .middle)
-            } else {
-                directions.replaceSubrange(busStopRange, with: [])
-                tableView.deleteRows(at: indexPathArray, with: .bottom)
-            }
-
-            tableView.endUpdates()
-            tableView.scrollToRow(at: indexPath, at: .none, animated: true)
-
-        }
-
-    }
-    
-    // MARK: Gesture Recognizers and Interaction-Related Functions
-
-    /** Animate detailTableView depending on context, centering map */
-    @objc func summaryTapped(_ sender: UITapGestureRecognizer? = nil) {
-
-        let isSmall = self.detailView.frame.minY == self.smallDetailHeight
-
-        if isInitialView() || !isSmall {
-            centerMap() // !isSmall to make centered when going big to small
-        }
-
-        UIView.animate(withDuration: 0.25) {
-            let point = CGPoint(x: 0, y: isSmall || self.isInitialView() ? self.largeDetailHeight : self.smallDetailHeight)
-            self.detailView.frame = CGRect(origin: point, size: self.view.frame.size)
-            self.detailTableView.layoutIfNeeded()
-        }
-
-    }
-
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith
-        otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView == detailTableView {
-            contentOffset = scrollView.contentOffset.y
-        }
-    }
-
-    @objc func panGesture(recognizer: UIPanGestureRecognizer) {
-
-        if contentOffset != 0 { return }
-
-        let translation = recognizer.translation(in: self.detailView)
-        let velocity = recognizer.velocity(in: self.detailView)
-        let y = self.detailView.frame.minY
-
-        if y + translation.y >= largeDetailHeight && y + translation.y <= smallDetailHeight {
-            self.detailView.frame = CGRect(x: 0, y: y + translation.y, width: detailView.frame.width, height: detailView.frame.height)
-            recognizer.setTranslation(.zero, in: self.detailView)
-        }
-
-        if recognizer.state == .ended {
-
-            // to make sure call bar doesn't mess up view
-            let statusHeight: CGFloat = 20 // UIApplication.shared.statusBarFrame.height
-            let visibleScreen = self.main.height - statusHeight - self.navigationController!.navigationBar.frame.height
-
-            var duration = Double(abs(visibleScreen - y)) / Double(abs(velocity.y))
-            duration = duration > 0.5 ? 0.5 : duration
-
-            UIView.animate(withDuration: duration) {
-                let point = CGPoint(x: 0, y: velocity.y > 0 ? self.smallDetailHeight : self.largeDetailHeight)
-                self.detailView.frame = CGRect(origin: point, size: self.view.frame.size)
-            }
-            
-        }
-
+    func drawerCreated(_ presentedViewController: RouteDetailTableViewController) {
+        present(presentedViewController, animated: true, completion: {
+            self.mapView.padding.bottom = presentedViewController.bottomGap
+        })
     }
 
 }

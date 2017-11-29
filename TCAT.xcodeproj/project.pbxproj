@@ -32,6 +32,7 @@
 		BF274E3D1F971A9B00981C34 /* DirectionPathHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF274E3C1F971A9B00981C34 /* DirectionPathHelper.swift */; };
 		BF453F851FAE7DCA001E5481 /* Location+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF453F841FAE7DCA001E5481 /* Location+Shared.swift */; };
 		BF453F871FAF7853001E5481 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF453F861FAF7850001E5481 /* Default-568h@2x.png */; };
+		BF5CBAD11FCE6CCE00478C6F /* RouteDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5CBAD01FCE6CCE00478C6F /* RouteDetailTableViewController.swift */; };
 		BF662F341F731DD200B21109 /* OnboardPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F331F731DD200B21109 /* OnboardPageViewController.swift */; };
 		BF662F361F7323B400B21109 /* ActionOnboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */; };
 		BF73F0F31F60B0BD003B479D /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF73F0F21F60B0BD003B479D /* BusLocation.swift */; };
@@ -134,6 +135,7 @@
 		BF453F861FAF7850001E5481 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		BF4F831B1F89B9180097A052 /* testNew.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = testNew.json; path = Data/testNew.json; sourceTree = "<group>"; };
 		BF52F5481F5B553B000DEDF0 /* testOld.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = testOld.json; path = Data/testOld.json; sourceTree = "<group>"; };
+		BF5CBAD01FCE6CCE00478C6F /* RouteDetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDetailTableViewController.swift; path = Controllers/RouteDetailTableViewController.swift; sourceTree = "<group>"; };
 		BF662F331F731DD200B21109 /* OnboardPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardPageViewController.swift; path = Controllers/OnboardPageViewController.swift; sourceTree = "<group>"; };
 		BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActionOnboardViewController.swift; path = Controllers/ActionOnboardViewController.swift; sourceTree = "<group>"; };
 		BF73F0F21F60B0BD003B479D /* BusLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocation.swift; path = Model/BusLocation.swift; sourceTree = "<group>"; };
@@ -425,6 +427,7 @@
 			children = (
 				503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */,
 				DDB49C921E8857D000A99C35 /* RouteDetailViewController.swift */,
+				BF5CBAD01FCE6CCE00478C6F /* RouteDetailTableViewController.swift */,
 				50A19BAD1E4C214000AD6768 /* HomeViewController.swift */,
 				BF662F331F731DD200B21109 /* OnboardPageViewController.swift */,
 				BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */,
@@ -697,6 +700,7 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
+				"${BUILT_PRODUCTS_DIR}/DrawerKit/DrawerKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Fuzzywuzzy_swift/Fuzzywuzzy_swift.framework",
 				"${BUILT_PRODUCTS_DIR}/MarqueeLabel/MarqueeLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/NotificationBannerSwift/NotificationBannerSwift.framework",
@@ -708,6 +712,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DZNEmptyDataSet.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DrawerKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Fuzzywuzzy_swift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MarqueeLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NotificationBannerSwift.framework",
@@ -808,6 +813,7 @@
 				DDE3BC231F5863D50014D2BB /* Place.swift in Sources */,
 				DDEC101B1F66192B00834E91 /* RouteSummaryObject.swift in Sources */,
 				BF453F851FAE7DCA001E5481 /* Location+Shared.swift in Sources */,
+				BF5CBAD11FCE6CCE00478C6F /* RouteDetailTableViewController.swift in Sources */,
 				DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */,
 				DDBFEAA01E787008002BBD96 /* DatepickerView.swift in Sources */,
 				DD36A6FF1F66378C00E4789E /* BusStop.swift in Sources */,
