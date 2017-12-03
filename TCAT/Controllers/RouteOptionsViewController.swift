@@ -12,6 +12,7 @@ import SwiftyJSON
 import DZNEmptyDataSet
 import NotificationBannerSwift
 import Crashlytics
+import Pulley
 
 enum SearchBarType: String{
     case from, to
@@ -695,7 +696,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         locationManager.stopUpdatingLocation()
-        navigationController?.pushViewController(RouteDetailViewController(route: routes[indexPath.row]), animated: true)
+        let detailViewController = RouteDetailViewController(route: routes[indexPath.row])
+        guard let drawerViewController = detailViewController.drawerDisplayController else { return false }
+        let pulleyViewController = MyPulleyViewController(contentViewController: detailViewController, drawerViewController: drawerViewController)
+        navigationController?.pushViewController(pulleyViewController, animated: true)
         return false // halts the selection process, so don't have selected look
     }
 

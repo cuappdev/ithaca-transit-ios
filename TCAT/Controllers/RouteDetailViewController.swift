@@ -12,7 +12,6 @@ import CoreLocation
 import MapKit
 import SwiftyJSON
 import NotificationBannerSwift
-import DrawerKit
 
 //struct RouteDetailCellSize {
 //    static let smallHeight: CGFloat = 60
@@ -21,9 +20,9 @@ import DrawerKit
 //    static let indentedWidth: CGFloat = 140
 //}
 
-class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate, DrawerCoordinating {
+class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate {
     
-    var drawerDisplayController: DrawerDisplayController?
+    var drawerDisplayController: RouteDetailTableViewController?
     
     var loadingView: UIView!
     var isLoading: Bool = true
@@ -110,7 +109,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 // Update rest of app with on walking direction load completion
                 if walkingPaths.count == walkingDirections.count {
                     self.isLoading = false
-                    self.createDrawer(with: route)
+                    self.drawerDisplayController?.update(with: route)
                     self.drawMapRoute(walkingPaths)
                     self.dismissLoadingScreen()
                 }
@@ -169,6 +168,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             route.paths.append(path)
 
         }
+        
+        drawerDisplayController = RouteDetailTableViewController(route: route)
 
     }
 
@@ -181,8 +182,9 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         super.viewDidLoad()
 
         setHeights()
-        formatNavigationController()
         createLoadingScreen()
+        
+        self.mapView.padding.bottom = drawerDisplayController?.bottomGap ?? 0
         
         // Set up Location Manager
         locationManager.delegate = self
@@ -488,102 +490,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             centerMap(topHalfCentered: true)
         }
 
-    }
-
-    /** Set title, buttons, and style of navigation controller */
-    func formatNavigationController() {
-
-        let otherAttributes = [NSAttributedStringKey.font: UIFont(name :".SFUIText", size: 14)!]
-        let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!,
-                                                             .foregroundColor : UIColor.black]
-
-        // general
-        title = "Route Details"
-        UIApplication.shared.statusBarStyle = .default
-        navigationController?.navigationBar.backgroundColor = .white
-
-        // text and font
-        navigationController?.navigationBar.tintColor = .primaryTextColor
-        navigationController?.navigationBar.titleTextAttributes = titleAttributes
-        navigationController?.navigationItem.backBarButtonItem?.setTitleTextAttributes(otherAttributes, for: .normal)
-
-        // right button
-        self.navigationItem.leftBarButtonItem?.setTitleTextAttributes(otherAttributes, for: .normal)
-        let cancelButton = UIBarButtonItem(title: "Exit", style: .plain, target: self, action: #selector(exitAction))
-        cancelButton.setTitleTextAttributes(otherAttributes, for: .normal)
-        self.navigationItem.setRightBarButton(cancelButton, animated: true)
-
-        // back button
-        let backButton = UIButton(type: .system)
-        backButton.setImage(UIImage(named: "back"), for: .normal)
-        let attributedString = NSMutableAttributedString(string: "  Back")
-        // raise back button text a hair - attention to detail, baby
-        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
-        backButton.setAttributedTitle(attributedString, for: .normal)
-        backButton.sizeToFit()
-        backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
-        let barButtonBackItem = UIBarButtonItem(customView: backButton)
-        self.navigationItem.setLeftBarButton(barButtonBackItem, animated: true)
-
-    }
-
-    /** Return app to home page */
-    @objc func exitAction() {
-        navigationController?.popToRootViewController(animated: true)
-    }
-
-    /** Move back one view controller in navigationController stack */
-    @objc func backAction() {
-        navigationController?.popViewController(animated: true)
-    }
-    
-    func createDrawer(with route: Route) {
-        
-        let drawerViewController = RouteDetailTableViewController(route: route)
-        
-        var configuration = DrawerConfiguration()
-        configuration.totalDurationInSeconds = 0.4
-        configuration.durationIsProportionalToDistanceTraveled = false
-        configuration.timingCurveProvider = UISpringTimingParameters()
-        configuration.fullExpansionBehaviour = .leavesCustomGap(gap: drawerViewController.topGap)
-        configuration.supportsPartialExpansion = true
-        configuration.dismissesInStages = true
-        configuration.isDrawerDraggable = true
-        configuration.isFullyPresentableByDrawerTaps = true
-        configuration.numberOfTapsForFullDrawerPresentation = 1
-        configuration.isDismissableByOutsideDrawerTaps = true
-        configuration.numberOfTapsForOutsideDrawerDismissal = 1
-        configuration.flickSpeedThreshold = 3
-        configuration.upperMarkGap = 20
-        configuration.lowerMarkGap = 20 // 100000000 // large constant to prohibit disappearing .partiallyExpanded view
-        configuration.maximumCornerRadius = 16
-        
-        var handleViewConfiguration = HandleViewConfiguration()
-        handleViewConfiguration.backgroundColor = .mediumGrayColor
-        handleViewConfiguration.size = CGSize(width: 40, height: 4)
-        handleViewConfiguration.top = 8
-        handleViewConfiguration.cornerRadius = .automatic
-        handleViewConfiguration.autoAnimatesDimming = false
-        configuration.handleViewConfiguration = handleViewConfiguration
-        
-        configuration.drawerShadowConfiguration = DrawerShadowConfiguration(shadowOpacity: 0.25,
-                                                                                shadowRadius: 4,
-                                                                                shadowOffset: .zero,
-                                                                                shadowColor: .black)
-        
-        drawerDisplayController = DrawerDisplayController(presentingViewController: self,
-                                                          presentedViewController: drawerViewController,
-                                                          configuration: configuration,
-                                                          inDebugMode: false)
-
-        drawerCreated(drawerViewController)
-        
-    }
-    
-    func drawerCreated(_ presentedViewController: RouteDetailTableViewController) {
-        present(presentedViewController, animated: true, completion: {
-            self.mapView.padding.bottom = presentedViewController.bottomGap
-        })
     }
 
 }

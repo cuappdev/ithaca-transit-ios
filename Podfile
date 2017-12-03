@@ -16,7 +16,7 @@ target 'TCAT' do
   pod 'NotificationBannerSwift'
   pod 'Fabric'
   pod 'Crashlytics'
-  pod 'DrawerKit', '~> 0.4.1'
+  pod 'Pulley'
 
 post_install do |installer|
     installer.pods_project.targets.each do |target|

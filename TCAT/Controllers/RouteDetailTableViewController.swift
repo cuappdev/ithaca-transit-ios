@@ -8,7 +8,6 @@
 
 import UIKit
 import SwiftyJSON
-import DrawerKit
 
 struct RouteDetailCellSize {
     static let smallHeight: CGFloat = 60
@@ -18,12 +17,12 @@ struct RouteDetailCellSize {
 }
 
 class RouteDetailTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate,
-                                        UIGestureRecognizerDelegate, DrawerPresentable {
+                                        UIGestureRecognizerDelegate {
     
     // MARK: Variables
     
     var summaryView = UIView()
-    var detailTableView: UITableView!
+    var tableView: UITableView!
     
     var route: Route!
     var directions: [Direction] = []
@@ -59,6 +58,12 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
         super.init(nibName: nil, bundle: nil)
         self.route = route
         self.directions = route.directions
+    }
+    
+    func update(with route: Route) {
+        self.route = route
+        self.directions = route.directions
+        tableView.reloadData()
     }
     
     required convenience init(coder aDecoder: NSCoder) {
@@ -156,19 +161,19 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
         summaryView.addSubview(summaryBottomLabel)
 
         // Create Detail Table View
-        detailTableView = UITableView()
-        detailTableView.frame.origin = CGPoint(x: 0, y: summaryViewHeight)
-        detailTableView.frame.size = CGSize(width: main.width, height: main.height - summaryViewHeight)
-        detailTableView.bounces = false
-        detailTableView.estimatedRowHeight = RouteDetailCellSize.smallHeight
-        detailTableView.rowHeight = UITableViewAutomaticDimension
-        detailTableView.register(SmallDetailTableViewCell.self, forCellReuseIdentifier: "smallCell")
-        detailTableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: "largeCell")
-        detailTableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: "busStopCell")
-        detailTableView.dataSource = self
-        detailTableView.delegate = self
-        detailTableView.tableFooterView = UIView()
-        view.addSubview(detailTableView)
+        tableView = UITableView()
+        tableView.frame.origin = CGPoint(x: 0, y: summaryViewHeight)
+        tableView.frame.size = CGSize(width: main.width, height: main.height - summaryViewHeight)
+        tableView.bounces = false
+        tableView.estimatedRowHeight = RouteDetailCellSize.smallHeight
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.register(SmallDetailTableViewCell.self, forCellReuseIdentifier: "smallCell")
+        tableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: "largeCell")
+        tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: "busStopCell")
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.tableFooterView = UIView()
+        view.addSubview(tableView)
 
     }
     
