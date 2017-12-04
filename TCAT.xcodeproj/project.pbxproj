@@ -40,6 +40,8 @@
 		BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */; };
 		BFD5B4E41FAADFAE00955C37 /* WalkPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */; };
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
+		DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */; };
+		DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96451FC21B29009955C6 /* HeaderView.swift */; };
 		DCB717101FB76EA600BE4D26 /* AllStopsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */; };
 		DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
@@ -142,6 +144,8 @@
 		BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WalkPath.swift; path = Model/WalkPath.swift; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
+		DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesTableViewController.swift; sourceTree = "<group>"; };
+		DC2E96451FC21B29009955C6 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeaderView.swift; path = Views/HeaderView.swift; sourceTree = "<group>"; };
 		DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllStopsTableViewController.swift; sourceTree = "<group>"; };
 		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
@@ -393,6 +397,7 @@
 		DD2F98951E50D8E60005F6BC /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DC2E96451FC21B29009955C6 /* HeaderView.swift */,
 				DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */,
 				BF0002211FB37D0A00773109 /* LoadingIndicator.swift */,
 				DDBCD5E61E989E5800014641 /* Circle.swift */,
@@ -428,6 +433,7 @@
 				BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */,
 				DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */,
 				DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */,
+				DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -790,6 +796,7 @@
 				E337970D1FC1606D00BCB28F /* InformationViewController.swift in Sources */,
 				503EC37B1E969ACD00B3D4D4 /* BusStopCell.swift in Sources */,
 				DDB49C9A1E8857E000A99C35 /* BusStopTableViewCell.swift in Sources */,
+				DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */,
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
 				BF662F361F7323B400B21109 /* ActionOnboardViewController.swift in Sources */,
 				DD87F20A1E878CB5000C244B /* Loader.swift in Sources */,
@@ -797,6 +804,7 @@
 				DD3D9C211F94297100B164D4 /* Reachability.swift in Sources */,
 				DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */,
 				DD99E2F61F6DB06A0073E8F7 /* KeyConstants.swift in Sources */,
+				DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */,
 				DD99E2F41F6DB0410073E8F7 /* FontConstants.swift in Sources */,
 				D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */,
 				503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */,
@@ -905,6 +913,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 45;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -959,6 +968,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 45;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -986,7 +996,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1016,7 +1026,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1042,6 +1052,7 @@
 			baseConfigurationReference = 8236DFFA6C5F3AB1E6E1B0E4 /* Pods-TCATTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CURRENT_PROJECT_VERSION = 45;
 				INFOPLIST_FILE = TCATTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1057,6 +1068,7 @@
 			baseConfigurationReference = 00AAC04EC20FD099C317E4DF /* Pods-TCATTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CURRENT_PROJECT_VERSION = 45;
 				INFOPLIST_FILE = TCATTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1071,6 +1083,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0A53C1C936C7282DCAB7292F /* Pods-TCATUITests.debug.xcconfig */;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 45;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				INFOPLIST_FILE = TCATUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1086,6 +1099,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 45;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				INFOPLIST_FILE = TCATUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;

@@ -19,11 +19,19 @@ class AllStopsTableViewController: UITableViewController {
     var sortedKeys: [String]!
     var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
     var navController: UINavigationController!
+    var height: CGFloat?
+
+    override func viewWillLayoutSubviews() {
+        if let y = navigationController?.navigationBar.frame.maxY {
+            if height == nil {
+                height = tableView.bounds.height
+            }
+            tableView.frame = CGRect(x: 0.0, y: y, width: view.bounds.width, height: height! - y)
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.edgesForExtendedLayout = []
-        self.extendedLayoutIncludesOpaqueBars = true
         sectionIndexes = sectionIndexesForBusStop()
 
         sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
@@ -37,12 +45,21 @@ class AllStopsTableViewController: UITableViewController {
                                                              .foregroundColor : UIColor.black]
         title = "All Stops"
         navigationController?.navigationBar.titleTextAttributes = titleAttributes
+        setupBackButton()
 
         if #available(iOS 11.0, *) {
             navigationItem.searchController = nil
         } else {
             navigationItem.titleView = nil
         }
+
+        if #available(iOS 11.0, *) {
+            self.tableView.contentInsetAdjustmentBehavior = .never
+        } else {
+            self.automaticallyAdjustsScrollViewInsets = false
+        }
+
+        tableView.tableFooterView = UIView()
     }
 
     override func didReceiveMemoryWarning() {
@@ -52,9 +69,18 @@ class AllStopsTableViewController: UITableViewController {
 
     func sectionIndexesForBusStop() -> [String: [BusStop]] {
         var sectionIndexDictionary: [String: [BusStop]] = [:]
-        var currentChar: Character = allStops[0].name.capitalized.first!
         var currBusStopArray: [BusStop] = []
-        var numberBusStops: [BusStop] = []
+
+        var currentChar: Character = {
+            guard let firstChar = allStops.first?.name.capitalized.first else { return Character("") }
+            return firstChar
+        }()
+
+        var numberBusStops: [BusStop] = {
+            guard let firstStop = allStops.first else { return [] }
+            return [firstStop]
+        }()
+
         for busStop in allStops {
             if let firstChar = busStop.name.capitalized.first {
                 if currentChar != firstChar {
@@ -63,6 +89,7 @@ class AllStopsTableViewController: UITableViewController {
                         currBusStopArray = []
                     }
                     currentChar = firstChar
+                    currBusStopArray.append(busStop)
                 } else {
                     if CharacterSet.decimalDigits.contains(currentChar.unicodeScalars.first!) {
                         numberBusStops.append(busStop)
@@ -109,8 +136,7 @@ class AllStopsTableViewController: UITableViewController {
                 print("Could not find bus stop")
                 return
         }
-
-        insertRecentLocation(location: busStopSelected)
+        SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.recentSearch, location: busStopSelected, limit: 8)
         optionsVC.searchTo = busStopSelected
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)
@@ -121,6 +147,23 @@ class AllStopsTableViewController: UITableViewController {
         } else {
         navigationController?.pushViewController(optionsVC, animated: true)
         }
+    }
+
+    private func setupBackButton(){
+        let backButton = UIButton(type: .system)
+        backButton.setImage(UIImage(named: "back"), for: .normal)
+        let attributedString = NSMutableAttributedString(string: "  Back")
+        // raise back button text a hair - attention to detail, baby
+        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
+        backButton.setAttributedTitle(attributedString, for: .normal)
+        backButton.sizeToFit()
+        backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
+        let barButtonBackItem = UIBarButtonItem(customView: backButton)
+        self.navigationItem.setLeftBarButton(barButtonBackItem, animated: true)
+    }
+
+    @objc func backAction() {
+        navigationController?.popViewController(animated: true)
     }
 
 }

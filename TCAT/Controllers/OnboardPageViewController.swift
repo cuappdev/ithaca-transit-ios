@@ -9,11 +9,16 @@
 import UIKit
 
 class OnboardViewController: UIViewController, OnboardingDelegate {
+
+    var page = 0
     
     let controllers: [ActionOnboardViewController] = [
         
         ActionOnboardViewController(type: .welcome),
+        ActionOnboardViewController(type: .tracking),
+        ActionOnboardViewController(type: .destination),
         ActionOnboardViewController(type: .locationServices)
+        //ActionOnboardViewController(type: .favorites)
         
     ]
     
@@ -30,14 +35,17 @@ class OnboardViewController: UIViewController, OnboardingDelegate {
         addChildViewController(controller)
         view.addSubview(controller.view)
         didMove(toParentViewController: controller)
+        page += 1
     }
     
     func moveToNextViewController(vc: ActionOnboardViewController) {
-        let controller = controllers[1]
+        let controller = controllers[page]
+        controller.onboardingDelegate = self
         addChildViewController(controller)
         vc.navigationController?.pushViewController(controller, animated: true)
         didMove(toParentViewController: controller)
         vc.removeFromParentViewController()
+        page += 1
     }
     
 }

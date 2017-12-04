@@ -37,7 +37,7 @@ class InformationViewController: UIViewController {
         
         backButton.addTarget(self, action: #selector(backButtonClicked), for: .touchUpInside)
         backButton.setImage(UIImage(named: "back"), for: .normal)
-        let attributedString = NSMutableAttributedString(string: "  Book")
+        let attributedString = NSMutableAttributedString(string: "  Back")
         attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
         backButton.setAttributedTitle(attributedString, for: .normal)
         backButton.sizeToFit()

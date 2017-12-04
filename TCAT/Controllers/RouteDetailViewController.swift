@@ -95,7 +95,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 
                 var waypoints: [Waypoint] = []
                 for point in path {
-                    var type: WaypointType = .none
+                    var type: WaypointType = .walking
                     if direction == self.directions.first && point == path.first! {
                         type = .origin
                     }
@@ -147,6 +147,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                 var type: WaypointType = .none
 
                 if direction.type == .depart {
+                    
+                    type = .bussing
 
                     if pathIndex == 0 {
                         type = arrayIndex == 0 ? .origin : .bus
@@ -161,19 +163,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                         
                         // type = .stop
                         
-                    }
-
-                }
-
-                // can probably delete
-                else if direction.type == .walk {
-
-                    if arrayIndex == 0 && pathIndex == 0 {
-                        type = .origin
-                    }
-
-                    else if arrayIndex == self.directions.count - 1 && pathIndex == direction.path.count - 1 {
-                        type = .destination
                     }
 
                 }
@@ -297,12 +286,13 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         summaryViewHeight = 80
         
         if #available(iOS 11.0, *) {
+            
             let topPadding = navigationController?.view.safeAreaInsets.top ?? 0
             let bottomPadding = navigationController?.view.safeAreaInsets.bottom ?? 0
 
-            largeDetailHeight = topPadding
-            mediumDetailHeight = (main.height / 2) - statusNavHeight()
-            smallDetailHeight = main.height - summaryViewHeight - bottomPadding*2 - topPadding
+            largeDetailHeight = topPadding + summaryViewHeight
+            mediumDetailHeight = main.height / 2
+            smallDetailHeight = main.height - summaryViewHeight - bottomPadding
 
         } else {
 
@@ -314,11 +304,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             largeDetailHeight -= statusNavHeight()
             
         }
-        
-//        print("summaryViewHeight:", summaryViewHeight)
-//        print("largeDetailHeight:", largeDetailHeight)
-//        print("mediumDetailHeight:", mediumDetailHeight)
-//        print("smallDetailHeight:", smallDetailHeight)
         
     }
     
@@ -413,7 +398,8 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
                 UIView.animate(withDuration: 1.0, delay: 0, options: .curveEaseInOut, animations: {
                     newBus.userData = bus
-                    (newBus.iconView as? BusLocationView)?.setBearing(bus.heading, start: existingBus!.position, end: busCoords)
+                    // (newBus.iconView as? BusLocationView)?.setBearing(bus.heading, start: existingBus!.position, end: busCoords)
+                    (newBus.iconView as? BusLocationView)?.setBetterBearing(start: existingBus!.position, end: busCoords, debugDegrees: bus.heading)
                     newBus.position = busCoords
                 })
                 
@@ -421,7 +407,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             // Otherwise, add bus to map
             else {
                 let marker = GMSMarker(position: busCoords)
-                (bus.iconView as? BusLocationView)?.setBearing(bus.heading)
+                // (bus.iconView as? BusLocationView)?.setBearing(bus.heading)
                 marker.iconView = bus.iconView
 
                 marker.userData = bus
@@ -458,6 +444,21 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         }
 
     }
+    
+    func setIndex(of marker: GMSMarker, with waypoint: Waypoint) {
+        marker.zIndex = {
+            switch waypoint.wpType {
+            case .bus: return 1
+            case .walk: return 1
+            case .origin: return 3
+            case .destination: return 3
+            case .stop: return 1
+            case .walking: return 0
+            case .bussing: return 999 // large constant to place above other elements
+            default: return 0
+            }
+        }()
+    }
 
     /** Draw all waypoints initially for all paths in [Path] or [[CLLocationCoordinate2D]], plus fill bounds */
     func drawMapRoute(_ newPaths: [Path]? = nil) {
@@ -481,6 +482,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
                     marker.iconView = waypoint.iconView
                     marker.userData = waypoint
                     marker.map = mapView
+                    setIndex(of: marker, with: waypoint)
                 
 //                }
                 
@@ -821,11 +823,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
             UIView.animate(withDuration: duration) {
                 let point = CGPoint(x: 0, y: velocity.y > 0 ? self.smallDetailHeight : self.largeDetailHeight)
                 self.detailView.frame = CGRect(origin: point, size: self.view.frame.size)
-            }
-            
-            if withinMiddle && velocity.y > 0 {
-                centerMap()
-                withinMiddle = false
             }
             
         }

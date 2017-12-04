@@ -59,9 +59,31 @@ class BusLocationView: UIView {
         super.init(coder: aDecoder)
     }
     
-    private func radians(_ degrees: Any) -> CGFloat {
+    private func degreesToRadians(_ degrees: Any) -> Double {
         let value = degrees as? Double ?? Double(degrees as! Int)
-        return CGFloat(value / 360) * .pi * 2
+        return value * .pi / 180
+    }
+    
+    private func radiansToDegrees(_ radians: Any) -> Double {
+        let value = radians as? Double ?? Double(radians as! Int)
+        return value * 180 / .pi
+    }
+    
+    func getBearingBetweenTwoPoints(point1: CLLocationCoordinate2D, point2: CLLocationCoordinate2D) -> Double {
+        
+        let lat1 = degreesToRadians(point1.latitude)
+        let lon1 = degreesToRadians(point1.longitude)
+        let lat2 = degreesToRadians(point2.latitude)
+        let lon2 = degreesToRadians(point2.longitude)
+        
+        let dLon = lon2 - lon1
+        
+        let y = sin(dLon) * cos(lat2)
+        let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
+        let radiansBearing = atan2(y, x)
+        
+        return radiansToDegrees(radiansBearing)
+        
     }
     
     /// Animate a change in bearing of bus
@@ -76,23 +98,16 @@ class BusLocationView: UIView {
             }
         }
         
-        self.bearingIndicator.transform = self.bearingIndicator.transform.inverted()
-        
         UIView.animate(withDuration: 0.2) {
-            // print("degrees:", degrees)
-            // let newDegrees = Double(degrees) - self.currentBearing
-            let currentAngle: CGFloat = CGFloat(-1) * self.radians(degrees)
+            let newDegrees = Double(degrees) - self.currentBearing
+            let currentAngle: CGFloat = CGFloat(-1) * CGFloat(self.degreesToRadians(newDegrees))
             self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
             self.currentBearing = Double(degrees)
-            // print("===")
         }
         
     }
     
-    func setBetterBearing(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D) {
-        
-        print("start:", start)
-        print("end:", end)
+    func setBetterBearing(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D, debugDegrees: Int? = nil) {
         
         // Latitude: North / South, Longitude: East / West
         let latDelta = end.latitude - start.latitude
@@ -103,18 +118,16 @@ class BusLocationView: UIView {
         }
         
         // Calulcate bearing from start and end points
-        // Source: https://stackoverflow.com/questions/3932502/calculate-angle-between-two-latitude-longitude-points
         
-        let y = sin(longDelta) * cos(end.latitude)
-        let x = cos(start.latitude) * sin(end.latitude) - sin(start.latitude) * cos(end.latitude) * cos(longDelta)
-        var degrees = atan2(y, x)
-        degrees = Double(radians(degrees))
-        degrees = (degrees + 360.0).truncatingRemainder(dividingBy: 360)
+        let degrees = getBearingBetweenTwoPoints(point1: start, point2: end)
         
-        let currentAngle: CGFloat = CGFloat(-1) * self.radians(degrees)
-        self.bearingIndicator.transform = .identity
+//        print("calculated degrees:", degrees)
+//        print("actual degrees:", 360 + debugDegrees!)
+        
+        let newDegrees = degrees - self.currentBearing
+        let currentAngle = CGFloat(-1) * CGFloat(self.degreesToRadians(newDegrees))
         self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
-        // self.currentBearing = adjustedDegrees
+        self.currentBearing = newDegrees
     
     }
     
