@@ -30,6 +30,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var tableView : UITableView!
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
+    let submitBugButton = UIButton(type: .infoLight)
     var recentLocations: [ItemType] = []
     var isKeyboardVisible = false
     var sections: [Section] = [] {
@@ -66,16 +67,15 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
         textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
         
-        let submitBugButton = UIButton(type: .infoLight)
         submitBugButton.addTarget(self, action: #selector(openInformationScreen), for: .touchUpInside)
         submitBugButton.snp.makeConstraints { (make) in
             make.width.equalTo(30)
             make.height.equalTo(38)
         }
-        submitBugButton.imageEdgeInsets = UIEdgeInsetsMake(14, -7, 0, 0)
+        submitBugButton.imageEdgeInsets = UIEdgeInsetsMake(14, 7, 0, 0)
         
         let submitBugBarButton = UIBarButtonItem(customView: submitBugButton)
-        navigationItem.setLeftBarButton(submitBugBarButton, animated: false)
+        navigationItem.setRightBarButton(submitBugBarButton, animated: false)
         
         navigationItem.titleView = searchBar
         
@@ -341,7 +341,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
-
+        navigationItem.rightBarButtonItem = nil
         //Crashlytics Answers
         Answers.searchBarTappedInHome()
     }
@@ -351,6 +351,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.endEditing(true)
         searchBar.text = nil
+        
+        let submitBugBarButton = UIBarButtonItem(customView: submitBugButton)
+        navigationItem.setRightBarButton(submitBugBarButton, animated: false)
         sections = createSections()
         tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
         
@@ -382,7 +385,16 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     /* Open information screen */
     @objc func openInformationScreen() {
         let informationViewController = InformationViewController()
-        self.navigationController?.pushViewController(informationViewController, animated: false)
+        let navigationVC = UINavigationController(rootViewController: informationViewController)
+        self.present(navigationVC, animated: true, completion: nil)
+        
+//        let transition: CATransition = CATransition()
+//        transition.duration = 0.5
+//        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+//        transition.type = kCATransitionPush
+//        transition.subtype = kCATransitionFromTop
+//        self.navigationController!.view.layer.add(transition, forKey: kCATransition)
+//        self.navigationController?.pushViewController(informationViewController, animated: false)
     }
 }
 

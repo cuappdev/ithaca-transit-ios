@@ -11,81 +11,78 @@ import SafariServices
 
 class InformationViewController: UIViewController {
     
-    var titleText = UITextView()
+    var titleLabel = UILabel()
     var appDevImage = UIImageView()
     var appDevTitle = UILabel()
-    var descriptionTextView = UITextView()
+    var descriptionLabel = UILabel()
     var tcatQuoteText = UILabel()
     var tcatImage = UIImageView()
-    var submitBugButton = UIButton()
+    var sendFeedbackButton = UIButton()
+    var visitWebsiteButton = UIButton()
+    var cancelButton = UIButton(type: .system)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "About"
+        title = "About Us"
         
         view.backgroundColor = UIColor.tableBackgroundColor
         
-        view.addSubview(titleText)
+        view.addSubview(titleLabel)
         view.addSubview(appDevImage)
         view.addSubview(appDevTitle)
-        view.addSubview(descriptionTextView)
-        view.addSubview(submitBugButton)
+        view.addSubview(descriptionLabel)
+        view.addSubview(sendFeedbackButton)
         view.addSubview(tcatImage)
         view.addSubview(tcatQuoteText)
         
-        titleText.font = UIFont(name: FontNames.SanFrancisco.Bold, size: 28)
-        titleText.textColor = UIColor.primaryTextColor
-//        titleText.text = "Thank you for using TCAT"
-        titleText.backgroundColor = .clear
-        titleText.snp.makeConstraints { (make) in
-            make.leading.equalToSuperview().offset(16)
-            make.top.equalToSuperview().offset(36)
-            make.width.equalTo(250)
-            make.height.equalTo(100)
-        }
+        cancelButton.addTarget(self, action: #selector(cancelButtonClicked), for: .touchUpInside)
+        let attributedString = NSMutableAttributedString(string: "Cancel")
+        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
+        cancelButton.setAttributedTitle(attributedString, for: .normal)
+        cancelButton.sizeToFit()
+        let cancelButtonItem = UIBarButtonItem(customView: cancelButton)
+        navigationItem.setLeftBarButton(cancelButtonItem, animated: false)
         
         tcatImage.image = UIImage(named: "tcatbus")
         tcatImage.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
-            make.top.equalTo(titleText.snp.bottom).offset(24)
-            make.width.equalTo(300)
-            make.height.equalTo(120)
+            make.top.equalTo(topLayoutGuide.snp.bottom).offset(32)
+            make.bottom.equalTo(titleLabel.snp.top).offset(-28)
+            make.width.equalTo(tcatImage.snp.height).multipliedBy(2)
         }
         
-        tcatQuoteText.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 8)
-        tcatQuoteText.textColor = UIColor.secondaryTextColor
-        tcatQuoteText.text = "The TCAT bus goes vroom vroom"
-        tcatQuoteText.snp.makeConstraints { (make) in
-            make.trailing.equalTo(tcatImage.snp.trailing).offset(20)
-            make.width.equalTo(150)
-            make.height.equalTo(20)
-            make.top.equalTo(tcatImage.snp.bottom).offset(4)
+        titleLabel.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)
+        titleLabel.textColor = UIColor.primaryTextColor
+        titleLabel.text = "Made by AppDev"
+        titleLabel.backgroundColor = .clear
+        titleLabel.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(descriptionLabel.snp.top).offset(-12)
         }
         
-        submitBugButton.addTarget(self, action: #selector(openBugReportForm), for: .touchUpInside)
-        submitBugButton.setTitle("Submit a bug", for: .normal)
-        submitBugButton.setTitleColor(.white, for: .normal)
-        submitBugButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)
-        submitBugButton.backgroundColor = UIColor.tcatBlueColor
-        submitBugButton.layer.cornerRadius = 5.0
-        submitBugButton.snp.makeConstraints { (make) in
+        descriptionLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        descriptionLabel.textColor = UIColor.primaryTextColor
+        descriptionLabel.text = "Cornell University\nApp Development Project Team"
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.backgroundColor = .clear
+        descriptionLabel.textAlignment = .center
+        descriptionLabel.snp.makeConstraints { (make) in
+            make.bottom.equalTo(view.snp.centerY).offset(-10)
+            make.centerX.equalToSuperview()
+        }
+        
+        sendFeedbackButton.addTarget(self, action: #selector(openBugReportForm), for: .touchUpInside)
+        sendFeedbackButton.setTitle("Send feedback", for: .normal)
+        sendFeedbackButton.setTitleColor(.white, for: .normal)
+        sendFeedbackButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)
+        sendFeedbackButton.backgroundColor = UIColor.tcatBlueColor
+        sendFeedbackButton.layer.cornerRadius = 5.0
+        sendFeedbackButton.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
             make.bottom.equalToSuperview().offset(-85)
             make.width.equalTo(135)
             make.height.equalTo(44)
-        }
-        
-        descriptionTextView.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 16)
-        descriptionTextView.textColor = UIColor.secondaryTextColor
-        descriptionTextView.text = "TCAT is still in its baby stage. If you discover any bugs, please report them using the button below, and we will promise to squash them. Happy riding!"
-        descriptionTextView.backgroundColor = .clear
-        descriptionTextView.textAlignment = .center
-        descriptionTextView.snp.makeConstraints { (make) in
-            make.leading.equalTo(titleText.snp.leading)
-            make.bottom.equalTo(submitBugButton.snp.top).offset(-12)
-            make.width.equalToSuperview().offset(-30)
-            make.height.equalTo(100)
         }
         
         appDevTitle.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 10)
@@ -106,6 +103,18 @@ class InformationViewController: UIViewController {
             make.height.equalTo(20)
         }
         
+    }
+    
+    @objc func cancelButtonClicked() {
+        self.dismiss(animated: true, completion: nil)
+        
+//        let transition: CATransition = CATransition()
+//        transition.duration = 0.5
+//        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+//        transition.type = kCATransitionPush
+//        transition.subtype = kCATransitionFromBottom
+//        self.navigationController!.view.layer.add(transition, forKey: kCATransition)
+//        self.navigationController?.popViewController(animated: false)
     }
     
     @objc func openBugReportForm() {
