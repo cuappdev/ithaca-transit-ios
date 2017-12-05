@@ -12,6 +12,7 @@ import CoreLocation
 import MapKit
 import SwiftyJSON
 import NotificationBannerSwift
+import Pulley
 
 //struct RouteDetailCellSize {
 //    static let smallHeight: CGFloat = 60
@@ -22,11 +23,10 @@ import NotificationBannerSwift
 
 class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate {
     
+    var loadingView: UIView!
     var drawerDisplayController: RouteDetailTableViewController?
     
-    var loadingView: UIView!
     var isLoading: Bool = true
-    var withinMiddle: Bool = true
     var justLoaded: Bool = true
     
     var locationManager = CLLocationManager()
@@ -45,11 +45,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     var directions: [Direction] = []
 
     let main = UIScreen.main.bounds
-    // to be initialized programmatically
-    var summaryViewHeight: CGFloat = 0
-    var largeDetailHeight: CGFloat = 0
-    var mediumDetailHeight: CGFloat = 0
-    var smallDetailHeight: CGFloat = 0
+    var summaryViewHeight: CGFloat = 80
 
     let markerRadius: CGFloat = 8
     let mapPadding: CGFloat = 40
@@ -181,10 +177,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setHeights()
         createLoadingScreen()
-        
-        self.mapView.padding.bottom = drawerDisplayController?.bottomGap ?? 0
         
         // Set up Location Manager
         locationManager.delegate = self
@@ -220,7 +213,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         // set mapView with settings
         let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: defaultZoom)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
-        mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: summaryViewHeight, right: 0)
+        mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: drawerDisplayController?.bottomGap ?? 0, right: 0)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
         mapView.settings.compassButton = true
@@ -273,33 +266,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     }
     
     // MARK: Programmatic Layout Constants
-    
-    /** Set proper layout constraints based on version (iOS 11 & safeArea support) */
-    func setHeights() {
-        
-        summaryViewHeight = 80
-        
-        if #available(iOS 11.0, *) {
-            
-            let topPadding = navigationController?.view.safeAreaInsets.top ?? 0
-            let bottomPadding = navigationController?.view.safeAreaInsets.bottom ?? 0
-
-            largeDetailHeight = topPadding + summaryViewHeight
-            mediumDetailHeight = main.height / 2
-            smallDetailHeight = main.height - summaryViewHeight - bottomPadding
-
-        } else {
-
-            largeDetailHeight = summaryViewHeight
-            mediumDetailHeight = main.height / 2 - statusNavHeight()
-            smallDetailHeight = main.height - summaryViewHeight
-            
-            smallDetailHeight -= statusNavHeight()
-            largeDetailHeight -= statusNavHeight()
-            
-        }
-        
-    }
     
     /** Return height of status bar and possible navigation controller */
     func statusNavHeight(includingShadow: Bool = false) -> CGFloat {

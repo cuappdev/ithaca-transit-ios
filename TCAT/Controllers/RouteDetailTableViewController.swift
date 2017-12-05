@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftyJSON
+import Pulley
 
 struct RouteDetailCellSize {
     static let smallHeight: CGFloat = 60
@@ -17,7 +18,7 @@ struct RouteDetailCellSize {
 }
 
 class RouteDetailTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate,
-                                        UIGestureRecognizerDelegate {
+                                        UIGestureRecognizerDelegate, PulleyDrawerViewControllerDelegate {
     
     // MARK: Variables
     
@@ -29,6 +30,8 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
     
     let main = UIScreen.main.bounds
     var summaryViewHeight: CGFloat = 80
+    
+    var justLoaded: Bool = true
 
     // Drawer Presentable (mediumDetailHeight)
     var heightOfPartiallyExpandedDrawer: CGFloat {
@@ -74,6 +77,9 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeDetailView()
+        if let drawer = self.parent as? PulleyViewController {
+            drawer.setDrawerPosition(position: .partiallyRevealed, animated: false)
+        }
     }
     
     // MARK: Programmatic Layout Constants
@@ -104,13 +110,15 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
     func initializeDetailView() {
 
         view.backgroundColor = .white
+        
+        // Create summary tap gesture
+        let summaryTapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
+        summaryTapGesture.delegate = self
 
         // Place and format the summary view
         summaryView.backgroundColor = .summaryBackgroundColor
         summaryView.frame = CGRect(x: 0, y: 0, width: main.width, height: summaryViewHeight)
         summaryView.roundCorners(corners: [.topLeft, .topRight], radius: 16)
-        let summaryTapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
-        summaryTapGesture.delegate = self
         summaryView.addGestureRecognizer(summaryTapGesture)
         view.addSubview(summaryView)
 
@@ -173,8 +181,27 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableFooterView = UIView()
+        tableView.tableFooterView?.addGestureRecognizer(summaryTapGesture)
         view.addSubview(tableView)
 
+    }
+    
+    // MARK: Pulley Delegate
+    
+    func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
+        return bottomSafeArea + summaryViewHeight
+    }
+    
+    func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
+        return main.height / 2
+    }
+    
+    func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
+        justLoaded = false
+    }
+    
+    func supportedDrawerPositions() -> [PulleyPosition] {
+        return justLoaded ? [.collapsed, .partiallyRevealed, .open] : [.collapsed, .open]
     }
     
     // MARK: TableView Data Source and Delegate Functions
@@ -292,6 +319,10 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
             tableView.endUpdates()
             tableView.scrollToRow(at: indexPath, at: .none, animated: true)
 
+        } else {
+            
+            summaryTapped()
+            
         }
 
     }
@@ -301,19 +332,22 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
     /** Animate detailTableView depending on context, centering map */
     @objc func summaryTapped(_ sender: UITapGestureRecognizer? = nil) {
         
-        // TODO: Logic when tapped
+        if let drawer = self.parent as? PulleyViewController {
+            switch drawer.drawerPosition {
+            
+            case .collapsed:
+                drawer.setDrawerPosition(position: .open, animated: true)
+            
+            case .open:
+                drawer.setDrawerPosition(position: .collapsed, animated: true)
+            
+            default: break
+                
+            }
+            
+        }
 
-//        let isSmall = self.frame.minY == self.smallDetailHeight
-//
-//        if isInitialView() || !isSmall {
-//            centerMap() // !isSmall to make centered when going big to small
-//        }
-//
-//        UIView.animate(withDuration: 0.25) {
-//            let point = CGPoint(x: 0, y: isSmall || self.isInitialView() ? self.largeDetailHeight : self.smallDetailHeight)
-//            self.detailView.frame = CGRect(origin: point, size: self.view.frame.size)
-//            self.detailTableView.layoutIfNeeded()
-//        }
+//      self.detailTableView.layoutIfNeeded()
 
     }
 

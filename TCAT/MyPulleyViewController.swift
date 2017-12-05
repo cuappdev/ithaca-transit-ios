@@ -37,18 +37,10 @@ class MyPulleyViewController: PulleyViewController {
         shadowOpacity = 0.25
         shadowRadius = 4
         
-        backgroundDimmingColor = .clear
-        backgroundDimmingOpacity = 1.0
+        backgroundDimmingColor = .black
+        backgroundDimmingOpacity = 0.5
         
         initialDrawerPosition = .partiallyRevealed
-        
-        guard let routeDetailViewController = primaryContentViewController as? RouteDetailTableViewController
-            else { return }
-//        guard let routeDetailTableViewController = drawerContentViewController as? RouteDetailTableViewController
-//            else { return }
-        
-        setDefaultCollapsedHeight(to: routeDetailViewController.summaryViewHeight + 40)
-        setDefaultPartialRevealHeight(to: (UIScreen.main.bounds.height / 2) - statusNavHeight())
         
     }
     
