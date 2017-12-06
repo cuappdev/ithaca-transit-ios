@@ -138,17 +138,12 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
     }
     
     private func setDepartureTime(withTime departureTime: Date, isWalkingRoute: Bool){
-        if isWalkingRoute {
-            departureTimeLabel.text = ""
-            return
-        }
-        
         let time = Time.timeString(from: Date(), to: departureTime)
         
         if time == "0 min" {
-            departureTimeLabel.text = "Board now"
+            departureTimeLabel.text = isWalkingRoute ? "Leave now" : "Board now"
         } else {
-           departureTimeLabel.text = "Board in \(time)"
+            departureTimeLabel.text = isWalkingRoute ? "Leave in \(time)": "Board in \(time)"
         }
         departureTimeLabel.sizeToFit()
     }
