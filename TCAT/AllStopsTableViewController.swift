@@ -150,16 +150,16 @@ class AllStopsTableViewController: UITableViewController {
     }
 
     private func setupBackButton(){
-        let backButton = UIButton(type: .system)
-        backButton.setImage(UIImage(named: "back"), for: .normal)
-        let attributedString = NSMutableAttributedString(string: "  Back")
-        // raise back button text a hair - attention to detail, baby
-        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
-        backButton.setAttributedTitle(attributedString, for: .normal)
-        backButton.sizeToFit()
-        backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
-        let barButtonBackItem = UIBarButtonItem(customView: backButton)
-        self.navigationItem.setLeftBarButton(barButtonBackItem, animated: true)
+//        let backButton = UIButton(type: .system)
+//        backButton.setImage(UIImage(named: "back"), for: .normal)
+//        let attributedString = NSMutableAttributedString(string: "  Back")
+//        // raise back button text a hair - attention to detail, baby
+//        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
+//        backButton.setAttributedTitle(attributedString, for: .normal)
+//        backButton.sizeToFit()
+//        backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
+//        let barButtonBackItem = UIBarButtonItem(customView: backButton)
+//        self.navigationItem.setLeftBarButton(barButtonBackItem, animated: true)
     }
 
     @objc func backAction() {

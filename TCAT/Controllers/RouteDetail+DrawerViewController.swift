@@ -17,43 +17,23 @@ struct RouteDetailCellSize {
     static let indentedWidth: CGFloat = 140
 }
 
-class RouteDetailTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate,
+class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, UITableViewDelegate,
                                         UIGestureRecognizerDelegate, PulleyDrawerViewControllerDelegate {
     
     // MARK: Variables
     
     var summaryView = UIView()
     var tableView: UITableView!
+    var safeAreaCover: UIView? = nil
     
     var route: Route!
     var directions: [Direction] = []
     
     let main = UIScreen.main.bounds
-    var summaryViewHeight: CGFloat = 80
-    
     var justLoaded: Bool = true
-
-    // Drawer Presentable (mediumDetailHeight)
-    var heightOfPartiallyExpandedDrawer: CGFloat {
-        if #available(iOS 11.0, *) {
-            return summaryViewHeight + self.view.safeAreaInsets.bottom
-        }
-        return main.height / 2
-    }
     
-    // smallDetailHeight
-    var bottomGap: CGFloat {
-        if #available(iOS 11.0, *) {
-            return summaryViewHeight // + self.view.safeAreaInsets.bottom
-        } else {
-            return summaryViewHeight
-        }
-    }
-    
-    // largeDetailHeight
-    var topGap: CGFloat {
-        return statusNavHeight() + 20
-    }
+    /// Height of summary view
+    var summaryViewHeight: CGFloat = 80
     
     // MARK: Initalization
 
@@ -77,34 +57,17 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeDetailView()
-        if let drawer = self.parent as? PulleyViewController {
-            drawer.setDrawerPosition(position: .partiallyRevealed, animated: false)
+        initializeCover()
+        if let drawer = self.parent as? RouteDetailViewController {
+            drawer.initialDrawerPosition = .partiallyRevealed
         }
     }
     
-    // MARK: Programmatic Layout Constants
-    
-    /** Return height of status bar and possible navigation controller */
-    func statusNavHeight(includingShadow: Bool = false) -> CGFloat {
-        
-        guard let navigationController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController
-            else { return 0 }
-        
-        if #available(iOS 11.0, *) {
-            
-            return navigationController.view.safeAreaInsets.top +
-                navigationController.navigationBar.frame.height +
-                (includingShadow ? 4 : 0)
-            
-        } else {
-            
-            return UIApplication.shared.statusBarFrame.height +
-                navigationController.navigationBar.frame.height +
-                (includingShadow ? 4 : 0)
-            
-        }
-
+    override func viewDidDisappear(_ animated: Bool) {
+        removeCover()
     }
+    
+    // MARK: UIView Functions
 
     /** Create and configure detailView, summaryView, tableView */
     func initializeDetailView() {
@@ -186,6 +149,23 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
 
     }
     
+    /// Creates a temporary view to cover the drawer contents when collapsed. Hidden by default.
+    func initializeCover() {
+        if #available(iOS 11.0, *) {
+            let bottom = UIApplication.shared.keyWindow?.rootViewController?.view.safeAreaInsets.bottom ?? 34
+            safeAreaCover = UIView(frame: CGRect(x: 0, y: summaryViewHeight, width: main.width, height: bottom))
+            safeAreaCover!.backgroundColor = .summaryBackgroundColor
+            safeAreaCover!.alpha = 0
+            view.addSubview(safeAreaCover!)
+        }
+    }
+    
+    /// Remove cover view
+    func removeCover() {
+        safeAreaCover?.removeFromSuperview()
+        safeAreaCover = nil
+    }
+    
     // MARK: Pulley Delegate
     
     func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
@@ -197,7 +177,31 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
     }
     
     func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
-        justLoaded = false
+        if drawer.drawerPosition != .partiallyRevealed {
+            justLoaded = false
+        }
+    }
+    
+    private var visible: Bool = false
+    private var ongoing: Bool = false
+    
+    func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
+        
+        // Manage cover view hiding drawer when collapsed
+        if distance - bottomSafeArea == summaryViewHeight {
+            safeAreaCover?.alpha = 1.0
+            visible = true
+        } else {
+            if !ongoing && visible {
+                UIView.animate(withDuration: 0.25, animations: {
+                    self.safeAreaCover?.alpha = 0.0
+                    self.visible = false
+                }, completion: { (_) in
+                    self.ongoing = false
+                })
+            }
+        }
+        
     }
     
     func supportedDrawerPositions() -> [PulleyPosition] {
@@ -271,8 +275,7 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
         // Check if cell starts a bus direction, and should be expandable
         if direction.type == .depart {
 
-            // TODO: Logic
-            // if isInitialView() { summaryTapped() }
+            if justLoaded { summaryTapped() }
 
             let cell = tableView.cellForRow(at: indexPath) as! LargeDetailTableViewCell
             cell.isExpanded = !cell.isExpanded
@@ -332,7 +335,10 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
     /** Animate detailTableView depending on context, centering map */
     @objc func summaryTapped(_ sender: UITapGestureRecognizer? = nil) {
         
-        if let drawer = self.parent as? PulleyViewController {
+        print("tapped!")
+        
+        if let drawer = self.parent as? RouteDetailViewController {
+            print("drawer found")
             switch drawer.drawerPosition {
             
             case .collapsed:
@@ -346,8 +352,6 @@ class RouteDetailTableViewController: UIViewController, UITableViewDataSource, U
             }
             
         }
-
-//      self.detailTableView.layoutIfNeeded()
 
     }
 

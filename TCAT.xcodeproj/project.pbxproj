@@ -32,14 +32,15 @@
 		BF274E3D1F971A9B00981C34 /* DirectionPathHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF274E3C1F971A9B00981C34 /* DirectionPathHelper.swift */; };
 		BF453F851FAE7DCA001E5481 /* Location+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF453F841FAE7DCA001E5481 /* Location+Shared.swift */; };
 		BF453F871FAF7853001E5481 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BF453F861FAF7850001E5481 /* Default-568h@2x.png */; };
-		BF5CBAD11FCE6CCE00478C6F /* RouteDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5CBAD01FCE6CCE00478C6F /* RouteDetailTableViewController.swift */; };
+		BF5CBAD11FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */; };
+		BF6095271FD7091B0013E538 /* CustomNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6095261FD7091B0013E538 /* CustomNavigationController.swift */; };
 		BF662F341F731DD200B21109 /* OnboardPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F331F731DD200B21109 /* OnboardPageViewController.swift */; };
 		BF662F361F7323B400B21109 /* ActionOnboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */; };
 		BF73F0F31F60B0BD003B479D /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF73F0F21F60B0BD003B479D /* BusLocation.swift */; };
 		BF74AC1A1F945D7D00AFD4E4 /* GoogleMapsBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */; };
 		BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */; };
 		BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */; };
-		BFA53FEE1FD45D7000E770DF /* MyPulleyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA53FED1FD45D7000E770DF /* MyPulleyViewController.swift */; };
+		BFA53FEE1FD45D7000E770DF /* RouteDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */; };
 		BFD5B4E41FAADFAE00955C37 /* WalkPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */; };
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
 		DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */; };
@@ -62,7 +63,7 @@
 		DD99E2F41F6DB0410073E8F7 /* FontConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F31F6DB0410073E8F7 /* FontConstants.swift */; };
 		DD99E2F61F6DB06A0073E8F7 /* KeyConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */; };
 		DDA134451EC6A8CB00460B18 /* RouteLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA134441EC6A8CB00460B18 /* RouteLine.swift */; };
-		DDB49C941E8857D000A99C35 /* RouteDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C921E8857D000A99C35 /* RouteDetailViewController.swift */; };
+		DDB49C941E8857D000A99C35 /* RouteDetail+ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C921E8857D000A99C35 /* RouteDetail+ContentViewController.swift */; };
 		DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */; };
 		DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C961E8857E000A99C35 /* SmallDetailTableViewCell.swift */; };
 		DDB49C9A1E8857E000A99C35 /* BusStopTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C971E8857E000A99C35 /* BusStopTableViewCell.swift */; };
@@ -136,14 +137,15 @@
 		BF453F861FAF7850001E5481 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		BF4F831B1F89B9180097A052 /* testNew.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = testNew.json; path = Data/testNew.json; sourceTree = "<group>"; };
 		BF52F5481F5B553B000DEDF0 /* testOld.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = testOld.json; path = Data/testOld.json; sourceTree = "<group>"; };
-		BF5CBAD01FCE6CCE00478C6F /* RouteDetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDetailTableViewController.swift; path = Controllers/RouteDetailTableViewController.swift; sourceTree = "<group>"; };
+		BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "RouteDetail+DrawerViewController.swift"; path = "Controllers/RouteDetail+DrawerViewController.swift"; sourceTree = "<group>"; };
+		BF6095261FD7091B0013E538 /* CustomNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomNavigationController.swift; path = Controllers/CustomNavigationController.swift; sourceTree = "<group>"; };
 		BF662F331F731DD200B21109 /* OnboardPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardPageViewController.swift; path = Controllers/OnboardPageViewController.swift; sourceTree = "<group>"; };
 		BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActionOnboardViewController.swift; path = Controllers/ActionOnboardViewController.swift; sourceTree = "<group>"; };
 		BF73F0F21F60B0BD003B479D /* BusLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocation.swift; path = Model/BusLocation.swift; sourceTree = "<group>"; };
 		BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsBase.framework; path = Pods/GoogleMaps/Base/Frameworks/GoogleMapsBase.framework; sourceTree = "<group>"; };
 		BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsCore.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMapsCore.framework; sourceTree = "<group>"; };
 		BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMaps.framework; sourceTree = "<group>"; };
-		BFA53FED1FD45D7000E770DF /* MyPulleyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyPulleyViewController.swift; sourceTree = "<group>"; };
+		BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RouteDetailViewController.swift; sourceTree = "<group>"; };
 		BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WalkPath.swift; path = Model/WalkPath.swift; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
@@ -167,7 +169,7 @@
 		DD99E2F31F6DB0410073E8F7 /* FontConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FontConstants.swift; path = "Supporting Files/FontConstants.swift"; sourceTree = "<group>"; };
 		DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KeyConstants.swift; path = "Supporting Files/KeyConstants.swift"; sourceTree = "<group>"; };
 		DDA134441EC6A8CB00460B18 /* RouteLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteLine.swift; path = Views/RouteLine.swift; sourceTree = "<group>"; };
-		DDB49C921E8857D000A99C35 /* RouteDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDetailViewController.swift; path = Controllers/RouteDetailViewController.swift; sourceTree = "<group>"; };
+		DDB49C921E8857D000A99C35 /* RouteDetail+ContentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "RouteDetail+ContentViewController.swift"; path = "Controllers/RouteDetail+ContentViewController.swift"; sourceTree = "<group>"; };
 		DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LargeDetailTableViewCell.swift; path = Cells/LargeDetailTableViewCell.swift; sourceTree = "<group>"; };
 		DDB49C961E8857E000A99C35 /* SmallDetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SmallDetailTableViewCell.swift; path = Cells/SmallDetailTableViewCell.swift; sourceTree = "<group>"; };
 		DDB49C971E8857E000A99C35 /* BusStopTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusStopTableViewCell.swift; path = Cells/BusStopTableViewCell.swift; sourceTree = "<group>"; };
@@ -427,11 +429,12 @@
 		DD47EA501E50D77D009C68EB /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */,
-				DDB49C921E8857D000A99C35 /* RouteDetailViewController.swift */,
-				BFA53FED1FD45D7000E770DF /* MyPulleyViewController.swift */,
-				BF5CBAD01FCE6CCE00478C6F /* RouteDetailTableViewController.swift */,
+				BF6095261FD7091B0013E538 /* CustomNavigationController.swift */,
 				50A19BAD1E4C214000AD6768 /* HomeViewController.swift */,
+				503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */,
+				BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */,
+				DDB49C921E8857D000A99C35 /* RouteDetail+ContentViewController.swift */,
+				BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */,
 				BF662F331F731DD200B21109 /* OnboardPageViewController.swift */,
 				BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */,
 				DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */,
@@ -796,7 +799,7 @@
 				DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */,
 				BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */,
 				DDA134451EC6A8CB00460B18 /* RouteLine.swift in Sources */,
-				BFA53FEE1FD45D7000E770DF /* MyPulleyViewController.swift in Sources */,
+				BFA53FEE1FD45D7000E770DF /* RouteDetailViewController.swift in Sources */,
 				BF662F341F731DD200B21109 /* OnboardPageViewController.swift in Sources */,
 				DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */,
 				503EC37B1E969ACD00B3D4D4 /* BusStopCell.swift in Sources */,
@@ -817,7 +820,8 @@
 				DDE3BC231F5863D50014D2BB /* Place.swift in Sources */,
 				DDEC101B1F66192B00834E91 /* RouteSummaryObject.swift in Sources */,
 				BF453F851FAE7DCA001E5481 /* Location+Shared.swift in Sources */,
-				BF5CBAD11FCE6CCE00478C6F /* RouteDetailTableViewController.swift in Sources */,
+				BF6095271FD7091B0013E538 /* CustomNavigationController.swift in Sources */,
+				BF5CBAD11FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift in Sources */,
 				DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */,
 				DDBFEAA01E787008002BBD96 /* DatepickerView.swift in Sources */,
 				DD36A6FF1F66378C00E4789E /* BusStop.swift in Sources */,
@@ -832,7 +836,7 @@
 				DDD33DEF1EC2960400BC6454 /* CircleLine.swift in Sources */,
 				505E00E51E9ED56F00F09BAE /* KMLParser.swift in Sources */,
 				DD36A7021F6637CA00E4789E /* Direction.swift in Sources */,
-				DDB49C941E8857D000A99C35 /* RouteDetailViewController.swift in Sources */,
+				DDB49C941E8857D000A99C35 /* RouteDetail+ContentViewController.swift in Sources */,
 				BFD5B4E41FAADFAE00955C37 /* WalkPath.swift in Sources */,
 				BF1209FB1F7759C200A7C930 /* BusLocationView.swift in Sources */,
 				DD3D9C361F945F2A00B164D4 /* RPCircularProgress.swift in Sources */,

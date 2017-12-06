@@ -14,17 +14,10 @@ import SwiftyJSON
 import NotificationBannerSwift
 import Pulley
 
-//struct RouteDetailCellSize {
-//    static let smallHeight: CGFloat = 60
-//    static let largeHeight: CGFloat = 80
-//    static let regularWidth: CGFloat = 120
-//    static let indentedWidth: CGFloat = 140
-//}
-
-class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate {
+class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate {
     
     var loadingView: UIView!
-    var drawerDisplayController: RouteDetailTableViewController?
+    var drawerDisplayController: RouteDetailDrawerViewController?
     
     var isLoading: Bool = true
     var justLoaded: Bool = true
@@ -45,7 +38,6 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
     var directions: [Direction] = []
 
     let main = UIScreen.main.bounds
-    var summaryViewHeight: CGFloat = 80
 
     let markerRadius: CGFloat = 8
     let mapPadding: CGFloat = 40
@@ -165,7 +157,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
 
         }
         
-        drawerDisplayController = RouteDetailTableViewController(route: route)
+        drawerDisplayController = RouteDetailDrawerViewController(route: route)
 
     }
 
@@ -200,12 +192,13 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         networkTimer!.fire()
 
     }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         networkTimer?.invalidate()
         networkTimer = nil
         banner = nil
+        dismissLoadingScreen()
     }
 
     override func loadView() {
@@ -213,7 +206,7 @@ class RouteDetailViewController: UIViewController, GMSMapViewDelegate, CLLocatio
         // set mapView with settings
         let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: defaultZoom)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
-        mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: drawerDisplayController?.bottomGap ?? 0, right: 0)
+        mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: drawerDisplayController?.summaryViewHeight ?? 0, right: 0)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
         mapView.settings.compassButton = true

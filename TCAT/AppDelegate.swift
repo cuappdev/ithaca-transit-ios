@@ -36,13 +36,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         // Initalize window without storyboard
         getBusStops()
 
-        let rootVC: UIViewController = userDefaults.bool(forKey: "onboardingShown") ? HomeViewController() :
-            OnboardViewController()
-        let navigationController = UINavigationController(rootViewController: rootVC)
-        navigationController.navigationBar.barTintColor = .white
-        //navigationController.navigationBar.isTranslucent = false
-        navigationController.navigationBar.tintColor = .black
+        let rootVC = userDefaults.bool(forKey: "onboardingShown") ? HomeViewController() : OnboardViewController()
+        let navigationController = CustomNavigationController(rootViewController: rootVC)
 
+        UIApplication.shared.statusBarStyle = .default
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
