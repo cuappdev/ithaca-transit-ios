@@ -21,16 +21,18 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         title = fromOnboarding ? "Add Favorites" : "Add Favorite"
         let systemItem: UIBarButtonSystemItem = fromOnboarding ? .done : .cancel
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem, target: self, action: #selector(dismissVC))
-        let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!, .foregroundColor : UIColor.black]
-        navigationController?.navigationBar.titleTextAttributes = titleAttributes
-        navigationController?.navigationBar.tintColor = .black
-        navigationController?.navigationBar.barTintColor = .white
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.shadowImage = UIImage()
+        
+//        let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!, .foregroundColor : UIColor.black]
+//        navigationController?.navigationBar.titleTextAttributes = titleAttributes
+//        navigationController?.navigationBar.tintColor = .black
+//        navigationController?.navigationBar.barTintColor = .white
+//        navigationController?.navigationBar.isTranslucent = false
+//        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+//        navigationController?.navigationBar.shadowImage = UIImage()
 
         allStops = SearchTableViewManager.shared.getAllStops()
         tableView.register(BusStopCell.self, forCellReuseIdentifier: Key.Cells.busIdentifier)
@@ -47,7 +49,7 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
     @objc func dismissVC() {
         if fromOnboarding {
             let rootVC = HomeViewController()
-            let desiredViewController = UINavigationController(rootViewController: rootVC)
+            let desiredViewController = CustomNavigationController(rootViewController: rootVC)
 
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let snapshot: UIView = appDelegate.window!.snapshotView(afterScreenUpdates: true)!

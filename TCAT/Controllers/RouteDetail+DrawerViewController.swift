@@ -84,10 +84,18 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         summaryView.roundCorners(corners: [.topLeft, .topRight], radius: 16)
         summaryView.addGestureRecognizer(summaryTapGesture)
         view.addSubview(summaryView)
+        
+        // Create puller tab
+        let puller = UIView(frame: CGRect(x: 0, y: 6, width: 32, height: 4))
+        // value to help center items below
+        let pullerHeight = (puller.frame.origin.y + puller.frame.height) / 2
+        puller.center.x = summaryView.center.x
+        puller.backgroundColor = .mediumGrayColor
+        puller.layer.cornerRadius = puller.frame.height / 2
+        summaryView.addSubview(puller)
 
         // Create and place all bus routes in Directions (account for small screens)
         var icon_maxY: CGFloat = 24; var first = true
-        let pullerHeight: CGFloat = 12 / 2 // based on position and height defined elsewhere, halved for "center" calc.
         let mainStopCount = route.numberOfBusRoutes()
         var center = CGPoint(x: icon_maxY, y: (summaryView.frame.height / 2) + pullerHeight)
         for direction in directions {
@@ -143,8 +151,13 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: "busStopCell")
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.tableFooterView = UIView()
+        
+        // TODO: Temporary solution to enable tap gesture, but disables scroll
+        
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: main.width, height: main.height))
         tableView.tableFooterView?.addGestureRecognizer(summaryTapGesture)
+        tableView.isScrollEnabled = false
+        
         view.addSubview(tableView)
 
     }
@@ -177,9 +190,23 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     }
     
     func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
-        if drawer.drawerPosition != .partiallyRevealed {
+
+        // Update supported drawer positions to 2 options after inital load
+        if drawer.drawerPosition == .partiallyRevealed {
+            if !justLoaded {
+               drawer.setNeedsSupportedDrawerPositionsUpdate()
+            }
+        } else {
             justLoaded = false
         }
+        
+        // Center map on drawer collapse
+        if drawer.drawerPosition == .collapsed {
+            guard let contentViewController = drawer.primaryContentViewController as? RouteDetailContentViewController
+                else { return }
+            contentViewController.centerMap()
+        }
+        
     }
     
     private var visible: Bool = false
@@ -338,10 +365,9 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         print("tapped!")
         
         if let drawer = self.parent as? RouteDetailViewController {
-            print("drawer found")
             switch drawer.drawerPosition {
             
-            case .collapsed:
+            case .collapsed, .partiallyRevealed:
                 drawer.setDrawerPosition(position: .open, animated: true)
             
             case .open:
@@ -350,7 +376,6 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
             default: break
                 
             }
-            
         }
 
     }

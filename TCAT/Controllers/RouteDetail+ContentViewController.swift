@@ -287,8 +287,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             currentLocation = newCoord
         }
         
-        if justLoaded { drawMapRoute(); justLoaded = false }
-        centerMap(topHalfCentered: true)
+        if justLoaded {
+            drawMapRoute()
+            justLoaded = false
+            centerMap(topHalfCentered: true)
+        }
         
     }
 
@@ -379,8 +382,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
         if topHalfCentered {
             let constant: CGFloat = 20
-            let bottom = (main.height / 2) - (statusNavHeight(includingShadow: false) - constant)
-            let edgeInsets = UIEdgeInsets(top: mapPadding / 2 , left: constant, bottom: bottom, right: constant)
+            let bottom = (main.height / 2) - statusNavHeight(includingShadow: true) - constant
+            let edgeInsets = UIEdgeInsets(top: statusNavHeight(includingShadow: false), left: constant, bottom: bottom, right: constant)
             let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
             mapView.animate(with: update)
         }
