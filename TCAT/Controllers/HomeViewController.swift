@@ -13,6 +13,7 @@ import Alamofire
 import DZNEmptyDataSet
 import NotificationBannerSwift
 import Crashlytics
+import SafariServices
 import SnapKit
 
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate, AddFavoritesDelegate {
@@ -30,6 +31,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var tableView : UITableView!
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
+    let submitBugButton = UIButton(type: .infoLight)
     var recentLocations: [ItemType] = []
     var favorites: [ItemType] = []
     var isKeyboardVisible = false
@@ -58,6 +60,16 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
         view.backgroundColor = .tableBackgroundColor
+        
+        submitBugButton.addTarget(self, action: #selector(openInformationScreen), for: .touchUpInside)
+        submitBugButton.snp.makeConstraints { (make) in
+            make.width.equalTo(30)
+            make.height.equalTo(38)
+        }
+        submitBugButton.imageEdgeInsets = UIEdgeInsetsMake(14, 7, 0, 0)
+        
+        let submitBugBarButton = UIBarButtonItem(customView: submitBugButton)
+        navigationItem.setRightBarButton(submitBugBarButton, animated: false)
 
         tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
@@ -369,7 +381,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
-
+        navigationItem.rightBarButtonItem = nil
         //Crashlytics Answers
         Answers.searchBarTappedInHome()
     }
@@ -379,6 +391,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.endEditing(true)
         searchBar.text = nil
+        
+        let submitBugBarButton = UIBarButtonItem(customView: submitBugButton)
+        navigationItem.setRightBarButton(submitBugBarButton, animated: false)
         sections = createSections()
         tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
         
@@ -405,6 +420,13 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         } else {
             sections = createSections()
         }
+    }
+    
+    /* Open information screen */
+    @objc func openInformationScreen() {
+        let informationViewController = InformationViewController()
+        let navigationVC = UINavigationController(rootViewController: informationViewController)
+        self.present(navigationVC, animated: true, completion: nil)
     }
 }
 

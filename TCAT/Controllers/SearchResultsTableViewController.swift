@@ -215,13 +215,13 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
                 SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.recentSearch, location: busStop, limit: 8)
             }
             //Crashlytics Answers
-            Answers.destinationSearched(destination: busStop.name, stopType: "bus stop")
+//            Answers.destinationSearched(destination: busStop.name, stopType: "bus stop", requestUrl: <#String?#>)
             
             destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
         case .placeResult(let placeResult):
             SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.recentSearch, location: placeResult, limit: 8)
             //Crashlytics Answers
-            Answers.destinationSearched(destination: placeResult.name, stopType: "google place")
+//            Answers.destinationSearched(destination: placeResult.name, stopType: "google place", requestUrl: <#String?#>)
             
             destinationDelegate?.didSelectDestination(busStop: nil, placeResult: placeResult)
         default: break

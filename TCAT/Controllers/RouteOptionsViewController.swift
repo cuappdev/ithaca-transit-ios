@@ -324,21 +324,22 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 } else {
                     self.refreshControl.endRefreshing()
                 }
-
-                request.perform(withSuccess: { (routeJson) in
+                
+                let alamofireRequest = request.perform(withSuccess: { (routeJson) in
                     let rawRoutes = Route.getRoutesArray(fromJson: routeJson, endingAt: self.searchTo?.name ?? "")
                     self.routes = self.processRoutes(rawRoutes)
                     self.currentlySearching = false
                     self.routeResults.reloadData()
                 },
-
+                
                 failure: { (error) in
                     print("RouteOptionVC searchForRoutes Error: \(error)")
                     self.routes = []
                     self.currentlySearching = false
                     self.routeResults.reloadData()
                 })
-
+                
+                Answers.destinationSearched(destination: (self.searchTo?.name)!, stopType: nil, requestUrl: String(describing: alamofireRequest?.request?.url))
             }
 
             }
