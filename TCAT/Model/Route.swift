@@ -33,6 +33,10 @@ class Route: NSObject, JSONDecodable {
     var routeSummary: [RouteSummaryObject] = [RouteSummaryObject]()
     
     var travelDistance: Double?
+    var totalDuration: Int = 0
+    
+    var paths: [Path] = []
+    
     weak var travelDistanceDelegate: TravelDistanceDelegate?
     
     required init(json: JSON) throws {
@@ -54,6 +58,8 @@ class Route: NSObject, JSONDecodable {
                                              longitude: data[pathStart]["start"]["location"]["longitude"].doubleValue)
         endCoords = CLLocationCoordinate2D(latitude: data[pathEnd]["end"]["location"]["latitude"].doubleValue,
                                            longitude: data[pathEnd]["end"]["location"]["longitude"].doubleValue)
+        
+        totalDuration = Time.dateComponents(from: departureTime, to: arrivalTime).minute ?? 0
         
         var busInvolved = false
         

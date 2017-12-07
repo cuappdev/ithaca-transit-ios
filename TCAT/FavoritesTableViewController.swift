@@ -21,17 +21,11 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         title = fromOnboarding ? "Add Favorites" : "Add Favorite"
         let systemItem: UIBarButtonSystemItem = fromOnboarding ? .done : .cancel
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem, target: self, action: #selector(dismissVC))
-        let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!, .foregroundColor : UIColor.black]
-        navigationController?.navigationBar.titleTextAttributes = titleAttributes
-        navigationController?.navigationBar.tintColor = .black
-        navigationController?.navigationBar.barTintColor = .white
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.shadowImage = UIImage()
-
+        
         allStops = SearchTableViewManager.shared.getAllStops()
         tableView.register(BusStopCell.self, forCellReuseIdentifier: Key.Cells.busIdentifier)
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Key.Cells.searchResultsIdentifier)
@@ -47,7 +41,7 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
     @objc func dismissVC() {
         if fromOnboarding {
             let rootVC = HomeViewController()
-            let desiredViewController = UINavigationController(rootViewController: rootVC)
+            let desiredViewController = CustomNavigationController(rootViewController: rootVC)
 
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let snapshot: UIView = appDelegate.window!.snapshotView(afterScreenUpdates: true)!
@@ -80,11 +74,11 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let searchBar = UISearchBar()
         searchBar.isTranslucent = true
+        searchBar.placeholder = "Search (e.g Balch Hall, 312 College Ave)"
         searchBar.backgroundImage = UIImage()
         searchBar.alpha = 1.0
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
         textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
-        textFieldInsideSearchBar?.attributedPlaceholder = NSAttributedString(string: "Search", attributes: [NSAttributedStringKey.foregroundColor: UIColor.searchBarPlaceholderTextColor])
         searchBar.backgroundColor = .white
         searchBar.delegate = self
         return searchBar

@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '9.3'
+platform :ios, '10.2'
 
 target 'TCAT' do
   # Comment this line if you're not using Swift and don't want to use dynamic frameworks
@@ -16,6 +16,7 @@ target 'TCAT' do
   pod 'NotificationBannerSwift'
   pod 'Fabric'
   pod 'Crashlytics'
+  pod 'Pulley'
 
 post_install do |installer|
     installer.pods_project.targets.each do |target|

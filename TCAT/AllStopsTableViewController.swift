@@ -41,12 +41,6 @@ class AllStopsTableViewController: UITableViewController {
         tableView.sectionIndexColor = .primaryTextColor
         tableView.register(BusStopCell.self, forCellReuseIdentifier: "BusStop")
 
-        let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!,
-                                                             .foregroundColor : UIColor.black]
-        title = "All Stops"
-        navigationController?.navigationBar.titleTextAttributes = titleAttributes
-        setupBackButton()
-
         if #available(iOS 11.0, *) {
             navigationItem.searchController = nil
         } else {
@@ -147,19 +141,6 @@ class AllStopsTableViewController: UITableViewController {
         } else {
         navigationController?.pushViewController(optionsVC, animated: true)
         }
-    }
-
-    private func setupBackButton(){
-        let backButton = UIButton(type: .system)
-        backButton.setImage(UIImage(named: "back"), for: .normal)
-        let attributedString = NSMutableAttributedString(string: "  Back")
-        // raise back button text a hair - attention to detail, baby
-        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
-        backButton.setAttributedTitle(attributedString, for: .normal)
-        backButton.sizeToFit()
-        backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
-        let barButtonBackItem = UIBarButtonItem(customView: backButton)
-        self.navigationItem.setLeftBarButton(barButtonBackItem, animated: true)
     }
 
     @objc func backAction() {

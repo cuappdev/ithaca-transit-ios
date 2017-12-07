@@ -103,9 +103,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     func displayFavoritesTVC() {
         if favorites.count < 5 {
-        let favoritesTVC = FavoritesTableViewController()
-        let navController = UINavigationController(rootViewController: favoritesTVC)
-        present(navController, animated: true, completion: nil)
+            presentFavoritesTVC()
         } else {
             let title = "Maximum Number of Favorites"
             let message = "To add more favorites, please swipe left and delete one first."
@@ -219,9 +217,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
 
-    @objc func addNewFavorite(sender: UIButton) {
+    @objc func presentFavoritesTVC(sender: UIButton? = nil) {
         let favoritesTVC = FavoritesTableViewController()
-        let navController = UINavigationController(rootViewController: favoritesTVC)
+        let navController = CustomNavigationController(rootViewController: favoritesTVC)
         present(navController, animated: true, completion: nil)
     }
     
@@ -321,9 +319,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         case .busStop(let busStop):
             if busStop.name == Key.Favorites.first { //we want to go to favoritesvc
                 presentOptionsVC = false
-                let favoritesTVC = FavoritesTableViewController()
-                let navController = UINavigationController(rootViewController: favoritesTVC)
-                present(navController, animated: true, completion: nil)
+                presentFavoritesTVC()
             } else {
             SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.recentSearch, location: busStop, limit: 8)
             optionsVC.searchTo = busStop

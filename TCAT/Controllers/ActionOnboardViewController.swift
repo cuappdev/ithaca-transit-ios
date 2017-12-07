@@ -212,15 +212,14 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     @objc func presentFavoritesTVC() {
         let favoritesTVC = FavoritesTableViewController()
         favoritesTVC.fromOnboarding = true
-        let navController = UINavigationController(rootViewController: favoritesTVC)
+        let navController = CustomNavigationController(rootViewController: favoritesTVC)
         present(navController, animated: true, completion: nil)
-        
     }
     
     @objc func dismissOnboarding() {
         
         let rootVC = HomeViewController()
-        let desiredViewController = UINavigationController(rootViewController: rootVC)
+        let desiredViewController = CustomNavigationController(rootViewController: rootVC)
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let snapshot: UIView = appDelegate.window!.snapshotView(afterScreenUpdates: true)!
