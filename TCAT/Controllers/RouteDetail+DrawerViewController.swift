@@ -152,10 +152,13 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         tableView.dataSource = self
         tableView.delegate = self
         
-        // TODO: Temporary solution to enable tap gesture, but disables scroll
+        // TODO: Temporary solution to enable tap gesture for footer: Disable scroll
         
-        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: main.width, height: main.height))
-        tableView.tableFooterView?.addGestureRecognizer(summaryTapGesture)
+        let cellHeight = tableView.visibleCells.reduce(0) { $0 + $1.frame.size.height }
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - cellHeight))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
+        tapGesture.delegate = self
+        tableView.tableFooterView?.addGestureRecognizer(tapGesture)
         tableView.isScrollEnabled = false
         
         view.addSubview(tableView)

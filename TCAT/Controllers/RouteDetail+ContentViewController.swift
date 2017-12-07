@@ -383,7 +383,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         if topHalfCentered {
             let constant: CGFloat = 20
             let bottom = (main.height / 2) - statusNavHeight(includingShadow: true) - constant
-            let edgeInsets = UIEdgeInsets(top: statusNavHeight(includingShadow: false), left: constant, bottom: bottom, right: constant)
+            let edgeInsets = UIEdgeInsets(top: mapPadding, left: constant, bottom: bottom, right: constant)
             let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
             mapView.animate(with: update)
         }
