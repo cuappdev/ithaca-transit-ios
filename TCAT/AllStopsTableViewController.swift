@@ -41,8 +41,6 @@ class AllStopsTableViewController: UITableViewController {
         tableView.sectionIndexColor = .primaryTextColor
         tableView.register(BusStopCell.self, forCellReuseIdentifier: "BusStop")
 
-        title = "All Stops"
-
         if #available(iOS 11.0, *) {
             navigationItem.searchController = nil
         } else {
