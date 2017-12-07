@@ -30,6 +30,7 @@ class RouteDetailViewController: PulleyViewController {
         shadowRadius = 4
         backgroundDimmingColor = .black
         backgroundDimmingOpacity = 0.5
+        animationDuration = 0.5
         
         setRightButton()
         
