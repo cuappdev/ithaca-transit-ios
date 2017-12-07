@@ -127,7 +127,7 @@ extension UIWindow {
         }
     }
     
-    private func openFeedback() {
+    func openFeedback() {
         let betaFormURL = "https://goo.gl/forms/u2shinl8ddNyFuZ23"
         let safariViewController = SFSafariViewController(url: URL(string: betaFormURL)!)
         presentInApp(safariViewController)
