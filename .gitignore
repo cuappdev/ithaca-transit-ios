@@ -12,6 +12,7 @@
 *.mobileprovision
 *.dSYM.zip
 *.ipa
+/report.xml
 report.xml
   
 # Xcode

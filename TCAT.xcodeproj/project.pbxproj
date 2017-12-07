@@ -79,6 +79,7 @@
 		DDE0A9311F096A3E005CD01C /* RouteDiagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */; };
 		DDE3BC231F5863D50014D2BB /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE3BC221F5863D50014D2BB /* Place.swift */; };
 		DDEC101B1F66192B00834E91 /* RouteSummaryObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEC101A1F66192B00834E91 /* RouteSummaryObject.swift */; };
+		E337970D1FC1606D00BCB28F /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E337970C1FC1606D00BCB28F /* InformationViewController.swift */; };
 		E34490CD1F8EF00A0064D284 /* SFText-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */; };
 		E3FCA3C91FAA67250069BD0F /* Crashlytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FCA3C81FAA67250069BD0F /* Crashlytics.swift */; };
 /* End PBXBuildFile section */
@@ -186,6 +187,7 @@
 		DDE3BC221F5863D50014D2BB /* Place.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Place.swift; path = Model/Place.swift; sourceTree = "<group>"; };
 		DDEC101A1F66192B00834E91 /* RouteSummaryObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RouteSummaryObject.swift; path = Model/RouteSummaryObject.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E337970C1FC1606D00BCB28F /* InformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationViewController.swift; sourceTree = "<group>"; };
 		E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Bold.otf"; path = "Resources/SFText-Bold.otf"; sourceTree = "<group>"; };
 		E3FCA3C81FAA67250069BD0F /* Crashlytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crashlytics.swift; sourceTree = "<group>"; };
 		E69224A160B2B078827D28A1 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -435,6 +437,7 @@
 				BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */,
 				DDB49C921E8857D000A99C35 /* RouteDetail+ContentViewController.swift */,
 				BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */,
+				E337970C1FC1606D00BCB28F /* InformationViewController.swift */,
 				BF662F331F731DD200B21109 /* OnboardPageViewController.swift */,
 				BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */,
 				DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */,
@@ -802,6 +805,7 @@
 				BFA53FEE1FD45D7000E770DF /* RouteDetailViewController.swift in Sources */,
 				BF662F341F731DD200B21109 /* OnboardPageViewController.swift in Sources */,
 				DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */,
+				E337970D1FC1606D00BCB28F /* InformationViewController.swift in Sources */,
 				503EC37B1E969ACD00B3D4D4 /* BusStopCell.swift in Sources */,
 				DDB49C9A1E8857E000A99C35 /* BusStopTableViewCell.swift in Sources */,
 				DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */,
