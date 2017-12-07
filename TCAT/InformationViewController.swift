@@ -43,15 +43,15 @@ class InformationViewController: UIViewController {
             else { return }
         self.navigationItem.rightBarButtonItem?.setTitleTextAttributes(buttonAttributes, for: .normal)
         let backButtonItem = UIBarButtonItem(customView: dismissButton)
-        navigationItem.setLeftBarButton(backButtonItem, animated: false)
+        navigationItem.setRightBarButton(backButtonItem, animated: false)
         
-        someLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        someLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 16)
         someLabel.textColor = .primaryTextColor
         someLabel.text = "Ride14850 Sucks"
         someLabel.textAlignment = .center
         someLabel.backgroundColor = .clear
         someLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(topLayoutGuide.snp.bottom).offset(80)
+            make.top.equalTo(topLayoutGuide.snp.bottom).offset(86)
             make.centerX.equalToSuperview()
             make.height.equalTo(19)
         }

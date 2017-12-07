@@ -66,8 +66,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             make.width.equalTo(30)
             make.height.equalTo(38)
         }
-        infoButton.imageEdgeInsets = UIEdgeInsetsMake(14, 7, 0, 0)
-        
+        infoButton.imageEdgeInsets = UIEdgeInsets(top: 7, left: 7, bottom: 7, right: 0)
         let submitBugBarButton = UIBarButtonItem(customView: infoButton)
         navigationItem.setRightBarButton(submitBugBarButton, animated: false)
 
