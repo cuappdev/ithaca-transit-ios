@@ -80,7 +80,7 @@ class InformationViewController: UIViewController {
         sendFeedbackButton.setTitle("Send Feedback", for: .normal)
         sendFeedbackButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
         sendFeedbackButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
-        sendFeedbackButton.backgroundColor = UIColor.white
+        sendFeedbackButton.backgroundColor = .white
         sendFeedbackButton.layer.borderColor = UIColor.lineDarkColor.cgColor
         sendFeedbackButton.layer.borderWidth = 0.5
         sendFeedbackButton.snp.makeConstraints { (make) in

@@ -431,14 +431,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let informationViewController = InformationViewController()
         let navigationVC = UINavigationController(rootViewController: informationViewController)
         self.present(navigationVC, animated: true, completion: nil)
-        
-//        let transition: CATransition = CATransition()
-//        transition.duration = 0.5
-//        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-//        transition.type = kCATransitionPush
-//        transition.subtype = kCATransitionFromTop
-//        self.navigationController!.view.layer.add(transition, forKey: kCATransition)
-//        self.navigationController?.pushViewController(informationViewController, animated: false)
     }
 }
 
