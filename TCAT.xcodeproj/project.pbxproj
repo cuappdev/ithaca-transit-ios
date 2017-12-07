@@ -927,7 +927,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 47;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -982,7 +982,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 47;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1010,7 +1010,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 47;
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1040,7 +1040,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 47;
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1066,7 +1066,7 @@
 			baseConfigurationReference = 8236DFFA6C5F3AB1E6E1B0E4 /* Pods-TCATTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 47;
 				INFOPLIST_FILE = TCATTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1082,7 +1082,7 @@
 			baseConfigurationReference = 00AAC04EC20FD099C317E4DF /* Pods-TCATTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 47;
 				INFOPLIST_FILE = TCATTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1097,7 +1097,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0A53C1C936C7282DCAB7292F /* Pods-TCATUITests.debug.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 47;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				INFOPLIST_FILE = TCATUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1113,7 +1113,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 47;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				INFOPLIST_FILE = TCATUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
