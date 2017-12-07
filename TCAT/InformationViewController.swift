@@ -16,10 +16,11 @@ class InformationViewController: UIViewController {
     var appDevTitle = UILabel()
     var descriptionLabel = UILabel()
     var tcatQuoteText = UILabel()
+    var someLabel = UILabel()
     var tcatImage = UIImageView()
     var sendFeedbackButton = UIButton()
     var visitWebsiteButton = UIButton()
-    var backButton = UIButton(type: .system)
+    var dismissButton = UIButton(type: .system)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,18 +34,31 @@ class InformationViewController: UIViewController {
         view.addSubview(descriptionLabel)
         view.addSubview(sendFeedbackButton)
         view.addSubview(visitWebsiteButton)
+        view.addSubview(someLabel)
         view.addSubview(tcatImage)
         
-        backButton.addTarget(self, action: #selector(backButtonClicked), for: .touchUpInside)
-        backButton.setImage(UIImage(named: "back"), for: .normal)
-        let attributedString = NSMutableAttributedString(string: "  Back")
-        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
-        backButton.setAttributedTitle(attributedString, for: .normal)
-        backButton.sizeToFit()
-        let backButtonItem = UIBarButtonItem(customView: backButton)
+        dismissButton.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
+        dismissButton.setTitle("Done", for: .normal)
+        guard let buttonAttributes = (navigationController as? CustomNavigationController)?.buttonTitleTextAttributes
+            else { return }
+        self.navigationItem.rightBarButtonItem?.setTitleTextAttributes(buttonAttributes, for: .normal)
+        let backButtonItem = UIBarButtonItem(customView: dismissButton)
         navigationItem.setLeftBarButton(backButtonItem, animated: false)
         
+        someLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        someLabel.textColor = .primaryTextColor
+        someLabel.text = "Ride14850 Sucks"
+        someLabel.textAlignment = .center
+        someLabel.backgroundColor = .clear
+        someLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(topLayoutGuide.snp.bottom).offset(80)
+            make.centerX.equalToSuperview()
+            make.height.equalTo(19)
+        }
+        
         tcatImage.image = UIImage(named: "tcatbus")
+        tcatImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(busTapped)))
+        tcatImage.isUserInteractionEnabled = true
         tcatImage.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
             make.top.equalTo(topLayoutGuide.snp.bottom).offset(44)
@@ -72,7 +86,7 @@ class InformationViewController: UIViewController {
         descriptionLabel.textAlignment = .center
         descriptionLabel.snp.makeConstraints { (make) in
             make.height.equalTo(34)
-//            make.bottom.equalTo(view.snp.centerY).offset(-10)
+            // make.bottom.equalTo(view.snp.centerY).offset(-10)
             make.centerX.equalToSuperview()
         }
         
@@ -107,7 +121,7 @@ class InformationViewController: UIViewController {
         }
     }
     
-    @objc func backButtonClicked() {
+    @objc func dismissTapped() {
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -122,4 +136,34 @@ class InformationViewController: UIViewController {
         let safariViewController = SFSafariViewController(url: URL(string: siteURL)!)
         UIApplication.shared.keyWindow?.presentInApp(safariViewController)
     }
+    
+    @objc func busTapped() {
+        
+        let constant: CGFloat = UIScreen.main.bounds.width
+        let duration: TimeInterval = 1.5
+        let delay: TimeInterval = 0
+        let damping: CGFloat = 0.75
+        let velocity: CGFloat = 0
+        let options: UIViewAnimationOptions = .curveEaseInOut
+        
+        UIView.animate(withDuration: duration, delay: delay, usingSpringWithDamping: damping,
+                       initialSpringVelocity: velocity, options: options, animations: {
+                        
+            self.tcatImage.frame.origin.x += constant
+                        
+        }) { (completed) in
+            
+            self.tcatImage.frame.origin.x -= 2 * constant
+            
+            UIView.animate(withDuration: duration, delay: delay, usingSpringWithDamping: damping,
+                           initialSpringVelocity: velocity, options: options, animations: {
+                            
+                self.tcatImage.frame.origin.x += constant
+                            
+            })
+            
+        }
+        
+    }
+    
 }

@@ -25,6 +25,9 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
         title = fromOnboarding ? "Add Favorites" : "Add Favorite"
         let systemItem: UIBarButtonSystemItem = fromOnboarding ? .done : .cancel
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem, target: self, action: #selector(dismissVC))
+        guard let buttonAttributes = (navigationController as? CustomNavigationController)?.buttonTitleTextAttributes
+            else { return }
+        navigationItem.rightBarButtonItem?.setTitleTextAttributes(buttonAttributes, for: .normal)
         
         allStops = SearchTableViewManager.shared.getAllStops()
         tableView.register(BusStopCell.self, forCellReuseIdentifier: Key.Cells.busIdentifier)

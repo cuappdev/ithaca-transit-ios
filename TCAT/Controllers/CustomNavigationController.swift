@@ -90,9 +90,15 @@ class CustomNavigationController: UINavigationController, UINavigationController
         super.pushViewController(viewController, animated: animated)
         
         if viewControllers.count > 1 {
-            let pushedViewController = viewControllers.last!
-            let backButton = customBackButton()
-            pushedViewController.navigationItem.setLeftBarButton(backButton, animated: true)
+            
+            navigationBar.titleTextAttributes = titleTextAttributes
+            
+            // Add back button for non-modal screens
+            if !viewController.isModal {
+                let backButton = customBackButton()
+                viewController.navigationItem.setLeftBarButton(backButton, animated: true)
+            }
+            
         }
         
     }

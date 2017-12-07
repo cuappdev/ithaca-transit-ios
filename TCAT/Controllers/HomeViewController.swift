@@ -31,7 +31,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var tableView : UITableView!
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
-    let submitBugButton = UIButton(type: .infoLight)
+    let infoButton = UIButton(type: .infoLight)
     var recentLocations: [ItemType] = []
     var favorites: [ItemType] = []
     var isKeyboardVisible = false
@@ -61,14 +61,14 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
         view.backgroundColor = .tableBackgroundColor
         
-        submitBugButton.addTarget(self, action: #selector(openInformationScreen), for: .touchUpInside)
-        submitBugButton.snp.makeConstraints { (make) in
+        infoButton.addTarget(self, action: #selector(openInformationScreen), for: .touchUpInside)
+        infoButton.snp.makeConstraints { (make) in
             make.width.equalTo(30)
             make.height.equalTo(38)
         }
-        submitBugButton.imageEdgeInsets = UIEdgeInsetsMake(14, 7, 0, 0)
+        infoButton.imageEdgeInsets = UIEdgeInsetsMake(14, 7, 0, 0)
         
-        let submitBugBarButton = UIBarButtonItem(customView: submitBugButton)
+        let submitBugBarButton = UIBarButtonItem(customView: infoButton)
         navigationItem.setRightBarButton(submitBugBarButton, animated: false)
 
         tableView = UITableView(frame: .zero, style: .grouped)
@@ -392,7 +392,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.endEditing(true)
         searchBar.text = nil
         
-        let submitBugBarButton = UIBarButtonItem(customView: submitBugButton)
+        let submitBugBarButton = UIBarButtonItem(customView: infoButton)
         navigationItem.setRightBarButton(submitBugBarButton, animated: false)
         sections = createSections()
         tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
@@ -425,7 +425,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     /* Open information screen */
     @objc func openInformationScreen() {
         let informationViewController = InformationViewController()
-        let navigationVC = UINavigationController(rootViewController: informationViewController)
+        let navigationVC = CustomNavigationController(rootViewController: informationViewController)
         self.present(navigationVC, animated: true, completion: nil)
     }
 }
