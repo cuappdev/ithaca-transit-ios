@@ -75,8 +75,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         edgesForExtendedLayout = []
 
-        setupNavigationBar()
-        setupBackButton()
+        title = navigationBarTitle
 
         setupRouteSelection()
         setupSearchBar()
@@ -116,33 +115,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     override func viewWillDisappear(_ animated: Bool) {
         takedownReachability()
-    }
-
-    // MARK: Navigation bar
-
-    private func setupNavigationBar(){
-        let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!,
-                                               .foregroundColor : UIColor.black]
-        title = navigationBarTitle
-        navigationController?.navigationBar.titleTextAttributes = titleAttributes //so title actually shows up
-    }
-
-    private func setupBackButton(){
-//        let backButton = UIButton(type: .system)
-//        backButton.setImage(UIImage(named: "back"), for: .normal)
-//        let attributedString = NSMutableAttributedString(string: "  Back")
-//        // raise back button text a hair - attention to detail, baby
-//        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
-//        backButton.setAttributedTitle(attributedString, for: .normal)
-//        backButton.sizeToFit()
-//        backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
-//        let barButtonBackItem = UIBarButtonItem(customView: backButton)
-//        self.navigationItem.setLeftBarButton(barButtonBackItem, animated: true)
-    }
-
-    // Move back one view controller in navigationController stack
-    @objc func backAction() {
-        navigationController?.popViewController(animated: true)
     }
 
     // MARK: Route Selection view
@@ -276,7 +248,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         } else {
             navigationItem.titleView = nil
         }
-        setupBackButton()
         searchBarView.searchController?.isActive = false
     }
 

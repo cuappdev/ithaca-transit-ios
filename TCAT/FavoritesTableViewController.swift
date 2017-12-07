@@ -26,14 +26,6 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
         let systemItem: UIBarButtonSystemItem = fromOnboarding ? .done : .cancel
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem, target: self, action: #selector(dismissVC))
         
-//        let titleAttributes: [NSAttributedStringKey: Any] = [.font : UIFont(name :".SFUIText", size: 18)!, .foregroundColor : UIColor.black]
-//        navigationController?.navigationBar.titleTextAttributes = titleAttributes
-//        navigationController?.navigationBar.tintColor = .black
-//        navigationController?.navigationBar.barTintColor = .white
-//        navigationController?.navigationBar.isTranslucent = false
-//        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-//        navigationController?.navigationBar.shadowImage = UIImage()
-
         allStops = SearchTableViewManager.shared.getAllStops()
         tableView.register(BusStopCell.self, forCellReuseIdentifier: Key.Cells.busIdentifier)
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Key.Cells.searchResultsIdentifier)
