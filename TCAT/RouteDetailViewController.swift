@@ -31,6 +31,11 @@ class RouteDetailViewController: PulleyViewController {
         backgroundDimmingColor = .black
         backgroundDimmingOpacity = 0.5
         animationDuration = 0.5
+        animationSpringDamping = 0.8
+        animationSpringInitialVelocity = 2.5
+        
+        let threshold: CGFloat = 20
+        snapMode = .nearestPositionUnlessExceeded(threshold: threshold)
         
         setRightButton()
         
