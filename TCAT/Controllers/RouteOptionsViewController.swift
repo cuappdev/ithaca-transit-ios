@@ -121,7 +121,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     private func setupRouteSelection() {
         routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: 150)) // offset for -12 for larger views, get rid of black space
-        routeSelection.backgroundColor = .lineColor
+        routeSelection.backgroundColor = .white //.lineColor // for demo
         routeSelection.positionSubviews()
         routeSelection.addSubviews()
         var newRSFrame = routeSelection.frame
