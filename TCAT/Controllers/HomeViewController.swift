@@ -88,7 +88,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         view.addSubview(tableView)
 
         tableView.snp.makeConstraints { (make) in
-            make.top.leading.trailing.bottom.equalToSuperview()
+            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo((navigationController?.navigationBar.bounds.maxY)!)
         }
 
         searchBar = UISearchBar()

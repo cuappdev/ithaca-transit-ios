@@ -12,6 +12,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
     
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
+        view.backgroundColor = .white // for demo
         customizeAppearance()
     }
     

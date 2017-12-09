@@ -30,7 +30,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     var networkTimer: Timer? = nil
     /// Number of seconds to wait before auto-refreshing network call, timed with live indicator
-    var refreshRate: Double = LiveIndicator.INTERVAL * 3.0
+    var refreshRate: Double = LiveIndicator.INTERVAL * 1.0
     var buses = [GMSMarker]()
     var banner: StatusBarNotificationBanner? = nil
 
@@ -40,7 +40,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     let main = UIScreen.main.bounds
 
     let markerRadius: CGFloat = 8
-    let mapPadding: CGFloat = 40
+    let mapPadding: CGFloat = 80
     let minZoom: Float = 12
     let defaultZoom: Float = 15.5
     let maxZoom: Float = 25
@@ -261,20 +261,14 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     // MARK: Programmatic Layout Constants
     
     /** Return height of status bar and possible navigation controller */
-    func statusNavHeight(includingShadow: Bool = false) -> CGFloat {
+    func statusNavHeight() -> CGFloat {
+        
+        let navBarHeight = navigationController?.navigationBar.frame.height ?? 0
         
         if #available(iOS 11.0, *) {
-            
-            return (navigationController?.view.safeAreaInsets.top ?? 0) +
-                (navigationController?.navigationBar.frame.height ?? 0) +
-                (includingShadow ? 4 : 0)
-            
+            return navBarHeight + (navigationController?.view.safeAreaInsets.top ?? 0)
         } else {
-            
-            return UIApplication.shared.statusBarFrame.height +
-                (navigationController?.navigationBar.frame.height ?? 0) +
-                (includingShadow ? 4 : 0)
-            
+            return navBarHeight + UIApplication.shared.statusBarFrame.height
         }
 
     }
@@ -284,6 +278,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         if let newCoord = locations.last?.coordinate {
+            bounds = bounds.includingCoordinate(newCoord)
             currentLocation = newCoord
         }
         
@@ -363,9 +358,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             // Otherwise, add bus to map
             else {
                 let marker = GMSMarker(position: busCoords)
-                // (bus.iconView as? BusLocationView)?.setBearing(bus.heading)
+                (bus.iconView as? BusLocationView)?.setBearing(bus.heading)
                 marker.iconView = bus.iconView
-
+                setIndex(of: marker, with: .bussing)
                 marker.userData = bus
                 marker.map = mapView
                 buses.append(marker)
@@ -379,31 +374,26 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     /** Centers map around all waypoints in routePaths, and animates the map */
     func centerMap(topHalfCentered: Bool = false) {
+        
+        // Note: Can use mapView.move(with: GMSCameraUpdate) instead of mapView.animate
 
         if topHalfCentered {
-            let constant: CGFloat = 20
-            let bottom = (main.height / 2) - statusNavHeight(includingShadow: true) - constant
-            let edgeInsets = UIEdgeInsets(top: mapPadding, left: constant, bottom: bottom, right: constant)
+            let bottom = (main.height / 2) - (mapPadding / 2)
+            let edgeInsets = UIEdgeInsets(top: mapPadding, left: mapPadding / 2, bottom: bottom, right: mapPadding / 2)
             let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
             mapView.animate(with: update)
         }
 
         else {
-            bounds = GMSCoordinateBounds()
-            for route in route.paths {
-                for waypoint in route.waypoints {
-                    bounds = bounds.includingCoordinate(waypoint.coordinate)
-                }
-            }
             let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
             mapView.animate(with: update)
         }
 
     }
     
-    func setIndex(of marker: GMSMarker, with waypoint: Waypoint) {
+    func setIndex(of marker: GMSMarker, with waypointType: WaypointType) {
         marker.zIndex = {
-            switch waypoint.wpType {
+            switch waypointType {
             case .bus: return 1
             case .walk: return 1
             case .origin: return 3
@@ -438,7 +428,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     marker.iconView = waypoint.iconView
                     marker.userData = waypoint
                     marker.map = mapView
-                    setIndex(of: marker, with: waypoint)
+                    setIndex(of: marker, with: waypoint.wpType)
                 
 //                }
                 

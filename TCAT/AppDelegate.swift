@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         GMSServices.provideAPIKey(json["google-maps"].stringValue)
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
-        // userDefaults.set(false, forKey: "onboardingShown")
+//         userDefaults.set(false, forKey: "onboardingShown")
         if userDefaults.value(forKey: "onboardingShown") == nil {
             userDefaults.set(false, forKey: "onboardingShown")
         }

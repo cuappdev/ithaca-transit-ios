@@ -47,7 +47,7 @@ class InformationViewController: UIViewController {
         
         someLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 16)
         someLabel.textColor = .primaryTextColor
-        someLabel.text = "Ride14850 Sucks"
+        someLabel.text = "Walker wuz here"
         someLabel.textAlignment = .center
         someLabel.backgroundColor = .clear
         someLabel.snp.makeConstraints { (make) in
@@ -142,7 +142,7 @@ class InformationViewController: UIViewController {
         let constant: CGFloat = UIScreen.main.bounds.width
         let duration: TimeInterval = 1.5
         let delay: TimeInterval = 0
-        let damping: CGFloat = 0.75
+        let damping: CGFloat = 0.6
         let velocity: CGFloat = 0
         let options: UIViewAnimationOptions = .curveEaseInOut
         
