@@ -142,8 +142,8 @@ class InformationViewController: UIViewController {
         let constant: CGFloat = UIScreen.main.bounds.width
         let duration: TimeInterval = 1.5
         let delay: TimeInterval = 0
-        let damping: CGFloat = 0.75
-        let velocity: CGFloat = 0
+        let damping: CGFloat = 0.5
+        let velocity: CGFloat = 1
         let options: UIViewAnimationOptions = .curveEaseInOut
         
         UIView.animate(withDuration: duration, delay: delay, usingSpringWithDamping: damping,
