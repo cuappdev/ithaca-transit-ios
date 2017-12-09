@@ -119,7 +119,11 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
             make.width.equalTo(image.snp.height)
             make.leading.equalToSuperview().offset(32)
             make.trailing.equalToSuperview().offset(-32)
-            make.top.equalToSuperview().offset(32)
+            if UIDevice().userInterfaceIdiom == .phone && UIScreen.main.nativeBounds.height == 2436 {
+                make.top.equalToSuperview().offset(120)
+            } else {
+                make.top.equalToSuperview().offset(32)
+            }
             make.bottom.equalTo(title.snp.top).offset(-32)
             
         }
