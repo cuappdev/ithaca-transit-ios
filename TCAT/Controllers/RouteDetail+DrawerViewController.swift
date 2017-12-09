@@ -365,8 +365,6 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     /** Animate detailTableView depending on context, centering map */
     @objc func summaryTapped(_ sender: UITapGestureRecognizer? = nil) {
         
-        print("tapped!")
-        
         if let drawer = self.parent as? RouteDetailViewController {
             switch drawer.drawerPosition {
             

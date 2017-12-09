@@ -30,7 +30,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     var networkTimer: Timer? = nil
     /// Number of seconds to wait before auto-refreshing network call, timed with live indicator
-    var refreshRate: Double = LiveIndicator.INTERVAL * 3.0
+    var refreshRate: Double = LiveIndicator.INTERVAL * 1.0
     var buses = [GMSMarker]()
     var banner: StatusBarNotificationBanner? = nil
 
@@ -358,9 +358,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             // Otherwise, add bus to map
             else {
                 let marker = GMSMarker(position: busCoords)
-                // (bus.iconView as? BusLocationView)?.setBearing(bus.heading)
+                (bus.iconView as? BusLocationView)?.setBearing(bus.heading)
                 marker.iconView = bus.iconView
-
+                setIndex(of: marker, with: .bussing)
                 marker.userData = bus
                 marker.map = mapView
                 buses.append(marker)
@@ -391,9 +391,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     }
     
-    func setIndex(of marker: GMSMarker, with waypoint: Waypoint) {
+    func setIndex(of marker: GMSMarker, with waypointType: WaypointType) {
         marker.zIndex = {
-            switch waypoint.wpType {
+            switch waypointType {
             case .bus: return 1
             case .walk: return 1
             case .origin: return 3
@@ -428,7 +428,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     marker.iconView = waypoint.iconView
                     marker.userData = waypoint
                     marker.map = mapView
-                    setIndex(of: marker, with: waypoint)
+                    setIndex(of: marker, with: waypoint.wpType)
                 
 //                }
                 
