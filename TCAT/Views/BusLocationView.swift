@@ -50,8 +50,6 @@ class BusLocationView: UIView {
         
         // Set initial point to North
         self.bearingIndicator.transform = CGAffineTransform(rotationAngle: .pi)
-        self.setBearing(bearing)
-        currentBearing = Double(bearing)
         
     }
     
@@ -86,7 +84,7 @@ class BusLocationView: UIView {
         
     }
     
-    /// Animate a change in bearing of bus
+    /// Animate a change in bearing of bus based on bearing input (degrees: Int)
     func setBearing(_ degrees: Int, start: CLLocationCoordinate2D? = nil, end: CLLocationCoordinate2D? = nil) {
 
         // If bus stays in same location, don't update bearing
@@ -98,16 +96,18 @@ class BusLocationView: UIView {
             }
         }
         
+        let newDegrees = Double(degrees) - self.currentBearing
+        let currentAngle: CGFloat = CGFloat(-1) * CGFloat(self.degreesToRadians(newDegrees))
+        
         UIView.animate(withDuration: 0.2) {
-            let newDegrees = Double(degrees) - self.currentBearing
-            let currentAngle: CGFloat = CGFloat(-1) * CGFloat(self.degreesToRadians(newDegrees))
             self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
             self.currentBearing = Double(degrees)
         }
         
     }
     
-    func setBetterBearing(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D, debugDegrees: Int? = nil) {
+    // Depreciated. Calculate bearing based on change in location
+    func setBearing(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D, debugDegrees: Int? = nil) {
         
         // Latitude: North / South, Longitude: East / West
         let latDelta = end.latitude - start.latitude
@@ -119,10 +119,7 @@ class BusLocationView: UIView {
         
         // Calulcate bearing from start and end points
         
-        let degrees = getBearingBetweenTwoPoints(point1: start, point2: end)
-        
-//        print("calculated degrees:", degrees)
-//        print("actual degrees:", 360 + debugDegrees!)
+        let degrees = (getBearingBetweenTwoPoints(point1: start, point2: end) + 360).truncatingRemainder(dividingBy: 360)
         
         let newDegrees = degrees - self.currentBearing
         let currentAngle = CGFloat(-1) * CGFloat(self.degreesToRadians(newDegrees))

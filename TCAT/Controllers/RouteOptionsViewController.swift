@@ -241,23 +241,30 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func didCancel(){
         hideSearchBar()
     }
+    
+    // Variable to remember back button when hiding
+    var backButton: UIBarButtonItem? = nil
 
-    private func hideSearchBar(){
+    private func hideSearchBar() {
         if #available(iOS 11.0, *) {
             navigationItem.searchController = nil
         } else {
             navigationItem.titleView = nil
         }
+        if let backButton = backButton {
+            navigationItem.setLeftBarButton(backButton, animated: false)
+        }
+        navigationItem.hidesBackButton = false
         searchBarView.searchController?.isActive = false
     }
 
-    private func showSearchBar(){
+    private func showSearchBar() {
         if #available(iOS 11.0, *) {
             navigationItem.searchController = searchBarView.searchController
         } else {
-            // Fallback on earlier versions
             navigationItem.titleView = searchBarView.searchController?.searchBar
         }
+        backButton = navigationItem.leftBarButtonItem
         navigationItem.setLeftBarButton(nil, animated: false)
         navigationItem.hidesBackButton = true
         searchBarView.searchController?.isActive = true
