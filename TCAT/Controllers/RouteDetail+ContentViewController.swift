@@ -337,6 +337,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     /** Update the map with new busLocations, adding or replacing based on vehicleID */
     func updateBusLocations(busLocations: [BusLocation]) {
 
+        // bus - most updated bus location
         for bus in busLocations {
 
             let busCoords = CLLocationCoordinate2DMake(bus.latitude, bus.longitude)
@@ -349,14 +350,15 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
                 UIView.animate(withDuration: 1.0, delay: 0, options: .curveEaseInOut, animations: {
                     newBus.userData = bus
-                    // (newBus.iconView as? BusLocationView)?.setBearing(bus.heading, start: existingBus!.position, end: busCoords)
-                    (newBus.iconView as? BusLocationView)?.setBetterBearing(start: existingBus!.position, end: busCoords, debugDegrees: bus.heading)
+                    (newBus.iconView as? BusLocationView)?.setBearing(bus.heading, start: existingBus!.position, end: busCoords)
                     newBus.position = busCoords
                 })
                 
             }
+                
             // Otherwise, add bus to map
             else {
+                
                 let marker = GMSMarker(position: busCoords)
                 (bus.iconView as? BusLocationView)?.setBearing(bus.heading)
                 marker.iconView = bus.iconView
@@ -364,8 +366,21 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 marker.userData = bus
                 marker.map = mapView
                 buses.append(marker)
+                
             }
 
+        }
+        
+        // if a bus on the map doesn't appear in latest buses, remove it
+        for (index, mappedBus) in buses.enumerated() {
+            
+            if !busLocations.contains(where: { (newBusLocation) -> Bool in
+                return (mappedBus.userData as? BusLocation)?.vehicleID == newBusLocation.vehicleID
+            }) {
+                mappedBus.map = nil
+                buses.remove(at: index)
+            }
+            
         }
 
     }

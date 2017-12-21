@@ -51,7 +51,6 @@ class CustomNavigationController: UINavigationController, UINavigationController
         navigationItem.backBarButtonItem?.setTitleTextAttributes(buttonTitleTextAttributes, for: .normal)
         
         // Saved from other view controllers in case needed
-        
         // navigationBar.isTranslucent = false
         // navigationBar.setBackgroundImage(UIImage(), for: .default)
         // navigationBar.shadowImage = UIImage()
