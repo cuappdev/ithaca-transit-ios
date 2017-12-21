@@ -281,7 +281,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         }
 
         else if direction.type == .walk || direction.type == .arrive {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell") as! SmallDetailTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell", for: indexPath) as! SmallDetailTableViewCell
             cell.setCell(direction, busEnd: direction.type == .arrive,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
@@ -345,8 +345,8 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
                 directions.insert(contentsOf: busStops, at: indexPath.row + 1)
                 tableView.insertRows(at: indexPathArray, with: .middle)
             } else {
-                directions.replaceSubrange(busStopRange, with: [])
-                tableView.deleteRows(at: indexPathArray, with: .bottom)
+                directions.removeSubrange(busStopRange)
+                tableView.deleteRows(at: indexPathArray, with: .middle)
             }
 
             tableView.endUpdates()

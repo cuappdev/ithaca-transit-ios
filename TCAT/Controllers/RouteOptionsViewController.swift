@@ -287,13 +287,20 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
             // Check if to and from location is the same
             if searchFrom?.name == searchTo?.name {
+                
                 let title = "You're here!"
-                let message = "Thank you for using our TCAT Teleporation™ feature (beta)."
+                let message = "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta)."
                 let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
                 let action = UIAlertAction(title: "😐😒🙄", style: .cancel, handler: nil)
                 alertController.addAction(action)
                 present(alertController, animated: true, completion: nil)
-            } else {
+                
+                currentlySearching = false
+                routeResults.reloadData()
+                
+            }
+        
+            else {
 
             Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
 
