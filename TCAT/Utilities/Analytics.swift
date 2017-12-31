@@ -8,17 +8,26 @@
 
 import Foundation
 import SwiftRegister
+import SwiftyJSON
 
 fileprivate var registerSession: RegisterSession? = nil
 
+fileprivate func getSecretKey() -> String? {
+    let configUrl = Bundle.main.url(forResource: "config", withExtension: "json")!
+    let configJson = try! JSON(Data(contentsOf: configUrl))
+    return configJson["register-secret"].string
+}
+
 extension RegisterSession {
-    static var shared: RegisterSession {
+    static var shared: RegisterSession? {
         guard let session = registerSession else {
-            guard let url = URL(string: "http://52.54.98.130/api/") else {
-                fatalError("Invalid Url")
+            let url = URL(string: "http://52.54.98.130/api/")!
+            guard let secretKey = getSecretKey() else {
+                print("could not initialize register session. missing secret key.")
+                return nil
             }
-            registerSession = RegisterSession(apiUrl: url, secretKey: "")
-            return registerSession!
+            registerSession = RegisterSession(apiUrl: url, secretKey: secretKey)
+            return registerSession
         }
         return session
     }

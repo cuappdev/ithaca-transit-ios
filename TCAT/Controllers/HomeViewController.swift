@@ -385,7 +385,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         navigationItem.rightBarButtonItem = nil
         //Crashlytics Answers
         Answers.searchBarTappedInHome()
-        RegisterSession.shared.logEvent(event: SearchBarTappedEventPayload(location: .home).toEvent())
+        RegisterSession.shared?.logEvent(event: SearchBarTappedEventPayload(location: .home).toEvent())
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
