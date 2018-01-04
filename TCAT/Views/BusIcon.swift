@@ -17,6 +17,7 @@ class BusIcon: UIView {
     
     var number: Int = 99
     
+    var baseView: UIView!
     var label: UILabel!
     var image: UIImageView!
     var liveIndicator: LiveIndicator!
@@ -32,16 +33,16 @@ class BusIcon: UIView {
         self.number = number
         self.backgroundColor = .clear
         
-        let base = UIView(frame: self.frame)
-        base.backgroundColor = .tcatBlueColor
-        base.layer.cornerRadius = type == .directionLarge ? 8 : 4
-        addSubview(base)
+        baseView = UIView(frame: self.frame)
+        baseView.backgroundColor = .tcatBlueColor
+        baseView.layer.cornerRadius = type == .directionLarge ? 8 : 4
+        addSubview(baseView)
         
         image = UIImageView(image: UIImage(named: "bus"))
         let constant: CGFloat = type == .directionSmall ? 0.75 : 1.0
         image.frame.size = CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
         image.tintColor = .white
-        image.center.y = base.center.y
+        image.center.y = baseView.center.y
         image.frame.origin.x = type == .directionSmall ? 8 : 12
         addSubview(image)
         
@@ -50,7 +51,7 @@ class BusIcon: UIView {
         label.font = UIFont.systemFont(ofSize: type == .directionLarge ? 20 : 14, weight: UIFont.Weight.semibold)
         label.textColor = .white
         label.textAlignment = .center
-        label.center.y = base.center.y
+        label.center.y = baseView.center.y
         label.frame.size.width = frame.maxX - image.frame.maxX
         label.frame.origin.x = image.frame.maxX
         addSubview(label)
@@ -62,16 +63,24 @@ class BusIcon: UIView {
             image.frame.origin.x = 8
             let sizeConstant: CGFloat = 0.87
             image.frame.size = CGSize(width: image.frame.width * sizeConstant, height: image.frame.height * sizeConstant)
-            label.center.y = base.center.y
+            label.center.y = baseView.center.y
             label.frame.origin.x = image.frame.maxX + 4
             
             liveIndicator = LiveIndicator()
             liveIndicator.frame.origin = CGPoint(x: label.frame.maxX + 6, y: label.frame.origin.y)
-            liveIndicator.center.y = base.center.y
+            liveIndicator.center.y = baseView.center.y
             addSubview(liveIndicator)
             
         }
         
+    }
+    
+    // Debugging tool
+    func updateNumber(to number: String) {
+        label.text = number
+        label.sizeToFit()
+        liveIndicator.frame.origin = CGPoint(x: label.frame.maxX + 6, y: label.frame.origin.y)
+        liveIndicator.center.y = baseView.center.y
     }
     
     required init?(coder aDecoder: NSCoder) {

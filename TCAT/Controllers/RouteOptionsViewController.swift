@@ -241,23 +241,30 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func didCancel(){
         hideSearchBar()
     }
+    
+    // Variable to remember back button when hiding
+    var backButton: UIBarButtonItem? = nil
 
-    private func hideSearchBar(){
+    private func hideSearchBar() {
         if #available(iOS 11.0, *) {
             navigationItem.searchController = nil
         } else {
             navigationItem.titleView = nil
         }
+        if let backButton = backButton {
+            navigationItem.setLeftBarButton(backButton, animated: false)
+        }
+        navigationItem.hidesBackButton = false
         searchBarView.searchController?.isActive = false
     }
 
-    private func showSearchBar(){
+    private func showSearchBar() {
         if #available(iOS 11.0, *) {
             navigationItem.searchController = searchBarView.searchController
         } else {
-            // Fallback on earlier versions
             navigationItem.titleView = searchBarView.searchController?.searchBar
         }
+        backButton = navigationItem.leftBarButtonItem
         navigationItem.setLeftBarButton(nil, animated: false)
         navigationItem.hidesBackButton = true
         searchBarView.searchController?.isActive = true
@@ -280,13 +287,20 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
             // Check if to and from location is the same
             if searchFrom?.name == searchTo?.name {
+                
                 let title = "You're here!"
-                let message = "Thank you for using our TCAT Teleporation™ feature (beta)."
+                let message = "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta)."
                 let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
                 let action = UIAlertAction(title: "😐😒🙄", style: .cancel, handler: nil)
                 alertController.addAction(action)
                 present(alertController, animated: true, completion: nil)
-            } else {
+                
+                currentlySearching = false
+                routeResults.reloadData()
+                
+            }
+        
+            else {
 
             Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
 
