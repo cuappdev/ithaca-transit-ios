@@ -5,6 +5,7 @@
 //  Created by Serge-Olivier Amega on 12/29/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
+// To log an event, use the shared RegisterSession (RegisterSession.shared)
 
 import Foundation
 import SwiftRegister
@@ -32,6 +33,8 @@ extension RegisterSession {
         return session
     }
 }
+
+// MARK: Event Payloads
 
 struct SearchBarTappedEventPayload: Payload {
     enum SearchBarTapLocation: String, Codable {
