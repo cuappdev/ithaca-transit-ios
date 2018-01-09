@@ -325,11 +325,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     self.routeResults.reloadData()
                 })
                 
-                let event = DestinationSearchedEventPayload(destination: (self.searchTo?.name)!,
+                let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
                                                             requestUrl: alamofireRequest?.request?.url?.absoluteString,
                                                             stopType: nil).toEvent()
                 RegisterSession.shared?.logEvent(event: event)
-                Answers.destinationSearched(destination: (self.searchTo?.name)!, stopType: nil, requestUrl: String(describing: alamofireRequest?.request?.url))
+                Answers.destinationSearched(destination: self.searchTo?.name ?? "", stopType: nil, requestUrl: String(describing: alamofireRequest?.request?.url))
             }
 
             }

@@ -530,7 +530,7 @@
 				TargetAttributes = {
 					449A7C741D80D0E80019300C = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = TD73A242XE;
+						DevelopmentTeam = ZGMCXU7X3U;
 						LastSwiftMigration = 0910;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -1027,7 +1027,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 47;
-				DEVELOPMENT_TEAM = TD73A242XE;
+				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1057,7 +1057,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 47;
-				DEVELOPMENT_TEAM = TD73A242XE;
+				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
