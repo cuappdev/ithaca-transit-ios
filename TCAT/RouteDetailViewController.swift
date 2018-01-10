@@ -35,7 +35,7 @@ class RouteDetailViewController: PulleyViewController {
         animationSpringInitialVelocity = 2.5
         
         let threshold: CGFloat = 20
-        snapMode = .nearestPositionUnlessExceeded(threshold: threshold)
+        //snapMode = .nearestPositionUnlessExceeded(threshold: threshold)
         
         setRightButton()
         

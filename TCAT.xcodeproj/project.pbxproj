@@ -23,7 +23,6 @@
 		503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */; };
 		503EC38D1E96B85B00B3D4D4 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC38C1E96B85B00B3D4D4 /* Network.swift */; };
 		505E00E51E9ED56F00F09BAE /* KMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505E00E41E9ED56F00F09BAE /* KMLParser.swift */; };
-		505E00E91E9ED6BC00F09BAE /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = 505E00E81E9ED6BC00F09BAE /* config.json */; };
 		50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A19BAD1E4C214000AD6768 /* HomeViewController.swift */; };
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
 		BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0002211FB37D0A00773109 /* LoadingIndicator.swift */; };
@@ -45,6 +44,7 @@
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
 		DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */; };
 		DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96451FC21B29009955C6 /* HeaderView.swift */; };
+		DC56499C20048A4000D61B19 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = DC56499B20048A4000D61B19 /* config.json */; };
 		DCB717101FB76EA600BE4D26 /* AllStopsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */; };
 		DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
@@ -125,7 +125,6 @@
 		503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = SearchResultsTableViewController.swift; path = Controllers/SearchResultsTableViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		503EC38C1E96B85B00B3D4D4 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Network.swift; path = Utilities/Network.swift; sourceTree = "<group>"; };
 		505E00E41E9ED56F00F09BAE /* KMLParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KMLParser.swift; path = Utilities/KMLParser.swift; sourceTree = "<group>"; };
-		505E00E81E9ED6BC00F09BAE /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = config.json; path = "Supporting Files/config.json"; sourceTree = "<group>"; };
 		50A19BAD1E4C214000AD6768 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = HomeViewController.swift; path = Controllers/HomeViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		81725F2EBEBD3D184BFD0635 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
 		8236DFFA6C5F3AB1E6E1B0E4 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -152,6 +151,7 @@
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
 		DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesTableViewController.swift; sourceTree = "<group>"; };
 		DC2E96451FC21B29009955C6 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeaderView.swift; path = Views/HeaderView.swift; sourceTree = "<group>"; };
+		DC56499B20048A4000D61B19 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = config.json; path = ../../../Downloads/config.json; sourceTree = "<group>"; };
 		DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllStopsTableViewController.swift; sourceTree = "<group>"; };
 		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
@@ -315,7 +315,7 @@
 			children = (
 				DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */,
 				DD99E2F31F6DB0410073E8F7 /* FontConstants.swift */,
-				505E00E81E9ED6BC00F09BAE /* config.json */,
+				DC56499B20048A4000D61B19 /* config.json */,
 				449A7C841D80D0E80019300C /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -572,12 +572,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E34490CD1F8EF00A0064D284 /* SFText-Bold.otf in Resources */,
-				505E00E91E9ED6BC00F09BAE /* config.json in Resources */,
 				BF453F871FAF7853001E5481 /* Default-568h@2x.png in Resources */,
 				DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */,
 				449A7C831D80D0E80019300C /* LaunchScreen.storyboard in Resources */,
 				DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */,
 				DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */,
+				DC56499C20048A4000D61B19 /* config.json in Resources */,
 				449A7C801D80D0E80019300C /* Assets.xcassets in Resources */,
 				449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */,
 			);
