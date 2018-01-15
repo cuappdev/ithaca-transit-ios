@@ -23,7 +23,6 @@
 		503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */; };
 		503EC38D1E96B85B00B3D4D4 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC38C1E96B85B00B3D4D4 /* Network.swift */; };
 		505E00E51E9ED56F00F09BAE /* KMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505E00E41E9ED56F00F09BAE /* KMLParser.swift */; };
-		505E00E91E9ED6BC00F09BAE /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = 505E00E81E9ED6BC00F09BAE /* config.json */; };
 		50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A19BAD1E4C214000AD6768 /* HomeViewController.swift */; };
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
 		BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0002211FB37D0A00773109 /* LoadingIndicator.swift */; };
@@ -42,6 +41,8 @@
 		BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */; };
 		BFA53FEE1FD45D7000E770DF /* RouteDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */; };
 		BFD5B4E41FAADFAE00955C37 /* WalkPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */; };
+		CC27BD091FF6C91C00DAA7D5 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */; };
+		CCA9E5511FF944D100405806 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = CCA9E5501FF944D100405806 /* config.json */; };
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
 		DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */; };
 		DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96451FC21B29009955C6 /* HeaderView.swift */; };
@@ -149,6 +150,8 @@
 		BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RouteDetailViewController.swift; sourceTree = "<group>"; };
 		BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WalkPath.swift; path = Model/WalkPath.swift; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Analytics.swift; path = Utilities/Analytics.swift; sourceTree = "<group>"; };
+		CCA9E5501FF944D100405806 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = config.json; path = Resources/config.json; sourceTree = "<group>"; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
 		DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesTableViewController.swift; sourceTree = "<group>"; };
 		DC2E96451FC21B29009955C6 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeaderView.swift; path = Views/HeaderView.swift; sourceTree = "<group>"; };
@@ -375,6 +378,7 @@
 		DD2F98921E50D8D20005F6BC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CCA9E5501FF944D100405806 /* config.json */,
 				DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */,
 				DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */,
 				DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */,
@@ -396,6 +400,7 @@
 				D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */,
 				DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */,
 				E3FCA3C81FAA67250069BD0F /* Crashlytics.swift */,
+				CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -572,12 +577,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E34490CD1F8EF00A0064D284 /* SFText-Bold.otf in Resources */,
-				505E00E91E9ED6BC00F09BAE /* config.json in Resources */,
 				BF453F871FAF7853001E5481 /* Default-568h@2x.png in Resources */,
 				DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */,
 				449A7C831D80D0E80019300C /* LaunchScreen.storyboard in Resources */,
 				DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */,
 				DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */,
+				CCA9E5511FF944D100405806 /* config.json in Resources */,
 				449A7C801D80D0E80019300C /* Assets.xcassets in Resources */,
 				449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */,
 			);
@@ -710,10 +715,15 @@
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
 				"${BUILT_PRODUCTS_DIR}/Fuzzywuzzy_swift/Fuzzywuzzy_swift.framework",
+				"${BUILT_PRODUCTS_DIR}/Log/Log.framework",
 				"${BUILT_PRODUCTS_DIR}/MarqueeLabel/MarqueeLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/NotificationBannerSwift/NotificationBannerSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Pulley/Pulley.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftRegister/SwiftRegister.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/TRON/TRON.framework",
 			);
@@ -722,10 +732,15 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DZNEmptyDataSet.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Fuzzywuzzy_swift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Log.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MarqueeLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NotificationBannerSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pulley.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftRegister.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TRON.framework",
 			);
@@ -838,6 +853,7 @@
 				DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */,
 				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
 				DDD33DEF1EC2960400BC6454 /* CircleLine.swift in Sources */,
+				CC27BD091FF6C91C00DAA7D5 /* Analytics.swift in Sources */,
 				505E00E51E9ED56F00F09BAE /* KMLParser.swift in Sources */,
 				DD36A7021F6637CA00E4789E /* Direction.swift in Sources */,
 				DDB49C941E8857D000A99C35 /* RouteDetail+ContentViewController.swift in Sources */,

@@ -17,6 +17,7 @@ target 'TCAT' do
   pod 'Fabric'
   pod 'Crashlytics'
   pod 'Pulley'
+  pod 'SwiftRegister', :git => 'https://github.com/cuappdev/register-client-ios.git', :commit => 'v0.0.3'
 
 post_install do |installer|
     installer.pods_project.targets.each do |target|

@@ -15,6 +15,7 @@ import NotificationBannerSwift
 import Crashlytics
 import SafariServices
 import SnapKit
+import SwiftRegister
 
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate, AddFavoritesDelegate {
     let userDefaults = UserDefaults.standard
@@ -384,6 +385,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         navigationItem.rightBarButtonItem = nil
         //Crashlytics Answers
         Answers.searchBarTappedInHome()
+        RegisterSession.shared?.logEvent(event: SearchBarTappedEventPayload(location: .home).toEvent())
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
