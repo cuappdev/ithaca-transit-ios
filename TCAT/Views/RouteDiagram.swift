@@ -109,7 +109,11 @@ class RouteDiagram: UIView {
     // MARK: Get data from route ojbect
     
     private func getStopNameLabel() -> UILabel {
-        let stopNameLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 20))
+        let yPos: CGFloat = 101
+        let rightSpaceFromSuperview: CGFloat = 16
+        let width: CGFloat = UIScreen.main.bounds.width - yPos - rightSpaceFromSuperview
+        
+        let stopNameLabel = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: 17))
         
         return stopNameLabel
     }
@@ -201,6 +205,9 @@ class RouteDiagram: UIView {
     private func styleStopLabel(_ stopLabel: UILabel) {
         stopLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
         stopLabel.textColor = .primaryTextColor
+        stopLabel.allowsDefaultTighteningForTruncation = true
+        stopLabel.lineBreakMode = .byWordWrapping
+        stopLabel.numberOfLines = 0
     }
     
     private func styleDistanceLabel() {
