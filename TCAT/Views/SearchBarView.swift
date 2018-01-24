@@ -26,9 +26,6 @@ class SearchBarView: UIView, UISearchControllerDelegate {
         searchController?.searchResultsUpdater = resultsViewController
         searchController?.searchBar.sizeToFit()
         searchController?.searchBar.delegate = resultsViewController
-        if #available(iOS 11.0, *) {
-            searchController?.searchBar.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        }
         resultsViewController?.searchBar = searchController?.searchBar
         
         let textFieldInsideSearchBar = searchController?.searchBar.value(forKey: "searchField") as? UITextField
