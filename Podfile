@@ -16,7 +16,7 @@ target 'TCAT' do
   pod 'NotificationBannerSwift'
   pod 'Fabric'
   pod 'Crashlytics'
-  pod 'Pulley'
+  pod 'Pulley', :git=> 'https://github.com/52inc/Pulley.git', :branch => 'master'
 
 post_install do |installer|
     installer.pods_project.targets.each do |target|
