@@ -150,17 +150,17 @@ class Network {
     class func getRoutes(start: CoordinateAcceptor, end: CoordinateAcceptor, time: Date, type: SearchType, callback:@escaping ((APIRequest<JSON, Error>) -> Void)) {
         getStartEndCoords(start: start, end: end) { startCoords, endCoords in
             
-            let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routes")
+            let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
             
             request.parameters = [
-                "start_coords"  :   "\(startCoords?.latitude ??? ""),\(startCoords?.longitude ??? "")",
-                "end_coords"    :   "\(endCoords?.latitude ??? ""),\(endCoords?.longitude ??? "")",
+                "start"  :   "\(startCoords?.latitude ??? ""),\(startCoords?.longitude ??? "")",
+                "end"    :   "\(endCoords?.latitude ??? ""),\(endCoords?.longitude ??? "")",
             ]
 
             if type == .arriveBy {
                 request.parameters["depart_time"] = time.timeIntervalSince1970
             } else {
-                request.parameters["leave_by"] = time.timeIntervalSince1970
+                request.parameters["time"] = time.timeIntervalSince1970
             }
             
             request.method = .get
