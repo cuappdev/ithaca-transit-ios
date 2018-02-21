@@ -13,8 +13,8 @@ import MapKit
 /// Caluclate walking directions for a Direction. Returns (path: [CLLocationCoordinate2D], time: TimeInterval), with time in minutes.
 func calculateWalkingDirections(_ direction: Direction, _ completion: @escaping (_ path: [CLLocationCoordinate2D], _ time: TimeInterval) -> Void) {
     let request = MKDirectionsRequest()
-    request.source = MKMapItem(placemark: MKPlacemark(coordinate: direction.startLocation.coordinate, addressDictionary: [:]))
-    request.destination = MKMapItem(placemark: MKPlacemark(coordinate: direction.endLocation.coordinate, addressDictionary: [:]))
+    request.source = MKMapItem(placemark: MKPlacemark(coordinate: direction.startLocation, addressDictionary: [:]))
+    request.destination = MKMapItem(placemark: MKPlacemark(coordinate: direction.endLocation, addressDictionary: [:]))
     request.transportType = .walking
     request.requestsAlternateRoutes = false
     MKDirections(request: request).calculate { (response, error) in

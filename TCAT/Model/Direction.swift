@@ -19,192 +19,195 @@ enum Bound: String {
     case inbound, outbound
 }
 
+/// An enum for the type of direction
 enum DirectionType: String {
-    case walk, depart, arrive, unknown
+    case walk, depart, arrive, other
+}
+
+class LocationObject: NSObject {
+    
+    /// The name of the location
+    var name: String
+    
+    /// The latitude coordinate of the location
+    var latitude: Double
+    
+    /// The longitude coordinate of the location
+    var longitude: Double
+    
+    init(name: String, latitude: Double, longitude: Double) {
+        self.name = name
+        self.latitude = latitude
+        self.longitude = longitude
+    }
+    
+    /// The coordinates of the location.
+    var coordinates: CLLocationCoordinate2D {
+        return CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
+    }
+    
 }
 
 class Direction: NSObject, NSCopying {
 
     var type: DirectionType
 
-    var locationName: String
+    /**
+        General description for the direction.
+     
+        - walk: The description of the place / location the user is walking to
+        - depart: The name of the bus stop where the bus is departing from
+        - arrive: The name of the bus stop where the user gets off the bus
+     */
+    var name: String
 
-    var startLocation: CLLocation
-    var endLocation: CLLocation
+    /// The starting location associated with the direction
+    var startLocation: CLLocationCoordinate2D
+    
+    /// The starting location associated with the direction
+    var endLocation: CLLocationCoordinate2D
 
+    /// The starting time (UTC) associated with the direction. Format: `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`
     var startTime: Date
+    
+    /// The starting time (UTC) associated with the direction Format: `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`
     var endTime: Date
 
+    /// The corresponding path of the direction
     var path: [CLLocationCoordinate2D]
-
-    var routeNumber: Int
     
-    var busStops: [String]
-    var stopLocations: [CLLocationCoordinate2D]
+    /// The total distance of the direction, in meters.
+    var travelDistance: Double = 0
 
-    required init(type: DirectionType,
-         locationName: String,
-         startLocation: CLLocation,
-         endLocation: CLLocation,
-         startTime: Date,
-         endTime: Date,
-         path: [CLLocationCoordinate2D] = [],
-         busStops: [String] = [],
-         stopLocations: [CLLocationCoordinate2D] = [],
-         routeNumber: Int = 0) {
+    /// The number representing the bus route.
+    var routeNumber: Int = 0
+    
+    /// An array of bus stop locations on the bus route, excluding the departure and arrival stop. Empty if `type != .depart`.
+    var stops: [LocationObject]
+    
+    // MARK: Initalizers
+
+    required init (
+        type: DirectionType,
+        name: String,
+        startLocation: CLLocationCoordinate2D,
+        endLocation: CLLocationCoordinate2D,
+        startTime: Date,
+        endTime: Date,
+        path: [CLLocationCoordinate2D],
+        routeNumber: Int = 0,
+        stops: [LocationObject] = []
+    ) {
 
         self.type = type
-        self.locationName = locationName
+        self.name = name
         self.startLocation = startLocation
         self.endLocation = endLocation
         self.startTime = startTime
         self.path = path
         self.endTime = endTime
         self.routeNumber = routeNumber
-        self.busStops = busStops
-        self.stopLocations = stopLocations
+        self.stops = stops
         
     }
 
-    convenience init(locationName: String) {
+    convenience init(name: String? = nil) {
 
         let blankLocation = CLLocation()
         let blankTime = Date()
 
         self.init(
             type: .arrive,
-            locationName: locationName,
-            startLocation: blankLocation,
-            endLocation: blankLocation,
+            name: name ?? "",
+            startLocation: blankLocation.coordinate,
+            endLocation: blankLocation.coordinate,
             startTime: blankTime,
-            endTime: blankTime
+            endTime: blankTime,
+            path: []
         )
 
     }
 
-    convenience init(from json: JSON, baseTime: Double) {
+    convenience init(from json: JSON) {
         
-        // Return [String] filed with names of bus stops
-        func jsonToStopNames() -> [String] {
-            return json["busPath"]["path"]["timedStops"].arrayValue.flatMap {
-                $0["stop"]["name"].stringValue
+        self.init()
+        
+        type = {
+            switch json["type"].stringValue {
+            case "walk" : return .walk
+            case "depart" : return .depart
+            default: return .other
             }
-        }
+        }()
         
-        func jsonToStopLocations(filterWith stops: [String] = []) -> [CLLocationCoordinate2D] {
-            
-            var jsonArray = json["busPath"]["path"]["timedStops"].arrayValue
-            
-            if !stops.isEmpty {
-                jsonArray = jsonArray.filter {
-                    stops.contains($0["stop"]["name"].stringValue)
-                }
-            }
-            
-            return jsonArray.flatMap {
-                locationJSON(from: $0["stop"]).coordinate
-            }
-
-        }
+        name = json["name"].stringValue
+        startTime = json["startTime"].parseDate()
+        endTime = json["endTime"].parseDate()
+        startLocation = json["startLocation"].parseCoordinates()
+        endLocation = json["endLocation"].parseCoordinates()
+        travelDistance = json["distance"].doubleValue
+        routeNumber = json["routeNumber"].int ?? 0
+        stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
         
-        // Precondition: passed in json with 'start' or 'end'
-        func locationJSON(from json: JSON) -> CLLocation {
-            return CLLocation(latitude: json["location"]["latitude"].doubleValue,
-                              longitude: json["location"]["longitude"].doubleValue)
-        }
-        
-        let type: DirectionType = json["busPath"] != JSON.null ? .depart : .walk
-        let startLocation = locationJSON(from: json["start"])
-        let endLocation = locationJSON(from: json["end"])
-        let filteredPath = PathHelper.shared.filterPath(in: json, from: startLocation.coordinate, to: endLocation.coordinate)
-        let filteredStops = PathHelper.shared.filterStops(in: jsonToStopNames(), along: filteredPath)
-        
-        self.init(
-
-            type: type,
-
-            locationName: json["\(type == .depart ? "start" : "end")"]["name"].stringValue,
-
-            startLocation: startLocation,
-
-            endLocation: endLocation,
-
-            startTime: Date(timeIntervalSince1970: baseTime + json["startTime"].doubleValue),
-
-            endTime: Date(timeIntervalSince1970: baseTime + json["endTime"].doubleValue),
-
-            path: filteredPath,
-
-            busStops: filteredStops,
-            
-            stopLocations: jsonToStopLocations(filterWith: filteredStops),
-            
-
-            routeNumber: json["busPath"]["lineNumber"].intValue
-
-        )
-        
-
-
     }
     
     func copy(with zone: NSZone? = nil) -> Any {
-        
         return Swift.type(of: self).init(
             type: type,
-            locationName: locationName,
+            name: name,
             startLocation: startLocation,
             endLocation: endLocation,
             startTime: startTime,
             endTime: endTime,
             path: path
         )
-        
     }
 
 
-    // MARK: Descriptions / Functions
-    
-    /// Distance between start and end locations in miles
-    var travelDistance: Double {
-        let metersInMile = 1609.34
-        var distance =  startLocation.distance(from: endLocation) / metersInMile
-        let numberOfPlaces = distance >= 10 ? 0 : 1
-        return distance.roundToPlaces(places: numberOfPlaces)
-    }
+    // MARK: Descriptions
 
     /// Returns custom description for locationName based on DirectionType
     var locationNameDescription: String {
         switch type {
 
         case .depart:
-            return "at \(locationName)"
+            return "at \(name)"
 
         case .arrive:
-            return "Debark at \(locationName)"
+            return "Debark at \(name)"
 
         case .walk:
-            return "Walk to \(locationName)"
+            return "Walk to \(name)"
 
-        case .unknown:
-            return locationName
+        case .other:
+            return name
 
         }
     }
     
     override var debugDescription: String {
         return """
-            type: \(self.type)\n
-            startTime: \(self.startTime)\n
-            endTime: \(self.endTime)\n
-            startLocation: \(self.startLocation)\n
-            endLocation: \(self.endLocation)\n
-            busStops: \(self.busStops)\n
-            travelDistance: \(self.travelDistance)\n
-            locationNameDescription: \(self.locationNameDescription)\n
-            locationName: \(self.locationName)\n
-            stops: \(self.busStops)
+            type: \(type)\n
+            name: \(name)\n
+            startTime: \(startTime)\n
+            endTime: \(endTime)\n
+            startLocation: \(startLocation)\n
+            endLocation: \(endLocation)\n
+            stops: \(stops)\n
+            distance: \(travelDistance)\n
+            locationNameDescription: \(locationNameDescription)\n
+            stops: \(stops)
         """
+    }
+    
+    // MARK: Functions
+    
+    /// Convert distance from meters to miles
+    var travelDistanceInMiles: Double {
+        let numberOfMetersInMile = 1609.34
+        var conversion = travelDistance / numberOfMetersInMile
+        let numberOfPlaces = travelDistance >= 10 ? 0 : 1
+        return conversion.roundToPlaces(places: numberOfPlaces)
     }
 
     /// Returns readable start time (e.g. 7:49 PM)

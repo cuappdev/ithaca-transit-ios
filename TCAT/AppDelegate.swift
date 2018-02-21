@@ -23,12 +23,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        //Set Up Google Services
+        // Set Up Google Services
         let json = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
         GMSServices.provideAPIKey(json["google-maps"].stringValue)
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
-//         userDefaults.set(false, forKey: "onboardingShown")
+        // userDefaults.set(false, forKey: "onboardingShown")
         if userDefaults.value(forKey: "onboardingShown") == nil {
             userDefaults.set(false, forKey: "onboardingShown")
         }
@@ -58,6 +58,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             Fabric.with([Crashlytics.self])
             print ("RELEASE MODE")
         #endif
+        
+        do {
+            let testJSON = try JSON(data: Data(contentsOf: Bundle.main.url(forResource: "testGraphhopper", withExtension: "json")!))
+            print("Keys:", testJSON.dictionaryValue.keys)
+            
+        } catch let error {
+            print("Error:", error)
+        }
         
         return true
     }

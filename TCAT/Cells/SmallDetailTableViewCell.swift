@@ -53,12 +53,12 @@ class SmallDetailTableViewCell: UITableViewCell {
         
         if busEnd {
             // Arrive Direction
-            titleLabel.attributedText = bold(pattern: direction.locationName, in: direction.locationNameDescription)
+            titleLabel.attributedText = bold(pattern: direction.name, in: direction.locationNameDescription)
         } else {
             // Walk Direction
-            var walkString = lastStep ? "Arrive at \(direction.locationName)" : direction.locationNameDescription
+            var walkString = lastStep ? "Arrive at \(direction.name)" : direction.locationNameDescription
             if direction.travelDistance > 0 { walkString += " (\(direction.travelDistance) mi)" }
-            titleLabel.attributedText = bold(pattern: direction.locationName, in: walkString)
+            titleLabel.attributedText = bold(pattern: direction.name, in: walkString)
             if lastStep {
                 iconView?.changeTime(direction.endTimeDescription)
             }

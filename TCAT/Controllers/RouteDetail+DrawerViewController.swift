@@ -115,7 +115,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         let textLabelPadding: CGFloat = 16
         let summaryTopLabel = UILabel()
         if let departDirection = (directions.filter { $0.type == .depart }).first {
-            summaryTopLabel.text = "Depart at \(departDirection.startTimeDescription) from \(departDirection.locationName)"
+            summaryTopLabel.text = "Depart at \(departDirection.startTimeDescription) from \(departDirection.name)"
         } else {
             summaryTopLabel.text = directions.first?.locationNameDescription ?? "Route Directions"
         }
@@ -261,7 +261,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         let direction = directions[indexPath.row]
-        let isBusStopCell = direction.type == .arrive && direction.startLocation.coordinate.latitude == 0.0
+        let isBusStopCell = direction.type == .arrive && direction.startLocation.latitude == 0.0
         let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
 
         /// Formatting, including selectionStyle, and seperator line fixes
@@ -275,7 +275,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
 
         if isBusStopCell {
             let cell = tableView.dequeueReusableCell(withIdentifier: "busStopCell") as! BusStopTableViewCell
-            cell.setCell(direction.locationName)
+            cell.setCell(direction.name)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
             return format(cell)
         }
@@ -327,8 +327,8 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
 
             // Prepare bus stop data to be inserted / deleted into Directions array
             var busStops = [Direction]()
-            for stop in direction.busStops {
-                let stopAsDirection = Direction(locationName: stop)
+            for stop in direction.stops {
+                let stopAsDirection = Direction(name: stop.name)
                 busStops.append(stopAsDirection)
             }
             var indexPathArray: [IndexPath] = []
