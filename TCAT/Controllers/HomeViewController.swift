@@ -41,7 +41,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             tableView.reloadData()
         }
     }
-    let reachability = Reachability(hostname: Network.source)
+    // TODO: DEBUGGING
+    let reachability = Reachability(hostname: "www.google.com")
     var isBannerShown = false
     var banner: StatusBarNotificationBanner?
     

@@ -125,7 +125,8 @@ class AllBusLocations: JSONDecodable {
 
 class Network {
 
-    static let source = "34.235.128.17"
+    // INSERT YOUR OWN IP ADDRESS BEFORE :3000
+    static let source = "10.132.6.161:3000" // "34.235.128.17"
     static let tron = TRON(baseURL: "http://\(source)/api/v1/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
@@ -149,17 +150,17 @@ class Network {
     class func getRoutes(start: CoordinateAcceptor, end: CoordinateAcceptor, time: Date, type: SearchType, callback:@escaping ((APIRequest<JSON, Error>) -> Void)) {
         getStartEndCoords(start: start, end: end) { startCoords, endCoords in
             
-            let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routes")
+            let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
             
             request.parameters = [
-                "start_coords"  :   "\(startCoords?.latitude ??? ""),\(startCoords?.longitude ??? "")",
-                "end_coords"    :   "\(endCoords?.latitude ??? ""),\(endCoords?.longitude ??? "")",
+                "start"  :   "\(startCoords?.latitude ??? ""),\(startCoords?.longitude ??? "")",
+                "end"    :   "\(endCoords?.latitude ??? ""),\(endCoords?.longitude ??? "")",
             ]
 
             if type == .arriveBy {
                 request.parameters["depart_time"] = time.timeIntervalSince1970
             } else {
-                request.parameters["leave_by"] = time.timeIntervalSince1970
+                request.parameters["time"] = time.timeIntervalSince1970
             }
             
             request.method = .get

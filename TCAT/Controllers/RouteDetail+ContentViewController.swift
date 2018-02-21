@@ -36,6 +36,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     var route: Route!
     var directions: [Direction] = []
+    var paths: [Path] = []
 
     let main = UIScreen.main.bounds
 
@@ -64,59 +65,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         self.route = route
         self.directions = route.directions
         
-        /// Calculate walking directions
-        
-        let walkingDirections = self.directions.filter { $0.type == .walk }
-        var walkingPaths: [Path] = []
-        for direction in walkingDirections {
-            calculateWalkingDirections(direction) { (path, time) in
-                
-                direction.path = path
-                route.totalDuration = route.totalDuration + Int(time)
-                
-                var waypoints: [Waypoint] = []
-                for point in path {
-                    var type: WaypointType = .walking
-                    if direction == self.directions.first && point == path.first! {
-                        type = .origin
-                    }
-                    else if direction == self.directions.last && point == path.last! {
-                        type = .destination
-                    }
-//                    else if point == path.first! || point == path.last! {
-//                        type = .walk
-//                    }
-                    let waypoint = Waypoint(lat: point.latitude, long: point.longitude, wpType: type)
-                    waypoints.append(waypoint)
-                }
-                
-                let walkingPath = WalkPath(waypoints)
-                walkingPaths.append(walkingPath)
-                route.paths.append(walkingPath)
-                
-                // Update rest of app with on walking direction load completion
-                if walkingPaths.count == walkingDirections.count {
-                    self.isLoading = false
-                    self.drawerDisplayController?.update(with: route)
-                    self.drawMapRoute(walkingPaths)
-                    self.dismissLoadingScreen()
-                }
-                
-            }
-        }
-        
-        // Print Route Information
-        
-//        print("\n\n--- Route ---\n")
-//        print(route.debugDescription)
-//        print("\ndirections:")
-//        for (index, object) in route.directions.enumerated() {
-//            print("--- Direction[\(index)] ---")
-//            print(object.debugDescription)
-//            // print("path:", object.path)
-//        }
-//        print("\n-------\n")
-        
         // Plot the paths of all directions
         for (arrayIndex, direction) in directions.enumerated() {
 
@@ -138,8 +86,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                         type = arrayIndex == directions.count - 1 ? .destination : .bus
                     }
                         
-                    else if pointWithinLocation(point: point, location: direction.startLocation.coordinate, exact: true) ||
-                        pointWithinLocation(point: point, location: direction.endLocation.coordinate, exact: true) {
+                    else if pointWithinLocation(point: point, location: direction.startLocation, exact: true) ||
+                        pointWithinLocation(point: point, location: direction.endLocation, exact: true) {
                         
                         // type = .stop
                         
@@ -153,7 +101,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             }
 
             let path = direction.type == .walk ? WalkPath(waypoints) : BusPath(waypoints)
-            route.paths.append(path)
+            paths.append(path)
 
         }
         
@@ -424,7 +372,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     /** Draw all waypoints initially for all paths in [Path] or [[CLLocationCoordinate2D]], plus fill bounds */
     func drawMapRoute(_ newPaths: [Path]? = nil) {
 
-        let paths = newPaths ?? route.paths
+        let paths = newPaths ?? self.paths
         
         for path in paths {
             

@@ -124,7 +124,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         
         // Format and place labels
         let attributedString = NSMutableAttributedString(string: label.text!)
-        attributedString.append(bold(pattern: self.direction.locationName,
+        attributedString.append(bold(pattern: self.direction.name,
                                      in: self.direction.locationNameDescription))
         label.attributedText = attributedString
         paragraphStyle.lineSpacing = 8
@@ -144,7 +144,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     
     /** Abstracted formatting of content for detailLabel. Needs titleLabel */
     func formatDetailLabel(_ label: UILabel, _ titleLabel: UILabel) -> UILabel {
-        label.text = "\(self.direction.busStops.count) stops"
+        label.text = "\(self.direction.stops.count) stops"
         label.frame.origin.y = titleLabel.frame.maxY + labelSpacing
         label.sizeToFit()
         return label
