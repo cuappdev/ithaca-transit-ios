@@ -51,21 +51,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             userDefaults.set([Any](), forKey: Key.UserDefaults.favorites)
         }
 
-        
         #if DEBUG
             print ("DEBUG MODE")
         #else
             Fabric.with([Crashlytics.self])
             print ("RELEASE MODE")
         #endif
-        
-        do {
-            let testJSON = try JSON(data: Data(contentsOf: Bundle.main.url(forResource: "testGraphhopper", withExtension: "json")!))
-            print("Keys:", testJSON.dictionaryValue.keys)
-            
-        } catch let error {
-            print("Error:", error)
-        }
         
         return true
     }
