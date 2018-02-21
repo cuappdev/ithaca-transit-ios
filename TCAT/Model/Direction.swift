@@ -98,7 +98,6 @@ class Direction: NSObject, NSCopying {
         routeNumber: Int = 0,
         stops: [LocationObject] = []
     ) {
-
         self.type = type
         self.name = name
         self.startLocation = startLocation
@@ -108,7 +107,6 @@ class Direction: NSObject, NSCopying {
         self.endTime = endTime
         self.routeNumber = routeNumber
         self.stops = stops
-        
     }
 
     convenience init(name: String? = nil) {

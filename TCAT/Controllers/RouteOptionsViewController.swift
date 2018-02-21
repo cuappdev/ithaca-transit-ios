@@ -311,7 +311,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 }
                 
                 let alamofireRequest = request.perform(withSuccess: { (routeJson) in
-                    let rawRoutes = Route.getRoutesArray(fromJson: routeJson, endingAt: self.searchTo?.name ?? "")
+                    let rawRoutes = Route.getRoutesArray(from: routeJson)
                     self.routes = self.processRoutes(rawRoutes)
                     self.currentlySearching = false
                     self.routeResults.reloadData()

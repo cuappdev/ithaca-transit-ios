@@ -94,77 +94,26 @@ class Route: NSObject, JSONDecodable {
         directions = json["directions"].arrayValue.map { Direction(from: $0) }
         
         super.init()
-        
-        // Old Code VVV
-        
-        // Arrive directions
-        // Potential last directions
-        
-        var busInvolved = false
-        
-        let lastIsBusStop = SearchTableViewManager.shared.getAllStops().first(where: { (stop) -> Bool in
-            let stopCoordinates = CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.long)
-            return stopCoordinates == endCoords
-        }) != nil
-        
-        for (index, direction) in directions.enumerated() {
-            
-            // Create pair ArriveDirection after DepartDirection
+
+        // Create Arrive Direction after Depart Direction
+        for direction in directions {
             if direction.type == .depart {
-                busInvolved = true
                 let arriveDirection = direction.copy() as! Direction
                 arriveDirection.type = .arrive
                 arriveDirection.startTime = arriveDirection.endTime
                 arriveDirection.startLocation = arriveDirection.endLocation
                 arriveDirection.stops = []
-                arriveDirection.name = index == json["path"].arrayValue.count - 1 && lastIsBusStop ?
-                    "" : ""
+                arriveDirection.name = direction.stops.last?.name ?? "Nil"
                 directions.append(arriveDirection)
             }
-            
         }
-        
-        // Create final direction to walk (if destination not a bus stop) from last bus option to final destination
-        
-        if busInvolved && !lastIsBusStop {
-            
-            let finalDirection = Direction(name: json["endName"].string ?? "Null")
-            finalDirection.type = .walk
-            finalDirection.startLocation = directions.last!.endLocation
-            finalDirection.endLocation = endCoords
-            finalDirection.startTime = directions.last!.endTime
-            finalDirection.endTime = arrivalTime
-            
-            // path should be set in bulk walk calculations
-            directions.append(finalDirection)
-            
-        }
-        
-        routeSummary = getRouteSummary(from: json["path"].arrayValue)
         
     }
     
     // MARK: Parse JSON
     
-    static func getRoutesArray(fromJson json: JSON, endingAt endName: String) -> [Route] {
-        
-        if !json["success"].boolValue {
-            return []
-        }
-        
-        let jsonData = json["data"]
-        var routes: [Route] = []
-        
-        for resultsJSON in jsonData["results"].arrayValue {
-            var routeJSON = resultsJSON
-            routeJSON["baseTime"] = jsonData["baseTime"]
-            routeJSON["endName"].string = endName
-            let route = try! Route(json: routeJSON)
-            routes.append(route)
-        }
-        
-        return routes
-        
+    static func getRoutesArray(from json: JSON) -> [Route] {
+        return json.arrayValue.map { try! Route(json: $0) }
     }
     
     private func getRouteSummary(from json: [JSON]) -> [RouteSummaryObject] {
