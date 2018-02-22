@@ -126,8 +126,8 @@ class AllBusLocations: JSONDecodable {
 class Network {
 
     // INSERT YOUR OWN IP ADDRESS BEFORE :3000
-    static let source = "10.132.6.161:3000" // "34.235.128.17"
-    static let tron = TRON(baseURL: "http://\(source)/api/v1/")
+    static let source = "192.168.1.8:3000" // "34.235.128.17"
+    static let tron = TRON(baseURL: "http://\(source)/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
 
@@ -164,6 +164,9 @@ class Network {
             }
             
             request.method = .get
+
+            // for debugging
+//            print("Request URL: http://\(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
             
             callback(request)
         }

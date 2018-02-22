@@ -96,7 +96,7 @@ class Route: NSObject, JSONDecodable {
         super.init()
 
         // Create Arrive Direction after Depart Direction
-        for direction in directions {
+        for (index, direction) in directions.enumerated() {
             if direction.type == .depart {
                 let arriveDirection = direction.copy() as! Direction
                 arriveDirection.type = .arrive
@@ -104,16 +104,41 @@ class Route: NSObject, JSONDecodable {
                 arriveDirection.startLocation = arriveDirection.endLocation
                 arriveDirection.stops = []
                 arriveDirection.name = direction.stops.last?.name ?? "Nil"
-                directions.append(arriveDirection)
+                directions.insert(arriveDirection, at: index+1)
             }
         }
         
+        routeSummary = getRouteSummary(from: directions)
     }
     
     // MARK: Parse JSON
     
     static func getRoutesArray(from json: JSON) -> [Route] {
         return json.arrayValue.map { try! Route(json: $0) }
+    }
+    
+    private func getRouteSummary(from directions: [Direction]) -> [RouteSummaryObject] {
+        var routeSummary = [RouteSummaryObject]()
+        
+        for (index, direction) in directions.enumerated() {
+            // skip first walking direction
+            let first = 0
+            if index == first && direction.type == .walk {
+                continue
+            }
+            
+            let routeSummaryObject = RouteSummaryObject(direction: direction)
+            
+            // remove next direction for route summary object
+            let last = directions.count - 1
+            if index == last {
+                routeSummaryObject.removeNextDirection()
+            }
+            
+            routeSummary.append(routeSummaryObject)
+        }
+        
+        return routeSummary
     }
     
     private func getRouteSummary(from json: [JSON]) -> [RouteSummaryObject] {

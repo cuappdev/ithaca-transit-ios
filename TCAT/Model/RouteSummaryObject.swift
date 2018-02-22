@@ -29,6 +29,28 @@ class RouteSummaryObject: NSObject, JSONDecodable {
     var location: CLLocationCoordinate2D
     var time: Date
     
+    override var description: String {
+        return """
+        {
+            name: \(name),
+            type: \(type.rawValue),
+            busNumber: \(busNumber),
+            nextDirection: \(nextDirection?.rawValue ?? "nil")
+        }
+        """
+    }
+    
+    init(direction: Direction) {
+        name = direction.name
+        type = direction.type == .walk ? PinType.place : PinType.stop
+        busNumber = direction.routeNumber
+        nextDirection = direction.type == .depart ? NextDirection.bus: NextDirection.walk
+        
+        // N2SELF - delete this later b/c just filler code so it compiles
+        location = CLLocationCoordinate2D()
+        time = Date()
+    }
+    
     required init(json: JSON) throws {
         name = json["start"]["name"].stringValue
         type = .stop

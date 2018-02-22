@@ -185,16 +185,18 @@ class Direction: NSObject, NSCopying {
     
     override var debugDescription: String {
         return """
-            type: \(type)\n
-            name: \(name)\n
-            startTime: \(startTime)\n
-            endTime: \(endTime)\n
-            startLocation: \(startLocation)\n
-            endLocation: \(endLocation)\n
-            stops: \(stops)\n
-            distance: \(travelDistance)\n
-            locationNameDescription: \(locationNameDescription)\n
+        {
+            type: \(type),
+            name: \(name),
+            startTime: \(startTime),
+            endTime: \(endTime),
+            startLocation: \(startLocation),
+            endLocation: \(endLocation),
+            stops: \(stops),
+            distance: \(travelDistance),
+            locationNameDescription: \(locationNameDescription),
             stops: \(stops)
+        }
         """
     }
     
