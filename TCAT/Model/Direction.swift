@@ -134,7 +134,7 @@ class Direction: NSObject, NSCopying {
             switch json["type"].stringValue {
             case "walk" : return .walk
             case "depart" : return .depart
-            default: return .other
+            default : return .other
             }
         }()
         
@@ -143,6 +143,7 @@ class Direction: NSObject, NSCopying {
         endTime = json["endTime"].parseDate()
         startLocation = json["startLocation"].parseCoordinates()
         endLocation = json["endLocation"].parseCoordinates()
+        path = json["path"].arrayValue.map { $0.parseCoordinates() }
         travelDistance = json["distance"].doubleValue
         routeNumber = json["routeNumber"].int ?? 0
         stops = json["stops"].arrayValue.map { $0.parseLocationObject() }

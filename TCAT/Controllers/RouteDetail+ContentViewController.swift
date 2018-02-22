@@ -19,9 +19,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     var loadingView: UIView!
     var drawerDisplayController: RouteDetailDrawerViewController?
     
-    var isLoading: Bool = true
-    var justLoaded: Bool = true
-    
     var locationManager = CLLocationManager()
 
     var mapView: GMSMapView!
@@ -174,7 +171,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
         self.mapView = mapView
         view = mapView
-        if isLoading { view.alpha = 0 }
         
     }
     
@@ -230,11 +226,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             currentLocation = newCoord
         }
         
-        if justLoaded {
-            drawMapRoute()
-            justLoaded = false
-            centerMap(topHalfCentered: true)
-        }
+        drawMapRoute()
+        centerMap(topHalfCentered: true)
+        
+        // (self.parent as? PulleyViewController)?.bounceDrawer()
         
     }
 

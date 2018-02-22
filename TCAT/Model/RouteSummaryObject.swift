@@ -34,7 +34,7 @@ class RouteSummaryObject: NSObject, JSONDecodable {
         {
             name: \(name),
             type: \(type.rawValue),
-            busNumber: \(busNumber),
+            busNumber: \(busNumber ?? -1),
             nextDirection: \(nextDirection?.rawValue ?? "nil")
         }
         """

@@ -42,7 +42,6 @@
 		BFA53FEE1FD45D7000E770DF /* RouteDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */; };
 		BFD5B4E41FAADFAE00955C37 /* WalkPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */; };
 		CC27BD091FF6C91C00DAA7D5 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */; };
-		CCA9E5511FF944D100405806 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = CCA9E5501FF944D100405806 /* config.json */; };
 		D183AA021E6CB092006A9A15 /* UIColor+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */; };
 		DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */; };
 		DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96451FC21B29009955C6 /* HeaderView.swift */; };
@@ -151,7 +150,6 @@
 		BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WalkPath.swift; path = Model/WalkPath.swift; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Analytics.swift; path = Utilities/Analytics.swift; sourceTree = "<group>"; };
-		CCA9E5501FF944D100405806 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = config.json; path = Resources/config.json; sourceTree = "<group>"; };
 		D183AA011E6CB092006A9A15 /* UIColor+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Shared.swift"; path = "Utilities/UIColor+Shared.swift"; sourceTree = "<group>"; };
 		DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesTableViewController.swift; sourceTree = "<group>"; };
 		DC2E96451FC21B29009955C6 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeaderView.swift; path = Views/HeaderView.swift; sourceTree = "<group>"; };
@@ -317,7 +315,6 @@
 		50A19BA81E4BC5BC00AD6768 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				DDDBF0542006E3ED003348AF /* config.json */,
 				DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */,
 				DD99E2F31F6DB0410073E8F7 /* FontConstants.swift */,
 				449A7C841D80D0E80019300C /* Info.plist */,
@@ -379,7 +376,7 @@
 		DD2F98921E50D8D20005F6BC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CCA9E5501FF944D100405806 /* config.json */,
+				DDDBF0542006E3ED003348AF /* config.json */,
 				DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */,
 				DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */,
 				DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */,
@@ -584,7 +581,6 @@
 				449A7C831D80D0E80019300C /* LaunchScreen.storyboard in Resources */,
 				DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */,
 				DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */,
-				CCA9E5511FF944D100405806 /* config.json in Resources */,
 				449A7C801D80D0E80019300C /* Assets.xcassets in Resources */,
 				449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */,
 			);
