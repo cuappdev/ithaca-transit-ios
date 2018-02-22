@@ -203,6 +203,11 @@ class Direction: NSObject, NSCopying {
     
     // MARK: Functions
     
+    /// Boolean to determine if destination is hard-coded and should be replaced.
+    var isNameHardCodedDestinatation: Bool {
+        return name.contains("destination")
+    }
+    
     /// Convert distance from meters to miles
     var travelDistanceInMiles: Double {
         let numberOfMetersInMile = 1609.34

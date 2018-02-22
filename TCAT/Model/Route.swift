@@ -73,6 +73,14 @@ class Route: NSObject, JSONDecodable {
     
     /// A list of Direction objects (used for Route Detail)
     var directions: [Direction] = [Direction]()
+    
+    /** A description of the starting location of the route (e.g. Current Location, Arts Quad)
+        Default assumption is Current Location.
+     */
+    var startName: String
+    
+    /// A description of the final destination of the route (e.g. Chipotle Mexican Grill, The Shops at Ithaca Mall)
+    var endName: String
 
     var routeSummary: [RouteSummaryObject] = [RouteSummaryObject]()
     
@@ -89,6 +97,8 @@ class Route: NSObject, JSONDecodable {
         arrivalTime = json["arrivalTime"].parseDate()
         startCoords = json["startCoords"].parseCoordinates()
         endCoords = json["endCoords"].parseCoordinates()
+        startName = json["startName"].stringValue
+        endName = json["endName"].stringValue
         boundingBox = json["boundingBox"].parseBounds()
         numberOfTransfers = json["numberOfTransfers"].intValue
         directions = json["directions"].arrayValue.map { Direction(from: $0) }
@@ -113,8 +123,14 @@ class Route: NSObject, JSONDecodable {
     
     // MARK: Parse JSON
     
-    static func getRoutesArray(from json: JSON) -> [Route] {
-        return json.arrayValue.map { try! Route(json: $0) }
+    static func getRoutes(from json: JSON, fromDescription: String? = nil, toDescription: String? = nil) -> [Route] {
+        return json.arrayValue.map {
+            var augmentedJSON = $0
+            augmentedJSON["startName"].string = fromDescription ?? "Current Location"
+            augmentedJSON["endName"].string = toDescription ?? "your destination"
+            print(augmentedJSON)
+            return try! Route(json: augmentedJSON)
+        }
     }
     
     private func getRouteSummary(from directions: [Direction]) -> [RouteSummaryObject] {

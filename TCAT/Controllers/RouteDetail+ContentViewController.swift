@@ -46,14 +46,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     /** Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
      * dummy data will be used. The directions parameter have logical assumptions,
      * such as ArriveDirection always comes after DepartDirection. */
-    init (route: Route? = nil) {
+    init (route: Route) {
         super.init(nibName: nil, bundle: nil)
-        if route == nil {
-            let json = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "testNew", withExtension: "json")!))
-            initializeRoute(route: try! Route(json: json))
-        } else {
-            initializeRoute(route: route!)
-        }
+        initializeRoute(route: route)
     }
 
     /** Construct Directions based on Route and parse Waypoint / Path data */
