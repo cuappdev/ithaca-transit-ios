@@ -102,6 +102,9 @@ class Route: NSObject, JSONDecodable {
         boundingBox = json["boundingBox"].parseBounds()
         numberOfTransfers = json["numberOfTransfers"].intValue
         directions = json["directions"].arrayValue.map { Direction(from: $0) }
+
+        // Replace hard-coded destination
+        directions.last?.name = endName
         
         super.init()
 
@@ -128,7 +131,6 @@ class Route: NSObject, JSONDecodable {
             var augmentedJSON = $0
             augmentedJSON["startName"].string = fromDescription ?? "Current Location"
             augmentedJSON["endName"].string = toDescription ?? "your destination"
-            print(augmentedJSON)
             return try! Route(json: augmentedJSON)
         }
     }
