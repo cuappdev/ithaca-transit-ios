@@ -312,6 +312,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 }
                 
                 let alamofireRequest = request.perform(withSuccess: { (routeJson) in
+                    
                     let rawRoutes = Route.getRoutesArray(from: routeJson)
                     self.routes = self.processRoutes(rawRoutes)
                     self.currentlySearching = false
@@ -559,7 +560,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 isBannerShown = true // hides status bar
                 setNeedsStatusBarAppearanceUpdate()
                 banner.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
-                setUserInteraction(to: false)
+//                setUserInteraction(to: false)
 
             case .cellular, .wifi:
                 if isBannerShown {
