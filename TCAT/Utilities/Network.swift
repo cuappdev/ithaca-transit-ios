@@ -125,9 +125,10 @@ class AllBusLocations: JSONDecodable {
 
 class Network {
 
-    // Use our own IP Address
-    static let ipAddress = "10.132.6.225"
-    static let source = "\(ipAddress):\(3000)" // Old Backend Endpoint: "34.235.128.17"
+    // Use your own IP Address (changes!)
+    static let ipAddress = "10.132.2.59"
+    
+    static let source = "\(ipAddress):3000" // Old Backend Endpoint: "34.235.128.17"
     static let tron = TRON(baseURL: "http://\(source)/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()

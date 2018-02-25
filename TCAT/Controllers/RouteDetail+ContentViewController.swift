@@ -27,7 +27,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     var networkTimer: Timer? = nil
     /// Number of seconds to wait before auto-refreshing network call, timed with live indicator
-    var refreshRate: Double = LiveIndicator.INTERVAL * 1.0
+    var networkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
+    
     var buses = [GMSMarker]()
     var banner: StatusBarNotificationBanner? = nil
 
@@ -127,7 +128,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             timer.invalidate()
         }
 
-        networkTimer = Timer.scheduledTimer(timeInterval: refreshRate, target: self, selector: #selector(getBusLocations),
+        networkTimer = Timer.scheduledTimer(timeInterval: networkRefreshRate, target: self, selector: #selector(getBusLocations),
                                             userInfo: nil, repeats: true)
         networkTimer!.fire()
 
@@ -241,11 +242,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         
         guard let firstRoute = route.directions.first(where: {
             return $0.routeNumber > 0
-        })
-        else {
+        }) else {
             print("[RouteDetailViewController] getBusLocations: Couldn't find valid routes")
             return
         }
+        
 // */ // debugging
         
         // Network.getBusLocations(routeID: "90").perform( // debugging
@@ -286,7 +287,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             // If bus is already on map, update and animate change
             if let newBus = existingBus {
 
-                UIView.animate(withDuration: 1.0, delay: 0, options: .curveEaseInOut, animations: {
+                // allow time to receive new live bus request
+                let latencyConstant = 0.25
+                
+                UIView.animate(withDuration: networkRefreshRate + latencyConstant, delay: 0, options: .curveEaseInOut, animations: {
                     newBus.userData = bus
                     (newBus.iconView as? BusLocationView)?.setBearing(bus.heading, start: existingBus!.position, end: busCoords)
                     newBus.position = busCoords
