@@ -8,6 +8,8 @@
 
 import UIKit
 import MapKit
+import SwiftyJSON
+import CoreLocation
 
 extension UIColor {
     
@@ -76,25 +78,46 @@ extension UIViewController {
     }
 }
 
-/** Bold a phrase that appears in a string, and return the attributed string */
-func bold(pattern: String, in string: String) -> NSMutableAttributedString {
-    let fontSize = UIFont.systemFontSize
-    let attributedString = NSMutableAttributedString(string: string,
-                                                     attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: fontSize)])
-    let boldFontAttribute = [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: fontSize)]
+extension JSON {
     
-    do {
-        let regex = try NSRegularExpression(pattern: pattern, options: [])
-        let ranges = regex.matches(in: string, options: [], range: NSMakeRange(0, string.count)).map {$0.range}
-        for range in ranges { attributedString.addAttributes(boldFontAttribute, range: range) }
-    } catch { }
+    /// Format date with pattern `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`. Returns current date on error.
+    func parseDate() -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
+        return dateFormatter.date(from: self.stringValue) ?? Date.distantPast
+    }
     
-    return attributedString
+    /// Create coordinate object from JSON.
+    func parseCoordinates() -> CLLocationCoordinate2D {
+        let latitude = self["lat"].doubleValue
+        let longitude = self["long"].doubleValue
+        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+    
+    /// Create Bounds object
+    func parseBounds() -> Bounds {
+        return Bounds(
+            minLat: self["minLat"].doubleValue,
+            minLong: self["minLong"].doubleValue,
+            maxLat: self["maxLat"].doubleValue,
+            maxLong: self["maxLong"].doubleValue
+        )
+    }
+    
+    // Return LocationObject
+    func parseLocationObject() -> LocationObject {
+        return LocationObject(
+            name: self["name"].stringValue,
+            latitude: self["lat"].doubleValue,
+            longitude: self["long"].doubleValue
+        )
+    }
+    
 }
 
 extension String {
     func capitalizingFirstLetter() -> String {
-
         let first = String(prefix(1)).capitalized
         let other = String(dropFirst()).lowercased()
         return first + other
@@ -129,6 +152,29 @@ extension Double {
     }
 }
 
+extension Array where Element: UIView {
+    /// Remove each view from its superview.
+    func removeViewsFromSuperview(){
+        self.forEach{ $0.removeFromSuperview() }
+    }
+}
+
+/** Bold a phrase that appears in a string, and return the attributed string */
+func bold(pattern: String, in string: String) -> NSMutableAttributedString {
+    let fontSize = UIFont.systemFontSize
+    let attributedString = NSMutableAttributedString(string: string,
+                                                     attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: fontSize)])
+    let boldFontAttribute = [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: fontSize)]
+    
+    do {
+        let regex = try NSRegularExpression(pattern: pattern, options: [])
+        let ranges = regex.matches(in: string, options: [], range: NSMakeRange(0, string.count)).map {$0.range}
+        for range in ranges { attributedString.addAttributes(boldFontAttribute, range: range) }
+    } catch { }
+    
+    return attributedString
+}
+
 func areObjectsEqual<T: Equatable>(type: T.Type, a: Any, b: Any) -> Bool {
     guard let a = a as? T, let b = b as? T else { return false }
     return a == b
@@ -154,12 +200,4 @@ func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop]{
         }
     }
     return letterArray + nonLetterArray
-}
-
-extension Array where Element: UIView {
-    
-    /// Remove each view from its superview.
-    func removeViewsFromSuperview(){
-        self.forEach{ $0.removeFromSuperview() }
-    }
 }

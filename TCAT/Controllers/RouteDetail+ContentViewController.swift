@@ -78,13 +78,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     else if pathIndex == direction.path.count - 1 {
                         type = arrayIndex == directions.count - 1 ? .destination : .bus
                     }
-                        
-                    else if pointWithinLocation(point: point, location: direction.startLocation, exact: true) ||
-                        pointWithinLocation(point: point, location: direction.endLocation, exact: true) {
-                        
-                        // type = .stop
-                        
-                    }
 
                 }
 
