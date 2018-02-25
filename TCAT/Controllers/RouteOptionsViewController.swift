@@ -321,9 +321,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 }
                 
                 let alamofireRequest = request.perform(withSuccess: { (routeJSON) in
-                    Route.getRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (jsonRoutes,error) in
+                    Route.getRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (jsonRoutes,err) in
                         self.routes = self.processRoutes(jsonRoutes)
-                        requestDidFinish(with: error)
+                        requestDidFinish(with: err)
                     })
                 }, failure: { (error) in
                     self.routes = []

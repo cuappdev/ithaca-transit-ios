@@ -10,6 +10,7 @@ import UIKit
 import MapKit
 import SwiftyJSON
 import CoreLocation
+import TRON
 
 extension UIColor {
     
@@ -156,6 +157,23 @@ extension Array where Element: UIView {
     /// Remove each view from its superview.
     func removeViewsFromSuperview(){
         self.forEach{ $0.removeFromSuperview() }
+    }
+}
+
+extension Array : JSONDecodable {
+    public init(json: JSON) {
+        self.init(json.arrayValue.flatMap {
+            if let type = Element.self as? JSONDecodable.Type {
+                let element : Element?
+                do {
+                    element = try type.init(json: $0) as? Element
+                } catch {
+                    return nil
+                }
+                return element
+            }
+            return nil
+        })
     }
 }
 

@@ -11,11 +11,87 @@ import TRON
 import CoreLocation
 import GooglePlaces
 
+class Network {
+    
+    // Use your own IP Address (changes!)
+    static let ipAddress = "10.132.2.59"
+    
+    static let source = "\(ipAddress):3000" // Old Backend Endpoint: "34.235.128.17"
+    static let tron = TRON(baseURL: "http://\(source)/")
+    static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
+    static let placesClient = GMSPlacesClient.shared()
+    
+    class func getAllStops() -> APIRequest<AllBusStops, Error> {
+        let request: APIRequest<AllBusStops, Error> = tron.swiftyJSON.request("stops")
+        request.method = .get
+        return request
+    }
+    
+    class func getStartEndCoords(start: CoordinateAcceptor, end: CoordinateAcceptor, callback:@escaping ((CLLocationCoordinate2D?, CLLocationCoordinate2D?) -> Void)) {
+        let visitor = CoordinateVisitor()
+        start.accept(visitor: visitor) { startCoord in
+            end.accept(visitor: visitor) { endCoord in
+                
+                callback(startCoord, endCoord)
+            }
+        }
+    }
+    
+    class func getRoutes(start: CoordinateAcceptor, end: CoordinateAcceptor, time: Date, type: SearchType, callback:@escaping ((APIRequest<JSON, Error>) -> Void)) {
+        getStartEndCoords(start: start, end: end) { startCoords, endCoords in
+            
+            let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
+            
+            request.parameters = [
+                "start"  :   "\(startCoords?.latitude ??? ""),\(startCoords?.longitude ??? "")",
+                "end"    :   "\(endCoords?.latitude ??? ""),\(endCoords?.longitude ??? "")",
+            ]
+            
+            if type == .arriveBy {
+                request.parameters["depart_time"] = time.timeIntervalSince1970
+            } else {
+                request.parameters["time"] = time.timeIntervalSince1970
+            }
+            
+            request.method = .get
+            
+            // for debugging
+            //            print("Request URL: http://\(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
+            
+            callback(request)
+        }
+    }
+    
+    
+    class func getGooglePlaces(searchText: String) -> APIRequest<JSON, Error> {
+        let googleJson = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
+        let request: APIRequest<JSON, Error> = googleTron.swiftyJSON.request("json")
+        request.parameters = [
+            "strictbounds" : "",
+            "location" : "42.4440,-76.5019",
+            "radius" : 24140,
+            "input" : searchText,
+            "key" : googleJson["google-places"].stringValue
+        ]
+        request.method = .get
+        return request
+    }
+    
+    class func getBusLocations(routeID: String) -> APIRequest<AllBusLocations, Error> {
+        let request: APIRequest<AllBusLocations, Error> = tron.swiftyJSON.request("tracking")
+        request.parameters = ["routeID" : routeID]
+        request.method = .get
+        return request
+    }
+    
+}
+
 class Error: JSONDecodable {
     required init(json: JSON) {
         // need to talk to shiv about what errors could be possibily returned
     }
 }
+
 class AllBusStops: JSONDecodable {
     var allStops : [BusStop] = [BusStop]()
 
@@ -123,94 +199,4 @@ class AllBusLocations: JSONDecodable {
 
 }
 
-class Network {
 
-    // Use your own IP Address (changes!)
-    static let ipAddress = "10.132.2.59"
-    
-    static let source = "\(ipAddress):3000" // Old Backend Endpoint: "34.235.128.17"
-    static let tron = TRON(baseURL: "http://\(source)/")
-    static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
-    static let placesClient = GMSPlacesClient.shared()
-
-    class func getAllStops() -> APIRequest<AllBusStops, Error> {
-        let request: APIRequest<AllBusStops, Error> = tron.swiftyJSON.request("stops")
-        request.method = .get
-        return request
-    }
-
-    class func getStartEndCoords(start: CoordinateAcceptor, end: CoordinateAcceptor, callback:@escaping ((CLLocationCoordinate2D?, CLLocationCoordinate2D?) -> Void)) {
-        let visitor = CoordinateVisitor()
-        start.accept(visitor: visitor) { startCoord in
-            end.accept(visitor: visitor) { endCoord in
-        
-                callback(startCoord, endCoord)
-            }
-        }
-    }
-
-    class func getRoutes(start: CoordinateAcceptor, end: CoordinateAcceptor, time: Date, type: SearchType, callback:@escaping ((APIRequest<JSON, Error>) -> Void)) {
-        getStartEndCoords(start: start, end: end) { startCoords, endCoords in
-            
-            let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
-            
-            request.parameters = [
-                "start"  :   "\(startCoords?.latitude ??? ""),\(startCoords?.longitude ??? "")",
-                "end"    :   "\(endCoords?.latitude ??? ""),\(endCoords?.longitude ??? "")",
-            ]
-
-            if type == .arriveBy {
-                request.parameters["depart_time"] = time.timeIntervalSince1970
-            } else {
-                request.parameters["time"] = time.timeIntervalSince1970
-            }
-            
-            request.method = .get
-
-            // for debugging
-//            print("Request URL: http://\(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
-            
-            callback(request)
-        }
-    }
-
-
-    class func getGooglePlaces(searchText: String) -> APIRequest<JSON, Error> {
-        let googleJson = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
-        let request: APIRequest<JSON, Error> = googleTron.swiftyJSON.request("json")
-        request.parameters = [
-            "strictbounds" : "",
-            "location" : "42.4440,-76.5019",
-            "radius" : 24140,
-            "input" : searchText,
-            "key" : googleJson["google-places"].stringValue
-        ]
-        request.method = .get
-        return request
-    }
-
-    class func getBusLocations(routeID: String) -> APIRequest<AllBusLocations, Error> {
-        let request: APIRequest<AllBusLocations, Error> = tron.swiftyJSON.request("tracking")
-        request.parameters = ["routeID" : routeID]
-        request.method = .get
-        return request
-    }
-
-}
-
-extension Array : JSONDecodable {
-    public init(json: JSON) {
-        self.init(json.arrayValue.flatMap {
-            if let type = Element.self as? JSONDecodable.Type {
-                let element : Element?
-                do {
-                    element = try type.init(json: $0) as? Element
-                } catch {
-                    return nil
-                }
-                return element
-            }
-            return nil
-        })
-    }
-}

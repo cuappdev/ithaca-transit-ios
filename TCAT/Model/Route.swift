@@ -109,16 +109,29 @@ class Route: NSObject, JSONDecodable {
         super.init()
 
         // Create Arrive Direction after Depart Direction
+        var offset = 0
         for (index, direction) in directions.enumerated() {
+            
             if direction.type == .depart {
+                
+                // Create Arrival Direction
                 let arriveDirection = direction.copy() as! Direction
                 arriveDirection.type = .arrive
                 arriveDirection.startTime = arriveDirection.endTime
                 arriveDirection.startLocation = arriveDirection.endLocation
                 arriveDirection.stops = []
                 arriveDirection.name = direction.stops.last?.name ?? "Nil"
-                directions.insert(arriveDirection, at: index+1)
+                directions.insert(arriveDirection, at: index + offset + 1)
+                offset += 1 // for each new arrival direction added
+                
+                // Remove inital bus stop and departure bus stop
+                if direction.stops.count >= 2 {
+                    direction.stops.removeFirst()
+                    direction.stops.removeLast()
+                }
+                
             }
+            
         }
         
         routeSummary = getRouteSummary(from: directions)
@@ -131,10 +144,11 @@ class Route: NSObject, JSONDecodable {
                           _ completion: @escaping (_ routes: [Route], _ error: NSError?) -> Void) {
         
         if json["success"].boolValue {
-            let routes: [Route] = json.arrayValue.map {
+            let routes: [Route] = json["data"].arrayValue.map {
                 var augmentedJSON = $0
                 augmentedJSON["startName"].string = from ?? "Current Location"
                 augmentedJSON["endName"].string = to ?? "your destination"
+                // print("JSON:", augmentedJSON)
                 return try! Route(json: augmentedJSON)
             }
             completion(routes, nil)
