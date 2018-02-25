@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import TRON
-import SwiftyJSON
 import CoreLocation
 
 enum PinType: String {
@@ -19,15 +17,12 @@ enum NextDirection: String {
     case bus, walk
 }
 
-class RouteSummaryObject: NSObject, JSONDecodable {
+class RouteSummaryObject: NSObject {
 
     var name: String
     var type: PinType
     var busNumber: Int?
     var nextDirection: NextDirection?
-    
-    var location: CLLocationCoordinate2D
-    var time: Date
     
     override var description: String {
         return """
@@ -45,44 +40,20 @@ class RouteSummaryObject: NSObject, JSONDecodable {
         type = direction.type == .walk ? PinType.place : PinType.stop
         busNumber = direction.routeNumber
         nextDirection = direction.type == .depart ? NextDirection.bus: NextDirection.walk
-        
-        // N2SELF - delete this later b/c just filler code so it compiles
-        location = CLLocationCoordinate2D()
-        time = Date()
     }
     
-    required init(json: JSON) throws {
-        name = json["start"]["name"].stringValue
-        type = .stop
-        
-        if(json["busPath"] != JSON.null){
-            nextDirection = .bus
-            busNumber = json["busPath"]["lineNumber"].intValue
-        }else{
-            nextDirection = .walk
-        }
-        
-        let long = json["start"]["location"]["longitude"].doubleValue
-        let lat = json["start"]["location"]["latitude"].doubleValue
-        location = CLLocationCoordinate2D(latitude: lat, longitude: long)
-        
-        time = Date(timeIntervalSince1970: json["startTime"].doubleValue)
-    }
-    
-    init(name: String, type: PinType, location: CLLocationCoordinate2D, time: Date) {
+    init(name: String, type: PinType) {
         self.name = name
         self.type = type
-        self.location = location
-        self.time = time
     }
     
-    convenience init(name: String, type: PinType, location: CLLocationCoordinate2D, time: Date, nextDirection: NextDirection) {
-        self.init(name: name, type: type, location: location, time: time)
+    convenience init(name: String, type: PinType, nextDirection: NextDirection) {
+        self.init(name: name, type: type)
         self.nextDirection = nextDirection
     }
     
-    convenience init(name: String, type: PinType, location: CLLocationCoordinate2D, time: Date, nextDirection: NextDirection, busNumber: Int) {
-        self.init(name: name, type: type, location: location, time: time, nextDirection: nextDirection)
+    convenience init(name: String, type: PinType, nextDirection: NextDirection, busNumber: Int) {
+        self.init(name: name, type: type, nextDirection: nextDirection)
         self.busNumber = busNumber
     }
     
