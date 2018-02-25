@@ -130,8 +130,6 @@
 		BF101FE11F93D9BB00C58769 /* LiveIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LiveIndicator.swift; path = Views/LiveIndicator.swift; sourceTree = "<group>"; };
 		BF1209FA1F7759C200A7C930 /* BusLocationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocationView.swift; path = Views/BusLocationView.swift; sourceTree = "<group>"; };
 		BF453F861FAF7850001E5481 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		BF4F831B1F89B9180097A052 /* testNew.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = testNew.json; path = Data/testNew.json; sourceTree = "<group>"; };
-		BF52F5481F5B553B000DEDF0 /* testOld.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = testOld.json; path = Data/testOld.json; sourceTree = "<group>"; };
 		BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "RouteDetail+DrawerViewController.swift"; path = "Controllers/RouteDetail+DrawerViewController.swift"; sourceTree = "<group>"; };
 		BF6095261FD7091B0013E538 /* CustomNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomNavigationController.swift; path = Controllers/CustomNavigationController.swift; sourceTree = "<group>"; };
 		BF662F331F731DD200B21109 /* OnboardPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardPageViewController.swift; path = Controllers/OnboardPageViewController.swift; sourceTree = "<group>"; };
@@ -278,7 +276,6 @@
 				DD2F988E1E50D8660005F6BC /* Base.lproj */,
 				DD2F988F1E50D89C0005F6BC /* Cells */,
 				DD47EA501E50D77D009C68EB /* Controllers */,
-				DD2F98901E50D8C50005F6BC /* Data */,
 				DD2F98911E50D8C90005F6BC /* Model */,
 				DD2F98921E50D8D20005F6BC /* Resources */,
 				50A19BA81E4BC5BC00AD6768 /* Supporting Files */,
@@ -338,15 +335,6 @@
 				5006F7B71EBFC7DE005ACAF2 /* CornellDestinationCell.swift */,
 			);
 			name = Cells;
-			sourceTree = "<group>";
-		};
-		DD2F98901E50D8C50005F6BC /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				BF52F5481F5B553B000DEDF0 /* testOld.json */,
-				BF4F831B1F89B9180097A052 /* testNew.json */,
-			);
-			name = Data;
 			sourceTree = "<group>";
 		};
 		DD2F98911E50D8C90005F6BC /* Model */ = {
