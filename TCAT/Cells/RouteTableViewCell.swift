@@ -11,7 +11,7 @@ import UIKit
 protocol TravelDistanceDelegate: NSObjectProtocol {
     func travelDistanceUpdated(withDistance distance: Double)
 }
-class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
+class RouteTableViewCell: UITableViewCell {
 
     // MARK: Data var
     
@@ -107,12 +107,6 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
         bottomBorder.removeFromSuperview()
     }
     
-    // MARK: Travel Distance Delegate
-    
-    func travelDistanceUpdated(withDistance distance: Double) {
-        routeDiagram.setTravelDistance(withDistance: distance)
-    }
-    
     // MARK: Set Data
         
     func setRouteData(){
@@ -120,7 +114,8 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
         guard let departureTime = route?.departureTime,
               let arrivalTime = route?.arrivalTime,
               let isWalkingRoute = route?.isWalkingRoute(),
-              let routeSummary = route?.routeSummary
+              let directions = route?.directions,
+              let travelDistance = route?.travelDistance
               else{
                 print("RouteTableViewCell route object does not have the data needed to fill in the cell")
                 return
@@ -129,8 +124,7 @@ class RouteTableViewCell: UITableViewCell, TravelDistanceDelegate {
         setTravelTime(withDepartureTime: departureTime, withArrivalTime: arrivalTime)
         setDepartureTime(withTime: departureTime, isWalkingRoute: isWalkingRoute)
         
-        routeDiagram.setRouteData(fromRouteSummary: routeSummary, fromTravelDistance: route?.directions.first?.travelDistanceInMiles)
-        
+        routeDiagram.setRouteData(fromDirections: directions, fromTravelDistance: travelDistance)
     }
     
     private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
