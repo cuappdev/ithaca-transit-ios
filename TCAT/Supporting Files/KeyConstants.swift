@@ -35,4 +35,5 @@ struct Key {
     struct Favorites {
         static let first = "Add Your First Favorite!"
     }
+    
 }

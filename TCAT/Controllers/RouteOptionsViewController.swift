@@ -311,27 +311,31 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     self.refreshControl.endRefreshing()
                 }
                 
-                let alamofireRequest = request.perform(withSuccess: { (routeJson) in
-                    let rawRoutes = Route.getRoutes(from: routeJson,
-                                                    fromDescription: self.searchFrom?.name,
-                                                    toDescription: self.searchTo?.name)
-                    self.routes = self.processRoutes(rawRoutes)
+                func requestDidFinish(with error: NSError? = nil) {
+                    if let err = error {
+                        print("RouteOptionVC searchForRoutes Error: \(err)")
+                        print("Error Description:", err.userInfo["description"] as! String)
+                    }
                     self.currentlySearching = false
                     self.routeResults.reloadData()
-                },
+                }
                 
-                failure: { (error) in
-                    print("RouteOptionVC searchForRoutes Error: \(error)")
+                let alamofireRequest = request.perform(withSuccess: { (routeJSON) in
+                    Route.getRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (jsonRoutes,error) in
+                        self.routes = self.processRoutes(jsonRoutes)
+                        requestDidFinish(with: error)
+                    })
+                }, failure: { (error) in
                     self.routes = []
-                    self.currentlySearching = false
-                    self.routeResults.reloadData()
+                    requestDidFinish(with: error as NSError)
                 })
                 
                 let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
                                                             requestUrl: alamofireRequest?.request?.url?.absoluteString,
                                                             stopType: nil).toEvent()
-                RegisterSession.shared?.logEvent(event: event)
+                let _ = RegisterSession.shared?.logEvent(event: event)
                 Answers.destinationSearched(destination: self.searchTo?.name ?? "", stopType: nil, requestUrl: String(describing: alamofireRequest?.request?.url))
+                
             }
 
             }

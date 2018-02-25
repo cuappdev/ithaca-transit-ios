@@ -125,8 +125,8 @@ class AllBusLocations: JSONDecodable {
 
 class Network {
 
-    // Use our own IP Address
-    static let ipAddress = "10.132.7.128"
+    // Use your own IP Address (changes!)
+    static let ipAddress = "10.132.2.59"
     
     static let source = "\(ipAddress):3000" // Old Backend Endpoint: "34.235.128.17"
     static let tron = TRON(baseURL: "http://\(source)/")

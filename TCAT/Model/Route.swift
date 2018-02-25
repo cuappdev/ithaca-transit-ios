@@ -126,13 +126,24 @@ class Route: NSObject, JSONDecodable {
     
     // MARK: Parse JSON
     
-    static func getRoutes(from json: JSON, fromDescription: String? = nil, toDescription: String? = nil) -> [Route] {
-        return json.arrayValue.map {
-            var augmentedJSON = $0
-            augmentedJSON["startName"].string = fromDescription ?? "Current Location"
-            augmentedJSON["endName"].string = toDescription ?? "your destination"
-            return try! Route(json: augmentedJSON)
+    /// Handle route calculation data request.
+    static func getRoutes(in json: JSON, from: String?, to: String?,
+                          _ completion: @escaping (_ routes: [Route], _ error: NSError?) -> Void) {
+        
+        if json["success"].boolValue {
+            let routes: [Route] = json.arrayValue.map {
+                var augmentedJSON = $0
+                augmentedJSON["startName"].string = from ?? "Current Location"
+                augmentedJSON["endName"].string = to ?? "your destination"
+                return try! Route(json: augmentedJSON)
+            }
+            completion(routes, nil)
+        } else {
+            let userInfo = ["description" : json["error"].stringValue]
+            let error = NSError(domain: "Route Calculation Failure", code: 400, userInfo: userInfo)
+            completion([], error)
         }
+        
     }
     
     private func getRouteSummary(from directions: [Direction]) -> [RouteSummaryObject] {

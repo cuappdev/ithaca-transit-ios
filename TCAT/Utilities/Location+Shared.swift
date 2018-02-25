@@ -46,7 +46,6 @@ func calculateMidpoint(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D)
     let averageLat = (to.latitude + from.latitude) / 2
     let averageLong = (to.longitude + from.longitude) / 2
     let midpoint = CLLocationCoordinate2D(latitude: averageLat, longitude: averageLong)
-    print("midpoint:", midpoint)
     return midpoint
     
 }
@@ -65,51 +64,6 @@ func pointWithinLocation(point: CLLocationCoordinate2D, location: CLLocationCoor
     let latitudeInRange = minLatitude <= point.latitude && point.latitude <= maxLatitude
     let longitudeInRange = minLongitude <= point.longitude && point.longitude <= maxLongitude
     return latitudeInRange && longitudeInRange
-    
-}
-
-/// Return bearing from one location to another
-func calculateBearing(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Bearing {
-    
-    let latDelta = to.latitude - from.latitude
-    let longDelta = to.longitude - from.longitude
-    
-    // North / South dominant
-    if latDelta >= longDelta {
-        return latDelta > 0  ? .north : .south
-    }
-        
-        // East / West dominant
-    else {
-        return longDelta > 0 ? .east : .west
-    }
-    
-}
-
-/// Return the most common bearing between all points
-func generalBearing(of points: [CLLocationCoordinate2D]) -> Bearing {
-    
-    var topBearing: Bearing = .north
-    
-    var bearings: [Bearing : Int] = [
-        .north : 0,
-        .east : 0,
-        .south : 0,
-        .west : 0
-    ]
-    
-    for i in 0..<points.count - 1 {
-        
-        let instance = calculateBearing(from: points[i], to: points[i+1])
-        bearings[instance]! += 1
-        
-        if bearings[instance]! > bearings[topBearing]! {
-            topBearing = instance
-        }
-        
-    }
-    
-    return topBearing
     
 }
 

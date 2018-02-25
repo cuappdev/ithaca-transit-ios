@@ -212,7 +212,7 @@ class Direction: NSObject, NSCopying {
     var travelDistanceInMiles: Double {
         let numberOfMetersInMile = 1609.34
         var conversion = travelDistance / numberOfMetersInMile
-        let numberOfPlaces = travelDistance >= 10 ? 0 : 1
+        let numberOfPlaces = conversion >= 10 ? 0 : 1
         return conversion.roundToPlaces(places: numberOfPlaces)
     }
 
