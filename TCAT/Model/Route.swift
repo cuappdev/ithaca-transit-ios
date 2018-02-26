@@ -131,13 +131,9 @@ class Route: NSObject, JSONDecodable {
     // MARK: Process raw routes
     
     func isWalkingRoute() -> Bool {
-        for direction in directions {
-            if direction.type != .walk {
-                return false
-            }
-        }
+        let isWalkingRoute = directions.reduce(true) { $0 && $1.type == .walk }
         
-        return true
+        return isWalkingRoute
     }
     
     /** Calculate travel distance from location passed in to first route summary object and updates travel distance of route
