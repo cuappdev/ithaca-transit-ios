@@ -125,7 +125,7 @@ class RouteDiagram: UIView {
     }
     
     private func getStopDot(fromDirections directions: [Direction], atIndex index: Int) -> Circle {
-        let directionType = directions[index].type
+
         var pin: Circle
         let destinationDot = directions.count - 1
 
