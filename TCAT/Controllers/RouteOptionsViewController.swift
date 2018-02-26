@@ -312,10 +312,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 }
                 
                 let alamofireRequest = request.perform(withSuccess: { (routeJson) in
-                    let rawRoutes = Route.getRoutes(from: routeJson,
-                                                    fromDescription: self.searchFrom?.name,
-                                                    toDescription: self.searchTo?.name)
-                    self.routes = self.processRoutes(rawRoutes)
+                    self.routes = Route.getRoutes(from: routeJson,
+                                                  fromDescription: self.searchFrom?.name,
+                                                  toDescription: self.searchTo?.name)
                     self.currentlySearching = false
                     self.routeResults.reloadData()
                 },
@@ -338,33 +337,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         }
 
-    }
-
-    private func processRoutes(_ routes: [Route]) -> [Route]{
-        // Update starting & ending place name & pin
-        if let startDestination = searchFrom {
-            for route in routes {
-                route.updateStartingDestination(startDestination)
-            }
-        }
-        if let endDestination = searchTo {
-            for route in routes{
-                route.updateEndingDestination(endDestination)
-            }
-        }
-
-        // Calculate walking distance
-        let start = searchFrom as! CoordinateAcceptor
-        let visitor = CoordinateVisitor()
-        start.accept(visitor: visitor) { startCoord in
-            if let startLocation = startCoord {
-                for route in routes {
-                    route.calculateTravelDistance(fromLocation: startLocation)
-                }
-            }
-        }
-
-        return routes
     }
 
     // MARK: Location Manager Delegate
@@ -681,7 +653,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let numOfStops = routes[indexPath.row].routeSummary.count
+        let directions = routes[indexPath.row].directions
+        // skip first walking direction
+        let numOfStops = directions.first?.type == .walk ? directions.count - 1 : directions.count
         let rowHeight = RouteTableViewCell().heightForCell(withNumOfStops: numOfStops)
 
         return rowHeight

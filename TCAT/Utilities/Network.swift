@@ -126,9 +126,8 @@ class AllBusLocations: JSONDecodable {
 class Network {
 
     // Use our own IP Address
-    static let ipAddress = "10.132.7.128"
-    
-    static let source = "\(ipAddress):3000" // Old Backend Endpoint: "34.235.128.17"
+    static let ipAddress = "10.132.6.225"
+    static let source = "\(ipAddress):\(3000)" // Old Backend Endpoint: "34.235.128.17"
     static let tron = TRON(baseURL: "http://\(source)/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
@@ -158,17 +157,13 @@ class Network {
                 "start"  :   "\(startCoords?.latitude ??? ""),\(startCoords?.longitude ??? "")",
                 "end"    :   "\(endCoords?.latitude ??? ""),\(endCoords?.longitude ??? "")",
             ]
+            request.parameters["time"] = time.timeIntervalSince1970
+            request.parameters["arriveBy"] = type == .arriveBy
 
-            if type == .arriveBy {
-                request.parameters["depart_time"] = time.timeIntervalSince1970
-            } else {
-                request.parameters["time"] = time.timeIntervalSince1970
-            }
-            
             request.method = .get
 
             // for debugging
-//            print("Request URL: http://\(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
+            print("Request URL: http://\(source)/\(request.path)?arriveBy=\(request.parameters["arriveBy"]!)&end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
             
             callback(request)
         }
