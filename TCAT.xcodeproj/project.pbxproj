@@ -69,7 +69,7 @@
 		DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C9C1E8857FC00A99C35 /* Waypoint.swift */; };
 		DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49CA11E88584B00A99C35 /* DetailIconView.swift */; };
 		DDBCD5E71E989E5800014641 /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBCD5E61E989E5800014641 /* Circle.swift */; };
-		DDBFEAA01E787008002BBD96 /* DatepickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9E1E787008002BBD96 /* DatepickerView.swift */; };
+		DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */; };
 		DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */; };
 		DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */; };
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
@@ -172,7 +172,7 @@
 		DDB49C9C1E8857FC00A99C35 /* Waypoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Waypoint.swift; path = Model/Waypoint.swift; sourceTree = "<group>"; };
 		DDB49CA11E88584B00A99C35 /* DetailIconView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DetailIconView.swift; path = Views/DetailIconView.swift; sourceTree = "<group>"; };
 		DDBCD5E61E989E5800014641 /* Circle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Circle.swift; path = Views/Circle.swift; sourceTree = "<group>"; };
-		DDBFEA9E1E787008002BBD96 /* DatepickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatepickerView.swift; path = Views/DatepickerView.swift; sourceTree = "<group>"; };
+		DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatePickerView.swift; path = Views/DatePickerView.swift; sourceTree = "<group>"; };
 		DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteSelectionView.swift; path = Views/RouteSelectionView.swift; sourceTree = "<group>"; };
 		DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationTableViewCell.swift; path = Cells/LocationTableViewCell.swift; sourceTree = "<group>"; };
 		DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteTableViewCell.swift; path = Cells/RouteTableViewCell.swift; sourceTree = "<group>"; };
@@ -305,9 +305,9 @@
 		50A19BA81E4BC5BC00AD6768 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */,
 				DD99E2F31F6DB0410073E8F7 /* FontConstants.swift */,
 				449A7C841D80D0E80019300C /* Info.plist */,
+				DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -315,8 +315,8 @@
 		DD2F988E1E50D8660005F6BC /* Base.lproj */ = {
 			isa = PBXGroup;
 			children = (
-				449A7C7C1D80D0E80019300C /* Main.storyboard */,
 				449A7C811D80D0E80019300C /* LaunchScreen.storyboard */,
+				449A7C7C1D80D0E80019300C /* Main.storyboard */,
 			);
 			name = Base.lproj;
 			sourceTree = "<group>";
@@ -324,14 +324,14 @@
 		DD2F988F1E50D89C0005F6BC /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */,
-				DDB49C961E8857E000A99C35 /* SmallDetailTableViewCell.swift */,
-				DDB49C971E8857E000A99C35 /* BusStopTableViewCell.swift */,
 				503EC37A1E969ACD00B3D4D4 /* BusStopCell.swift */,
-				503EC37C1E969ADF00B3D4D4 /* SearchResultsCell.swift */,
+				DDB49C971E8857E000A99C35 /* BusStopTableViewCell.swift */,
+				5006F7B71EBFC7DE005ACAF2 /* CornellDestinationCell.swift */,
+				DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */,
 				DDC83CA21E52B09D00D4EDDF /* LocationTableViewCell.swift */,
 				DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */,
-				5006F7B71EBFC7DE005ACAF2 /* CornellDestinationCell.swift */,
+				503EC37C1E969ADF00B3D4D4 /* SearchResultsCell.swift */,
+				DDB49C961E8857E000A99C35 /* SmallDetailTableViewCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -356,10 +356,10 @@
 			isa = PBXGroup;
 			children = (
 				DDDBF0542006E3ED003348AF /* config.json */,
+				E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */,
 				DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */,
 				DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */,
 				DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */,
-				E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -367,15 +367,15 @@
 		DD2F98941E50D8DC0005F6BC /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				DD3D9C201F94297100B164D4 /* Reachability.swift */,
-				DD87F2091E878CB5000C244B /* Loader.swift */,
-				503EC38C1E96B85B00B3D4D4 /* Network.swift */,
-				5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */,
-				DD5D233B1E6367A100F8DECE /* Time.swift */,
-				D183AA011E6CB092006A9A15 /* Extensions.swift */,
+				CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */,
 				DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */,
 				E3FCA3C81FAA67250069BD0F /* Crashlytics.swift */,
-				CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */,
+				D183AA011E6CB092006A9A15 /* Extensions.swift */,
+				DD87F2091E878CB5000C244B /* Loader.swift */,
+				503EC38C1E96B85B00B3D4D4 /* Network.swift */,
+				DD3D9C201F94297100B164D4 /* Reachability.swift */,
+				5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */,
+				DD5D233B1E6367A100F8DECE /* Time.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -383,21 +383,21 @@
 		DD2F98951E50D8E60005F6BC /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				DC2E96451FC21B29009955C6 /* HeaderView.swift */,
-				DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */,
-				BF0002211FB37D0A00773109 /* LoadingIndicator.swift */,
+				DD16B8E41E7046390089B7B2 /* BusIcon.swift */,
+				BF1209FA1F7759C200A7C930 /* BusLocationView.swift */,
 				DDBCD5E61E989E5800014641 /* Circle.swift */,
 				DDD33DEE1EC2960400BC6454 /* CircleLine.swift */,
+				DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */,
 				DDB49CA11E88584B00A99C35 /* DetailIconView.swift */,
-				502D8F5E1E55161D005280F1 /* SearchBarView.swift */,
-				DDBFEA9E1E787008002BBD96 /* DatepickerView.swift */,
-				DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */,
-				DD16B8E41E7046390089B7B2 /* BusIcon.swift */,
+				DC2E96451FC21B29009955C6 /* HeaderView.swift */,
 				BF101FE11F93D9BB00C58769 /* LiveIndicator.swift */,
-				BFF41EB1204365E800E0696B /* SummaryView.swift */,
-				BF1209FA1F7759C200A7C930 /* BusLocationView.swift */,
+				BF0002211FB37D0A00773109 /* LoadingIndicator.swift */,
 				DDA134441EC6A8CB00460B18 /* RouteLine.swift */,
 				DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */,
+				DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */,
+				DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */,
+				502D8F5E1E55161D005280F1 /* SearchBarView.swift */,
+				BFF41EB1204365E800E0696B /* SummaryView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -405,18 +405,18 @@
 		DD47EA501E50D77D009C68EB /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */,
+				DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */,
 				BF6095261FD7091B0013E538 /* CustomNavigationController.swift */,
+				DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */,
 				50A19BAD1E4C214000AD6768 /* HomeViewController.swift */,
-				503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */,
+				E337970C1FC1606D00BCB28F /* InformationViewController.swift */,
+				BF662F331F731DD200B21109 /* OnboardPageViewController.swift */,
 				BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */,
 				DDB49C921E8857D000A99C35 /* RouteDetail+ContentViewController.swift */,
 				BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */,
-				E337970C1FC1606D00BCB28F /* InformationViewController.swift */,
-				BF662F331F731DD200B21109 /* OnboardPageViewController.swift */,
-				BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */,
 				DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */,
-				DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */,
-				DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */,
+				503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -809,7 +809,7 @@
 				BF6095271FD7091B0013E538 /* CustomNavigationController.swift in Sources */,
 				BF5CBAD11FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift in Sources */,
 				DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */,
-				DDBFEAA01E787008002BBD96 /* DatepickerView.swift in Sources */,
+				DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */,
 				DD36A6FF1F66378C00E4789E /* BusStop.swift in Sources */,
 				DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */,
 				DD5D233C1E6367A100F8DECE /* Time.swift in Sources */,

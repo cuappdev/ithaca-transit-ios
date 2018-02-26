@@ -140,7 +140,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         // set mapView with settings
         let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: defaultZoom)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
-        mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: drawerDisplayController?.summaryViewHeight ?? 0, right: 0)
+        mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: drawerDisplayController?.summaryView.frame.height ?? 0, right: 0)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
         mapView.settings.compassButton = true

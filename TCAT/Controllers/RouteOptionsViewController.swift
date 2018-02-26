@@ -42,7 +42,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: View vars
 
     var routeSelection: RouteSelectionView!
-    var datePickerView: DatepickerView!
+    var datePickerView: DatePickerView!
     var datePickerOverlay: UIView!
     var routeResults: UITableView!
     var refreshControl = UIRefreshControl()
@@ -392,7 +392,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     private func setupDatepickerView(){
-        datePickerView = DatepickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 254))
+        datePickerView = DatePickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 254))
 
         datePickerView.positionSubviews()
         datePickerView.addSubviews()
