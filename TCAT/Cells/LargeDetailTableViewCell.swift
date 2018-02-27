@@ -106,6 +106,10 @@ class LargeDetailTableViewCell: UITableViewCell {
             chevron.center.y = cellHeight / 2
         }
         
+        if direction.stops.isEmpty {
+            chevron.isHidden = true
+        }
+        
     }
     
     /** Abstracted formatting of content for titleLabel */
@@ -144,7 +148,11 @@ class LargeDetailTableViewCell: UITableViewCell {
     
     /** Abstracted formatting of content for detailLabel. Needs titleLabel */
     func formatDetailLabel(_ label: UILabel, _ titleLabel: UILabel) -> UILabel {
-        label.text = "\(self.direction.stops.count) stops"
+        if direction.stops.isEmpty {
+            label.text = "Get off at next stop"
+        } else {
+            label.text = "\(direction.stops.count) stop\(direction.stops.count == 1 ? "" : "s")"
+        }
         label.frame.origin.y = titleLabel.frame.maxY + labelSpacing
         label.sizeToFit()
         return label

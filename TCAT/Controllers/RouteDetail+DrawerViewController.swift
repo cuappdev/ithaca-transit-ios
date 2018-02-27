@@ -22,7 +22,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     
     // MARK: Variables
     
-    var summaryView: SummaryView!
+    var summaryView = SummaryView()
     var tableView: UITableView!
     var safeAreaCover: UIView? = nil
     
@@ -73,11 +73,12 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         
         // Create summaryView
         
-        summaryView = SummaryView(route: route)
+        print("summaryViewHeight before:", summaryView.frame.height)
+        summaryView.route = route
+        print("summaryViewHeight after:", summaryView.frame.height)
         let summaryTapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
         summaryTapGesture.delegate = self
         summaryView.addGestureRecognizer(summaryTapGesture)
-        view.addSubview(summaryView)
 
         // Create Detail Table View
         tableView = UITableView()
@@ -101,7 +102,9 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         tableView.tableFooterView?.addGestureRecognizer(tapGesture)
         // tableView.isScrollEnabled = false
         
+        // make sure summary is above table
         view.addSubview(tableView)
+        view.addSubview(summaryView)
 
     }
     

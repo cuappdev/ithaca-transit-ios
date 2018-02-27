@@ -10,13 +10,26 @@ import UIKit
 
 class SummaryView: UIView {
     
-    /// Height of summary view
-    static var height: CGFloat = 80
-    
-    fileprivate var main = UIScreen.main.bounds
+    /// The route being used for the summary view
+    var route: Route! {
+        didSet { setRoute() }
+    }
     
     /// The puller tab used to indicate dragability
     fileprivate var tab = UIView(frame: CGRect(x: 0, y: 6, width: 32, height: 4))
+    
+    /// Three times the height of the tab view (spacing + tabHeight + spacing)
+    fileprivate var tabInsetHeight: CGFloat = 12
+    
+    /// The usable height of the summaryView
+    var safeAreaHeight: CGFloat {
+        return frame.size.height - tabInsetHeight
+    }
+    
+    /// The y-coordinate center of the safe area
+    var safeAreaCenterY: CGFloat {
+        return tabInsetHeight + safeAreaHeight / 2
+    }
     
     /// The primary summary label
     fileprivate var mainLabel = UILabel()
@@ -24,37 +37,82 @@ class SummaryView: UIView {
     /// The secondary label (Trip Duration)
     fileprivate var secondaryLabel = UILabel()
     
+    /// Whether route icons have been set or not
+    fileprivate var didSetRoutes: Bool = false
+    
+    /// The device's bounds
+    fileprivate var main = UIScreen.main.bounds
+    /// Constant for label padding
+    fileprivate let textLabelPadding: CGFloat = 16
+    /// Identifier for bus route icons
+    fileprivate let busIconTag: Int = 14850
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    init(route: Route) {
+    init(route: Route? = nil) {
         
         // View Initialization
-        super.init(frame: CGRect(x: 0, y: 0, width: main.width, height: SummaryView.height))
+        let height: CGFloat = 80 + tabInsetHeight
+        super.init(frame: CGRect(x: 0, y: 0, width: main.width, height: height))
         backgroundColor = .summaryBackgroundColor
         roundCorners(corners: [.topLeft, .topRight], radius: 16)
 
         // Create puller tab
-        let tabHeight = (tab.frame.origin.y + tab.frame.height) / 2
         tab.center.x = center.x
         tab.backgroundColor = .mediumGrayColor
         tab.layer.cornerRadius = tab.frame.height / 2
         addSubview(tab)
         
+        // Place and format top summary label
+        mainLabel.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.regular)
+        mainLabel.textColor = .primaryTextColor
+        mainLabel.numberOfLines = 1
+        mainLabel.allowsDefaultTighteningForTruncation = true
+        mainLabel.lineBreakMode = .byTruncatingTail
+        addSubview(mainLabel)
+        
+        // Place and format secondary label
+        secondaryLabel.font = .systemFont(ofSize: 12, weight: UIFont.Weight.regular)
+        secondaryLabel.textColor = .mediumGrayColor
+        addSubview(secondaryLabel)
+        
+        if route != nil {
+            setRoute()
+        }
+            
+    }
+    
+    /// Change the height of the view
+    func setHeight(to newHeight: CGFloat) {
+        frame.size.height = newHeight
+        setRoute() // go back and adjust positions based on change
+    }
+    
+    /// Update summary card data and position accordingly
+    func setRoute() {
+        
+        /// Constant for spacing for various elements
+        let spacing: CGFloat = 12
+        
         /// The edge of the next bus icon
-        var icon_maxY: CGFloat = 24
+        var iconMaximumX: CGFloat = 24
         
         /// True if first icon to be placed
         var first = true
         
         /// The center to use for the next bus icon
-        var iconCenter = CGPoint(x: icon_maxY, y: (frame.height / 2) + tabHeight)
+        var iconCenter = CGPoint(x: iconMaximumX, y: safeAreaCenterY)
+        
+        // MARK: Route Icons
+        
+        subviews.filter { $0.tag == busIconTag }.removeViewsFromSuperview()
         
         // Create and place bus icons
         let busRoutes: [Int] = route.directions.flatMap { return $0.type == .depart ? $0.routeNumber : nil }
-        for route in busRoutes {
-
+        for (index, route) in busRoutes.enumerated() {
+            
             let busType: BusIconType = busRoutes.count > 1 ? .directionSmall : .directionLarge
             let busIcon = BusIcon(type: busType, number: route)
             
@@ -63,42 +121,54 @@ class SummaryView: UIView {
                 first = false
             }
             
+            busIcon.tag = busIconTag
             busIcon.center = iconCenter
             addSubview(busIcon)
-            iconCenter.x += busIcon.frame.width + 12
-            icon_maxY += busIcon.frame.width + 12
+            iconCenter.x += busIcon.frame.width + spacing
+            iconMaximumX += busIcon.frame.width + spacing
+            
+            // Don't show more than 2 buses
+            if index == 1 { break }
             
         }
         
-        // Place and format top summary label
-        let textLabelPadding: CGFloat = 16
-        var mainLabelText: String = ""
+        // MARK: Main Label Positioning
+
+        mainLabel.frame.origin.x = iconMaximumX + textLabelPadding
+        mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
         
         if let departDirection = (route.directions.filter { $0.type == .depart }).first {
-            mainLabelText = "Depart at \(departDirection.startTimeDescription) from \(departDirection.name)"
+            mainLabel.text = "Depart at \(departDirection.startTimeDescription) from \(departDirection.name)"
         } else {
-            mainLabelText = route.directions.first?.locationNameDescription ?? "Route Directions"
+            mainLabel.text = route.directions.first?.locationNameDescription ?? "Route Directions"
         }
-
-        mainLabel.text = mainLabelText
-        mainLabel.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.regular)
-        mainLabel.textColor = .primaryTextColor
-        mainLabel.sizeToFit()
-        mainLabel.frame.origin.x = icon_maxY + textLabelPadding
-        mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
-        mainLabel.center.y = (bounds.height / 2) + tabHeight - (mainLabel.frame.height / 2)
-        mainLabel.allowsDefaultTighteningForTruncation = true
-        mainLabel.lineBreakMode = .byTruncatingTail
-        addSubview(mainLabel)
         
-        // Place and format secondary label
+        // Calculate and adjust label based on number of lines
+        let numOfLines = mainLabel.numberOfLines()
+        // let difference = numOfLines - mainLabel.numberOfLines
+        if numOfLines != mainLabel.numberOfLines {
+            // let delta = CGFloat(difference) * mainLabel.font.lineHeight
+            mainLabel.numberOfLines = numOfLines
+            setHeight(to: frame.size.height)
+        }
+        
+        // Reset main label positioning
+        mainLabel.sizeToFit()
+        mainLabel.frame.origin.x = iconMaximumX + textLabelPadding
+        mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
+        
+        // MARK: Secondary Label
+        
         secondaryLabel.text = "Trip Duration: \(route.totalDuration) minute\(route.totalDuration == 1 ? "" : "s")"
-        secondaryLabel.font = .systemFont(ofSize: 12, weight: UIFont.Weight.regular)
-        secondaryLabel.textColor = .mediumGrayColor
         secondaryLabel.sizeToFit()
-        secondaryLabel.frame.origin.x = icon_maxY + textLabelPadding
-        secondaryLabel.center.y = (bounds.height / 2) + tabHeight + (secondaryLabel.frame.height / 2)
-        addSubview(secondaryLabel)
+        secondaryLabel.frame.origin.x = iconMaximumX + textLabelPadding
+        
+        // Adjust labels vertically
+        let labelSpacing = spacing / 3
+        let totalLabelHeight = mainLabel.frame.size.height + secondaryLabel.frame.size.height + labelSpacing
+        let maximumY = safeAreaCenterY + (totalLabelHeight / 2)
+        secondaryLabel.frame.origin.y = maximumY - secondaryLabel.frame.height
+        mainLabel.frame.origin.y = secondaryLabel.frame.origin.y - mainLabel.frame.height - (labelSpacing)
         
     }
     

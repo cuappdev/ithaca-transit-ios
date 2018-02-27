@@ -6,8 +6,8 @@ target 'TCAT' do
   use_frameworks!
 
   # Pods for TCAT
-  pod 'GoogleMaps', '~> 2.2'
-  pod 'GooglePlaces', '~> 2.2'
+  pod 'GoogleMaps', '~> 2.6'
+  pod 'GooglePlaces', '~> 2.6'
   pod 'SwiftyJSON', '~> 4.0.0'
   pod 'Alamofire', '~> 4.4'
   pod 'TRON', '~> 4.0.0', :inhibit_warnings => true

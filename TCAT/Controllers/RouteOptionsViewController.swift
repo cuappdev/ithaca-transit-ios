@@ -312,10 +312,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 }
                 
                 func requestDidFinish(with error: NSError? = nil) {
-                    if let err = error {
-                        print("RouteOptionVC searchForRoutes Error: \(err)")
-                        print("Error Description:", err.userInfo["description"] as! String)
-                    }
+//                    if let err = error {
+//                        print("RouteOptionVC searchForRoutes Error: \(err)")
+//                        print("Error Description:", err.userInfo["description"] as? String)
+//                    }
                     self.currentlySearching = false
                     self.routeResults.reloadData()
                 }
@@ -326,6 +326,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                         requestDidFinish(with: error)
                     })
                 }, failure: { (error) in
+                    print("Request Failure:", error)
                     self.routes = []
                     requestDidFinish(with: error as NSError)
                 })

@@ -63,6 +63,17 @@ extension UIView {
     }
 }
 
+extension UILabel {
+    /// Returns the number of lines the UILabel will take based on its width.
+    func numberOfLines() -> Int {
+        let maxSize = CGSize(width: frame.size.width, height: CGFloat(Float.infinity))
+        let charSize = font.lineHeight
+        let labelText = (text ?? "") as NSString
+        let textSize = labelText.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, attributes: [.font: font], context: nil)
+        return Int(textSize.height/charSize)
+    }
+}
+
 extension UIViewController {
     var isModal: Bool {
         if let index = navigationController?.viewControllers.index(of: self), index > 0 {

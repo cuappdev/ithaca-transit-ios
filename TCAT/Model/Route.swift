@@ -141,7 +141,6 @@ class Route: NSObject, JSONDecodable {
                 var augmentedJSON = $0
                 augmentedJSON["startName"].string = from ?? "Current Location"
                 augmentedJSON["endName"].string = to ?? "your destination"
-                // print("JSON:", augmentedJSON)
                 return try! Route(json: augmentedJSON)
             }
             completion(routes, nil)

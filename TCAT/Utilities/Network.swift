@@ -14,7 +14,7 @@ import GooglePlaces
 class Network {
     
     // Use your own IP Address (changes!)
-    static let ipAddress = "10.132.2.59"
+    static let ipAddress = "192.168.1.8"
     
     static let source = "\(ipAddress):3000" // Old Backend Endpoint: "34.235.128.17"
     static let tron = TRON(baseURL: "http://\(source)/")
