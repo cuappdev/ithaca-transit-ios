@@ -320,7 +320,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     self.routeResults.reloadData()
                 }
                 
-                let alamofireRequest = request.perform(withSuccess: { (routeJSON) in
+                if let alamofireRequest = request?.perform(withSuccess: { (routeJSON) in
                     Route.getRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes,error) in
                         self.routes = parsedRoutes
                         requestDidFinish(with: error)
@@ -331,11 +331,18 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     requestDidFinish(with: error as NSError)
                 })
                 
-                let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
-                                                            requestUrl: alamofireRequest?.request?.url?.absoluteString,
-                                                            stopType: nil).toEvent()
-                let _ = RegisterSession.shared?.logEvent(event: event)
-                Answers.destinationSearched(destination: self.searchTo?.name ?? "", stopType: nil, requestUrl: String(describing: alamofireRequest?.request?.url))
+                { // Handle non-null request
+                    let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
+                                                                requestUrl: alamofireRequest.request?.url?.absoluteString,
+                                                                stopType: nil).toEvent()
+                    let _ = RegisterSession.shared?.logEvent(event: event)
+                    Answers.destinationSearched(destination: self.searchTo?.name ?? "", stopType: nil, requestUrl: String(describing: alamofireRequest.request?.url))
+                }
+                
+                else { // Catch error of coordinates not being found
+                    let error = NSError(domain: "Null Coordinates", code: 400, userInfo: nil)
+                    requestDidFinish(with: error)
+                }
                 
             }
 

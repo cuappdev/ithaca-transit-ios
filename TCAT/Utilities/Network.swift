@@ -27,38 +27,42 @@ class Network {
         return request
     }
     
-    class func getStartEndCoords(start: CoordinateAcceptor, end: CoordinateAcceptor, callback:@escaping ((CLLocationCoordinate2D?, CLLocationCoordinate2D?) -> Void)) {
+    class func getParameterData(start: CoordinateAcceptor, end: CoordinateAcceptor,
+                                 callback: @escaping ((_ start: CLLocationCoordinate2D?, _ end: CLLocationCoordinate2D?,
+                                    _ isStartBusStop: Bool, _ isEndBusStop: Bool) -> Void)) {
+        
         let visitor = CoordinateVisitor()
         start.accept(visitor: visitor) { startCoord in
             end.accept(visitor: visitor) { endCoord in
-                
-                callback(startCoord, endCoord)
+                callback(startCoord, endCoord, start is BusStop, end is BusStop)
             }
         }
     }
     
-    class func getRoutes(start: CoordinateAcceptor, end: CoordinateAcceptor, time: Date, type: SearchType, callback:@escaping ((APIRequest<JSON, Error>) -> Void)) {
-        getStartEndCoords(start: start, end: end) { startCoords, endCoords in
+    class func getRoutes(start: CoordinateAcceptor, end: CoordinateAcceptor, time: Date, type: SearchType,
+                         callback: @escaping ((APIRequest<JSON, Error>?) -> Void)) {
+        
+        getParameterData(start: start, end: end) { startCoords, endCoords, isStartBusStop, isEndBusStop in
+            
+            guard let startCoords = startCoords, let endCoords = endCoords
+                else { callback(nil); return }
             
             let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
-            
+            request.method = .get
             request.parameters = [
-                "start"  :   "\(startCoords?.latitude ??? ""),\(startCoords?.longitude ??? "")",
-                "end"    :   "\(endCoords?.latitude ??? ""),\(endCoords?.longitude ??? "")",
+                "arriveBy"          :   type == .arriveBy,
+                "end"               :   "\(endCoords.latitude),\(endCoords.longitude)",
+                "start"             :   "\(startCoords.latitude),\(startCoords.longitude)",
+                "isEndBusStop"      :   isEndBusStop,
+                "isStartBusStop"    :   isStartBusStop,
+                "time"              :   time.timeIntervalSince1970
             ]
             
-            if type == .arriveBy {
-                request.parameters["depart_time"] = time.timeIntervalSince1970
-            } else {
-                request.parameters["time"] = time.timeIntervalSince1970
-            }
-            
-            request.method = .get
-            
             // for debugging
-            //            print("Request URL: http://\(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
+            //  print("Request URL: http://\(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
             
             callback(request)
+            
         }
     }
     
