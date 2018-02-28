@@ -29,6 +29,15 @@ class DetailIconView: UIView {
     
     init(height: CGFloat, type: IconType, time: String, firstStep: Bool, lastStep: Bool) {
         
+//        print("""
+//            [DetailView] Init
+//                 height: \(height)
+//                   type: \(type),
+//                   time: \(time),
+//              firstStep: \(firstStep),
+//               lastStep: \(lastStep)
+//        """)
+        
         self.type = type
         self.time = time
         let frame = CGRect(x: 0, y: 0, width: 114, height: height)

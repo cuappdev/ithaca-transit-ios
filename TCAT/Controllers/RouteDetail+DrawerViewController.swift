@@ -120,7 +120,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         }
         
         // Debugging
-        tableView.tableFooterView?.backgroundColor = .summaryBackgroundColor
+        // tableView.tableFooterView?.backgroundColor = .summaryBackgroundColor
 
     }
     

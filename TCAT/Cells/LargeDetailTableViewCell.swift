@@ -107,7 +107,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         }
         
         if direction.stops.isEmpty {
-            chevron.isHidden = true
+            chevron.alpha = 0 // .hidden attribute used for animation
         }
         
     }
