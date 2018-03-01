@@ -99,10 +99,8 @@ class BusLocationView: UIView {
         let newDegrees = Double(degrees) - currentBearing
         let currentAngle: CGFloat = CGFloat(-1) * CGFloat(degreesToRadians(newDegrees))
         
-        UIView.animate(withDuration: 0.2) {
-            self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
-            self.currentBearing = Double(degrees)
-        }
+        self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
+        self.currentBearing = Double(degrees)
         
     }
     

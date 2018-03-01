@@ -155,14 +155,13 @@ class Route: NSObject, JSONDecodable {
     // MARK: Process raw routes
     
     func isWalkingRoute() -> Bool {
-        let isWalkingRoute = directions.reduce(true) { $0 && $1.type == .walk }
-        
-        return isWalkingRoute
+        return directions.reduce(true) { $0 && $1.type == .walk }
     }
     
     /** Calculate travel distance from location passed in to first route summary object and updates travel distance of route
      */
     func calculateTravelDistance(fromDirection directions: [Direction]) {
+        
         // first route option stop is the first bus stop in the route
         guard let firstRouteOptionsStop = directions.first?.type == .walk ? directions[1] : directions.first else {
             return
@@ -176,6 +175,7 @@ class Route: NSObject, JSONDecodable {
         let distanceInMiles = distanceInMeters / numberOfMetersInMile
         
         travelDistance = distanceInMiles
+        
     }
     
     override var debugDescription: String {
@@ -192,17 +192,9 @@ class Route: NSObject, JSONDecodable {
         
     }
     
+    /// Number of directions with .depart type
     func numberOfBusRoutes() -> Int {
-        
-        var numberOfRoutes = 0
-        for direction in directions {
-            if direction.type == .depart {
-                numberOfRoutes += 1
-            }
-        }
-        
-        return numberOfRoutes
-        
+        return directions.reduce(0) { $0 + ($1.type == .depart ? 1 : 0) }
     }
     
 }

@@ -14,7 +14,7 @@ import GooglePlaces
 class Network {
     
     // Use your own IP Address (changes!)
-    static let ipAddress = "10.132.1.42"
+    static let ipAddress = "192.168.1.8"
     
     static let source = "\(ipAddress):3000" // Old Backend Endpoint: "34.235.128.17"
     static let tron = TRON(baseURL: "http://\(source)/")
@@ -128,10 +128,9 @@ class AllBusStops: JSONDecodable {
         var nonDuplicateStops = crossReference.filter {$1.count == 1}.map { (key, value) -> BusStop in
             return value.first!
         }
-        let duplicates = crossReference
-            .filter { $1.count > 1 }
+        
+        let duplicates = crossReference.filter { $1.count > 1 }
 
-        // 160 meters = 0.1 miles
         var middleGroundBusStops: [BusStop] = []
         for key in duplicates.keys {
             if let currentBusStops = duplicates[key], let first = currentBusStops.first, let second = currentBusStops.last {
@@ -190,7 +189,7 @@ class AllBusLocations: JSONDecodable {
             busLocation.opStatus = bus["opStatus"].stringValue
             busLocation.runID = bus["runID"].intValue
             busLocation.speed = bus["speed"].intValue
-            busLocation.tripID = bus["tripID"].intValue
+            busLocation.tripID = bus["tripID"].stringValue
             busLocation.vehicleID = bus["vehicleID"].intValue
 
             allLocationsArray.append(busLocation)

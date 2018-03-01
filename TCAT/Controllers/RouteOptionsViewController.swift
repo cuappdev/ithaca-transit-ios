@@ -320,17 +320,18 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     self.routeResults.reloadData()
                 }
                 
-                if let alamofireRequest = request?.perform(withSuccess: { (routeJSON) in
-                    Route.getRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes,error) in
-                        self.routes = parsedRoutes
-                        requestDidFinish(with: error)
+                if let alamofireRequest = request?.perform(
+                    withSuccess: { (routeJSON) in
+                        Route.getRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes,error) in
+                            self.routes = parsedRoutes
+                            requestDidFinish(with: error)
+                        })
+                    },
+                    failure: { (error) in
+                        print("Request Failure:", error)
+                        self.routes = []
+                        requestDidFinish(with: error as NSError)
                     })
-                }, failure: { (error) in
-                    print("Request Failure:", error)
-                    self.routes = []
-                    requestDidFinish(with: error as NSError)
-                })
-                
                 { // Handle non-null request
                     let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
                                                                 requestUrl: alamofireRequest.request?.url?.absoluteString,
@@ -440,7 +441,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         UIView.animate(withDuration: 0.5) {
             self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
-            self.datePickerOverlay.alpha = 0.59 // darken screen when pull up datepicker
+            self.datePickerOverlay.alpha = 0.6 // darken screen when pull up datepicker
         }
     }
 

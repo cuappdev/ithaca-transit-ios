@@ -12,8 +12,8 @@ import MapKit
 import SwiftyJSON
 
 /* To get string version of Bound
- * let inbound: String = Bound.inbound.rawValue  //"inbound"
- * let outbound: String = Bound.inbound.rawValue //"outbound"
+ * let inbound: String = Bound.inbound.rawValue  // "inbound"
+ * let outbound: String = Bound.inbound.rawValue // "outbound"
  */
 enum Bound: String {
     case inbound, outbound
@@ -50,14 +50,15 @@ class LocationObject: NSObject {
 
 class Direction: NSObject, NSCopying {
 
+    /// The type of the direction.
     var type: DirectionType
 
     /**
-        General description for the direction.
+     General description for the direction.
      
-        - walk: The description of the place / location the user is walking to
-        - depart: The name of the bus stop where the bus is departing from
-        - arrive: The name of the bus stop where the user gets off the bus
+     - walk: The description of the place / location the user is walking to
+     - depart: The name of the bus stop where the bus is departing from
+     - arrive: The name of the bus stop where the user gets off the bus
      */
     var name: String
 
@@ -76,14 +77,20 @@ class Direction: NSObject, NSCopying {
     /// The corresponding path of the direction
     var path: [CLLocationCoordinate2D]
     
-    /// The total distance of the direction, in meters.
+    /// The total distance of the direction, in miles.
     var travelDistance: Double = 0
 
     /// The number representing the bus route.
     var routeNumber: Int = 0
     
     /// An array of bus stop locations on the bus route, excluding the departure and arrival stop. Empty if `type != .depart`.
-    var stops: [LocationObject]
+    var stops: [LocationObject] = []
+    
+    /// Whether the user should stay on the bus for an upcoming transfer.
+    var stayOnBusTransfer: Bool = false
+    
+    /// The unique identifier for the specific bus related to the direction.
+    var tripID: String = ""
     
     // MARK: Initalizers
 
@@ -95,18 +102,24 @@ class Direction: NSObject, NSCopying {
         startTime: Date,
         endTime: Date,
         path: [CLLocationCoordinate2D],
-        routeNumber: Int = 0,
-        stops: [LocationObject] = []
+        travelDistance: Double,
+        routeNumber: Int,
+        stops: [LocationObject],
+        stayOnBusTransfer: Bool,
+        tripID: String
     ) {
         self.type = type
         self.name = name
         self.startLocation = startLocation
         self.endLocation = endLocation
         self.startTime = startTime
-        self.path = path
         self.endTime = endTime
+        self.path = path
+        self.travelDistance = travelDistance
         self.routeNumber = routeNumber
         self.stops = stops
+        self.stayOnBusTransfer = stayOnBusTransfer
+        self.tripID = tripID
     }
 
     convenience init(name: String? = nil) {
@@ -121,7 +134,12 @@ class Direction: NSObject, NSCopying {
             endLocation: blankLocation.coordinate,
             startTime: blankTime,
             endTime: blankTime,
-            path: []
+            path: [],
+            travelDistance: 0,
+            routeNumber: 0,
+            stops: [],
+            stayOnBusTransfer: false,
+            tripID: ""
         )
 
     }
@@ -147,6 +165,8 @@ class Direction: NSObject, NSCopying {
         travelDistance = json["distance"].doubleValue
         routeNumber = json["routeNumber"].int ?? 0
         stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
+        stayOnBusTransfer = json["stayOnBusTransfer"].boolValue
+        tripID = json["tripID"].stringValue
         
     }
     
@@ -158,7 +178,12 @@ class Direction: NSObject, NSCopying {
             endLocation: endLocation,
             startTime: startTime,
             endTime: endTime,
-            path: path
+            path: path,
+            travelDistance: travelDistance,
+            routeNumber: routeNumber,
+            stops: stops,
+            stayOnBusTransfer: stayOnBusTransfer,
+            tripID: tripID
         )
     }
 
@@ -201,14 +226,16 @@ class Direction: NSObject, NSCopying {
         """
     }
     
-    // MARK: Functions
+    // MARK: Complex Variables & Functions
     
-    /// Convert distance from meters to miles
-    var travelDistanceInMiles: Double {
-        let numberOfMetersInMile = 1609.34
-        var conversion = travelDistance / numberOfMetersInMile
-        let numberOfPlaces = conversion >= 10 ? 0 : 1
-        return conversion.roundToPlaces(places: numberOfPlaces)
+    /// Round distances less than 10 to 0.1, otherwise to nearest mile.
+    var travelDistanceFormatted: String {
+        switch travelDistance {
+            case let x where x >= 10:
+                return "\(Int(travelDistance)) mi"
+            default:
+                return "\(travelDistance.roundToPlaces(places: 1)) mi"
+        }
     }
 
     /// Returns readable start time (e.g. 7:49 PM)

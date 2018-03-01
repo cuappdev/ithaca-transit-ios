@@ -66,6 +66,7 @@ class RouteDiagram: UIView {
     func setRouteData(fromDirections directions: [Direction], fromTravelDistance travelDistance: Double?) {
         
         for index in directions.indices {
+            
             // skip first walking direction
             let first = 0
             if index == first && directions[index].type == .walk {

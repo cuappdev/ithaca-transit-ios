@@ -109,7 +109,7 @@ class RouteTableViewCell: UITableViewCell {
     
     // MARK: Set Data
         
-    func setRouteData(){
+    func setRouteData() {
         
         guard let departureTime = route?.departureTime,
               let arrivalTime = route?.arrivalTime,

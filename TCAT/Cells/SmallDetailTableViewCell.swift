@@ -57,10 +57,7 @@ class SmallDetailTableViewCell: UITableViewCell {
         } else {
             // Walk Direction
             var walkString = lastStep ? "Arrive at \(direction.name)" : direction.locationNameDescription
-            var distanceInMiles = direction.travelDistanceInMiles
-            let roundAmount = distanceInMiles < 10 ? 1 : 0
-            let formattedDistance = distanceInMiles.roundToPlaces(places: roundAmount)
-            if formattedDistance > 0 { walkString += " (\(formattedDistance) mi)" }
+            if direction.travelDistance > 0 { walkString += " (\(direction.travelDistanceFormatted))" }
             titleLabel.attributedText = bold(pattern: direction.name, in: walkString)
             if lastStep {
                 iconView?.changeTime(direction.endTimeDescription)

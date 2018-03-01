@@ -25,7 +25,7 @@ class BusLocation: NSObject, NSCoding {
     var routeID: String = ""
     var runID: Int = 0
     var speed: Int = 0
-    var tripID: Int = 0
+    var tripID: String = ""
     var vehicleID: Int = 0
     
     fileprivate var _iconView: UIView? = nil
