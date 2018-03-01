@@ -77,7 +77,7 @@ class Direction: NSObject, NSCopying {
     /// The corresponding path of the direction
     var path: [CLLocationCoordinate2D]
     
-    /// The total distance of the direction, in miles.
+    /// The total distance of the direction, in meters.
     var travelDistance: Double = 0
 
     /// The number representing the bus route.
@@ -228,14 +228,15 @@ class Direction: NSObject, NSCopying {
     
     // MARK: Complex Variables & Functions
     
-    /// Round distances less than 10 to 0.1, otherwise to nearest mile.
-    var travelDistanceFormatted: String {
-        switch travelDistance {
-            case let x where x >= 10:
-                return "\(Int(travelDistance)) mi"
-            default:
-                return "\(travelDistance.roundToPlaces(places: 1)) mi"
-        }
+    /** Convert distance from meters to proper unit (based on size)
+     
+        - Huge Distances: 16 mi
+        - Medium Distances: 3.2 mi
+        - Small Distances: 410 ft
+     
+     */
+    var formattedTravelDistance: String {
+        return roundedString(travelDistance)
     }
 
     /// Returns readable start time (e.g. 7:49 PM)

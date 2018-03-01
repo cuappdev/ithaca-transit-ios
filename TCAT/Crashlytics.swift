@@ -23,4 +23,5 @@ extension Answers {
     static func userTappedRouteResultsCell() {
         Answers.logCustomEvent(withName: "Tapped route results cell", customAttributes: nil)
     }
+    
 }

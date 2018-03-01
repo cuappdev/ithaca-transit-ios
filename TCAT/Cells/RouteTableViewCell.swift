@@ -125,6 +125,7 @@ class RouteTableViewCell: UITableViewCell {
         setDepartureTime(withTime: departureTime, isWalkingRoute: isWalkingRoute)
         
         routeDiagram.setRouteData(fromDirections: directions, fromTravelDistance: travelDistance)
+        
     }
     
     private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){

@@ -99,11 +99,8 @@ class RouteDiagram: UIView {
     
     // only set distance if distance > 0
     private func setDistanceLabel(withDistance distance: Double) {
-        if distance > 0  {
-            let numberOfPlacesToRound = (distance >= 10.0) ? 1 : 2
-            var mutableDistance = distance
-            let roundedDistance = mutableDistance.roundToPlaces(places: numberOfPlacesToRound)
-            travelDistanceLabel.text = "\(roundedDistance) mi away"
+        if distance > 0 {
+            travelDistanceLabel.text = "\(roundedString(distance)) away"
             travelDistanceLabel.sizeToFit()
         }
     }
@@ -355,9 +352,8 @@ class RouteDiagram: UIView {
             }
         }
         
-        if travelDistanceLabel.text != "0.0 mi away" {
-            addSubview(travelDistanceLabel)
-        }
+        addSubview(travelDistanceLabel)
+    
     }
     
     private func resizeHeight() {

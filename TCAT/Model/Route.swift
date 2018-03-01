@@ -169,12 +169,7 @@ class Route: NSObject, JSONDecodable {
         
         let fromLocation = CLLocation(latitude: startCoords.latitude, longitude: startCoords.longitude)
         let endLocation = CLLocation(latitude: firstRouteOptionsStop.startLocation.latitude, longitude: firstRouteOptionsStop.startLocation.longitude)
-        
-        let numberOfMetersInMile = 1609.34
-        let distanceInMeters = fromLocation.distance(from: endLocation)
-        let distanceInMiles = distanceInMeters / numberOfMetersInMile
-        
-        travelDistance = distanceInMiles
+        travelDistance = fromLocation.distance(from: endLocation)
         
     }
     

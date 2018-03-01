@@ -158,7 +158,7 @@ extension CLLocationCoordinate2D {
 
 extension Double {
     /// Rounds the double to decimal places value
-    mutating func roundToPlaces(places:Int) -> Double {
+    mutating func roundTo(places: Int) -> Double {
         let divisor = pow(10.0, Double(places))
         return Darwin.round(self * divisor) / divisor
     }
@@ -202,6 +202,36 @@ func bold(pattern: String, in string: String) -> NSMutableAttributedString {
     } catch { }
     
     return attributedString
+}
+
+/** Convert distance from meters to proper unit (based on size)
+ 
+ - Huge Distances: 16 mi
+ - Medium Distances: 3.2 mi
+ - Small Distances: 410 ft (412 ft -> 410 ft)
+ 
+ */
+func roundedString(_ value: Double) -> String {
+    
+    let numberOfMetersInMile = 1609.34
+    var distanceInMiles = value / numberOfMetersInMile
+    
+    switch distanceInMiles {
+        
+    case let x where x >= 10:
+        return "\(Int(distanceInMiles)) mi"
+        
+    case let x where x < 0.1:
+        var distanceInFeet = distanceInMiles * 5280
+        var temporaryValue = distanceInFeet.roundTo(places: 0) / 10.0
+        distanceInFeet = temporaryValue.roundTo(places: 0) * 10.0
+        return "\(Int(distanceInFeet)) ft"
+        
+    default:
+        return "\(distanceInMiles.roundTo(places: 1)) mi"
+        
+    }
+    
 }
 
 func areObjectsEqual<T: Equatable>(type: T.Type, a: Any, b: Any) -> Bool {
