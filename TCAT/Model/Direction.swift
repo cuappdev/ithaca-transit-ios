@@ -227,17 +227,6 @@ class Direction: NSObject, NSCopying {
     }
     
     // MARK: Complex Variables & Functions
-    
-    /** Convert distance from meters to proper unit (based on size)
-     
-        - Huge Distances: 16 mi
-        - Medium Distances: 3.2 mi
-        - Small Distances: 410 ft
-     
-     */
-    var formattedTravelDistance: String {
-        return roundedString(travelDistance)
-    }
 
     /// Returns readable start time (e.g. 7:49 PM)
     var startTimeDescription: String {

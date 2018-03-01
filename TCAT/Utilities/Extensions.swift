@@ -167,7 +167,7 @@ extension Double {
 extension Array where Element: UIView {
     /// Remove each view from its superview.
     func removeViewsFromSuperview(){
-        self.forEach{ $0.removeFromSuperview() }
+        self.forEach { $0.removeFromSuperview() }
     }
 }
 

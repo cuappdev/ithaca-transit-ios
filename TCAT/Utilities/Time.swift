@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Time{
+class Time {
     
     /// Takes date and return full date formatted in "EEEE, MMMM d, yyyy at h:mm a""
     static func dateString(from date: Date)-> String{
@@ -70,7 +70,7 @@ class Time{
         let date = dateFormatter.date(from: string)
         var dateComponents = Time.dateComponents(from: date!)
         
-        //Modify date to have today's day, month & year
+        // Modify date to have today's day, month & year
         var todaysDateComponents = Time.dateComponents(from: Date())
         dateComponents.year = todaysDateComponents.year
         dateComponents.month = todaysDateComponents.month
@@ -78,4 +78,5 @@ class Time{
         
         return Calendar.current.date(from: dateComponents)!
     }
+    
 }
