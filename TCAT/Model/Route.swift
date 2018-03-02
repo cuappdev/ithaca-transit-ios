@@ -100,21 +100,37 @@ class Route: NSObject, JSONDecodable {
         
         super.init()
 
-        // Create Arrive Direction after Depart Direction
+        // Parse and format directions
+        
+        /// Variable to keep track of additions to direction list
         var offset = 0
+        
+        /// True if previous direction indicated next bus is a transfer to stay on
+        var isTransfer: Bool = false
+        
         for (index, direction) in directions.enumerated() {
             
             if direction.type == .depart {
                 
-                // Create Arrival Direction
-                let arriveDirection = direction.copy() as! Direction
-                arriveDirection.type = .arrive
-                arriveDirection.startTime = arriveDirection.endTime
-                arriveDirection.startLocation = arriveDirection.endLocation
-                arriveDirection.stops = []
-                arriveDirection.name = direction.stops.last?.name ?? "Nil"
-                directions.insert(arriveDirection, at: index + offset + 1)
-                offset += 1 // for each new arrival direction added
+                if !isTransfer {
+                    
+                    // Create Arrival Direction
+                    let arriveDirection = direction.copy() as! Direction
+                    arriveDirection.type = .arrive
+                    arriveDirection.startTime = arriveDirection.endTime
+                    arriveDirection.startLocation = arriveDirection.endLocation
+                    arriveDirection.stops = []
+                    arriveDirection.name = direction.stops.last?.name ?? "Nil"
+                    directions.insert(arriveDirection, at: index + offset + 1)
+                    offset += 1 // for each new arrival direction added
+                    
+                } else {
+                    
+                    direction.type = .transfer
+                    
+                }
+                
+                isTransfer = direction.stayOnBusTransfer
                 
                 // Remove inital bus stop and departure bus stop
                 if direction.stops.count >= 2 {
@@ -128,6 +144,7 @@ class Route: NSObject, JSONDecodable {
         
         // Calculate travel distance
         calculateTravelDistance(fromDirection: directions)
+        
     }
     
     // MARK: Parse JSON

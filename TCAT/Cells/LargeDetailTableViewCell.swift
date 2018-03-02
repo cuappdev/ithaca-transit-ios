@@ -127,9 +127,14 @@ class LargeDetailTableViewCell: UITableViewCell {
         }
         
         // Format and place labels
+        
+        var content = direction.locationNameDescription
+        if direction.type == .transfer {
+            content = "Bus becomes " + " " + content
+        }
+        
         let attributedString = NSMutableAttributedString(string: label.text!)
-        attributedString.append(bold(pattern: self.direction.name,
-                                     in: self.direction.locationNameDescription))
+        attributedString.append(bold(pattern: self.direction.name, in: content))
         label.attributedText = attributedString
         paragraphStyle.lineSpacing = 8
         

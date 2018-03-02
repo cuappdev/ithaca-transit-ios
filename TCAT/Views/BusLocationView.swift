@@ -86,7 +86,7 @@ class BusLocationView: UIView {
     
     /// Animate a change in bearing of bus based on bearing input (degrees: Int)
     func setBearing(_ degrees: Int, start: CLLocationCoordinate2D? = nil, end: CLLocationCoordinate2D? = nil) {
-
+        
         // If bus stays in same location, don't update bearing
         if let start = start, let end = end {
             let latDelta = end.latitude - start.latitude
@@ -99,6 +99,7 @@ class BusLocationView: UIView {
         let newDegrees = Double(degrees) - currentBearing
         let currentAngle: CGFloat = CGFloat(-1) * CGFloat(degreesToRadians(newDegrees))
         
+        self.bearingIndicator.transform = CGAffineTransform(rotationAngle: CGFloat(-1) * CGFloat(degreesToRadians(currentBearing)))
         self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
         self.currentBearing = Double(degrees)
         

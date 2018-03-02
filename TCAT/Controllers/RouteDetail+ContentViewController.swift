@@ -16,6 +16,7 @@ import Pulley
 
 class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate {
     
+    var isBannerShown: Bool = false
     var loadingView: UIView!
     var drawerDisplayController: RouteDetailDrawerViewController?
     
@@ -26,6 +27,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     var bounds = GMSCoordinateBounds()
 
     var networkTimer: Timer? = nil
+    
     /// Number of seconds to wait before auto-refreshing network call, timed with live indicator
     var networkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
     
@@ -163,6 +165,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         
     }
     
+    override var prefersStatusBarHidden: Bool {
+        return isBannerShown
+    }
+    
     // MARK: Loading Screen Functions
     
     func createLoadingScreen() {
@@ -231,40 +237,43 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     /** Fetch live-tracking information for the first direction's bus route. Handles connection issues with banners. */
     @objc func getBusLocations() {
         
-        var routeNumbers: [Int] = []
-        var validTripIDs: [String] = []
-        
         for direction in route.directions {
+            
             if direction.type == .depart && direction.routeNumber > 0 {
-                routeNumbers.append(direction.routeNumber)
-                if direction.tripID != "" {
-                    validTripIDs.append(direction.tripID)
-                }
-            }
-        }
-        
-        for routeNumber in routeNumbers {
-            
-            Network.getBusLocations(routeID: String(routeNumber)).perform(
                 
-                withSuccess: { (result) in
+                Network.getBusLocations(routeID: String(direction.routeNumber),
+                                        tripID: direction.tripID,
+                                        stopID: direction.startLocation.id)
                     
-                    self.banner?.dismiss()
-                    self.banner = nil
-                    self.setBusLocations(result.allBusLocations, validTripIDs: validTripIDs)
+                .perform(withSuccess: { (result) in
+                        
+                        self.banner?.dismiss()
+                        self.isBannerShown = false
+                        self.banner = nil
+                        UIApplication.shared.statusBarStyle = .default
+                        self.setNeedsStatusBarAppearanceUpdate()
+                        if let busLocation = result.busLocation {
+                           self.setBusLocations([busLocation])
+                        } else {
+                            print("result nil")
+                        }
+                        
+                }) { (error) in
                     
-            }) { (error) in
-                
-                print("RouteDetailVC getBusLocations Error:", error)
-                if self.banner == nil {
-                    let title = "Cannot connect to live tracking"
-                    self.banner = StatusBarNotificationBanner(title: title, style: .warning)
-                    self.banner!.autoDismiss = false
-                    self.banner!.show(queuePosition: .front, on: self)
+                    print("RouteDetailVC getBusLocations Error:", error)
+                    if self.banner == nil {
+                        let title = "Cannot connect to live tracking"
+                        self.banner = StatusBarNotificationBanner(title: title, style: .warning)
+                        self.banner!.autoDismiss = false
+                        self.banner!.show(queuePosition: .front, on: self)
+                        self.isBannerShown = true
+                        UIApplication.shared.statusBarStyle = .lightContent
+                        self.setNeedsStatusBarAppearanceUpdate()
+                    }
+                    
                 }
                 
             }
-            
         }
 
     }
@@ -273,14 +282,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         If `validTripIDs` is passed in, only buses that match the tripID will be drawn.
         The input includes every bus associated with a certain line.
      */
-    func setBusLocations(_ busLocations: [BusLocation], validTripIDs: [String] = []) {
-        
-        let filteredBusLocations = busLocations.filter {
-            return validTripIDs.isEmpty || validTripIDs.contains($0.tripID)
-        }
+    func setBusLocations(_ busLocations: [BusLocation]) {
 
         // `bus` is the most updated bus location
-        for bus in filteredBusLocations {
+        for bus in busLocations {
 
             let busCoords = CLLocationCoordinate2DMake(bus.latitude, bus.longitude)
             let existingBus = buses.first(where: {

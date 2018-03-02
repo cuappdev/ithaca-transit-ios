@@ -41,13 +41,18 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             tableView.reloadData()
         }
     }
+    
     // TODO: DEBUGGING
-    let reachability = Reachability(hostname: "www.google.com")
+    let reachability = Reachability(hostname: "10.132.4.224")
     var isBannerShown = false
     var banner: StatusBarNotificationBanner?
     
     func tctSectionHeaderFont() -> UIFont? {
         return UIFont.systemFont(ofSize: 14)
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return isBannerShown
     }
     
     override func viewDidLoad() {
@@ -132,8 +137,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     @objc func reachabilityChanged(note: Notification) {
         if banner == nil {
-            banner = StatusBarNotificationBanner(title: "No Internet Connection", style: .danger)
+            banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
             banner?.autoDismiss = false
+            UIApplication.shared.statusBarStyle = .lightContent
+            setNeedsStatusBarAppearanceUpdate()
         }
         let reachability = note.object as! Reachability
         switch reachability.connection {
@@ -148,6 +155,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 if isBannerShown {
                     banner?.dismiss()
                     isBannerShown = false
+                    UIApplication.shared.statusBarStyle = .default
+                    setNeedsStatusBarAppearanceUpdate()
                 }
                 sections = createSections()
                 self.searchBar.isUserInteractionEnabled = true
@@ -384,13 +393,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         navigationItem.rightBarButtonItem = nil
-        //Crashlytics Answers
-        Answers.searchBarTappedInHome()
         let _ = RegisterSession.shared?.logEvent(event: SearchBarTappedEventPayload(location: .home).toEvent())
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.placeholder = "Search (e.g Balch Hall, 312 College Ave)"
+        searchBar.placeholder = "Search (e.g. Balch Hall, 312 College Ave)"
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.endEditing(true)
         searchBar.text = nil

@@ -14,7 +14,7 @@ import GooglePlaces
 class Network {
     
     // Use your own IP Address (changes!)
-    static let ipAddress = "192.168.1.8"
+    static let ipAddress = "10.132.4.224" // Austin's IP - 10.132.4.224
     
     static let source = "\(ipAddress):3000" // Old Backend Endpoint: "34.235.128.17"
     static let tron = TRON(baseURL: "http://\(source)/")
@@ -81,9 +81,13 @@ class Network {
         return request
     }
     
-    class func getBusLocations(routeID: String) -> APIRequest<AllBusLocations, Error> {
-        let request: APIRequest<AllBusLocations, Error> = tron.swiftyJSON.request("tracking")
-        request.parameters = ["routeID" : routeID]
+    class func getBusLocations(routeID: String, tripID: String, stopID: String) -> APIRequest<BusLocationResult, Error> {
+        let request: APIRequest<BusLocationResult, Error> = tron.swiftyJSON.request("tracking")
+        request.parameters = [
+            "routeID"   :     routeID,
+            "tripID"    :     tripID,
+            "stopID"    :     stopID
+        ]
         request.method = .get
         return request
     }
@@ -154,49 +158,46 @@ class AllBusStops: JSONDecodable {
     }
 }
 
-class AllBusLocations: JSONDecodable {
+class BusLocationResult: JSONDecodable {
 
-    var allBusLocations : [BusLocation] = [BusLocation]()
+    var busLocation: BusLocation? = nil
 
     required init(json: JSON) throws {
-        
         if json["success"].boolValue {
-            let data = json["data"].arrayValue
-            allBusLocations = parseAllLocations(json: data)
+            let data = json["data"]
+            print("bus locations result:", data)
+            busLocation = parseBusLocation(json: data)
         }
     }
 
-    func parseAllLocations(json: [JSON]) -> [BusLocation] {
-
-        var allLocationsArray = [BusLocation]()
-
-        for bus in json {
-
-            let routeID = bus["routeID"].stringValue
-            let busLocation = BusLocation(routeID: routeID)
-
-            busLocation.destination = bus["destination"].stringValue
-            busLocation.deviation = bus["deviation"].intValue
-            busLocation.direction = bus["direction"].stringValue
-            busLocation.displayStatus = bus["displayStatus"].stringValue
-            busLocation.gpsStatus = bus["gpsStatus"].intValue
-            busLocation.heading = bus["heading"].intValue
-            busLocation.lastStop = bus["lastStop"].stringValue
-            busLocation.lastUpdated = Date(timeIntervalSince1970: bus["lastUpdated"].doubleValue)
-            busLocation.latitude = bus["latitude"].doubleValue
-            busLocation.longitude = bus["longitude"].doubleValue
-            busLocation.name = bus["name"].intValue
-            busLocation.opStatus = bus["opStatus"].stringValue
-            busLocation.runID = bus["runID"].intValue
-            busLocation.speed = bus["speed"].intValue
-            busLocation.tripID = bus["tripID"].stringValue
-            busLocation.vehicleID = bus["vehicleID"].intValue
-
-            allLocationsArray.append(busLocation)
-
-        }
-
-        return allLocationsArray
+    func parseBusLocation(json: JSON) -> BusLocation {
+        
+        let routeID = json["routeID"].stringValue
+        let busLocation = BusLocation(routeID: routeID)
+//        busLocation.dataType = { _ -> 
+//            switch json["case"] {
+//            case "noData" : return .noData
+//            case "haveData" : return .validData
+//            default : return BusDataType.invalidData
+//        }()
+        busLocation.destination = json["destination"].stringValue
+        busLocation.deviation = json["deviation"].intValue
+        busLocation.delay = json["delay"].intValue
+        busLocation.direction = json["direction"].stringValue
+        busLocation.displayStatus = json["displayStatus"].stringValue
+        busLocation.gpsStatus = json["gpsStatus"].intValue
+        busLocation.heading = json["heading"].intValue
+        busLocation.lastStop = json["lastStop"].stringValue
+        busLocation.lastUpdated = Date(timeIntervalSince1970: json["lastUpdated"].doubleValue)
+        busLocation.latitude = json["latitude"].doubleValue
+        busLocation.longitude = json["longitude"].doubleValue
+        busLocation.name = json["name"].intValue
+        busLocation.opStatus = json["opStatus"].stringValue
+        busLocation.runID = json["runID"].intValue
+        busLocation.speed = json["speed"].intValue
+        busLocation.tripID = json["tripID"].stringValue
+        busLocation.vehicleID = json["vehicleID"].intValue
+        return busLocation
 
     }
 

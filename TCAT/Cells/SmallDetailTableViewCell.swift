@@ -56,9 +56,9 @@ class SmallDetailTableViewCell: UITableViewCell {
             titleLabel.attributedText = bold(pattern: direction.name, in: direction.locationNameDescription)
         } else {
             // Walk Direction
-            var walkString = lastStep ? "Arrive at \(direction.name)" : direction.locationNameDescription
+            var walkString = direction.locationNameDescription
             if direction.travelDistance > 0 {
-                walkString += " (\(roundedString(direction.travelDistance))"
+                walkString += " (\(roundedString(direction.travelDistance)))"
             }
             titleLabel.attributedText = bold(pattern: direction.name, in: walkString)
             if lastStep {

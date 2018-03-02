@@ -94,10 +94,13 @@ extension JSON {
     
     /// Format date with pattern `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`. Returns current date on error.
     func parseDate() -> Date {
+        print("JSON Date:", self)
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
-        return dateFormatter.date(from: self.stringValue) ?? Date.distantPast
+        let date = dateFormatter.date(from: self.stringValue) ?? Date.distantPast
+        print("Parsed Date:", date)
+        return date
     }
     
     /// Create coordinate object from JSON.
@@ -117,10 +120,13 @@ extension JSON {
         )
     }
     
+    // TODO: generic / rename
+    
     // Return LocationObject
     func parseLocationObject() -> LocationObject {
         return LocationObject(
             name: self["name"].stringValue,
+            id: self["stopID"].stringValue,
             latitude: self["lat"].doubleValue,
             longitude: self["long"].doubleValue
         )

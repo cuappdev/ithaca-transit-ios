@@ -59,12 +59,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Reachability vars
 
     let reachability: Reachability? = Reachability(hostname: Network.source)
+    
     var banner: StatusBarNotificationBanner = {
-        let banner = StatusBarNotificationBanner(title: "No Internet Connection", style: .danger)
+        let banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
         banner.autoDismiss = false
-
         return banner
     }()
+    
     var isBannerShown: Bool = false
     var cellUserInteraction: Bool = true
 
@@ -239,7 +240,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         searchForRoutes()
     }
 
-    func didCancel(){
+    func didCancel() {
         hideSearchBar()
     }
     
@@ -322,7 +323,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 
                 if let alamofireRequest = request?.perform(
                     withSuccess: { (routeJSON) in
-                        Route.getRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes,error) in
+                        Route.getRoutes(in: routeJSON, from: self.searchFrom?.name,
+                                        to: self.searchTo?.name,
+                        { (parsedRoutes,error) in
                             self.routes = parsedRoutes
                             requestDidFinish(with: error)
                         })
@@ -337,7 +340,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                                                                 requestUrl: alamofireRequest.request?.url?.absoluteString,
                                                                 stopType: nil).toEvent()
                     let _ = RegisterSession.shared?.logEvent(event: event)
-                    Answers.destinationSearched(destination: self.searchTo?.name ?? "", stopType: nil, requestUrl: String(describing: alamofireRequest.request?.url))
                 }
                 
                 else { // Catch error of coordinates not being found
@@ -537,22 +539,27 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     override var prefersStatusBarHidden: Bool {
         return isBannerShown
     }
-
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return isBannerShown ? .lightContent : .default
+    }
+    
     @objc private func reachabilityDidChange(_ notification: Notification) {
         let reachability = notification.object as! Reachability
 
         switch reachability.connection {
 
             case .none:
-                isBannerShown = true // hides status bar
-                setNeedsStatusBarAppearanceUpdate()
                 banner.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
-//                setUserInteraction(to: false)
+                isBannerShown = true
+                setNeedsStatusBarAppearanceUpdate()
+            
+                // setUserInteraction(to: false)
 
             case .cellular, .wifi:
                 if isBannerShown {
                     banner.dismiss()
-                    isBannerShown = false // unhides status bar
+                    isBannerShown = false
                     setNeedsStatusBarAppearanceUpdate()
                 }
 

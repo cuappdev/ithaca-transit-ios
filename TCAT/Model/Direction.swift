@@ -8,44 +8,20 @@
 
 import UIKit
 import CoreLocation
-import MapKit
 import SwiftyJSON
-
-/* To get string version of Bound
- * let inbound: String = Bound.inbound.rawValue  // "inbound"
- * let outbound: String = Bound.inbound.rawValue // "outbound"
- */
-enum Bound: String {
-    case inbound, outbound
-}
 
 /// An enum for the type of direction
 enum DirectionType: String {
-    case walk, depart, arrive, other
-}
+    
+    /// Directions that involving walking
+    case walk
+    /// Directions where the user gets on the bus
+    case depart
+    /// Direction where the user gets off the bus
+    case arrive
+    /// Direction where transfer is involved, but user stays on bus
+    case transfer
 
-class LocationObject: NSObject {
-    
-    /// The name of the location
-    var name: String
-    
-    /// The latitude coordinate of the location
-    var latitude: Double
-    
-    /// The longitude coordinate of the location
-    var longitude: Double
-    
-    init(name: String, latitude: Double, longitude: Double) {
-        self.name = name
-        self.latitude = latitude
-        self.longitude = longitude
-    }
-    
-    /// The coordinates of the location.
-    var coordinates: CLLocationCoordinate2D {
-        return CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
-    }
-    
 }
 
 class Direction: NSObject, NSCopying {
@@ -62,11 +38,15 @@ class Direction: NSObject, NSCopying {
      */
     var name: String
 
-    /// The starting location associated with the direction
-    var startLocation: CLLocationCoordinate2D
+    /** The starting location object associated with the direction
+        If this is a bus stop, includes stopID as id.
+     */
+    var startLocation: LocationObject
     
-    /// The starting location associated with the direction
-    var endLocation: CLLocationCoordinate2D
+    /** The ending location object associated with the direction
+        If this is a bus stop, includes stopID as id.
+    */
+    var endLocation: LocationObject
 
     /// The starting time (UTC) associated with the direction. Format: `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`
     var startTime: Date
@@ -86,7 +66,7 @@ class Direction: NSObject, NSCopying {
     /// An array of bus stop locations on the bus route, excluding the departure and arrival stop. Empty if `type != .depart`.
     var stops: [LocationObject] = []
     
-    /// Whether the user should stay on the bus for an upcoming transfer.
+    /// Whether the user should stay on this direction's bus for an upcoming transfer.
     var stayOnBusTransfer: Bool = false
     
     /// The unique identifier for the specific bus related to the direction.
@@ -97,8 +77,8 @@ class Direction: NSObject, NSCopying {
     required init (
         type: DirectionType,
         name: String,
-        startLocation: CLLocationCoordinate2D,
-        endLocation: CLLocationCoordinate2D,
+        startLocation: LocationObject,
+        endLocation: LocationObject,
         startTime: Date,
         endTime: Date,
         path: [CLLocationCoordinate2D],
@@ -124,14 +104,14 @@ class Direction: NSObject, NSCopying {
 
     convenience init(name: String? = nil) {
 
-        let blankLocation = CLLocation()
+        let blankLocation = LocationObject.blank
         let blankTime = Date()
 
         self.init(
             type: .arrive,
             name: name ?? "",
-            startLocation: blankLocation.coordinate,
-            endLocation: blankLocation.coordinate,
+            startLocation: blankLocation,
+            endLocation: blankLocation,
             startTime: blankTime,
             endTime: blankTime,
             path: [],
@@ -146,27 +126,32 @@ class Direction: NSObject, NSCopying {
 
     convenience init(from json: JSON) {
         
+        print("Direction JSON:", json)
+        
         self.init()
         
-        type = {
-            switch json["type"].stringValue {
-            case "walk" : return .walk
-            case "depart" : return .depart
-            default : return .other
-            }
-        }()
-        
         name = json["name"].stringValue
+        type = json["type"].stringValue == "depart" ? .depart : .walk
         startTime = json["startTime"].parseDate()
         endTime = json["endTime"].parseDate()
-        startLocation = json["startLocation"].parseCoordinates()
-        endLocation = json["endLocation"].parseCoordinates()
+        startLocation = json["startLocation"].parseLocationObject()
+        endLocation = json["endLocation"].parseLocationObject()
         path = json["path"].arrayValue.map { $0.parseCoordinates() }
         travelDistance = json["distance"].doubleValue
         routeNumber = json["routeNumber"].int ?? 0
         stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
         stayOnBusTransfer = json["stayOnBusTransfer"].boolValue
         tripID = json["tripID"].stringValue
+        
+        // If depart direction, use bus stop locations (with id) for start and end
+        if type == .depart, let start = stops.first, let end = stops.last {
+            startLocation = start
+            endLocation = end
+        }
+        
+        if stayOnBusTransfer {
+            print("stayOnBusTransfer!")
+        }
         
     }
     
@@ -202,9 +187,9 @@ class Direction: NSObject, NSCopying {
 
         case .walk:
             return "Walk to \(name)"
-
-        case .other:
-            return name
+            
+        case .transfer:
+            return "at \(name). Stay on board."
 
         }
     }

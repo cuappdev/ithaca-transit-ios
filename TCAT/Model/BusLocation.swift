@@ -7,11 +7,23 @@
 //
 
 import UIKit
+import MapKit
+
+enum BusDataType: String {
+    /// No data to show
+    case noData
+    /// Valid data to show
+    case validData
+    /// Invalid data (e.g. bus trip too far in future)
+    case invalidData
+}
 
 class BusLocation: NSObject, NSCoding {
     
+    var dataType: BusDataType = .noData
     var destination: String = ""
     var deviation: Int = 0
+    var delay: Int = 0
     var direction: String = ""
     var displayStatus: String = ""
     var gpsStatus: Int = 0
