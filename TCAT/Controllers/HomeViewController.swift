@@ -42,17 +42,17 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    // TODO: DEBUGGING
     let reachability = Reachability(hostname: Network.ipAddress)
     var isBannerShown = false
-    var banner: StatusBarNotificationBanner?
+    
+    var banner: StatusBarNotificationBanner {
+        let banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
+        banner.autoDismiss = false
+        return banner
+    }
     
     func tctSectionHeaderFont() -> UIFont? {
         return UIFont.systemFont(ofSize: 14)
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return isBannerShown
     }
     
     override func viewDidLoad() {
@@ -136,27 +136,21 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     @objc func reachabilityChanged(note: Notification) {
-        if banner == nil {
-            banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
-            banner?.autoDismiss = false
-            UIApplication.shared.statusBarStyle = .lightContent
-            setNeedsStatusBarAppearanceUpdate()
-        }
         let reachability = note.object as! Reachability
         switch reachability.connection {
             case .none:
+                banner.show(queuePosition: .front, on: self)
                 isBannerShown = true
-                banner?.show(queuePosition: .front, on: self)
+                UIApplication.shared.statusBarStyle = .lightContent
                 self.isNetworkDown = true
                 self.sectionIndexes = [:]
                 self.searchBar.isUserInteractionEnabled = false
                 self.sections = []
             case .cellular, .wifi:
                 if isBannerShown {
-                    banner?.dismiss()
+                    banner.dismiss()
                     isBannerShown = false
                     UIApplication.shared.statusBarStyle = .default
-                    setNeedsStatusBarAppearanceUpdate()
                 }
                 sections = createSections()
                 self.searchBar.isUserInteractionEnabled = true

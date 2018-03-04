@@ -120,9 +120,12 @@ extension JSON {
         )
     }
     
-    // TODO: generic / rename
-    
-    // Return LocationObject
+    /** Return LocationObject.
+     
+        `id` is used when bus stops conform to this object.
+        Would like a way to extend this class for instances when JSON
+        strings are unique to the generic location (e.g. stopID)
+    */
     func parseLocationObject() -> LocationObject {
         return LocationObject(
             name: self["name"].stringValue,

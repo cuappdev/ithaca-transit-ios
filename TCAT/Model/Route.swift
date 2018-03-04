@@ -102,7 +102,7 @@ class Route: NSObject, JSONDecodable {
 
         // Parse and format directions
         
-        /// Variable to keep track of additions to direction list
+        /// Variable to keep track of additions to direction list (Arrival Directions)
         var offset = 0
         
         /// True if previous direction indicated next bus is a transfer to stay on
@@ -110,9 +110,14 @@ class Route: NSObject, JSONDecodable {
         
         for (index, direction) in directions.enumerated() {
             
+            // print("Direction Type:", direction.type.rawValue)
+            // print("Direction stayOnBusTransfer", direction.stayOnBusTransfer)
+            
             if direction.type == .depart {
                 
-                if !isTransfer {
+                if !direction.stayOnBusTransfer {
+                    
+                    // print("Creating Arrival Direction")
                     
                     // Create Arrival Direction
                     let arriveDirection = direction.copy() as! Direction
@@ -122,11 +127,14 @@ class Route: NSObject, JSONDecodable {
                     arriveDirection.stops = []
                     arriveDirection.name = direction.stops.last?.name ?? "Nil"
                     directions.insert(arriveDirection, at: index + offset + 1)
-                    offset += 1 // for each new arrival direction added
+                    offset += 1
                     
-                } else {
+                }
+                
+                if isTransfer {
                     
-                    direction.type = .transfer
+                    // print("Marked As Transfer Direction")
+                    // direction.type = .transfer
                     
                 }
                 

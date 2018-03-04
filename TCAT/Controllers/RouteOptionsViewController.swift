@@ -313,10 +313,15 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 }
                 
                 func requestDidFinish(with error: NSError? = nil) {
-//                    if let err = error {
-//                        print("RouteOptionVC searchForRoutes Error: \(err)")
-//                        print("Error Description:", err.userInfo["description"] as? String)
-//                    }
+                    if let err = error {
+                        print("RouteOptionVC searchForRoutes Error: \(err)")
+                        print("Error Description:", err.userInfo["description"] as? String)
+                        self.banner = StatusBarNotificationBanner(title: "Could not connect to server", style: .danger)
+                        self.banner.autoDismiss = false
+                        self.banner.show(queuePosition: .front, on: self)
+                        self.isBannerShown = true
+                        UIApplication.shared.statusBarStyle = .lightContent
+                    }
                     self.currentlySearching = false
                     self.routeResults.reloadData()
                 }
@@ -332,6 +337,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     },
                     failure: { (error) in
                         print("Request Failure:", error)
+                        // TODO: ADD BANNERS
                         self.routes = []
                         requestDidFinish(with: error as NSError)
                     })
@@ -547,13 +553,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         switch reachability.connection {
 
             case .none:
-                print("Connection NONE")
                 banner.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
                 isBannerShown = true
                 setUserInteraction(to: false)
 
             case .cellular, .wifi:
-                print("Connection SOME")
                 if isBannerShown {
                     banner.dismiss()
                     isBannerShown = false

@@ -166,7 +166,6 @@ class BusLocationResult: JSONDecodable {
     required init(json: JSON) throws {
         if json["success"].boolValue {
             let data = json["data"]
-            print("bus locations result:", data)
             busLocation = parseBusLocation(json: data)
         }
     }

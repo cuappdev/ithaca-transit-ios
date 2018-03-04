@@ -149,10 +149,6 @@ class Direction: NSObject, NSCopying {
             endLocation = end
         }
         
-        if stayOnBusTransfer {
-            print("stayOnBusTransfer!")
-        }
-        
     }
     
     func copy(with zone: NSZone? = nil) -> Any {

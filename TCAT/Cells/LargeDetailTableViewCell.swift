@@ -40,7 +40,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         titleLabel.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.textColor = .primaryTextColor
-        titleLabel.text = "Board"
+        titleLabel.text = direction != nil && direction.type == .transfer ? "Bus becomes" : "Board"
         titleLabel.sizeToFit()
         return titleLabel
     }
@@ -92,7 +92,7 @@ class LargeDetailTableViewCell: UITableViewCell {
                                       lastStep: false)
             contentView.addSubview(iconView!)
             
-            busIconView = BusIcon(type: .directionSmall, number: self.direction.routeNumber)
+            busIconView = BusIcon(type: .directionSmall, number: direction.routeNumber)
             busIconView = formatBusIconView(busIconView, titleLabel)
             contentView.addSubview(busIconView)
             
@@ -114,7 +114,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     
     /** Abstracted formatting of content for titleLabel */
     func formatTitleLabel(_ label: UILabel) -> UILabel {
-        
+ 
         // Add correct amount of spacing to create a gap for the busIcon
         // Using constant always returned from
         //      while label.frame.maxX < busIconView.frame.maxX + 8 {
@@ -128,11 +128,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         
         // Format and place labels
         
-        var content = direction.locationNameDescription
-        if direction.type == .transfer {
-            content = "Bus becomes " + " " + content
-        }
-        
+        let content = direction.locationNameDescription
         let attributedString = NSMutableAttributedString(string: label.text!)
         attributedString.append(bold(pattern: self.direction.name, in: content))
         label.attributedText = attributedString
