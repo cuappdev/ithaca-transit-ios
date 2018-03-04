@@ -312,11 +312,19 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 }
                 
                 let alamofireRequest = request.perform(withSuccess: { (routeJson) in
-                    self.routes = Route.getRoutes(from: routeJson,
-                                                  fromDescription: self.searchFrom?.name,
-                                                  toDescription: self.searchTo?.name)
-                    self.currentlySearching = false
-                    self.routeResults.reloadData()
+                    if routeJson["success"].boolValue {
+                        self.routes = Route.getRoutes(from: routeJson["data"],
+                                                      fromDescription: self.searchFrom?.name,
+                                                      toDescription: self.searchTo?.name)
+                        self.currentlySearching = false
+                        self.routeResults.reloadData()
+                    }
+                    else {
+                        print("RouteOptionVC searchForRoutes routeJson success false")
+                        self.routes = []
+                        self.currentlySearching = false
+                        self.routeResults.reloadData()
+                    }
                 },
                 
                 failure: { (error) in
@@ -325,7 +333,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     self.currentlySearching = false
                     self.routeResults.reloadData()
                 })
-                
+
                 let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
                                                             requestUrl: alamofireRequest?.request?.url?.absoluteString,
                                                             stopType: nil).toEvent()

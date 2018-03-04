@@ -28,6 +28,8 @@ extension UIColor {
     @nonobjc static let searchBarPlaceholderTextColor = UIColor(red: 214.0 / 255.0, green: 216.0 / 255.0, blue: 220.0 / 255.0, alpha: 1.0)
     @nonobjc static let noInternetTextColor = UIColor(red: 0.0, green: 118.0 / 255.0, blue: 255.0 / 255.0, alpha: 1.0)
     @nonobjc static let placeColor = UIColor(white: 151.0 / 255.0, alpha: 1.0)
+    @nonobjc static let liveGreenColor = UIColor(red: 39.0 / 255.0, green: 174.0 / 255.0, blue: 96.0 / 255.0, alpha: 1.0)
+    @nonobjc static let liveRedColor = UIColor(red: 214.0 / 255.0, green: 48.0 / 255.0, blue: 79.0 / 255.0, alpha: 1.0)
     
     // Get color from hex code
     public static func colorFromCode(_ code: Int, alpha: CGFloat) -> UIColor {
