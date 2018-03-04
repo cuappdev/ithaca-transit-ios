@@ -315,7 +315,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 func requestDidFinish(with error: NSError? = nil) {
                     if let err = error {
                         print("RouteOptionVC searchForRoutes Error: \(err)")
-                        print("Error Description:", err.userInfo["description"] as? String)
+                        // print("Error Description:", err.userInfo["description"] as? String)
                         self.banner = StatusBarNotificationBanner(title: "Could not connect to server", style: .danger)
                         self.banner.autoDismiss = false
                         self.banner.show(queuePosition: .front, on: self)
@@ -337,7 +337,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     },
                     failure: { (error) in
                         print("Request Failure:", error)
-                        // TODO: ADD BANNERS
                         self.routes = []
                         requestDidFinish(with: error as NSError)
                     })

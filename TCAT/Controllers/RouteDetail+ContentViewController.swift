@@ -240,12 +240,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     
                         if let busLocation = result.busLocation {
                             
-                            print("Before - No Data Route List:", self.noDataRouteList)
-                            
                             switch busLocation.dataType {
                             
                             case .noData:
-                                print("No Data for", direction.routeNumber)
+                                // print("No Data for", direction.routeNumber)
                                 
                                 if !self.noDataRouteList.contains(direction.routeNumber) {
                                     self.noDataRouteList.append(direction.routeNumber)
@@ -261,8 +259,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                                 self.showBanner(message, status: .info)
                                 
                             case .invalidData:
-                                
-                                print("Invalid Data for", direction.routeNumber)
+                                // print("Invalid Data for", direction.routeNumber)
                                 
                                 if let previouslyUnavailableRoute = self.noDataRouteList.index(of: direction.routeNumber) {
                                     self.noDataRouteList.remove(at: previouslyUnavailableRoute)
@@ -275,7 +272,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                                 self.showBanner("Tracking available near departure time", status: .info)
                                 
                             case .validData:
-                                 print("Valid Data for", direction.routeNumber)
+                                 // print("Valid Data for", direction.routeNumber)
                                 
                                  if let previouslyUnavailableRoute = self.noDataRouteList.index(of: direction.routeNumber) {
                                     self.noDataRouteList.remove(at: previouslyUnavailableRoute)
@@ -288,8 +285,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                                  self.setBusLocation(busLocation)
                                 
                             } // switch end
-                            
-                            print("After - No Data Route List:", self.noDataRouteList)
                             
                         } else {
                             print("Error: Successful response, but no content. Likely client-side issue")
