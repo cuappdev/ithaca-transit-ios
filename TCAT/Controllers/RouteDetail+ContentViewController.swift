@@ -237,6 +237,17 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     /** Fetch live-tracking information for the first direction's bus route. Handles connection issues with banners. */
     @objc func getBusLocations() {
         
+        func createBanner(_ message: String, status: BannerStyle) {
+            if self.banner == nil {
+                self.banner = StatusBarNotificationBanner(title: message, style: status)
+                self.banner!.autoDismiss = false
+                self.banner!.show(queuePosition: .front, on: self)
+                self.isBannerShown = true
+                UIApplication.shared.statusBarStyle = .lightContent
+                self.setNeedsStatusBarAppearanceUpdate()
+            }
+        }
+        
         for direction in route.directions {
             
             if direction.type == .depart && direction.routeNumber > 0 {
@@ -252,24 +263,33 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                         self.banner = nil
                         UIApplication.shared.statusBarStyle = .default
                         self.setNeedsStatusBarAppearanceUpdate()
+                    
                         if let busLocation = result.busLocation {
-                           self.setBusLocations([busLocation])
+                            
+                            switch busLocation.dataType {
+                            
+                            case .noData:
+                                // TODO: Implement for individual routes
+                                // "No live tracking available for Route 30"
+                                let message = "No live tracking available"
+                                createBanner(message, status: .warning)
+                                
+                            case .invalidData:
+                                createBanner("Tracking available near departure time", status: .info)
+                                
+                            case .validData:
+                                self.setBusLocations([busLocation])
+                                
+                            }
+                            
                         } else {
-                            print("result nil")
+                            print("Error: Successful response, but no content. Likely client-side issue")
                         }
                         
                 }) { (error) in
                     
                     print("RouteDetailVC getBusLocations Error:", error)
-                    if self.banner == nil {
-                        let title = "Cannot connect to live tracking"
-                        self.banner = StatusBarNotificationBanner(title: title, style: .warning)
-                        self.banner!.autoDismiss = false
-                        self.banner!.show(queuePosition: .front, on: self)
-                        self.isBannerShown = true
-                        UIApplication.shared.statusBarStyle = .lightContent
-                        self.setNeedsStatusBarAppearanceUpdate()
-                    }
+                    createBanner("Cannot connect to live tracking", status: .danger)
                     
                 }
                 

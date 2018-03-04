@@ -126,7 +126,7 @@ class Direction: NSObject, NSCopying {
 
     convenience init(from json: JSON) {
         
-        print("Direction JSON:", json)
+        // print("Direction JSON:", json)
         
         self.init()
         

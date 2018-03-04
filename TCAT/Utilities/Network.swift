@@ -13,11 +13,12 @@ import GooglePlaces
 
 class Network {
     
-    // Use your own IP Address (changes!)
-    static let ipAddress = "10.132.4.224" // Austin's IP - 10.132.4.224
+    static let ipAddress = "54.174.47.32" // 10.132.9.134
     
-    static let source = "\(ipAddress):3000" // Old Backend Endpoint: "34.235.128.17"
-    static let tron = TRON(baseURL: "http://\(source)/")
+    /// Main backend endpoint. Includes "http://" and "/" at end.
+    static let source = "http://\(ipAddress)/"
+    
+    static let tron = TRON(baseURL: source)
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
     
@@ -174,12 +175,13 @@ class BusLocationResult: JSONDecodable {
         
         let routeID = json["routeID"].stringValue
         let busLocation = BusLocation(routeID: routeID)
-//        busLocation.dataType = { _ -> 
-//            switch json["case"] {
-//            case "noData" : return .noData
-//            case "haveData" : return .validData
-//            default : return BusDataType.invalidData
-//        }()
+        busLocation.dataType = {
+            switch json["case"] {
+            case "noData" : return .noData
+            case "validData" : return .validData
+            default : return .invalidData
+            }
+        }()
         busLocation.destination = json["destination"].stringValue
         busLocation.deviation = json["deviation"].intValue
         busLocation.delay = json["delay"].intValue

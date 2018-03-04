@@ -15,11 +15,11 @@ import Crashlytics
 import Pulley
 import SwiftRegister
 
-enum SearchBarType: String{
+enum SearchBarType: String {
     case from, to
 }
 
-enum SearchType: String{
+enum SearchType: String {
     case arriveBy, leaveAt
 }
 
@@ -58,7 +58,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     // MARK: Reachability vars
 
-    let reachability: Reachability? = Reachability(hostname: Network.source)
+    let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
     
     var banner: StatusBarNotificationBanner = {
         let banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
@@ -522,7 +522,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Reachability
 
     private func setupReachability() {
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityDidChange(_:)), name: .reachabilityChanged, object: reachability)
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .reachabilityChanged, object: reachability)
 
         do {
             try reachability?.startNotifier()
@@ -535,37 +535,35 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         reachability?.stopNotifier()
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
-
-    override var prefersStatusBarHidden: Bool {
-        return isBannerShown
-    }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return isBannerShown ? .lightContent : .default
     }
     
-    @objc private func reachabilityDidChange(_ notification: Notification) {
+    @objc private func reachabilityChanged(_ notification: Notification) {
+        
         let reachability = notification.object as! Reachability
 
         switch reachability.connection {
 
             case .none:
+                print("Connection NONE")
                 banner.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
                 isBannerShown = true
-                setNeedsStatusBarAppearanceUpdate()
-            
-                // setUserInteraction(to: false)
+                setUserInteraction(to: false)
 
             case .cellular, .wifi:
+                print("Connection SOME")
                 if isBannerShown {
                     banner.dismiss()
                     isBannerShown = false
-                    setNeedsStatusBarAppearanceUpdate()
                 }
-
                 setUserInteraction(to: true)
 
         }
+        
+        UIApplication.shared.statusBarStyle = preferredStatusBarStyle
+        
     }
 
     private func setUserInteraction(to userInteraction: Bool) {

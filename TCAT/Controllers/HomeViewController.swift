@@ -43,7 +43,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     // TODO: DEBUGGING
-    let reachability = Reachability(hostname: "10.132.4.224")
+    let reachability = Reachability(hostname: Network.ipAddress)
     var isBannerShown = false
     var banner: StatusBarNotificationBanner?
     

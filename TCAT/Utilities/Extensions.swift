@@ -75,6 +75,7 @@ extension UILabel {
 }
 
 extension UIViewController {
+    
     var isModal: Bool {
         if let index = navigationController?.viewControllers.index(of: self), index > 0 {
             return false
@@ -88,18 +89,17 @@ extension UIViewController {
             return false
         }
     }
+    
 }
 
 extension JSON {
     
     /// Format date with pattern `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`. Returns current date on error.
     func parseDate() -> Date {
-        print("JSON Date:", self)
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
         let date = dateFormatter.date(from: self.stringValue) ?? Date.distantPast
-        print("Parsed Date:", date)
         return date
     }
     
