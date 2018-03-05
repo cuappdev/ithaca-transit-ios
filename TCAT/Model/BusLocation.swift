@@ -21,24 +21,24 @@ enum BusDataType: String {
 class BusLocation: NSObject {
     
     var dataType: BusDataType
-    var destination: String = ""
-    var deviation: Int = 0
-    var delay: Int = 0
-    var direction: String = ""
-    var displayStatus: String = ""
-    var gpsStatus: Int = 0
-    var heading: Int = 0
-    var lastStop: String = ""
-    var lastUpdated: Date = .distantPast
-    var latitude: Double = 0
-    var longitude: Double = 0
-    var name: Int = 0
-    var opStatus: String = ""
-    var routeID: String = ""
-    var runID: Int = 0
-    var speed: Int = 0
-    var tripID: String = ""
-    var vehicleID: Int = 0
+    var destination: String
+    var deviation: Int
+    var delay: Int
+    var direction: String
+    var displayStatus: String
+    var gpsStatus: Int
+    var heading: Int
+    var lastStop: String
+    var lastUpdated: Date
+    var latitude: Double
+    var longitude: Double
+    var name: Int
+    var opStatus: String
+    var routeID: String
+    var runID: Int
+    var speed: Int
+    var tripID: String
+    var vehicleID: Int
     
     fileprivate var _iconView: UIView? = nil
     
