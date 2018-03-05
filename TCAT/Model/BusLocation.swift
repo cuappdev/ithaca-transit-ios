@@ -18,9 +18,9 @@ enum BusDataType: String {
     case invalidData
 }
 
-class BusLocation: NSObject, NSCoding {
+class BusLocation: NSObject {
     
-    var dataType: BusDataType = .noData
+    var dataType: BusDataType
     var destination: String = ""
     var deviation: Int = 0
     var delay: Int = 0
@@ -42,15 +42,45 @@ class BusLocation: NSObject, NSCoding {
     
     fileprivate var _iconView: UIView? = nil
     
-    init(routeID: String) {
+    init(dataType: BusDataType,
+         destination: String,
+         deviation: Int,
+         delay: Int,
+         direction: String,
+         displayStatus: String,
+         gpsStatus: Int,
+         heading: Int,
+         lastStop: String,
+         lastUpdated: Date,
+         latitude: Double,
+         longitude: Double,
+         name: Int,
+         opStatus: String,
+         routeID: String,
+         runID: Int,
+         speed: Int,
+         tripID: String,
+         vehicleID: Int
+    ) {
+        self.dataType = dataType
+        self.destination = destination
+        self.deviation = deviation
+        self.delay = delay
+        self.direction = direction
+        self.displayStatus = displayStatus
+        self.gpsStatus = gpsStatus
+        self.heading = heading
+        self.lastStop = lastStop
+        self.lastUpdated = lastUpdated
+        self.latitude = latitude
+        self.longitude = longitude
+        self.name = name
+        self.opStatus = opStatus
         self.routeID = routeID
-    }
-    
-    // MARK: NSCoding
-    
-    required convenience init(coder aDecoder: NSCoder) {
-        let routeID = aDecoder.decodeObject(forKey: "routeID") as! String
-        self.init(routeID: routeID)
+        self.runID = runID
+        self.speed = speed
+        self.tripID = tripID
+        self.vehicleID = vehicleID
     }
     
     public func encode(with aCoder: NSCoder) {

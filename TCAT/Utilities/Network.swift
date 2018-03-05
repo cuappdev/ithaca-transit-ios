@@ -172,32 +172,36 @@ class BusLocationResult: JSONDecodable {
 
     func parseBusLocation(json: JSON) -> BusLocation {
         
-        let routeID = json["routeID"].stringValue
-        let busLocation = BusLocation(routeID: routeID)
-        busLocation.dataType = {
+        let dataType: BusDataType = {
             switch json["case"].stringValue {
             case "noData" : return .noData
             case "validData" : return .validData
             default : return .invalidData
             }
         }()
-        busLocation.destination = json["destination"].stringValue
-        busLocation.deviation = json["deviation"].intValue
-        busLocation.delay = json["delay"].intValue
-        busLocation.direction = json["direction"].stringValue
-        busLocation.displayStatus = json["displayStatus"].stringValue
-        busLocation.gpsStatus = json["gpsStatus"].intValue
-        busLocation.heading = json["heading"].intValue
-        busLocation.lastStop = json["lastStop"].stringValue
-        busLocation.lastUpdated = Date(timeIntervalSince1970: json["lastUpdated"].doubleValue)
-        busLocation.latitude = json["latitude"].doubleValue
-        busLocation.longitude = json["longitude"].doubleValue
-        busLocation.name = json["name"].intValue
-        busLocation.opStatus = json["opStatus"].stringValue
-        busLocation.runID = json["runID"].intValue
-        busLocation.speed = json["speed"].intValue
-        busLocation.tripID = json["tripID"].stringValue
-        busLocation.vehicleID = json["vehicleID"].intValue
+        
+        let busLocation = BusLocation(
+            dataType: dataType,
+            destination: json["destination"].stringValue,
+            deviation: json["deviation"].intValue,
+            delay: json["delay"].intValue,
+            direction: json["direction"].stringValue,
+            displayStatus: json["displayStatus"].stringValue,
+            gpsStatus: json["gpsStatus"].intValue,
+            heading: json["heading"].intValue,
+            lastStop: json["lastStop"].stringValue,
+            lastUpdated: Date(timeIntervalSince1970: json["lastUpdated"].doubleValue),
+            latitude: json["latitude"].doubleValue,
+            longitude: json["longitude"].doubleValue,
+            name: json["name"].intValue,
+            opStatus: json["opStatus"].stringValue,
+            routeID: json["routeID"].stringValue,
+            runID: json["runID"].intValue,
+            speed: json["speed"].intValue,
+            tripID: json["tripID"].stringValue,
+            vehicleID: json["vehicleID"].intValue
+        )
+        
         return busLocation
 
     }
