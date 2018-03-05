@@ -238,7 +238,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     
                 .perform(withSuccess: { (result) in
                     
+                    var results: [BusDataType] = []
+                    
                         if let busLocation = result.busLocation {
+                            
+                            results.append(busLocation.dataType)
                             
                             switch busLocation.dataType {
                             
@@ -322,6 +326,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             
             CATransaction.begin()
             CATransaction.setAnimationDuration(networkRefreshRate + latencyConstant)
+            newBus.appearAnimation = .none
             newBus.userData = bus
             (newBus.iconView as? BusLocationView)?.setBearing(bus.heading, start: existingBus!.position, end: busCoords)
             newBus.position = busCoords
@@ -335,8 +340,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             let marker = GMSMarker(position: busCoords)
             (bus.iconView as? BusLocationView)?.setBearing(bus.heading)
             marker.iconView = bus.iconView
-            // marker.appearAnimation = .pop
-            // marker.tracksViewChanges = true
+            marker.appearAnimation = .pop
             setIndex(of: marker, with: .bussing)
             marker.userData = bus
             marker.map = mapView

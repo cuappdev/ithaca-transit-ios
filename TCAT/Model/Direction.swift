@@ -131,7 +131,7 @@ class Direction: NSObject, NSCopying {
         self.init()
         
         name = json["name"].stringValue
-        type = json["type"].stringValue == "depart" ? .depart : .walk
+        type = json["type"].stringValue.lowercased() == "depart" ? .depart : .walk
         startTime = json["startTime"].parseDate()
         endTime = json["endTime"].parseDate()
         startLocation = json["startLocation"].parseLocationObject()

@@ -175,7 +175,7 @@ class BusLocationResult: JSONDecodable {
         let routeID = json["routeID"].stringValue
         let busLocation = BusLocation(routeID: routeID)
         busLocation.dataType = {
-            switch json["case"] {
+            switch json["case"].stringValue {
             case "noData" : return .noData
             case "validData" : return .validData
             default : return .invalidData
