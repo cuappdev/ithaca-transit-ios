@@ -15,11 +15,11 @@ import Crashlytics
 import Pulley
 import SwiftRegister
 
-enum SearchBarType: String{
+enum SearchBarType: String {
     case from, to
 }
 
-enum SearchType: String{
+enum SearchType: String {
     case arriveBy, leaveAt
 }
 
@@ -42,7 +42,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: View vars
 
     var routeSelection: RouteSelectionView!
-    var datePickerView: DatepickerView!
+    var datePickerView: DatePickerView!
     var datePickerOverlay: UIView!
     var routeResults: UITableView!
     var refreshControl = UIRefreshControl()
@@ -58,13 +58,14 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     // MARK: Reachability vars
 
-    let reachability: Reachability? = Reachability(hostname: Network.source)
+    let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
+    
     var banner: StatusBarNotificationBanner = {
-        let banner = StatusBarNotificationBanner(title: "No Internet Connection", style: .danger)
+        let banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
         banner.autoDismiss = false
-
         return banner
     }()
+    
     var isBannerShown: Bool = false
     var cellUserInteraction: Bool = true
 
@@ -239,7 +240,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         searchForRoutes()
     }
 
-    func didCancel(){
+    func didCancel() {
         hideSearchBar()
     }
     
@@ -311,26 +312,46 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     self.refreshControl.endRefreshing()
                 }
                 
-                let alamofireRequest = request.perform(withSuccess: { (routeJson) in
-                    self.routes = Route.getRoutes(from: routeJson,
-                                                  fromDescription: self.searchFrom?.name,
-                                                  toDescription: self.searchTo?.name)
+                func requestDidFinish(with error: NSError? = nil) {
+                    if let err = error {
+                        print("RouteOptionVC searchForRoutes Error: \(err)")
+                        // print("Error Description:", err.userInfo["description"] as? String)
+                        self.banner = StatusBarNotificationBanner(title: "Could not connect to server", style: .danger)
+                        self.banner.autoDismiss = false
+                        self.banner.show(queuePosition: .front, on: self)
+                        self.isBannerShown = true
+                        UIApplication.shared.statusBarStyle = .lightContent
+                    }
                     self.currentlySearching = false
                     self.routeResults.reloadData()
-                },
+                }
                 
-                failure: { (error) in
-                    print("RouteOptionVC searchForRoutes Error: \(error)")
-                    self.routes = []
-                    self.currentlySearching = false
-                    self.routeResults.reloadData()
-                })
+                if let alamofireRequest = request?.perform(
+                    withSuccess: { (routeJSON) in
+                        Route.getRoutes(in: routeJSON, from: self.searchFrom?.name,
+                                        to: self.searchTo?.name,
+                        { (parsedRoutes,error) in
+                            self.routes = parsedRoutes
+                            requestDidFinish(with: error)
+                        })
+                    },
+                    failure: { (error) in
+                        print("Request Failure:", error)
+                        self.routes = []
+                        requestDidFinish(with: error as NSError)
+                    })
+                { // Handle non-null request
+                    let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
+                                                                requestUrl: alamofireRequest.request?.url?.absoluteString,
+                                                                stopType: nil).toEvent()
+                    let _ = RegisterSession.shared?.logEvent(event: event)
+                }
                 
-                let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
-                                                            requestUrl: alamofireRequest?.request?.url?.absoluteString,
-                                                            stopType: nil).toEvent()
-                RegisterSession.shared?.logEvent(event: event)
-                Answers.destinationSearched(destination: self.searchTo?.name ?? "", stopType: nil, requestUrl: String(describing: alamofireRequest?.request?.url))
+                else { // Catch error of coordinates not being found
+                    let error = NSError(domain: "Null Coordinates", code: 400, userInfo: nil)
+                    requestDidFinish(with: error)
+                }
+                
             }
 
             }
@@ -387,7 +408,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     private func setupDatepickerView(){
-        datePickerView = DatepickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 254))
+        datePickerView = DatePickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 254))
 
         datePickerView.positionSubviews()
         datePickerView.addSubviews()
@@ -427,7 +448,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         UIView.animate(withDuration: 0.5) {
             self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
-            self.datePickerOverlay.alpha = 0.59 // darken screen when pull up datepicker
+            self.datePickerOverlay.alpha = 0.6 // darken screen when pull up datepicker
         }
     }
 
@@ -506,7 +527,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Reachability
 
     private func setupReachability() {
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityDidChange(_:)), name: .reachabilityChanged, object: reachability)
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .reachabilityChanged, object: reachability)
 
         do {
             try reachability?.startNotifier()
@@ -519,32 +540,33 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         reachability?.stopNotifier()
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
-
-    override var prefersStatusBarHidden: Bool {
-        return isBannerShown
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return isBannerShown ? .lightContent : .default
     }
-
-    @objc private func reachabilityDidChange(_ notification: Notification) {
+    
+    @objc private func reachabilityChanged(_ notification: Notification) {
+        
         let reachability = notification.object as! Reachability
 
         switch reachability.connection {
 
             case .none:
-                isBannerShown = true // hides status bar
-                setNeedsStatusBarAppearanceUpdate()
                 banner.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
-//                setUserInteraction(to: false)
+                isBannerShown = true
+                setUserInteraction(to: false)
 
             case .cellular, .wifi:
                 if isBannerShown {
                     banner.dismiss()
-                    isBannerShown = false // unhides status bar
-                    setNeedsStatusBarAppearanceUpdate()
+                    isBannerShown = false
                 }
-
                 setUserInteraction(to: true)
 
         }
+        
+        UIApplication.shared.statusBarStyle = preferredStatusBarStyle
+        
     }
 
     private func setUserInteraction(to userInteraction: Bool) {

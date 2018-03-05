@@ -1,16 +1,16 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '10.2'
+platform :ios, '10.0'
 
 target 'TCAT' do
   # Comment this line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
 
   # Pods for TCAT
-  pod 'GoogleMaps', '~> 2.2'
-  pod 'GooglePlaces', '~> 2.2'
+  pod 'GoogleMaps', '~> 2.6'
+  pod 'GooglePlaces', '~> 2.6'
   pod 'SwiftyJSON', '~> 4.0.0'
   pod 'Alamofire', '~> 4.4'
-  pod 'TRON', '~> 4.0.0', :inhibit_warnings => true
+  pod 'TRON', '~> 4.1.2', :inhibit_warnings => true
   pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/AAAstorga/Fuzzywuzzy_swift.git', :commit => '9c94253b2e83abffcce5014808fe1a22c6b97d90'
   pod 'DZNEmptyDataSet'
   pod 'NotificationBannerSwift'

@@ -109,7 +109,7 @@ class RouteTableViewCell: UITableViewCell {
     
     // MARK: Set Data
         
-    func setRouteData(){
+    func setRouteData() {
         
         guard let departureTime = route?.departureTime,
               let arrivalTime = route?.arrivalTime,
@@ -125,6 +125,7 @@ class RouteTableViewCell: UITableViewCell {
         setDepartureTime(withTime: departureTime, isWalkingRoute: isWalkingRoute)
         
         routeDiagram.setRouteData(fromDirections: directions, fromTravelDistance: travelDistance)
+        
     }
     
     private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){

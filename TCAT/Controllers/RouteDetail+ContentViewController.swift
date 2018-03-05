@@ -16,18 +16,21 @@ import Pulley
 
 class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate {
     
+    var isBannerShown: Bool = false
     var loadingView: UIView!
     var drawerDisplayController: RouteDetailDrawerViewController?
     
     var locationManager = CLLocationManager()
-
+    
     var mapView: GMSMapView!
     var currentLocation: CLLocationCoordinate2D?
     var bounds = GMSCoordinateBounds()
 
     var networkTimer: Timer? = nil
+    
     /// Number of seconds to wait before auto-refreshing network call, timed with live indicator
-    var refreshRate: Double = LiveIndicator.INTERVAL * 1.0
+    var networkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
+    
     var buses = [GMSMarker]()
     var banner: StatusBarNotificationBanner? = nil
 
@@ -77,13 +80,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     else if pathIndex == direction.path.count - 1 {
                         type = arrayIndex == directions.count - 1 ? .destination : .bus
                     }
-                        
-                    else if pointWithinLocation(point: point, location: direction.startLocation, exact: true) ||
-                        pointWithinLocation(point: point, location: direction.endLocation, exact: true) {
-                        
-                        // type = .stop
-                        
-                    }
 
                 }
 
@@ -108,8 +104,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        createLoadingScreen()
         
         // Set up Location Manager
         locationManager.delegate = self
@@ -127,7 +121,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             timer.invalidate()
         }
 
-        networkTimer = Timer.scheduledTimer(timeInterval: refreshRate, target: self, selector: #selector(getBusLocations),
+        networkTimer = Timer.scheduledTimer(timeInterval: networkRefreshRate, target: self, selector: #selector(getBusLocations),
                                             userInfo: nil, repeats: true)
         networkTimer!.fire()
 
@@ -138,7 +132,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         networkTimer?.invalidate()
         networkTimer = nil
         banner = nil
-        dismissLoadingScreen()
     }
 
     override func loadView() {
@@ -146,12 +139,13 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         // set mapView with settings
         let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: defaultZoom)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
-        mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: drawerDisplayController?.summaryViewHeight ?? 0, right: 0)
+        mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: drawerDisplayController?.summaryView.frame.height ?? 0, right: 0)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
         mapView.settings.compassButton = true
         mapView.settings.myLocationButton = true
         mapView.setMinZoom(minZoom, maxZoom: maxZoom)
+        mapView.settings.tiltGestures = false
 
         // most extreme points on TCAT Route map
         let north = 42.61321283145329
@@ -169,32 +163,26 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         
     }
     
-    // MARK: Loading Screen Functions
+    // MARK: Status Bar Functions
     
-    func createLoadingScreen() {
-        
-        loadingView = UIView(frame: navigationController?.view.frame ?? CGRect())
-        loadingView.frame.origin.y += statusNavHeight()
-        loadingView.frame.size.height -= statusNavHeight()
-        loadingView.backgroundColor = .tableBackgroundColor
-        
-        let circularProgress = LoadingIndicator()
-        loadingView.addSubview(circularProgress)
-        
-        circularProgress.snp.makeConstraints{ (make) in
-            make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().offset(-20)
-            make.width.equalTo(40)
-            make.height.equalTo(40)
+    /// Show banner if no other status banner exists; turns status bar light
+    func showBanner(_ message: String, status: BannerStyle) {
+        if self.banner == nil {
+            self.banner = StatusBarNotificationBanner(title: message, style: status)
+            self.banner!.autoDismiss = false
+            self.banner!.dismissOnTap = true
+            self.banner!.show(queuePosition: .front, on: navigationController)
+            self.isBannerShown = true
+            UIApplication.shared.statusBarStyle = .lightContent
         }
-
-        navigationController?.view.addSubview(self.loadingView)
-        
     }
     
-    func dismissLoadingScreen() {
-        view.alpha = 1
-        loadingView.removeFromSuperview()
+    /// Dismisses and removes banner; turns status bar back to default
+    func hideBanner() {
+        self.banner?.dismiss()
+        self.isBannerShown = false
+        self.banner = nil
+        UIApplication.shared.statusBarStyle = .default
     }
     
     // MARK: Programmatic Layout Constants
@@ -233,94 +221,133 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     }
     
     // MARK: Live Tracking Functions
+    
+    // Kepp track of statuses of bus routes throughout view life cycle
+    var noDataRouteList: [Int] = []
 
     /** Fetch live-tracking information for the first direction's bus route. Handles connection issues with banners. */
     @objc func getBusLocations() {
-
- // /* debugging
         
-        guard let firstRoute = route.directions.first(where: {
-            return $0.routeNumber > 0
-        })
-        else {
-            print("[RouteDetailViewController] getBusLocations: Couldn't find valid routes")
-            return
-        }
-// */ // debugging
-        
-        // Network.getBusLocations(routeID: "90").perform( // debugging
-        
-        Network.getBusLocations(routeID: String(firstRoute.routeNumber)).perform(
-
-            withSuccess: { (result) in
-
-                self.banner?.dismiss()
-                self.banner = nil
-                self.updateBusLocations(busLocations: result.allBusLocations)
-
-        }) { (error) in
-
-            print("RouteDetailVC getBusLocations Error:", error)
-            if self.banner == nil {
-                let title = "Cannot connect to live tracking"
-                self.banner = StatusBarNotificationBanner(title: title, style: .warning)
-                self.banner!.autoDismiss = false
-                self.banner!.show(queuePosition: .front, on: self)
-            }
-
-        }
+        for direction in route.directions {
+            
+            if direction.type == .depart && direction.routeNumber > 0 {
+                
+                Network.getBusLocations(routeID: String(direction.routeNumber),
+                                        tripID: direction.tripID,
+                                        stopID: direction.startLocation.id)
+                    
+                .perform(withSuccess: { (result) in
+                    
+                    var results: [BusDataType] = []
+                    
+                        if let busLocation = result.busLocation {
+                            
+                            results.append(busLocation.dataType)
+                            
+                            switch busLocation.dataType {
+                            
+                            case .noData:
+                                // print("No Data for", direction.routeNumber)
+                                
+                                if !self.noDataRouteList.contains(direction.routeNumber) {
+                                    self.noDataRouteList.append(direction.routeNumber)
+                                }
+                                
+                                var message = ""
+                                if self.noDataRouteList.count > 1 {
+                                    message = "No live tracking available for routes"
+                                } else {
+                                    message = "No live tracking available for Route \(direction.routeNumber)"
+                                }
+                                
+                                self.showBanner(message, status: .info)
+                                
+                            case .invalidData:
+                                // print("Invalid Data for", direction.routeNumber)
+                                
+                                if let previouslyUnavailableRoute = self.noDataRouteList.index(of: direction.routeNumber) {
+                                    self.noDataRouteList.remove(at: previouslyUnavailableRoute)
+                                }
+                                
+                                if self.noDataRouteList.isEmpty {
+                                    self.hideBanner()
+                                }
+                                
+                                self.showBanner("Tracking available near departure time", status: .info)
+                                
+                            case .validData:
+                                 // print("Valid Data for", direction.routeNumber)
+                                
+                                 if let previouslyUnavailableRoute = self.noDataRouteList.index(of: direction.routeNumber) {
+                                    self.noDataRouteList.remove(at: previouslyUnavailableRoute)
+                                 }
+                                 
+                                 if self.noDataRouteList.isEmpty {
+                                    self.hideBanner()
+                                 }
+                                 
+                                 self.setBusLocation(busLocation)
+                                
+                            } // switch end
+                            
+                        } else {
+                            print("Error: Successful response, but no content. Likely client-side issue")
+                        }
+                        
+                }) { (error) in
+                    
+                    print("RouteDetailVC getBusLocations Error:", error)
+                    self.showBanner("Cannot connect to live tracking", status: .danger)
+                    
+                } // network completion handler end
+                
+            } // depart conditional end
+            
+        } // for loop end
 
     }
 
-    /** Update the map with new busLocations, adding or replacing based on vehicleID */
-    func updateBusLocations(busLocations: [BusLocation]) {
-
-        // bus - most updated bus location
-        for bus in busLocations {
-
-            let busCoords = CLLocationCoordinate2DMake(bus.latitude, bus.longitude)
-            let existingBus = buses.first(where: {
-                return ($0.userData as? BusLocation)?.vehicleID == bus.vehicleID
-            })
-
-            // If bus is already on map, update and animate change
-            if let newBus = existingBus {
-
-                UIView.animate(withDuration: 1.0, delay: 0, options: .curveEaseInOut, animations: {
-                    newBus.userData = bus
-                    (newBus.iconView as? BusLocationView)?.setBearing(bus.heading, start: existingBus!.position, end: busCoords)
-                    newBus.position = busCoords
-                })
-                
-            }
-                
-            // Otherwise, add bus to map
-            else {
-                
-                let marker = GMSMarker(position: busCoords)
-                (bus.iconView as? BusLocationView)?.setBearing(bus.heading)
-                marker.iconView = bus.iconView
-                setIndex(of: marker, with: .bussing)
-                marker.userData = bus
-                marker.map = mapView
-                buses.append(marker)
-                
-            }
-
+    /** Update the map with new busLocations, adding or replacing based on vehicleID.
+        If `validTripIDs` is passed in, only buses that match the tripID will be drawn.
+        The input includes every bus associated with a certain line.
+     */
+    func setBusLocation(_ bus: BusLocation) {
+        
+        let busCoords = CLLocationCoordinate2DMake(bus.latitude, bus.longitude)
+        let existingBus = buses.first(where: {
+            return ($0.userData as? BusLocation)?.vehicleID == bus.vehicleID
+        })
+        
+        // If bus is already on map, update and animate change
+        if let newBus = existingBus {
+            
+            /// Allow time to receive new live bus request
+            let latencyConstant = 0.25
+            
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(networkRefreshRate + latencyConstant)
+            newBus.appearAnimation = .none
+            newBus.userData = bus
+            (newBus.iconView as? BusLocationView)?.setBearing(bus.heading, start: existingBus!.position, end: busCoords)
+            newBus.position = busCoords
+            CATransaction.commit()
+            
+        }
+            
+        // Otherwise, add bus to map
+        else {
+            
+            let marker = GMSMarker(position: busCoords)
+            (bus.iconView as? BusLocationView)?.setBearing(bus.heading)
+            marker.iconView = bus.iconView
+            marker.appearAnimation = .pop
+            setIndex(of: marker, with: .bussing)
+            marker.userData = bus
+            marker.map = mapView
+            buses.append(marker)
+            
         }
         
-        // if a bus on the map doesn't appear in latest buses, remove it
-        for (index, mappedBus) in buses.enumerated() {
-            
-            if !busLocations.contains(where: { (newBusLocation) -> Bool in
-                return (mappedBus.userData as? BusLocation)?.vehicleID == newBusLocation.vehicleID
-            }) {
-                mappedBus.map = nil
-                buses.remove(at: index)
-            }
-            
-        }
-
     }
     
     // MARK: Map Functions

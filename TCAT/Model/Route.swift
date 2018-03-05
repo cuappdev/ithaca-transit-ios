@@ -100,45 +100,93 @@ class Route: NSObject, JSONDecodable {
         
         super.init()
 
-        // Create Arrive Direction after Depart Direction
+        // Parse and format directions
+        
+        /// Variable to keep track of additions to direction list (Arrival Directions)
+        var offset = 0
+        
+        /// True if previous direction indicated next bus is a transfer to stay on
+        var isTransfer: Bool = false
+        
         for (index, direction) in directions.enumerated() {
+            
+            // print("Direction Type:", direction.type.rawValue)
+            // print("Direction stayOnBusTransfer", direction.stayOnBusTransfer)
+            
             if direction.type == .depart {
-                let arriveDirection = direction.copy() as! Direction
-                arriveDirection.type = .arrive
-                arriveDirection.startTime = arriveDirection.endTime
-                arriveDirection.startLocation = arriveDirection.endLocation
-                arriveDirection.stops = []
-                arriveDirection.name = direction.stops.last?.name ?? "Nil"
-                directions.insert(arriveDirection, at: index+1)
+                
+                if !direction.stayOnBusTransfer {
+                    
+                    // print("Creating Arrival Direction")
+                    
+                    // Create Arrival Direction
+                    let arriveDirection = direction.copy() as! Direction
+                    arriveDirection.type = .arrive
+                    arriveDirection.startTime = arriveDirection.endTime
+                    arriveDirection.startLocation = arriveDirection.endLocation
+                    arriveDirection.stops = []
+                    arriveDirection.name = direction.stops.last?.name ?? "Nil"
+                    directions.insert(arriveDirection, at: index + offset + 1)
+                    offset += 1
+                    
+                }
+                
+                if isTransfer {
+                    
+                    // print("Marked As Transfer Direction")
+                    // direction.type = .transfer
+                    
+                }
+                
+                isTransfer = direction.stayOnBusTransfer
+                
+                // Remove inital bus stop and departure bus stop
+                if direction.stops.count >= 2 {
+                    direction.stops.removeFirst()
+                    direction.stops.removeLast()
+                }
+                
             }
+            
         }
         
         // Calculate travel distance
         calculateTravelDistance(fromDirection: directions)
+        
     }
     
     // MARK: Parse JSON
     
-    static func getRoutes(from json: JSON, fromDescription: String? = nil, toDescription: String? = nil) -> [Route] {
-        return json.arrayValue.map {
-            var augmentedJSON = $0
-            augmentedJSON["startName"].string = fromDescription ?? "Current Location"
-            augmentedJSON["endName"].string = toDescription ?? "your destination"
-            return try! Route(json: augmentedJSON)
+    /// Handle route calculation data request.
+    static func getRoutes(in json: JSON, from: String?, to: String?,
+                          _ completion: @escaping (_ routes: [Route], _ error: NSError?) -> Void) {
+        
+        if json["success"].boolValue {
+            let routes: [Route] = json["data"].arrayValue.map {
+                var augmentedJSON = $0
+                augmentedJSON["startName"].string = from ?? "Current Location"
+                augmentedJSON["endName"].string = to ?? "your destination"
+                return try! Route(json: augmentedJSON)
+            }
+            completion(routes, nil)
+        } else {
+            let userInfo = ["description" : json["error"].stringValue]
+            let error = NSError(domain: "Route Calculation Failure", code: 400, userInfo: userInfo)
+            completion([], error)
         }
+        
     }
     
     // MARK: Process raw routes
     
     func isWalkingRoute() -> Bool {
-        let isWalkingRoute = directions.reduce(true) { $0 && $1.type == .walk }
-        
-        return isWalkingRoute
+        return directions.reduce(true) { $0 && $1.type == .walk }
     }
     
     /** Calculate travel distance from location passed in to first route summary object and updates travel distance of route
      */
     func calculateTravelDistance(fromDirection directions: [Direction]) {
+        
         // first route option stop is the first bus stop in the route
         guard let firstRouteOptionsStop = directions.first?.type == .walk ? directions[1] : directions.first else {
             return
@@ -146,12 +194,8 @@ class Route: NSObject, JSONDecodable {
         
         let fromLocation = CLLocation(latitude: startCoords.latitude, longitude: startCoords.longitude)
         let endLocation = CLLocation(latitude: firstRouteOptionsStop.startLocation.latitude, longitude: firstRouteOptionsStop.startLocation.longitude)
+        travelDistance = fromLocation.distance(from: endLocation)
         
-        let numberOfMetersInMile = 1609.34
-        let distanceInMeters = fromLocation.distance(from: endLocation)
-        let distanceInMiles = distanceInMeters / numberOfMetersInMile
-        
-        travelDistance = distanceInMiles
     }
     
     override var debugDescription: String {
@@ -168,17 +212,9 @@ class Route: NSObject, JSONDecodable {
         
     }
     
+    /// Number of directions with .depart type
     func numberOfBusRoutes() -> Int {
-        
-        var numberOfRoutes = 0
-        for direction in directions {
-            if direction.type == .depart {
-                numberOfRoutes += 1
-            }
-        }
-        
-        return numberOfRoutes
-        
+        return directions.reduce(0) { $0 + ($1.type == .depart ? 1 : 0) }
     }
     
 }
