@@ -58,7 +58,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     // MARK: Reachability vars
 
-    let reachability: Reachability? = Reachability(hostname: Network.source)
+    let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
     var banner: StatusBarNotificationBanner = {
         let banner = StatusBarNotificationBanner(title: "No Internet Connection", style: .danger)
         banner.autoDismiss = false
@@ -93,13 +93,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setRouteSelectionView(withDestination: searchTo)
         setupLocationManager()
 
-        setupReachability()
-
         searchForRoutes()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: routeTableViewCellIdentifier)
+        setupReachability()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -501,8 +500,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: routeTableViewCellIdentifier)
         }
 
-        cell?.route = routes[indexPath.row]
-        cell?.setRouteData()
+        cell?.setData(routes[indexPath.row])
         cell?.positionSubviews()
         cell?.addSubviews()
 
@@ -541,7 +539,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 isBannerShown = true // hides status bar
                 setNeedsStatusBarAppearanceUpdate()
                 banner.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
-//                setUserInteraction(to: false)
+                setUserInteraction(to: false)
 
             case .cellular, .wifi:
                 if isBannerShown {
