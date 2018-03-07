@@ -120,28 +120,31 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Set Data
 
     func setData(_ route: Route){
-        setLiveElements(withDirections: route.directions)
+        let firstDepartDirection = route.getFirstDepartDirection()
+        
+        setLiveElements(withFirstDepartDirection: firstDepartDirection)
         
         var isWalkingRoute = route.isWalkingRoute()
-
-        setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime, withWalkingRoute: isWalkingRoute)
-        setDepartureTime(withTime: route.departureTime, withWalkingRoute: isWalkingRoute)
+        
+        if let firstDepartDirection = firstDepartDirection, let lastArriveDirection = route.getLastArriveDirection(){
+            setTravelTime(withDepartureTime: firstDepartDirection.startTime, withArrivalTime: lastArriveDirection.endTime)
+        }
+        else {
+            setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
+        }
+        
+        if let firstDepartDirection = firstDepartDirection {
+            setDepartureTime(withTime: firstDepartDirection.startTime, withWalkingRoute: isWalkingRoute)
+        }
+        else {
+            setDepartureTime(withTime: route.departureTime, withWalkingRoute: isWalkingRoute)
+        }
 
         routeDiagram.setData(withDirections: route.directions, withTravelDistance: route.travelDistance, withWalkingRoute: isWalkingRoute)
     }
     
-    func getFirstDepartDirection(_ directions: [Direction]) -> Direction? {
-        for direction in directions {
-            if direction.type == .depart {
-                return direction
-            }
-        }
-        
-        return nil
-    }
-    
-    func setLiveElements(withDirections directions: [Direction]) {
-        if let direction = getFirstDepartDirection(directions) {
+    func setLiveElements(withFirstDepartDirection firstDepartDirection: Direction?) {
+        if let direction = firstDepartDirection {
             Network.getBusLocations(routeID: String(direction.routeNumber), tripID: direction.tripID, stopID: direction.startLocation.id)
                 .perform(withSuccess: { (result) in
                     if let busLocation = result.busLocation {
@@ -171,8 +174,8 @@ class RouteTableViewCell: UITableViewCell {
         }
     }
 
-    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date, withWalkingRoute isWalkingRoute: Bool){
-        travelTimeLabel.text = isWalkingRoute ? "\(Time.timeString(from: departureTime)) - \(Time.timeString(from: arrivalTime))" : "\(Time.timeString(from: departureTime))"
+    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
+        travelTimeLabel.text = "\(Time.timeString(from: departureTime)) - \(Time.timeString(from: arrivalTime))"
         travelTimeLabel.sizeToFit()
     }
 
