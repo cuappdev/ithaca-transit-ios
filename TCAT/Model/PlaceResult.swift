@@ -12,6 +12,7 @@ import SwiftyJSON
 import CoreLocation
 
 class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
+    
     var detail: String
     var placeID: String
     

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DatepickerView: UIView {
+class DatePickerView: UIView {
 
     // MARK:  View vars
 

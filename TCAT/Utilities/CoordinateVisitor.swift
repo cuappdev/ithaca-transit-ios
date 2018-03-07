@@ -19,6 +19,7 @@ class CoordinateVisitor: NSObject {
     private let placesClient = GMSPlacesClient.shared()
     
     func getCoordinate(from place: PlaceResult, callback: @escaping (CLLocationCoordinate2D?) -> Void) {
+        
         placesClient.lookUpPlaceID(place.placeID) { (result, error) in
             
             if let error = error {
@@ -35,9 +36,12 @@ class CoordinateVisitor: NSObject {
             
             callback(result.coordinate)
         }
+        
     }
     
     func getCoordinate(from busStop: BusStop, callback: @escaping (CLLocationCoordinate2D?) -> Void) {
+        
         callback(CLLocationCoordinate2D(latitude: busStop.lat, longitude: busStop.long))
+        
     }
 }

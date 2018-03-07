@@ -40,7 +40,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         titleLabel.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.textColor = .primaryTextColor
-        titleLabel.text = "Board"
+        titleLabel.text = direction != nil && direction.type == .transfer ? "Bus becomes" : "Board"
         titleLabel.sizeToFit()
         return titleLabel
     }
@@ -92,7 +92,7 @@ class LargeDetailTableViewCell: UITableViewCell {
                                       lastStep: false)
             contentView.addSubview(iconView!)
             
-            busIconView = BusIcon(type: .directionSmall, number: self.direction.routeNumber)
+            busIconView = BusIcon(type: .directionSmall, number: direction.routeNumber)
             busIconView = formatBusIconView(busIconView, titleLabel)
             contentView.addSubview(busIconView)
             
@@ -106,11 +106,15 @@ class LargeDetailTableViewCell: UITableViewCell {
             chevron.center.y = cellHeight / 2
         }
         
+        if direction.stops.isEmpty {
+            chevron.alpha = 0 // .hidden attribute used for animation
+        }
+        
     }
     
     /** Abstracted formatting of content for titleLabel */
     func formatTitleLabel(_ label: UILabel) -> UILabel {
-        
+ 
         // Add correct amount of spacing to create a gap for the busIcon
         // Using constant always returned from
         //      while label.frame.maxX < busIconView.frame.maxX + 8 {
@@ -123,9 +127,10 @@ class LargeDetailTableViewCell: UITableViewCell {
         }
         
         // Format and place labels
+        
+        let content = direction.locationNameDescription
         let attributedString = NSMutableAttributedString(string: label.text!)
-        attributedString.append(bold(pattern: self.direction.name,
-                                     in: self.direction.locationNameDescription))
+        attributedString.append(bold(pattern: self.direction.name, in: content))
         label.attributedText = attributedString
         paragraphStyle.lineSpacing = 8
         
@@ -144,7 +149,11 @@ class LargeDetailTableViewCell: UITableViewCell {
     
     /** Abstracted formatting of content for detailLabel. Needs titleLabel */
     func formatDetailLabel(_ label: UILabel, _ titleLabel: UILabel) -> UILabel {
-        label.text = "\(self.direction.stops.count) stops"
+        if direction.stops.isEmpty {
+            label.text = "Get off at next stop"
+        } else {
+            label.text = "\(direction.stops.count) stop\(direction.stops.count == 1 ? "" : "s")"
+        }
         label.frame.origin.y = titleLabel.frame.maxY + labelSpacing
         label.sizeToFit()
         return label

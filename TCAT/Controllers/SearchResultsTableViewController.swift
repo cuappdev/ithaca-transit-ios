@@ -287,7 +287,8 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
                 self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
                 //self.tableViewIndexController.setHidden(true, animated: false)
                 if !self.sections.isEmpty {
-                    self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false) }
+                    self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+                }
             })
         } else {
             sections = createSections()
@@ -303,6 +304,9 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     
     /* SearchBar Delegates */
     func updateSearchResults(for searchController: UISearchController) {
+        if !sections.isEmpty {
+            tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        }
         searchController.searchResultsController?.view.isHidden = false
     }
     

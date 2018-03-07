@@ -20,8 +20,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     var window: UIWindow?
     let userDefaults = UserDefaults.standard
     
+    /// Link to Google Forms
+    let betaFormLink = "https://goo.gl/forms/jYejUtVccVQ3UHH12"
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
         
         // Set Up Google Services
         let json = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
@@ -124,8 +126,8 @@ extension UIWindow {
     }
     
     func openFeedback() {
-        let betaFormURL = "https://goo.gl/forms/u2shinl8ddNyFuZ23"
-        let safariViewController = SFSafariViewController(url: URL(string: betaFormURL)!)
+        let link = (UIApplication.shared.delegate as! AppDelegate).betaFormLink
+        let safariViewController = SFSafariViewController(url: URL(string: link)!)
         presentInApp(safariViewController)
     }
     

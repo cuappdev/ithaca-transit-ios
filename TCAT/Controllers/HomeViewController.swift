@@ -41,10 +41,15 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             tableView.reloadData()
         }
     }
-    // TODO: DEBUGGING
-    let reachability = Reachability(hostname: "www.google.com")
+    
+    let reachability = Reachability(hostname: Network.ipAddress)
     var isBannerShown = false
-    var banner: StatusBarNotificationBanner?
+    
+    var banner: StatusBarNotificationBanner {
+        let banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
+        banner.autoDismiss = false
+        return banner
+    }
     
     func tctSectionHeaderFont() -> UIFont? {
         return UIFont.systemFont(ofSize: 14)
@@ -131,23 +136,21 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     @objc func reachabilityChanged(note: Notification) {
-        if banner == nil {
-            banner = StatusBarNotificationBanner(title: "No Internet Connection", style: .danger)
-            banner?.autoDismiss = false
-        }
         let reachability = note.object as! Reachability
         switch reachability.connection {
             case .none:
+                banner.show(queuePosition: .front, on: self)
                 isBannerShown = true
-                banner?.show(queuePosition: .front, on: self)
+                UIApplication.shared.statusBarStyle = .lightContent
                 self.isNetworkDown = true
                 self.sectionIndexes = [:]
                 self.searchBar.isUserInteractionEnabled = false
                 self.sections = []
             case .cellular, .wifi:
                 if isBannerShown {
-                    banner?.dismiss()
+                    banner.dismiss()
                     isBannerShown = false
+                    UIApplication.shared.statusBarStyle = .default
                 }
                 sections = createSections()
                 self.searchBar.isUserInteractionEnabled = true
@@ -384,13 +387,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         navigationItem.rightBarButtonItem = nil
-        //Crashlytics Answers
-        Answers.searchBarTappedInHome()
-        RegisterSession.shared?.logEvent(event: SearchBarTappedEventPayload(location: .home).toEvent())
+        let _ = RegisterSession.shared?.logEvent(event: SearchBarTappedEventPayload(location: .home).toEvent())
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.placeholder = "Search (e.g Balch Hall, 312 College Ave)"
+        searchBar.placeholder = "Search (e.g. Balch Hall, 312 College Ave)"
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.endEditing(true)
         searchBar.text = nil

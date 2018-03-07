@@ -22,7 +22,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     
     // MARK: Variables
     
-    var summaryView = UIView()
+    var summaryView = SummaryView()
     var tableView: UITableView!
     var safeAreaCover: UIView? = nil
     
@@ -31,9 +31,6 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     
     let main = UIScreen.main.bounds
     var justLoaded: Bool = true
-    
-    /// Height of summary view
-    var summaryViewHeight: CGFloat = 80
     
     // MARK: Initalization
 
@@ -74,75 +71,18 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
 
         view.backgroundColor = .white
         
-        // Create summary tap gesture
+        // Create summaryView
+        
+        summaryView.route = route
         let summaryTapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
         summaryTapGesture.delegate = self
-
-        // Place and format the summary view
-        summaryView.backgroundColor = .summaryBackgroundColor
-        summaryView.frame = CGRect(x: 0, y: 0, width: main.width, height: summaryViewHeight)
-        summaryView.roundCorners(corners: [.topLeft, .topRight], radius: 16)
         summaryView.addGestureRecognizer(summaryTapGesture)
         view.addSubview(summaryView)
-        
-        // Create puller tab
-        let puller = UIView(frame: CGRect(x: 0, y: 6, width: 32, height: 4))
-        // value to help center items below
-        let pullerHeight = (puller.frame.origin.y + puller.frame.height) / 2
-        puller.center.x = summaryView.center.x
-        puller.backgroundColor = .mediumGrayColor
-        puller.layer.cornerRadius = puller.frame.height / 2
-        summaryView.addSubview(puller)
-
-        // Create and place all bus routes in Directions (account for small screens)
-        var icon_maxY: CGFloat = 24; var first = true
-        let mainStopCount = route.numberOfBusRoutes()
-        var center = CGPoint(x: icon_maxY, y: (summaryView.frame.height / 2) + pullerHeight)
-        for direction in directions {
-            if direction.type == .depart {
-                // use smaller icons for small phones or multiple icons
-                let busType: BusIconType = mainStopCount > 1 ? .directionSmall : .directionLarge
-                let busIcon = BusIcon(type: busType, number: direction.routeNumber)
-                if first { center.x += busIcon.frame.width / 2; first = false }
-                busIcon.center = center
-                summaryView.addSubview(busIcon)
-                center.x += busIcon.frame.width + 12
-                icon_maxY += busIcon.frame.width + 12
-            }
-        }
-
-        // Place and format top summary label
-        let textLabelPadding: CGFloat = 16
-        let summaryTopLabel = UILabel()
-        if let departDirection = (directions.filter { $0.type == .depart }).first {
-            summaryTopLabel.text = "Depart at \(departDirection.startTimeDescription) from \(departDirection.name)"
-        } else {
-            summaryTopLabel.text = directions.first?.locationNameDescription ?? "Route Directions"
-        }
-        summaryTopLabel.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.regular)
-        summaryTopLabel.textColor = .primaryTextColor
-        summaryTopLabel.sizeToFit()
-        summaryTopLabel.frame.origin.x = icon_maxY + textLabelPadding
-        summaryTopLabel.frame.size.width = summaryView.frame.maxX - summaryTopLabel.frame.origin.x - textLabelPadding
-        summaryTopLabel.center.y = (summaryView.bounds.height / 2) + pullerHeight - (summaryTopLabel.frame.height / 2)
-        summaryTopLabel.allowsDefaultTighteningForTruncation = true
-        summaryTopLabel.lineBreakMode = .byTruncatingTail
-        summaryView.addSubview(summaryTopLabel)
-
-        // Place and format bottom summary label
-        let summaryBottomLabel = UILabel()
-        summaryBottomLabel.text = "Trip Duration: \(route.totalDuration) minute\(route.totalDuration == 1 ? "" : "s")"
-        summaryBottomLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)
-        summaryBottomLabel.textColor = .mediumGrayColor
-        summaryBottomLabel.sizeToFit()
-        summaryBottomLabel.frame.origin.x = icon_maxY + textLabelPadding
-        summaryBottomLabel.center.y = (summaryView.bounds.height / 2) + pullerHeight + (summaryBottomLabel.frame.height / 2)
-        summaryView.addSubview(summaryBottomLabel)
 
         // Create Detail Table View
         tableView = UITableView()
-        tableView.frame.origin = CGPoint(x: 0, y: summaryViewHeight)
-        tableView.frame.size = CGSize(width: main.width, height: main.height - summaryViewHeight)
+        tableView.frame.origin = CGPoint(x: 0, y: summaryView.frame.height)
+        tableView.frame.size = CGSize(width: main.width, height: main.height - summaryView.frame.height)
         tableView.bounces = false
         tableView.estimatedRowHeight = RouteDetailCellSize.smallHeight
         tableView.rowHeight = UITableViewAutomaticDimension
@@ -151,25 +91,59 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: "busStopCell")
         tableView.dataSource = self
         tableView.delegate = self
-        
-        // TODO: Temporary solution to enable tap gesture for footer: Disable scroll
-        
-        let cellHeight = tableView.visibleCells.reduce(0) { $0 + $1.frame.size.height }
-        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - cellHeight))
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
-        tapGesture.delegate = self
-        tableView.tableFooterView?.addGestureRecognizer(tapGesture)
-        tableView.isScrollEnabled = false
+        setTableViewFooter()
         
         view.addSubview(tableView)
 
+    }
+    
+    /// Create and / or adjust the tableView footer, including setting tap gesture recognizer.
+    func setTableViewFooter() {
+        
+        let lastCellIndexPath = IndexPath(row: tableView.numberOfRows(inSection: 0) - 1, section: 0)
+        var screenBottom = main.height
+        if #available(iOS 11.0, *) { screenBottom -= view.safeAreaInsets.bottom }
+        
+        // Calculate height of space between last cell and the bottom of the screen, also accounting for summary
+        var footerHeight = screenBottom - (tableView.cellForRow(at: lastCellIndexPath)?.frame.maxY ?? screenBottom) - summaryView.frame.height
+        
+        if tableView.tableFooterView != nil {
+            // remove footer when when additional cells are added
+            footerHeight = expandedCell != nil ? 0 : footerHeight
+            tableView.tableFooterView?.frame.size.height = footerHeight
+            tableView.tableFooterView?.layoutIfNeeded()
+        } else {
+            tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: footerHeight))
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
+            tapGesture.delegate = self
+            tableView.tableFooterView?.addGestureRecognizer(tapGesture)
+        }
+        
+        // Debugging
+        // tableView.tableFooterView?.backgroundColor = .summaryBackgroundColor
+
+    }
+    
+    /// Returns true if any cell is currently expanded
+    var expandedCell: LargeDetailTableViewCell? {
+        
+        for index in 0..<tableView.numberOfRows(inSection: 0) {
+            let indexPath = IndexPath(row: index, section: 0)
+            if let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell {
+                if cell.isExpanded {
+                    return cell
+                }
+            }
+            
+        }
+        return nil
     }
     
     /// Creates a temporary view to cover the drawer contents when collapsed. Hidden by default.
     func initializeCover() {
         if #available(iOS 11.0, *) {
             let bottom = UIApplication.shared.keyWindow?.rootViewController?.view.safeAreaInsets.bottom ?? 34
-            safeAreaCover = UIView(frame: CGRect(x: 0, y: summaryViewHeight, width: main.width, height: bottom))
+            safeAreaCover = UIView(frame: CGRect(x: 0, y: summaryView.frame.height, width: main.width, height: bottom))
             safeAreaCover!.backgroundColor = .summaryBackgroundColor
             safeAreaCover!.alpha = 0
             view.addSubview(safeAreaCover!)
@@ -185,7 +159,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     // MARK: Pulley Delegate
     
     func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return bottomSafeArea + summaryViewHeight
+        return bottomSafeArea + summaryView.frame.height
     }
     
     func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
@@ -218,7 +192,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
         
         // Manage cover view hiding drawer when collapsed
-        if distance - bottomSafeArea == summaryViewHeight {
+        if distance - bottomSafeArea == summaryView.frame.height {
             safeAreaCover?.alpha = 1.0
             visible = true
         } else {
@@ -301,63 +275,89 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         let direction = directions[indexPath.row]
+        
+        // Limit expandedCell to only one bus route at a time.
+//        if let cell = expandedCell, cell != tableView.cellForRow(at: indexPath) {
+//            toggleCellExpansion(at: tableView.indexPath(for: cell))
+//        }
 
         // Check if cell starts a bus direction, and should be expandable
         if direction.type == .depart {
 
             if justLoaded { summaryTapped() }
 
-            let cell = tableView.cellForRow(at: indexPath) as! LargeDetailTableViewCell
-            cell.isExpanded = !cell.isExpanded
-
-            // Flip arrow
-            cell.chevron.layer.removeAllAnimations()
-
-            let transitionOptionsOne: UIViewAnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
-            UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsOne, animations: {
-                cell.chevron.isHidden = true
-            })
-
-            cell.chevron.transform = cell.chevron.transform.rotated(by: CGFloat.pi)
-
-            let transitionOptionsTwo: UIViewAnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
-            UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsTwo, animations: {
-                cell.chevron.isHidden = false
-            })
-
-            // Prepare bus stop data to be inserted / deleted into Directions array
-            var busStops = [Direction]()
-            for stop in direction.stops {
-                let stopAsDirection = Direction(name: stop.name)
-                busStops.append(stopAsDirection)
-            }
-            var indexPathArray: [IndexPath] = []
-            let busStopRange = (indexPath.row + 1)..<(indexPath.row + 1) + busStops.count
-            for i in busStopRange {
-                indexPathArray.append(IndexPath(row: i, section: 0))
-            }
-
-            tableView.beginUpdates()
-
-            // Insert or remove bus stop data based on selection
-
-            if cell.isExpanded {
-                directions.insert(contentsOf: busStops, at: indexPath.row + 1)
-                tableView.insertRows(at: indexPathArray, with: .middle)
-            } else {
-                directions.removeSubrange(busStopRange)
-                tableView.deleteRows(at: indexPathArray, with: .middle)
-            }
-
-            tableView.endUpdates()
+            toggleCellExpansion(at: indexPath)
+            
             tableView.scrollToRow(at: indexPath, at: .none, animated: true)
-
+            setTableViewFooter()
+            
+            tableView.layoutIfNeeded()
+            tableView.layoutSubviews()
+            
         } else {
-            
             summaryTapped()
-            
         }
 
+    }
+    
+    /// Toggle the cell expansion at the indexPath
+    func toggleCellExpansion(at indexPath: IndexPath?) {
+        
+        guard
+            let indexPath = indexPath,
+            let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell
+        else {
+            return
+        }
+        
+        let direction = directions[indexPath.row]
+        
+        // Flip arrow
+        cell.chevron.layer.removeAllAnimations()
+        
+        cell.isExpanded = !cell.isExpanded
+        
+        let transitionOptionsOne: UIViewAnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
+        UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsOne, animations: {
+            cell.chevron.isHidden = true
+        })
+        
+        cell.chevron.transform = cell.chevron.transform.rotated(by: CGFloat.pi)
+        
+        let transitionOptionsTwo: UIViewAnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
+        UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsTwo, animations: {
+            cell.chevron.isHidden = false
+        })
+        
+        // Prepare bus stop data to be inserted / deleted into Directions array
+        var busStops = [Direction]()
+        for stop in direction.stops {
+            let stopAsDirection = Direction(name: stop.name)
+            busStops.append(stopAsDirection)
+        }
+        var indexPathArray: [IndexPath] = []
+        let busStopRange = (indexPath.row + 1)..<(indexPath.row + 1) + busStops.count
+        for i in busStopRange {
+            indexPathArray.append(IndexPath(row: i, section: 0))
+        }
+        
+        tableView.beginUpdates()
+        
+        // Insert or remove bus stop data based on selection
+        
+        if cell.isExpanded {
+            directions.insert(contentsOf: busStops, at: indexPath.row + 1)
+            tableView.insertRows(at: indexPathArray, with: .middle)
+        } else {
+            directions.removeSubrange(busStopRange)
+            tableView.deleteRows(at: indexPathArray, with: .middle)
+        }
+        
+        tableView.endUpdates()
+        
+        busStops = []
+        indexPathArray = []
+        
     }
     
     // MARK: Gesture Recognizers and Interaction-Related Functions

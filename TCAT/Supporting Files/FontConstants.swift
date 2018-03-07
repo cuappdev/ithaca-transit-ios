@@ -16,4 +16,5 @@ struct FontNames {
         static let Bold = "SFUIText-Bold"
         static let Semibold = "SFUIText-Semibold"
     }
+    
 }
