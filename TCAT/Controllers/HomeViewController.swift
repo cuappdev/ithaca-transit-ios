@@ -338,8 +338,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.endEditing(true)
         let vcToPush = didSelectAllStops ? allStopsTVC : optionsVC
         if presentOptionsVC {
-        navigationController?.pushViewController(vcToPush, animated: true)
+            navigationController?.pushViewController(vcToPush, animated: true)
         }
+        
     }
 
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {

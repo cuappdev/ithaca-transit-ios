@@ -91,16 +91,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 
     /* Get all bus stops and store in userDefaults */
     func getBusStops() {
-//        Network.getAllStops().perform(withSuccess: { stops in
-//            let allBusStops = stops.allStops
-//            let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
-//            self.userDefaults.set(data, forKey: Key.UserDefaults.allBusStops)
-//        }, failure: { error in
-//            print("getBusStops error:", error)
-//        })
+        Network.getAllStops().perform(withSuccess: { stops in
+            let allBusStops = stops.allStops
+            let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
+            self.userDefaults.set(data, forKey: Key.UserDefaults.allBusStops)
+        }, failure: { error in
+            print("getBusStops error:", error)
+        })
     }
-
-    
     
 }
 

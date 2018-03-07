@@ -23,7 +23,7 @@ class Network {
     static let placesClient = GMSPlacesClient.shared()
     
     class func getAllStops() -> APIRequest<AllBusStops, Error> {
-        let request: APIRequest<AllBusStops, Error> = tron.swiftyJSON.request("stops")
+        let request: APIRequest<AllBusStops, Error> = tron.swiftyJSON.request("allStops")
         request.method = .get
         return request
     }
