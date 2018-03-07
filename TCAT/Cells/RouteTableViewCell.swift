@@ -124,7 +124,7 @@ class RouteTableViewCell: UITableViewCell {
         
         setLiveElements(withFirstDepartDirection: firstDepartDirection)
         
-        var isWalkingRoute = route.isWalkingRoute()
+        let isWalkingRoute = route.isWalkingRoute()
         
         if let firstDepartDirection = firstDepartDirection, let lastArriveDirection = route.getLastArriveDirection(){
             setTravelTime(withDepartureTime: firstDepartDirection.startTime, withArrivalTime: lastArriveDirection.endTime)
