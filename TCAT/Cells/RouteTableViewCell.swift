@@ -60,7 +60,6 @@ class RouteTableViewCell: UITableViewCell {
 
         positionTravelTime()
         positionLiveElementsVertically(usingTravelTime: travelTimeLabel)
-//        positionLiveElementsHorizontally(usingTravelTime: travelTimeLabel)
         positionDepartureTimeVertically(usingTravelTime: travelTimeLabel)
         positionArrowVertically(usingDepartureTime: departureTimeLabel)
         positionTopBorder()
@@ -113,19 +112,63 @@ class RouteTableViewCell: UITableViewCell {
         routeDiagram.removeFromSuperview()
         cellSeperator.removeFromSuperview()
         bottomBorder.removeFromSuperview()
+        
+        // make live elements invisible
+        setLiveElements(withStartTime: nil, withDelay: nil)
     }
 
     // MARK: Set Data
 
     func setData(_ route: Route){
-        let isLate: Bool = true
-        let lateTime: Date? = nil
+        setLiveElements(withDirections: route.directions)
+        
+        var isWalkingRoute = route.isWalkingRoute()
 
-        setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime, withWalkingRoute: route.isWalkingRoute())
-        setLiveElements(withLateness: isLate, withLateTime: lateTime)
-        setDepartureTime(withTime: route.departureTime, withWalkingRoute: route.isWalkingRoute())
+        setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime, withWalkingRoute: isWalkingRoute)
+        setDepartureTime(withTime: route.departureTime, withWalkingRoute: isWalkingRoute)
 
-        routeDiagram.setData(withDirections: route.directions, withTravelDistance: route.travelDistance, withWalkingRoute: route.isWalkingRoute())
+        routeDiagram.setData(withDirections: route.directions, withTravelDistance: route.travelDistance, withWalkingRoute: isWalkingRoute)
+    }
+    
+    func getFirstDepartDirection(_ directions: [Direction]) -> Direction? {
+        for direction in directions {
+            if direction.type == .depart {
+                return direction
+            }
+        }
+        
+        return nil
+    }
+    
+    func setLiveElements(withDirections directions: [Direction]) {
+        if let direction = getFirstDepartDirection(directions) {
+            Network.getBusLocations(routeID: String(direction.routeNumber), tripID: direction.tripID, stopID: direction.startLocation.id)
+                .perform(withSuccess: { (result) in
+                    if let busLocation = result.busLocation {
+                        
+                        switch busLocation.dataType {
+                            
+                        case .validData:
+                            self.setLiveElements(withStartTime: direction.startTime, withDelay: busLocation.delay)
+                            
+                        default:
+                           self.setLiveElements(withStartTime: nil, withDelay: nil)
+                            
+                        }
+                        
+                    }
+                    else {
+                        self.setLiveElements(withStartTime: nil, withDelay: nil)
+                    }
+                    
+                }) { (error) in
+                     self.setLiveElements(withStartTime: nil, withDelay: nil)
+                    
+                }
+        }
+        else {
+             self.setLiveElements(withStartTime: nil, withDelay: nil)
+        }
     }
 
     private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date, withWalkingRoute isWalkingRoute: Bool){
@@ -133,25 +176,25 @@ class RouteTableViewCell: UITableViewCell {
         travelTimeLabel.sizeToFit()
     }
 
-    private func setLiveElements(withLateness isLate: Bool, withLateTime lateTime: Date?) {
-        if isLate {
-            liveImageView.tintColor = .liveRedColor
-            liveLabel.textColor = .liveRedColor
-            liveLabel.text = "Late"
-            liveLabel.sizeToFit()
-
-            guard let lateTime = lateTime else {
-                print("RouteTableViewCell does not have late time to fill the live label with")
-                return
+    private func setLiveElements(withStartTime startTime: Date?, withDelay delay: Int?) {
+        if let delay = delay, let startTime = startTime {
+            if delay > 0 {
+                liveImageView.tintColor = .liveRedColor
+                liveLabel.textColor = .liveRedColor
+                liveLabel.text = "Late - \(Time.timeString(from: startTime.addingTimeInterval(TimeInterval(delay))))"
+                liveLabel.sizeToFit()
             }
-
-            liveLabel.text = "Late - \(Time.timeString(from: lateTime))"
-            liveLabel.sizeToFit()
-        } else {
-            liveImageView.tintColor = .liveGreenColor
-            liveLabel.textColor = .liveGreenColor
-            liveLabel.text = "On Time"
-            liveLabel.sizeToFit()
+            else {
+                liveImageView.tintColor = .liveGreenColor
+                liveLabel.textColor = .liveGreenColor
+                liveLabel.text = "On Time"
+                liveLabel.sizeToFit()
+            }
+        }
+        else {
+            // make live elements invisible
+            liveImageView.tintColor = .white
+            liveLabel.textColor = .white
         }
     }
 
@@ -180,9 +223,10 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     private func styleLiveElements() {
-        liveImageView.tintColor = .liveGreenColor
+        // style live elements to be invisible before get live data
+        liveImageView.tintColor = .white
         liveLabel.font = UIFont(name: FontNames.SanFrancisco.Semibold, size: 14.0)
-        liveLabel.textColor = .liveGreenColor
+        liveLabel.textColor = .white
     }
 
     private func styleDepartureTime(){
