@@ -127,7 +127,7 @@ class Network {
 
     // Use our own IP Address
     static let ipAddress = "54.174.47.32"
-    static let source = "\(ipAddress):3000" // Old Backend Endpoint: "34.235.128.17"
+    static let source = "\(ipAddress)" // Old Backend Endpoint: "34.235.128.17"
     static let tron = TRON(baseURL: "http://\(source)/")
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
