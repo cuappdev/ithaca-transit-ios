@@ -36,6 +36,10 @@ class RouteDiagram: UIView {
     let stopDotAndStopLabelHorizontalSpace: CGFloat = 14.0
     let stopLabelAndDistLabelHorizontalSpace: CGFloat = 5.5
     
+    // MARK: Data vars
+    
+    var isWalkingRoute: Bool?
+    
     // MARK: Init
     
     override init(frame: CGRect) {
@@ -59,50 +63,51 @@ class RouteDiagram: UIView {
         
         routeDiagramElements.removeAll()
         travelDistanceLabel = UILabel()
+        isWalkingRoute = nil
     }
     
     // MARK: Set Data
     
-    func setRouteData(fromDirections directions: [Direction], fromTravelDistance travelDistance: Double?) {
+    func setData(withDirections directions: [Direction], withTravelDistance travelDistance: Double, withWalkingRoute isWalkingRoute: Bool) {
+        self.isWalkingRoute = isWalkingRoute
         
+        setTravelDistance(withDistance: travelDistance, withWalkingRoute: isWalkingRoute)
+
         for index in directions.indices {
-            // skip first walking direction
-            let first = 0
-            if index == first && directions[index].type == .walk {
-                continue
+            // skip first walking direction if not walking route
+            if !isWalkingRoute {
+                let first = 0
+                if index == first && directions[index].type == .walk {
+                    continue
+                }
             }
             
             let routeDiagramElement = RouteDiagramElement()
             
             routeDiagramElement.stopNameLabel = getStopNameLabel()
-            routeDiagramElement.stopDot = getStopDot(fromDirections: directions, atIndex: index)
-            routeDiagramElement.icon = getBusIcon(fromDirections: directions, atIndex: index)
-            routeDiagramElement.routeLine = getRouteLine(fromDirections: directions, atIndex: index)
+            routeDiagramElement.stopDot = getStopDot(fromDirections: directions, atIndex: index, withWalkingRoute: isWalkingRoute)
+            routeDiagramElement.icon = getBusIcon(fromDirections: directions, atIndex: index, withWalkingRoute: isWalkingRoute, withTravelDistanceLabel: travelDistanceLabel)
+            routeDiagramElement.routeLine = getRouteLine(fromDirections: directions, atIndex: index, withWalkingRoute: isWalkingRoute)
             
             styleStopLabel(routeDiagramElement.stopNameLabel)
             setStopLabel(routeDiagramElement.stopNameLabel, withStopName: directions[index].name)
             
-            if let distance = travelDistance {
-                setTravelDistance(withDistance: distance)
-            }
-            
             routeDiagramElements.append(routeDiagramElement)
         }
-    
     }
     
-    private func setTravelDistance(withDistance distance: Double) {
+    private func setTravelDistance(withDistance distance: Double, withWalkingRoute isWalkingRoute: Bool) {
         styleDistanceLabel()
-        setDistanceLabel(withDistance: distance)
+        setDistanceLabel(withDistance: distance, withWalkingRoute: isWalkingRoute)
     }
     
     // only set distance if distance > 0
-    private func setDistanceLabel(withDistance distance: Double) {
+    private func setDistanceLabel(withDistance distance: Double, withWalkingRoute isWalkingRoute: Bool) {
         if distance > 0  {
             let numberOfPlacesToRound = (distance >= 10.0) ? 1 : 2
             var mutableDistance = distance
             let roundedDistance = mutableDistance.roundToPlaces(places: numberOfPlacesToRound)
-            travelDistanceLabel.text = "\(roundedDistance) mi away"
+            travelDistanceLabel.text = isWalkingRoute ? "\(roundedDistance) mi" : "\(roundedDistance) mi away"
             travelDistanceLabel.sizeToFit()
         }
     }
@@ -124,7 +129,7 @@ class RouteDiagram: UIView {
         return stopNameLabel
     }
     
-    private func getStopDot(fromDirections directions: [Direction], atIndex index: Int) -> Circle {
+    private func getStopDot(fromDirections directions: [Direction], atIndex index: Int, withWalkingRoute isWalkingRoute: Bool) -> Circle {
         let directionType = directions[index].type
         var pin: Circle
         let destinationDot = directions.count - 1
@@ -134,12 +139,12 @@ class RouteDiagram: UIView {
             case .walk:
                 
                 if(index == destinationDot) {
-                    let framedGreyCircle = Circle(size: .large, color: .lineColor, style: .bordered)
+                    let framedGreyCircle = Circle(size: .large, color: .mediumGrayColor, style: .bordered)
                     framedGreyCircle.backgroundColor = .white
                     
                     pin = framedGreyCircle
                 } else {
-                    let solidGreyCircle = Circle(size: .small, color: .lineColor, style: .solid)
+                    let solidGreyCircle = Circle(size: .small, color: .mediumGrayColor, style: .solid)
                     
                     pin = solidGreyCircle
                 }
@@ -147,10 +152,18 @@ class RouteDiagram: UIView {
             default:
                 
                 if(index == destinationDot) {
-                    let framedBlueCircle = Circle(size: .large, color: .tcatBlueColor, style: .bordered)
-                    framedBlueCircle.backgroundColor = .white
-                    
-                    pin = framedBlueCircle
+                    if isWalkingRoute {
+                        // walking route destination should always be grey no matter what direction type
+                        let framedGreyCircle = Circle(size: .large, color: .mediumGrayColor, style: .bordered)
+                        framedGreyCircle.backgroundColor = .white
+                        
+                        pin = framedGreyCircle
+                    } else {
+                        let framedBlueCircle = Circle(size: .large, color: .tcatBlueColor, style: .bordered)
+                        framedBlueCircle.backgroundColor = .white
+                        
+                        pin = framedBlueCircle
+                    }
                 } else {
                     let solidBlueCircle = Circle(size: .small, color: .tcatBlueColor, style: .solid)
                     
@@ -162,7 +175,31 @@ class RouteDiagram: UIView {
         return pin
     }
     
-    private func getBusIcon(fromDirections directions: [Direction], atIndex index: Int) -> UIView? {
+    private func getBusIcon(fromDirections directions: [Direction], atIndex index: Int, withWalkingRoute isWalkingRoute: Bool, withTravelDistanceLabel travelDistanceLabel: UILabel) -> UIView? {
+        let first = 0
+        // if walking route, add distance label to first walk icon
+        if index == first && isWalkingRoute {
+            let walkIcon = UIImageView(image: #imageLiteral(resourceName: "walk"))
+            walkIcon.contentMode = .scaleAspectFit
+            walkIcon.tintColor = .mediumGrayColor
+            
+            let walkIconAndDistanceLabelVerticalSpace: CGFloat = 2.0
+            let width: CGFloat = travelDistanceLabel.frame.width > 0 ? travelDistanceLabel.frame.width : 34.0
+            let height: CGFloat = walkIcon.frame.height + walkIconAndDistanceLabelVerticalSpace + travelDistanceLabel.frame.height
+            let walkWithDistanceIcon = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: height)))
+            
+            walkIcon.center.x = walkWithDistanceIcon.center.x
+            travelDistanceLabel.center.x = walkWithDistanceIcon.center.x
+            
+            let oldFrame = travelDistanceLabel.frame
+            travelDistanceLabel.frame = CGRect(x: oldFrame.minX, y: walkIcon.frame.maxY + walkIconAndDistanceLabelVerticalSpace, width: oldFrame.width, height: oldFrame.height)
+
+            walkWithDistanceIcon.addSubview(walkIcon)
+            walkWithDistanceIcon.addSubview(travelDistanceLabel)
+            
+            return walkWithDistanceIcon
+        }
+        
         let last = directions.count - 1
         if index == last {
             return nil
@@ -179,16 +216,23 @@ class RouteDiagram: UIView {
             default:
                 let walkIcon = UIImageView(image: #imageLiteral(resourceName: "walk"))
                 walkIcon.contentMode = .scaleAspectFit
+                walkIcon.tintColor = .mediumGrayColor
                 return walkIcon
             
         }
 
     }
     
-    private func getRouteLine(fromDirections directions: [Direction], atIndex index: Int) -> RouteLine? {
+    private func getRouteLine(fromDirections directions: [Direction], atIndex index: Int, withWalkingRoute isWalkingRoute: Bool) -> RouteLine? {
         let last = directions.count - 1
         if index == last {
             return nil
+        }
+        
+        if isWalkingRoute {
+            let greyRouteLine = SolidLine(height: RouteDiagram.routeLineHeight, color: .mediumGrayColor)
+            
+            return greyRouteLine
         }
         
         let directionType = directions[index].type
@@ -254,7 +298,21 @@ class RouteDiagram: UIView {
             
         }
         
-        positionDistanceLabel(usingFirstStopLabel: routeDiagramElements[0].stopNameLabel)
+        guard let isWalkingRoute = isWalkingRoute else {
+            positionDistanceLabel(usingFirstStopLabel: routeDiagramElements[0].stopNameLabel)
+            resizeHeight()
+            return
+        }
+        
+        if isWalkingRoute {
+            if let walkWithDistanceIcon = routeDiagramElements.first?.icon,
+                let routeLine = routeDiagramElements.first?.routeLine {
+                positionWalkWithDistanceIcon(walkWithDistanceIcon, usingRouteLine: routeLine, usingNextIcon: routeDiagramElements[1].icon)
+            }
+        }
+        else {
+            positionDistanceLabel(usingFirstStopLabel: routeDiagramElements[0].stopNameLabel)
+        }
         
         resizeHeight()
     }
@@ -326,13 +384,25 @@ class RouteDiagram: UIView {
         busIcon.center.y = routeLine.center.y
     }
     
+    private func positionWalkWithDistanceIcon(_ walkWithDistanceIcon: UIView, usingRouteLine routeLine: RouteLine, usingNextIcon nextIcon: UIView?) {
+        if let nextIcon = nextIcon {
+            walkWithDistanceIcon.center.x = nextIcon.center.x
+            walkWithDistanceIcon.center.y = routeLine.center.y
+        }
+        else {
+            let walkWithDistanceIconAndRouteLineHorizontalSpace: CGFloat = 22.0
+            
+            walkWithDistanceIcon.center.x = routeLine.frame.minX - walkWithDistanceIconAndRouteLineHorizontalSpace - (walkWithDistanceIcon.frame.width/2)
+            walkWithDistanceIcon.center.y = routeLine.center.y
+        }
+    }
+    
     private func positionDistanceLabel(usingFirstStopLabel firstStopLabel: UILabel) {
         let oldFrame = travelDistanceLabel.frame
         let newFrame = CGRect(x: firstStopLabel.frame.maxX + stopLabelAndDistLabelHorizontalSpace, y: firstStopLabel.frame.minY, width: oldFrame.width, height: oldFrame.height)
         
         travelDistanceLabel.frame = newFrame
     }
-    
     
     // MARK: Add subviews
     
@@ -354,9 +424,18 @@ class RouteDiagram: UIView {
             }
         }
         
-        if travelDistanceLabel.text != "0.0 mi away" {
+        guard let isWalkingRoute = isWalkingRoute else {
+            if travelDistanceLabel.text != "0.0 mi away" {
+                addSubview(travelDistanceLabel)
+            }
+            
+            return
+        }
+        
+        if !isWalkingRoute && travelDistanceLabel.text != "0.0 mi away" {
             addSubview(travelDistanceLabel)
         }
+        
     }
     
     private func resizeHeight() {

@@ -345,6 +345,15 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
 
     }
+    
+    // to test walking route
+    private func transformToWalkingRoute(_ route: Route) -> Route {
+        for direction in route.directions {
+            direction.type = .walk
+        }
+        
+        return route
+    }
 
     // MARK: Location Manager Delegate
 
@@ -660,8 +669,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let directions = routes[indexPath.row].directions
-        // skip first walking direction
-        let numOfStops = directions.first?.type == .walk ? directions.count - 1 : directions.count
+        let isWalkingRoute = routes[indexPath.row].isWalkingRoute()
+        
+        // if walking route, don't skip first walking direction. Ow skip first walking direction
+        let numOfStops = isWalkingRoute ? directions.count : (directions.first?.type == .walk ? directions.count - 1 : directions.count)
         let rowHeight = RouteTableViewCell().heightForCell(withNumOfStops: numOfStops)
 
         return rowHeight

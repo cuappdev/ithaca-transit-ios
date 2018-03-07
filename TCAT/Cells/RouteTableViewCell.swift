@@ -14,8 +14,6 @@ protocol TravelDistanceDelegate: NSObjectProtocol {
 class RouteTableViewCell: UITableViewCell {
 
     // MARK: Data var
-    
-    var route: Route?
     let identifier: String = "Route cell"
     
     // MARK: View vars
@@ -62,7 +60,7 @@ class RouteTableViewCell: UITableViewCell {
         
         positionTravelTime()
         positionLiveElementsVertically(usingTravelTime: travelTimeLabel)
-        positionLiveElementsHorizontally(usingTravelTime: travelTimeLabel)
+//        positionLiveElementsHorizontally(usingTravelTime: travelTimeLabel)
         positionDepartureTimeVertically(usingTravelTime: travelTimeLabel)
         positionArrowVertically(usingDepartureTime: departureTimeLabel)
         positionTopBorder()
@@ -119,29 +117,19 @@ class RouteTableViewCell: UITableViewCell {
     
     // MARK: Set Data
         
-    func setRouteData(){
-        
-        guard let departureTime = route?.departureTime,
-              let isWalkingRoute = route?.isWalkingRoute(),
-              let directions = route?.directions,
-              let travelDistance = route?.travelDistance
-              else{
-                print("RouteTableViewCell route object does not have the data needed to fill in the cell")
-                return
-              }
-        
+    func setData(_ route: Route){
         let isLate: Bool = true
         let lateTime: Date? = nil
         
-        setTravelTime(withDepartureTime: departureTime)
+        setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime, withWalkingRoute: route.isWalkingRoute())
         setLiveElements(withLateness: isLate, withLateTime: lateTime)
-        setDepartureTime(withTime: departureTime, isWalkingRoute: isWalkingRoute)
+        setDepartureTime(withTime: route.departureTime, withWalkingRoute: route.isWalkingRoute())
         
-        routeDiagram.setRouteData(fromDirections: directions, fromTravelDistance: travelDistance)
+        routeDiagram.setData(withDirections: route.directions, withTravelDistance: route.travelDistance, withWalkingRoute: route.isWalkingRoute())
     }
     
-    private func setTravelTime(withDepartureTime departureTime: Date){
-        travelTimeLabel.text = "\(Time.timeString(from: departureTime))"
+    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date, withWalkingRoute isWalkingRoute: Bool){
+        travelTimeLabel.text = isWalkingRoute ? "\(Time.timeString(from: departureTime)) - \(Time.timeString(from: arrivalTime))" : "\(Time.timeString(from: departureTime))"
         travelTimeLabel.sizeToFit()
     }
     
@@ -165,18 +153,21 @@ class RouteTableViewCell: UITableViewCell {
             liveLabel.text = "On Time"
             liveLabel.sizeToFit()
         }
-        
-        positionLiveElementsHorizontally(usingTravelTime: travelTimeLabel)
     }
     
-    private func setDepartureTime(withTime departureTime: Date, isWalkingRoute: Bool){
-        let time = Time.timeString(from: Date(), to: departureTime)
-        
-        if time == "0 min" {
-            departureTimeLabel.text = isWalkingRoute ? "Leave now" : "Board now"
-        } else {
-            departureTimeLabel.text = isWalkingRoute ? "Leave in \(time)": "Board in \(time)"
+    private func setDepartureTime(withTime departureTime: Date, withWalkingRoute isWalkingRoute: Bool){
+        if isWalkingRoute {
+            departureTimeLabel.text = "Directions"
+            departureTimeLabel.textColor = .mediumGrayColor
+            arrowImageView.tintColor = .mediumGrayColor
         }
+        else {
+            let time = Time.timeString(from: Date(), to: departureTime)
+            departureTimeLabel.text = "\(time)"
+            departureTimeLabel.textColor = .primaryTextColor
+            arrowImageView.tintColor = .primaryTextColor
+        }
+        
         departureTimeLabel.sizeToFit()
         positionArrowVertically(usingDepartureTime: departureTimeLabel)
     }
@@ -216,6 +207,7 @@ class RouteTableViewCell: UITableViewCell {
     
     func positionSubviews(){
         
+        positionLiveElementsHorizontally(usingTravelTime: travelTimeLabel)
         positionArrowHorizontally()
         positionDepartureTimeHorizontally(usingArrowImageView: arrowImageView)
         positionRouteDiagram(usingTravelTimeLabel: travelTimeLabel)

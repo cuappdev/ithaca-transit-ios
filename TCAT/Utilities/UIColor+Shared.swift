@@ -165,3 +165,11 @@ extension Array where Element: UIView {
         self.forEach{ $0.removeFromSuperview() }
     }
 }
+
+extension Collection {
+    
+    subscript(optional i: Index) -> Iterator.Element? {
+        return self.indices.contains(i) ? self[i] : nil
+    }
+    
+}
