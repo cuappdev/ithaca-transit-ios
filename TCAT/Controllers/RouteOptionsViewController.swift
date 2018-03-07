@@ -559,10 +559,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
             case .none:
                 banner.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
-<<<<<<< HEAD
-=======
                 isBannerShown = true
->>>>>>> master
                 setUserInteraction(to: false)
 
             case .cellular, .wifi:

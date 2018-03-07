@@ -104,9 +104,6 @@ class RouteDiagram: UIView {
     // only set distance if distance > 0
     private func setDistanceLabel(withDistance distance: Double, withWalkingRoute isWalkingRoute: Bool) {
         if distance > 0  {
-            let numberOfPlacesToRound = (distance >= 10.0) ? 1 : 2
-            var mutableDistance = distance
-            let roundedDistance = mutableDistance.roundToPlaces(places: numberOfPlacesToRound)
             travelDistanceLabel.text = isWalkingRoute ? "\(roundedString(distance))" : "\(roundedString(distance)) away"
             travelDistanceLabel.sizeToFit()
         }
