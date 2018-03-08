@@ -11,7 +11,6 @@ import UIKit
 class RouteDiagramElement: NSObject {
 
     var stopLabel: UILabel
-    var travelDistanceLabel: UILabel?
     
     var stopDot: Circle
     var icon: UIView?
@@ -57,7 +56,6 @@ class RouteDiagram: UIView {
     func prepareForReuse() {
         for routeDiagramElement in routeDiagramElements {
             routeDiagramElement.stopLabel.removeFromSuperview()
-            routeDiagramElement.travelDistanceLabel?.removeFromSuperview()
 
             routeDiagramElement.stopDot.removeFromSuperview()
             routeDiagramElement.icon?.removeFromSuperview()
@@ -81,23 +79,18 @@ class RouteDiagram: UIView {
                 continue
             }
             
-            // N2SELF: rename stayOnBusTransfer to stayOnBusForTransfer & update Paper
-            let stopLabel = getStopLabel(withName: direction.name, withStayOnBusForTranfer: stayOnBusForTransfer)
+            // if route is not walking route and if on first stop in route, will have travel distance in stop label
+            let stopLabel = getStopLabel(withName: direction.name, withStayOnBusForTranfer: stayOnBusForTransfer, withDistance: !isWalkingRoute && index == first ? travelDistance : nil)
             let stopDot = getStopDot(fromDirections: directions, atIndex: index, withWalkingRoute: isWalkingRoute)
-            let icon = getIcon(fromDirections: directions, atIndex: index, withTravelDistanceLabel: isWalkingRoute && index == first ? getTravelDistanceLabel(withDistance: travelDistance, withWalkingRoute: isWalkingRoute) : nil)
+            let icon = getIcon(fromDirections: directions, atIndex: index, withDistance: isWalkingRoute && index == first ? travelDistance: nil)
             let routeLine = getRouteLine(fromDirections: directions, atIndex: index, withWalkingRoute: isWalkingRoute)
             
             let routeDiagramElement = RouteDiagramElement(stopLabel: stopLabel, stopDot: stopDot, icon: icon, routeLine: routeLine)
             
-            // if first stop in route and is not walking route, will have travel distance
-            if (!isWalkingRoute && index == first) {
-                routeDiagramElement.travelDistanceLabel = getTravelDistanceLabel(withDistance: travelDistance, withWalkingRoute: isWalkingRoute)
-            }
-            
             if stayOnBusForTransfer {
                 routeDiagramElement.stayOnBusCoverUpView = getStayOnBusCoverUpView()
             }
-            stayOnBusForTransfer = direction.stayOnBusTransfer
+            stayOnBusForTransfer = direction.stayOnBusForTransfer
             
             routeDiagramElements.append(routeDiagramElement)
         }
@@ -105,7 +98,7 @@ class RouteDiagram: UIView {
 
     // MARK: Get data from route ojbect
     
-    private func getStopLabel(withName name: String, withStayOnBusForTranfer stayOnBusForTranfer: Bool) -> UILabel {
+    private func getStopLabel(withName name: String, withStayOnBusForTranfer stayOnBusForTranfer: Bool, withDistance distance: Double?) -> UILabel {
         let yPos: CGFloat = 101
         let rightSpaceFromSuperview: CGFloat = 16
         let width: CGFloat = UIScreen.main.bounds.width - yPos - rightSpaceFromSuperview
@@ -119,6 +112,12 @@ class RouteDiagram: UIView {
         let stopNameAttrs = [NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0), NSAttributedStringKey.foregroundColor : UIColor.primaryTextColor]
         let stopName = NSMutableAttributedString(string: name, attributes: stopNameAttrs)
 
+        if let distance = distance {
+            let travelDistanceAttrs = [NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0), NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor]
+            let travelDistance = NSMutableAttributedString(string: " \(roundedString(distance)) away", attributes: travelDistanceAttrs)
+            stopName.append(travelDistance)
+        }
+        
         if stayOnBusForTranfer {
             let stayOnBusAttrs = [NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0), NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor]
             let stayOnBus = NSMutableAttributedString(string:"\nStay on board", attributes: stayOnBusAttrs)
@@ -177,11 +176,13 @@ class RouteDiagram: UIView {
         return pin
     }
 
-    private func getIcon(fromDirections directions: [Direction], atIndex index: Int, withTravelDistanceLabel travelDistanceLabel: UILabel?) -> UIView? {
-        if let travelDistanceLabel = travelDistanceLabel {
+    private func getIcon(fromDirections directions: [Direction], atIndex index: Int, withDistance distance: Double?) -> UIView? {
+        if let distance = distance {
             let walkIcon = UIImageView(image: #imageLiteral(resourceName: "walk"))
             walkIcon.contentMode = .scaleAspectFit
             walkIcon.tintColor = .mediumGrayColor
+            
+            let travelDistanceLabel = getTravelDistanceLabel(withDistance: distance)
             
             return WalkWithDistanceIcon(walkIcon: walkIcon, travelDistanceLabel: travelDistanceLabel)
         }
@@ -207,6 +208,19 @@ class RouteDiagram: UIView {
 
         }
 
+    }
+    
+    private func getTravelDistanceLabel(withDistance distance: Double) -> UILabel {
+        let travelDistanceLabel = UILabel()
+        travelDistanceLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)
+        travelDistanceLabel.textColor = .mediumGrayColor
+        
+        if distance > 0  {
+            travelDistanceLabel.text = "\(roundedString(distance))"
+            travelDistanceLabel.sizeToFit()
+        }
+        
+        return travelDistanceLabel
     }
 
     private func getRouteLine(fromDirections directions: [Direction], atIndex index: Int, withWalkingRoute isWalkingRoute: Bool) -> RouteLine? {
@@ -238,19 +252,6 @@ class RouteDiagram: UIView {
 
     }
     
-    private func getTravelDistanceLabel(withDistance distance: Double, withWalkingRoute isWalkingRoute: Bool) -> UILabel {
-        let travelDistanceLabel = UILabel()
-        travelDistanceLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)
-        travelDistanceLabel.textColor = .mediumGrayColor
-        
-        if distance > 0  {
-            travelDistanceLabel.text = isWalkingRoute ? "\(roundedString(distance))" : "\(roundedString(distance)) away"
-            travelDistanceLabel.sizeToFit()
-        }
-        
-        return travelDistanceLabel
-    }
-    
     private func getStayOnBusCoverUpView() -> UIView {
         let busIconWidth: CGFloat = 48
         let spaceBtnBusIcons: CGFloat = 9.0
@@ -279,10 +280,6 @@ class RouteDiagram: UIView {
             } else{
                 let prevStopLabel = routeDiagramElements[i-1].stopLabel
                 positionStopLabelHorizontally(stopLabel, usingPrevStopLabel: prevStopLabel)
-            }
-            
-            if let travelDistanceLabel = routeDiagramElements[i].travelDistanceLabel {
-                positionTravelDistanceLabel(travelDistanceLabel, usingStopLabel: routeDiagramElements[i].stopLabel)
             }
             
             if let routeLine = routeDiagramElements[i].routeLine {
@@ -410,10 +407,6 @@ class RouteDiagram: UIView {
 
             addSubview(stopDot)
             addSubview(stopLabel)
-
-            if let travelDistanceLabel = routeDiagramElement.travelDistanceLabel {
-                addSubview(travelDistanceLabel)
-            }
             
             if let routeLine = routeDiagramElement.routeLine {
                 addSubview(routeLine)
