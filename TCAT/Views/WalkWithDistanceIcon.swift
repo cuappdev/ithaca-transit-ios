@@ -19,23 +19,33 @@ class WalkWithDistanceIcon: UIView {
     
     let walkIconAndDistanceLabelVerticalSpace: CGFloat = 2.0
 
-    init(walkIcon: UIImageView, travelDistanceLabel: UILabel) {
-        self.walkIcon = walkIcon
-        self.travelDistanceLabel = travelDistanceLabel
+    init(withDistance distance: Double) {
+        travelDistanceLabel = UILabel()
+        travelDistanceLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)
+        travelDistanceLabel.textColor = .mediumGrayColor
+        
+        if distance > 0  {
+            travelDistanceLabel.text = "\(roundedString(distance))"
+            travelDistanceLabel.sizeToFit()
+        }
+        
+        walkIcon = UIImageView(image: #imageLiteral(resourceName: "walk"))
+        walkIcon.contentMode = .scaleAspectFit
+        walkIcon.tintColor = .mediumGrayColor
         
         let width: CGFloat = travelDistanceLabel.frame.width > 0 ? travelDistanceLabel.frame.width : 34.0
         let height: CGFloat = walkIcon.frame.height + walkIconAndDistanceLabelVerticalSpace + travelDistanceLabel.frame.height
         
         super.init(frame: CGRect(origin: CGPoint.zero, size:  CGSize(width: width, height: height)))
         
-        self.walkIcon.center.x = center.x
-        self.travelDistanceLabel.center.x = center.x
+        walkIcon.center.x = center.x
+        travelDistanceLabel.center.x = center.x
         
-        let oldFrame = self.travelDistanceLabel.frame
-        self.travelDistanceLabel.frame = CGRect(x: oldFrame.minX, y: self.walkIcon.frame.maxY + walkIconAndDistanceLabelVerticalSpace, width: oldFrame.width, height: oldFrame.height)
+        let oldFrame = travelDistanceLabel.frame
+        travelDistanceLabel.frame = CGRect(x: oldFrame.minX, y: walkIcon.frame.maxY + walkIconAndDistanceLabelVerticalSpace, width: oldFrame.width, height: oldFrame.height)
         
-        addSubview(self.walkIcon)
-        addSubview(self.travelDistanceLabel)
+        addSubview(walkIcon)
+        addSubview(travelDistanceLabel)
     }
     
     required init?(coder aDecoder: NSCoder) {

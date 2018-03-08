@@ -177,14 +177,8 @@ class RouteDiagram: UIView {
     }
 
     private func getIcon(fromDirections directions: [Direction], atIndex index: Int, withDistance distance: Double?) -> UIView? {
-        if let distance = distance {
-            let walkIcon = UIImageView(image: #imageLiteral(resourceName: "walk"))
-            walkIcon.contentMode = .scaleAspectFit
-            walkIcon.tintColor = .mediumGrayColor
-            
-            let travelDistanceLabel = getTravelDistanceLabel(withDistance: distance)
-            
-            return WalkWithDistanceIcon(walkIcon: walkIcon, travelDistanceLabel: travelDistanceLabel)
+        if let distance = distance {            
+            return WalkWithDistanceIcon(withDistance: distance)
         }
         
         let last = directions.count - 1
@@ -208,19 +202,6 @@ class RouteDiagram: UIView {
 
         }
 
-    }
-    
-    private func getTravelDistanceLabel(withDistance distance: Double) -> UILabel {
-        let travelDistanceLabel = UILabel()
-        travelDistanceLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)
-        travelDistanceLabel.textColor = .mediumGrayColor
-        
-        if distance > 0  {
-            travelDistanceLabel.text = "\(roundedString(distance))"
-            travelDistanceLabel.sizeToFit()
-        }
-        
-        return travelDistanceLabel
     }
 
     private func getRouteLine(fromDirections directions: [Direction], atIndex index: Int, withWalkingRoute isWalkingRoute: Bool) -> RouteLine? {

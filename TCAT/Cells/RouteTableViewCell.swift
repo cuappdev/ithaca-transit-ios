@@ -166,7 +166,6 @@ class RouteTableViewCell: UITableViewCell {
                     
                 }) { (error) in
                      self.setLiveElements(withStartTime: nil, withDelay: nil)
-                    
                 }
         }
         else {

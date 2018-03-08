@@ -184,23 +184,11 @@ class Route: NSObject, JSONDecodable {
     }
     
     func getFirstDepartDirection() -> Direction? {
-        for direction in directions {
-            if direction.type == .depart {
-                return direction
-            }
-        }
-        
-        return nil
+        return directions.first { $0.type == .depart }
     }
     
     func getLastArriveDirection() -> Direction? {
-        for direction in directions.reversed() {
-            if direction.type == .arrive {
-                return direction
-            }
-        }
-        
-        return nil
+        return directions.reversed().first { $0.type == .arrive }
     }
     
     /** Calculate travel distance from location passed in to first route summary object and updates travel distance of route

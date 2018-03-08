@@ -358,15 +358,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     }
 
-    // to test walking route
-    private func transformToWalkingRoute(_ route: Route) -> Route {
-        for direction in route.directions {
-            direction.type = .walk
-        }
-
-        return route
-    }
-
     // MARK: Location Manager Delegate
 
     private func setupLocationManager(){
