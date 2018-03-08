@@ -59,13 +59,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Reachability vars
 
     let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
-    
+
     var banner: StatusBarNotificationBanner = {
         let banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
         banner.autoDismiss = false
         return banner
     }()
-    
+
     var isBannerShown: Bool = false
     var cellUserInteraction: Bool = true
 
@@ -94,13 +94,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setRouteSelectionView(withDestination: searchTo)
         setupLocationManager()
 
-        setupReachability()
-
         searchForRoutes()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: routeTableViewCellIdentifier)
+        setupReachability()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -243,7 +242,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func didCancel() {
         hideSearchBar()
     }
-    
+
     // Variable to remember back button when hiding
     var backButton: UIBarButtonItem? = nil
 
@@ -289,19 +288,19 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
             // Check if to and from location is the same
             if searchFrom?.name == searchTo?.name {
-                
+
                 let title = "You're here!"
                 let message = "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta)."
                 let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
                 let action = UIAlertAction(title: "😐😒🙄", style: .cancel, handler: nil)
                 alertController.addAction(action)
                 present(alertController, animated: true, completion: nil)
-                
+
                 currentlySearching = false
                 routeResults.reloadData()
-                
+
             }
-        
+
             else {
 
             Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
@@ -311,7 +310,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 } else {
                     self.refreshControl.endRefreshing()
                 }
-                
+
                 func requestDidFinish(with error: NSError? = nil) {
                     if let err = error {
                         print("RouteOptionVC searchForRoutes Error: \(err)")
@@ -325,11 +324,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     self.currentlySearching = false
                     self.routeResults.reloadData()
                 }
-                
+
                 if let alamofireRequest = request?.perform(
                     withSuccess: { (routeJSON) in
-                        Route.getRoutes(in: routeJSON, from: self.searchFrom?.name,
-                                        to: self.searchTo?.name,
+                        Route.getRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name,
                         { (parsedRoutes,error) in
                             self.routes = parsedRoutes
                             requestDidFinish(with: error)
@@ -346,12 +344,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                                                                 stopType: nil).toEvent()
                     let _ = RegisterSession.shared?.logEvent(event: event)
                 }
-                
+
                 else { // Catch error of coordinates not being found
                     let error = NSError(domain: "Null Coordinates", code: 400, userInfo: nil)
                     requestDidFinish(with: error)
                 }
-                
+
             }
 
             }
@@ -514,8 +512,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: routeTableViewCellIdentifier)
         }
 
-        cell?.route = routes[indexPath.row]
-        cell?.setRouteData()
+        cell?.setData(routes[indexPath.row])
         cell?.positionSubviews()
         cell?.addSubviews()
 
@@ -540,13 +537,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         reachability?.stopNotifier()
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return isBannerShown ? .lightContent : .default
     }
-    
+
     @objc private func reachabilityChanged(_ notification: Notification) {
-        
+
         let reachability = notification.object as! Reachability
 
         switch reachability.connection {
@@ -564,9 +561,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 setUserInteraction(to: true)
 
         }
-        
+
         UIApplication.shared.statusBarStyle = preferredStatusBarStyle
-        
+
     }
 
     private func setUserInteraction(to userInteraction: Bool) {
@@ -676,8 +673,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let directions = routes[indexPath.row].directions
-        // skip first walking direction
-        let numOfStops = directions.first?.type == .walk ? directions.count - 1 : directions.count
+        let isWalkingRoute = routes[indexPath.row].isWalkingRoute()
+
+        // if walking route, don't skip first walking direction. Ow skip first walking direction
+        let numOfStops = isWalkingRoute ? directions.count : (directions.first?.type == .walk ? directions.count - 1 : directions.count)
         let rowHeight = RouteTableViewCell().heightForCell(withNumOfStops: numOfStops)
 
         return rowHeight

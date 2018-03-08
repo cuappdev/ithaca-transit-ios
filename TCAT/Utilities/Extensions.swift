@@ -13,9 +13,9 @@ import CoreLocation
 import TRON
 
 extension UIColor {
-    
+
     @nonobjc static let tcatBlueColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1.0)
-    
+
     @nonobjc static let buttonColor = UIColor(red: 0 / 255, green: 118 / 255, blue: 255 / 255, alpha: 1)
     @nonobjc static let primaryTextColor = UIColor(white: 34 / 255, alpha: 1.0)
     @nonobjc static let secondaryTextColor = UIColor(white: 74 / 255, alpha: 1.0)
@@ -29,13 +29,15 @@ extension UIColor {
     @nonobjc static let searchBarCursorColor = UIColor.black
     @nonobjc static let searchBarPlaceholderTextColor = UIColor(red: 214.0 / 255.0, green: 216.0 / 255.0, blue: 220.0 / 255.0, alpha: 1.0)
     @nonobjc static let noInternetTextColor = UIColor(red: 0.0, green: 118.0 / 255.0, blue: 255.0 / 255.0, alpha: 1.0)
-    
+    @nonobjc static let liveGreenColor = UIColor(red: 39.0 / 255.0, green: 174.0 / 255.0, blue: 96.0 / 255.0, alpha: 1.0)
+    @nonobjc static let liveRedColor = UIColor(red: 214.0 / 255.0, green: 48.0 / 255.0, blue: 79.0 / 255.0, alpha: 1.0)
+
     // Get color from hex code
     public static func colorFromCode(_ code: Int, alpha: CGFloat) -> UIColor {
         let red = CGFloat(((code & 0xFF0000) >> 16)) / 255
         let green = CGFloat(((code & 0xFF00) >> 8)) / 255
         let blue = CGFloat((code & 0xFF)) / 255
-        
+
         return UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
 }
@@ -44,9 +46,9 @@ extension MKPolyline {
     public var coordinates: [CLLocationCoordinate2D] {
         var coords = [CLLocationCoordinate2D](repeating: kCLLocationCoordinate2DInvalid,
                                               count: self.pointCount)
-        
+
         self.getCoordinates(&coords, range: NSRange(location: 0, length: self.pointCount))
-        
+
         return coords
     }
 }
@@ -73,7 +75,7 @@ extension UILabel {
 }
 
 extension UIViewController {
-    
+
     var isModal: Bool {
         if let index = navigationController?.viewControllers.index(of: self), index > 0 {
             return false
@@ -87,11 +89,11 @@ extension UIViewController {
             return false
         }
     }
-    
+
 }
 
 extension JSON {
-    
+
     /// Format date with pattern `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`. Returns current date on error.
     func parseDate() -> Date {
         let dateFormatter = DateFormatter()
@@ -100,14 +102,14 @@ extension JSON {
         let date = dateFormatter.date(from: self.stringValue) ?? Date.distantPast
         return date
     }
-    
+
     /// Create coordinate object from JSON.
     func parseCoordinates() -> CLLocationCoordinate2D {
         let latitude = self["lat"].doubleValue
         let longitude = self["long"].doubleValue
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
-    
+
     /// Create Bounds object
     func parseBounds() -> Bounds {
         return Bounds(
@@ -117,9 +119,9 @@ extension JSON {
             maxLong: self["maxLong"].doubleValue
         )
     }
-    
+
     /** Return LocationObject.
-     
+
         `id` is used when bus stops conform to this object.
         Would like a way to extend this class for instances when JSON
         strings are unique to the generic location (e.g. stopID)
@@ -132,7 +134,7 @@ extension JSON {
             longitude: self["long"].doubleValue
         )
     }
-    
+
 }
 
 extension String {
@@ -201,44 +203,44 @@ func bold(pattern: String, in string: String) -> NSMutableAttributedString {
     let attributedString = NSMutableAttributedString(string: string,
                                                      attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: fontSize)])
     let boldFontAttribute = [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: fontSize)]
-    
+
     do {
         let regex = try NSRegularExpression(pattern: pattern, options: [])
         let ranges = regex.matches(in: string, options: [], range: NSMakeRange(0, string.count)).map {$0.range}
         for range in ranges { attributedString.addAttributes(boldFontAttribute, range: range) }
     } catch { }
-    
+
     return attributedString
 }
 
 /** Convert distance from meters to proper unit (based on size)
- 
+
  - Huge Distances: 16 mi
  - Medium Distances: 3.2 mi
  - Small Distances: 410 ft (412 ft -> 410 ft)
- 
+
  */
 func roundedString(_ value: Double) -> String {
-    
+
     let numberOfMetersInMile = 1609.34
     var distanceInMiles = value / numberOfMetersInMile
-    
+
     switch distanceInMiles {
-        
+
     case let x where x >= 10:
         return "\(Int(distanceInMiles)) mi"
-        
+
     case let x where x < 0.1:
         var distanceInFeet = distanceInMiles * 5280
         var temporaryValue = distanceInFeet.roundTo(places: 0) / 10.0
         distanceInFeet = temporaryValue.roundTo(places: 0) * 10.0
         return "\(Int(distanceInFeet)) ft"
-        
+
     default:
         return "\(distanceInMiles.roundTo(places: 1)) mi"
-        
+
     }
-    
+
 }
 
 func areObjectsEqual<T: Equatable>(type: T.Type, a: Any, b: Any) -> Bool {
@@ -266,4 +268,12 @@ func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop]{
         }
     }
     return letterArray + nonLetterArray
+}
+
+extension Collection {
+
+    subscript(optional i: Index) -> Iterator.Element? {
+        return self.indices.contains(i) ? self[i] : nil
+    }
+
 }
