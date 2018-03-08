@@ -115,7 +115,7 @@ class Route: NSObject, JSONDecodable {
             
             if direction.type == .depart {
                 
-                if !direction.stayOnBusTransfer {
+                if !direction.stayOnBusForTransfer {
                     
                     // print("Creating Arrival Direction")
                     
@@ -138,7 +138,7 @@ class Route: NSObject, JSONDecodable {
                     
                 }
                 
-                isTransfer = direction.stayOnBusTransfer
+                isTransfer = direction.stayOnBusForTransfer
                 
                 // Remove inital bus stop and departure bus stop
                 if direction.stops.count >= 2 {

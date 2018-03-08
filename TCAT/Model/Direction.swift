@@ -67,7 +67,7 @@ class Direction: NSObject, NSCopying {
     var stops: [LocationObject] = []
     
     /// Whether the user should stay on this direction's bus for an upcoming transfer.
-    var stayOnBusTransfer: Bool = false
+    var stayOnBusForTransfer: Bool = false
     
     /// The unique identifier for the specific bus related to the direction.
     var tripID: String = ""
@@ -85,7 +85,7 @@ class Direction: NSObject, NSCopying {
         travelDistance: Double,
         routeNumber: Int,
         stops: [LocationObject],
-        stayOnBusTransfer: Bool,
+        stayOnBusForTransfer: Bool,
         tripID: String
     ) {
         self.type = type
@@ -98,7 +98,7 @@ class Direction: NSObject, NSCopying {
         self.travelDistance = travelDistance
         self.routeNumber = routeNumber
         self.stops = stops
-        self.stayOnBusTransfer = stayOnBusTransfer
+        self.stayOnBusForTransfer = stayOnBusForTransfer
         self.tripID = tripID
     }
 
@@ -118,7 +118,7 @@ class Direction: NSObject, NSCopying {
             travelDistance: 0,
             routeNumber: 0,
             stops: [],
-            stayOnBusTransfer: false,
+            stayOnBusForTransfer: false,
             tripID: ""
         )
 
@@ -140,7 +140,7 @@ class Direction: NSObject, NSCopying {
         travelDistance = json["distance"].doubleValue
         routeNumber = json["routeNumber"].int ?? 0
         stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
-        stayOnBusTransfer = json["stayOnBusTransfer"].boolValue
+        stayOnBusForTransfer = json["stayOnBusTransfer"].boolValue
         tripID = json["tripID"].stringValue
         
         // If depart direction, use bus stop locations (with id) for start and end
@@ -163,7 +163,7 @@ class Direction: NSObject, NSCopying {
             travelDistance: travelDistance,
             routeNumber: routeNumber,
             stops: stops,
-            stayOnBusTransfer: stayOnBusTransfer,
+            stayOnBusForTransfer: stayOnBusForTransfer,
             tripID: tripID
         )
     }
