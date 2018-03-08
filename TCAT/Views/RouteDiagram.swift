@@ -109,17 +109,26 @@ class RouteDiagram: UIView {
         stopLabel.lineBreakMode = .byWordWrapping
         stopLabel.numberOfLines = 0
         
-        let stopNameAttrs = [NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0), NSAttributedStringKey.foregroundColor : UIColor.primaryTextColor]
+        let stopNameAttrs: [NSAttributedStringKey : Any] = [
+            NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)!,
+            NSAttributedStringKey.foregroundColor : UIColor.primaryTextColor
+        ]
         let stopName = NSMutableAttributedString(string: name, attributes: stopNameAttrs)
 
         if let distance = distance {
-            let travelDistanceAttrs = [NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0), NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor]
+            let travelDistanceAttrs: [NSAttributedStringKey : Any] = [
+                NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)!,
+                NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor
+            ]
             let travelDistance = NSMutableAttributedString(string: " \(roundedString(distance)) away", attributes: travelDistanceAttrs)
             stopName.append(travelDistance)
         }
         
         if stayOnBusForTranfer {
-            let stayOnBusAttrs = [NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0), NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor]
+            let stayOnBusAttrs: [NSAttributedStringKey : Any] = [
+                NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)!,
+                NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor
+            ]
             let stayOnBus = NSMutableAttributedString(string:"\nStay on board", attributes: stayOnBusAttrs)
             stopName.append(stayOnBus)
         }

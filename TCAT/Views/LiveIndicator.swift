@@ -32,21 +32,30 @@ class LiveIndicator: UIView {
     /// The color to draw the indicator with
     var color: UIColor = .white
     
+    /// The size of the view
+    var size: LiveIndicatorSize!
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
     init(size: LiveIndicatorSize, color: UIColor = .white) {
-        
         super.init(frame: CGRect(x: 0, y: 0, width: size.rawValue, height: size.rawValue))
+        self.size = size
         self.color = color
+        drawViews()
+        startAnimation()
+    }
+    
+    /// Draw UIViews based on type and color
+    private func drawViews() {
         
         let dotSize: CGFloat = size == .large ? 4 : 3
         
         dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - dotSize + 0.5, width: dotSize, height: dotSize))
         dot.layer.cornerRadius = dot.frame.width / 2
         dot.clipsToBounds = true
-        dot.backgroundColor = .white
+        dot.backgroundColor = color
         addSubview(dot)
         
         let arcOrigin = CGPoint(x: 1, y: frame.maxY - 1)
@@ -60,7 +69,6 @@ class LiveIndicator: UIView {
         self.layer.addSublayer(largeArcLayer)
         
         views = [dot, smallArcLayer, largeArcLayer]
-        self.startAnimation()
         
     }
     
@@ -110,6 +118,11 @@ class LiveIndicator: UIView {
                 layer.removeAllAnimations()
             }
         }
+    }
+    
+    func setColor(to color: UIColor) {
+        self.color = color
+        drawViews()
     }
     
     /// Dim, wait, and un-dim a UIView
