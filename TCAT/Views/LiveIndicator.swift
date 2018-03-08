@@ -8,6 +8,11 @@
 
 import UIKit
 
+enum LiveIndicatorSize: Double {
+    case small = 8
+    case large = 12
+}
+
 class LiveIndicator: UIView {
     
     fileprivate var dot: UIView!
@@ -31,12 +36,14 @@ class LiveIndicator: UIView {
         super.init(coder: aDecoder)
     }
     
-    init(color: UIColor = .white) {
+    init(size: LiveIndicatorSize, color: UIColor = .white) {
         
-        super.init(frame: CGRect(x: 0, y: 0, width: 12, height: 12))
+        super.init(frame: CGRect(x: 0, y: 0, width: size.rawValue, height: size.rawValue))
         self.color = color
         
-        dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - 3.5, width: 4, height: 4))
+        let dotSize: CGFloat = size == .large ? 4 : 3
+        
+        dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - dotSize + 0.5, width: dotSize, height: dotSize))
         dot.layer.cornerRadius = dot.frame.width / 2
         dot.clipsToBounds = true
         dot.backgroundColor = .white
@@ -44,11 +51,12 @@ class LiveIndicator: UIView {
         
         let arcOrigin = CGPoint(x: 1, y: frame.maxY - 1)
         let constant: CGFloat = 2
+        let radius: CGFloat = size == .large ? 7 : 5
         
-        smallArcLayer = createTopToLeftArc(origin: arcOrigin, radius: 7, lineWidth: constant)
+        smallArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius, lineWidth: constant)
         self.layer.addSublayer(smallArcLayer)
         
-        largeArcLayer = createTopToLeftArc(origin: arcOrigin, radius: 7 + 2 * constant, lineWidth: constant)
+        largeArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius + 2 * constant, lineWidth: constant)
         self.layer.addSublayer(largeArcLayer)
         
         views = [dot, smallArcLayer, largeArcLayer]
