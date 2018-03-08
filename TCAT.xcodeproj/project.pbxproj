@@ -57,6 +57,7 @@
 		DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */; };
 		DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */; };
 		DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */; };
+		DD659C8A20508E1B00506BAC /* WalkWithDistanceIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD659C8920508E1A00506BAC /* WalkWithDistanceIcon.swift */; };
 		DD87F20A1E878CB5000C244B /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD87F2091E878CB5000C244B /* Loader.swift */; };
 		DD99E2F41F6DB0410073E8F7 /* FontConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F31F6DB0410073E8F7 /* FontConstants.swift */; };
 		DD99E2F61F6DB06A0073E8F7 /* KeyConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */; };
@@ -159,6 +160,7 @@
 		DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Medium.otf"; path = "Resources/SFText-Medium.otf"; sourceTree = "<group>"; };
 		DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Regular.otf"; path = "Resources/SFText-Regular.otf"; sourceTree = "<group>"; };
 		DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Semibold.otf"; path = "Resources/SFText-Semibold.otf"; sourceTree = "<group>"; };
+		DD659C8920508E1A00506BAC /* WalkWithDistanceIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WalkWithDistanceIcon.swift; path = Views/WalkWithDistanceIcon.swift; sourceTree = "<group>"; };
 		DD87F2091E878CB5000C244B /* Loader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Loader.swift; path = Utilities/Loader.swift; sourceTree = "<group>"; };
 		DD99E2F31F6DB0410073E8F7 /* FontConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FontConstants.swift; path = "Supporting Files/FontConstants.swift"; sourceTree = "<group>"; };
 		DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KeyConstants.swift; path = "Supporting Files/KeyConstants.swift"; sourceTree = "<group>"; };
@@ -395,6 +397,7 @@
 				DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */,
 				502D8F5E1E55161D005280F1 /* SearchBarView.swift */,
 				BFF41EB1204365E800E0696B /* SummaryView.swift */,
+				DD659C8920508E1A00506BAC /* WalkWithDistanceIcon.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -774,6 +777,7 @@
 				5006F7B81EBFC7DE005ACAF2 /* CornellDestinationCell.swift in Sources */,
 				503EC38D1E96B85B00B3D4D4 /* Network.swift in Sources */,
 				DDB49C9D1E8857FC00A99C35 /* BusPath.swift in Sources */,
+				DD659C8A20508E1B00506BAC /* WalkWithDistanceIcon.swift in Sources */,
 				DD36A7001F66378C00E4789E /* PlaceResult.swift in Sources */,
 				BF73F0F31F60B0BD003B479D /* LocationObject.swift in Sources */,
 				BF101FE21F93D9BB00C58769 /* LiveIndicator.swift in Sources */,

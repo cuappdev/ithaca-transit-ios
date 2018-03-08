@@ -115,7 +115,7 @@ class Route: NSObject, JSONDecodable {
             
             if direction.type == .depart {
                 
-                if !direction.stayOnBusTransfer {
+                if !direction.stayOnBusForTransfer {
                     
                     // print("Creating Arrival Direction")
                     
@@ -138,7 +138,7 @@ class Route: NSObject, JSONDecodable {
                     
                 }
                 
-                isTransfer = direction.stayOnBusTransfer
+                isTransfer = direction.stayOnBusForTransfer
                 
                 // Remove inital bus stop and departure bus stop
                 if direction.stops.count >= 2 {
@@ -177,10 +177,18 @@ class Route: NSObject, JSONDecodable {
         
     }
     
-    // MARK: Process raw routes
+    // MARK: Process routes
     
     func isWalkingRoute() -> Bool {
         return directions.reduce(true) { $0 && $1.type == .walk }
+    }
+    
+    func getFirstDepartDirection() -> Direction? {
+        return directions.first { $0.type == .depart }
+    }
+    
+    func getLastArriveDirection() -> Direction? {
+        return directions.reversed().first { $0.type == .arrive }
     }
     
     /** Calculate travel distance from location passed in to first route summary object and updates travel distance of route
