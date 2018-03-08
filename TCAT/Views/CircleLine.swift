@@ -25,9 +25,9 @@ class CircleLine: UIView {
     init(color: UIColor) {
         super.init(frame: CGRect(x: 0, y: 0, width: superviewWidth, height: superviewHeight))
         
-        solidCircle = Circle(size: .small, color: color, style: .solid)
+        solidCircle = Circle(type: .smallSolid, color: color)
         line = SolidLine(height: lineHeight, color: color)
-        borderedCircle = Circle(size: .large, color: color, style: .bordered)
+        borderedCircle = Circle(type: .largeBordered, color: color)
         
         positionSolidCircle()
         positionLine(usingSolidCircle: solidCircle)

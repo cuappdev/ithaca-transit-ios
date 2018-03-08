@@ -88,7 +88,7 @@ class Network {
         
         let departDirections = directions.filter { $0.type == .depart }
 
-        let dictionary = departDirections.flatMap { (direction) -> [String : Any] in
+        let dictionary = departDirections.map { (direction) -> [String : Any] in
             
             // The id of the location, or bus stop, the bus needs to get to
             let stopID = direction.startLocation.id

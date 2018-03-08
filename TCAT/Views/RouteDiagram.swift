@@ -11,7 +11,7 @@ import UIKit
 class RouteDiagramElement: NSObject {
     
     var stopNameLabel: UILabel = UILabel()
-    var stopDot: Circle = Circle(size: .small, color: .tcatBlueColor, style: .solid)
+    var stopDot: Circle = Circle(type: .smallSolid, color: .tcatBlueColor)
     var icon: UIView?
     var routeLine: RouteLine?
         
@@ -132,12 +132,12 @@ class RouteDiagram: UIView {
             case .walk:
                 
                 if(index == destinationDot) {
-                    let framedGreyCircle = Circle(size: .large, color: .lineDotColor, style: .bordered)
+                    let framedGreyCircle = Circle(type: .largeBordered, color: .lineDotColor)
                     framedGreyCircle.backgroundColor = .white
                     
                     pin = framedGreyCircle
                 } else {
-                    let solidGreyCircle = Circle(size: .small, color: .lineDotColor, style: .solid)
+                    let solidGreyCircle = Circle(type: .smallSolid, color: .lineDotColor)
                     
                     pin = solidGreyCircle
                 }
@@ -145,12 +145,12 @@ class RouteDiagram: UIView {
             default:
                 
                 if(index == destinationDot) {
-                    let framedBlueCircle = Circle(size: .large, color: .tcatBlueColor, style: .bordered)
+                    let framedBlueCircle = Circle(type: .largeBordered, color: .tcatBlueColor)
                     framedBlueCircle.backgroundColor = .white
                     
                     pin = framedBlueCircle
                 } else {
-                    let solidBlueCircle = Circle(size: .small, color: .tcatBlueColor, style: .solid)
+                    let solidBlueCircle = Circle(type: .smallSolid, color: .tcatBlueColor)
                     
                     pin = solidBlueCircle
                 }

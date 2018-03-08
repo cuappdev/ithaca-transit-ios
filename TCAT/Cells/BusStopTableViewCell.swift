@@ -44,7 +44,7 @@ class BusStopTableViewCell: UITableViewCell {
         connectorBottom.backgroundColor = .tcatBlueColor
         contentView.addSubview(connectorBottom)
         
-        statusCircle = Circle(size: .small, color: .tcatBlueColor, style: .outline)
+        statusCircle = Circle(type: .smallOutline, color: .tcatBlueColor)
         statusCircle.center = self.center
         statusCircle.center.y = cellHeight / 2
         statusCircle.frame.origin.x = linePosition - (statusCircle.frame.width / 2)
