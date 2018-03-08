@@ -132,12 +132,12 @@ class RouteDiagram: UIView {
             case .walk:
                 
                 if(index == destinationDot) {
-                    let framedGreyCircle = Circle(size: .large, color: .lineColor, style: .bordered)
+                    let framedGreyCircle = Circle(size: .large, color: .lineDotColor, style: .bordered)
                     framedGreyCircle.backgroundColor = .white
                     
                     pin = framedGreyCircle
                 } else {
-                    let solidGreyCircle = Circle(size: .small, color: .lineColor, style: .solid)
+                    let solidGreyCircle = Circle(size: .small, color: .lineDotColor, style: .solid)
                     
                     pin = solidGreyCircle
                 }

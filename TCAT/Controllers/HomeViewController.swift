@@ -84,7 +84,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
 
-        tableView.separatorColor = .lineColor
+        tableView.separatorColor = .lineDotColor
         tableView.keyboardDismissMode = .onDrag
         tableView.tableFooterView = UIView()
         tableView.showsVerticalScrollIndicator = false

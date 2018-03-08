@@ -20,7 +20,7 @@ class Circle: UIView {
     
     init(size: CircleSize, color: UIColor, style: CircleStyle) {
         
-        let radius: CGFloat = CGFloat(size == .small ? 12 : 24)
+        let radius: CGFloat = CGFloat(size == .small ? 12 : 32)
         super.init(frame: CGRect(x: 0, y: 0, width: radius, height: radius))
         
         layer.cornerRadius = frame.width / 2
@@ -36,7 +36,7 @@ class Circle: UIView {
                 
                 backgroundColor = .white
                 layer.borderColor = color.cgColor
-                layer.borderWidth = 1.0
+                layer.borderWidth = 4.0
                 
                 let solidCircle = CALayer()
                 solidCircle.frame = CGRect(x: 0, y: 0, width: 12, height: 12)

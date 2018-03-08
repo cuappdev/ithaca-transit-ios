@@ -30,6 +30,9 @@ struct Key {
         static let cornellDestinationsIdentifier = "CornellDestinations"
         static let seeAllStopsIdentifier = "SeeAllStops"
         static let currentLocationIdentifier = "CurrentLocation"
+        static let smallDetailCellIdentifier = "SmallCell"
+        static let largeDetailCellIdentifier = "LargeCell"
+        static let busStopCellIdentifier = "BusStopCell"
     }
 
     struct Favorites {

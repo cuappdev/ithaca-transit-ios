@@ -157,11 +157,11 @@ class RouteTableViewCell: UITableViewCell {
     }
     
     private func styleTopBorder(){
-        topBorder.backgroundColor = .lineColor
+        topBorder.backgroundColor = .lineDotColor
     }
     
     private func styleBottomBorder(){
-        bottomBorder.backgroundColor = .lineColor
+        bottomBorder.backgroundColor = .lineDotColor
     }
     
     private func styleCellSeperator(){

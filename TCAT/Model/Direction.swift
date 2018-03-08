@@ -69,8 +69,8 @@ class Direction: NSObject, NSCopying {
     /// Whether the user should stay on this direction's bus for an upcoming transfer.
     var stayOnBusTransfer: Bool = false
     
-    /// The unique identifier for the specific bus related to the direction.
-    var tripID: String = ""
+    /// The unique identifiers for the specific bus related to the direction.
+    var tripIdentifiers: [String]? = nil
     
     // MARK: Initalizers
 
@@ -86,7 +86,7 @@ class Direction: NSObject, NSCopying {
         routeNumber: Int,
         stops: [LocationObject],
         stayOnBusTransfer: Bool,
-        tripID: String
+        tripIdentifiers: [String]?
     ) {
         self.type = type
         self.name = name
@@ -99,7 +99,7 @@ class Direction: NSObject, NSCopying {
         self.routeNumber = routeNumber
         self.stops = stops
         self.stayOnBusTransfer = stayOnBusTransfer
-        self.tripID = tripID
+        self.tripIdentifiers = tripIdentifiers
     }
 
     convenience init(name: String? = nil) {
@@ -119,7 +119,7 @@ class Direction: NSObject, NSCopying {
             routeNumber: 0,
             stops: [],
             stayOnBusTransfer: false,
-            tripID: ""
+            tripIdentifiers: []
         )
 
     }
@@ -141,7 +141,7 @@ class Direction: NSObject, NSCopying {
         routeNumber = json["routeNumber"].int ?? 0
         stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
         stayOnBusTransfer = json["stayOnBusTransfer"].boolValue
-        tripID = json["tripID"].stringValue
+        tripIdentifiers = json["tripID"].arrayObject as? [String]
         
         // If depart direction, use bus stop locations (with id) for start and end
         if type == .depart, let start = stops.first, let end = stops.last {
@@ -164,7 +164,7 @@ class Direction: NSObject, NSCopying {
             routeNumber: routeNumber,
             stops: stops,
             stayOnBusTransfer: stayOnBusTransfer,
-            tripID: tripID
+            tripIdentifiers: tripIdentifiers
         )
     }
 

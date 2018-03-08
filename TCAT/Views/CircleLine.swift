@@ -22,7 +22,7 @@ class CircleLine: UIView {
     let superviewHeight: CGFloat = 56
     let lineHeight: CGFloat = 27
     
-    init(color: UIColor){
+    init(color: UIColor) {
         super.init(frame: CGRect(x: 0, y: 0, width: superviewWidth, height: superviewHeight))
         
         solidCircle = Circle(size: .small, color: color, style: .solid)
@@ -42,11 +42,11 @@ class CircleLine: UIView {
     
     // MARK: Position
     
-    private func positionSolidCircle(){
+    private func positionSolidCircle() {
         solidCircle.center.x = center.x
     }
     
-    private func positionLine(usingSolidCircle solidCircle: Circle){
+    private func positionLine(usingSolidCircle solidCircle: Circle) {
         line.center.x = solidCircle.center.x
         
         let oldFrame = line.frame
@@ -55,7 +55,7 @@ class CircleLine: UIView {
         line.frame = newFrame
     }
     
-    private func positionBorderedCircle(usingLine line: RouteLine){
+    private func positionBorderedCircle(usingLine line: RouteLine) {
         let oldFrame = borderedCircle.frame
         let newFrame = CGRect(x: oldFrame.minX, y: line.frame.maxY, width: oldFrame.width, height: oldFrame.height)
         

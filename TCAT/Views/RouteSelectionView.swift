@@ -113,7 +113,7 @@ class RouteSelectionView: UIView {
     
     private func styleBottomLine(){
         bottomLine.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: lineWidth)
-        bottomLine.backgroundColor = .lineColor
+        bottomLine.backgroundColor = .lineDotColor
     }
         
     // MARK: Set data

@@ -95,7 +95,7 @@ class InformationViewController: UIViewController {
         sendFeedbackButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
         sendFeedbackButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
         sendFeedbackButton.backgroundColor = .white
-        sendFeedbackButton.layer.borderColor = UIColor.lineDarkColor.cgColor
+        sendFeedbackButton.layer.borderColor = UIColor.lineDotColor.cgColor
         sendFeedbackButton.layer.borderWidth = 0.5
         sendFeedbackButton.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
@@ -110,7 +110,7 @@ class InformationViewController: UIViewController {
         visitWebsiteButton.setTitleColor(UIColor.primaryTextColor, for: .normal)
         visitWebsiteButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
         visitWebsiteButton.backgroundColor = .white
-        visitWebsiteButton.layer.borderColor = UIColor.lineDarkColor.cgColor
+        visitWebsiteButton.layer.borderColor = UIColor.lineDotColor.cgColor
         visitWebsiteButton.layer.borderWidth = 0.5
         visitWebsiteButton.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()

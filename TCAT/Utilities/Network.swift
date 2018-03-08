@@ -13,12 +13,12 @@ import GooglePlaces
 
 class Network {
     
-    static let ipAddress = "54.174.47.32" // 10.132.9.134
+    static let ipAddress = "192.168.1.8" // Backend: 54.174.47.32
     
     /// Main backend endpoint. Includes "http://" and "/" at end.
     static let source = "http://\(ipAddress)/"
-    
-    static let tron = TRON(baseURL: source)
+    static let debugSource = "http://\(ipAddress):3000"
+    static let tron = TRON(baseURL: debugSource)
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
     static let placesClient = GMSPlacesClient.shared()
     
@@ -82,15 +82,29 @@ class Network {
         return request
     }
     
-    class func getBusLocations(routeID: String, tripID: String, stopID: String) -> APIRequest<BusLocationResult, Error> {
+    class func getBusLocations(_ directions: [Direction]) -> APIRequest<BusLocationResult, Error> {
+        
         let request: APIRequest<BusLocationResult, Error> = tron.swiftyJSON.request("tracking")
-        request.parameters = [
-            "routeID"   :     routeID,
-            "tripID"    :     tripID,
-            "stopID"    :     stopID
-        ]
-        request.method = .get
+        
+        let departDirections = directions.filter { $0.type == .depart }
+
+        let dictionary = departDirections.flatMap { (direction) -> [String : Any] in
+            
+            // The id of the location, or bus stop, the bus needs to get to
+            let stopID = direction.startLocation.id
+            
+            return [
+                "stopID"                :   stopID,
+                "routeID"               :   String(direction.routeNumber),
+                "tripIdentifiers"       :   direction.tripIdentifiers!
+            ]
+            
+        }
+        
+        request.parameters = [ "data" : dictionary ]
+        request.method = .post
         return request
+        
     }
     
 }
@@ -161,15 +175,21 @@ class AllBusStops: JSONDecodable {
 
 class BusLocationResult: JSONDecodable {
 
-    var busLocation: BusLocation? = nil
+    var busLocations: [BusLocation] = []
 
     required init(json: JSON) throws {
+        print("Bus Location JSON:", json)
         if json["success"].boolValue {
-            let data = json["data"]
-            busLocation = parseBusLocation(json: data)
+            if let data = json["data"].array {
+                busLocations = data.map { parseBusLocation(json: $0) }
+            } else {
+                busLocations = []
+            }
+        } else {
+            print("BusLocation Init Error")
         }
     }
-
+    
     func parseBusLocation(json: JSON) -> BusLocation {
         
         let dataType: BusDataType = {
@@ -203,7 +223,7 @@ class BusLocationResult: JSONDecodable {
         )
         
         return busLocation
-
+        
     }
 
 }

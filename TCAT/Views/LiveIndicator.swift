@@ -24,13 +24,17 @@ class LiveIndicator: UIView {
     fileprivate let DIM_OPACITY: CGFloat = 0.5
     fileprivate let INTERVAL: TimeInterval = LiveIndicator.INTERVAL
     
+    /// The color to draw the indicator with
+    var color: UIColor = .white
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    init() {
+    init(color: UIColor = .white) {
         
         super.init(frame: CGRect(x: 0, y: 0, width: 12, height: 12))
+        self.color = color
         
         dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - 3.5, width: 4, height: 4))
         dot.layer.cornerRadius = dot.frame.width / 2
@@ -56,7 +60,7 @@ class LiveIndicator: UIView {
         let path = UIBezierPath(arcCenter: origin, radius: radius, startAngle: .pi * (3 / 2), endAngle: 0, clockwise: true)
         let pathLayer = CAShapeLayer()
         pathLayer.path = path.cgPath
-        pathLayer.strokeColor = UIColor.white.cgColor
+        pathLayer.strokeColor = color.cgColor
         pathLayer.fillColor = UIColor.clear.cgColor
         pathLayer.lineWidth = lineWidth
         pathLayer.lineCap = kCALineCapRound
