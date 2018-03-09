@@ -13,7 +13,7 @@ import GooglePlaces
 
 class Network {
 
-    static let ipAddress = "54.174.47.32" // 10.132.9.134
+    static let ipAddress = "35.174.156.171" // debug //"54.174.47.32" release  // 10.132.9.134
 
     /// Main backend endpoint. Includes "http://" and "/" at end.
     static let source = "http://\(ipAddress)/"
@@ -60,7 +60,7 @@ class Network {
             ]
 
             // for debugging
-            //  print("Request URL: http://\(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
+            print("Request URL: \(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
 
             callback(request)
 
@@ -92,7 +92,16 @@ class Network {
         request.method = .get
         return request
     }
-
+    
+    class func getDelay(tripId: String, stopId: String) -> APIRequest<JSON, Error> {
+        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("delay")
+        request.method = .get
+        request.parameters = ["stopID": stopId, "tripID": tripId]
+        
+        print("Delay request URL: \(source)/delay?stopID=\(request.parameters["stopID"]!)&tripID=\(request.parameters["tripID"]!)")
+        return request
+    }
+    
 }
 
 class Error: JSONDecodable {

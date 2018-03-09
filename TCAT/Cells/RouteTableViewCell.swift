@@ -144,33 +144,25 @@ class RouteTableViewCell: UITableViewCell {
     }
     
     func setLiveElements(withFirstDepartDirection firstDepartDirection: Direction?) {
-        if let direction = firstDepartDirection {
-            Network.getBusLocations(routeID: String(direction.routeNumber), tripID: direction.tripID, stopID: direction.startLocation.id)
-                .perform(withSuccess: { (result) in
-                    if let busLocation = result.busLocation {
-                        
-                        switch busLocation.dataType {
-                            
-                        case .validData:
-                            self.setLiveElements(withStartTime: direction.startTime, withDelay: busLocation.delay)
-                            
-                        default:
-                           self.setLiveElements(withStartTime: nil, withDelay: nil)
-                            
-                        }
-                        
-                    }
-                    else {
-                        self.setLiveElements(withStartTime: nil, withDelay: nil)
-                    }
-                    
-                }) { (error) in
-                     self.setLiveElements(withStartTime: nil, withDelay: nil)
+        
+        if let direction = firstDepartDirection, let tripId = direction.tripIDs?.first, let stopId = direction.stops.first?.id {
+            
+            Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
+                if json["success"].boolValue {
+                    self.setLiveElements(withStartTime: direction.startTime, withDelay: Int(json["data"].stringValue))
                 }
+                else {
+                    self.setLiveElements(withStartTime: nil, withDelay: nil)
+                }
+            }, failure: { (error) in
+                print("RouteTableViewCell setLiveElements(withFirstDepartDirection:) error: \(error.errorDescription) Request url: \(error.request?.url)")
+                self.setLiveElements(withStartTime: nil, withDelay: nil)
+            })
         }
         else {
-             self.setLiveElements(withStartTime: nil, withDelay: nil)
+            self.setLiveElements(withStartTime: nil, withDelay: nil)
         }
+        
     }
 
     private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
