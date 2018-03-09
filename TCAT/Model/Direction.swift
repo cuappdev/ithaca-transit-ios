@@ -140,7 +140,7 @@ class Direction: NSObject, NSCopying {
         travelDistance = json["distance"].doubleValue
         routeNumber = json["routeNumber"].int ?? 0
         stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
-        stayOnBusForTransfer = json["stayOnBusTransfer"].boolValue
+        stayOnBusForTransfer = json["stayOnBusForTransfer"].boolValue
         tripIdentifiers = json["tripID"].arrayObject as? [String]
         
         // If depart direction, use bus stop locations (with id) for start and end

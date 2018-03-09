@@ -13,17 +13,31 @@ import GooglePlaces
 
 class Network {
     
-    /// IP Address of server instance
-    static let ipAddress = "192.168.1.8" // Current Backend IP Address: 54.174.47.32
+    /// Deployed server instance used for release
+    static let releaseIPAddress = "54.174.47.32"
+    static let releaseSource = "http://\(releaseIPAddress)/"
+    
+    /// The IP address, set to either debug or release depending on environment
+    static var address: String {
+        #if DEBUG
+            return debugIPAddress
+        #else
+            return releaseIPAddress
+        #endif
+    }
   
-    /// Main backend endpoint. Includes "http://" and "/" at end.
-    static let source = "http://\(ipAddress)/"
+    /// Test server used for development
+    static let debugIPAddress = "35.174.156.171"
+    static let debugSource = "http://\(debugIPAddress)" // append ":3000" when testing on localhost on device
   
-    /// Change the `tron` paramter below to `debugSource` when testing locally.
-    static let debugSource = "http://\(ipAddress):3000"
-  
-    static let tron = TRON(baseURL: source)
-
+    static var tron: TRON {
+        #if DEBUG
+            return TRON(baseURL: Network.debugSource)
+        #else
+            return TRON(baseURL: Network.releaseSource)
+        #endif
+    }
+    
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
   
     static let placesClient = GMSPlacesClient.shared()
@@ -134,11 +148,11 @@ class AllBusStops: JSONDecodable {
     func parseAllStops(json: [JSON]) -> [BusStop] {
         var allStopsArray = [BusStop]()
         for stop in json {
-            let name = stop["name"].stringValue
-            let location = stop["location"]
-            let lat = location["latitude"].doubleValue
-            let long = location["longitude"].doubleValue
-            let busStop = BusStop(name: name, lat: lat, long: long)
+            let busStop = BusStop(
+                name: stop["name"].stringValue,
+                lat: stop["lat"].doubleValue,
+                long: stop["long"].doubleValue
+            )
             allStopsArray.append(busStop)
         }
 

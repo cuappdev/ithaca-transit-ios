@@ -54,10 +54,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         }
 
         #if DEBUG
-            print ("DEBUG MODE")
+            print("DEBUG MODE")
         #else
+            print("RELEASE MODE")
             Fabric.with([Crashlytics.self])
-            print ("RELEASE MODE")
         #endif
         
         return true

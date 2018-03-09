@@ -110,9 +110,6 @@ class Route: NSObject, JSONDecodable {
         
         for (index, direction) in directions.enumerated() {
             
-            // print("Direction Type:", direction.type.rawValue)
-            // print("Direction stayOnBusTransfer", direction.stayOnBusTransfer)
-            
             if direction.type == .depart {
                 
                 if !direction.stayOnBusForTransfer {

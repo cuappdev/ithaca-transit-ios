@@ -58,7 +58,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     // MARK: Reachability vars
 
-    let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
+    let reachability: Reachability? = Reachability(hostname: Network.address)
 
     var banner: StatusBarNotificationBanner = {
         let banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
