@@ -20,6 +20,7 @@ class RouteSelectionView: UIView {
     var routeLine: CircleLine!
     var swapButton: UIButton = UIButton()
     var datepickerButton: UIButton = UIButton()
+    var topLine: UIView = UIView()
     var bottomLine: UIView = UIView()
     
     // MARK: Spacing vars
@@ -48,14 +49,18 @@ class RouteSelectionView: UIView {
         styleSearchbar(toSearchbar)
         styleRouteLine()
         styleSwapButton()
+        styleLine(topLine)
         styleDatepickerButton()
-        styleBottomLine()
+        styleLine(bottomLine)
         
         setLabel(fromLabel, withText: "From")
         setLabel(toLabel, withText: "To")
         setSwapButton(withImage: #imageLiteral(resourceName: "swap"))
         setDatpickerButton(withImage: #imageLiteral(resourceName: "clock"))
-        setDatepickerButton(withTitle: "Leave now")
+        setDatepickerButton(withTitle: "Leave Now")
+        
+        positionSubviews()
+        addSubviews()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -104,16 +109,16 @@ class RouteSelectionView: UIView {
         datepickerButton.setTitleColor(.mediumGrayColor, for: .normal)
         datepickerButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
         
-        datepickerButton.backgroundColor = .optionsTimeBackgroundColor
+        datepickerButton.backgroundColor = .white
         
         datepickerButton.contentHorizontalAlignment = .left
         datepickerButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: leadingSpace, bottom: 0, right: 0)
         datepickerButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: leadingSpace + datepickerImageWidth + datepickerTitleLeadingSpace, bottom: 0, right: 0)
     }
     
-    private func styleBottomLine(){
-        bottomLine.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: lineWidth)
-        bottomLine.backgroundColor = .lineColor
+    private func styleLine(_ line: UIView){
+        line.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: lineWidth)
+        line.backgroundColor = .lineColor
     }
         
     // MARK: Set data
@@ -125,6 +130,7 @@ class RouteSelectionView: UIView {
     
     private func setSwapButton(withImage image: UIImage){
         swapButton.setImage(image, for: .normal)
+        swapButton.tintColor = .mediumGrayColor
     }
     
     private func setDatpickerButton(withImage image: UIImage){
@@ -151,6 +157,7 @@ class RouteSelectionView: UIView {
         
         positionSearchbarView(usingFromSearchbar: fromSearchbar, usingToSearchbar: toSearchbar)
         positionDatepickerButton(usingSearchbarView: searcbarView)
+        positionTopLine(usingDatepickerButton: datepickerButton)
         positionBottomLine(usingDatepickerButton: datepickerButton)
         
         resizeSearchbar(fromSearchbar, usingSwapButton: swapButton)
@@ -212,6 +219,13 @@ class RouteSelectionView: UIView {
         datepickerButton.frame = newFrame
     }
     
+    private func positionTopLine(usingDatepickerButton datepickerButton: UIButton) {
+        let oldFrame = topLine.frame
+        let newFrame = CGRect(x: 0, y: datepickerButton.frame.minY - lineWidth, width: oldFrame.width, height: oldFrame.height)
+        
+        topLine.frame = newFrame
+    }
+    
     private func positionBottomLine(usingDatepickerButton datepickerButton: UIButton){
         let oldFrame = bottomLine.frame
         let newFrame = CGRect(x: 0, y: datepickerButton.frame.maxY - lineWidth, width: oldFrame.width, height: oldFrame.height)
@@ -245,6 +259,7 @@ class RouteSelectionView: UIView {
         searcbarView.addSubview(swapButton)
         searcbarView.addSubview(toSearchbar)
         searcbarView.addSubview(toLabel)
+        addSubview(topLine)
         addSubview(datepickerButton)
         addSubview(bottomLine)
     }

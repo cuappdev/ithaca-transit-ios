@@ -61,7 +61,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
 
     var banner: StatusBarNotificationBanner = {
-        let banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
+        let banner = StatusBarNotificationBanner(title: "No internet connection", style: .danger)
         banner.autoDismiss = false
         return banner
     }()
@@ -115,10 +115,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Route Selection view
 
     private func setupRouteSelection() {
-        routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: 150)) // offset for -12 for larger views, get rid of black space
+        // offset for -12 for larger views, get rid of black space
+        routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: 150))
         routeSelection.backgroundColor = .white
-        routeSelection.positionSubviews()
-        routeSelection.addSubviews()
         var newRSFrame = routeSelection.frame
         newRSFrame.size.height =  routeSelection.lineWidth + routeSelection.searcbarView.frame.height + routeSelection.lineWidth + routeSelection.datepickerButton.frame.height
         routeSelection.frame = newRSFrame
@@ -308,9 +307,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 func requestDidFinish(with error: NSError? = nil) {
                     if let err = error {
                         print("RouteOptionVC searchForRoutes Error: \(err)")
-                        // print("Error Description:", err.userInfo["description"] as? String)
-                        self.banner = StatusBarNotificationBanner(title: "Could not connect to server", style: .danger)
-                        self.banner.autoDismiss = false
                         self.banner.show(queuePosition: .front, on: self)
                         self.isBannerShown = true
                         UIApplication.shared.statusBarStyle = .lightContent
@@ -491,10 +487,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         return 1
     }
 
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?{
-        return routeResultsTitle
-    }
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         return routes.count
     }
@@ -641,28 +633,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         } else {
             routeResults.addSubview(refreshControl)
         }
-    }
-
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat{
-        return routeResultsHeaderHeight
-    }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: routeResultsHeaderHeight))
-        headerView.backgroundColor = .tableBackgroundColor
-
-        let titleLeftSpaceFromSuperview: CGFloat = 16.0
-        let titleVeticalSpaceFromSuperview: CGFloat = 24.0
-
-        let titleLabel = UILabel(frame: CGRect(x: titleLeftSpaceFromSuperview, y: titleVeticalSpaceFromSuperview, width: 88.0, height: 17.0))
-        titleLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
-        titleLabel.textColor = UIColor.secondaryTextColor
-        titleLabel.text = self.tableView(tableView, titleForHeaderInSection: section)
-        titleLabel.sizeToFit()
-
-        headerView.addSubview(titleLabel)
-
-        return headerView
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
