@@ -103,15 +103,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     override func viewDidAppear(_ animated: Bool) {
-//        var safeAreaHeight: CGFloat = 0
-//        if #available(iOS 11, *) {
-//            safeAreaHeight = view.safeAreaInsets.bottom
-//        }
-//        else {
-//            safeAreaHeight = 0
-//        }
-//
-//        updateDatepickerHeight(safeAreaBottomHeight: safeAreaHeight)
+        if #available(iOS 11, *) {
+            addHeightToDatepicker(20)
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -423,9 +417,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         datePickerOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissDatepicker)))
     }
 
-    private func updateDatepickerHeight(safeAreaBottomHeight safeAreaHeight: CGFloat) {
+    private func addHeightToDatepicker(_ height: CGFloat) {
         let oldFrame = datePickerView.frame
-        let newFrame = CGRect(x: oldFrame.minX, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height + safeAreaHeight)
+        let newFrame = CGRect(x: oldFrame.minX, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height + height)
 
         datePickerView.frame = newFrame
     }
