@@ -16,7 +16,7 @@ class Network {
     static let ipAddress = "35.174.156.171" // debug //"54.174.47.32" release  // 10.132.9.134
 
     /// Main backend endpoint. Includes "http://" and "/" at end.
-    static let source = "http://\(ipAddress)/"
+    static let source = "http://\(ipAddress)/api/v1"
 
     static let tron = TRON(baseURL: source)
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")

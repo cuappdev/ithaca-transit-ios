@@ -144,32 +144,11 @@ class RouteTableViewCell: UITableViewCell {
     }
     
     func setLiveElements(withFirstDepartDirection firstDepartDirection: Direction?) {
-        
-        if let direction = firstDepartDirection, let tripId = direction.tripIDs?.first, let stopId = direction.stops.first?.id {
-            
-            Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
-                if json["success"].boolValue {
-                    self.setLiveElements(withStartTime: direction.startTime, withDelay: Int(json["data"].stringValue))
-                }
-                else {
-                    self.setLiveElements(withStartTime: nil, withDelay: nil)
-                }
-            }, failure: { (error) in
-                print("RouteTableViewCell setLiveElements(withFirstDepartDirection:) error: \(error.errorDescription) Request url: \(error.request?.url)")
-                self.setLiveElements(withStartTime: nil, withDelay: nil)
-            })
+        if let direction = firstDepartDirection {
+            setLiveElements(withStartTime: direction.startTime, withDelay: direction.delay)
         }
-        else {
-            self.setLiveElements(withStartTime: nil, withDelay: nil)
-        }
-        
     }
-
-    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
-        travelTimeLabel.text = "\(Time.timeString(from: departureTime)) - \(Time.timeString(from: arrivalTime))"
-        travelTimeLabel.sizeToFit()
-    }
-
+    
     private func setLiveElements(withStartTime startTime: Date?, withDelay delay: Int?) {
         if let delay = delay, let startTime = startTime {
             if delay > 0 {
@@ -190,6 +169,11 @@ class RouteTableViewCell: UITableViewCell {
             liveImageView.tintColor = .white
             liveLabel.textColor = .white
         }
+    }
+
+    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
+        travelTimeLabel.text = "\(Time.timeString(from: departureTime)) - \(Time.timeString(from: arrivalTime))"
+        travelTimeLabel.sizeToFit()
     }
 
     private func setDepartureTime(withTime departureTime: Date, withWalkingRoute isWalkingRoute: Bool){
