@@ -21,7 +21,7 @@ class WalkWithDistanceIcon: UIView {
 
     init(withDistance distance: Double) {
         travelDistanceLabel = UILabel()
-        travelDistanceLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)
+        travelDistanceLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)
         travelDistanceLabel.textColor = .mediumGrayColor
         
         if distance > 0  {

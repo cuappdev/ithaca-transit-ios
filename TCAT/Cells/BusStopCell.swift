@@ -9,6 +9,7 @@
 import UIKit
 
 class BusStopCell: UITableViewCell {
+    
     let labelWidthConstant: CGFloat = 45.0
     let labelXPosition: CGFloat = 40.0
     let imageHeight: CGFloat = 20.0
@@ -38,7 +39,7 @@ class BusStopCell: UITableViewCell {
         imageView?.frame = CGRect(x: 10.0, y: 5.0, width: imageWidth, height: imageHeight)
         imageView?.contentMode = .scaleAspectFit
         imageView?.center.y = bounds.height / 2.0
-        imageView?.image = reuseIdentifier == Key.Cells.currentLocationIdentifier ? #imageLiteral(resourceName: "location") : #imageLiteral(resourceName: "pin")
+        imageView?.image = reuseIdentifier == Constants.Cells.currentLocationIdentifier ? #imageLiteral(resourceName: "location") : #imageLiteral(resourceName: "pin")
         imageView?.tintColor = .tcatBlueColor
         
         textLabel?.frame = CGRect(x: labelXPosition, y: 0.0, width: frame.width - labelWidthConstant, height: labelHeight)

@@ -61,7 +61,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         view.addSubview(secondButton)
         
         secondButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
-        secondButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)
+        secondButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Medium, size: 16)
         secondButton.backgroundColor = .clear
         secondButton.snp.makeConstraints { (make) in
             if #available(iOS 11.0, *) {
@@ -77,7 +77,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         
         button.setTitle(getButtonText(), for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)!
+        button.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Medium, size: 16)!
         button.backgroundColor = UIColor.tcatBlueColor
         button.layer.cornerRadius = 4
         self.button.snp.makeConstraints { (make) in
@@ -86,7 +86,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
             make.height.equalTo(44)
         }
         
-        description.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 16)
+        description.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 16)
         description.textColor = UIColor.mediumGrayColor
         description.text = getDescription()
         description.textAlignment = .center
@@ -99,7 +99,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
             make.centerX.equalToSuperview()
         }
         
-        title.font = UIFont(name: FontNames.SanFrancisco.Bold, size: 26)
+        title.font = UIFont(name: Constants.Fonts.SanFrancisco.Bold, size: 26)
         title.textColor = UIColor.primaryTextColor
         title.text = getTitle()
         title.center = view.center

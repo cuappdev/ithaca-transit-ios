@@ -327,7 +327,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             CATransaction.setAnimationDuration(networkRefreshRate + latencyConstant)
             newBus.appearAnimation = .none
             newBus.userData = bus
-            (newBus.iconView as? BusLocationView)?.setBearing(bus.heading, start: existingBus!.position, end: busCoords)
+            (newBus.iconView as? BusLocationView)?.setBearing(start: existingBus!.position, end: busCoords)
             newBus.position = busCoords
             CATransaction.commit()
             
@@ -337,7 +337,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         else {
             
             let marker = GMSMarker(position: busCoords)
-            (bus.iconView as? BusLocationView)?.setBearing(bus.heading)
+            (bus.iconView as? BusLocationView)?.setBearing(heading: Double(bus.heading))
             marker.iconView = bus.iconView
             marker.appearAnimation = .pop
             setIndex(of: marker, with: .bussing)

@@ -110,14 +110,14 @@ class RouteDiagram: UIView {
         stopLabel.numberOfLines = 0
         
         let stopNameAttrs: [NSAttributedStringKey : Any] = [
-            NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)!,
+            NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)!,
             NSAttributedStringKey.foregroundColor : UIColor.primaryTextColor
         ]
         let stopName = NSMutableAttributedString(string: name, attributes: stopNameAttrs)
 
         if let distance = distance {
             let travelDistanceAttrs: [NSAttributedStringKey : Any] = [
-                NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)!,
+                NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)!,
                 NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor
             ]
             let travelDistance = NSMutableAttributedString(string: " \(roundedString(distance)) away", attributes: travelDistanceAttrs)
@@ -126,7 +126,7 @@ class RouteDiagram: UIView {
         
         if stayOnBusForTranfer {
             let stayOnBusAttrs: [NSAttributedStringKey : Any] = [
-                NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)!,
+                NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)!,
                 NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor
             ]
             let stayOnBus = NSMutableAttributedString(string:"\nStay on board", attributes: stayOnBusAttrs)
@@ -149,11 +149,11 @@ class RouteDiagram: UIView {
             case .walk:
 
                 if index == destinationDot {
-                    let framedGreyCircle = Circle(type: .largeBordered, color: .lineDotColor)
+                    let framedGreyCircle = Circle(size: .large, style: .bordered, color: .mediumGrayColor)
                     framedGreyCircle.backgroundColor = .white
                     pin = framedGreyCircle
                 } else {
-                    let solidGreyCircle = Circle(type: .smallSolid, color: .lineDotColor)
+                    let solidGreyCircle = Circle(size: .small, style: .solid, color: .mediumGrayColor)
                     pin = solidGreyCircle
                 }
 
@@ -162,16 +162,16 @@ class RouteDiagram: UIView {
                 if index == destinationDot {
                     if isWalkingRoute {
                         // walking route destination should always be grey no matter what direction type
-                        let framedGreyCircle = Circle(type: .largeBordered, color: .mediumGrayColor)
+                        let framedGreyCircle = Circle(size: .large, style: .bordered, color: .mediumGrayColor)
                         framedGreyCircle.backgroundColor = .white
                         pin = framedGreyCircle
                     } else {
-                        let framedBlueCircle = Circle(type: .largeBordered, color: .tcatBlueColor)
+                        let framedBlueCircle = Circle(size: .large, style: .bordered, color: .tcatBlueColor)
                         framedBlueCircle.backgroundColor = .white
                         pin = framedBlueCircle
                     }
                 } else {
-                    let solidBlueCircle = Circle(type: .smallSolid, color: .tcatBlueColor)
+                    let solidBlueCircle = Circle(size: .small, style: .solid, color: .tcatBlueColor)
                     pin = solidBlueCircle
                 }
 

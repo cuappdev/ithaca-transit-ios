@@ -10,66 +10,64 @@ import SwiftyJSON
 import TRON
 import CoreLocation
 import GooglePlaces
+import Alamofire
 
 class Network {
     
+    /// Change based on DEBUG or RELEASE mode (macros didn't work :/)
+    static let address = Network.debugSource
+    static let ipAddress = Network.debugIPAddress
+    
     /// Deployed server instance used for release
     static let releaseIPAddress = "54.174.47.32"
-    static let releaseSource = "http://\(releaseIPAddress)/"
+    static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
     
-    /// The IP address, set to either debug or release depending on environment
-    static var address: String {
-        #if DEBUG
-            return debugIPAddress
-        #else
-            return releaseIPAddress
-        #endif
-    }
-  
     /// Test server used for development
     static let debugIPAddress = "35.174.156.171"
-    static let debugSource = "http://\(debugIPAddress)" // append ":3000" when testing on localhost on device
+    static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/" // add ":3000" when testing on localhost on device
   
-    static var tron: TRON {
-        #if DEBUG
-            return TRON(baseURL: Network.debugSource)
-        #else
-            return TRON(baseURL: Network.releaseSource)
-        #endif
-    }
+    static let apiVersion = "v1"
     
+    static let mainTron = TRON(baseURL: Network.address)
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
   
     static let placesClient = GMSPlacesClient.shared()
 
     class func getAllStops() -> APIRequest<AllBusStops, Error> {
-        let request: APIRequest<AllBusStops, Error> = tron.swiftyJSON.request("allStops")
+        let request: APIRequest<AllBusStops, Error> = mainTron.swiftyJSON.request("allStops")
         request.method = .get
         return request
     }
 
     class func getParameterData(start: CoordinateAcceptor, end: CoordinateAcceptor,
-                                 callback: @escaping ((_ start: CLLocationCoordinate2D?, _ end: CLLocationCoordinate2D?,
-                                    _ isStartBusStop: Bool, _ isEndBusStop: Bool) -> Void)) {
+                                callback: @escaping (_ start: CLLocationCoordinate2D?, _ end: CLLocationCoordinate2D?) -> Void) {
 
         let visitor = CoordinateVisitor()
         start.accept(visitor: visitor) { startCoord in
             end.accept(visitor: visitor) { endCoord in
-                callback(startCoord, endCoord, start is BusStop, end is BusStop)
+                callback(startCoord, endCoord)
             }
         }
+        
     }
 
     class func getRoutes(start: CoordinateAcceptor, end: CoordinateAcceptor, time: Date, type: SearchType,
                          callback: @escaping ((APIRequest<JSON, Error>?) -> Void)) {
 
-        getParameterData(start: start, end: end) { startCoords, endCoords, isStartBusStop, isEndBusStop in
+        getParameterData(start: start, end: end) { (startCoords, endCoords) in
 
-            guard let startCoords = startCoords, let endCoords = endCoords
-                else { callback(nil); return }
+            guard let startCoords = startCoords, let endCoords = endCoords else {
+                callback(nil)
+                return
+            }
+            
+            /// Check if a bus stop, or if current location (not a bus stop... for now)
+            let isStartBusStop = start is BusStop && (start as? BusStop)?.name != Constants.Phrases.currentLocation
+            let isEndBusStop = end is BusStop
 
-            let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
+            let request: APIRequest<JSON, Error> = mainTron.swiftyJSON.request("route")
             request.method = .get
+            request.parameterEncoding = JSONEncoding.default
             request.parameters = [
                 "arriveBy"          :   type == .arriveBy,
                 "end"               :   "\(endCoords.latitude),\(endCoords.longitude)",
@@ -81,6 +79,8 @@ class Network {
 
             // for debugging
             //  print("Request URL: http://\(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
+            
+            print("Request Parameters", request.parameters)
 
             callback(request)
 
@@ -91,6 +91,7 @@ class Network {
     class func getGooglePlaces(searchText: String) -> APIRequest<JSON, Error> {
         let googleJson = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
         let request: APIRequest<JSON, Error> = googleTron.swiftyJSON.request("json")
+        request.method = .get
         request.parameters = [
             "strictbounds" : "",
             "location" : "42.4440,-76.5019",
@@ -98,16 +99,14 @@ class Network {
             "input" : searchText,
             "key" : googleJson["google-places"].stringValue
         ]
-        request.method = .get
         return request
     }
     
     class func getBusLocations(_ directions: [Direction]) -> APIRequest<BusLocationResult, Error> {
 
-        let request: APIRequest<BusLocationResult, Error> = tron.swiftyJSON.request("tracking")
-        
+        let request: APIRequest<BusLocationResult, Error> = mainTron.swiftyJSON.request("tracking")
+        request.method = .post
         let departDirections = directions.filter { $0.type == .depart }
-
         let dictionary = departDirections.map { (direction) -> [String : Any] in
             
             // The id of the location, or bus stop, the bus needs to get to
@@ -122,7 +121,7 @@ class Network {
         }
         
         request.parameters = [ "data" : dictionary ]
-        request.method = .post
+        request.parameterEncoding = JSONEncoding.default
         return request
         
     }
@@ -178,7 +177,7 @@ class AllBusStops: JSONDecodable {
 
                 let distanceBetween = firstStopLocation.distance(from: secondStopLocation)
                 let middleCoordinate = firstStopLocation.coordinate.middleLocationWith(location: secondStopLocation.coordinate)
-                if distanceBetween < Key.Distance.maxBetweenStops {
+                if distanceBetween < Constants.Values.maxDistanceBetweenStops {
                     let middleBusStop = BusStop(name: first.name, lat: middleCoordinate.latitude, long: middleCoordinate.longitude)
                     middleGroundBusStops.append(middleBusStop)
                 } else {
@@ -198,15 +197,10 @@ class BusLocationResult: JSONDecodable {
     var busLocations: [BusLocation] = []
 
     required init(json: JSON) throws {
-        print("Bus Location JSON:", json)
-        if json["success"].boolValue {
-            if let data = json["data"].array {
-                busLocations = data.map { parseBusLocation(json: $0) }
-            } else {
-                busLocations = []
-            }
+        if json["success"].boolValue, let data = json["data"].array {
+            self.busLocations = data.map { parseBusLocation(json: $0) }
         } else {
-            print("BusLocation Init Error")
+            print("BusLocation Init Failure - Success:", json["success"].boolValue)
         }
     }
     

@@ -45,7 +45,7 @@ class InformationViewController: UIViewController {
         let backButtonItem = UIBarButtonItem(customView: dismissButton)
         navigationItem.setRightBarButton(backButtonItem, animated: false)
         
-        someLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 16)
+        someLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 16)
         someLabel.textColor = .primaryTextColor
         someLabel.text = "Walker wuz here"
         someLabel.textAlignment = .center
@@ -67,7 +67,7 @@ class InformationViewController: UIViewController {
             make.trailing.equalToSuperview().offset(-40)
         }
         
-        titleLabel.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)
+        titleLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Medium, size: 16)
         titleLabel.textColor = UIColor.primaryTextColor
         titleLabel.text = "Made by AppDev"
         titleLabel.backgroundColor = .clear
@@ -78,7 +78,7 @@ class InformationViewController: UIViewController {
             make.height.equalTo(19)
         }
         
-        descriptionLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        descriptionLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)
         descriptionLabel.textColor = UIColor.primaryTextColor
         descriptionLabel.text = "Cornell University\nApp Development Project Team"
         descriptionLabel.numberOfLines = 0
@@ -93,7 +93,7 @@ class InformationViewController: UIViewController {
         sendFeedbackButton.addTarget(self, action: #selector(openBugReportForm), for: .touchUpInside)
         sendFeedbackButton.setTitle("Send Feedback", for: .normal)
         sendFeedbackButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
-        sendFeedbackButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        sendFeedbackButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)
         sendFeedbackButton.backgroundColor = .white
         sendFeedbackButton.layer.borderColor = UIColor.lineDotColor.cgColor
         sendFeedbackButton.layer.borderWidth = 0.5
@@ -108,7 +108,7 @@ class InformationViewController: UIViewController {
         visitWebsiteButton.addTarget(self, action: #selector(openTeamWebsite), for: .touchUpInside)
         visitWebsiteButton.setTitle("Visit Our Website", for: .normal)
         visitWebsiteButton.setTitleColor(UIColor.primaryTextColor, for: .normal)
-        visitWebsiteButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        visitWebsiteButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)
         visitWebsiteButton.backgroundColor = .white
         visitWebsiteButton.layer.borderColor = UIColor.lineDotColor.cgColor
         visitWebsiteButton.layer.borderWidth = 0.5

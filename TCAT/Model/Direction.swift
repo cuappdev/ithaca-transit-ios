@@ -141,7 +141,7 @@ class Direction: NSObject, NSCopying {
         routeNumber = json["routeNumber"].int ?? 0
         stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
         stayOnBusForTransfer = json["stayOnBusForTransfer"].boolValue
-        tripIdentifiers = json["tripID"].arrayObject as? [String]
+        tripIdentifiers = json["tripIdentifiers"].arrayObject as? [String]
         
         // If depart direction, use bus stop locations (with id) for start and end
         if type == .depart, let start = stops.first, let end = stops.last {

@@ -57,11 +57,11 @@ class DetailIconView: UIView {
         
         if type == .noBus {
             if lastStep {
-                statusCircle = Circle(type: .largeBordered, color: .lineDotColor)
+                statusCircle = Circle(size: .large, style: .bordered, color: .lineDotColor)
                 connectorTop.backgroundColor = .lineDotColor
                 connectorBottom.backgroundColor = .clear
             } else {
-                statusCircle = Circle(type: .smallSolid, color: .lineDotColor)
+                statusCircle = Circle(size: .small, style: .solid, color: .lineDotColor)
                 connectorTop.backgroundColor = .lineDotColor
                 connectorBottom.backgroundColor = .lineDotColor
                 if firstStep {
@@ -70,11 +70,11 @@ class DetailIconView: UIView {
             }
         } else {
             if lastStep {
-                statusCircle = Circle(type: .largeBordered, color: .tcatBlueColor)
+                statusCircle = Circle(size: .large, style: .bordered, color: .tcatBlueColor)
                 connectorTop.backgroundColor = .tcatBlueColor
                 connectorBottom.backgroundColor = .clear
             } else {
-                statusCircle = Circle(type: .smallSolid, color: .tcatBlueColor)
+                statusCircle = Circle(size: .small, style: .solid, color: .tcatBlueColor)
                 if type == .busStart {
                     connectorTop.backgroundColor = .lineDotColor
                     connectorBottom.backgroundColor = .tcatBlueColor

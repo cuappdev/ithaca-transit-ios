@@ -46,11 +46,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         self.window!.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
         
-        if userDefaults.value(forKey: Key.UserDefaults.recentSearch) == nil {
-            userDefaults.set([Any](), forKey: Key.UserDefaults.recentSearch)
+        if userDefaults.value(forKey: Constants.UserDefaults.recentSearch) == nil {
+            userDefaults.set([Any](), forKey: Constants.UserDefaults.recentSearch)
         }
-        if userDefaults.value(forKey: Key.UserDefaults.favorites) == nil {
-            userDefaults.set([Any](), forKey: Key.UserDefaults.favorites)
+        if userDefaults.value(forKey: Constants.UserDefaults.favorites) == nil {
+            userDefaults.set([Any](), forKey: Constants.UserDefaults.favorites)
         }
 
         #if DEBUG
@@ -94,7 +94,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         Network.getAllStops().perform(withSuccess: { stops in
             let allBusStops = stops.allStops
             let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
-            self.userDefaults.set(data, forKey: Key.UserDefaults.allBusStops)
+            self.userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
         }, failure: { error in
             print("getBusStops error:", error)
         })

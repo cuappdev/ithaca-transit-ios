@@ -58,7 +58,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     // MARK: Reachability vars
 
-    let reachability: Reachability? = Reachability(hostname: Network.address)
+    let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
 
     var banner: StatusBarNotificationBanner = {
         let banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
@@ -174,7 +174,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         presentSearchBar()
     }
 
-    func presentSearchBar(){
+    func presentSearchBar() {
         var placeholder = ""
 
         switch searchType {
@@ -205,17 +205,17 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         showSearchBar()
     }
 
-    private func dismissSearchBar(){
+    private func dismissSearchBar() {
         searchBarView.searchController?.dismiss(animated: true, completion: nil)
     }
 
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?) {
 
-        switch searchType{
+        switch searchType {
 
         case .from:
 
-            if let result = busStop{
+            if let result = busStop {
                 searchFrom = result
                 routeSelection.fromSearchbar.setTitle(result.name, for: .normal)
             }else if let result = placeResult{
@@ -225,10 +225,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         case .to:
 
-            if let result = busStop{
+            if let result = busStop {
                 searchTo = result
                 routeSelection.toSearchbar.setTitle(result.name, for: .normal)
-            }else if let result = placeResult{
+            }else if let result = placeResult {
                 searchTo = result
                 routeSelection.toSearchbar.setTitle(result.name, for: .normal)
             }
@@ -274,6 +274,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Process data
 
     func searchForRoutes() {
+        
         // If no date is set then date should be same as today's date
         if routeSelection.datepickerButton.titleLabel?.text?.lowercased() == "leave now" {
             searchTime = Date()
@@ -302,56 +303,60 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             }
 
             else {
-
-            Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
-
-                if #available(iOS 10.0, *) {
-                    self.routeResults.refreshControl?.endRefreshing()
-                } else {
-                    self.refreshControl.endRefreshing()
-                }
-
-                func requestDidFinish(with error: NSError? = nil) {
-                    if let err = error {
-                        print("RouteOptionVC searchForRoutes Error: \(err)")
-                        // print("Error Description:", err.userInfo["description"] as? String)
-                        self.banner = StatusBarNotificationBanner(title: "Could not connect to server", style: .danger)
-                        self.banner.autoDismiss = false
-                        self.banner.show(queuePosition: .front, on: self)
-                        self.isBannerShown = true
-                        UIApplication.shared.statusBarStyle = .lightContent
+                
+                print("start:", startingDestination)
+                print("end:", endingDestination)
+                print("searchFrom, isStartBusStop", searchFrom is BusStop)
+                print("searchTo, isEndBusStop", searchTo is BusStop)
+                print("start, isStartBusStop", startingDestination is BusStop)
+                print("end, isEndBusStop", endingDestination is BusStop)
+                
+                Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
+                    
+                    if #available(iOS 10.0, *) {
+                        self.routeResults.refreshControl?.endRefreshing()
+                    } else {
+                        self.refreshControl.endRefreshing()
                     }
-                    self.currentlySearching = false
-                    self.routeResults.reloadData()
-                }
-
-                if let alamofireRequest = request?.perform(
-                    withSuccess: { (routeJSON) in
-                        Route.getRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name,
-                        { (parsedRoutes,error) in
+                    
+                    func requestDidFinish(with error: NSError? = nil) {
+                        if let err = error {
+                            print("RouteOptionVC searchForRoutes Error: \(err)")
+                            // print("Error Description:", err.userInfo["description"] as? String)
+                            self.banner = StatusBarNotificationBanner(title: "Could not connect to server", style: .danger)
+                            self.banner.autoDismiss = false
+                            self.banner.show(queuePosition: .front, on: self)
+                            self.isBannerShown = true
+                            UIApplication.shared.statusBarStyle = .lightContent
+                        }
+                        self.currentlySearching = false
+                        self.routeResults.reloadData()
+                    }
+                    
+                    if let alamofireRequest = request?.perform(withSuccess: { (routeJSON) in
+                        Route.getRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes,error) in
                             self.routes = parsedRoutes
                             requestDidFinish(with: error)
                         })
-                    },
-                    failure: { (error) in
+                    }, failure: { (error) in
                         print("Request Failure:", error)
                         self.routes = []
                         requestDidFinish(with: error as NSError)
                     })
-                { // Handle non-null request
-                    let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
-                                                                requestUrl: alamofireRequest.request?.url?.absoluteString,
-                                                                stopType: nil).toEvent()
-                    let _ = RegisterSession.shared?.logEvent(event: event)
+                    { // Handle non-null request
+                        let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
+                                                                    requestUrl: alamofireRequest.request?.url?.absoluteString,
+                                                                    stopType: nil).toEvent()
+                        let _ = RegisterSession.shared?.logEvent(event: event)
+                    }
+                        
+                    else { // Catch error of coordinates not being found
+                        let error = NSError(domain: "Null Coordinates", code: 400, userInfo: nil)
+                        requestDidFinish(with: error)
+                    }
+                    
                 }
-
-                else { // Catch error of coordinates not being found
-                    let error = NSError(domain: "Null Coordinates", code: 400, userInfo: nil)
-                    requestDidFinish(with: error)
-                }
-
-            }
-
+                
             }
 
         }
@@ -390,7 +395,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // If haven't selected start location, set to current location
         if searchFrom == nil, let location = manager.location {
-            let currentLocationStop =  BusStop(name: "Current Location", lat: location.coordinate.latitude, long: location.coordinate.longitude)
+            let currentLocationStop =  BusStop(name: Constants.Phrases.currentLocation,
+                                               lat: location.coordinate.latitude, long: location.coordinate.longitude)
             searchFrom = currentLocationStop
             searchBarView.resultsViewController?.currentLocation = currentLocationStop
             routeSelection.fromSearchbar.setTitle(currentLocationStop.name, for: .normal)
@@ -606,7 +612,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
 
         let titleLabel = UILabel()
-        titleLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
+        titleLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
         titleLabel.textColor = .mediumGrayColor
         titleLabel.text = currentlySearching ? "Looking for routes..." : "No Routes Found"
         titleLabel.sizeToFit()
@@ -661,7 +667,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         let titleVeticalSpaceFromSuperview: CGFloat = 24.0
 
         let titleLabel = UILabel(frame: CGRect(x: titleLeftSpaceFromSuperview, y: titleVeticalSpaceFromSuperview, width: 88.0, height: 17.0))
-        titleLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
+        titleLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
         titleLabel.textColor = UIColor.secondaryTextColor
         titleLabel.text = self.tableView(tableView, titleForHeaderInSection: section)
         titleLabel.sizeToFit()
@@ -670,6 +676,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         return headerView
     }
+    
+    // TODO: FIGURE OUT SENSITIVE TAP
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let directions = routes[indexPath.row].directions

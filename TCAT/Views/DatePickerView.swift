@@ -113,26 +113,26 @@ class DatePickerView: UIView {
 
     private func styleSegmentedControl(_ segmentedControl: UISegmentedControl){
         segmentedControl.tintColor = .tcatBlueColor
-        let segmentControlFont = UIFont(name: FontNames.SanFrancisco.Regular, size: 13.0)
+        let segmentControlFont = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 13.0)
         segmentedControl.setTitleTextAttributes([NSAttributedStringKey.font: segmentControlFont!], for: .normal)
     }
 
     private func styleCancelButton(){
         cancelButton.frame = CGRect(x: 0, y: 0, width: 60, height: buttonHeight)
-        cancelButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 17.0)
+        cancelButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 17.0)
         cancelButton.setTitleColor(.mediumGrayColor, for: .normal)
     }
 
     private func styleDoneButton(){
         doneButton.frame = CGRect(x: 0, y: 0, width: 55, height: buttonHeight)
-        doneButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 17.0)
+        doneButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 17.0)
         doneButton.setTitleColor(.tcatBlueColor, for: .normal)
     }
 
     private func styleDisclaimerLabel(){
         disclaimerLabel.frame = CGRect(x: 0, y: 0, width: self.frame.width*(343/375), height: labelHeight)
         disclaimerLabel.textColor = .mediumGrayColor
-        disclaimerLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)
+        disclaimerLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)
         disclaimerLabel.numberOfLines = 0
         disclaimerLabel.lineBreakMode = .byWordWrapping
         disclaimerLabel.textAlignment = .center

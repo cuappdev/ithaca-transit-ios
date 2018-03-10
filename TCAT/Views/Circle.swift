@@ -8,47 +8,22 @@
 
 import UIKit
 
-enum CircleType: String {
-    // small solid circle
-    case smallSolid
-    // used to indicate destination
-    case largeBordered
-    // Used for bus stops in route detail cell expansion
-    case smallOutline
+enum CircleStyle {
+    case solid
+    case bordered
+    case outline
 }
 
-private enum CircleStyle {
-    case solid, bordered, outline
-}
-
-private enum CircleSize {
-    case small, large
+enum CircleSize {
+    case small
+    case large
 }
 
 class Circle: UIView {
     
-    init(type: CircleType, color: UIColor) {
+    init(size: CircleSize, style: CircleStyle, color: UIColor) {
         
-        var size: CircleSize
-        var style: CircleStyle
-        
-        switch type {
-            
-        case .smallSolid:
-            size = .small
-            style = .solid
-            
-        case .largeBordered:
-            size = .large
-            style = .bordered
-            
-        case .smallOutline:
-            size = .small
-            style = .outline
-            
-        }
-        
-        let radius: CGFloat = CGFloat(size == .small ? 16 : 32)
+        let radius: CGFloat = size == .small ? 12 : 18
         super.init(frame: CGRect(x: 0, y: 0, width: radius, height: radius))
         
         layer.cornerRadius = frame.width / 2
@@ -64,10 +39,10 @@ class Circle: UIView {
                 
                 backgroundColor = .white
                 layer.borderColor = color.cgColor
-                layer.borderWidth = 4.0
+                layer.borderWidth = 2.0
                 
                 let solidCircle = CALayer()
-                solidCircle.frame = CGRect(x: 0, y: 0, width: 12, height: 12)
+                solidCircle.frame = CGRect(x: 0, y: 0, width: 8, height: 8)
                 solidCircle.position = center
                 solidCircle.cornerRadius = solidCircle.frame.height / 2
                 solidCircle.backgroundColor = color.cgColor

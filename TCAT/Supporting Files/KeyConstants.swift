@@ -1,5 +1,5 @@
 //
-//  UserDefaultKey.swift
+//  UserDefaultConstants.swift
 //  TCAT
 //
 //  Created by Monica Ong on 9/16/17.
@@ -8,22 +8,9 @@
 
 import Foundation
 
-struct Key {
-
-    struct UserDefaults {
-        static let recentSearch = "recentSearch"
-        static let allBusStops = "allBusStops"
-        static let favorites = "favorites"
-    }
-
-    struct FuzzySearch {
-        static let minimumValue = 75
-    }
-
-    struct Distance {
-        static let maxBetweenStops = 160.0
-    }
-
+/// App-wide constants
+struct Constants {
+    
     struct Cells {
         static let busIdentifier = "BusStop"
         static let searchResultsIdentifier = "SearchResults"
@@ -34,9 +21,34 @@ struct Key {
         static let largeDetailCellIdentifier = "LargeCell"
         static let busStopCellIdentifier = "BusStopCell"
     }
-
-    struct Favorites {
-        static let first = "Add Your First Favorite!"
+    
+    /// Font identifiers
+    struct Fonts {
+        
+        struct SanFrancisco {
+            static let Regular = "SFUIText-Regular"
+            static let Medium = "SFUIText-Medium"
+            static let Bold = "SFUIText-Bold"
+            static let Semibold = "SFUIText-Semibold"
+        }
+        
+    }
+    
+    struct Phrases {
+        static let currentLocation = "Current Location"
+        static let firstFavorite = "Add Your First Favorite!"
+        static let yourDestination = "your destination"
+    }
+    
+    struct UserDefaults {
+        static let recentSearch = "recentSearch"
+        static let allBusStops = "allBusStops"
+        static let favorites = "favorites"
+    }
+    
+    struct Values {
+        static let maxDistanceBetweenStops = 160.0
+        static let fuzzySearchMinimumValue = 75
     }
     
 }

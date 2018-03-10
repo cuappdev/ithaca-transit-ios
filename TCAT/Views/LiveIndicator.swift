@@ -30,7 +30,7 @@ class LiveIndicator: UIView {
     fileprivate let INTERVAL: TimeInterval = LiveIndicator.INTERVAL
     
     /// The color to draw the indicator with
-    var color: UIColor = .white
+    var color: UIColor!
     
     /// The size of the view
     var size: LiveIndicatorSize!
@@ -44,32 +44,35 @@ class LiveIndicator: UIView {
         self.size = size
         self.color = color
         drawViews()
+        addViews()
         startAnimation()
     }
     
-    /// Draw UIViews based on type and color
+    /// Draw UIViews and layers based on type and color. Does not add them.
     private func drawViews() {
         
         let dotSize: CGFloat = size == .large ? 4 : 3
-        
         dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - dotSize + 0.5, width: dotSize, height: dotSize))
         dot.layer.cornerRadius = dot.frame.width / 2
         dot.clipsToBounds = true
         dot.backgroundColor = color
-        addSubview(dot)
         
         let arcOrigin = CGPoint(x: 1, y: frame.maxY - 1)
         let constant: CGFloat = 2
         let radius: CGFloat = size == .large ? 7 : 5
         
         smallArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius, lineWidth: constant)
-        self.layer.addSublayer(smallArcLayer)
-        
         largeArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius + 2 * constant, lineWidth: constant)
-        self.layer.addSublayer(largeArcLayer)
-        
+
         views = [dot, smallArcLayer, largeArcLayer]
         
+    }
+    
+    /// Add subviews and layers
+    private func addViews() {
+        addSubview(dot)
+        layer.addSublayer(smallArcLayer)
+        layer.addSublayer(largeArcLayer)
     }
     
     private func createTopToLeftArc(origin: CGPoint, radius: CGFloat, lineWidth: CGFloat) -> CAShapeLayer {

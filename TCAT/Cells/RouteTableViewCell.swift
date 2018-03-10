@@ -94,7 +94,7 @@ class RouteTableViewCell: UITableViewCell {
 
         let solidStopDotDiameter: CGFloat = 12.0
         let routeLineHeight: CGFloat = RouteDiagram.routeLineHeight
-        let destinationDotHeight: CGFloat = Circle(type: .largeBordered, color: .tcatBlueColor).frame.height
+        let destinationDotHeight: CGFloat = Circle(size: .large, style: .bordered, color: .tcatBlueColor).frame.height
         let routeDiagramHeight = (CGFloat(numOfSolidStopDots)*solidStopDotDiameter) +
         (CGFloat(numOfRouteLines)*routeLineHeight) + destinationDotHeight
 
@@ -172,7 +172,7 @@ class RouteTableViewCell: UITableViewCell {
         
     }
 
-    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
+    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date) {
         travelTimeLabel.text = "\(Time.timeString(from: departureTime)) - \(Time.timeString(from: arrivalTime))"
         travelTimeLabel.sizeToFit()
     }
@@ -199,7 +199,7 @@ class RouteTableViewCell: UITableViewCell {
         }
     }
 
-    private func setDepartureTime(withTime departureTime: Date, withWalkingRoute isWalkingRoute: Bool){
+    private func setDepartureTime(withTime departureTime: Date, withWalkingRoute isWalkingRoute: Bool) {
         
         if isWalkingRoute {
             departureTimeLabel.text = "Directions"
@@ -218,39 +218,39 @@ class RouteTableViewCell: UITableViewCell {
 
     // MARK: Style
 
-    private func styleTravelTime(){
-        travelTimeLabel.font = UIFont(name: FontNames.SanFrancisco.Semibold, size: 14.0)
+    private func styleTravelTime() {
+        travelTimeLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
         travelTimeLabel.textColor = .primaryTextColor
     }
 
     private func styleLiveElements() {
         // style live elements to be invisible before get live data
         liveIndicatorView.setColor(to: .white)
-        liveLabel.font = UIFont(name: FontNames.SanFrancisco.Semibold, size: 14.0)
+        liveLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
         liveLabel.textColor = .white
     }
 
-    private func styleDepartureTime(){
-        departureTimeLabel.font = UIFont(name: FontNames.SanFrancisco.Semibold, size: 14.0)
+    private func styleDepartureTime() {
+        departureTimeLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
         departureTimeLabel.textColor = .primaryTextColor
         arrowImageView.tintColor = .primaryTextColor
     }
 
-    private func styleTopBorder(){
+    private func styleTopBorder() {
         topBorder.backgroundColor = .lineDotColor
     }
 
-    private func styleBottomBorder(){
+    private func styleBottomBorder() {
         bottomBorder.backgroundColor = .lineDotColor
     }
 
-    private func styleCellSeperator(){
+    private func styleCellSeperator() {
         cellSeperator.backgroundColor = .tableBackgroundColor
     }
 
     // MARK: Positioning
 
-    func positionSubviews(){
+    func positionSubviews() {
 
         positionLiveElementsHorizontally(usingTravelTime: travelTimeLabel)
         positionArrowHorizontally()
@@ -266,7 +266,7 @@ class RouteTableViewCell: UITableViewCell {
         positionBottomBorder(usingCellSeperator: cellSeperator)
     }
 
-    private func positionTravelTime(){
+    private func positionTravelTime() {
         travelTimeLabel.frame = CGRect(x: timeLabelLeftSpaceFromSuperview, y: timeLabelVerticalSpaceFromSuperview, width: 50.5, height: 17)
     }
 
@@ -280,7 +280,7 @@ class RouteTableViewCell: UITableViewCell {
         liveLabel.frame = CGRect(x: liveIndicatorView.frame.maxX + liveLabelHorizontalSpaceFromLiveImage, y: liveLabel.frame.minY, width: liveLabel.frame.width, height: liveLabel.frame.height)
     }
 
-    private func positionDepartureTimeVertically(usingTravelTime travelTimeLabel: UILabel){
+    private func positionDepartureTimeVertically(usingTravelTime travelTimeLabel: UILabel) {
         departureTimeLabel.frame = CGRect(x: 0, y: travelTimeLabel.frame.minY, width: 135, height: 20)
     }
 
@@ -288,7 +288,7 @@ class RouteTableViewCell: UITableViewCell {
         arrowImageView.center.y = departureTimeLabel.center.y
     }
 
-    private func positionTopBorder(){
+    private func positionTopBorder() {
         topBorder.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: cellBorderHeight)
     }
 
@@ -296,27 +296,26 @@ class RouteTableViewCell: UITableViewCell {
         arrowImageView.center.x = contentView.frame.width - arrowImageViewRightSpaceFromSuperview - (arrowImageView.frame.width/2)
     }
 
-    private func positionDepartureTimeHorizontally(usingArrowImageView arrowImageView: UIImageView){
+    private func positionDepartureTimeHorizontally(usingArrowImageView arrowImageView: UIImageView) {
         departureTimeLabel.center.x = arrowImageView.frame.minX - departureLabelSpaceFromArrowImageView - (departureTimeLabel.frame.width/2)
     }
 
-    private func positionRouteDiagram(usingTravelTimeLabel travelTimeLabel: UILabel){
+    private func positionRouteDiagram(usingTravelTimeLabel travelTimeLabel: UILabel) {
         routeDiagram.frame = CGRect(x: 0, y: travelTimeLabel.frame.maxY + timeLabelAndRouteDiagramVerticalSpace, width: UIScreen.main.bounds.width, height: 75)
     }
 
-    private func positionCellSeperator(usingRouteDiagram routeDiagram: RouteDiagram){
+    private func positionCellSeperator(usingRouteDiagram routeDiagram: RouteDiagram) {
         cellSeperator.frame = CGRect(x: 0, y: routeDiagram.frame.maxY + routeDiagramAndCellSeparatorVerticalSpace, width: UIScreen.main.bounds.width, height: cellSeperatorHeight)
     }
 
-    private func positionBottomBorder(usingCellSeperator cellSeperator: UIView){
+    private func positionBottomBorder(usingCellSeperator cellSeperator: UIView) {
         bottomBorder.frame = CGRect(x: 0, y: cellSeperator.frame.minY - cellBorderHeight, width: UIScreen.main.bounds.width, height: cellBorderHeight)
     }
 
     // MARK: Add subviews
 
-    func addSubviews(){
+    func addSubviews() {
         routeDiagram.addSubviews()
-
         contentView.addSubview(routeDiagram)
         contentView.addSubview(cellSeperator)
         contentView.addSubview(bottomBorder)

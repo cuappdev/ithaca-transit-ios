@@ -42,7 +42,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    let reachability = Reachability(hostname: Network.address)
+    let reachability = Reachability(hostname: Network.ipAddress)
     var isBannerShown = false
     
     var banner: StatusBarNotificationBanner {
@@ -62,8 +62,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
         
-        recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Key.UserDefaults.recentSearch)
-        favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Key.UserDefaults.favorites)
+        recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
+        favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
         view.backgroundColor = .tableBackgroundColor
@@ -88,10 +88,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.keyboardDismissMode = .onDrag
         tableView.tableFooterView = UIView()
         tableView.showsVerticalScrollIndicator = false
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: Key.Cells.busIdentifier)
-        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Key.Cells.searchResultsIdentifier)
-        tableView.register(CornellDestinationCell.self, forCellReuseIdentifier: Key.Cells.cornellDestinationsIdentifier)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Key.Cells.seeAllStopsIdentifier)
+        tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
+        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Constants.Cells.searchResultsIdentifier)
+        tableView.register(CornellDestinationCell.self, forCellReuseIdentifier: Constants.Cells.cornellDestinationsIdentifier)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
         view.addSubview(tableView)
 
         tableView.snp.makeConstraints { (make) in
@@ -163,8 +163,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Key.UserDefaults.recentSearch)
-        favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Key.UserDefaults.favorites)
+        recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
+        favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
         sections = createSections()
     }
 
@@ -175,7 +175,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         var favoritesSection = Section(type: .favorites, items: favorites)
 
         if favoritesSection.items.isEmpty {
-            let addFavorites = BusStop(name: Key.Favorites.first, lat: 0.0, long: 0.0)
+            let addFavorites = BusStop(name: Constants.Phrases.firstFavorite, lat: 0.0, long: 0.0)
             favoritesSection = Section(type: .favorites, items: [.busStop(addFavorites)])
         }
         allSections.append(favoritesSection)
@@ -264,18 +264,18 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         if let itemType = itemType {
             switch itemType {
             case .busStop(let busStop):
-                cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.busIdentifier) as! BusStopCell
+                cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busIdentifier) as! BusStopCell
                 cell.textLabel?.text = busStop.name
             case .placeResult(let placeResult):
-                cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.searchResultsIdentifier) as! SearchResultsCell
+                cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.searchResultsIdentifier) as! SearchResultsCell
                 cell.textLabel?.text = placeResult.name
                 cell.detailTextLabel?.text = placeResult.detail
             case .cornellDestination:
-                cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.cornellDestinationsIdentifier) as! CornellDestinationCell
+                cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.cornellDestinationsIdentifier) as! CornellDestinationCell
                 cell.textLabel?.text = cornellDestinations[indexPath.row].name
                 cell.detailTextLabel?.text = cornellDestinations[indexPath.row].stops
             case .seeAllStops:
-                cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.seeAllStopsIdentifier)
+                cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
                 cell.textLabel?.text = "See All Stops"
                 cell.imageView?.image = #imageLiteral(resourceName: "list")
                 cell.accessoryType = .disclosureIndicator
@@ -322,15 +322,15 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             didSelectAllStops = true
             allStopsTVC.allStops = SearchTableViewManager.shared.getAllStops()
         case .busStop(let busStop):
-            if busStop.name == Key.Favorites.first { //we want to go to favoritesvc
+            if busStop.name == Constants.Phrases.firstFavorite {
                 presentOptionsVC = false
                 presentFavoritesTVC()
             } else {
-            SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.recentSearch, location: busStop, limit: 8)
+            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: busStop, limit: 8)
             optionsVC.searchTo = busStop
             }
         case .placeResult(let placeResult):
-            SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.recentSearch, location: placeResult, limit: 8)
+            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: placeResult, limit: 8)
             optionsVC.searchTo = placeResult
         }
 

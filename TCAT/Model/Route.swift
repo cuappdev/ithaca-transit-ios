@@ -161,8 +161,8 @@ class Route: NSObject, JSONDecodable {
         if json["success"].boolValue {
             let routes: [Route] = json["data"].arrayValue.map {
                 var augmentedJSON = $0
-                augmentedJSON["startName"].string = from ?? "Current Location"
-                augmentedJSON["endName"].string = to ?? "your destination"
+                augmentedJSON["startName"].string = from ?? Constants.Phrases.currentLocation
+                augmentedJSON["endName"].string = to ?? Constants.Phrases.yourDestination
                 return try! Route(json: augmentedJSON)
             }
             completion(routes, nil)
