@@ -94,7 +94,7 @@ class RouteTableViewCell: UITableViewCell {
 
         let solidStopDotDiameter: CGFloat = 12.0
         let routeLineHeight: CGFloat = RouteDiagram.routeLineHeight
-        let destinationDotHeight: CGFloat = Circle(size: .large, color: .tcatBlueColor, style: .bordered).frame.height
+        let destinationDotHeight: CGFloat = Circle(size: .medium, color: .tcatBlueColor, style: .bordered).frame.height
 
         let routeDiagramHeight = (CGFloat(numOfSolidStopDots)*solidStopDotDiameter) +
         (CGFloat(numOfRouteLines)*routeLineHeight) + destinationDotHeight

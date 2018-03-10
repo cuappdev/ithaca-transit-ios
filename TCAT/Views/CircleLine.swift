@@ -27,7 +27,7 @@ class CircleLine: UIView {
         
         solidCircle = Circle(size: .small, color: color, style: .solid)
         line = SolidLine(height: lineHeight, color: color)
-        borderedCircle = Circle(size: .large, color: color, style: .bordered)
+        borderedCircle = Circle(size: .medium, color: color, style: .bordered)
         
         positionSolidCircle()
         positionLine(usingSolidCircle: solidCircle)

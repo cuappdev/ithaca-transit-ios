@@ -140,7 +140,7 @@ class RouteDiagram: UIView {
             case .walk:
 
                 if(index == destinationDot) {
-                    let framedGreyCircle = Circle(size: .large, color: .mediumGrayColor, style: .bordered)
+                    let framedGreyCircle = Circle(size: .medium, color: .mediumGrayColor, style: .bordered)
                     framedGreyCircle.backgroundColor = .white
 
                     pin = framedGreyCircle
@@ -155,12 +155,12 @@ class RouteDiagram: UIView {
                 if(index == destinationDot) {
                     if isWalkingRoute {
                         // walking route destination should always be grey no matter what direction type
-                        let framedGreyCircle = Circle(size: .large, color: .mediumGrayColor, style: .bordered)
+                        let framedGreyCircle = Circle(size: .medium, color: .mediumGrayColor, style: .bordered)
                         framedGreyCircle.backgroundColor = .white
 
                         pin = framedGreyCircle
                     } else {
-                        let framedBlueCircle = Circle(size: .large, color: .tcatBlueColor, style: .bordered)
+                        let framedBlueCircle = Circle(size: .medium, color: .tcatBlueColor, style: .bordered)
                         framedBlueCircle.backgroundColor = .white
 
                         pin = framedBlueCircle
