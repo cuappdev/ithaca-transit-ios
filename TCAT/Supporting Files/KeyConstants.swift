@@ -36,4 +36,8 @@ struct Key {
         static let first = "Add Your First Favorite!"
     }
     
+    struct CurrentLocation {
+        static let name = "Current Location"
+    }
+    
 }

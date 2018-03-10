@@ -103,15 +103,15 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        var safeAreaHeight: CGFloat = 0
-        if #available(iOS 11, *) {
-            safeAreaHeight = view.safeAreaInsets.bottom
-        }
-        else {
-            safeAreaHeight = 0
-        }
-
-        updateDatepickerHeight(safeAreaBottomHeight: safeAreaHeight)
+//        var safeAreaHeight: CGFloat = 0
+//        if #available(iOS 11, *) {
+//            safeAreaHeight = view.safeAreaInsets.bottom
+//        }
+//        else {
+//            safeAreaHeight = 0
+//        }
+//
+//        updateDatepickerHeight(safeAreaBottomHeight: safeAreaHeight)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -122,7 +122,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     private func setupRouteSelection() {
         routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: 150)) // offset for -12 for larger views, get rid of black space
-        routeSelection.backgroundColor = .white //.lineColor // for demo
+        routeSelection.backgroundColor = .white
         routeSelection.positionSubviews()
         routeSelection.addSubviews()
         var newRSFrame = routeSelection.frame
@@ -176,31 +176,31 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func presentSearchBar(){
         var placeholder = ""
+        var searchBarText = ""
 
         switch searchType {
 
         case .from:
 
             if let startingDestinationName = searchFrom?.name {
-                placeholder = startingDestinationName
+                if startingDestinationName != Key.CurrentLocation.name {
+                    searchBarText = startingDestinationName
+                }
             }
-            else {
-                placeholder = "Search start locations"
-            }
+            placeholder = "Choose starting point..."
 
         case .to:
 
             if let endingDestinationName = searchTo?.name {
-                placeholder = endingDestinationName
+                searchBarText = endingDestinationName
             }
-            else {
-                placeholder = "Search destination"
-            }
+            placeholder = "Choose destination..."
 
         }
 
         let textFieldInsideSearchBar = searchBarView.searchController?.searchBar.value(forKey: "searchField") as? UITextField
-        textFieldInsideSearchBar?.attributedPlaceholder = NSAttributedString(string: placeholder) //make placeholder invisible
+        textFieldInsideSearchBar?.attributedPlaceholder = NSAttributedString(string: placeholder) // make placeholder invisible
+        textFieldInsideSearchBar?.text = searchBarText
 
         showSearchBar()
     }
@@ -372,7 +372,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         locationManager.stopUpdatingLocation()
         print("RouteOptionVC locationManager didFailWithError: \(error.localizedDescription)")
 
-        let title = "Couldn't Find Current Location"
+        let title = "Couldn't Find \(Key.CurrentLocation.name)"
         let message = "Please ensure you are connected to the internet and have enabled location permissions."
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
@@ -390,7 +390,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // If haven't selected start location, set to current location
         if searchFrom == nil, let location = manager.location {
-            let currentLocationStop =  BusStop(name: "Current Location", lat: location.coordinate.latitude, long: location.coordinate.longitude)
+            let currentLocationStop =  BusStop(name: Key.CurrentLocation.name, lat: location.coordinate.latitude, long: location.coordinate.longitude)
             searchFrom = currentLocationStop
             searchBarView.resultsViewController?.currentLocation = currentLocationStop
             routeSelection.fromSearchbar.setTitle(currentLocationStop.name, for: .normal)
