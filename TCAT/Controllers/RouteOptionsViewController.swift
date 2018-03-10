@@ -177,7 +177,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         case .from:
 
             if let startingDestinationName = searchFrom?.name {
-                if startingDestinationName != Key.CurrentLocation.name {
+                if startingDestinationName != Key.Stops.currentLocation {
                     searchBarText = startingDestinationName
                 }
             }
@@ -366,7 +366,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         locationManager.stopUpdatingLocation()
         print("RouteOptionVC locationManager didFailWithError: \(error.localizedDescription)")
 
-        let title = "Couldn't Find \(Key.CurrentLocation.name)"
+        let title = "Couldn't Find \(Key.Stops.currentLocation)"
         let message = "Please ensure you are connected to the internet and have enabled location permissions."
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
@@ -384,7 +384,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // If haven't selected start location, set to current location
         if searchFrom == nil, let location = manager.location {
-            let currentLocationStop =  BusStop(name: Key.CurrentLocation.name, lat: location.coordinate.latitude, long: location.coordinate.longitude)
+            let currentLocationStop =  BusStop(name: Key.Stops.currentLocation, lat: location.coordinate.latitude, long: location.coordinate.longitude)
             searchFrom = currentLocationStop
             searchBarView.resultsViewController?.currentLocation = currentLocationStop
             routeSelection.fromSearchbar.setTitle(currentLocationStop.name, for: .normal)
