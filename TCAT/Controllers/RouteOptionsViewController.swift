@@ -304,13 +304,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
             else {
                 
-                print("start:", startingDestination)
-                print("end:", endingDestination)
-                print("searchFrom, isStartBusStop", searchFrom is BusStop)
-                print("searchTo, isEndBusStop", searchTo is BusStop)
-                print("start, isStartBusStop", startingDestination is BusStop)
-                print("end, isEndBusStop", endingDestination is BusStop)
-                
                 Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
                     
                     if #available(iOS 10.0, *) {
