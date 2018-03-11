@@ -26,9 +26,11 @@ class Time {
     }
     
     /// Returns time between 2 dates formatted in "# d  # hr # min"
-    static func timeString(from startTime: Date, to endTime: Date) -> String{
+    static func timeString(from startTime: Date, to endTime: Date) -> String {
+        
         let time = dateComponents(from: startTime, to: endTime)
         var timeStr = ""
+        
         if time.day! > 0 {
             timeStr += "\(time.day!) d "
         }
@@ -38,7 +40,10 @@ class Time {
         }
         
         if time.minute! > 0 {
-            timeStr += "\(time.minute!) min"
+            // If time difference is 3m 56s, closer to 4m difference than 3m
+            // Needed only for minutes since last measurement in series
+            let hasSignificantSeconds = time.second! >= 30
+            timeStr += "\(time.minute! + (hasSignificantSeconds ? 1 : 0)) min"
         }
         
         if timeStr.isEmpty {
@@ -54,13 +59,13 @@ class Time {
     }
     
     /// Calculates time bt 2 dates, returns DateComponents
-    static func dateComponents(from startTime: Date, to endTime: Date) -> DateComponents{
-        return Calendar.current.dateComponents([.hour, .minute, .day], from: startTime, to: endTime)
+    static func dateComponents(from startTime: Date, to endTime: Date) -> DateComponents {
+        return Calendar.current.dateComponents([.hour, .minute, .day, .second], from: startTime, to: endTime)
     }
     
     /// Calculates dateComponenets for a single date
-    static func dateComponents(from date: Date) -> DateComponents{
-        return Calendar.current.dateComponents([.year,.month,.day, .hour, .minute], from: date)
+    static func dateComponents(from date: Date) -> DateComponents {
+        return Calendar.current.dateComponents([.year,.month,.day, .hour, .minute, .second], from: date)
     }
     
     /// Takes time string formatted in "h:mm a" and returns today's date with that time

@@ -123,9 +123,12 @@ class LiveIndicator: UIView {
         }
     }
     
+    /// DOES NOT WORK CURRENTLY
     func setColor(to color: UIColor) {
         self.color = color
+        stopAnimation()
         drawViews()
+        startAnimation()
     }
     
     /// Dim, wait, and un-dim a UIView

@@ -36,7 +36,7 @@ class RouteTableViewCell: UITableViewCell {
     let timeLabelVerticalSpaceFromSuperview: CGFloat = 18.0
 
     let liveImageHorizontalSpaceFromTravelTime: CGFloat = 12.0
-    let liveLabelHorizontalSpaceFromLiveImage: CGFloat = 4.0
+    let liveLabelHorizontalSpaceFromLiveImage: CGFloat = 8.0
 
     let arrowImageViewRightSpaceFromSuperview: CGFloat = 12.0
     let departureLabelSpaceFromArrowImageView: CGFloat = 8.0
@@ -180,13 +180,12 @@ class RouteTableViewCell: UITableViewCell {
     private func setLiveElements(withStartTime startTime: Date?, withDelay delay: Int?) {
         if let delay = delay, let startTime = startTime {
             if delay > 0 {
-                liveIndicatorView.setColor(to: .liveRedColor)
+                liveIndicatorView = LiveIndicator(size: .small, color: .liveRedColor)
                 liveLabel.textColor = .liveRedColor
                 liveLabel.text = "Late - \(Time.timeString(from: startTime.addingTimeInterval(TimeInterval(delay))))"
                 liveLabel.sizeToFit()
-            }
-            else {
-                liveIndicatorView.setColor(to: .liveGreenColor)
+            } else {
+                liveIndicatorView = LiveIndicator(size: .small, color: .liveGreenColor)
                 liveLabel.textColor = .liveGreenColor
                 liveLabel.text = "On Time"
                 liveLabel.sizeToFit()
@@ -194,9 +193,10 @@ class RouteTableViewCell: UITableViewCell {
         }
         else {
             // make live elements invisible
-            liveIndicatorView.setColor(to: .white)
+            liveIndicatorView = LiveIndicator(size: .small, color: .white)
             liveLabel.textColor = .white
         }
+        positionSubviews()
     }
 
     private func setDepartureTime(withTime departureTime: Date, withWalkingRoute isWalkingRoute: Bool) {
@@ -225,7 +225,7 @@ class RouteTableViewCell: UITableViewCell {
 
     private func styleLiveElements() {
         // style live elements to be invisible before get live data
-        liveIndicatorView.setColor(to: .white)
+        liveIndicatorView = LiveIndicator(size: .small, color: .white)
         liveLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
         liveLabel.textColor = .white
     }
@@ -264,6 +264,7 @@ class RouteTableViewCell: UITableViewCell {
 
         positionCellSeperator(usingRouteDiagram: routeDiagram)
         positionBottomBorder(usingCellSeperator: cellSeperator)
+        
     }
 
     private func positionTravelTime() {

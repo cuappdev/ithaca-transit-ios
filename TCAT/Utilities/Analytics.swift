@@ -54,3 +54,7 @@ struct DestinationSearchedEventPayload: Payload {
 struct RouteResultsCellTappedEventPayload: Payload {
     static let eventName: String = "tappedRouteResultsCell"
 }
+
+struct InformationViewControllerTappedEventPayload: Payload {
+    static let eventName: String = "tappedBigBlueBus"
+}

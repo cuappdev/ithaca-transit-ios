@@ -114,7 +114,7 @@ class Route: NSObject, JSONDecodable {
                 
                 if !direction.stayOnBusForTransfer {
                     
-                    // print("Creating Arrival Direction")
+                    print("Creating Arrival Direction")
                     
                     // Create Arrival Direction
                     let arriveDirection = direction.copy() as! Direction
@@ -130,8 +130,8 @@ class Route: NSObject, JSONDecodable {
                 
                 if isTransfer {
                     
-                    // print("Marked As Transfer Direction")
-                    // direction.type = .transfer
+                     print("Marked As Transfer Direction")
+                     direction.type = .transfer
                     
                 }
                 

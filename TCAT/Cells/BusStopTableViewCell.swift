@@ -10,7 +10,7 @@ import UIKit
 
 class BusStopTableViewCell: UITableViewCell {
     
-    let linePosition: CGFloat = 98 // max of DetailIconView (114) - constant (16)
+    let linePosition: CGFloat = DetailIconView.width - 16 // max of DetailIconView (114) - constant (16) = 98
     
     var titleLabel: UILabel!
     let cellHeight: CGFloat = RouteDetailCellSize.smallHeight

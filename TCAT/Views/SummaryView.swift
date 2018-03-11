@@ -93,19 +93,20 @@ class SummaryView: UIView {
     /// Update summary card data and position accordingly
     func setRoute() {
         
+        // MARK: Route Icons
+        
         /// Constant for spacing for various elements
         let spacing: CGFloat = 12
-        /// The edge of the next bus icon
-        var iconMaximumX: CGFloat = 24
-        /// The center to use for the next bus icon. Initalized for one bus.
-        var iconCenter = CGPoint(x: iconMaximumX, y: safeAreaCenterY)
         
-        // MARK: Route Icons
+        /// The center to use for the next bus icon. Initalized for one bus.
+        var iconCenter = CGPoint(x: DetailIconView.width / 2, y: safeAreaCenterY)
         
         subviews.filter { $0.tag == busIconTag }.removeViewsFromSuperview()
         
         // Create and place bus icons
-        let busRoutes: [Int] = route.directions.flatMap { return $0.type == .depart ? $0.routeNumber : nil }
+        let busRoutes: [Int] = route.directions.flatMap {
+            return $0.type == .depart ? $0.routeNumber : nil
+        }
         
         // Place one sole bus icon
         if busRoutes.count == 1 {
@@ -113,14 +114,8 @@ class SummaryView: UIView {
             // Create and add bus icon
             let busIcon = BusIcon(type: .directionLarge, number: busRoutes.first!)
             busIcon.tag = busIconTag
-            addSubview(busIcon)
-            
-            // Adjust center point, set to bus icon
-            iconCenter.x += busIcon.frame.width / 2
             busIcon.center = iconCenter
-            
-            // move iconMaximumX for later UI elements
-            iconMaximumX += busIcon.frame.width + spacing
+            addSubview(busIcon)
             
         }
         
@@ -129,9 +124,7 @@ class SummaryView: UIView {
             
             // Adjust initial variables
             let exampleBusIcon = BusIcon(type: .directionSmall, number: 0)
-            let initalY = tabInsetHeight + safeAreaCenterY - (spacing / 4) - exampleBusIcon.frame.height
-            iconCenter = CGPoint(x: iconMaximumX + exampleBusIcon.frame.width / 2, y: initalY)
-            iconMaximumX = exampleBusIcon.frame.width + (spacing * 2)
+            iconCenter.y = tabInsetHeight + safeAreaCenterY - (spacing / 4) - exampleBusIcon.frame.height
             
             for (index, route) in busRoutes.enumerated() {
                 
@@ -152,8 +145,10 @@ class SummaryView: UIView {
         }
         
         // MARK: Main Label Positioning
+        
+        let extraLabelPadding: CGFloat = 6
 
-        mainLabel.frame.origin.x = iconMaximumX + textLabelPadding
+        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
         mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
         
         if let departDirection = (route.directions.filter { $0.type == .depart }).first {
@@ -173,14 +168,14 @@ class SummaryView: UIView {
         
         // Reset main label positioning
         mainLabel.sizeToFit()
-        mainLabel.frame.origin.x = iconMaximumX + textLabelPadding
+        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
         mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
         
         // MARK: Secondary Label
         
         secondaryLabel.text = "Trip Duration: \(route.totalDuration) minute\(route.totalDuration == 1 ? "" : "s")"
         secondaryLabel.sizeToFit()
-        secondaryLabel.frame.origin.x = iconMaximumX + textLabelPadding
+        secondaryLabel.frame.origin.x = mainLabel.frame.origin.x
         
         // Adjust labels vertically
         let labelSpacing = spacing / 3

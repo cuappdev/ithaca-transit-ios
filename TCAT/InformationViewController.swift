@@ -8,6 +8,7 @@
 
 import UIKit
 import SafariServices
+import SwiftRegister
 
 class InformationViewController: UIViewController {
     
@@ -69,7 +70,7 @@ class InformationViewController: UIViewController {
         
         titleLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Medium, size: 16)
         titleLabel.textColor = UIColor.primaryTextColor
-        titleLabel.text = "Made by AppDev"
+        titleLabel.text = "Made by Cornell App Development"
         titleLabel.backgroundColor = .clear
         titleLabel.snp.makeConstraints { (make) in
             make.top.equalTo(tcatImage.snp.bottom).offset(44)
@@ -80,7 +81,7 @@ class InformationViewController: UIViewController {
         
         descriptionLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)
         descriptionLabel.textColor = UIColor.primaryTextColor
-        descriptionLabel.text = "Cornell University\nApp Development Project Team"
+        descriptionLabel.text = "An Engineering Project Team\nat Cornell University"
         descriptionLabel.numberOfLines = 0
         descriptionLabel.backgroundColor = .clear
         descriptionLabel.textAlignment = .center
@@ -163,6 +164,8 @@ class InformationViewController: UIViewController {
             })
             
         }
+        
+        let _ = RegisterSession.shared?.logEvent(event: InformationViewControllerTappedEventPayload().toEvent())
         
     }
     

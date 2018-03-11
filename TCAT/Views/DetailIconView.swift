@@ -19,6 +19,8 @@ class DetailIconView: UIView {
     fileprivate let constant: CGFloat = 16
     fileprivate var shouldAddSubviews: Bool = true
     
+    static let width: CGFloat = 114
+    
     var type: IconType!
     var time: String!
     
@@ -40,7 +42,7 @@ class DetailIconView: UIView {
         
         self.type = type
         self.time = time
-        let frame = CGRect(x: 0, y: 0, width: 114, height: height)
+        let frame = CGRect(x: 0, y: 0, width: DetailIconView.width, height: height)
         super.init(frame : frame)
         
         // Format and place time label
