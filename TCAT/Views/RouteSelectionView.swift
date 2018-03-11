@@ -17,7 +17,9 @@ class RouteSelectionView: UIView {
     var toLabel: UILabel = UILabel()
     var fromSearchbar: UIButton = UIButton()
     var toSearchbar: UIButton = UIButton()
-    var routeLine: CircleLine!
+    var solidCircle: Circle!
+    var line: SolidLine!
+    var borderedCircle: Circle!
     var swapButton: UIButton = UIButton()
     var datepickerButton: UIButton = UIButton()
     var topLine: UIView = UIView()
@@ -28,8 +30,8 @@ class RouteSelectionView: UIView {
     let lineWidth: CGFloat = 1.0
     let leadingSpace: CGFloat = 16.0
     let topSpace: CGFloat = 21.5
-    let routeLineLeftSpace: CGFloat = 11.0
-    let routeLineRightSpace: CGFloat = 14.0
+    let solidCircleLeftSpace: CGFloat = 11.0
+    let solidCircleRightSpace: CGFloat = 14.0
     let searchbarTextSpaceFromLeft: CGFloat = 12.0
     let searchbarHeight: CGFloat = 28
     let swapPadding: CGFloat = 16.0
@@ -92,7 +94,9 @@ class RouteSelectionView: UIView {
     }
     
     private func styleRouteLine(){
-        routeLine = CircleLine(color: .mediumGrayColor)
+        solidCircle = Circle(size: .small, color: .mediumGrayColor, style: .solid)
+        line = SolidLine(height: 27.0, color: .mediumGrayColor)
+        borderedCircle = Circle(size: .medium, color: .mediumGrayColor, style: .bordered)
     }
     
     private func styleSwapButton(){
@@ -146,14 +150,17 @@ class RouteSelectionView: UIView {
     func positionSubviews(){
         positionLabelHorizontally(fromLabel)
         positionLabelHorizontally(toLabel)
-        positionRouteLineHorizontally(usingFromLabel: fromLabel)
+        postionSolidCircleHorizontally(usingFromLabel: fromLabel)
         
-        positionFromSearchbar(usingRouteLine: routeLine)
+        positionFromSearchbar(usingSolidCircle: solidCircle)
         positionToSearchbar(usingFromSearchbar: fromSearchbar)
         
+        positionSolidCircleVertically(usingFromSearchbar: fromSearchbar)
+        positionBorderedCircle(usingSolidCircle: solidCircle, usingToSearchbar: toSearchbar)
+        positionLine(usingSolidCircle: solidCircle, usingBorderedCircle: borderedCircle)
+
         positionLabelVertically(fromLabel, usingSearchbar: fromSearchbar)
         positionLabelVertically(toLabel, usingSearchbar: toSearchbar)
-        positionRouteLineVertically(usingFromLabel: fromLabel)
         
         positionSearchbarView(usingFromSearchbar: fromSearchbar, usingToSearchbar: toSearchbar)
         positionDatepickerButton(usingSearchbarView: searcbarView)
@@ -163,7 +170,7 @@ class RouteSelectionView: UIView {
         resizeSearchbar(fromSearchbar, usingSwapButton: swapButton)
         resizeSearchbar(toSearchbar, usingSwapButton: swapButton)
         
-        positionSwapButton(usingFromSearchBar: fromSearchbar, usingRouteLine: routeLine)
+        positionSwapButton(usingFromSearchBar: fromSearchbar, usingLine: line)
     }
     
     private func positionLabelHorizontally(_ label: UILabel){
@@ -173,16 +180,13 @@ class RouteSelectionView: UIView {
         label.frame = newFrame
     }
     
-    private func positionRouteLineHorizontally(usingFromLabel fromLabel: UILabel){
-        let oldFrame = routeLine.frame
-        let newFrame = CGRect(x: fromLabel.frame.maxX + routeLineLeftSpace, y: oldFrame.minY, width: oldFrame.width , height: oldFrame.height)
-        
-        routeLine.frame = newFrame
+    private func postionSolidCircleHorizontally(usingFromLabel fromLabel: UILabel) {
+        solidCircle.center.x = fromLabel.frame.maxX + solidCircleLeftSpace + (solidCircle.frame.width/2)
     }
     
-    private func positionFromSearchbar(usingRouteLine routeLine: CircleLine){
+    private func positionFromSearchbar(usingSolidCircle solidCircle: Circle){
         let oldFrame = fromSearchbar.frame
-        let newFrame = CGRect(x: routeLine.frame.maxX + routeLineRightSpace, y: topSpace, width: oldFrame.width, height: oldFrame.height)
+        let newFrame = CGRect(x: solidCircle.frame.maxX + solidCircleRightSpace, y: topSpace, width: oldFrame.width, height: oldFrame.height)
         
         fromSearchbar.frame = newFrame
     }
@@ -194,15 +198,26 @@ class RouteSelectionView: UIView {
          toSearchbar.frame = newFrame
     }
     
-    private func positionLabelVertically(_ label: UILabel, usingSearchbar searchbar: UIButton){
-        label.center.y = searchbar.center.y
+    private func positionSolidCircleVertically(usingFromSearchbar fromSearchbar: UIButton){
+        solidCircle.center.y = fromSearchbar.center.y
     }
     
-    private func positionRouteLineVertically(usingFromLabel fromLabel: UILabel){
-        let oldFrame = routeLine.frame
-        let newFrame = CGRect(x: oldFrame.minX, y: fromLabel.frame.minY + 4, width: oldFrame.width, height: oldFrame.height)
+    private func positionBorderedCircle(usingSolidCircle solidCircle: Circle, usingToSearchbar toSearchbar: UIButton) {
+        borderedCircle.center.x = solidCircle.center.x
+        borderedCircle.center.y = toSearchbar.center.y
+    }
+    
+    private func positionLine(usingSolidCircle solidCircle: Circle, usingBorderedCircle borderedCircle: Circle) {
+        line.center.x = solidCircle.center.x
         
-        routeLine.frame = newFrame
+        let oldFrame = line.frame
+        let newFrame = CGRect(x: oldFrame.minX, y: solidCircle.center.y, width: oldFrame.width, height: 1 + borderedCircle.frame.minY - solidCircle.center.y)
+        
+        line.frame = newFrame
+    }
+    
+    private func positionLabelVertically(_ label: UILabel, usingSearchbar searchbar: UIButton){
+        label.center.y = searchbar.center.y
     }
     
     private func positionSearchbarView(usingFromSearchbar fromSearchbar: UIButton, usingToSearchbar toSearchbar: UIButton){
@@ -240,13 +255,13 @@ class RouteSelectionView: UIView {
         searchbar.frame = resizedSearchbarFrame
     }
     
-    private func positionSwapButton(usingFromSearchBar fromSearchbar: UIButton, usingRouteLine routeLine: CircleLine){
+    private func positionSwapButton(usingFromSearchBar fromSearchbar: UIButton, usingLine line: UIView){
         let oldFrame = swapButton.frame
         let newFrame = CGRect(x: fromSearchbar.frame.maxX + swapPadding, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height)
         
         swapButton.frame = newFrame
         
-        swapButton.center.y = routeLine.center.y
+        swapButton.center.y = line.center.y
     }
     
     // MARK: Add subviews
@@ -255,7 +270,9 @@ class RouteSelectionView: UIView {
         addSubview(searcbarView)
         searcbarView.addSubview(fromSearchbar)
         searcbarView.addSubview(fromLabel)
-        searcbarView.addSubview(routeLine)
+        searcbarView.addSubview(solidCircle)
+        searcbarView.addSubview(line)
+        searcbarView.addSubview(borderedCircle)
         searcbarView.addSubview(swapButton)
         searcbarView.addSubview(toSearchbar)
         searcbarView.addSubview(toLabel)
