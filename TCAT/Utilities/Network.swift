@@ -67,7 +67,6 @@ class Network {
 
             let request: APIRequest<JSON, Error> = mainTron.swiftyJSON.request("route")
             request.method = .get
-            request.parameterEncoding = JSONEncoding.default
             request.parameters = [
                 "arriveBy"          :   type == .arriveBy,
                 "end"               :   "\(endCoords.latitude),\(endCoords.longitude)",
@@ -79,8 +78,6 @@ class Network {
 
             // for debugging
             //  print("Request URL: http://\(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
-            
-            print("Request Parameters", request.parameters)
 
             callback(request)
 
@@ -197,10 +194,12 @@ class BusLocationResult: JSONDecodable {
     var busLocations: [BusLocation] = []
 
     required init(json: JSON) throws {
-        if json["success"].boolValue, let data = json["data"].array {
-            self.busLocations = data.map { parseBusLocation(json: $0) }
+        if json["success"].boolValue {
+            self.busLocations = json["data"].arrayValue.map {
+                parseBusLocation(json: $0)
+            }
         } else {
-            print("BusLocation Init Failure - Success:", json["success"].boolValue)
+            print("BusLocation Init Failure")
         }
     }
     

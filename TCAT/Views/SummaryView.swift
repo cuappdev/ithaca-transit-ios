@@ -94,10 +94,10 @@ class SummaryView: UIView {
     func setRoute() {
         
         /// Constant for spacing for various elements
-        let spacing: CGFloat = 10
+        let spacing: CGFloat = 12
         /// The edge of the next bus icon
-        var iconMaximumX: CGFloat = 20
-        /// The center to use for the next bus icon. Initalized for one bus
+        var iconMaximumX: CGFloat = 24
+        /// The center to use for the next bus icon. Initalized for one bus.
         var iconCenter = CGPoint(x: iconMaximumX, y: safeAreaCenterY)
         
         // MARK: Route Icons
@@ -110,31 +110,39 @@ class SummaryView: UIView {
         // Place one sole bus icon
         if busRoutes.count == 1 {
             
+            // Create and add bus icon
             let busIcon = BusIcon(type: .directionLarge, number: busRoutes.first!)
             busIcon.tag = busIconTag
+            addSubview(busIcon)
+            
+            // Adjust center point, set to bus icon
             iconCenter.x += busIcon.frame.width / 2
             busIcon.center = iconCenter
+            
+            // move iconMaximumX for later UI elements
             iconMaximumX += busIcon.frame.width + spacing
-            addSubview(busIcon)
             
         }
         
         // Place up to 2 bus icons. This will not support more buses without changes
         else {
             
-            // Get starting y point above center line
-            let initalY = safeAreaCenterY - spacing / 2 - BusIcon(type: .directionSmall, number: 0).frame.height
-            iconCenter = CGPoint(x: iconMaximumX, y: initalY)
+            // Adjust initial variables
+            let exampleBusIcon = BusIcon(type: .directionSmall, number: 0)
+            let initalY = tabInsetHeight + safeAreaCenterY - (spacing / 4) - exampleBusIcon.frame.height
+            iconCenter = CGPoint(x: iconMaximumX + exampleBusIcon.frame.width / 2, y: initalY)
+            iconMaximumX = exampleBusIcon.frame.width + (spacing * 2)
             
             for (index, route) in busRoutes.enumerated() {
                 
+                // Create and add bus icon
                 let busIcon = BusIcon(type: .directionSmall, number: route)
                 busIcon.tag = busIconTag
-                iconCenter.x += busIcon.frame.width + spacing
                 busIcon.center = iconCenter
-                iconMaximumX = busIcon.frame.width + spacing
                 addSubview(busIcon)
-                iconCenter.y += busIcon.frame.height + spacing
+                
+                // Adjust center point
+                iconCenter.y += busIcon.frame.height + (spacing / 2)
 
                 // Stop once two buses have been placed
                 if index == 1 { break }
