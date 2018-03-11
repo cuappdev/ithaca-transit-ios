@@ -61,7 +61,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
 
     var banner: StatusBarNotificationBanner = {
-        let banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
+        let banner = StatusBarNotificationBanner(title: "No internet connection", style: .danger)
         banner.autoDismiss = false
         return banner
     }()
@@ -103,15 +103,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        var safeAreaHeight: CGFloat = 0
         if #available(iOS 11, *) {
-            safeAreaHeight = view.safeAreaInsets.bottom
+            addHeightToDatepicker(20) // add bottom padding to date picker for iPhone X
         }
-        else {
-            safeAreaHeight = 0
-        }
-
-        updateDatePickerHeight(safeAreaBottomHeight: safeAreaHeight)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -121,10 +115,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Route Selection view
 
     private func setupRouteSelection() {
-        routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: 150)) // offset for -12 for larger views, get rid of black space
-        routeSelection.backgroundColor = .white //.lineColor // for demo
-        routeSelection.positionSubviews()
-        routeSelection.addSubviews()
+        // offset for -12 for larger views, get rid of black space
+        routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: 150))
+        routeSelection.backgroundColor = .white
         var newRSFrame = routeSelection.frame
         newRSFrame.size.height =  routeSelection.lineWidth + routeSelection.searcbarView.frame.height + routeSelection.lineWidth + routeSelection.datepickerButton.frame.height
         routeSelection.frame = newRSFrame
@@ -176,31 +169,31 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func presentSearchBar() {
         var placeholder = ""
+        var searchBarText = ""
 
         switch searchType {
 
         case .from:
 
             if let startingDestinationName = searchFrom?.name {
-                placeholder = startingDestinationName
+                if startingDestinationName != Constants.Stops.currentLocation {
+                    searchBarText = startingDestinationName
+                }
             }
-            else {
-                placeholder = "Search start locations"
-            }
+            placeholder = "Choose starting point..."
 
         case .to:
 
             if let endingDestinationName = searchTo?.name {
-                placeholder = endingDestinationName
+                searchBarText = endingDestinationName
             }
-            else {
-                placeholder = "Search destination"
-            }
+            placeholder = "Choose destination..."
 
         }
 
         let textFieldInsideSearchBar = searchBarView.searchController?.searchBar.value(forKey: "searchField") as? UITextField
-        textFieldInsideSearchBar?.attributedPlaceholder = NSAttributedString(string: placeholder) //make placeholder invisible
+        textFieldInsideSearchBar?.attributedPlaceholder = NSAttributedString(string: placeholder) // make placeholder invisible
+        textFieldInsideSearchBar?.text = searchBarText
 
         showSearchBar()
     }
@@ -310,6 +303,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                         self.routeResults.refreshControl?.endRefreshing()
                     } else {
                         self.refreshControl.endRefreshing()
+
                     }
                     
                     func requestDidFinish(with error: NSError? = nil) {
@@ -370,7 +364,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         locationManager.stopUpdatingLocation()
         print("RouteOptionVC locationManager didFailWithError: \(error.localizedDescription)")
 
-        let title = "Couldn't Find Current Location"
+        let title = "Couldn't Find \(Constants.Stops.currentLocation)"
         let message = "Please ensure you are connected to the internet and have enabled location permissions."
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
@@ -388,7 +382,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // If haven't selected start location, set to current location
         if searchFrom == nil, let location = manager.location {
-            let currentLocationStop =  BusStop(name: Constants.Phrases.currentLocation,
+            let currentLocationStop =  BusStop(name: Constants.Stops.currentLocation,
                                                lat: location.coordinate.latitude, long: location.coordinate.longitude)
             searchFrom = currentLocationStop
             searchBarView.resultsViewController?.currentLocation = currentLocationStop
@@ -422,9 +416,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         datePickerOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissDatePicker)))
     }
 
-    private func updateDatePickerHeight(safeAreaBottomHeight safeAreaHeight: CGFloat) {
+    private func addHeightToDatepicker(_ height: CGFloat) {
         let oldFrame = datePickerView.frame
-        let newFrame = CGRect(x: oldFrame.minX, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height + safeAreaHeight)
+        let newFrame = CGRect(x: oldFrame.minX, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height + height)
 
         datePickerView.frame = newFrame
     }
@@ -496,11 +490,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         return 1
     }
 
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return routeResultsTitle
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         return routes.count
     }
 
@@ -650,35 +640,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
     }
 
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat{
-        return routeResultsHeaderHeight
-    }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: routeResultsHeaderHeight))
-        headerView.backgroundColor = .tableBackgroundColor
-
-        let titleLeftSpaceFromSuperview: CGFloat = 16.0
-        let titleVeticalSpaceFromSuperview: CGFloat = 24.0
-
-        let titleLabel = UILabel(frame: CGRect(x: titleLeftSpaceFromSuperview, y: titleVeticalSpaceFromSuperview, width: 88.0, height: 17.0))
-        titleLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
-        titleLabel.textColor = UIColor.secondaryTextColor
-        titleLabel.text = self.tableView(tableView, titleForHeaderInSection: section)
-        titleLabel.sizeToFit()
-
-        headerView.addSubview(titleLabel)
-
-        return headerView
-    }
-
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let directions = routes[indexPath.row].directions
         let isWalkingRoute = routes[indexPath.row].isWalkingRoute()
 
         // if walking route, don't skip first walking direction. Ow skip first walking direction
         let numOfStops = isWalkingRoute ? directions.count : (directions.first?.type == .walk ? directions.count - 1 : directions.count)
-        let rowHeight = RouteTableViewCell().heightForCell(withNumOfStops: numOfStops)
+        let rowHeight = RouteTableViewCell().heightForCell(withNumOfStops: numOfStops, withNumOfWalkLines: routes[indexPath.row].getNumOfWalkLines())
 
         return rowHeight
     }

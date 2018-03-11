@@ -62,7 +62,7 @@ class Network {
             }
             
             /// Check if a bus stop, or if current location (not a bus stop... for now)
-            let isStartBusStop = start is BusStop && (start as? BusStop)?.name != Constants.Phrases.currentLocation
+            let isStartBusStop = start is BusStop && (start as? BusStop)?.name != Constants.Stops.currentLocation
             let isEndBusStop = end is BusStop
 
             let request: APIRequest<JSON, Error> = mainTron.swiftyJSON.request("route")
@@ -77,7 +77,7 @@ class Network {
             ]
 
             // for debugging
-            //  print("Request URL: http://\(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
+            // print("Request URL: \(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
 
             callback(request)
 
@@ -122,7 +122,15 @@ class Network {
         return request
         
     }
-
+    
+    class func getDelay(tripId: String, stopId: String) -> APIRequest<JSON, Error> {
+        let request: APIRequest<JSON, Error> = mainTron.swiftyJSON.request("delay")
+        request.method = .get
+        request.parameters = ["stopID": stopId, "tripID": tripId]
+        // print("Delay request URL: \(source)/delay?stopID=\(request.parameters["stopID"]!)&tripID=\(request.parameters["tripID"]!)")
+        return request
+    }
+    
 }
 
 class Error: JSONDecodable {

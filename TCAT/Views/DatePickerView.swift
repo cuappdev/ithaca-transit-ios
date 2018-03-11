@@ -19,7 +19,6 @@ class DatePickerView: UIView {
     let timeTypeSegmentedControlOptions: [String] = ["Leave At", "Arrive By"]
     var cancelButton: UIButton = UIButton()
     var doneButton: UIButton = UIButton()
-    var disclaimerLabel: UILabel = UILabel()
 
     // MARK: Spacing vars
 
@@ -46,7 +45,6 @@ class DatePickerView: UIView {
         styleSegmentedControl(leaveNowSegmentedControl)
         styleCancelButton()
         styleDoneButton()
-//        styleDisclaimerLabel()
 
         setDatepickerSettings()
 
@@ -59,7 +57,6 @@ class DatePickerView: UIView {
 
         setCancelButton(withTitle: "Cancel")
         setDoneButton(withTitle: "Done")
-//        setDisclaimerLabel(withText: "Results are shown for buses departing up to 30 minutes after the selected time")
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -129,15 +126,6 @@ class DatePickerView: UIView {
         doneButton.setTitleColor(.tcatBlueColor, for: .normal)
     }
 
-    private func styleDisclaimerLabel(){
-        disclaimerLabel.frame = CGRect(x: 0, y: 0, width: self.frame.width*(343/375), height: labelHeight)
-        disclaimerLabel.textColor = .mediumGrayColor
-        disclaimerLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)
-        disclaimerLabel.numberOfLines = 0
-        disclaimerLabel.lineBreakMode = .byWordWrapping
-        disclaimerLabel.textAlignment = .center
-    }
-
     // MARK: Set data
 
     private func setDatepickerSettings(){
@@ -164,11 +152,6 @@ class DatePickerView: UIView {
         doneButton.setTitle(title, for: .normal)
     }
 
-    private func setDisclaimerLabel(withText text: String){
-        disclaimerLabel.text = text
-        disclaimerLabel.sizeToFit()
-    }
-
     // MARK: Position
 
     func positionSubviews(){
@@ -177,7 +160,6 @@ class DatePickerView: UIView {
         positionTimeTypeSegmentedControl(usingCancelButton: cancelButton)
         positionLeaveNowSegmentedControl(usingTimeTypeSegmentedControl: timeTypeSegmentedControl)
         positionDatepicker(usingSegmentedControl: timeTypeSegmentedControl)
-        positionDisclaimerLabel(usingDatepicker: datepicker)
      }
 
     private func positionCancelButton(){
@@ -214,11 +196,6 @@ class DatePickerView: UIView {
         datepicker.center.x = self.frame.width/2
     }
 
-    private func positionDisclaimerLabel(usingDatepicker datepicker: UIDatePicker){
-        disclaimerLabel.center.x = self.frame.width/2
-        disclaimerLabel.center.y = datepicker.frame.maxY + (self.frame.height - datepicker.frame.maxY)/2
-    }
-
     // MARK:  Add subviews
 
     func addSubviews(){
@@ -227,7 +204,6 @@ class DatePickerView: UIView {
         addSubview(timeTypeSegmentedControl)
         addSubview(leaveNowSegmentedControl)
         addSubview(datepicker)
-//        addSubview(disclaimerLabel)
     }
 
 }

@@ -14,17 +14,18 @@ enum CircleStyle {
     case outline
 }
 
-enum CircleSize {
-    case small
-    case large
-}
+enum CircleSize: Int {
+    case small = 12
+    case medium = 16
+    case large = 24
+} // large was 18
 
 class Circle: UIView {
     
     init(size: CircleSize, style: CircleStyle, color: UIColor) {
         
-        let radius: CGFloat = size == .small ? 12 : 18
-        super.init(frame: CGRect(x: 0, y: 0, width: radius, height: radius))
+        let diameter: CGFloat = CGFloat(size.rawValue)
+        super.init(frame: CGRect(x: 0, y: 0, width: diameter, height: diameter))
         
         layer.cornerRadius = frame.width / 2
         clipsToBounds = true
@@ -43,6 +44,7 @@ class Circle: UIView {
                 
                 let solidCircle = CALayer()
                 solidCircle.frame = CGRect(x: 0, y: 0, width: 8, height: 8)
+
                 solidCircle.position = center
                 solidCircle.cornerRadius = solidCircle.frame.height / 2
                 solidCircle.backgroundColor = color.cgColor

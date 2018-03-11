@@ -130,7 +130,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     /* Location Manager Delegates */
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let firstLocation = locations.first, currentLocationSection.items.isEmpty {
-            let currentLocationBusItem = ItemType.busStop(BusStop(name: Constants.Phrases.currentLocation,
+            let currentLocationBusItem = ItemType.busStop(BusStop(name: Constants.Stops.currentLocation,
                                                                   lat: firstLocation.coordinate.latitude, long: firstLocation.coordinate.longitude))
             currentLocationSection = Section(type: .currentLocation, items: [currentLocationBusItem])
             sections = createSections()
@@ -215,7 +215,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
             allStopsTVC.allStops = SearchTableViewManager.shared.getAllStops()
             allStopsTVC.unwindAllStopsTVCDelegate = self
         case .busStop(let busStop):
-            if busStop.name != Constants.Phrases.currentLocation
+            if busStop.name != Constants.Stops.currentLocation
                 && busStop.name != Constants.Phrases.firstFavorite {
                 SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: busStop, limit: 8)
             }
@@ -252,7 +252,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         if let itemType = itemType {
             switch itemType {
             case .busStop(let busStop):
-                let identifier = busStop.name == Constants.Phrases.currentLocation ?
+                let identifier = busStop.name == Constants.Stops.currentLocation ?
                     Constants.Cells.currentLocationIdentifier : Constants.Cells.busIdentifier
                 cell = tableView.dequeueReusableCell(withIdentifier: identifier) as! BusStopCell
                 cell.textLabel?.text = busStop.name

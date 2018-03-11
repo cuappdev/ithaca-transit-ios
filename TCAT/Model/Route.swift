@@ -161,8 +161,8 @@ class Route: NSObject, JSONDecodable {
         if json["success"].boolValue {
             let routes: [Route] = json["data"].arrayValue.map {
                 var augmentedJSON = $0
-                augmentedJSON["startName"].string = from ?? Constants.Phrases.currentLocation
-                augmentedJSON["endName"].string = to ?? Constants.Phrases.yourDestination
+                augmentedJSON["startName"].string = from ?? Constants.Stops.currentLocation
+                augmentedJSON["endName"].string = to ?? Constants.Stops.destination
                 return try! Route(json: augmentedJSON)
             }
             completion(routes, nil)
@@ -186,6 +186,17 @@ class Route: NSObject, JSONDecodable {
     
     func getLastArriveDirection() -> Direction? {
         return directions.reversed().first { $0.type == .arrive }
+    }
+    
+    func getNumOfWalkLines() -> Int {
+        var count = 0
+        for (index, direction) in directions.enumerated() {
+            if index != directions.count - 1 && direction.type == .walk {
+                count += 1
+            }
+        }
+        
+        return count
     }
     
     /** Calculate travel distance from location passed in to first route summary object and updates travel distance of route

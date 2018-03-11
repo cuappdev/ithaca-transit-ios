@@ -72,6 +72,9 @@ class Direction: NSObject, NSCopying {
     /// The unique identifiers for the specific bus related to the direction.
     var tripIdentifiers: [String]? = nil
     
+    /// The bus delay for stops[0]
+    var delay: Int?
+    
     // MARK: Initalizers
 
     required init (
@@ -86,7 +89,8 @@ class Direction: NSObject, NSCopying {
         routeNumber: Int,
         stops: [LocationObject],
         stayOnBusForTransfer: Bool,
-        tripIdentifiers: [String]?
+        tripIdentifiers: [String]?,
+        delay: Int?
     ) {
         self.type = type
         self.name = name
@@ -100,6 +104,7 @@ class Direction: NSObject, NSCopying {
         self.stops = stops
         self.stayOnBusForTransfer = stayOnBusForTransfer
         self.tripIdentifiers = tripIdentifiers
+        self.delay = delay
     }
 
     convenience init(name: String? = nil) {
@@ -119,7 +124,8 @@ class Direction: NSObject, NSCopying {
             routeNumber: 0,
             stops: [],
             stayOnBusForTransfer: false,
-            tripIdentifiers: []
+            tripIdentifiers: [],
+            delay: nil
         )
 
     }
@@ -142,6 +148,7 @@ class Direction: NSObject, NSCopying {
         stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
         stayOnBusForTransfer = json["stayOnBusForTransfer"].boolValue
         tripIdentifiers = json["tripIdentifiers"].arrayObject as? [String]
+        delay = json["delay"].intValue
         
         // If depart direction, use bus stop locations (with id) for start and end
         if type == .depart, let start = stops.first, let end = stops.last {
@@ -164,7 +171,8 @@ class Direction: NSObject, NSCopying {
             routeNumber: routeNumber,
             stops: stops,
             stayOnBusForTransfer: stayOnBusForTransfer,
-            tripIdentifiers: tripIdentifiers
+            tripIdentifiers: tripIdentifiers,
+            delay: delay
         )
     }
 

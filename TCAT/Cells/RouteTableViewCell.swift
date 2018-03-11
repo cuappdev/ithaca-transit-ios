@@ -35,13 +35,12 @@ class RouteTableViewCell: UITableViewCell {
     let timeLabelLeftSpaceFromSuperview: CGFloat = 18.0
     let timeLabelVerticalSpaceFromSuperview: CGFloat = 18.0
 
-    let liveImageHorizontalSpaceFromTravelTime: CGFloat = 12.0
-    let liveLabelHorizontalSpaceFromLiveImage: CGFloat = 8.0
+    let liveLabelHorizontalSpaceFromLiveImage: CGFloat = 2.0
 
     let arrowImageViewRightSpaceFromSuperview: CGFloat = 12.0
     let departureLabelSpaceFromArrowImageView: CGFloat = 8.0
 
-    let timeLabelAndRouteDiagramVerticalSpace: CGFloat = 20.5
+    let timeLabelAndRouteDiagramVerticalSpace: CGFloat = 32.5
 
     let cellBorderHeight: CGFloat = 0.75
     let cellSeperatorHeight: CGFloat = 4.0
@@ -59,7 +58,8 @@ class RouteTableViewCell: UITableViewCell {
         styleTopBorder()
 
         positionTravelTime()
-        positionLiveElementsVertically(usingTravelTime: travelTimeLabel)
+        positionLiveLabel(usingTravelTime: travelTimeLabel)
+        positionLiveImageView(usingLiveLabel: liveLabel)
         positionDepartureTimeVertically(usingTravelTime: travelTimeLabel)
         positionArrowVertically(usingDepartureTime: departureTimeLabel)
         positionTopBorder()
@@ -84,21 +84,27 @@ class RouteTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func heightForCell(withNumOfStops numOfStops: Int) -> CGFloat{
+    func heightForCell(withNumOfStops numOfStops: Int, withNumOfWalkLines numOfWalkLines: Int) -> CGFloat{
         let numOfSolidStopDots = numOfStops - 1
         let numOfRouteLines = numOfSolidStopDots
+        let numOfBusLines = numOfRouteLines - numOfWalkLines
 
         let timeLabelHeight: CGFloat = 17.0
 
         let headerHeight = timeLabelVerticalSpaceFromSuperview + timeLabelHeight  + timeLabelAndRouteDiagramVerticalSpace
 
         let solidStopDotDiameter: CGFloat = 12.0
-        let routeLineHeight: CGFloat = RouteDiagram.routeLineHeight
-        let destinationDotHeight: CGFloat = Circle(size: .large, style: .bordered, color: .tcatBlueColor).frame.height
-        let routeDiagramHeight = (CGFloat(numOfSolidStopDots)*solidStopDotDiameter) +
-        (CGFloat(numOfRouteLines)*routeLineHeight) + destinationDotHeight
 
-        let footerHeight = routeDiagramAndCellSeparatorVerticalSpace + cellSeperatorHeight
+        let destinationDotHeight: CGFloat = Circle(size: .large, style: .bordered, color: .tcatBlueColor).frame.height
+
+        let busLineHeight: CGFloat = RouteDiagram.busLineHeight
+        let walkLineHeight: CGFloat = RouteDiagram.walkLineHeight
+
+        let routeDiagramHeight = (CGFloat(numOfSolidStopDots)*solidStopDotDiameter) +
+        (CGFloat(numOfBusLines)*busLineHeight) + (CGFloat(numOfWalkLines)*walkLineHeight) + destinationDotHeight
+
+        let stopLabelHeight: CGFloat = 17.0 // add an extra stop label height for if the last label is two-lined
+        let footerHeight = stopLabelHeight + routeDiagramAndCellSeparatorVerticalSpace + cellSeperatorHeight
 
         return headerHeight + routeDiagramHeight + footerHeight
     }
@@ -142,39 +148,30 @@ class RouteTableViewCell: UITableViewCell {
         routeDiagram.setData(withDirections: route.directions, withTravelDistance: route.travelDistance, withWalkingRoute: isWalkingRoute)
     }
     
-    func setLiveElements(withFirstDepartDirection firstDepartDirection: Direction?) {
-        
+    private func setLiveElements(withFirstDepartDirection firstDepartDirection: Direction?) {
         if let direction = firstDepartDirection {
-            
-            Network.getBusLocations([direction]).perform(withSuccess: { (result) in
-                
-                for busLocation in result.busLocations {
-                    
-                    switch busLocation.dataType {
-                        
-                    case .validData:
-                        self.setLiveElements(withStartTime: direction.startTime, withDelay: busLocation.delay)
-                        
-                    default:
-                        self.setLiveElements(withStartTime: nil, withDelay: nil)
-                        
-                    }
-                    
+            setLiveElements(withStartTime: direction.startTime, withDelay: direction.delay)
+        }
+    }
+    
+    func setLiveElements(withRoute route: Route) {
+        if let direction = route.getFirstDepartDirection(), let tripId = direction.tripIdentifiers?.first, let stopId = direction.stops.first?.id  {
+            Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
+                if json["success"].boolValue {
+                    self.setLiveElements(withStartTime: direction.startTime, withDelay: json["data"]["delay"].intValue)
                 }
-                
-            }) { (error) in
+                else {
+                    self.setLiveElements(withStartTime: nil, withDelay: nil)
+                }
+            }, failure: { (error) in
+                print("RouteTableViewCell setLiveElements(withFirstDepartDirection:) error: \(error.errorDescription ?? "") Request url: \(error.request?.url?.absoluteString ?? "")")
                 self.setLiveElements(withStartTime: nil, withDelay: nil)
-            }
+            })
         }
         else {
             self.setLiveElements(withStartTime: nil, withDelay: nil)
         }
         
-    }
-
-    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date) {
-        travelTimeLabel.text = "\(Time.timeString(from: departureTime)) - \(Time.timeString(from: arrivalTime))"
-        travelTimeLabel.sizeToFit()
     }
 
     private func setLiveElements(withStartTime startTime: Date?, withDelay delay: Int?) {
@@ -188,8 +185,9 @@ class RouteTableViewCell: UITableViewCell {
                 liveIndicatorView = LiveIndicator(size: .small, color: .liveGreenColor)
                 liveLabel.textColor = .liveGreenColor
                 liveLabel.text = "On Time"
-                liveLabel.sizeToFit()
             }
+            liveLabel.sizeToFit()
+            positionLiveImageView(usingLiveLabel: liveLabel)
         }
         else {
             // make live elements invisible
@@ -199,8 +197,13 @@ class RouteTableViewCell: UITableViewCell {
         positionSubviews()
     }
 
-    private func setDepartureTime(withTime departureTime: Date, withWalkingRoute isWalkingRoute: Bool) {
-        
+
+    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
+        travelTimeLabel.text = "\(Time.timeString(from: departureTime)) - \(Time.timeString(from: arrivalTime))"
+        travelTimeLabel.sizeToFit()
+    }
+
+    private func setDepartureTime(withTime departureTime: Date, withWalkingRoute isWalkingRoute: Bool){
         if isWalkingRoute {
             departureTimeLabel.text = "Directions"
             departureTimeLabel.textColor = .mediumGrayColor
@@ -219,7 +222,7 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Style
 
     private func styleTravelTime() {
-        travelTimeLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
+        travelTimeLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 16.0)
         travelTimeLabel.textColor = .primaryTextColor
     }
 
@@ -252,7 +255,8 @@ class RouteTableViewCell: UITableViewCell {
 
     func positionSubviews() {
 
-        positionLiveElementsHorizontally(usingTravelTime: travelTimeLabel)
+        positionLiveLabel(usingTravelTime: travelTimeLabel)
+        positionLiveImageView(usingLiveLabel: liveLabel)
         positionArrowHorizontally()
         positionDepartureTimeHorizontally(usingArrowImageView: arrowImageView)
         positionRouteDiagram(usingTravelTimeLabel: travelTimeLabel)
@@ -268,17 +272,15 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     private func positionTravelTime() {
-        travelTimeLabel.frame = CGRect(x: timeLabelLeftSpaceFromSuperview, y: timeLabelVerticalSpaceFromSuperview, width: 50.5, height: 17)
+        travelTimeLabel.frame = CGRect(x: timeLabelLeftSpaceFromSuperview, y: timeLabelVerticalSpaceFromSuperview, width: 50.5, height: 19)
     }
 
-    private func positionLiveElementsVertically(usingTravelTime travelTimeLabel: UILabel) {
-        liveIndicatorView.center.y = travelTimeLabel.center.y
-        liveLabel.center.y =  travelTimeLabel.frame.minY
+    private func positionLiveImageView(usingLiveLabel liveLabel: UILabel) {
+        liveIndicatorView.frame = CGRect(x: liveLabel.frame.maxX + liveLabelHorizontalSpaceFromLiveImage, y: liveLabel.center.y - (liveIndicatorView.frame.height/2), width: liveIndicatorView.frame.width, height: liveIndicatorView.frame.height)
     }
-
-    private func positionLiveElementsHorizontally(usingTravelTime travelTimeLabel: UILabel) {
-        liveIndicatorView.frame = CGRect(x: travelTimeLabel.frame.maxX + liveImageHorizontalSpaceFromTravelTime, y: liveIndicatorView.frame.minY, width: liveIndicatorView.frame.width, height: liveIndicatorView.frame.height)
-        liveLabel.frame = CGRect(x: liveIndicatorView.frame.maxX + liveLabelHorizontalSpaceFromLiveImage, y: liveLabel.frame.minY, width: liveLabel.frame.width, height: liveLabel.frame.height)
+    
+    private func positionLiveLabel(usingTravelTime travelTimeLabel: UILabel) {
+        liveLabel.frame = CGRect(x: travelTimeLabel.frame.minX, y: travelTimeLabel.frame.maxY, width: liveLabel.frame.width, height: liveLabel.frame.height)
     }
 
     private func positionDepartureTimeVertically(usingTravelTime travelTimeLabel: UILabel) {

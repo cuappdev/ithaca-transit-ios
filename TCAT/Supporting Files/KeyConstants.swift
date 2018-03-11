@@ -35,9 +35,7 @@ struct Constants {
     }
     
     struct Phrases {
-        static let currentLocation = "Current Location"
         static let firstFavorite = "Add Your First Favorite!"
-        static let yourDestination = "your destination"
     }
     
     struct UserDefaults {
@@ -49,6 +47,11 @@ struct Constants {
     struct Values {
         static let maxDistanceBetweenStops = 160.0
         static let fuzzySearchMinimumValue = 75
+    }
+    
+    struct Stops {
+        static let currentLocation = "Current Location"
+        static let destination = "your destination"
     }
     
 }
