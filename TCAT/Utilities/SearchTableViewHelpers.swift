@@ -66,8 +66,11 @@ class SearchTableViewManager {
     }
 
     private func getAllBusStops() -> [BusStop] {
-        if let allBusStops = userDefaults.value(forKey: Key.UserDefaults.allBusStops) as? Data,
-            let busStopArray = NSKeyedUnarchiver.unarchiveObject(with: allBusStops) as? [BusStop] {
+        if let allBusStops = userDefaults.value(forKey: Constants.UserDefaults.allBusStops) as? Data,
+            var busStopArray = NSKeyedUnarchiver.unarchiveObject(with: allBusStops) as? [BusStop] {
+            /// Creating "fake" bus stop to remove Google Places central Collegetown location choice
+            let collegetownStop = BusStop(name: "Collegetown", lat: 42.442558, long: -76.485336)
+            busStopArray.append(collegetownStop)
             return busStopArray
         }
         return [BusStop]()
@@ -77,15 +80,15 @@ class SearchTableViewManager {
         var itemTypes: [ItemType] = []
 
         let busStopsWithLevenshtein: [(BusStop, Int)] = getAllStops().map({ ($0, String.fuzzPartialRatio(str1: $0.name.lowercased(), str2: searchText.lowercased())) })
-        var filteredBusStops = busStopsWithLevenshtein.filter({$0.1 > Key.FuzzySearch.minimumValue})
-        filteredBusStops.sort(by: {$0.1 > $1.1})
-        itemTypes = filteredBusStops.map( {ItemType.busStop($0.0)})
+        var filteredBusStops = busStopsWithLevenshtein.filter { $0.1 > Constants.Values.fuzzySearchMinimumValue }
+        filteredBusStops.sort(by: { $0.1 > $1.1} )
+        itemTypes = filteredBusStops.map { ItemType.busStop($0.0) }
 
         var googleResults: [ItemType] = []
         if let predictionsArray = json["predictions"].array {
             for result in predictionsArray {
                 let placeResult = PlaceResult(name: result["structured_formatting"]["main_text"].stringValue, detail: result["structured_formatting"]["secondary_text"].stringValue, placeID: result["place_id"].stringValue)
-                let isPlaceABusStop = filteredBusStops.contains(where: {(stop) -> Bool in
+                let isPlaceABusStop = filteredBusStops.contains(where: { (stop) -> Bool in
                     placeResult.name.contains(stop.0.name)
                 })
                 if !isPlaceABusStop {
@@ -144,7 +147,7 @@ class SearchTableViewManager {
             }
         }
         let data = NSKeyedArchiver.archivedData(withRootObject: itemsToStore)
-        userDefaults.set(data, forKey: Key.UserDefaults.favorites)
+        userDefaults.set(data, forKey: Constants.UserDefaults.favorites)
         return newFavoritesList
     }
 

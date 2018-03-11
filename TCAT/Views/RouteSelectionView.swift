@@ -71,47 +71,47 @@ class RouteSelectionView: UIView {
     
     // MARK: Style
     
-    private func styleSearchbarView(){
+    private func styleSearchbarView() {
         searcbarView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: 103)
         searcbarView.backgroundColor = .white
     }
     
-    private func styleLabel(_ label: UILabel){
+    private func styleLabel(_ label: UILabel) {
         fromLabel.frame = CGRect(x: 0, y: 0, width: 40, height: 20)
-        label.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
+        label.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
         label.textColor = .black
     }
     
-    private func styleSearchbar(_ searchbar: UIButton){
+    private func styleSearchbar(_ searchbar: UIButton) {
         searchbar.frame = CGRect(x: 0, y: 0, width: 243, height: searchbarHeight)
         searchbar.backgroundColor = .tableBackgroundColor
         searchbar.setTitleColor(.primaryTextColor, for: .normal)
-        searchbar.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
+        searchbar.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
         searchbar.contentHorizontalAlignment = .left
         searchbar.contentEdgeInsets = UIEdgeInsetsMake(0, searchbarTextSpaceFromLeft, 0, 0)
         searchbar.layer.cornerRadius = searchbarHeight/4
         searchbar.layer.masksToBounds = true
     }
     
-    private func styleRouteLine(){
-        solidCircle = Circle(size: .small, color: .mediumGrayColor, style: .solid)
+    private func styleRouteLine() {
+        solidCircle = Circle(size: .small, style: .solid, color: .mediumGrayColor)
         line = SolidLine(height: 27.0, color: .mediumGrayColor)
-        borderedCircle = Circle(size: .medium, color: .mediumGrayColor, style: .bordered)
+        borderedCircle = Circle(size: .medium, style: .bordered, color: .mediumGrayColor)
     }
     
-    private func styleSwapButton(){
+    private func styleSwapButton() {
         swapButton.frame = CGRect(x: 0, y: 0, width: 20, height: 25)
         swapButton.imageView?.contentMode = .scaleAspectFit
     }
     
-    private func styleDatepickerButton(){
+    private func styleDatepickerButton() {
         datepickerButton.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: datepickerButtonHeight)
         
         datepickerButton.contentMode = .scaleAspectFit
         
         datepickerButton.tintColor = .mediumGrayColor
         datepickerButton.setTitleColor(.mediumGrayColor, for: .normal)
-        datepickerButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
+        datepickerButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
         
         datepickerButton.backgroundColor = .white
         
@@ -120,9 +120,9 @@ class RouteSelectionView: UIView {
         datepickerButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: leadingSpace + datepickerImageWidth + datepickerTitleLeadingSpace, bottom: 0, right: 0)
     }
     
-    private func styleLine(_ line: UIView){
+    private func styleLine(_ line: UIView) {
         line.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: lineWidth)
-        line.backgroundColor = .lineColor
+        line.backgroundColor = .lineDotColor
     }
         
     // MARK: Set data

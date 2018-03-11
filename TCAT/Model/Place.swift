@@ -14,7 +14,7 @@ class Place: NSObject, NSCoding {
     
     private let nameKey = "name"
     
-    init(name: String){
+    init(name: String) {
         self.name = name
     }
     
@@ -36,4 +36,5 @@ class Place: NSObject, NSCoding {
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(self.name, forKey: nameKey)
     }
+    
 }

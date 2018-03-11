@@ -93,48 +93,62 @@ class SummaryView: UIView {
     /// Update summary card data and position accordingly
     func setRoute() {
         
+        // MARK: Route Icons
+        
         /// Constant for spacing for various elements
         let spacing: CGFloat = 12
         
-        /// The edge of the next bus icon
-        var iconMaximumX: CGFloat = 24
-        
-        /// True if first icon to be placed
-        var first = true
-        
-        /// The center to use for the next bus icon
-        var iconCenter = CGPoint(x: iconMaximumX, y: safeAreaCenterY)
-        
-        // MARK: Route Icons
+        /// The center to use for the next bus icon. Initalized for one bus.
+        var iconCenter = CGPoint(x: DetailIconView.width / 2, y: safeAreaCenterY)
         
         subviews.filter { $0.tag == busIconTag }.removeViewsFromSuperview()
         
         // Create and place bus icons
-        let busRoutes: [Int] = route.directions.flatMap { return $0.type == .depart ? $0.routeNumber : nil }
-        for (index, route) in busRoutes.enumerated() {
+        let busRoutes: [Int] = route.directions.flatMap {
+            return $0.type == .depart ? $0.routeNumber : nil
+        }
+        
+        // Place one sole bus icon
+        if busRoutes.count == 1 {
             
-            let busType: BusIconType = busRoutes.count > 1 ? .directionSmall : .directionLarge
-            let busIcon = BusIcon(type: busType, number: route)
-            
-            if first {
-                iconCenter.x += busIcon.frame.width / 2
-                first = false
-            }
-            
+            // Create and add bus icon
+            let busIcon = BusIcon(type: .directionLarge, number: busRoutes.first!)
             busIcon.tag = busIconTag
             busIcon.center = iconCenter
             addSubview(busIcon)
-            iconCenter.x += busIcon.frame.width + spacing
-            iconMaximumX += busIcon.frame.width + spacing
             
-            // Don't show more than 2 buses
-            if index == 1 { break }
+        }
+        
+        // Place up to 2 bus icons. This will not support more buses without changes
+        else {
+            
+            // Adjust initial variables
+            let exampleBusIcon = BusIcon(type: .directionSmall, number: 0)
+            iconCenter.y = tabInsetHeight + safeAreaCenterY - (spacing / 4) - exampleBusIcon.frame.height
+            
+            for (index, route) in busRoutes.enumerated() {
+                
+                // Create and add bus icon
+                let busIcon = BusIcon(type: .directionSmall, number: route)
+                busIcon.tag = busIconTag
+                busIcon.center = iconCenter
+                addSubview(busIcon)
+                
+                // Adjust center point
+                iconCenter.y += busIcon.frame.height + (spacing / 2)
+
+                // Stop once two buses have been placed
+                if index == 1 { break }
+                
+            }
             
         }
         
         // MARK: Main Label Positioning
+        
+        let extraLabelPadding: CGFloat = 6
 
-        mainLabel.frame.origin.x = iconMaximumX + textLabelPadding
+        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
         mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
         
         if let departDirection = (route.directions.filter { $0.type == .depart }).first {
@@ -154,14 +168,14 @@ class SummaryView: UIView {
         
         // Reset main label positioning
         mainLabel.sizeToFit()
-        mainLabel.frame.origin.x = iconMaximumX + textLabelPadding
+        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
         mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
         
         // MARK: Secondary Label
         
         secondaryLabel.text = "Trip Duration: \(route.totalDuration) minute\(route.totalDuration == 1 ? "" : "s")"
         secondaryLabel.sizeToFit()
-        secondaryLabel.frame.origin.x = iconMaximumX + textLabelPadding
+        secondaryLabel.frame.origin.x = mainLabel.frame.origin.x
         
         // Adjust labels vertically
         let labelSpacing = spacing / 3

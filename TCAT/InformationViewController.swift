@@ -8,6 +8,7 @@
 
 import UIKit
 import SafariServices
+import SwiftRegister
 
 class InformationViewController: UIViewController {
     
@@ -45,7 +46,7 @@ class InformationViewController: UIViewController {
         let backButtonItem = UIBarButtonItem(customView: dismissButton)
         navigationItem.setRightBarButton(backButtonItem, animated: false)
         
-        someLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 16)
+        someLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 16)
         someLabel.textColor = .primaryTextColor
         someLabel.text = "Walker wuz here"
         someLabel.textAlignment = .center
@@ -67,9 +68,9 @@ class InformationViewController: UIViewController {
             make.trailing.equalToSuperview().offset(-40)
         }
         
-        titleLabel.font = UIFont(name: FontNames.SanFrancisco.Medium, size: 16)
+        titleLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Medium, size: 16)
         titleLabel.textColor = UIColor.primaryTextColor
-        titleLabel.text = "Made by AppDev"
+        titleLabel.text = "Made by Cornell App Development"
         titleLabel.backgroundColor = .clear
         titleLabel.snp.makeConstraints { (make) in
             make.top.equalTo(tcatImage.snp.bottom).offset(44)
@@ -78,9 +79,9 @@ class InformationViewController: UIViewController {
             make.height.equalTo(19)
         }
         
-        descriptionLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        descriptionLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)
         descriptionLabel.textColor = UIColor.primaryTextColor
-        descriptionLabel.text = "Cornell University\nApp Development Project Team"
+        descriptionLabel.text = "An Engineering Project Team\nat Cornell University"
         descriptionLabel.numberOfLines = 0
         descriptionLabel.backgroundColor = .clear
         descriptionLabel.textAlignment = .center
@@ -93,9 +94,9 @@ class InformationViewController: UIViewController {
         sendFeedbackButton.addTarget(self, action: #selector(openBugReportForm), for: .touchUpInside)
         sendFeedbackButton.setTitle("Send Feedback", for: .normal)
         sendFeedbackButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
-        sendFeedbackButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        sendFeedbackButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)
         sendFeedbackButton.backgroundColor = .white
-        sendFeedbackButton.layer.borderColor = UIColor.lineDarkColor.cgColor
+        sendFeedbackButton.layer.borderColor = UIColor.lineDotColor.cgColor
         sendFeedbackButton.layer.borderWidth = 0.5
         sendFeedbackButton.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
@@ -108,9 +109,9 @@ class InformationViewController: UIViewController {
         visitWebsiteButton.addTarget(self, action: #selector(openTeamWebsite), for: .touchUpInside)
         visitWebsiteButton.setTitle("Visit Our Website", for: .normal)
         visitWebsiteButton.setTitleColor(UIColor.primaryTextColor, for: .normal)
-        visitWebsiteButton.titleLabel?.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        visitWebsiteButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)
         visitWebsiteButton.backgroundColor = .white
-        visitWebsiteButton.layer.borderColor = UIColor.lineDarkColor.cgColor
+        visitWebsiteButton.layer.borderColor = UIColor.lineDotColor.cgColor
         visitWebsiteButton.layer.borderWidth = 0.5
         visitWebsiteButton.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
@@ -163,6 +164,8 @@ class InformationViewController: UIViewController {
             })
             
         }
+        
+        let _ = RegisterSession.shared?.logEvent(event: InformationViewControllerTappedEventPayload().toEvent())
         
     }
     

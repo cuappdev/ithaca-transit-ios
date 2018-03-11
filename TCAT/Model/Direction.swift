@@ -69,8 +69,8 @@ class Direction: NSObject, NSCopying {
     /// Whether the user should stay on this direction's bus for an upcoming transfer.
     var stayOnBusForTransfer: Bool = false
     
-    /// The unique identifier for the specific bus related to the direction.
-    var tripIDs: [String]?
+    /// The unique identifiers for the specific bus related to the direction.
+    var tripIdentifiers: [String]? = nil
     
     /// The bus delay for stops[0]
     var delay: Int?
@@ -89,7 +89,7 @@ class Direction: NSObject, NSCopying {
         routeNumber: Int,
         stops: [LocationObject],
         stayOnBusForTransfer: Bool,
-        tripIDs: [String]?,
+        tripIdentifiers: [String]?,
         delay: Int?
     ) {
         self.type = type
@@ -103,7 +103,7 @@ class Direction: NSObject, NSCopying {
         self.routeNumber = routeNumber
         self.stops = stops
         self.stayOnBusForTransfer = stayOnBusForTransfer
-        self.tripIDs = tripIDs
+        self.tripIdentifiers = tripIdentifiers
         self.delay = delay
     }
 
@@ -124,7 +124,7 @@ class Direction: NSObject, NSCopying {
             routeNumber: 0,
             stops: [],
             stayOnBusForTransfer: false,
-            tripIDs: [],
+            tripIdentifiers: [],
             delay: nil
         )
 
@@ -147,7 +147,7 @@ class Direction: NSObject, NSCopying {
         routeNumber = json["routeNumber"].int ?? 0
         stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
         stayOnBusForTransfer = json["stayOnBusForTransfer"].boolValue
-        tripIDs = json["tripIdentifiers"].arrayValue.map { $0.stringValue }
+        tripIdentifiers = json["tripIdentifiers"].arrayObject as? [String]
         delay = json["delay"].intValue
         
         // If depart direction, use bus stop locations (with id) for start and end
@@ -171,7 +171,7 @@ class Direction: NSObject, NSCopying {
             routeNumber: routeNumber,
             stops: stops,
             stayOnBusForTransfer: stayOnBusForTransfer,
-            tripIDs: tripIDs,
+            tripIdentifiers: tripIdentifiers,
             delay: delay
         )
     }

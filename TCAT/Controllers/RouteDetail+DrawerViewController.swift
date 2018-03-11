@@ -86,9 +86,9 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         tableView.bounces = false
         tableView.estimatedRowHeight = RouteDetailCellSize.smallHeight
         tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.register(SmallDetailTableViewCell.self, forCellReuseIdentifier: "smallCell")
-        tableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: "largeCell")
-        tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: "busStopCell")
+        tableView.register(SmallDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.smallDetailCellIdentifier)
+        tableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.largeDetailCellIdentifier)
+        tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: Constants.Cells.busStopCellIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
         setTableViewFooter()
@@ -223,7 +223,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         let direction = directions[indexPath.row]
 
         if direction.type == .depart {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "largeCell")! as! LargeDetailTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier)! as! LargeDetailTableViewCell
             cell.setCell(direction, firstStep: indexPath.row == 0)
             return cell.height()
         } else {
@@ -248,14 +248,14 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         }
 
         if isBusStopCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "busStopCell") as! BusStopTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopCellIdentifier) as! BusStopTableViewCell
             cell.setCell(direction.name)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
             return format(cell)
         }
 
         else if direction.type == .walk || direction.type == .arrive {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "smallCell", for: indexPath) as! SmallDetailTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as! SmallDetailTableViewCell
             cell.setCell(direction, busEnd: direction.type == .arrive,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
@@ -264,7 +264,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         }
 
         else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "largeCell") as! LargeDetailTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
             cell.setCell(direction, firstStep: indexPath.row == 0)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
             return format(cell)

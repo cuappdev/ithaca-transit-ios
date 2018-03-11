@@ -110,9 +110,6 @@ class Route: NSObject, JSONDecodable {
         
         for (index, direction) in directions.enumerated() {
             
-            // print("Direction Type:", direction.type.rawValue)
-            // print("Direction stayOnBusTransfer", direction.stayOnBusTransfer)
-            
             if direction.type == .depart {
                 
                 if !direction.stayOnBusForTransfer {
@@ -133,8 +130,8 @@ class Route: NSObject, JSONDecodable {
                 
                 if isTransfer {
                     
-                    // print("Marked As Transfer Direction")
-                    // direction.type = .transfer
+                     // print("Marked As Transfer Direction")
+                     // direction.type = .transfer
                     
                 }
                 
@@ -164,8 +161,8 @@ class Route: NSObject, JSONDecodable {
         if json["success"].boolValue {
             let routes: [Route] = json["data"].arrayValue.map {
                 var augmentedJSON = $0
-                augmentedJSON["startName"].string = from ?? Key.Stops.currentLocation
-                augmentedJSON["endName"].string = to ?? Key.Stops.currentLocation
+                augmentedJSON["startName"].string = from ?? Constants.Stops.currentLocation
+                augmentedJSON["endName"].string = to ?? Constants.Stops.destination
                 return try! Route(json: augmentedJSON)
             }
             completion(routes, nil)

@@ -39,7 +39,7 @@ class SearchResultsCell: UITableViewCell {
         imageView?.contentMode = .scaleAspectFit
         imageView?.center.y = bounds.height / 2.0
         imageView?.image = #imageLiteral(resourceName: "pin")
-        imageView?.tintColor = reuseIdentifier == "cornellDestinations" ? .tcatBlueColor : .placeColor
+        imageView?.tintColor = reuseIdentifier == Constants.Cells.cornellDestinationsIdentifier ? .tcatBlueColor : .mediumGrayColor
         
         textLabel?.frame = CGRect(x: labelXPosition, y: 8.0, width: frame.width - labelWidthConstant, height: labelHeight)
         textLabel?.font = .systemFont(ofSize: 13)

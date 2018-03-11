@@ -34,13 +34,13 @@ class CustomNavigationController: UINavigationController, UINavigationController
     
     /// Attributed string details for the title text of a navigation controller
     let titleTextAttributes: [NSAttributedStringKey: Any] = [
-        .font : UIFont(name: FontNames.SanFrancisco.Regular, size: 18)!,
+        .font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 18)!,
         .foregroundColor : UIColor.black
     ]
     
     /// Attributed string details for the back button text of a navigation controller
     let buttonTitleTextAttributes = [
-        NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 14)!
+        NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)!
     ]
     
     func customizeAppearance() {

@@ -19,7 +19,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>47</string>
+	<string>49</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -45,6 +45,8 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow the app to calculate navigation routes using your current location.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Allow the app to save photos.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>SFText-Medium.otf</string>

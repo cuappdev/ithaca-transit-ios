@@ -8,19 +8,21 @@
 
 import UIKit
 
+enum CircleStyle {
+    case solid
+    case bordered
+    case outline
+}
+
 enum CircleSize: Int {
     case small = 12
     case medium = 16
-    case large = 24
-}
-
-enum CircleStyle {
-    case solid, bordered, outline
+    case large = 18
 }
 
 class Circle: UIView {
     
-    init(size: CircleSize, color: UIColor, style: CircleStyle) {
+    init(size: CircleSize, style: CircleStyle, color: UIColor) {
         
         let diameter: CGFloat = CGFloat(size.rawValue)
         super.init(frame: CGRect(x: 0, y: 0, width: diameter, height: diameter))
@@ -38,10 +40,12 @@ class Circle: UIView {
                 
                 backgroundColor = .white
                 layer.borderColor = color.cgColor
-                layer.borderWidth = 2.5
+                layer.borderWidth = 2.0
                 
                 let solidCircle = CALayer()
-                solidCircle.frame = CGRect(x: 0, y: 0, width: 6, height: 6)
+                let solidCircleDiameter: CGFloat = size == .medium ? 6 : 8
+                solidCircle.frame = CGRect(x: 0, y: 0, width: solidCircleDiameter, height: solidCircleDiameter)
+
                 solidCircle.position = center
                 solidCircle.cornerRadius = solidCircle.frame.height / 2
                 solidCircle.backgroundColor = color.cgColor

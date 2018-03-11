@@ -8,6 +8,11 @@
 
 import UIKit
 
+enum LiveIndicatorSize: Double {
+    case small = 8
+    case large = 12
+}
+
 class LiveIndicator: UIView {
     
     fileprivate var dot: UIView!
@@ -24,39 +29,57 @@ class LiveIndicator: UIView {
     fileprivate let DIM_OPACITY: CGFloat = 0.5
     fileprivate let INTERVAL: TimeInterval = LiveIndicator.INTERVAL
     
+    /// The color to draw the indicator with
+    var color: UIColor!
+    
+    /// The size of the view
+    var size: LiveIndicatorSize!
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    init() {
+    init(size: LiveIndicatorSize, color: UIColor = .white) {
+        super.init(frame: CGRect(x: 0, y: 0, width: size.rawValue, height: size.rawValue))
+        self.size = size
+        self.color = color
+        drawViews()
+        addViews()
+        startAnimation()
+    }
+    
+    /// Draw UIViews and layers based on type and color. Does not add them.
+    private func drawViews() {
         
-        super.init(frame: CGRect(x: 0, y: 0, width: 12, height: 12))
-        
-        dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - 3.5, width: 4, height: 4))
+        let dotSize: CGFloat = size == .large ? 4 : 3
+        dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - dotSize + 0.5, width: dotSize, height: dotSize))
         dot.layer.cornerRadius = dot.frame.width / 2
         dot.clipsToBounds = true
-        dot.backgroundColor = .white
-        addSubview(dot)
+        dot.backgroundColor = color
         
         let arcOrigin = CGPoint(x: 1, y: frame.maxY - 1)
         let constant: CGFloat = 2
+        let radius: CGFloat = size == .large ? 7 : 5
         
-        smallArcLayer = createTopToLeftArc(origin: arcOrigin, radius: 7, lineWidth: constant)
-        self.layer.addSublayer(smallArcLayer)
-        
-        largeArcLayer = createTopToLeftArc(origin: arcOrigin, radius: 7 + 2 * constant, lineWidth: constant)
-        self.layer.addSublayer(largeArcLayer)
-        
+        smallArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius, lineWidth: constant)
+        largeArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius + 2 * constant, lineWidth: constant)
+
         views = [dot, smallArcLayer, largeArcLayer]
-        self.startAnimation()
         
+    }
+    
+    /// Add subviews and layers
+    private func addViews() {
+        addSubview(dot)
+        layer.addSublayer(smallArcLayer)
+        layer.addSublayer(largeArcLayer)
     }
     
     private func createTopToLeftArc(origin: CGPoint, radius: CGFloat, lineWidth: CGFloat) -> CAShapeLayer {
         let path = UIBezierPath(arcCenter: origin, radius: radius, startAngle: .pi * (3 / 2), endAngle: 0, clockwise: true)
         let pathLayer = CAShapeLayer()
         pathLayer.path = path.cgPath
-        pathLayer.strokeColor = UIColor.white.cgColor
+        pathLayer.strokeColor = color.cgColor
         pathLayer.fillColor = UIColor.clear.cgColor
         pathLayer.lineWidth = lineWidth
         pathLayer.lineCap = kCALineCapRound
@@ -98,6 +121,14 @@ class LiveIndicator: UIView {
                 layer.removeAllAnimations()
             }
         }
+    }
+    
+    /// DOES NOT WORK CURRENTLY
+    func setColor(to color: UIColor) {
+        self.color = color
+        dot.backgroundColor = color
+        smallArcLayer.strokeColor = color.cgColor
+        largeArcLayer.strokeColor = color.cgColor
     }
     
     /// Dim, wait, and un-dim a UIView

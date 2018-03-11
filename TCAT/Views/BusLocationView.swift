@@ -48,9 +48,6 @@ class BusLocationView: UIView {
         bearingIndicator.frame.origin.y = 44 - (bearingIndicator.frame.width / 2)
         addSubview(bearingIndicator)
         
-        // Set initial point to North
-        self.bearingIndicator.transform = CGAffineTransform(rotationAngle: .pi)
-        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -84,47 +81,39 @@ class BusLocationView: UIView {
         
     }
     
-    /// Animate a change in bearing of bus based on bearing input (degrees: Int)
-    func setBearing(_ degrees: Int, start: CLLocationCoordinate2D? = nil, end: CLLocationCoordinate2D? = nil) {
+    // Calculate and transform bearing based on change in location or provided heading
+    func setBearing(start: CLLocationCoordinate2D? = nil, end: CLLocationCoordinate2D? = nil, heading: Double? = nil) {
         
-        // If bus stays in same location, don't update bearing
+        // Latitude: North / South, Longitude: East / West
         if let start = start, let end = end {
+            
+            // If no location change, don't change anything
             let latDelta = end.latitude - start.latitude
             let longDelta = end.longitude - start.longitude
             if latDelta == 0 || longDelta == 0 {
                 return
             }
+            
+            // Calulcate bearing from start and end points based on location change
+            let degrees = (getBearingBetweenTwoPoints(point1: start, point2: end) + 360).truncatingRemainder(dividingBy: 360)
+            let newDegrees = degrees - self.currentBearing
+            let currentAngle = CGFloat(-1) * CGFloat(self.degreesToRadians(newDegrees))
+            self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
+            self.currentBearing = newDegrees
+            
+        } else if let heading = heading {
+            
+            // Use endpoint-provided value to change bearing
+            let newDegrees = heading - currentBearing
+            let currentAngle: CGFloat = CGFloat(-1) * CGFloat(degreesToRadians(newDegrees))
+            self.bearingIndicator.transform = CGAffineTransform(rotationAngle: CGFloat(-1) * CGFloat(degreesToRadians(currentBearing)))
+            self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
+            self.currentBearing = heading
+            
+        } else {
+            print("setBearing: no parameters passed in")
         }
         
-        let newDegrees = Double(degrees) - currentBearing
-        let currentAngle: CGFloat = CGFloat(-1) * CGFloat(degreesToRadians(newDegrees))
-        
-        self.bearingIndicator.transform = CGAffineTransform(rotationAngle: CGFloat(-1) * CGFloat(degreesToRadians(currentBearing)))
-        self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
-        self.currentBearing = Double(degrees)
-        
-    }
-    
-    // Depreciated. Calculate bearing based on change in location
-    func setBearing(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D, debugDegrees: Int? = nil) {
-        
-        // Latitude: North / South, Longitude: East / West
-        let latDelta = end.latitude - start.latitude
-        let longDelta = end.longitude - start.longitude
-        
-        if latDelta == 0 || longDelta == 0 {
-            return
-        }
-        
-        // Calulcate bearing from start and end points
-        
-        let degrees = (getBearingBetweenTwoPoints(point1: start, point2: end) + 360).truncatingRemainder(dividingBy: 360)
-        
-        let newDegrees = degrees - self.currentBearing
-        let currentAngle = CGFloat(-1) * CGFloat(self.degreesToRadians(newDegrees))
-        self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
-        self.currentBearing = newDegrees
-    
     }
     
 }

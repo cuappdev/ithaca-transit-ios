@@ -20,6 +20,7 @@ class AllStopsTableViewController: UITableViewController {
     var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
     var navController: UINavigationController!
     var height: CGFloat?
+    var currentChar: Character?
 
     override func viewWillLayoutSubviews() {
         if let y = navigationController?.navigationBar.frame.maxY {
@@ -31,6 +32,7 @@ class AllStopsTableViewController: UITableViewController {
     }
 
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         sectionIndexes = sectionIndexesForBusStop()
 
@@ -43,17 +45,14 @@ class AllStopsTableViewController: UITableViewController {
 
         if #available(iOS 11.0, *) {
             navigationItem.searchController = nil
+            tableView.contentInsetAdjustmentBehavior = .never
         } else {
             navigationItem.titleView = nil
-        }
-
-        if #available(iOS 11.0, *) {
-            self.tableView.contentInsetAdjustmentBehavior = .never
-        } else {
-            self.automaticallyAdjustsScrollViewInsets = false
+            automaticallyAdjustsScrollViewInsets = false
         }
 
         tableView.tableFooterView = UIView()
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -62,39 +61,45 @@ class AllStopsTableViewController: UITableViewController {
     }
 
     func sectionIndexesForBusStop() -> [String: [BusStop]] {
+        
         var sectionIndexDictionary: [String: [BusStop]] = [:]
         var currBusStopArray: [BusStop] = []
-
-        var currentChar: Character = {
-            guard let firstChar = allStops.first?.name.capitalized.first else { return Character("") }
-            return firstChar
-        }()
+        
+        currentChar = allStops.first?.name.capitalized.first
 
         var numberBusStops: [BusStop] = {
             guard let firstStop = allStops.first else { return [] }
             return [firstStop]
         }()
-
-        for busStop in allStops {
-            if let firstChar = busStop.name.capitalized.first {
-                if currentChar != firstChar {
-                    if !CharacterSet.decimalDigits.contains(currentChar.unicodeScalars.first!) {
-                        sectionIndexDictionary["\(currentChar)"] = currBusStopArray
-                        currBusStopArray = []
-                    }
-                    currentChar = firstChar
-                    currBusStopArray.append(busStop)
-                } else {
-                    if CharacterSet.decimalDigits.contains(currentChar.unicodeScalars.first!) {
-                        numberBusStops.append(busStop)
+        
+        if let _ = currentChar {
+            
+            for busStop in allStops {
+                if let firstChar = busStop.name.capitalized.first {
+                    if currentChar != firstChar {
+                        if !CharacterSet.decimalDigits.contains(currentChar!.unicodeScalars.first!) {
+                            sectionIndexDictionary["\(currentChar!)"] = currBusStopArray
+                            currBusStopArray = []
+                        }
+                        currentChar = firstChar
+                        currBusStopArray.append(busStop)
                     } else {
-                    currBusStopArray.append(busStop)
+                        if CharacterSet.decimalDigits.contains(currentChar!.unicodeScalars.first!) {
+                            numberBusStops.append(busStop)
+                        } else {
+                            currBusStopArray.append(busStop)
+                        }
                     }
                 }
             }
+            
         }
+        
         sectionIndexDictionary["#"] = numberBusStops
         return sectionIndexDictionary
+        
+        // When no bus stops, empty with only "#"
+        
     }
 
     // MARK: - Table view data source
@@ -125,12 +130,11 @@ class AllStopsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let section = sectionIndexes[sortedKeys[indexPath.section]]
         let optionsVC = RouteOptionsViewController()
-        guard let busStopSelected = section?[indexPath.row]
-            else {
-                print("Could not find bus stop")
-                return
+        guard let busStopSelected = section?[indexPath.row] else {
+            print("Could not find bus stop")
+            return
         }
-        SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.recentSearch, location: busStopSelected, limit: 8)
+        SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: busStopSelected, limit: 8)
         optionsVC.searchTo = busStopSelected
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)
@@ -139,7 +143,7 @@ class AllStopsTableViewController: UITableViewController {
             unwindDelegate.dismissSearchResultsVC(busStop: busStopSelected)
             navigationController?.popViewController(animated: true)
         } else {
-        navigationController?.pushViewController(optionsVC, animated: true)
+            navigationController?.pushViewController(optionsVC, animated: true)
         }
     }
 

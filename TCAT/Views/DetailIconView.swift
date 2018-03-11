@@ -19,6 +19,8 @@ class DetailIconView: UIView {
     fileprivate let constant: CGFloat = 16
     fileprivate var shouldAddSubviews: Bool = true
     
+    static let width: CGFloat = 114
+    
     var type: IconType!
     var time: String!
     
@@ -40,7 +42,7 @@ class DetailIconView: UIView {
         
         self.type = type
         self.time = time
-        let frame = CGRect(x: 0, y: 0, width: 114, height: height)
+        let frame = CGRect(x: 0, y: 0, width: DetailIconView.width, height: height)
         super.init(frame : frame)
         
         // Format and place time label
@@ -57,30 +59,30 @@ class DetailIconView: UIView {
         
         if type == .noBus {
             if lastStep {
-                statusCircle = Circle(size: .large, color: .lineColor, style: .bordered)
-                connectorTop.backgroundColor = .lineDarkColor
+                statusCircle = Circle(size: .large, style: .bordered, color: .lineDotColor)
+                connectorTop.backgroundColor = .lineDotColor
                 connectorBottom.backgroundColor = .clear
             } else {
-                statusCircle = Circle(size: .small, color: .lineColor, style: .solid)
-                connectorTop.backgroundColor = .lineDarkColor
-                connectorBottom.backgroundColor = .lineDarkColor
+                statusCircle = Circle(size: .small, style: .solid, color: .lineDotColor)
+                connectorTop.backgroundColor = .lineDotColor
+                connectorBottom.backgroundColor = .lineDotColor
                 if firstStep {
                     connectorTop.backgroundColor = .clear
                 }
             }
         } else {
             if lastStep {
-                statusCircle = Circle(size: .large, color: .tcatBlueColor, style: .bordered)
+                statusCircle = Circle(size: .large, style: .bordered, color: .tcatBlueColor)
                 connectorTop.backgroundColor = .tcatBlueColor
                 connectorBottom.backgroundColor = .clear
             } else {
-                statusCircle = Circle(size: .small, color: .tcatBlueColor, style: .solid)
+                statusCircle = Circle(size: .small, style: .solid, color: .tcatBlueColor)
                 if type == .busStart {
-                    connectorTop.backgroundColor = .lineDarkColor
+                    connectorTop.backgroundColor = .lineDotColor
                     connectorBottom.backgroundColor = .tcatBlueColor
                 } else {
                     connectorTop.backgroundColor = .tcatBlueColor
-                    connectorBottom.backgroundColor = .lineDarkColor
+                    connectorBottom.backgroundColor = .lineDotColor
                 }
                 if firstStep {
                     connectorTop.backgroundColor = .clear

@@ -98,4 +98,9 @@ class BusLocation: NSObject {
         
     }
     
+    /// The Int type of routeID. Defaults to 0 if can't cast to Int
+    var routeNumber: Int {
+        return Int(routeID) ?? 0
+    }
+    
 }

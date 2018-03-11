@@ -110,10 +110,14 @@ class RouteDiagram: UIView {
         stopLabel.lineBreakMode = .byWordWrapping
         stopLabel.numberOfLines = 0
         
-        let stopNameAttrs = [NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0), NSAttributedStringKey.foregroundColor : UIColor.primaryTextColor]
+        let stopNameAttrs: [NSAttributedStringKey : Any] = [
+            NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)!,
+            NSAttributedStringKey.foregroundColor : UIColor.primaryTextColor
+        ]
         let stopName = NSMutableAttributedString(string: name, attributes: stopNameAttrs)
 
         if let distance = distance {
+
             let testStopLabel = getTestStopLabel(withName: name)
             let testDistanceLabel = getTestDistanceLabel(withDistance: distance)
             
@@ -122,13 +126,20 @@ class RouteDiagram: UIView {
                 addLinebreak = true
             }
             
-            let travelDistanceAttrs = [NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0), NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor]
+            let travelDistanceAttrs: [NSAttributedStringKey : Any] = [
+                NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)!,
+                NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor
+            ]
+            
             let travelDistance = NSMutableAttributedString(string: addLinebreak ? "\n\(roundedString(distance)) away" : " \(roundedString(distance)) away", attributes: travelDistanceAttrs)
             stopName.append(travelDistance)
         }
         
         if stayOnBusForTranfer {
-            let stayOnBusAttrs = [NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0), NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor]
+            let stayOnBusAttrs: [NSAttributedStringKey : Any] = [
+                NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)!,
+                NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor
+            ]
             let stayOnBus = NSMutableAttributedString(string:"\nStay on board", attributes: stayOnBusAttrs)
             stopName.append(stayOnBus)
         }
@@ -141,7 +152,7 @@ class RouteDiagram: UIView {
     
     private func getTestStopLabel(withName name: String) -> UILabel {
         let testStopLabel = UILabel()
-        testStopLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
+        testStopLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
         testStopLabel.textColor = .primaryTextColor
         testStopLabel.text = name
         testStopLabel.sizeToFit()
@@ -151,7 +162,7 @@ class RouteDiagram: UIView {
     
     private func getTestDistanceLabel(withDistance distance: Double) -> UILabel {
         let testDistanceLabel = UILabel()
-        testDistanceLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)
+        testDistanceLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)
         testDistanceLabel.textColor = .mediumGrayColor
         testDistanceLabel.text = " \(roundedString(distance)) away"
         testDistanceLabel.sizeToFit()
@@ -168,35 +179,30 @@ class RouteDiagram: UIView {
 
             case .walk:
 
-                if(index == destinationDot) {
-                    let framedGreyCircle = Circle(size: .medium, color: .mediumGrayColor, style: .bordered)
+                if index == destinationDot {
+                    let framedGreyCircle = Circle(size: .medium, style: .bordered, color: .mediumGrayColor)
                     framedGreyCircle.backgroundColor = .white
-
                     pin = framedGreyCircle
                 } else {
-                    let solidGreyCircle = Circle(size: .small, color: .mediumGrayColor, style: .solid)
-
+                    let solidGreyCircle = Circle(size: .small, style: .solid, color: .mediumGrayColor)
                     pin = solidGreyCircle
                 }
 
             default:
 
-                if(index == destinationDot) {
+                if index == destinationDot {
                     if isWalkingRoute {
                         // walking route destination should always be grey no matter what direction type
-                        let framedGreyCircle = Circle(size: .medium, color: .mediumGrayColor, style: .bordered)
+                        let framedGreyCircle = Circle(size: .medium, style: .bordered, color: .mediumGrayColor)
                         framedGreyCircle.backgroundColor = .white
-
                         pin = framedGreyCircle
                     } else {
-                        let framedBlueCircle = Circle(size: .medium, color: .tcatBlueColor, style: .bordered)
+                        let framedBlueCircle = Circle(size: .medium, style: .bordered, color: .tcatBlueColor)
                         framedBlueCircle.backgroundColor = .white
-
                         pin = framedBlueCircle
                     }
                 } else {
-                    let solidBlueCircle = Circle(size: .small, color: .tcatBlueColor, style: .solid)
-
+                    let solidBlueCircle = Circle(size: .small, style: .solid, color: .tcatBlueColor)
                     pin = solidBlueCircle
                 }
 
@@ -438,13 +444,14 @@ class RouteDiagram: UIView {
     }
 
     private func resizeHeight() {
-        if let firstStopLabel = routeDiagramElements.first?.stopLabel, let lastStopLabel = routeDiagramElements.last?.stopLabel {
-            let resizedHeight = lastStopLabel.frame.maxY - firstStopLabel.frame.minY
-            
+        
+        if let firstStopDot = routeDiagramElements.first?.stopDot,
+            let lastStopDot = routeDiagramElements.last?.stopDot {
+            let resizedHeight = lastStopDot.frame.maxY - firstStopDot.frame.minY
             let oldFrame = frame
             let newFrame = CGRect(x: oldFrame.minX, y: oldFrame.minY, width: oldFrame.width, height: resizedHeight)
-            
             frame = newFrame
         }
+        
     }
 }

@@ -149,11 +149,17 @@ class LargeDetailTableViewCell: UITableViewCell {
     
     /** Abstracted formatting of content for detailLabel. Needs titleLabel */
     func formatDetailLabel(_ label: UILabel, _ titleLabel: UILabel) -> UILabel {
+        
         if direction.stops.isEmpty {
             label.text = "Get off at next stop"
         } else {
             label.text = "\(direction.stops.count) stop\(direction.stops.count == 1 ? "" : "s")"
         }
+        
+        // Number of minutes for the bus direction
+        let timeString = Time.timeString(from: direction.startTime, to: direction.endTime)
+        label.text = label.text! +  " • \(timeString)"
+        
         label.frame.origin.y = titleLabel.frame.maxY + labelSpacing
         label.sizeToFit()
         return label

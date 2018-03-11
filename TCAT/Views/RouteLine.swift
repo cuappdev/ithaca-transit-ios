@@ -52,15 +52,15 @@ class DottedLine: RouteLine {
         let dashSpace: CGFloat = 4
         
         var nextDashYPos: CGFloat = dashSpace
-        for _ in 0..<2{
+        for _ in 0..<2 {
             let line = CALayer()
             
             line.frame = CGRect(x: 0, y: nextDashYPos, width: frame.width, height: dashHeight)
             line.backgroundColor = color.cgColor
-            line.cornerRadius = dashHeight/2
+            line.cornerRadius = dashHeight / 2
             
             layer.addSublayer(line)
-            nextDashYPos += (line.frame.height + dashSpace)
+            nextDashYPos += line.frame.height + dashSpace
         }
     }
         

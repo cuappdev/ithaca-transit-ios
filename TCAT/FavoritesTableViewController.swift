@@ -30,8 +30,8 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
         navigationItem.rightBarButtonItem?.setTitleTextAttributes(buttonAttributes, for: .normal)
         
         allStops = SearchTableViewManager.shared.getAllStops()
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: Key.Cells.busIdentifier)
-        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Key.Cells.searchResultsIdentifier)
+        tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
+        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Constants.Cells.searchResultsIdentifier)
 
         resultsSection = Section(type: .searchResults, items: [ItemType]())
     }
@@ -98,7 +98,7 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell!
         if resultsSection.items.isEmpty {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.busIdentifier, for: indexPath) as! BusStopCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busIdentifier, for: indexPath) as! BusStopCell
             cell.textLabel?.text = allStops[indexPath.row].name
             return cell
         }
@@ -107,10 +107,10 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
 
         switch item {
         case .busStop(let busStop):
-            cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.busIdentifier, for: indexPath) as! BusStopCell
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busIdentifier, for: indexPath) as! BusStopCell
             cell.textLabel?.text = busStop.name
         case .placeResult(let placeResult):
-            cell = tableView.dequeueReusableCell(withIdentifier: Key.Cells.searchResultsIdentifier, for: indexPath) as! SearchResultsCell
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.searchResultsIdentifier, for: indexPath) as! SearchResultsCell
             cell.textLabel?.text = placeResult.name
             cell.detailTextLabel?.text = placeResult.detail
         default:
@@ -127,13 +127,13 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         if resultsSection.items.isEmpty { //we selected from allStops array
             let busStopSelected = allStops[indexPath.row]
-            SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.favorites, location: busStopSelected, limit: 5, bottom: true)
+            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, location: busStopSelected, limit: 5, bottom: true)
         } else {
             switch resultsSection.items[indexPath.row] {
             case .busStop(let busStop):
-                SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.favorites, location: busStop, limit: 5, bottom: true)
+                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, location: busStop, limit: 5, bottom: true)
             case .placeResult(let placeResult):
-                SearchTableViewManager.shared.insertPlace(for: Key.UserDefaults.favorites, location: placeResult, limit: 5, bottom: true)
+                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, location: placeResult, limit: 5, bottom: true)
             default:
                 break
             }

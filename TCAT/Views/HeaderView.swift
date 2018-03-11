@@ -19,7 +19,7 @@ class HeaderView: UITableViewHeaderFooterView {
 
     var label: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14)
+        label.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)
         label.textColor = .tableViewHeaderTextColor
         return label
     }()
