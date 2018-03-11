@@ -36,7 +36,7 @@ class RouteTableViewCell: UITableViewCell {
     let timeLabelLeftSpaceFromSuperview: CGFloat = 18.0
     let timeLabelVerticalSpaceFromSuperview: CGFloat = 18.0
     
-    let liveLabelHorizontalSpaceFromLiveIndicator: CGFloat = 2.0
+    let liveLabelHorizontalSpaceFromLiveIndicator: CGFloat = 4.0
     
     let arrowImageViewRightSpaceFromSuperview: CGFloat = 12.0
     let departureLabelSpaceFromArrowImageView: CGFloat = 8.0
@@ -44,7 +44,7 @@ class RouteTableViewCell: UITableViewCell {
     let timeLabelAndRouteDiagramVerticalSpace: CGFloat = 32.5
     
     let cellBorderHeight: CGFloat = 0.75
-    let cellSeparatorHeight: CGFloat = 4.0
+    let cellSeparatorHeight: CGFloat = 8.0
     
     let routeDiagramAndCellSeparatorVerticalSpace: CGFloat = 16.5
 

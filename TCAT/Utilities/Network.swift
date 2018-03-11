@@ -102,7 +102,7 @@ class Network {
 
         let request: APIRequest<BusLocationResult, Error> = mainTron.swiftyJSON.request("tracking")
         request.method = .post
-        let departDirections = directions.filter { $0.type == .depart }
+        let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
         let dictionary = departDirections.map { (direction) -> [String : Any] in
             
             // The id of the location, or bus stop, the bus needs to get to
