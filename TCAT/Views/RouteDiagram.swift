@@ -438,14 +438,13 @@ class RouteDiagram: UIView {
     }
 
     private func resizeHeight() {
-        let firstStopLabel = routeDiagramElements[0].stopLabel
-        let lastStopLabel = routeDiagramElements[routeDiagramElements.count - 1].stopLabel
-
-        let resizedHeight = lastStopLabel.frame.maxY - firstStopLabel.frame.minY
-
-        let oldFrame = frame
-        let newFrame = CGRect(x: oldFrame.minX, y: oldFrame.minY, width: oldFrame.width, height: resizedHeight)
-
-        frame = newFrame
+        if let firstStopLabel = routeDiagramElements.first?.stopLabel, let lastStopLabel = routeDiagramElements.last?.stopLabel {
+            let resizedHeight = lastStopLabel.frame.maxY - firstStopLabel.frame.minY
+            
+            let oldFrame = frame
+            let newFrame = CGRect(x: oldFrame.minX, y: oldFrame.minY, width: oldFrame.width, height: resizedHeight)
+            
+            frame = newFrame
+        }
     }
 }

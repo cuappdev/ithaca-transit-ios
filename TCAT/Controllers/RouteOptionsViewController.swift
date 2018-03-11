@@ -104,7 +104,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     override func viewDidAppear(_ animated: Bool) {
         if #available(iOS 11, *) {
-            addHeightToDatepicker(20)
+            addHeightToDatepicker(20) // add bottom padding to date picker for iPhone X
         }
     }
 
