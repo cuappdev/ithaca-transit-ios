@@ -101,7 +101,8 @@ class RouteTableViewCell: UITableViewCell {
         let routeDiagramHeight = (CGFloat(numOfSolidStopDots)*solidStopDotDiameter) +
         (CGFloat(numOfBusLines)*busLineHeight) + (CGFloat(numOfWalkLines)*walkLineHeight) + destinationDotHeight
 
-        let footerHeight = routeDiagramAndCellSeparatorVerticalSpace + cellSeperatorHeight
+        let stopLabelHeight: CGFloat = 17.0 // add an extra stop label height for if the last label is two-lined
+        let footerHeight = stopLabelHeight + routeDiagramAndCellSeparatorVerticalSpace + cellSeperatorHeight
 
         return headerHeight + routeDiagramHeight + footerHeight
     }

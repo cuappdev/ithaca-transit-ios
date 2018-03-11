@@ -438,10 +438,10 @@ class RouteDiagram: UIView {
     }
 
     private func resizeHeight() {
-        let firstStopDot = routeDiagramElements[0].stopDot
-        let lastStopDot = routeDiagramElements[routeDiagramElements.count - 1].stopDot
+        let firstStopLabel = routeDiagramElements[0].stopLabel
+        let lastStopLabel = routeDiagramElements[routeDiagramElements.count - 1].stopLabel
 
-        let resizedHeight = lastStopDot.frame.maxY - firstStopDot.frame.minY
+        let resizedHeight = lastStopLabel.frame.maxY - firstStopLabel.frame.minY
 
         let oldFrame = frame
         let newFrame = CGRect(x: oldFrame.minX, y: oldFrame.minY, width: oldFrame.width, height: resizedHeight)
