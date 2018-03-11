@@ -191,6 +191,17 @@ class Route: NSObject, JSONDecodable {
         return directions.reversed().first { $0.type == .arrive }
     }
     
+    func getNumOfWalkLines() -> Int {
+        var count = 0
+        for (index, direction) in directions.enumerated() {
+            if index != directions.count - 1 && direction.type == .walk {
+                count += 1
+            }
+        }
+        
+        return count
+    }
+    
     /** Calculate travel distance from location passed in to first route summary object and updates travel distance of route
      */
     func calculateTravelDistance(fromDirection directions: [Direction]) {

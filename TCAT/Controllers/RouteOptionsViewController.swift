@@ -641,7 +641,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         // if walking route, don't skip first walking direction. Ow skip first walking direction
         let numOfStops = isWalkingRoute ? directions.count : (directions.first?.type == .walk ? directions.count - 1 : directions.count)
-        let rowHeight = RouteTableViewCell().heightForCell(withNumOfStops: numOfStops)
+        let rowHeight = RouteTableViewCell().heightForCell(withNumOfStops: numOfStops, withNumOfWalkLines: routes[indexPath.row].getNumOfWalkLines())
 
         return rowHeight
     }
