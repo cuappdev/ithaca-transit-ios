@@ -15,8 +15,9 @@ import Alamofire
 class Network {
     
     /// Change based on DEBUG or RELEASE mode (macros didn't work :/)
-    static let address = Network.debugSource
-    static let ipAddress = Network.debugIPAddress
+    static let address = Network.releaseSource
+    static let ipAddress = Network.releaseIPAddress
+    static let apiVersion = "v1"
     
     /// Deployed server instance used for release
     static let releaseIPAddress = "54.174.47.32"
@@ -25,8 +26,6 @@ class Network {
     /// Test server used for development
     static let debugIPAddress = "35.174.156.171"
     static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/" // add ":3000" when testing on localhost on device
-  
-    static let apiVersion = "v1"
     
     static let mainTron = TRON(baseURL: Network.address)
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
