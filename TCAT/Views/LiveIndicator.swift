@@ -126,9 +126,9 @@ class LiveIndicator: UIView {
     /// DOES NOT WORK CURRENTLY
     func setColor(to color: UIColor) {
         self.color = color
-        stopAnimation()
-        drawViews()
-        startAnimation()
+        dot.backgroundColor = color
+        smallArcLayer.strokeColor = color.cgColor
+        largeArcLayer.strokeColor = color.cgColor
     }
     
     /// Dim, wait, and un-dim a UIView

@@ -43,7 +43,8 @@ class Circle: UIView {
                 layer.borderWidth = 2.0
                 
                 let solidCircle = CALayer()
-                solidCircle.frame = CGRect(x: 0, y: 0, width: 8, height: 8)
+                let solidCircleDiameter: CGFloat = size == .medium ? 6 : 8
+                solidCircle.frame = CGRect(x: 0, y: 0, width: solidCircleDiameter, height: solidCircleDiameter)
 
                 solidCircle.position = center
                 solidCircle.cornerRadius = solidCircle.frame.height / 2
