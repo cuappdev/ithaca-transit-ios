@@ -35,7 +35,8 @@ class RouteDiagram: UIView {
     // MARK: Spacing vars
 
     let stopDotLeftSpaceFromSuperview: CGFloat = 77.0
-    static let routeLineHeight: CGFloat = 20.0
+    static let walkLineHeight: CGFloat = 20.0
+    static let busLineHeight: CGFloat = 28.0
     let busIconLeftSpaceFromSuperview: CGFloat = 16.0
     let walkIconAndRouteLineHorizontalSpace: CGFloat = 36.0
     let stopDotAndStopLabelHorizontalSpace: CGFloat = 14.0
@@ -113,8 +114,16 @@ class RouteDiagram: UIView {
         let stopName = NSMutableAttributedString(string: name, attributes: stopNameAttrs)
 
         if let distance = distance {
+            let testStopLabel = getTestStopLabel(withName: name)
+            let testDistanceLabel = getTestDistanceLabel(withDistance: distance)
+            
+            var addLinebreak = false
+            if(testStopLabel.frame.width + testDistanceLabel.frame.width > width) {
+                addLinebreak = true
+            }
+            
             let travelDistanceAttrs = [NSAttributedStringKey.font : UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0), NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor]
-            let travelDistance = NSMutableAttributedString(string: " \(roundedString(distance)) away", attributes: travelDistanceAttrs)
+            let travelDistance = NSMutableAttributedString(string: addLinebreak ? "\n\(roundedString(distance)) away" : " \(roundedString(distance)) away", attributes: travelDistanceAttrs)
             stopName.append(travelDistance)
         }
         
@@ -129,6 +138,26 @@ class RouteDiagram: UIView {
         
         return stopLabel
     }
+    
+    private func getTestStopLabel(withName name: String) -> UILabel {
+        let testStopLabel = UILabel()
+        testStopLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 14.0)
+        testStopLabel.textColor = .primaryTextColor
+        testStopLabel.text = name
+        testStopLabel.sizeToFit()
+    
+        return testStopLabel
+    }
+    
+    private func getTestDistanceLabel(withDistance distance: Double) -> UILabel {
+        let testDistanceLabel = UILabel()
+        testDistanceLabel.font = UIFont(name: FontNames.SanFrancisco.Regular, size: 12.0)
+        testDistanceLabel.textColor = .mediumGrayColor
+        testDistanceLabel.text = " \(roundedString(distance)) away"
+        testDistanceLabel.sizeToFit()
+        
+        return testDistanceLabel
+    }
 
     private func getStopDot(fromDirections directions: [Direction], atIndex index: Int, withWalkingRoute isWalkingRoute: Bool) -> Circle {
         let directionType = directions[index].type
@@ -140,7 +169,7 @@ class RouteDiagram: UIView {
             case .walk:
 
                 if(index == destinationDot) {
-                    let framedGreyCircle = Circle(size: .large, color: .mediumGrayColor, style: .bordered)
+                    let framedGreyCircle = Circle(size: .medium, color: .mediumGrayColor, style: .bordered)
                     framedGreyCircle.backgroundColor = .white
 
                     pin = framedGreyCircle
@@ -155,12 +184,12 @@ class RouteDiagram: UIView {
                 if(index == destinationDot) {
                     if isWalkingRoute {
                         // walking route destination should always be grey no matter what direction type
-                        let framedGreyCircle = Circle(size: .large, color: .mediumGrayColor, style: .bordered)
+                        let framedGreyCircle = Circle(size: .medium, color: .mediumGrayColor, style: .bordered)
                         framedGreyCircle.backgroundColor = .white
 
                         pin = framedGreyCircle
                     } else {
-                        let framedBlueCircle = Circle(size: .large, color: .tcatBlueColor, style: .bordered)
+                        let framedBlueCircle = Circle(size: .medium, color: .tcatBlueColor, style: .bordered)
                         framedBlueCircle.backgroundColor = .white
 
                         pin = framedBlueCircle
@@ -211,7 +240,7 @@ class RouteDiagram: UIView {
         }
 
         if isWalkingRoute {
-            let greyRouteLine = SolidLine(height: RouteDiagram.routeLineHeight, color: .mediumGrayColor)
+            let greyRouteLine = SolidLine(height: RouteDiagram.walkLineHeight, color: .mediumGrayColor)
 
             return greyRouteLine
         }
@@ -220,12 +249,12 @@ class RouteDiagram: UIView {
         switch directionType {
 
             case .depart:
-                let solidBlueRouteLine = SolidLine(height: RouteDiagram.routeLineHeight, color: .tcatBlueColor)
+                let solidBlueRouteLine = SolidLine(height: RouteDiagram.busLineHeight, color: .tcatBlueColor)
 
                 return solidBlueRouteLine
 
             default:
-                let dashedGreyRouteLine = DottedLine(height: RouteDiagram.routeLineHeight, color: .mediumGrayColor)
+                let dashedGreyRouteLine = DottedLine(height: RouteDiagram.walkLineHeight, color: .mediumGrayColor)
 
                 return dashedGreyRouteLine
 
@@ -235,7 +264,7 @@ class RouteDiagram: UIView {
     
     private func getStayOnBusCoverUpView() -> UIView {
         let busIconWidth: CGFloat = 48
-        let spaceBtnBusIcons: CGFloat = 9.0
+        let spaceBtnBusIcons: CGFloat = 15.0
         
         let stayOnBusCoverUpView = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: busIconWidth, height: spaceBtnBusIcons + 6)))
         stayOnBusCoverUpView.backgroundColor = .tcatBlueColor
@@ -301,7 +330,7 @@ class RouteDiagram: UIView {
             let previousStopDot = routeDiagramElements[index-1].stopDot
 
             stopDot.center.x = previousStopDot.center.x
-            stopDot.center.y = (previousRouteLine?.frame.maxY ?? (previousStopDot.frame.maxY + RouteDiagram.routeLineHeight)) + (stopDot.frame.height/2)
+            stopDot.center.y = (previousRouteLine?.frame.maxY ?? (previousStopDot.frame.maxY + RouteDiagram.walkLineHeight)) + (stopDot.frame.height/2)
 
         }
 
@@ -315,7 +344,11 @@ class RouteDiagram: UIView {
     }
 
     private func positionStopLabelVertically(_ stopLabel: UILabel, usingStopDot stopDot: Circle) {
-        stopLabel.center.y = stopDot.center.y
+        let testStopLabel = getTestStopLabel(withName: stopLabel.text!)
+        let oldFrame = stopLabel.frame
+        let newFrame = CGRect(x: oldFrame.minX, y: stopDot.center.y - (testStopLabel.frame.height/2), width: oldFrame.width, height: oldFrame.height)
+        
+        stopLabel.frame = newFrame
     }
 
     private func positionStopLabelHorizontally(_ stopLabel: UILabel, usingPrevStopLabel prevStopLabel: UILabel) {
@@ -405,14 +438,13 @@ class RouteDiagram: UIView {
     }
 
     private func resizeHeight() {
-        let firstStopDot = routeDiagramElements[0].stopDot
-        let lastStopDot = routeDiagramElements[routeDiagramElements.count - 1].stopDot
-
-        let resizedHeight = lastStopDot.frame.maxY - firstStopDot.frame.minY
-
-        let oldFrame = frame
-        let newFrame = CGRect(x: oldFrame.minX, y: oldFrame.minY, width: oldFrame.width, height: resizedHeight)
-
-        frame = newFrame
+        if let firstStopLabel = routeDiagramElements.first?.stopLabel, let lastStopLabel = routeDiagramElements.last?.stopLabel {
+            let resizedHeight = lastStopLabel.frame.maxY - firstStopLabel.frame.minY
+            
+            let oldFrame = frame
+            let newFrame = CGRect(x: oldFrame.minX, y: oldFrame.minY, width: oldFrame.width, height: resizedHeight)
+            
+            frame = newFrame
+        }
     }
 }

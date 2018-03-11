@@ -231,9 +231,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         for direction in route.directions {
             
             if direction.type == .depart && direction.routeNumber > 0 {
-                
+                guard let tripId = direction.tripIDs?.first else {
+                    continue
+                }
                 Network.getBusLocations(routeID: String(direction.routeNumber),
-                                        tripID: direction.tripID,
+                                        tripID: tripId,
                                         stopID: direction.startLocation.id)
                     
                 .perform(withSuccess: { (result) in

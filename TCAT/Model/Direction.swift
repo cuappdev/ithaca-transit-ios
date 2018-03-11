@@ -70,7 +70,10 @@ class Direction: NSObject, NSCopying {
     var stayOnBusForTransfer: Bool = false
     
     /// The unique identifier for the specific bus related to the direction.
-    var tripID: String = ""
+    var tripIDs: [String]?
+    
+    /// The bus delay for stops[0]
+    var delay: Int?
     
     // MARK: Initalizers
 
@@ -86,7 +89,8 @@ class Direction: NSObject, NSCopying {
         routeNumber: Int,
         stops: [LocationObject],
         stayOnBusForTransfer: Bool,
-        tripID: String
+        tripIDs: [String]?,
+        delay: Int?
     ) {
         self.type = type
         self.name = name
@@ -99,7 +103,8 @@ class Direction: NSObject, NSCopying {
         self.routeNumber = routeNumber
         self.stops = stops
         self.stayOnBusForTransfer = stayOnBusForTransfer
-        self.tripID = tripID
+        self.tripIDs = tripIDs
+        self.delay = delay
     }
 
     convenience init(name: String? = nil) {
@@ -119,7 +124,8 @@ class Direction: NSObject, NSCopying {
             routeNumber: 0,
             stops: [],
             stayOnBusForTransfer: false,
-            tripID: ""
+            tripIDs: [],
+            delay: nil
         )
 
     }
@@ -140,8 +146,9 @@ class Direction: NSObject, NSCopying {
         travelDistance = json["distance"].doubleValue
         routeNumber = json["routeNumber"].int ?? 0
         stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
-        stayOnBusForTransfer = json["stayOnBusTransfer"].boolValue
-        tripID = json["tripID"].stringValue
+        stayOnBusForTransfer = json["stayOnBusForTransfer"].boolValue
+        tripIDs = json["tripIdentifiers"].arrayValue.map { $0.stringValue }
+        delay = json["delay"].intValue
         
         // If depart direction, use bus stop locations (with id) for start and end
         if type == .depart, let start = stops.first, let end = stops.last {
@@ -164,7 +171,8 @@ class Direction: NSObject, NSCopying {
             routeNumber: routeNumber,
             stops: stops,
             stayOnBusForTransfer: stayOnBusForTransfer,
-            tripID: tripID
+            tripIDs: tripIDs,
+            delay: delay
         )
     }
 
