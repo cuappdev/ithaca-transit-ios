@@ -17,8 +17,8 @@ enum CircleStyle {
 enum CircleSize: Int {
     case small = 12
     case medium = 16
-    case large = 24
-} // large was 18
+    case large = 18
+}
 
 class Circle: UIView {
     
