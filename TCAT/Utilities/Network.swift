@@ -21,7 +21,7 @@ class Network {
     
     /// Deployed server instance used for release
     static let releaseIPAddress = "54.174.47.32"
-    static let releaseSource = "http://\(releaseIPAddress)/" //"/api/\(apiVersion)/"
+    static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
     
     /// Test server used for development
     static let debugIPAddress = "35.174.156.171"
