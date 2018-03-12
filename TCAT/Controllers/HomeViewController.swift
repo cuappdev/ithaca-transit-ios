@@ -392,7 +392,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.placeholder = "Search (e.g. Balch Hall, 312 College Ave)"
+        searchBar.placeholder = "Where to?"
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.endEditing(true)
         searchBar.text = nil

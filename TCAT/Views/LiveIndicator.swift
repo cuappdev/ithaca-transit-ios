@@ -9,7 +9,7 @@
 import UIKit
 
 enum LiveIndicatorSize: Double {
-    case small = 8
+    case small = 6
     case large = 12
 }
 
