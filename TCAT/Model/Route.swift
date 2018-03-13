@@ -228,6 +228,42 @@ class Route: NSObject, JSONDecodable {
         
     }
     
+    /** Return a one sentence summary of the route, based on the first depart
+        or walking direction. Returns "" if no directions.
+     */
+    var summaryDescription: String {
+        
+        var description = "To get from \(self.startName) to \(self.endName),"
+        
+        if description.contains(Constants.Stops.currentLocation) {
+            description = "To get to \(self.endName),"
+        }
+        
+        if let direction = directions.first(where: { $0.type == .depart }) {
+            
+            let number = direction.routeNumber
+            let start = direction.startLocation.name
+            let end = direction.endLocation.name
+            description += " take Route \(number) from \(start) to \(end)."
+            
+        } else {
+            
+            // Walking Direction
+            guard let direction = directions.first else {
+                return ""
+            }
+            
+            let distance = roundedString(direction.travelDistance)
+            let start = direction.startLocation.name
+            let end = direction.endLocation.name
+            description = "Walk \(distance) from \(start) to \(end)."
+            
+        }
+        
+        return description
+        
+    }
+    
     /// Number of directions with .depart type
     func numberOfBusRoutes() -> Int {
         return directions.reduce(0) { $0 + ($1.type == .depart ? 1 : 0) }

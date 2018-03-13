@@ -11,6 +11,25 @@ import Foundation
 /// App-wide constants
 struct Constants {
     
+    struct App {
+        
+        /// The App Store Identifier used in App Store links
+        static let storeIdentifier: String = "\(1290883721)"
+        
+        /// The link of the application in the App Store
+        static let appStoreLink: String = "https://itunes.apple.com/app/id\(storeIdentifier)"
+        
+        /// The app version within the App Store (e.g. "1.4.2") [String value of `CFBundleShortVersionString`]
+        static let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
+        
+        /// Developer email address to direct contact inquiries and emails toward
+        static let contactEmailAddress = "cornellappdev@gmail.com"
+        
+        /// Link to Google Forms for Feedback
+        static let feedbackLink = "https://goo.gl/forms/jYejUtVccVQ3UHH12"
+        
+    }
+    
     struct Cells {
         static let busIdentifier = "BusStop"
         static let searchResultsIdentifier = "SearchResults"

@@ -11,6 +11,7 @@ import MapKit
 import SwiftyJSON
 import CoreLocation
 import TRON
+import SwiftRegister
 
 extension UIColor {
 
@@ -198,6 +199,29 @@ extension Array : JSONDecodable {
             return nil
         })
     }
+}
+
+/// Present a share sheet for a route in any context.
+func presentShareSheet(for route: Route) {
+    
+    let shareContent = route.summaryDescription
+    let promotionalText = "\n\nDownload Ithaca Transit on the App Store! \(Constants.App.appStoreLink)"
+    
+    let activityVC = UIActivityViewController(activityItems: [shareContent, promotionalText], applicationActivities: nil)
+    activityVC.excludedActivityTypes = [.print, .assignToContact, .openInIBooks, .addToReadingList]
+    activityVC.completionWithItemsHandler = { (activity, completed, items, error) in
+        let sharingMethod = activity?.rawValue.replacingOccurrences(of: "com.apple.UIKit.activity.", with: "") ?? "None"
+        let _ = RegisterSession.shared?.logEvent(event:
+            RouteSharedEventPayload(
+                activityType: sharingMethod,
+                didSelectAndCompleteShare: completed,
+                error: error?.localizedDescription
+            ).toEvent()
+        )
+    }
+    
+    UIApplication.shared.delegate?.window??.presentInApp(activityVC)
+    
 }
 
 /** Bold a phrase that appears in a string, and return the attributed string */

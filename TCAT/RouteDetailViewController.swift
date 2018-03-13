@@ -37,25 +37,31 @@ class RouteDetailViewController: PulleyViewController {
         let threshold: CGFloat = 20
         snapMode = .nearestPositionUnlessExceeded(threshold: threshold)
         
-        setRightButton()
-        
-    }
-    
-    // MARK: Navigation Controller
-    
-    /// Set the right button in the navigation controller
-    func setRightButton() {
+        // Set left back button
         guard let buttonAttributes = (navigationController as? CustomNavigationController)?.buttonTitleTextAttributes
             else { return }
         self.navigationItem.leftBarButtonItem?.setTitleTextAttributes(buttonAttributes, for: .normal)
-        let button = UIBarButtonItem(title: "Exit", style: .plain, target: self, action: #selector(exitAction))
-        button.setTitleTextAttributes(buttonAttributes, for: .normal)
-        self.navigationItem.setRightBarButton(button, animated: true)
+        
     }
     
-    /// Return app to home page
-    @objc func exitAction() {
-        navigationController?.popToRootViewController(animated: true)
+    /// 3D Touch Peep Pop Actions
+    override var previewActionItems: [UIPreviewActionItem] {
+        
+        let shareAction = UIPreviewAction(title: "Share", style: .default, handler: { (previewAction, viewController) -> Void in
+            
+            guard
+                let routeDetailViewController = viewController as? RouteDetailViewController,
+                let contentViewController = routeDetailViewController.primaryContentViewController as? RouteDetailContentViewController
+            else {
+                return
+            }
+            
+            contentViewController.shareRoute()
+            
+        })
+        
+        return [shareAction]
+        
     }
 
 }

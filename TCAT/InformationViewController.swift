@@ -127,8 +127,7 @@ class InformationViewController: UIViewController {
     }
     
     @objc func openBugReportForm() {
-        let link = (UIApplication.shared.delegate as! AppDelegate).betaFormLink
-        let safariViewController = SFSafariViewController(url: URL(string: link)!)
+        let safariViewController = SFSafariViewController(url: URL(string: Constants.App.feedbackLink)!)
         UIApplication.shared.keyWindow?.presentInApp(safariViewController)
     }
     

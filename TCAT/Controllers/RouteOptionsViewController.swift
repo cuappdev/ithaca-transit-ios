@@ -27,7 +27,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                                   DestinationDelegate, SearchBarCancelDelegate,
                                   DZNEmptyDataSetSource, DZNEmptyDataSetDelegate,
                                   CLLocationManagerDelegate {
-
+    
     // MARK: Search bar vars
 
     var searchBarView: SearchBarView!
@@ -95,6 +95,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setupLocationManager()
 
         searchForRoutes()
+        
+        // Check for 3D Touch availability
+        if traitCollection.forceTouchCapability == .available {
+            registerForPreviewing(with: self, sourceView: view)
+        }
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -504,9 +510,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         cell?.setData(routes[indexPath.row])
         cell?.positionSubviews()
-
         cell?.addSubviews()
 
+        // Add share action for long press gestures on non 3D Touch devices
+        let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
+        cell?.addGestureRecognizer(longPressGestureRecognizer)
+        
         setCellUserInteraction(cell, to: cellUserInteraction)
 
         return cell!
@@ -653,13 +662,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         locationManager.stopUpdatingLocation()
-        let contentViewController = RouteDetailContentViewController(route: routes[indexPath.row])
-        guard let drawerViewController = contentViewController.drawerDisplayController else {
-            return
+        if let routeDetailViewController = createRouteDetailViewController(from: routes[indexPath.row]) {
+            navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
-        let routeDetailViewController = RouteDetailViewController(contentViewController: contentViewController,
-                                                                  drawerViewController: drawerViewController)
-        navigationController?.pushViewController(routeDetailViewController, animated: true)
     }
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -667,4 +672,52 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             searchForRoutes()
         }
     }
+    
+    // Create RouteDetailViewController
+    
+    func createRouteDetailViewController(from route: Route) -> RouteDetailViewController? {
+        let contentViewController = RouteDetailContentViewController(route: route)
+        guard let drawerViewController = contentViewController.drawerDisplayController else {
+            return nil
+        }
+        return RouteDetailViewController(contentViewController: contentViewController,
+                                         drawerViewController: drawerViewController)
+    }
+    
+}
+
+extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
+    
+    @objc func handleLongPressGesture(_ sender: UILongPressGestureRecognizer) {
+        if sender.state == .began {
+            let point = sender.location(in: routeResults)
+            if let indexPath = routeResults.indexPathForRow(at: point) {
+                presentShareSheet(for: routes[indexPath.row])
+            }
+        }
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        
+        let point = view.convert(location, to: routeResults)
+        
+        guard
+            let indexPath = routeResults.indexPathForRow(at: point),
+            let cell = routeResults.cellForRow(at: indexPath) as? RouteTableViewCell,
+            let routeDetailViewController = createRouteDetailViewController(from: routes[indexPath.row])
+        else {
+            return nil
+        }
+        
+        routeDetailViewController.preferredContentSize = CGSize(width: 0.0, height: 0.0)
+        cell.transform = .identity
+        previewingContext.sourceRect = routeResults.convert(cell.frame, to: view)
+        return routeDetailViewController
+        
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        navigationController?.pushViewController(viewControllerToCommit, animated: true)
+    }
+    
 }

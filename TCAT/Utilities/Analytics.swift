@@ -58,3 +58,10 @@ struct RouteResultsCellTappedEventPayload: Payload {
 struct InformationViewControllerTappedEventPayload: Payload {
     static let eventName: String = "tappedBigBlueBus"
 }
+
+struct RouteSharedEventPayload: Payload {
+    static let eventName: String = "routeShared"
+    let activityType: String
+    let didSelectAndCompleteShare: Bool
+    let error: String?
+}
