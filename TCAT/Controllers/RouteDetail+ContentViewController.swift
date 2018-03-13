@@ -116,13 +116,23 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         locationManager.startUpdatingLocation()
         
         // Set up Share button
-        let shareImage = UIImageView(image: #imageLiteral(resourceName: "share"))
-        let shareButton = UIBarButtonItem(customView: shareImage)
+        let button = UIButton(type: .custom)
+        button.setImage(#imageLiteral(resourceName: "share"), for: .normal)
+//        button.widthAnchor.constraint(equalToConstant: 26).isActive = true
+//        button.heightAnchor.constraint(equalToConstant: 38).isActive = true
+        let shareButton = UIBarButtonItem(customView: button)
+        
         // let shareButton = UIBarButtonItem(image: #imageLiteral(resourceName: "share"), style: .plain, target: self, action: #selector(shareRoute))
         shareButton.tintColor = .primaryTextColor
-        guard let pulleyViewController = self.parent as? PulleyViewController else { return }
-        pulleyViewController.navigationItem.setRightBarButton(shareButton, animated: true)
+        // shareButton.width = 26; shareButton.height = 38
 
+        guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
+        routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
+
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
 
     override func viewDidAppear(_ animated: Bool) {

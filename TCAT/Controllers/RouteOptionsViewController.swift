@@ -710,6 +710,7 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
         }
         
         routeDetailViewController.preferredContentSize = CGSize(width: 0.0, height: 0.0)
+        routeDetailViewController.isPeeking = true
         cell.transform = .identity
         previewingContext.sourceRect = routeResults.convert(cell.frame, to: view)
         return routeDetailViewController
@@ -717,6 +718,7 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        (viewControllerToCommit as? RouteDetailViewController)?.isPeeking = false
         navigationController?.pushViewController(viewControllerToCommit, animated: true)
     }
     

@@ -11,13 +11,8 @@ import Pulley
 
 class RouteDetailViewController: PulleyViewController {
     
-    required init(contentViewController: UIViewController, drawerViewController: UIViewController) {
-        super.init(contentViewController: contentViewController, drawerViewController: drawerViewController)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
+    /// True if view is being peeked from Route Options
+    var isPeeking: Bool = false
     
     override func viewDidLoad() {
         
@@ -62,6 +57,16 @@ class RouteDetailViewController: PulleyViewController {
         
         return [shareAction]
         
+    }
+    
+    // MARK: Initializers
+    
+    required init(contentViewController: UIViewController, drawerViewController: UIViewController) {
+        super.init(contentViewController: contentViewController, drawerViewController: drawerViewController)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
 
 }

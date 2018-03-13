@@ -44,6 +44,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
     ]
     
     func customizeAppearance() {
+        
         navigationBar.backgroundColor = .white
         navigationBar.barTintColor = .white
         navigationBar.tintColor = .primaryTextColor
@@ -93,10 +94,11 @@ class CustomNavigationController: UINavigationController, UINavigationController
             
             navigationBar.titleTextAttributes = titleTextAttributes
             
-            // Add back button for non-modal screens
+            // Add back button for non-modal non-peeked screens
+        
             if !viewController.isModal {
-                let backButton = customBackButton()
-                viewController.navigationItem.setLeftBarButton(backButton, animated: true)
+                viewController.navigationItem.hidesBackButton = true
+                viewController.navigationItem.setLeftBarButton(customBackButton(), animated: true)
             }
             
         }
