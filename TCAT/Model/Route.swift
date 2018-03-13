@@ -85,6 +85,9 @@ class Route: NSObject, JSONDecodable {
     
     required init(json: JSON) throws {
         
+        print("Route")
+        print(json)
+        
         departureTime = json["departureTime"].parseDate()
         arrivalTime = json["arrivalTime"].parseDate()
         startCoords = json["startCoords"].parseCoordinates()
@@ -158,6 +161,9 @@ class Route: NSObject, JSONDecodable {
     static func getRoutes(in json: JSON, from: String?, to: String?,
                           _ completion: @escaping (_ routes: [Route], _ error: NSError?) -> Void) {
         
+        print("getRoutes Response")
+        print(json)
+        
         if json["success"].boolValue {
             let routes: [Route] = json["data"].arrayValue.map {
                 var augmentedJSON = $0
@@ -203,13 +209,23 @@ class Route: NSObject, JSONDecodable {
      */
     func calculateTravelDistance(fromDirection directions: [Direction]) {
         
-        // first route option stop is the first bus stop in the route
-        guard let firstRouteOptionsStop = directions.first?.type == .walk ? directions[1] : directions.first else {
+        // firstRouteOptionsStop = first bus stop in the route
+        guard var stop = directions.first else {
             return
         }
         
+        // If more than just a walking route that starts with walking
+        if !isWalkingRoute() && directions.first?.type == .walk && directions.count > 1 {
+            stop = directions[1]
+        }
+        
         let fromLocation = CLLocation(latitude: startCoords.latitude, longitude: startCoords.longitude)
-        let endLocation = CLLocation(latitude: firstRouteOptionsStop.startLocation.latitude, longitude: firstRouteOptionsStop.startLocation.longitude)
+        var endLocation = CLLocation(latitude: stop.startLocation.latitude, longitude: stop.startLocation.longitude)
+        
+        if isWalkingRoute() {
+            endLocation = CLLocation(latitude: stop.endLocation.latitude, longitude: stop.endLocation.longitude)
+        }
+        
         travelDistance = fromLocation.distance(from: endLocation)
         
     }

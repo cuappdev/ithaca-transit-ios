@@ -15,17 +15,21 @@ import Alamofire
 class Network {
     
     /// Change based on DEBUG or RELEASE mode (macros didn't work :/)
-    static let address = Network.releaseSource
-    static let ipAddress = Network.releaseIPAddress
+    static let address = Network.localSource
+    static let ipAddress = Network.localIPAddress
     static let apiVersion = "v1"
+    
+    /// Used for local backend testing
+    static let localIPAddress = "10.132.6.85"
+    static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
+    
+    /// Test server used for development
+    static let debugIPAddress = "35.174.156.171"
+    static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
     
     /// Deployed server instance used for release
     static let releaseIPAddress = "54.174.47.32"
     static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
-    
-    /// Test server used for development
-    static let debugIPAddress = "35.174.156.171"
-    static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/" // add ":3000" when testing on localhost on device
     
     static let mainTron = TRON(baseURL: Network.address)
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
@@ -59,10 +63,6 @@ class Network {
                 callback(nil)
                 return
             }
-            
-            /// Check if a bus stop, or if current location (not a bus stop... for now)
-            let isStartBusStop = start is BusStop && (start as? BusStop)?.name != Constants.Stops.currentLocation
-            let isEndBusStop = end is BusStop
 
             let request: APIRequest<JSON, Error> = mainTron.swiftyJSON.request("route")
             request.method = .get
@@ -70,13 +70,13 @@ class Network {
                 "arriveBy"          :   type == .arriveBy,
                 "end"               :   "\(endCoords.latitude),\(endCoords.longitude)",
                 "start"             :   "\(startCoords.latitude),\(startCoords.longitude)",
-                "isEndBusStop"      :   isEndBusStop,
-                "isStartBusStop"    :   isStartBusStop,
                 "time"              :   time.timeIntervalSince1970
             ]
 
             // for debugging
             // print("Request URL: \(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
+            
+            print(request.parameters)
 
             callback(request)
 

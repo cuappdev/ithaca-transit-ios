@@ -118,13 +118,13 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         // Set up Share button
         let button = UIButton(type: .custom)
         button.setImage(#imageLiteral(resourceName: "share"), for: .normal)
-//        button.widthAnchor.constraint(equalToConstant: 26).isActive = true
-//        button.heightAnchor.constraint(equalToConstant: 38).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 26).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 38).isActive = true
         let shareButton = UIBarButtonItem(customView: button)
         
         // let shareButton = UIBarButtonItem(image: #imageLiteral(resourceName: "share"), style: .plain, target: self, action: #selector(shareRoute))
         shareButton.tintColor = .primaryTextColor
-        // shareButton.width = 26; shareButton.height = 38
+        shareButton.width = 26; // shareButton.height = 38
 
         guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)

@@ -147,8 +147,9 @@ class SummaryView: UIView {
         // MARK: Main Label Positioning
         
         let extraLabelPadding: CGFloat = 6
-
-        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
+        let originX = route.directions.filter { $0.type == .depart }.count != 0 ? DetailIconView.width : DetailIconView.width
+        
+        mainLabel.frame.origin.x = originX + extraLabelPadding
         mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
         
         if let departDirection = (route.directions.filter { $0.type == .depart }).first {
@@ -168,7 +169,7 @@ class SummaryView: UIView {
         
         // Reset main label positioning
         mainLabel.sizeToFit()
-        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
+        mainLabel.frame.origin.x = originX + extraLabelPadding
         mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
         
         // MARK: Secondary Label

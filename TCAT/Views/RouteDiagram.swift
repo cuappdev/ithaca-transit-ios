@@ -70,6 +70,7 @@ class RouteDiagram: UIView {
     // MARK: Set Data
 
     func setData(withDirections directions: [Direction], withTravelDistance travelDistance: Double, withWalkingRoute isWalkingRoute: Bool) {
+        
         var first = 0
         var stayOnBusForTransfer = false
         
@@ -95,6 +96,7 @@ class RouteDiagram: UIView {
             
             routeDiagramElements.append(routeDiagramElement)
         }
+        
     }
 
     // MARK: Get data from route ojbect
