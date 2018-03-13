@@ -55,6 +55,7 @@ struct Constants {
     
     struct Phrases {
         static let firstFavorite = "Add Your First Favorite!"
+        static let searchPlaceholder = "Where to?"
     }
     
     struct UserDefaults {

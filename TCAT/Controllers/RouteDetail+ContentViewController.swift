@@ -116,7 +116,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         locationManager.startUpdatingLocation()
         
         // Set up Share button
-        let shareButton = UIBarButtonItem(image: #imageLiteral(resourceName: "share"), style: .plain, target: self, action: #selector(shareRoute))
+        let shareImage = UIImageView(image: #imageLiteral(resourceName: "share"))
+        let shareButton = UIBarButtonItem(customView: shareImage)
+        // let shareButton = UIBarButtonItem(image: #imageLiteral(resourceName: "share"), style: .plain, target: self, action: #selector(shareRoute))
+        shareButton.tintColor = .primaryTextColor
         guard let pulleyViewController = self.parent as? PulleyViewController else { return }
         pulleyViewController.navigationItem.setRightBarButton(shareButton, animated: true)
 

@@ -77,7 +77,7 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let searchBar = UISearchBar()
         searchBar.isTranslucent = true
-        searchBar.placeholder = "Search (e.g Balch Hall, 312 College Ave)"
+        searchBar.placeholder = Constants.Phrases.searchPlaceholder
         searchBar.backgroundImage = UIImage()
         searchBar.alpha = 1.0
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
