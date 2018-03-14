@@ -30,7 +30,7 @@ class SearchBarView: UIView, UISearchControllerDelegate {
         
         let textFieldInsideSearchBar = searchController?.searchBar.value(forKey: "searchField") as? UITextField
         textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
-        textFieldInsideSearchBar?.attributedPlaceholder = NSAttributedString(string: "Search (e.g Balch Hall, 312 College Ave)", attributes: [NSAttributedStringKey.foregroundColor: UIColor.searchBarPlaceholderTextColor])
+        textFieldInsideSearchBar?.attributedPlaceholder = NSAttributedString(string: Constants.Phrases.searchPlaceholder, attributes: [NSAttributedStringKey.foregroundColor: UIColor.searchBarPlaceholderTextColor])
         
         //searchController?.searchBar.backgroundColor = .clear
         searchController?.searchBar.tintColor = .clear

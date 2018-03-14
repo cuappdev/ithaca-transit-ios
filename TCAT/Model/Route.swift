@@ -203,13 +203,23 @@ class Route: NSObject, JSONDecodable {
      */
     func calculateTravelDistance(fromDirection directions: [Direction]) {
         
-        // first route option stop is the first bus stop in the route
-        guard let firstRouteOptionsStop = directions.first?.type == .walk ? directions[1] : directions.first else {
+        // firstRouteOptionsStop = first bus stop in the route
+        guard var stop = directions.first else {
             return
         }
         
+        // If more than just a walking route that starts with walking
+        if !isWalkingRoute() && directions.first?.type == .walk && directions.count > 1 {
+            stop = directions[1]
+        }
+        
         let fromLocation = CLLocation(latitude: startCoords.latitude, longitude: startCoords.longitude)
-        let endLocation = CLLocation(latitude: firstRouteOptionsStop.startLocation.latitude, longitude: firstRouteOptionsStop.startLocation.longitude)
+        var endLocation = CLLocation(latitude: stop.startLocation.latitude, longitude: stop.startLocation.longitude)
+        
+        if isWalkingRoute() {
+            endLocation = CLLocation(latitude: stop.endLocation.latitude, longitude: stop.endLocation.longitude)
+        }
+        
         travelDistance = fromLocation.distance(from: endLocation)
         
     }
@@ -225,6 +235,42 @@ class Route: NSObject, JSONDecodable {
         """
         
         return mainDescription
+        
+    }
+    
+    /** Return a one sentence summary of the route, based on the first depart
+        or walking direction. Returns "" if no directions.
+     */
+    var summaryDescription: String {
+        
+        var description = "To get from \(self.startName) to \(self.endName),"
+        
+        if description.contains(Constants.Stops.currentLocation) {
+            description = "To get to \(self.endName),"
+        }
+        
+        if let direction = directions.first(where: { $0.type == .depart }) {
+            
+            let number = direction.routeNumber
+            let start = direction.startLocation.name
+            let end = direction.endLocation.name
+            description += " take Route \(number) from \(start) to \(end)."
+            
+        } else {
+            
+            // Walking Direction
+            guard let direction = directions.first else {
+                return ""
+            }
+            
+            let distance = roundedString(direction.travelDistance)
+            let start = direction.startLocation.name
+            let end = direction.endLocation.name
+            description = "Walk \(distance) from \(start) to \(end)."
+            
+        }
+        
+        return description
         
     }
     

@@ -27,7 +27,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                                   DestinationDelegate, SearchBarCancelDelegate,
                                   DZNEmptyDataSetSource, DZNEmptyDataSetDelegate,
                                   CLLocationManagerDelegate {
-
+    
     // MARK: Search bar vars
 
     var searchBarView: SearchBarView!
@@ -60,7 +60,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
 
-    var banner: StatusBarNotificationBanner = {
+    var banner: StatusBarNotificationBanner? = {
         let banner = StatusBarNotificationBanner(title: "No internet connection", style: .danger)
         banner.autoDismiss = false
         return banner
@@ -95,6 +95,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setupLocationManager()
 
         searchForRoutes()
+        
+        // Check for 3D Touch availability
+        if traitCollection.forceTouchCapability == .available {
+            registerForPreviewing(with: self, sourceView: view)
+        }
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -110,6 +116,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     override func viewWillDisappear(_ animated: Bool) {
         takedownReachability()
+        if isBannerShown {
+            banner?.dismiss()
+            UIApplication.shared.statusBarStyle = .default
+        }
     }
 
     // MARK: Route Selection view
@@ -311,10 +321,17 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                             print("RouteOptionVC searchForRoutes Error: \(err)")
                             // print("Error Description:", err.userInfo["description"] as? String)
                             self.banner = StatusBarNotificationBanner(title: "Could not connect to server", style: .danger)
-                            self.banner.autoDismiss = false
-                            self.banner.show(queuePosition: .front, on: self)
+                            self.banner?.autoDismiss = false
+                            self.banner?.dismissOnTap = true
+                            self.banner?.show(queuePosition: .front, on: self.navigationController)
                             self.isBannerShown = true
                             UIApplication.shared.statusBarStyle = .lightContent
+                        } else {
+                            if self.isBannerShown {
+                                self.isBannerShown = false
+                                self.banner?.dismiss()
+                                UIApplication.shared.statusBarStyle = .default
+                            }
                         }
                         self.currentlySearching = false
                         self.routeResults.reloadData()
@@ -504,9 +521,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         cell?.setData(routes[indexPath.row])
         cell?.positionSubviews()
-
         cell?.addSubviews()
 
+        // Add share action for long press gestures on non 3D Touch devices
+        let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
+        cell?.addGestureRecognizer(longPressGestureRecognizer)
+        
         setCellUserInteraction(cell, to: cellUserInteraction)
 
         return cell!
@@ -529,10 +549,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return isBannerShown ? .lightContent : .default
-    }
-
     @objc private func reachabilityChanged(_ notification: Notification) {
 
         let reachability = notification.object as! Reachability
@@ -540,13 +556,15 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         switch reachability.connection {
 
             case .none:
-                banner.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
+                banner?.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
                 isBannerShown = true
                 setUserInteraction(to: false)
 
             case .cellular, .wifi:
+                print("back online")
                 if isBannerShown {
-                    banner.dismiss()
+                    print("back!")
+                    banner?.dismiss()
                     isBannerShown = false
                 }
                 setUserInteraction(to: true)
@@ -653,13 +671,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         locationManager.stopUpdatingLocation()
-        let contentViewController = RouteDetailContentViewController(route: routes[indexPath.row])
-        guard let drawerViewController = contentViewController.drawerDisplayController else {
-            return
+        if let routeDetailViewController = createRouteDetailViewController(from: routes[indexPath.row]) {
+            navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
-        let routeDetailViewController = RouteDetailViewController(contentViewController: contentViewController,
-                                                                  drawerViewController: drawerViewController)
-        navigationController?.pushViewController(routeDetailViewController, animated: true)
     }
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -667,4 +681,54 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             searchForRoutes()
         }
     }
+    
+    // Create RouteDetailViewController
+    
+    func createRouteDetailViewController(from route: Route) -> RouteDetailViewController? {
+        let contentViewController = RouteDetailContentViewController(route: route)
+        guard let drawerViewController = contentViewController.drawerDisplayController else {
+            return nil
+        }
+        return RouteDetailViewController(contentViewController: contentViewController,
+                                         drawerViewController: drawerViewController)
+    }
+    
+}
+
+extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
+    
+    @objc func handleLongPressGesture(_ sender: UILongPressGestureRecognizer) {
+        if sender.state == .began {
+            let point = sender.location(in: routeResults)
+            if let indexPath = routeResults.indexPathForRow(at: point) {
+                presentShareSheet(for: routes[indexPath.row])
+            }
+        }
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        
+        let point = view.convert(location, to: routeResults)
+        
+        guard
+            let indexPath = routeResults.indexPathForRow(at: point),
+            let cell = routeResults.cellForRow(at: indexPath) as? RouteTableViewCell,
+            let routeDetailViewController = createRouteDetailViewController(from: routes[indexPath.row])
+        else {
+            return nil
+        }
+        
+        routeDetailViewController.preferredContentSize = CGSize(width: 0.0, height: 0.0)
+        routeDetailViewController.isPeeking = true
+        cell.transform = .identity
+        previewingContext.sourceRect = routeResults.convert(cell.frame, to: view)
+        return routeDetailViewController
+        
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        (viewControllerToCommit as? RouteDetailViewController)?.isPeeking = false
+        navigationController?.pushViewController(viewControllerToCommit, animated: true)
+    }
+    
 }

@@ -45,7 +45,7 @@ class SummaryView: UIView {
     /// Constant for label padding
     fileprivate let textLabelPadding: CGFloat = 16
     /// Identifier for bus route icons
-    fileprivate let busIconTag: Int = 14850
+    fileprivate let iconTag: Int = 14850
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -98,22 +98,35 @@ class SummaryView: UIView {
         /// Constant for spacing for various elements
         let spacing: CGFloat = 12
         
-        /// The center to use for the next bus icon. Initalized for one bus.
+        /// The center to use for the next bus icon. Initalized for 0-1 bus(es).
         var iconCenter = CGPoint(x: DetailIconView.width / 2, y: safeAreaCenterY)
         
-        subviews.filter { $0.tag == busIconTag }.removeViewsFromSuperview()
+        subviews.filter { $0.tag == iconTag }.removeViewsFromSuperview()
         
         // Create and place bus icons
         let busRoutes: [Int] = route.directions.flatMap {
             return $0.type == .depart ? $0.routeNumber : nil
         }
         
+        // Show walking glyph
+        if busRoutes.count == 0 {
+            
+            // Create and add bus icon
+            let walkIcon = UIImageView(image: #imageLiteral(resourceName: "walk"))
+            walkIcon.tag = iconTag
+            walkIcon.contentMode = .scaleAspectFit
+            walkIcon.tintColor = .mediumGrayColor
+            walkIcon.center = iconCenter
+            addSubview(walkIcon)
+            
+        }
+        
         // Place one sole bus icon
-        if busRoutes.count == 1 {
+        else if busRoutes.count == 1 {
             
             // Create and add bus icon
             let busIcon = BusIcon(type: .directionLarge, number: busRoutes.first!)
-            busIcon.tag = busIconTag
+            busIcon.tag = iconTag
             busIcon.center = iconCenter
             addSubview(busIcon)
             
@@ -130,7 +143,7 @@ class SummaryView: UIView {
                 
                 // Create and add bus icon
                 let busIcon = BusIcon(type: .directionSmall, number: route)
-                busIcon.tag = busIconTag
+                busIcon.tag = iconTag
                 busIcon.center = iconCenter
                 addSubview(busIcon)
                 
@@ -147,7 +160,7 @@ class SummaryView: UIView {
         // MARK: Main Label Positioning
         
         let extraLabelPadding: CGFloat = 6
-
+        
         mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
         mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
         

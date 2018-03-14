@@ -20,9 +20,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     var window: UIWindow?
     let userDefaults = UserDefaults.standard
     
-    /// Link to Google Forms
-    let betaFormLink = "https://goo.gl/forms/jYejUtVccVQ3UHH12"
-    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // Set Up Google Services
@@ -124,8 +121,7 @@ extension UIWindow {
     }
     
     func openFeedback() {
-        let link = (UIApplication.shared.delegate as! AppDelegate).betaFormLink
-        let safariViewController = SFSafariViewController(url: URL(string: link)!)
+        let safariViewController = SFSafariViewController(url: URL(string: Constants.App.feedbackLink)!)
         presentInApp(safariViewController)
     }
     

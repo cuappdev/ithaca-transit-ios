@@ -31,26 +31,36 @@ class Time {
         let time = dateComponents(from: startTime, to: endTime)
         var timeStr = ""
         
-        if time.day! > 0 {
-            timeStr += "\(time.day!) d "
-        }
+        var minutes: Int = time.minute!
+        var hours: Int = time.hour!
+        var days: Int = time.day!
         
-        if time.hour! > 0 {
-            timeStr += "\(time.hour!) hr "
-        }
-        
-        if time.minute! > 0 {
+        if minutes > 0 {
             // If time difference is 3m 56s, closer to 4m difference than 3m
             // Needed only for minutes since last measurement in series
             let hasSignificantSeconds = time.second! >= 30
-            timeStr += "\(time.minute! + (hasSignificantSeconds ? 1 : 0)) min"
+            minutes = time.minute! + (hasSignificantSeconds ? 1 : 0)
+            if minutes >= 60 { hours += 1 }
+            minutes = minutes % 60
+            timeStr = "\(minutes % 60) min"
+        }
+        
+        if hours > 0 {
+            if hours >= 24 { days += 1 }
+            hours = hours % 24
+            timeStr = "\(hours) hr " + timeStr
+        }
+        
+        if days > 0 {
+            timeStr = "\(time.day!) d " + timeStr
         }
         
         if timeStr.isEmpty {
-            timeStr = "0 min"
+            return "0 min"
         }
         
         return timeStr
+        
     }
     
     /// Check whether 2 dates are equal (to the minute precision)

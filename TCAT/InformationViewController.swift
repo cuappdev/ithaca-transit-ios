@@ -42,7 +42,7 @@ class InformationViewController: UIViewController {
         dismissButton.setTitle("Done", for: .normal)
         guard let buttonAttributes = (navigationController as? CustomNavigationController)?.buttonTitleTextAttributes
             else { return }
-        self.navigationItem.rightBarButtonItem?.setTitleTextAttributes(buttonAttributes, for: .normal)
+        navigationItem.rightBarButtonItem?.setTitleTextAttributes(buttonAttributes, for: .normal)
         let backButtonItem = UIBarButtonItem(customView: dismissButton)
         navigationItem.setRightBarButton(backButtonItem, animated: false)
         
@@ -127,8 +127,7 @@ class InformationViewController: UIViewController {
     }
     
     @objc func openBugReportForm() {
-        let link = (UIApplication.shared.delegate as! AppDelegate).betaFormLink
-        let safariViewController = SFSafariViewController(url: URL(string: link)!)
+        let safariViewController = SFSafariViewController(url: URL(string: Constants.App.feedbackLink)!)
         UIApplication.shared.keyWindow?.presentInApp(safariViewController)
     }
     

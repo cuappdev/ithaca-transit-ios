@@ -127,7 +127,7 @@ class RouteTableViewCell: UITableViewCell {
 
     // MARK: Set Data
 
-    func setData(_ route: Route){
+    func setData(_ route: Route) {
         let firstDepartDirection = route.getFirstDepartDirection()
         
         setLiveElements(withFirstDepartDirection: firstDepartDirection)

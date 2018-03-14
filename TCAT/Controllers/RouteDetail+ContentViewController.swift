@@ -13,6 +13,7 @@ import MapKit
 import SwiftyJSON
 import NotificationBannerSwift
 import Pulley
+import SwiftRegister
 
 class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate {
     
@@ -101,6 +102,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         let route = aDecoder.decodeObject(forKey: "route") as! Route
         self.init(route: route)
     }
+    
+    // MARK: View-Related Functions
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -111,7 +114,17 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         locationManager.distanceFilter = 10
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+        
+        // Set up Share button
+        let shareButton = UIBarButtonItem(image: #imageLiteral(resourceName: "share"), style: .plain, target: self, action: #selector(shareRoute))
+        shareButton.tintColor = .primaryTextColor
+        guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
+        routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -164,7 +177,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         view = mapView
         
     }
-    
+
     // MARK: Status Bar Functions
     
     /// Show banner if no other status banner exists; turns status bar light
@@ -349,6 +362,12 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             
         }
         
+    }
+    
+    // MARK: Share Function
+    
+    @objc func shareRoute() {
+        presentShareSheet(for: route)
     }
     
     // MARK: Map Functions
