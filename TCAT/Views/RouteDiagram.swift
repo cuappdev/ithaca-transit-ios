@@ -124,7 +124,7 @@ class RouteDiagram: UIView {
             let testDistanceLabel = getTestDistanceLabel(withDistance: distance)
             
             var addLinebreak = false
-            if(testStopLabel.frame.width + testDistanceLabel.frame.width > width) {
+            if testStopLabel.frame.width + testDistanceLabel.frame.width > width {
                 addLinebreak = true
             }
             
