@@ -45,8 +45,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     let reachability = Reachability(hostname: Network.ipAddress)
     var isBannerShown = false
     
-    var banner: StatusBarNotificationBanner {
-        let banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
+    var banner: StatusBarNotificationBanner? {
+        let banner = StatusBarNotificationBanner(title: "No internet connection", style: .danger)
         banner.autoDismiss = false
         return banner
     }
@@ -139,7 +139,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let reachability = note.object as! Reachability
         switch reachability.connection {
             case .none:
-                banner.show(queuePosition: .front, on: self)
+                banner?.show(queuePosition: .front, on: navigationController)
                 isBannerShown = true
                 UIApplication.shared.statusBarStyle = .lightContent
                 self.isNetworkDown = true
@@ -148,7 +148,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 self.sections = []
             case .cellular, .wifi:
                 if isBannerShown {
-                    banner.dismiss()
+                    banner?.dismiss()
                     isBannerShown = false
                     UIApplication.shared.statusBarStyle = .default
                 }

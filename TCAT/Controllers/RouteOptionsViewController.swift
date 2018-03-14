@@ -561,9 +561,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 setUserInteraction(to: false)
 
             case .cellular, .wifi:
-                print("back online")
                 if isBannerShown {
-                    print("back!")
                     banner?.dismiss()
                     isBannerShown = false
                 }

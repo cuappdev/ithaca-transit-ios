@@ -98,6 +98,7 @@ class BusLocationView: UIView {
             let degrees = (getBearingBetweenTwoPoints(point1: start, point2: end) + 360).truncatingRemainder(dividingBy: 360)
             let newDegrees = degrees - self.currentBearing
             let currentAngle = CGFloat(-1) * CGFloat(self.degreesToRadians(newDegrees))
+            self.bearingIndicator.transform = CGAffineTransform(rotationAngle: CGFloat(-1) * CGFloat(degreesToRadians(currentBearing)))
             self.bearingIndicator.transform = CGAffineTransform(rotationAngle: currentAngle)
             self.currentBearing = newDegrees
             

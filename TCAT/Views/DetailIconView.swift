@@ -9,9 +9,14 @@
 import UIKit
 
 enum IconType: String {
-    case noBus // show just the time of instruction
-    case busStart // shows icon and time (in color) with start of connector
-    case busEnd // same as above, with end of connector
+    /// Show just the time of instruction. All gray.
+    case noBus
+    /// Shows icon and time with start of connector
+    case busStart
+    /// Shows icon and time with end of connector
+    case busEnd
+    /// Continues connection
+    case busTransfer
 }
 
 class DetailIconView: UIView {
@@ -80,7 +85,10 @@ class DetailIconView: UIView {
                 if type == .busStart {
                     connectorTop.backgroundColor = .lineDotColor
                     connectorBottom.backgroundColor = .tcatBlueColor
-                } else {
+                } else if type == .busTransfer {
+                    connectorTop.backgroundColor = .tcatBlueColor
+                    connectorBottom.backgroundColor = .tcatBlueColor
+                } else { // busEnd
                     connectorTop.backgroundColor = .tcatBlueColor
                     connectorBottom.backgroundColor = .lineDotColor
                 }
@@ -110,6 +118,13 @@ class DetailIconView: UIView {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    func prepareForReuse() {
+        timeLabel.removeFromSuperview()
+        connectorTop.removeFromSuperview()
+        connectorBottom.removeFromSuperview()
+        statusCircle.removeFromSuperview()
     }
     
     func changeTime(_ time: String) {

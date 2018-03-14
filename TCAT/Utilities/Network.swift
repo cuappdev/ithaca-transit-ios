@@ -12,11 +12,15 @@ import CoreLocation
 import GooglePlaces
 import Alamofire
 
+enum NetworkType: String {
+    case local, debug, release
+}
+
 class Network {
     
-    /// Change based on DEBUG or RELEASE mode (macros didn't work :/)
-    static let address = Network.debugSource
-    static let ipAddress = Network.debugIPAddress
+    // MARK: Global Network Variables
+    
+    static let networkType: NetworkType = .release
     static let apiVersion = "v1"
     
     /// Used for local backend testing
@@ -30,6 +34,24 @@ class Network {
     /// Deployed server instance used for release
     static let releaseIPAddress = "54.174.47.32"
     static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
+    
+    /// Network IP address being used for specified networkType
+    static var ipAddress: String {
+        switch networkType {
+        case .local: return localIPAddress
+        case .debug: return debugIPAddress
+        case .release: return releaseIPAddress
+        }
+    }
+    
+    /// Network source currently being used
+    static var address: String {
+        switch networkType {
+        case .local: return localSource
+        case .debug: return debugSource
+        case .release: return releaseSource
+        }
+    }
     
     static let mainTron = TRON(baseURL: Network.address)
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
@@ -76,7 +98,7 @@ class Network {
             // for debugging
             // print("Request URL: \(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
             
-            print(request.parameters)
+            print("Request Parameters:", request.parameters)
 
             callback(request)
 

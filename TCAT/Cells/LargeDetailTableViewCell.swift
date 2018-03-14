@@ -40,7 +40,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         titleLabel.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.textColor = .primaryTextColor
-        titleLabel.text = direction != nil && direction.type == .transfer ? "Bus becomes" : "Board"
+        titleLabel.text = "Board"
         titleLabel.sizeToFit()
         return titleLabel
     }
@@ -74,6 +74,16 @@ class LargeDetailTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        
+//        busIconView.prepareForReuse()
+//        iconView.prepareForReuse()
+//
+//        chevron.removeFromSuperview()
+//        titleLabel.removeFromSuperview()
+//        detailLabel.removeFromSuperview()
+        
+    }
     
     /** Precondition: Direction is BoardDirection */
     func setCell(_ direction: Direction, firstStep: Bool) {
@@ -86,7 +96,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         
         if shouldAddViews {
             iconView = DetailIconView(height: cellHeight,
-                                      type: IconType.busStart,
+                                      type: direction.type == .transfer ? .busTransfer : .busStart,
                                       time: direction.startTimeDescription,
                                       firstStep: firstStep,
                                       lastStep: false)
@@ -114,13 +124,16 @@ class LargeDetailTableViewCell: UITableViewCell {
     
     /** Abstracted formatting of content for titleLabel */
     func formatTitleLabel(_ label: UILabel) -> UILabel {
+        
+        // Set inital text in label
+        label.text = direction.type == .transfer ? "Bus becomes" : "Board"
  
         // Add correct amount of spacing to create a gap for the busIcon
         // Using constant always returned from
         //      while label.frame.maxX < busIconView.frame.maxX + 8 {
         // because it will occasionally run infinitely because of format func calls
         var accum = 0
-        while accum <= 16 {
+        while accum <= (direction.type == .transfer ? 34 : 16) {
             accum += 1
             label.text! += " "
             label.sizeToFit()
