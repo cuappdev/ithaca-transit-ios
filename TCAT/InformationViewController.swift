@@ -28,10 +28,6 @@ class InformationViewController: UIViewController {
         
         title = "About Us"
         
-        let scrollView = UIScrollView(frame: view.frame)
-        scrollView.contentSize = view.frame.size
-        view = scrollView
-        
         view.backgroundColor = UIColor.tableBackgroundColor
         navigationController?.navigationBar.tintColor = .primaryTextColor
         
