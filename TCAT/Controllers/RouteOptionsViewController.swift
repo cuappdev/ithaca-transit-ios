@@ -60,7 +60,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
 
-    var banner: StatusBarNotificationBanner = {
+    var banner: StatusBarNotificationBanner? = {
         let banner = StatusBarNotificationBanner(title: "No internet connection", style: .danger)
         banner.autoDismiss = false
         return banner
@@ -116,6 +116,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     override func viewWillDisappear(_ animated: Bool) {
         takedownReachability()
+        if isBannerShown {
+            banner?.dismiss()
+            UIApplication.shared.statusBarStyle = .default
+        }
     }
 
     // MARK: Route Selection view
@@ -317,10 +321,17 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                             print("RouteOptionVC searchForRoutes Error: \(err)")
                             // print("Error Description:", err.userInfo["description"] as? String)
                             self.banner = StatusBarNotificationBanner(title: "Could not connect to server", style: .danger)
-                            self.banner.autoDismiss = false
-                            self.banner.show(queuePosition: .front, on: self)
+                            self.banner?.autoDismiss = false
+                            self.banner?.dismissOnTap = true
+                            self.banner?.show(queuePosition: .front, on: self.navigationController)
                             self.isBannerShown = true
                             UIApplication.shared.statusBarStyle = .lightContent
+                        } else {
+                            if self.isBannerShown {
+                                self.isBannerShown = false
+                                self.banner?.dismiss()
+                                UIApplication.shared.statusBarStyle = .default
+                            }
                         }
                         self.currentlySearching = false
                         self.routeResults.reloadData()
@@ -538,10 +549,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return isBannerShown ? .lightContent : .default
-    }
-
     @objc private func reachabilityChanged(_ notification: Notification) {
 
         let reachability = notification.object as! Reachability
@@ -549,13 +556,15 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         switch reachability.connection {
 
             case .none:
-                banner.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
+                banner?.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
                 isBannerShown = true
                 setUserInteraction(to: false)
 
             case .cellular, .wifi:
+                print("back online")
                 if isBannerShown {
-                    banner.dismiss()
+                    print("back!")
+                    banner?.dismiss()
                     isBannerShown = false
                 }
                 setUserInteraction(to: true)

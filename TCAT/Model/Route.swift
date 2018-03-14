@@ -85,9 +85,6 @@ class Route: NSObject, JSONDecodable {
     
     required init(json: JSON) throws {
         
-        print("Route")
-        print(json)
-        
         departureTime = json["departureTime"].parseDate()
         arrivalTime = json["arrivalTime"].parseDate()
         startCoords = json["startCoords"].parseCoordinates()
@@ -160,9 +157,6 @@ class Route: NSObject, JSONDecodable {
     /// Handle route calculation data request.
     static func getRoutes(in json: JSON, from: String?, to: String?,
                           _ completion: @escaping (_ routes: [Route], _ error: NSError?) -> Void) {
-        
-        print("getRoutes Response")
-        print(json)
         
         if json["success"].boolValue {
             let routes: [Route] = json["data"].arrayValue.map {

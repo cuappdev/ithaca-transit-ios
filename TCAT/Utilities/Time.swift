@@ -48,7 +48,7 @@ class Time {
         if hours > 0 {
             if hours >= 24 { days += 1 }
             hours = hours % 24
-            timeStr = "\(hours) hr" + timeStr
+            timeStr = "\(hours) hr " + timeStr
         }
         
         if days > 0 {

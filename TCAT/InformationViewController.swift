@@ -28,6 +28,10 @@ class InformationViewController: UIViewController {
         
         title = "About Us"
         
+        let scrollView = UIScrollView(frame: view.frame)
+        scrollView.contentSize = view.frame.size
+        view = scrollView
+        
         view.backgroundColor = UIColor.tableBackgroundColor
         navigationController?.navigationBar.tintColor = .primaryTextColor
         
@@ -42,7 +46,7 @@ class InformationViewController: UIViewController {
         dismissButton.setTitle("Done", for: .normal)
         guard let buttonAttributes = (navigationController as? CustomNavigationController)?.buttonTitleTextAttributes
             else { return }
-        self.navigationItem.rightBarButtonItem?.setTitleTextAttributes(buttonAttributes, for: .normal)
+        navigationItem.rightBarButtonItem?.setTitleTextAttributes(buttonAttributes, for: .normal)
         let backButtonItem = UIBarButtonItem(customView: dismissButton)
         navigationItem.setRightBarButton(backButtonItem, animated: false)
         

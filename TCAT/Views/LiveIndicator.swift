@@ -73,6 +73,11 @@ class LiveIndicator: UIView {
         addSubview(dot)
         layer.addSublayer(smallArcLayer)
         layer.addSublayer(largeArcLayer)
+        
+        if size == .small {
+            frame.origin.y += 4
+        }
+        
     }
     
     private func createTopToLeftArc(origin: CGPoint, radius: CGFloat, lineWidth: CGFloat) -> CAShapeLayer {
