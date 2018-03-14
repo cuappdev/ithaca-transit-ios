@@ -15,8 +15,8 @@ import Alamofire
 class Network {
     
     /// Change based on DEBUG or RELEASE mode (macros didn't work :/)
-    static let address = Network.releaseSource
-    static let ipAddress = Network.releaseIPAddress
+    static let address = Network.debugSource
+    static let ipAddress = Network.debugIPAddress
     static let apiVersion = "v1"
     
     /// Used for local backend testing
