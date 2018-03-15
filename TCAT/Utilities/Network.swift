@@ -21,15 +21,15 @@ class Network {
     
     /// Used for local backend testing
     static let localIPAddress = "10.132.6.85"
-    static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
+    static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)"
     
     /// Test server used for development
     static let debugIPAddress = "35.174.156.171"
-    static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
+    static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)"
     
     /// Deployed server instance used for release
     static let releaseIPAddress = "54.174.47.32"
-    static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
+    static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)"
     
     static let mainTron = TRON(baseURL: Network.address)
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
@@ -74,10 +74,8 @@ class Network {
             ]
 
             // for debugging
-            // print("Request URL: \(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
+            print("Request URL: \(address)/\(request.path)?arriveBy=\(request.parameters["arriveBy"]!)&end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)\n")
             
-            print(request.parameters)
-
             callback(request)
 
         }

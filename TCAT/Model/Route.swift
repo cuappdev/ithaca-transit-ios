@@ -147,6 +147,26 @@ class Route: NSObject, JSONDecodable {
             
         }
         
+        // For walk-only direction, insert direction with the starting location
+        if directions.count == 1 && directions.first?.type == .walk {
+            if let firstDirection = directions.first {
+                let startingLocationDirection = Direction(type: .walk,
+                                          name: startName,
+                                          startLocation: firstDirection.startLocation,
+                                          endLocation: firstDirection.endLocation,
+                                          startTime: firstDirection.startTime,
+                                          endTime: firstDirection.endTime,
+                                          path: firstDirection.path,
+                                          travelDistance: firstDirection.travelDistance,
+                                          routeNumber: firstDirection.routeNumber,
+                                          stops: firstDirection.stops,
+                                          stayOnBusForTransfer: firstDirection.stayOnBusForTransfer,
+                                          tripIdentifiers: firstDirection.tripIdentifiers,
+                                          delay: firstDirection.delay)
+                directions.insert(startingLocationDirection, at: 0)
+            }
+        }
+        
         // Calculate travel distance
         calculateTravelDistance(fromDirection: directions)
         
