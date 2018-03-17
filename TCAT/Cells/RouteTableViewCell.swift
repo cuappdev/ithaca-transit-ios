@@ -152,9 +152,9 @@ class RouteTableViewCell: UITableViewCell {
             setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
         }
         
-        if let firstDepartDirection = firstDepartDirection {
-            setDepartureTime(withTime: firstDepartDirection.startTime.addingTimeInterval(TimeInterval(firstDepartDirection.delay!)), withWalkingRoute: isWalkingRoute)
-            setLiveElements(withStartTime: firstDepartDirection.startTime, withDelay: firstDepartDirection.delay)
+        if let firstDepartDirection = firstDepartDirection, let delay = firstDepartDirection.delay {
+            setDepartureTime(withTime: firstDepartDirection.startTime.addingTimeInterval(TimeInterval(delay)), withWalkingRoute: isWalkingRoute)
+            setLiveElements(withStartTime: firstDepartDirection.startTime, withDelay: delay)
         }
         else {
             setDepartureTime(withTime: route.departureTime, withWalkingRoute: isWalkingRoute)
