@@ -20,7 +20,6 @@ class BusStop: Place, CoordinateAcceptor {
     init(name: String, lat: CLLocationDegrees, long: CLLocationDegrees) {
         self.lat = lat
         self.long = long
-        
         super.init(name: name)
     }
     

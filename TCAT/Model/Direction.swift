@@ -193,7 +193,7 @@ class Direction: NSObject, NSCopying {
             return "Walk to \(name)"
             
         case .transfer:
-            return "at \(name). Stay on board."
+            return "at \(name). Stay on bus."
 
         }
     }
@@ -205,12 +205,13 @@ class Direction: NSObject, NSCopying {
             name: \(name),
             startTime: \(startTime),
             endTime: \(endTime),
-            startLocation: \(startLocation),
-            endLocation: \(endLocation),
-            stops: \(stops),
+            startLocation: \(startLocation.name),
+            endLocation: \(endLocation.name),
             distance: \(travelDistance),
             locationNameDescription: \(locationNameDescription),
-            stops: \(stops)
+            numberOfStops: \(stops.count)
+            routeNumber: \(routeNumber)
+            stayOnBusTransfer: \(stayOnBusForTransfer)
         }
         """
     }

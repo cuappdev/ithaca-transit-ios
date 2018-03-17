@@ -20,7 +20,7 @@ class BusIcon: UIView {
     var baseView: UIView!
     var label: UILabel!
     var image: UIImageView!
-    var liveIndicator: LiveIndicator!
+    var liveIndicator: LiveIndicator?
     
     init(type: BusIconType, number: Int) {
         
@@ -67,20 +67,19 @@ class BusIcon: UIView {
             label.frame.origin.x = image.frame.maxX + 4
             
             liveIndicator = LiveIndicator(size: .large)
-            liveIndicator.frame.origin = CGPoint(x: label.frame.maxX + 6, y: label.frame.origin.y)
-            liveIndicator.center.y = baseView.center.y
-            addSubview(liveIndicator)
+            liveIndicator!.frame.origin = CGPoint(x: label.frame.maxX + 6, y: label.frame.origin.y)
+            liveIndicator!.center.y = baseView.center.y
+            addSubview(liveIndicator!)
             
         }
         
     }
     
-    // Debugging tool
-    func updateNumber(to number: String) {
-        label.text = number
-        label.sizeToFit()
-        liveIndicator.frame.origin = CGPoint(x: label.frame.maxX + 6, y: label.frame.origin.y)
-        liveIndicator.center.y = baseView.center.y
+    func prepareForReuse() {
+        baseView.removeFromSuperview()
+        label.removeFromSuperview()
+        image.removeFromSuperview()
+        liveIndicator?.removeFromSuperview()
     }
     
     required init?(coder aDecoder: NSCoder) {

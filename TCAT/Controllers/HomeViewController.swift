@@ -17,7 +17,8 @@ import SafariServices
 import SnapKit
 import SwiftRegister
 
-class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate, AddFavoritesDelegate {
+class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate, AddFavoritesDelegate, CLLocationManagerDelegate {
+    
     let userDefaults = UserDefaults.standard
     let cornellDestinations = [(name: "North Campus", stops: "RPCC, Balch Hall, Appel, Helen Newman, Jessup Field"),
                                (name: "West Campus", stops: "Baker Flagpole, Baker Flagpole (Slopeside)"),
@@ -25,6 +26,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                                (name: "Collegetown", stops: "Collegetown Crossing, Schwartz Center"),
                                (name: "Ithaca Commons", stops: "Albany @ Salvation Army, State Street, Lot 32")]
 
+    var locationManager = CLLocationManager()
     var timer: Timer?
     var isNetworkDown = false
     var searchResultsSection: Section!
@@ -45,11 +47,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     let reachability = Reachability(hostname: Network.ipAddress)
     var isBannerShown = false
     
-    var banner: StatusBarNotificationBanner {
-        let banner = StatusBarNotificationBanner(title: "No internet connection. Retrying...", style: .danger)
-        banner.autoDismiss = false
-        return banner
-    }
+    var banner: StatusBarNotificationBanner?
     
     func tctSectionHeaderFont() -> UIFont? {
         return UIFont.systemFont(ofSize: 14)
@@ -58,7 +56,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        //Add Notification Observers
+        // Add Notification Observers
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
         
@@ -73,9 +71,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             make.width.equalTo(30)
             make.height.equalTo(38)
         }
-        infoButton.imageEdgeInsets = UIEdgeInsets(top: 7, left: 7, bottom: 7, right: 0)
-        let submitBugBarButton = UIBarButtonItem(customView: infoButton)
-        navigationItem.setRightBarButton(submitBugBarButton, animated: false)
+        infoButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 0)
+        let rightBarButton = UIBarButtonItem(customView: infoButton)
+        navigationItem.setRightBarButton(rightBarButton, animated: false)
 
         tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
@@ -109,7 +107,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     func displayFavoritesTVC() {
-        if favorites.count < 5 {
+        if favorites.count < 8 {
             presentFavoritesTVC()
         } else {
             let title = "Maximum Number of Favorites"
@@ -134,38 +132,55 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             searchBar.becomeFirstResponder()
         }
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return isBannerShown ? .lightContent : .default
+    }
 
     @objc func reachabilityChanged(note: Notification) {
         let reachability = note.object as! Reachability
         switch reachability.connection {
             case .none:
-                banner.show(queuePosition: .front, on: self)
-                isBannerShown = true
-                UIApplication.shared.statusBarStyle = .lightContent
+                if !isBannerShown {
+                    banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
+                    banner!.autoDismiss = false
+                    banner!.show(queuePosition: .front, on: navigationController)
+                    isBannerShown = true
+                }
                 self.isNetworkDown = true
                 self.sectionIndexes = [:]
                 self.searchBar.isUserInteractionEnabled = false
                 self.sections = []
             case .cellular, .wifi:
                 if isBannerShown {
-                    banner.dismiss()
+                    banner?.dismiss()
+                    banner = nil
                     isBannerShown = false
-                    UIApplication.shared.statusBarStyle = .default
                 }
                 sections = createSections()
                 self.searchBar.isUserInteractionEnabled = true
+            
         }
+        UIApplication.shared.statusBarStyle = preferredStatusBarStyle
     }
 
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         reachability?.stopNotifier()
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
         sections = createSections()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
     }
 
     func createSections() -> [Section] {
@@ -173,7 +188,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
         let seeAllStopsSection = Section(type: .seeAllStops, items: [.seeAllStops])
         var favoritesSection = Section(type: .favorites, items: favorites)
-
         if favoritesSection.items.isEmpty {
             let addFavorites = BusStop(name: Constants.Phrases.firstFavorite, lat: 0.0, long: 0.0)
             favoritesSection = Section(type: .favorites, items: [.busStop(addFavorites)])
@@ -181,7 +195,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         allSections.append(favoritesSection)
         allSections.append(recentSearchesSection)
         allSections.append(seeAllStopsSection)
-        return allSections.filter({$0.items.count > 0})
+        return allSections.filter { $0.items.count > 0 }
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -344,7 +358,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
-        return -80.0
+        return 0
     }
 
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
@@ -355,16 +369,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
         let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
-    }
-
-    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControlState) -> NSAttributedString! {
-        let buttonTitle = isNetworkDown ? "Try Again" : ""
-        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.noInternetTextColor]
-        return NSAttributedString(string: buttonTitle, attributes: attrs)
-    }
-
-    func emptyDataSet(_ scrollView: UIScrollView!, didTap button: UIButton!) {
-        //getBusStops()
     }
     
     /* Keyboard Functions */
@@ -388,7 +392,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         navigationItem.rightBarButtonItem = nil
-        let _ = RegisterSession.shared?.logEvent(event: SearchBarTappedEventPayload(location: .home).toEvent())
+        RegisterSession.shared.logEvent(event: SearchBarTappedEventPayload(location: .home).toEvent())
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -431,8 +435,54 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     @objc func openInformationScreen() {
         let informationViewController = InformationViewController()
         let navigationVC = CustomNavigationController(rootViewController: informationViewController)
-        self.present(navigationVC, animated: true, completion: nil)
+        present(navigationVC, animated: true)
     }
+    
+    // MARK: Location Manager Delegate
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        
+        if status == .denied {
+            
+            var actions: [UIAlertAction] = []
+            
+            let theTitle = "Location Services Disabled"
+            let message = "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services."
+            var leftButton = "Cancel"
+            
+            if let showReminder = userDefaults.value(forKey: Constants.UserDefaults.locationAuthReminder) as? Bool {
+                if showReminder {
+                    actions.append(UIAlertAction(title: "Dismiss", style: .default))
+                    leftButton = "Don't Remind Me Again"
+                } else {
+                    return
+                }
+            } else {
+                userDefaults.set(true, forKey: Constants.UserDefaults.locationAuthReminder)
+            }
+            
+            let alertController = UIAlertController(title: theTitle, message: message, preferredStyle: .alert)
+            
+            // Cancel / Don't Remind Me Again
+            actions.append(UIAlertAction(title: leftButton, style: .default) { (_) in
+                if leftButton == "Don't Remind Me Again" {
+                    self.userDefaults.set(false, forKey: Constants.UserDefaults.locationAuthReminder)
+                }
+            })
+            
+            actions.append(UIAlertAction(title: "Settings", style: .default) { (_) in
+                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
+            })
+            
+            for action in actions {
+                alertController.addAction(action)
+            }
+            
+            present(alertController, animated: true)
+        }
+        
+    }
+    
 }
 
 

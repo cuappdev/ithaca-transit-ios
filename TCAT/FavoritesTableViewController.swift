@@ -25,9 +25,9 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
         title = fromOnboarding ? "Add Favorites" : "Add Favorite"
         let systemItem: UIBarButtonSystemItem = fromOnboarding ? .done : .cancel
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem, target: self, action: #selector(dismissVC))
-        guard let buttonAttributes = (navigationController as? CustomNavigationController)?.buttonTitleTextAttributes
-            else { return }
-        navigationItem.rightBarButtonItem?.setTitleTextAttributes(buttonAttributes, for: .normal)
+        navigationItem.rightBarButtonItem?.setTitleTextAttributes(
+            CustomNavigationController.buttonTitleTextAttributes, for: .normal
+        )
         
         allStops = SearchTableViewManager.shared.getAllStops()
         tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
@@ -51,7 +51,7 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
             desiredViewController.view.addSubview(snapshot)
 
             appDelegate.window?.rootViewController = desiredViewController
-            userDefaults.setValue(true, forKey: "onboardingShown")
+            userDefaults.setValue(true, forKey: Constants.UserDefaults.onboardingShown)
 
             UIView.animate(withDuration: 0.5, animations: {
                 snapshot.layer.opacity = 0

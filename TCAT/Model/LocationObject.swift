@@ -33,6 +33,11 @@ class LocationObject: NSObject {
         self.longitude = longitude
     }
     
+    /// Blank init to store name
+    convenience init(name: String) {
+        self.init(name: name, id: "", latitude: 0.0, longitude: 0.0)
+    }
+    
     /// The coordinates of the location.
     var coordinates: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)

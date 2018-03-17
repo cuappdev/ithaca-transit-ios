@@ -230,7 +230,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         desiredViewController.view.addSubview(snapshot)
         
         appDelegate.window?.rootViewController = desiredViewController
-        userDefaults.setValue(true, forKey: "onboardingShown")
+        userDefaults.setValue(true, forKey: Constants.UserDefaults.onboardingShown)
         
         UIView.animate(withDuration: 0.5, animations: {
             snapshot.layer.opacity = 0
@@ -242,7 +242,6 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     @objc func enableLocation() {
-        
         locationManager.requestWhenInUseAuthorization()
     }
     
@@ -254,7 +253,7 @@ class ActionOnboardViewController: UIViewController, CLLocationManagerDelegate {
         }
         
         // if denied while onboarding...
-        if status == .denied && !userDefaults.bool(forKey: "onboardingShown") && type == .locationServices {
+        if status == .denied && !userDefaults.bool(forKey: Constants.UserDefaults.onboardingShown) && type == .locationServices {
             
             let title = "Location Services Disabled"
             let message = "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services."

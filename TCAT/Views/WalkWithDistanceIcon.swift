@@ -25,7 +25,7 @@ class WalkWithDistanceIcon: UIView {
         travelDistanceLabel.textColor = .mediumGrayColor
         
         if distance > 0  {
-            travelDistanceLabel.text = "\(roundedString(distance))"
+            travelDistanceLabel.text = "\(distance.roundedString)"
             travelDistanceLabel.sizeToFit()
         }
         
