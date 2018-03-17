@@ -15,12 +15,12 @@ import Alamofire
 class Network {
     
     /// Change based on DEBUG or RELEASE mode (macros didn't work :/)
-    static let address = Network.debugSource
-    static let ipAddress = Network.debugIPAddress
+    static let address = Network.localSource
+    static let ipAddress = Network.localIPAddress
     static let apiVersion = "v1"
     
     /// Used for local backend testing
-    static let localIPAddress = "10.132.6.85"
+    static let localIPAddress = "10.132.4.213"
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)"
     
     /// Test server used for development
@@ -74,7 +74,7 @@ class Network {
             ]
 
             // for debugging
-            print("Request URL: \(address)/\(request.path)?arriveBy=\(request.parameters["arriveBy"]!)&end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)\n")
+            print("Route Request URL: \(address)/\(request.path)?arriveBy=\(request.parameters["arriveBy"]!)&end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)\n")
             
             callback(request)
 
@@ -124,7 +124,10 @@ class Network {
         let request: APIRequest<JSON, Error> = mainTron.swiftyJSON.request("delay")
         request.method = .get
         request.parameters = ["stopID": stopId, "tripID": tripId]
-        // print("Delay request URL: \(source)/delay?stopID=\(request.parameters["stopID"]!)&tripID=\(request.parameters["tripID"]!)")
+        
+        
+        print("Delay request URL: \(address)/\(request.path)?stopID=\(request.parameters["stopID"]!)&tripID=\(request.parameters["tripID"]!)")
+        
         return request
     }
     
