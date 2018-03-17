@@ -136,6 +136,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     private func setRouteSelectionView(withDestination destination: Place?){
+        routeSelection.fromSearchbar.setTitle(Constants.Phrases.fromSearchBarPlaceholder, for: .normal)
         routeSelection.toSearchbar.setTitle(destination?.name ?? "", for: .normal)
     }
 
@@ -183,18 +184,18 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         case .from:
 
             if let startingDestinationName = searchFrom?.name {
-                if startingDestinationName != Constants.Stops.currentLocation {
+                if startingDestinationName != Constants.Stops.currentLocation && startingDestinationName != Constants.Phrases.fromSearchBarPlaceholder {
                     searchBarText = startingDestinationName
                 }
             }
-            placeholder = "Choose starting point..."
+            placeholder = Constants.Phrases.fromSearchBarPlaceholder
 
         case .to:
 
             if let endingDestinationName = searchTo?.name {
                 searchBarText = endingDestinationName
             }
-            placeholder = "Choose destination..."
+            placeholder = Constants.Phrases.toSearchBarPlaceholder
 
         }
 

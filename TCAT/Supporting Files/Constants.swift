@@ -1,5 +1,5 @@
 //
-//  UserDefaultConstants.swift
+//  Constants.swift
 //  TCAT
 //
 //  Created by Monica Ong on 9/16/17.
@@ -69,6 +69,8 @@ struct Constants {
     struct Phrases {
         static let firstFavorite = "Add Your First Favorite!"
         static let searchPlaceholder = "Where to?"
+        static let fromSearchBarPlaceholder = "Choose starting point..."
+        static let toSearchBarPlaceholder = "Choose destination..."
     }
     
     struct UserDefaults {
