@@ -193,6 +193,7 @@ class RouteTableViewCell: UITableViewCell {
                 
                 let time = Time.timeString(from: Date(), to: startTime.addingTimeInterval(TimeInterval(delay)))
                 departureTimeLabel.text = "Board in \(time)"
+                departureTimeLabel.sizeToFit()
                 departureTimeLabel.textColor = .liveRedColor
             } else {
                 liveLabel.textColor = .liveGreenColor
