@@ -199,7 +199,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         case .to:
 
             if let endingDestinationName = searchTo?.name {
-                searchBarText = endingDestinationName
+                if endingDestinationName != Constants.Stops.currentLocation {
+                    searchBarText = endingDestinationName
+                }
             }
             placeholder = Constants.Phrases.toSearchBarPlaceholder
 
