@@ -185,7 +185,8 @@ class RouteTableViewCell: UITableViewCell {
 
     private func setLiveElements(withStartTime startTime: Date?, withDelay delay: Int?) {
         if let delay = delay, let startTime = startTime {
-            if delay > 0 {
+            let oneMinute = 60
+            if delay >= oneMinute {
                 liveLabel.textColor = .liveRedColor
                 liveLabel.text = "Late - \(Time.timeString(from: startTime.addingTimeInterval(TimeInterval(delay))))"
                 liveIndicatorView.setColor(to: .liveRedColor)
