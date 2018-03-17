@@ -124,7 +124,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
 
     }
     
-    /// Returns true if any cell is currently expanded
+    /// Returns the currently expanded cell, if any
     var expandedCell: LargeDetailTableViewCell? {
         
         for index in 0..<tableView.numberOfRows(inSection: 0) {
@@ -168,20 +168,22 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     
     func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
 
-        // Update supported drawer positions to 2 options after inital load
-        if drawer.drawerPosition == .partiallyRevealed {
-            if !justLoaded {
-               drawer.setNeedsSupportedDrawerPositionsUpdate()
-            }
-        } else {
-            justLoaded = false
-        }
+          // Update supported drawer positions to 2 options after inital load
+//        if drawer.drawerPosition == .partiallyRevealed {
+//            if !justLoaded {
+//               drawer.setNeedsSupportedDrawerPositionsUpdate()
+//            }
+//        } else {
+//            justLoaded = false
+//        }
         
-        // Center map on drawer collapse
-        if drawer.drawerPosition == .collapsed {
+        justLoaded = false
+        
+        // Center map on drawer change
+        if drawer.drawerPosition == .collapsed || drawer.drawerPosition == .partiallyRevealed  {
             guard let contentViewController = drawer.primaryContentViewController as? RouteDetailContentViewController
                 else { return }
-            contentViewController.centerMap()
+            contentViewController.centerMap(topHalfCentered: drawer.drawerPosition == .partiallyRevealed)
         }
         
     }
@@ -209,7 +211,9 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     }
     
     func supportedDrawerPositions() -> [PulleyPosition] {
-        return justLoaded ? [.collapsed, .partiallyRevealed, .open] : [.collapsed, .open]
+        return [.collapsed, .partiallyRevealed, .open]
+        // Switch from 3 states to 2 after loading
+        // return justLoaded ? [.collapsed, .partiallyRevealed, .open] : [.collapsed, .open]
     }
     
     // MARK: TableView Data Source and Delegate Functions
@@ -222,7 +226,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
 
         let direction = directions[indexPath.row]
 
-        if direction.type == .depart {
+        if direction.type == .depart || direction.type == .transfer {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier)! as! LargeDetailTableViewCell
             cell.setCell(direction, firstStep: indexPath.row == 0)
             return cell.height()
@@ -242,6 +246,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         func format(_ cell: UITableViewCell) -> UITableViewCell {
             cell.selectionStyle = .none
             if indexPath.row == directions.count - 1 {
+                // Remove seperator at end of table
                 cell.layoutMargins = UIEdgeInsets(top: 0, left: main.width, bottom: 0, right: 0)
             }
             return cell
@@ -282,7 +287,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
 //        }
 
         // Check if cell starts a bus direction, and should be expandable
-        if direction.type == .depart {
+        if direction.type == .depart || direction.type == .transfer {
 
             if justLoaded { summaryTapped() }
 

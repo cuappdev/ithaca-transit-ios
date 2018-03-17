@@ -51,7 +51,7 @@ class LiveIndicator: UIView {
     /// Draw UIViews and layers based on type and color. Does not add them.
     private func drawViews() {
         
-        let dotSize: CGFloat = size == .large ? 4 : 3
+        let dotSize: CGFloat = CGFloat(size.rawValue / 3.0)
         dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - dotSize + 0.5, width: dotSize, height: dotSize))
         dot.layer.cornerRadius = dot.frame.width / 2
         dot.clipsToBounds = true
@@ -59,7 +59,7 @@ class LiveIndicator: UIView {
         
         let arcOrigin = CGPoint(x: 1, y: frame.maxY - 1)
         let constant: CGFloat = 2
-        let radius: CGFloat = size == .large ? 7 : 5
+        let radius: CGFloat = CGFloat(size.rawValue / 2.0 + 1.0)
         
         smallArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius, lineWidth: constant)
         largeArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius + 2 * constant, lineWidth: constant)
@@ -73,11 +73,6 @@ class LiveIndicator: UIView {
         addSubview(dot)
         layer.addSublayer(smallArcLayer)
         layer.addSublayer(largeArcLayer)
-        
-        if size == .small {
-            frame.origin.y += 4
-        }
-        
     }
     
     private func createTopToLeftArc(origin: CGPoint, radius: CGFloat, lineWidth: CGFloat) -> CAShapeLayer {

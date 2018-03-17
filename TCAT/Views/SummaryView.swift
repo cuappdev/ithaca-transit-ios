@@ -115,6 +115,8 @@ class SummaryView: UIView {
             let walkIcon = UIImageView(image: #imageLiteral(resourceName: "walk"))
             walkIcon.tag = iconTag
             walkIcon.contentMode = .scaleAspectFit
+            // Ideally, have a larger higher-res version for this. But we need to release.
+            walkIcon.frame.size = CGSize(width: walkIcon.frame.size.width * 2, height: walkIcon.frame.size.height * 2)
             walkIcon.tintColor = .mediumGrayColor
             walkIcon.center = iconCenter
             addSubview(walkIcon)

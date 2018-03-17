@@ -148,7 +148,7 @@ class Direction: NSObject, NSCopying {
         stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
         stayOnBusForTransfer = json["stayOnBusForTransfer"].boolValue
         tripIdentifiers = json["tripIdentifiers"].arrayObject as? [String]
-        delay = json["delay"].intValue
+        delay = json["delay"].int
         
         // If depart direction, use bus stop locations (with id) for start and end
         if type == .depart, let start = stops.first, let end = stops.last {
@@ -193,7 +193,7 @@ class Direction: NSObject, NSCopying {
             return "Walk to \(name)"
             
         case .transfer:
-            return "at \(name). Stay on board."
+            return "at \(name). Stay on bus."
 
         }
     }
@@ -205,12 +205,13 @@ class Direction: NSObject, NSCopying {
             name: \(name),
             startTime: \(startTime),
             endTime: \(endTime),
-            startLocation: \(startLocation),
-            endLocation: \(endLocation),
-            stops: \(stops),
+            startLocation: \(startLocation.name),
+            endLocation: \(endLocation.name),
             distance: \(travelDistance),
             locationNameDescription: \(locationNameDescription),
-            stops: \(stops)
+            numberOfStops: \(stops.count)
+            routeNumber: \(routeNumber)
+            stayOnBusTransfer: \(stayOnBusForTransfer)
         }
         """
     }

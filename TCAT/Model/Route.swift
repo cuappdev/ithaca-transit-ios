@@ -85,6 +85,8 @@ class Route: NSObject, JSONDecodable {
     
     required init(json: JSON) throws {
         
+        // print("Route JSON", json)
+        
         departureTime = json["departureTime"].parseDate()
         arrivalTime = json["arrivalTime"].parseDate()
         startCoords = json["startCoords"].parseCoordinates()
@@ -106,15 +108,16 @@ class Route: NSObject, JSONDecodable {
         var offset = 0
         
         /// True if previous direction indicated next bus is a transfer to stay on
-        var isTransfer: Bool = false
+        // var isTransfer: Bool = false
         
         for (index, direction) in directions.enumerated() {
             
             if direction.type == .depart {
                 
-                if !direction.stayOnBusForTransfer {
-                    
-                    // print("Creating Arrival Direction")
+                let beyondRange = index + 1 > directions.count - 1
+                
+                // If this direction doesn't have a transfer afterwards
+                if !beyondRange && !directions[index+1].stayOnBusForTransfer {
                     
                     // Create Arrival Direction
                     let arriveDirection = direction.copy() as! Direction
@@ -128,14 +131,9 @@ class Route: NSObject, JSONDecodable {
                     
                 }
                 
-                if isTransfer {
-                    
-                     // print("Marked As Transfer Direction")
-                     // direction.type = .transfer
-                    
+                if direction.stayOnBusForTransfer {
+                    direction.type = .transfer
                 }
-                
-                isTransfer = direction.stayOnBusForTransfer
                 
                 // Remove inital bus stop and departure bus stop
                 if direction.stops.count >= 2 {
@@ -155,7 +153,7 @@ class Route: NSObject, JSONDecodable {
     // MARK: Parse JSON
     
     /// Handle route calculation data request.
-    static func getRoutes(in json: JSON, from: String?, to: String?,
+    static func parseRoutes(in json: JSON, from: String?, to: String?,
                           _ completion: @escaping (_ routes: [Route], _ error: NSError?) -> Void) {
         
         if json["success"].boolValue {
@@ -168,7 +166,7 @@ class Route: NSObject, JSONDecodable {
             completion(routes, nil)
         } else {
             let userInfo = ["description" : json["error"].stringValue]
-            let error = NSError(domain: "Route Calculation Failure", code: 400, userInfo: userInfo)
+            let error = NSError(domain: "Route Calculation Failure", code: 300, userInfo: userInfo)
             completion([], error)
         }
         
@@ -231,6 +229,8 @@ class Route: NSObject, JSONDecodable {
             arrivalTime: \(self.arrivalTime)\n
             startCoords: \(self.startCoords)\n
             endCoords: \(self.endCoords)\n
+            startName: \(self.startName)\n
+            endName: \(self.endName)\n
             timeUntilDeparture: \(self.timeUntilDeparture)\n
         """
         
@@ -238,36 +238,44 @@ class Route: NSObject, JSONDecodable {
         
     }
     
-    /** Return a one sentence summary of the route, based on the first depart
-        or walking direction. Returns "" if no directions.
+    /** Used for sharing. Return a one sentence summary of the route, based on
+        the first depart or walking direction. Returns "" if no directions.
      */
     var summaryDescription: String {
         
-        var description = "To get from \(self.startName) to \(self.endName),"
+        var description = "To get from \(startName) to \(endName),"
+        var noDepartDirection = true
         
         if description.contains(Constants.Stops.currentLocation) {
-            description = "To get to \(self.endName),"
+            description = "To get to \(endName),"
         }
         
-        if let direction = directions.first(where: { $0.type == .depart }) {
+        let departDirections = directions.filter { $0.type == .depart }
+        
+        for (index, direction) in departDirections.enumerated() {
+            
+            noDepartDirection = false
             
             let number = direction.routeNumber
             let start = direction.startLocation.name
             let end = direction.endLocation.name
-            description += " take Route \(number) from \(start) to \(end)."
+            let line = "take Route \(number) from \(start) to \(end). "
             
-        } else {
+            if index == 0 {
+                description += " \(line)"
+            } else {
+                description += "Then, \(line)"
+            }
             
-            // Walking Direction
+        }
+        
+        // Walking Direction
+        if noDepartDirection {
             guard let direction = directions.first else {
                 return ""
             }
-            
-            let distance = roundedString(direction.travelDistance)
-            let start = direction.startLocation.name
-            let end = direction.endLocation.name
-            description = "Walk \(distance) from \(start) to \(end)."
-            
+            let distance = direction.travelDistance.roundedString
+            description = "Walk \(distance) from \(startName) to \(endName)."
         }
         
         return description

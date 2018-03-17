@@ -13,6 +13,7 @@ import SwiftyJSON
 import Fabric
 import Crashlytics
 import SafariServices
+import SwiftRegister
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
@@ -27,33 +28,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         GMSServices.provideAPIKey(json["google-maps"].stringValue)
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
-        // userDefaults.set(false, forKey: "onboardingShown")
-        if userDefaults.value(forKey: "onboardingShown") == nil {
-            userDefaults.set(false, forKey: "onboardingShown")
+        // Log basic information
+        let payload = DeviceInformationPayload().toEvent()
+        RegisterSession.shared.logEvent(event: payload)
+        
+        // Initalize User Defaults
+        if userDefaults.value(forKey: Constants.UserDefaults.onboardingShown) == nil {
+            userDefaults.set(false, forKey: Constants.UserDefaults.onboardingShown)
         }
-        
-        // Initalize window without storyboard
-        getBusStops()
-
-        let rootVC = userDefaults.bool(forKey: "onboardingShown") ? HomeViewController() : OnboardViewController()
-        let navigationController = CustomNavigationController(rootViewController: rootVC)
-
-        UIApplication.shared.statusBarStyle = .default
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window!.rootViewController = navigationController
-        self.window?.makeKeyAndVisible()
-        
         if userDefaults.value(forKey: Constants.UserDefaults.recentSearch) == nil {
             userDefaults.set([Any](), forKey: Constants.UserDefaults.recentSearch)
         }
         if userDefaults.value(forKey: Constants.UserDefaults.favorites) == nil {
             userDefaults.set([Any](), forKey: Constants.UserDefaults.favorites)
         }
+        
+        // Debug Onboarding
+        // userDefaults.set(false, forKey: Constants.UserDefaults.onboardingShown)
+        
+        getBusStops()
+        
+        // Initalize first view based on context
+        let showOnboarding = !userDefaults.bool(forKey: Constants.UserDefaults.onboardingShown)
+        let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : HomeViewController()
+        let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
+            CustomNavigationController(rootViewController: rootVC)
+        UIApplication.shared.statusBarStyle = showOnboarding ? .lightContent : .default
+        
+        // Initalize window without storyboard
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.window!.rootViewController = navigationController
+        self.window?.makeKeyAndVisible()
 
-        #if DEBUG
-            print("DEBUG MODE")
-        #else
-            print("RELEASE MODE")
+        // Initalize Fabric + Crashlytics (RELEASE)
+        #if !DEBUG
             Fabric.with([Crashlytics.self])
         #endif
         

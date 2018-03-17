@@ -12,15 +12,19 @@ import CoreLocation
 import GooglePlaces
 import Alamofire
 
+enum NetworkType: String {
+    case local, debug, release
+}
+
 class Network {
     
-    /// Change based on DEBUG or RELEASE mode (macros didn't work :/)
-    static let address = Network.debugSource
-    static let ipAddress = Network.debugIPAddress
+    // MARK: Global Network Variables
+    
+    static let networkType: NetworkType = .debug
     static let apiVersion = "v1"
     
     /// Used for local backend testing
-    static let localIPAddress = "10.132.6.85"
+    static let localIPAddress = "10.132.6.238"
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
     
     /// Test server used for development
@@ -30,6 +34,24 @@ class Network {
     /// Deployed server instance used for release
     static let releaseIPAddress = "54.174.47.32"
     static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
+    
+    /// Network IP address being used for specified networkType
+    static var ipAddress: String {
+        switch networkType {
+        case .local: return localIPAddress
+        case .debug: return debugIPAddress
+        case .release: return releaseIPAddress
+        }
+    }
+    
+    /// Network source currently being used
+    static var address: String {
+        switch networkType {
+        case .local: return localSource
+        case .debug: return debugSource
+        case .release: return releaseSource
+        }
+    }
     
     static let mainTron = TRON(baseURL: Network.address)
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
@@ -59,7 +81,10 @@ class Network {
 
         getParameterData(start: start, end: end) { (startCoords, endCoords) in
 
-            guard let startCoords = startCoords, let endCoords = endCoords else {
+            guard
+                let startCoords = startCoords,
+                let endCoords = endCoords
+            else {
                 callback(nil)
                 return
             }
@@ -70,13 +95,14 @@ class Network {
                 "arriveBy"          :   type == .arriveBy,
                 "end"               :   "\(endCoords.latitude),\(endCoords.longitude)",
                 "start"             :   "\(startCoords.latitude),\(startCoords.longitude)",
-                "time"              :   time.timeIntervalSince1970
+                "time"              :   time.timeIntervalSince1970,
+                "destinationName"   :   end.getName()
             ]
 
             // for debugging
             // print("Request URL: \(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
             
-            print(request.parameters)
+            print("Request Parameters:", request.parameters)
 
             callback(request)
 

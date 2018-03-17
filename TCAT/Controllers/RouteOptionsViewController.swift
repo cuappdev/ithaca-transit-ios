@@ -60,11 +60,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
 
-    var banner: StatusBarNotificationBanner? = {
-        let banner = StatusBarNotificationBanner(title: "No internet connection", style: .danger)
-        banner.autoDismiss = false
-        return banner
-    }()
+    var banner: StatusBarNotificationBanner? = nil
 
     var isBannerShown: Bool = false
     var cellUserInteraction: Bool = true
@@ -118,6 +114,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         takedownReachability()
         if isBannerShown {
             banner?.dismiss()
+            banner = nil
             UIApplication.shared.statusBarStyle = .default
         }
     }
@@ -157,7 +154,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     // MARK: Search bar
 
-    private func setupSearchBar(){
+    private func setupSearchBar() {
         searchBarView = SearchBarView()
         searchBarView.resultsViewController?.destinationDelegate = self
         searchBarView.resultsViewController?.searchBarCancelDelegate = self
@@ -166,12 +163,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         hideSearchBar()
     }
 
-    @objc func searchingTo(sender: UIButton){
+    @objc func searchingTo(sender: UIButton? = nil) {
         searchType = .to
         presentSearchBar()
     }
 
-    @objc func searchingFrom(sender: UIButton){
+    @objc func searchingFrom(sender: UIButton? = nil) {
         searchType = .from
         searchBarView.resultsViewController?.shouldShowCurrentLocation = true
         presentSearchBar()
@@ -283,7 +280,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             searchTime = Date()
         }
 
-        if let time = searchTime, let startingDestination = searchFrom as? CoordinateAcceptor, let endingDestination = searchTo as? CoordinateAcceptor{
+        if let time = searchTime,
+            let startingDestination = searchFrom as? CoordinateAcceptor,
+            let endingDestination = searchTo as? CoordinateAcceptor
+        {
 
             routes = []
             currentlySearching = true
@@ -291,21 +291,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             routeResults.reloadData()
 
             // Check if to and from location is the same
-            if searchFrom?.name == searchTo?.name {
-
-                let title = "You're here!"
-                let message = "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta)."
-                let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-                let action = UIAlertAction(title: "😐😒🙄", style: .cancel, handler: nil)
-                alertController.addAction(action)
-                present(alertController, animated: true, completion: nil)
-
-                currentlySearching = false
-                routeResults.reloadData()
-
-            }
-
-            else {
+            if searchFrom?.name != searchTo?.name {
                 
                 Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
                     
@@ -313,45 +299,57 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                         self.routeResults.refreshControl?.endRefreshing()
                     } else {
                         self.refreshControl.endRefreshing()
-
                     }
                     
                     func requestDidFinish(with error: NSError? = nil) {
                         if let err = error {
-                            print("RouteOptionVC searchForRoutes Error: \(err)")
-                            // print("Error Description:", err.userInfo["description"] as? String)
-                            self.banner = StatusBarNotificationBanner(title: "Could not connect to server", style: .danger)
+                            
+                            let message = err.code >= 400 ? "Could not connect to server" : "Route calculation error. Please retry."
+                            let type: BannerStyle = err.code >= 400 ? .danger : .warning
+                            
+                            self.banner = StatusBarNotificationBanner(title: message, style: type)
                             self.banner?.autoDismiss = false
                             self.banner?.dismissOnTap = true
                             self.banner?.show(queuePosition: .front, on: self.navigationController)
                             self.isBannerShown = true
-                            UIApplication.shared.statusBarStyle = .lightContent
+                            
+                            let payload = GetRoutesErrorPayload(description: error?.userInfo["description"] as? String ?? "",
+                                                                url: error?.userInfo["url"] as? String)
+                            RegisterSession.shared.logEvent(event: payload.toEvent())
+                            
                         } else {
                             if self.isBannerShown {
                                 self.isBannerShown = false
                                 self.banner?.dismiss()
-                                UIApplication.shared.statusBarStyle = .default
+                                self.banner = nil
                             }
                         }
+                        
+                        UIApplication.shared.statusBarStyle = self.preferredStatusBarStyle
                         self.currentlySearching = false
                         self.routeResults.reloadData()
+                        
                     }
                     
                     if let alamofireRequest = request?.perform(withSuccess: { (routeJSON) in
-                        Route.getRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes,error) in
+                        Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
                             self.routes = parsedRoutes
-                            requestDidFinish(with: error)
+                            requestDidFinish(with: error) // 300 error
                         })
-                    }, failure: { (error) in
-                        print("Request Failure:", error)
+                    }, failure: { (networkError) in
+                        let description = (networkError.errorDescription ?? "n/a") + " • " + (networkError.failureReason ?? "n/a")
+                        let error = NSError(domain: "Network Failure", code: 500, userInfo: [
+                            "description" : description,
+                            "url" : networkError.request?.url?.absoluteString ?? "n/a"
+                        ])
                         self.routes = []
-                        requestDidFinish(with: error as NSError)
+                        requestDidFinish(with: error)
                     })
                     { // Handle non-null request
                         let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
                                                                     requestUrl: alamofireRequest.request?.url?.absoluteString,
                                                                     stopType: nil).toEvent()
-                        let _ = RegisterSession.shared?.logEvent(event: event)
+                        RegisterSession.shared.logEvent(event: event)
                     }
                         
                     else { // Catch error of coordinates not being found
@@ -361,39 +359,72 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     
                 }
                 
+            } // end conditional ehecking names
+            
+            else {
+                
+                let title = "You're here!"
+                let message = "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta)."
+                let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                let action = UIAlertAction(title: "😐😒🙄", style: .cancel, handler: nil)
+                alertController.addAction(action)
+                present(alertController, animated: true, completion: nil)
+                
+                currentlySearching = false
+                routeResults.reloadData()
+                
             }
 
-        }
+        } // end if let
 
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return isBannerShown ? .lightContent : .default
     }
 
     // MARK: Location Manager Delegate
 
-    private func setupLocationManager(){
+    private func setupLocationManager() {
         locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = 10
+        locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-        locationManager.stopUpdatingLocation()
+        
         print("RouteOptionVC locationManager didFailWithError: \(error.localizedDescription)")
-
-        let title = "Couldn't Find \(Constants.Stops.currentLocation)"
-        let message = "Please ensure you are connected to the internet and have enabled location permissions."
+        locationManager.stopUpdatingLocation()
+        var boolean = true
+        
+        if let showReminder = userDefaults.value(forKey: Constants.UserDefaults.locationAuthReminder) as? Bool {
+            if showReminder {
+                boolean = false
+            } else {
+                // If the user doesn't want to use location, auto show from field
+                // Currently not working, but such an edge case, leaving for now
+                self.searchingFrom()
+                return
+            }
+        }
+        
+        // Most common, realistic error
+        let title = "Location Services Disabled"
+        let message = "Tap Settings to change your location permissions, or continue using a limited version of the app."
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-
-        let settings = UIAlertAction(title: "Settings", style: .default) { (_) in
+        alertController.addAction(UIAlertAction(title: "Dismiss", style: .default) { (_) in
+            userDefaults.set(boolean, forKey: Constants.UserDefaults.locationAuthReminder)
+        })
+        alertController.addAction(UIAlertAction(title: "Settings", style: .default) { (_) in
             UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
-        }
-
-        alertController.addAction(settings)
+        })
 
         present(alertController, animated: true, completion: nil)
+        
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -556,15 +587,16 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         switch reachability.connection {
 
             case .none:
-                banner?.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
+                banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
+                banner!.autoDismiss = false
+                banner!.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
                 isBannerShown = true
                 setUserInteraction(to: false)
 
             case .cellular, .wifi:
-                print("back online")
                 if isBannerShown {
-                    print("back!")
                     banner?.dismiss()
+                    banner = nil
                     isBannerShown = false
                 }
                 setUserInteraction(to: true)

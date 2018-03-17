@@ -33,9 +33,9 @@ class RouteDetailViewController: PulleyViewController {
         snapMode = .nearestPositionUnlessExceeded(threshold: threshold)
         
         // Set left back button
-        guard let buttonAttributes = (navigationController as? CustomNavigationController)?.buttonTitleTextAttributes
-            else { return }
-        self.navigationItem.leftBarButtonItem?.setTitleTextAttributes(buttonAttributes, for: .normal)
+        navigationItem.leftBarButtonItem?.setTitleTextAttributes(
+            CustomNavigationController.buttonTitleTextAttributes, for: .normal
+        )
         
     }
     
