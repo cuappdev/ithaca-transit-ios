@@ -141,12 +141,12 @@ class RouteTableViewCell: UITableViewCell {
         
         timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay as () -> Void), userInfo: nil, repeats: true)
         
-        let isWalkingRoute = route.isWalkingRoute()
+        let isWalkingRoute = route.isRawWalkingRoute()
         
-        let firstDepartDirection = route.getFirstDepartDirection()
+        let firstDepartDirection = route.getFirstDepartRawDirection()
 
-        if let firstDepartDirection = firstDepartDirection, let lastArriveDirection = route.getLastArriveDirection(){
-            setTravelTime(withDepartureTime: firstDepartDirection.startTime, withArrivalTime: lastArriveDirection.endTime)
+        if let firstDepartDirection = firstDepartDirection, let lastDepartDirection = route.getLastDepartRawDirection(){
+            setTravelTime(withDepartureTime: firstDepartDirection.startTime, withArrivalTime: lastDepartDirection.endTime)
         }
         else {
             setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
@@ -160,11 +160,11 @@ class RouteTableViewCell: UITableViewCell {
             setDepartureTime(withTime: route.departureTime, withWalkingRoute: isWalkingRoute)
         }
         
-        routeDiagram.setData(withDirections: route.directions, withTravelDistance: route.travelDistance, withWalkingRoute: isWalkingRoute)
+        routeDiagram.setData(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: isWalkingRoute)
     }
     
     @objc func updateLiveElementsWithDelay() {
-        if let route = route, let direction = route.getFirstDepartDirection(), let tripId = direction.tripIdentifiers?.first, let stopId = direction.stops.first?.id  {
+        if let route = route, let direction = route.getFirstDepartRawDirection(), let tripId = direction.tripIdentifiers?.first, let stopId = direction.stops.first?.id  {
             Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
                 if json["success"].boolValue {
                     self.setLiveElements(withStartTime: direction.startTime, withDelay: json["data"]["delay"].int)
@@ -209,7 +209,7 @@ class RouteTableViewCell: UITableViewCell {
             liveLabel.textColor = .white
             
             if let route = route {
-                setDepartureTime(withTime: route.departureTime, withWalkingRoute: route.isWalkingRoute())
+                setDepartureTime(withTime: route.departureTime, withWalkingRoute: route.isRawWalkingRoute())
             }
         }
     }

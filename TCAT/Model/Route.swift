@@ -65,10 +65,13 @@ class Route: NSObject, JSONDecodable {
     var boundingBox: Bounds
 
     /// The number of transfers in a route. Defaults to 0
-    var numberOfTransfers: Int = 0
+    var numberOfTransfers: Int
 
     /// A list of Direction objects (used for Route Detail)
-    var directions: [Direction] = [Direction]()
+    var directions: [Direction]
+    
+    /// For route options vc
+    var rawDirections: [Direction]
 
     /** A description of the starting location of the route (e.g. Current Location, Arts Quad)
         Default assumption is Current Location.
@@ -96,15 +99,50 @@ class Route: NSObject, JSONDecodable {
         boundingBox = json["boundingBox"].parseBounds()
         numberOfTransfers = json["numberOfTransfers"].intValue
         directions = json["directions"].arrayValue.map { Direction(from: $0) }
-
+        rawDirections = json["directions"].arrayValue.map { Direction(from: $0) }
+        
         // Replace hard-coded destination
         directions.last?.name = endName
 
         super.init()
 
-        // Parse and format directions
+        // Format raw directions
 
-        /// Variable to keep track of additions to direction list (Arrival Directions)
+        let first = 0
+        for (index, direction) in rawDirections.enumerated() {
+            if direction.type == .walk {
+                // Change walking direction name to name of location walking from
+                if index == first {
+                    direction.name = startName
+                }
+                else {
+                    direction.name = rawDirections[index - 1].name
+                }
+            }
+        }
+        
+        if let direction = rawDirections.last {
+            if direction.type == .walk {
+            // Append extra walk direction for walking ending location
+            rawDirections.append(Direction(type: .walk, name: endName, startLocation: direction.startLocation, endLocation: direction.endLocation, startTime: direction.startTime, endTime: direction.endTime, path: direction.path, travelDistance: direction.travelDistance, routeNumber: direction.routeNumber, stops: direction.stops, stayOnBusForTransfer: direction.stayOnBusForTransfer, tripIdentifiers: direction.tripIdentifiers, delay: direction.delay))
+            }
+            // Append extra arrive direction for depart ending location
+            else if direction.type == .depart {
+                rawDirections.append(Direction(type: .arrive, name: endName, startLocation: direction.startLocation, endLocation: direction.endLocation, startTime: direction.startTime, endTime: direction.endTime, path: direction.path, travelDistance: direction.travelDistance, routeNumber: direction.routeNumber, stops: direction.stops, stayOnBusForTransfer: direction.stayOnBusForTransfer, tripIdentifiers: direction.tripIdentifiers, delay: direction.delay))
+            }
+        }
+        
+        // Change all walking directions, except for first and last direction, to arrive
+        let last = rawDirections.count - 1
+        for (index, direction) in rawDirections.enumerated() {
+            if index != last && index != first && direction.type == .walk {
+                direction.type = .arrive
+            }
+        }
+        
+        // Parse and format directions
+        
+        // Variable to keep track of additions to direction list (Arrival Directions)
         var offset = 0
 
         for (index, direction) in directions.enumerated() {
@@ -140,30 +178,6 @@ class Route: NSObject, JSONDecodable {
             }
 
         }
-
-        // For walk-only direction, insert direction with the starting location
-        if directions.count == 1 && directions.first?.type == .walk {
-            if let firstDirection = directions.first {
-                let startingLocationDirection = Direction(type: .walk,
-                                          name: startName,
-                                          startLocation: firstDirection.startLocation,
-                                          endLocation: firstDirection.endLocation,
-                                          startTime: firstDirection.startTime,
-                                          endTime: firstDirection.endTime,
-                                          path: firstDirection.path,
-                                          travelDistance: firstDirection.travelDistance,
-                                          routeNumber: firstDirection.routeNumber,
-                                          stops: firstDirection.stops,
-                                          stayOnBusForTransfer: firstDirection.stayOnBusForTransfer,
-                                          tripIdentifiers: firstDirection.tripIdentifiers,
-                                          delay: firstDirection.delay)
-                directions.insert(startingLocationDirection, at: 0)
-            }
-        }
-
-        // Calculate travel distance
-        calculateTravelDistance(fromDirection: directions)
-
     }
 
     // MARK: Parse JSON
@@ -190,22 +204,22 @@ class Route: NSObject, JSONDecodable {
 
     // MARK: Process routes
 
-    func isWalkingRoute() -> Bool {
-        return directions.reduce(true) { $0 && $1.type == .walk }
+    func isRawWalkingRoute() -> Bool {
+        return rawDirections.reduce(true) { $0 && $1.type == .walk }
     }
 
-    func getFirstDepartDirection() -> Direction? {
-        return directions.first { $0.type == .depart }
+    func getFirstDepartRawDirection() -> Direction? {
+        return rawDirections.first { $0.type == .depart }
     }
 
-    func getLastArriveDirection() -> Direction? {
-        return directions.reversed().first { $0.type == .arrive }
+    func getLastDepartRawDirection() -> Direction? {
+        return rawDirections.reversed().first { $0.type == .depart }
     }
 
-    func getNumOfWalkLines() -> Int {
+    func getRawNumOfWalkLines() -> Int {
         var count = 0
-        for (index, direction) in directions.enumerated() {
-            if index != directions.count - 1 && direction.type == .walk {
+        for (index, direction) in rawDirections.enumerated() {
+            if index != rawDirections.count - 1 && direction.type == .walk {
                 count += 1
             }
         }
@@ -215,22 +229,22 @@ class Route: NSObject, JSONDecodable {
 
     /** Calculate travel distance from location passed in to first route summary object and updates travel distance of route
      */
-    func calculateTravelDistance(fromDirection directions: [Direction]) {
+    func calculateTravelDistance(fromRawDirections rawDirections: [Direction]) {
 
         // firstRouteOptionsStop = first bus stop in the route
-        guard var stop = directions.first else {
+        guard var stop = rawDirections.first else {
             return
         }
 
         // If more than just a walking route that starts with walking
-        if !isWalkingRoute() && directions.first?.type == .walk && directions.count > 1 {
-            stop = directions[1]
+        if !isRawWalkingRoute() && rawDirections.first?.type == .walk && rawDirections.count > 1 {
+            stop = rawDirections[1]
         }
 
         let fromLocation = CLLocation(latitude: startCoords.latitude, longitude: startCoords.longitude)
         var endLocation = CLLocation(latitude: stop.startLocation.latitude, longitude: stop.startLocation.longitude)
 
-        if isWalkingRoute() {
+        if isRawWalkingRoute() {
             endLocation = CLLocation(latitude: stop.endLocation.latitude, longitude: stop.endLocation.longitude)
         }
 
@@ -296,11 +310,6 @@ class Route: NSObject, JSONDecodable {
 
         return description
 
-    }
-
-    /// Number of directions with .depart type
-    func numberOfBusRoutes() -> Int {
-        return directions.reduce(0) { $0 + ($1.type == .depart ? 1 : 0) }
     }
 
 }

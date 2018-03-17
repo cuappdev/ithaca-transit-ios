@@ -334,6 +334,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     if let alamofireRequest = request?.perform(withSuccess: { (routeJSON) in
                         Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
                             self.routes = parsedRoutes
+                            
+                            for (index, route) in self.routes.enumerated() {
+                                print("Directions \(index): \(route.rawDirections)")
+                            }
                             requestDidFinish(with: error) // 300 error
                         })
                     }, failure: { (networkError) in
@@ -559,7 +563,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         cell?.addGestureRecognizer(longPressGestureRecognizer)
         
         setCellUserInteraction(cell, to: cellUserInteraction)
-
+        
         return cell!
     }
 
@@ -691,12 +695,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let directions = routes[indexPath.row].directions
-        let isWalkingRoute = routes[indexPath.row].isWalkingRoute()
+        let directions = routes[indexPath.row].rawDirections
+        let isWalkingRoute = routes[indexPath.row].isRawWalkingRoute()
 
         // if walking route, don't skip first walking direction. Ow skip first walking direction
         let numOfStops = isWalkingRoute ? directions.count : (directions.first?.type == .walk ? directions.count - 1 : directions.count)
-        let rowHeight = RouteTableViewCell().heightForCell(withNumOfStops: numOfStops, withNumOfWalkLines: routes[indexPath.row].getNumOfWalkLines())
+        let rowHeight = RouteTableViewCell().heightForCell(withNumOfStops: numOfStops, withNumOfWalkLines: routes[indexPath.row].getRawNumOfWalkLines())
 
         return rowHeight
     }
