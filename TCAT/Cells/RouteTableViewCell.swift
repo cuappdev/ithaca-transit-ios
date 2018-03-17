@@ -167,7 +167,7 @@ class RouteTableViewCell: UITableViewCell {
         if let route = route, let direction = route.getFirstDepartDirection(), let tripId = direction.tripIdentifiers?.first, let stopId = direction.stops.first?.id  {
             Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
                 if json["success"].boolValue {
-                    self.setLiveElements(withStartTime: direction.startTime, withDelay: json["data"]["delay"].intValue)
+                    self.setLiveElements(withStartTime: direction.startTime, withDelay: json["data"]["delay"].int)
                 }
                 else {
                     self.setLiveElements(withStartTime: nil, withDelay: nil)
@@ -206,7 +206,9 @@ class RouteTableViewCell: UITableViewCell {
             liveIndicatorView.setColor(to:.white)
             liveLabel.textColor = .white
             
-            departureTimeLabel.textColor = .primaryTextColor
+            if let route = route {
+                setDepartureTime(withTime: route.departureTime, withWalkingRoute: route.isWalkingRoute())
+            }
         }
     }
 
