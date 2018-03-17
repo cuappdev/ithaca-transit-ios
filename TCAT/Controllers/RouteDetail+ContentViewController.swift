@@ -33,6 +33,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     var networkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
     
     var buses = [GMSMarker]()
+    var busIndicators = [GMSMarker]()
     var banner: StatusBarNotificationBanner? = nil
 
     var route: Route!
@@ -130,7 +131,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         marker.iconView = bus.iconView
         marker.appearAnimation = .pop
         setIndex(of: marker, with: .bussing)
-        marker.userData = bus
+        marker.userData = [
+            Constants.BusUserData.actualLocation : coords,
+            Constants.BusUserData.placedLocation : coords
+        ]
         marker.map = mapView
         buses.append(marker)
         
@@ -332,7 +336,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                         self.hideBanner()
                     }
                     
-                    self.showBanner("Tracking available near departure time", status: .info)
+                    self.showBanner(Constants.Banner.trackingLater, status: .info)
                     
                 case .validData:
                     // print("Valid Data for", direction.routeNumber)
@@ -354,7 +358,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         }) { (error) in
             
             print("RouteDetailVC getBusLocations Error:", error)
-            self.showBanner("Cannot connect to live tracking", status: .danger)
+            self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
             
         } // network completion handler end
         
@@ -366,6 +370,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
      */
     func setBusLocation(_ bus: BusLocation) {
         
+        /// New bus coordinates
         let busCoords = CLLocationCoordinate2D(latitude: bus.latitude, longitude: bus.longitude)
         let existingBus = buses.first(where: {
             return ($0.userData as? BusLocation)?.vehicleID == bus.vehicleID
@@ -379,10 +384,23 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             
             CATransaction.begin()
             CATransaction.setAnimationDuration(networkRefreshRate + latencyConstant)
+            
+            guard let iconView = bus.iconView as? BusLocationView else { return }
             newBus.appearAnimation = .none
-            newBus.userData = bus
-            (newBus.iconView as? BusLocationView)?.updateBus(from: existingBus!.position, to: busCoords)
+            
+            let placement = calculatePlacement(position: busCoords, view: iconView)
+            newBus.userData = [
+                Constants.BusUserData.actualLocation : busCoords,
+                Constants.BusUserData.placedLocation : placement ?? busCoords,
+                Constants.BusUserData.id : bus.tripID
+            ]
+            
+            // Position
             newBus.position = busCoords
+            // Actual Coordinates, Bearing
+            iconView.updateBus(from: existingBus!.position, to: busCoords)
+            
+            
             CATransaction.commit()
             
         }
@@ -390,12 +408,22 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         // Otherwise, add bus to map
         else {
             
+            guard let iconView = bus.iconView as? BusLocationView else { return }
             let marker = GMSMarker(position: busCoords)
-            (bus.iconView as? BusLocationView)?.updateBus(to: busCoords, with: Double(bus.heading))
-            marker.iconView = bus.iconView
             marker.appearAnimation = .pop
+            marker.iconView = iconView
+            
+            let placement = calculatePlacement(position: busCoords, view: iconView)
+            marker.userData = [
+                Constants.BusUserData.actualLocation : busCoords,
+                Constants.BusUserData.placedLocation : placement ?? busCoords,
+                Constants.BusUserData.id : bus.tripID
+            ]
+            
+            // Actual Coordinates, Bearing
+            iconView.updateBus(to: busCoords, with: Double(bus.heading))
+
             setIndex(of: marker, with: .bussing)
-            marker.userData = bus
             marker.map = mapView
             buses.append(marker)
             
@@ -412,41 +440,37 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     // MARK: Google Map View Delegate Functions
     
     func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
-        // print("didChange to", position)
         
         for bus in buses {
             
             guard let busLocationView = bus.iconView as? BusLocationView else { continue }
-            let actualLocation = busLocationView.position!
             
-            // Update
-            if let placement = calculatePlacement(position: actualLocation, view: busLocationView) {
-                bus.position = placement
-                print("calculated position:", placement)
-                let bearing = calculateBearing(from: placement, to: actualLocation)
-                print()
-                print("bearing:", bearing)
-                busLocationView.updateBus(with: bearing)
-                busLocationView.setCircle(isVisible: false)
-            } else {
-                // No placement needed
-                bus.position = actualLocation
-                busLocationView.setCircle(isVisible: true)
+            if let existingIndicator = busIndicators.first(where: {
+                guard let markerUserData = $0.userData as? [String : Any] else { return false }
+                guard let busUserData = bus.userData as? [String : Any] else { return false }
+                return markerUserData[Constants.BusUserData.id] as? String == busUserData[Constants.BusUserData.id] as? String
+            })
+            
+            { // Update Indicator
+                if let placement = calculatePlacement(position: bus.position, view: busLocationView) {
+                    existingIndicator.position = placement
+                    existingIndicator.rotation = calculateBearing(from: placement, to: bus.position)
+                    existingIndicator.appearAnimation = .none
+                } else {
+                    existingIndicator.map = nil
+                }
+            } else { // Create Indicator
+                if let placement = calculatePlacement(position: bus.position, view: busLocationView) {
+                    let indicator = GMSMarker(position: placement)
+                    indicator.appearAnimation = .pop
+                    indicator.iconView = UIImageView(image: #imageLiteral(resourceName: "bearing"))
+                    indicator.map = mapView
+                }
+                
             }
             
         }
         
-    }
-    
-    func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
-//        print("idle")
-//        for bus in buses {
-//            guard let busLocationView = bus.iconView as? BusLocationView else { continue }
-//            let actualLocation = busLocationView.position!
-//            let bearing = calculateBearing(from: bus.position, to: actualLocation)
-//            print("bearing:", bearing)
-//            busLocationView.updateBus(with: bearing)
-//        }
     }
     
     func calculatePlacement(position: CLLocationCoordinate2D, view: BusLocationView) -> CLLocationCoordinate2D? {
@@ -540,6 +564,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 return value * 180 / .pi
             }
             
+            print("placement lat:", point1.latitude)
+            print("actualLocation lat:", point2.latitude)
+            print("placement long:", point1.longitude)
+            print("actualLocation long:", point2.longitude)
+            
             let lat1 = degreesToRadians(point1.latitude)
             let lon1 = degreesToRadians(point1.longitude)
             let lat2 = degreesToRadians(point2.latitude)
@@ -617,7 +646,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 
                     let marker = GMSMarker(position: waypoint.coordinate)
                     marker.iconView = waypoint.iconView
-                    marker.userData = waypoint
+                    // marker.userData = waypoint
                     marker.map = mapView
                     setIndex(of: marker, with: waypoint.wpType)
                 

@@ -47,7 +47,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     let reachability = Reachability(hostname: Network.ipAddress)
     var isBannerShown = false
     
-    var banner: StatusBarNotificationBanner? = nil
+    var banner: StatusBarNotificationBanner?
     
     func tctSectionHeaderFont() -> UIFont? {
         return UIFont.systemFont(ofSize: 14)
@@ -142,7 +142,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         switch reachability.connection {
             case .none:
                 if !isBannerShown {
-                    banner = StatusBarNotificationBanner(title: "No internet connection", style: .danger)
+                    banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
                     banner!.autoDismiss = false
                     banner!.show(queuePosition: .front, on: navigationController)
                     isBannerShown = true

@@ -281,8 +281,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
 
         if let time = searchTime,
-            var startingDestination = searchFrom as? CoordinateAcceptor,
-            var endingDestination = searchTo as? CoordinateAcceptor
+            let startingDestination = searchFrom as? CoordinateAcceptor,
+            let endingDestination = searchTo as? CoordinateAcceptor
         {
 
             routes = []
@@ -587,7 +587,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         switch reachability.connection {
 
             case .none:
-                banner = StatusBarNotificationBanner(title: "No internet connection", style: .danger)
+                banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
                 banner!.autoDismiss = false
                 banner!.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
                 isBannerShown = true

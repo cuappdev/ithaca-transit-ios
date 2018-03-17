@@ -35,10 +35,6 @@ class BusStop: Place, CoordinateAcceptor {
         return object.lat == lat && object.long == long
     }
     
-    func getName() -> String {
-        return name
-    }
-    
     // MARK: NSCoding
     
     required init(coder aDecoder: NSCoder) {

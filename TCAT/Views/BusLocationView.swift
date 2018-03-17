@@ -30,7 +30,7 @@ class BusLocationView: UIView {
     /// The current position of the bearing icon
     var currentBearing: Double = 0
     
-    /// The coordinates of the bus on a map
+    /// The actual coordinates of the bus on a map
     var position: CLLocationCoordinate2D!
     
     init(number: Int, bearing: Int, position: CLLocationCoordinate2D) {

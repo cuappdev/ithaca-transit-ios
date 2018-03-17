@@ -30,6 +30,18 @@ struct Constants {
         
     }
     
+    struct Banner {
+        static let noInternetConnection = "No internet connection"
+        static let trackingLater = "Tracking available near departure time"
+        static let cannotConnectLive = "Cannot connect to live tracking"
+    }
+    
+    struct BusUserData {
+        static let placedLocation = "placedLocation"
+        static let actualLocation = "actualLocation"
+        static let id = "id"
+    }
+    
     struct Cells {
         static let busIdentifier = "BusStop"
         static let searchResultsIdentifier = "SearchResults"

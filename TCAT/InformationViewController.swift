@@ -167,10 +167,6 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         performSelector(onMainThread: selector, with: nil, waitUntilDone: false)
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return nil
-    }
-    
     // MARK: Functions
     
     @objc func dismissTapped() {

@@ -20,7 +20,7 @@ class BusIcon: UIView {
     var baseView: UIView!
     var label: UILabel!
     var image: UIImageView!
-    var liveIndicator: LiveIndicator? = nil
+    var liveIndicator: LiveIndicator?
     
     init(type: BusIconType, number: Int) {
         
