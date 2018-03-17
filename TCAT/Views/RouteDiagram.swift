@@ -133,7 +133,7 @@ class RouteDiagram: UIView {
                 NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor
             ]
             
-            let travelDistance = NSMutableAttributedString(string: addLinebreak ? "\n\(roundedString(distance)) away" : " \(roundedString(distance)) away", attributes: travelDistanceAttrs)
+            let travelDistance = NSMutableAttributedString(string: addLinebreak ? "\n\(distance.roundedString) away" : " \(distance.roundedString) away", attributes: travelDistanceAttrs)
             stopName.append(travelDistance)
         }
         
@@ -166,7 +166,7 @@ class RouteDiagram: UIView {
         let testDistanceLabel = UILabel()
         testDistanceLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)
         testDistanceLabel.textColor = .mediumGrayColor
-        testDistanceLabel.text = " \(roundedString(distance)) away"
+        testDistanceLabel.text = " \(distance.roundedString) away"
         testDistanceLabel.sizeToFit()
         
         return testDistanceLabel

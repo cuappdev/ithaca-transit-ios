@@ -46,7 +46,15 @@ class BusLocationView: UIView {
         bearingIndicator = indicator
         bearingIndicator.center.x = center.x
         bearingIndicator.frame.origin.y = 44 - (bearingIndicator.frame.width / 2)
-        addSubview(bearingIndicator)
+        // addSubview(bearingIndicator)
+        
+        // Bearing too unpredictable. Using static circle for now.
+        let circle = UIView(frame: CGRect(x: 0, y: 0, width: indicator.frame.height / 2, height: indicator.frame.height / 2))
+        circle.center.x = center.x
+        circle.frame.origin.y = 44 - (circle.frame.width / 2)
+        circle.layer.cornerRadius = circle.frame.width / 2
+        circle.backgroundColor = .tcatBlueColor
+        addSubview(circle)
         
     }
     

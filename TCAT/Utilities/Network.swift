@@ -24,7 +24,7 @@ class Network {
     static let apiVersion = "v1"
     
     /// Used for local backend testing
-    static let localIPAddress = "10.132.6.85"
+    static let localIPAddress = "10.132.4.11"
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
     
     /// Test server used for development
@@ -81,7 +81,10 @@ class Network {
 
         getParameterData(start: start, end: end) { (startCoords, endCoords) in
 
-            guard let startCoords = startCoords, let endCoords = endCoords else {
+            guard
+                let startCoords = startCoords,
+                let endCoords = endCoords
+            else {
                 callback(nil)
                 return
             }
@@ -92,7 +95,8 @@ class Network {
                 "arriveBy"          :   type == .arriveBy,
                 "end"               :   "\(endCoords.latitude),\(endCoords.longitude)",
                 "start"             :   "\(startCoords.latitude),\(startCoords.longitude)",
-                "time"              :   time.timeIntervalSince1970
+                "time"              :   time.timeIntervalSince1970,
+                "destinationName"   :   end.getName()
             ]
 
             // for debugging

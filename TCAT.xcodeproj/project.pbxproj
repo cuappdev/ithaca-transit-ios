@@ -30,13 +30,13 @@
 		BF456E0320489990005C611D /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
 		BF5CBAD11FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */; };
 		BF6095271FD7091B0013E538 /* CustomNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6095261FD7091B0013E538 /* CustomNavigationController.swift */; };
-		BF662F341F731DD200B21109 /* OnboardPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F331F731DD200B21109 /* OnboardPageViewController.swift */; };
 		BF662F361F7323B400B21109 /* ActionOnboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */; };
 		BF73F0F31F60B0BD003B479D /* LocationObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF73F0F21F60B0BD003B479D /* LocationObject.swift */; };
 		BF74AC1A1F945D7D00AFD4E4 /* GoogleMapsBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */; };
 		BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */; };
 		BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */; };
 		BFA53FEE1FD45D7000E770DF /* RouteDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */; };
+		BFB86A07205C614C000794B2 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB86A06205C614C000794B2 /* OnboardingViewController.swift */; };
 		BFD5B4E41FAADFAE00955C37 /* WalkPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */; };
 		BFF41EB2204365E800E0696B /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF41EB1204365E800E0696B /* SummaryView.swift */; };
 		CC27BD091FF6C91C00DAA7D5 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */; };
@@ -130,13 +130,13 @@
 		BF456E0220489990005C611D /* BusLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocation.swift; path = Model/BusLocation.swift; sourceTree = "<group>"; };
 		BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "RouteDetail+DrawerViewController.swift"; path = "Controllers/RouteDetail+DrawerViewController.swift"; sourceTree = "<group>"; };
 		BF6095261FD7091B0013E538 /* CustomNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomNavigationController.swift; path = Controllers/CustomNavigationController.swift; sourceTree = "<group>"; };
-		BF662F331F731DD200B21109 /* OnboardPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardPageViewController.swift; path = Controllers/OnboardPageViewController.swift; sourceTree = "<group>"; };
 		BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActionOnboardViewController.swift; path = Controllers/ActionOnboardViewController.swift; sourceTree = "<group>"; };
 		BF73F0F21F60B0BD003B479D /* LocationObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationObject.swift; path = Model/LocationObject.swift; sourceTree = "<group>"; };
 		BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsBase.framework; path = Pods/GoogleMaps/Base/Frameworks/GoogleMapsBase.framework; sourceTree = "<group>"; };
 		BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsCore.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMapsCore.framework; sourceTree = "<group>"; };
 		BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMaps.framework; sourceTree = "<group>"; };
 		BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RouteDetailViewController.swift; sourceTree = "<group>"; };
+		BFB86A06205C614C000794B2 /* OnboardingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WalkPath.swift; path = Model/WalkPath.swift; sourceTree = "<group>"; };
 		BFF41EB1204365E800E0696B /* SummaryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SummaryView.swift; path = Views/SummaryView.swift; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -405,7 +405,7 @@
 				DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */,
 				50A19BAD1E4C214000AD6768 /* HomeViewController.swift */,
 				E337970C1FC1606D00BCB28F /* InformationViewController.swift */,
-				BF662F331F731DD200B21109 /* OnboardPageViewController.swift */,
+				BFB86A06205C614C000794B2 /* OnboardingViewController.swift */,
 				BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */,
 				DDB49C921E8857D000A99C35 /* RouteDetail+ContentViewController.swift */,
 				BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */,
@@ -680,6 +680,8 @@
 				"${BUILT_PRODUCTS_DIR}/Log/Log.framework",
 				"${BUILT_PRODUCTS_DIR}/MarqueeLabel/MarqueeLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/NotificationBannerSwift/NotificationBannerSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/Pages/Pages.framework",
+				"${BUILT_PRODUCTS_DIR}/Presentation/Presentation.framework",
 				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Pulley/Pulley.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
@@ -697,6 +699,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Log.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MarqueeLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NotificationBannerSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pages.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Presentation.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pulley.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
@@ -780,7 +784,6 @@
 				BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */,
 				DDA134451EC6A8CB00460B18 /* RouteLine.swift in Sources */,
 				BFA53FEE1FD45D7000E770DF /* RouteDetailViewController.swift in Sources */,
-				BF662F341F731DD200B21109 /* OnboardPageViewController.swift in Sources */,
 				DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */,
 				E337970D1FC1606D00BCB28F /* InformationViewController.swift in Sources */,
 				503EC37B1E969ACD00B3D4D4 /* BusStopCell.swift in Sources */,
@@ -810,6 +813,7 @@
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
 				DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */,
 				DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */,
+				BFB86A07205C614C000794B2 /* OnboardingViewController.swift in Sources */,
 				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
 				BF456E0320489990005C611D /* BusLocation.swift in Sources */,
 				CC27BD091FF6C91C00DAA7D5 /* Analytics.swift in Sources */,

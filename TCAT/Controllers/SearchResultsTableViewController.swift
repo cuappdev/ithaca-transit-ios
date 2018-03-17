@@ -124,14 +124,15 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         allSections.append(favoritesSection)
         allSections.append(recentSearchesSection)
         allSections.append(seeAllStopsSection)
-        return allSections.filter({$0.items.count > 0})
+        return allSections.filter { $0.items.count > 0 }
     }
     
     /* Location Manager Delegates */
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let firstLocation = locations.first, currentLocationSection.items.isEmpty {
             let currentLocationBusItem = ItemType.busStop(BusStop(name: Constants.Stops.currentLocation,
-                                                                  lat: firstLocation.coordinate.latitude, long: firstLocation.coordinate.longitude))
+                                                                  lat: firstLocation.coordinate.latitude,
+                                                                  long: firstLocation.coordinate.longitude))
             currentLocationSection = Section(type: .currentLocation, items: [currentLocationBusItem])
             sections = createSections()
         }
@@ -157,10 +158,14 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch sections[section].type {
-        case .cornellDestination: return 0
-        case .recentSearches: return recentLocations.count
-        case .favorites: return favorites.count
-        case .seeAllStops, .searchResults, .currentLocation: return sections[section].items.count
+        case .cornellDestination:
+            return 0
+        case .recentSearches:
+            return recentLocations.count
+        case .favorites:
+            return favorites.count
+        default:
+            return sections[section].items.count
         }
     }
     
@@ -176,7 +181,8 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
             header.setupView(labelText: "Favorite Destinations", displayAddButton: false)
         case .seeAllStops, .searchResults:
             return nil
-        default: break
+        default:
+            break
         }
 
         return header
@@ -245,7 +251,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         switch sections[indexPath.section].type {
         case .cornellDestination:
             itemType = .cornellDestination
-        case .recentSearches, .seeAllStops, .searchResults, .currentLocation, .favorites:
+        default:
             itemType = sections[indexPath.section].items[indexPath.row]
         }
         

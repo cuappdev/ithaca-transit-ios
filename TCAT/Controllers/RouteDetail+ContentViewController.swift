@@ -218,21 +218,23 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     // MARK: Location Manager Functions
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
         if let newCoord = locations.last?.coordinate {
             bounds = bounds.includingCoordinate(newCoord)
             currentLocation = newCoord
         }
-        
-        drawMapRoute()
-        centerMap(topHalfCentered: true)
-        
-        // (self.parent as? PulleyViewController)?.bounceDrawer()
-        
+        didUpdateLocation()
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         print("RouteDetailVC CLLocationManager didFailWithError: \(error)")
+        didUpdateLocation()
+    }
+    
+    /// Completion after locationManager functions return
+    func didUpdateLocation() {
+        drawMapRoute()
+        centerMap(topHalfCentered: true)
+        // (self.parent as? PulleyViewController)?.bounceDrawer()
     }
     
     // MARK: Live Tracking Functions

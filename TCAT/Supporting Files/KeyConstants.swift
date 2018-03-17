@@ -39,6 +39,7 @@ struct Constants {
         static let smallDetailCellIdentifier = "SmallCell"
         static let largeDetailCellIdentifier = "LargeCell"
         static let busStopCellIdentifier = "BusStopCell"
+        static let informationCellIdentifier = "InformationCell"
     }
     
     /// Font identifiers
@@ -59,9 +60,14 @@ struct Constants {
     }
     
     struct UserDefaults {
+        
+        static let onboardingShown = "onboardingShown"
+        static let locationAuthReminder = "locationAuthReminder"
+        
         static let recentSearch = "recentSearch"
         static let allBusStops = "allBusStops"
         static let favorites = "favorites"
+        
     }
     
     struct Values {

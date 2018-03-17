@@ -12,6 +12,7 @@ import GooglePlaces
 
 protocol CoordinateAcceptor {
     func accept(visitor: CoordinateVisitor, callback: @escaping (CLLocationCoordinate2D?) -> Void)
+    func getName() -> String
 }
 
 class CoordinateVisitor: NSObject {

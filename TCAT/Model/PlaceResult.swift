@@ -46,6 +46,10 @@ class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
         return object.placeID == placeID
     }
     
+    func getName() -> String {
+        return name
+    }
+    
     // MARK: NSCoding
     
     required init(coder aDecoder: NSCoder) {

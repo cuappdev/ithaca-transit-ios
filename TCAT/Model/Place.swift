@@ -21,7 +21,6 @@ class Place: NSObject, NSCoding {
     override func isEqual(_ object: Any?) -> Bool {
         guard let object = object as? Place else {
             return false
-            
         }
         
         return object.name == name

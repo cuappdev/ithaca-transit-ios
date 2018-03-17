@@ -20,7 +20,6 @@ class BusStop: Place, CoordinateAcceptor {
     init(name: String, lat: CLLocationDegrees, long: CLLocationDegrees) {
         self.lat = lat
         self.long = long
-        
         super.init(name: name)
     }
     
@@ -34,6 +33,10 @@ class BusStop: Place, CoordinateAcceptor {
         }
         
         return object.lat == lat && object.long == long
+    }
+    
+    func getName() -> String {
+        return name
     }
     
     // MARK: NSCoding

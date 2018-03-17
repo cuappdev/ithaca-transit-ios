@@ -12,7 +12,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
     
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
-        view.backgroundColor = .white // for demo
+        view.backgroundColor = .white
         customizeAppearance()
     }
     
@@ -39,7 +39,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
     ]
     
     /// Attributed string details for the back button text of a navigation controller
-    let buttonTitleTextAttributes = [
+    static let buttonTitleTextAttributes = [
         NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)!
     ]
     
@@ -49,7 +49,9 @@ class CustomNavigationController: UINavigationController, UINavigationController
         navigationBar.barTintColor = .white
         navigationBar.tintColor = .primaryTextColor
         navigationBar.titleTextAttributes = titleTextAttributes
-        navigationItem.backBarButtonItem?.setTitleTextAttributes(buttonTitleTextAttributes, for: .normal)
+        navigationItem.backBarButtonItem?.setTitleTextAttributes(
+            CustomNavigationController.buttonTitleTextAttributes, for: .normal
+        )
         
         // Saved from other view controllers in case needed
         // navigationBar.isTranslucent = false
@@ -121,5 +123,29 @@ class CustomNavigationController: UINavigationController, UINavigationController
         interactivePopGestureRecognizer?.isEnabled = (responds(to: #selector(getter: interactivePopGestureRecognizer)) && viewControllers.count > 1)
     }
 
+}
+
+class OnboardingNavigationController: UINavigationController {
+    
+    override init(rootViewController: UIViewController) {
+        super.init(rootViewController: rootViewController)
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.shadowImage = UIImage()
+        navigationBar.isTranslucent = true
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        UIApplication.shared.statusBarStyle = .lightContent
+    }
+    
 }
 
