@@ -92,7 +92,8 @@ class BusLocation: NSObject {
         if let iconView = _iconView {
             return iconView
         } else {
-            _iconView = BusLocationView(number: Int(routeID) ?? 0, bearing: heading)
+            let coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            _iconView = BusLocationView(number: Int(routeID) ?? 0, bearing: heading, position: coordinates)
             return _iconView!
         }
         

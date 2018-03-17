@@ -59,7 +59,7 @@ class Time {
             return "0 min"
         }
         
-        return timeStr
+        return timeStr.trimmingCharacters(in: .whitespacesAndNewlines)
         
     }
     

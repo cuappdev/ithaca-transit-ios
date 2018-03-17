@@ -43,6 +43,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     let markerRadius: CGFloat = 8
     let mapPadding: CGFloat = 80
+    
     let minZoom: Float = 12
     let defaultZoom: Float = 15.5
     let maxZoom: Float = 25
@@ -120,7 +121,36 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         shareButton.tintColor = .primaryTextColor
         guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
+        
+        // Fake Bus
+        let bus = BusLocation(dataType: .validData, destination: "", deviation: 0, delay: 0, direction: "", displayStatus: "", gpsStatus: 0, heading: 0, lastStop: "", lastUpdated: Date(), latitude: 42.4491411, longitude: -76.4836815, name: 16, opStatus: "", routeID: "", runID: 0, speed: 0, tripID: "", vehicleID: 0)
+        let coords = CLLocationCoordinate2D(latitude: 42.4491411, longitude: -76.4836815)
+        let marker = GMSMarker(position: coords)
+        (bus.iconView as? BusLocationView)?.updateBus(to: coords, with: Double(bus.heading))
+        marker.iconView = bus.iconView
+        marker.appearAnimation = .pop
+        setIndex(of: marker, with: .bussing)
+        marker.userData = bus
+        marker.map = mapView
+        buses.append(marker)
+        
+        // Fake Marker
+//        let marker2 = GMSMarker(position: coords)
+//        marker2.appearAnimation = .pop
+//        marker2.zIndex = 10000
+//        marker2.map = mapView
 
+    }
+    
+    override func viewSafeAreaInsetsDidChange() {
+        if #available(iOS 11.0, *) {
+            let top = view.safeAreaInsets.top
+            let bottom = drawerDisplayController?.summaryView.frame.height ?? 0
+            mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
+        } else {
+            print("Setting Padding pre-iOS 11")
+        }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -151,25 +181,32 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     override func loadView() {
 
-        // set mapView with settings
+        // Set mapView with settings
         let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: defaultZoom)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
-        mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: drawerDisplayController?.summaryView.frame.height ?? 0, right: 0)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
         mapView.settings.compassButton = true
         mapView.settings.myLocationButton = true
         mapView.setMinZoom(minZoom, maxZoom: maxZoom)
         mapView.settings.tiltGestures = false
+        mapView.settings.indoorPicker = false
+        mapView.isBuildingsEnabled = false
+        mapView.isIndoorEnabled = false
+        
+        // Pre-iOS 11 padding. See viewDidLoad for iOS 11 version
+        let top = (navigationController?.navigationBar.frame.height ?? 44) + UIApplication.shared.statusBarFrame.height
+        let bottom = drawerDisplayController?.summaryView.frame.height ?? 0
+        mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
 
-        // most extreme points on TCAT Route map
+        // Most extreme points on TCAT Route map
         let north = 42.61321283145329
         let east = -76.28125469914926
         let south = 42.32796328578829
         let west = -76.67690943302259
 
-        let northEast = CLLocationCoordinate2DMake(north, east)
-        let southWest = CLLocationCoordinate2DMake(south, west)
+        let northEast = CLLocationCoordinate2D(latitude: north, longitude: east)
+        let southWest = CLLocationCoordinate2D(latitude: south, longitude: west)
         let panBounds = GMSCoordinateBounds(coordinate: northEast, coordinate: southWest)
         mapView.cameraTargetBounds = panBounds
 
@@ -329,7 +366,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
      */
     func setBusLocation(_ bus: BusLocation) {
         
-        let busCoords = CLLocationCoordinate2DMake(bus.latitude, bus.longitude)
+        let busCoords = CLLocationCoordinate2D(latitude: bus.latitude, longitude: bus.longitude)
         let existingBus = buses.first(where: {
             return ($0.userData as? BusLocation)?.vehicleID == bus.vehicleID
         })
@@ -344,7 +381,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             CATransaction.setAnimationDuration(networkRefreshRate + latencyConstant)
             newBus.appearAnimation = .none
             newBus.userData = bus
-            (newBus.iconView as? BusLocationView)?.setBearing(start: existingBus!.position, end: busCoords)
+            (newBus.iconView as? BusLocationView)?.updateBus(from: existingBus!.position, to: busCoords)
             newBus.position = busCoords
             CATransaction.commit()
             
@@ -354,7 +391,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         else {
             
             let marker = GMSMarker(position: busCoords)
-            (bus.iconView as? BusLocationView)?.setBearing(heading: Double(bus.heading))
+            (bus.iconView as? BusLocationView)?.updateBus(to: busCoords, with: Double(bus.heading))
             marker.iconView = bus.iconView
             marker.appearAnimation = .pop
             setIndex(of: marker, with: .bussing)
@@ -370,6 +407,155 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     
     @objc func shareRoute() {
         presentShareSheet(for: route)
+    }
+    
+    // MARK: Google Map View Delegate Functions
+    
+    func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
+        // print("didChange to", position)
+        
+        for bus in buses {
+            
+            guard let busLocationView = bus.iconView as? BusLocationView else { continue }
+            let actualLocation = busLocationView.position!
+            
+            // Update
+            if let placement = calculatePlacement(position: actualLocation, view: busLocationView) {
+                bus.position = placement
+                print("calculated position:", placement)
+                let bearing = calculateBearing(from: placement, to: actualLocation)
+                print("bearing:", bearing)
+                // busLocationView.updateBus(with: bearing)
+                busLocationView.setCircle(isVisible: false)
+            } else {
+                // No placement needed
+                bus.position = actualLocation
+                busLocationView.setCircle(isVisible: true)
+            }
+            
+        }
+        
+    }
+    
+    func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
+        print("idle")
+        for bus in buses {
+            guard let busLocationView = bus.iconView as? BusLocationView else { continue }
+            let actualLocation = busLocationView.position!
+            let bearing = calculateBearing(from: bus.position, to: actualLocation)
+            print("bearing:", bearing)
+            busLocationView.updateBus(with: bearing)
+        }
+    }
+    
+    func calculatePlacement(position: CLLocationCoordinate2D, view: BusLocationView) -> CLLocationCoordinate2D? {
+        
+        let padding: CGFloat = 16
+        let bounds = mapView.projection.visibleRegion()
+        
+        var topOffset: Double {
+            let origin = mapView.projection.coordinate(for: CGPoint(x: 0, y: 0)).latitude
+            let withHeight = mapView.projection.coordinate(for: CGPoint(x: 0, y: view.frame.height)).latitude
+            return origin - withHeight
+        }
+        var sideOffset: Double {
+            let origin = mapView.projection.coordinate(for: CGPoint(x: 0, y: 0)).latitude
+            let withHeight = mapView.projection.coordinate(for: CGPoint(x: view.frame.width / 2, y: 0)).latitude
+            return abs(origin - withHeight)
+        }
+        
+        let top = bounds.farLeft.latitude - topOffset
+        let bottom = bounds.nearRight.latitude
+        let left = bounds.nearLeft.longitude - sideOffset
+        let right = bounds.nearRight.longitude + sideOffset
+        
+        let pastTopEdge = position.latitude > top
+        let pastBottomEdge = position.latitude < bottom
+        let pastLeftEdge = position.longitude < left
+        let pastRightEdge = position.longitude > right
+        
+        //        GMSVisibleRegion(
+        //            nearLeft: __C.CLLocationCoordinate2D(latitude: 42.442794190761489, longitude: -76.489242129027843),
+        //            nearRight: __C.CLLocationCoordinate2D(latitude: 42.442794190761489, longitude: -76.479822881519794),
+        //            farLeft: __C.CLLocationCoordinate2D(latitude: 42.456138223033271, longitude: -76.489242129027843),
+        //            farRight: __C.CLLocationCoordinate2D(latitude: 42.456138223033271, longitude: -76.479822881519794)
+        //        )
+        
+        // Set coordinate to most extreme on-screen map point if off screen
+        var newPosition = position
+        if pastRightEdge {
+            newPosition.longitude = right
+        }
+        if pastLeftEdge {
+            newPosition.longitude = left
+        }
+        if pastBottomEdge {
+            newPosition.latitude = bottom
+        }
+        if pastTopEdge {
+            newPosition.latitude = top
+        }
+        
+        // Convert coordinate to point and adjust based on frame and padding
+        // The actual point is at the maxY and centerX of the view
+        var point = mapView.projection.point(for: newPosition)
+        if pastRightEdge {
+            point.x -= (view.frame.width / 2) + padding
+        }
+        if pastLeftEdge {
+            point.x += (view.frame.width / 2) + padding
+        }
+        if pastTopEdge {
+            point.y += padding
+        }
+        if pastBottomEdge {
+            var inset: CGFloat = 0
+            if #available(iOS 11.0, *) {
+                inset = view.safeAreaInsets.bottom
+            }
+            point.y -= padding + inset
+        }
+        
+        // If no change needed, return nil.
+        if pastRightEdge || pastLeftEdge || pastTopEdge || pastBottomEdge {
+            return mapView.projection.coordinate(for: point)
+        } else {
+            return nil
+        }
+        
+    }
+    
+    func calculateBearing(from marker: CLLocationCoordinate2D, to location: CLLocationCoordinate2D) -> Double {
+        
+        func getBearingBetween(_ point1: CLLocationCoordinate2D, _ point2: CLLocationCoordinate2D) -> Double {
+            
+            func degreesToRadians(_ degrees: Any) -> Double {
+                let value = degrees as? Double ?? Double(degrees as! Int)
+                return value * .pi / 180
+            }
+            
+            func radiansToDegrees(_ radians: Any) -> Double {
+                let value = radians as? Double ?? Double(radians as! Int)
+                return value * 180 / .pi
+            }
+            
+            let lat1 = degreesToRadians(point1.latitude)
+            let lon1 = degreesToRadians(point1.longitude)
+            let lat2 = degreesToRadians(point2.latitude)
+            let lon2 = degreesToRadians(point2.longitude)
+            
+            let dLon = lon2 - lon1
+            
+            let y = sin(dLon) * cos(lat2)
+            let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
+            let radiansBearing = atan2(y, x)
+            
+            return radiansToDegrees(radiansBearing)
+            
+        }
+        
+        return (getBearingBetween(location, marker) + 360).truncatingRemainder(dividingBy: 360)
+        
     }
     
     // MARK: Map Functions
