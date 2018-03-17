@@ -108,13 +108,16 @@ class Route: NSObject, JSONDecodable {
         var offset = 0
         
         /// True if previous direction indicated next bus is a transfer to stay on
-        var isTransfer: Bool = false
+        // var isTransfer: Bool = false
         
         for (index, direction) in directions.enumerated() {
             
             if direction.type == .depart {
                 
-                if !direction.stayOnBusForTransfer {
+                let beyondRange = index + 1 > directions.count - 1
+                
+                // If this direction doesn't have a transfer afterwards
+                if !beyondRange && !directions[index+1].stayOnBusForTransfer {
                     
                     // Create Arrival Direction
                     let arriveDirection = direction.copy() as! Direction
@@ -128,13 +131,9 @@ class Route: NSObject, JSONDecodable {
                     
                 }
                 
-                if isTransfer {
-                    
-                     direction.type = .transfer
-                    
+                if direction.stayOnBusForTransfer {
+                    direction.type = .transfer
                 }
-                
-                isTransfer = direction.stayOnBusForTransfer
                 
                 // Remove inital bus stop and departure bus stop
                 if direction.stops.count >= 2 {

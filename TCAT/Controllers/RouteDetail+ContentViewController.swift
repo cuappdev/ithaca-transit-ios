@@ -424,8 +424,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 bus.position = placement
                 print("calculated position:", placement)
                 let bearing = calculateBearing(from: placement, to: actualLocation)
+                print()
                 print("bearing:", bearing)
-                // busLocationView.updateBus(with: bearing)
+                busLocationView.updateBus(with: bearing)
                 busLocationView.setCircle(isVisible: false)
             } else {
                 // No placement needed
@@ -438,14 +439,14 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     }
     
     func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
-        print("idle")
-        for bus in buses {
-            guard let busLocationView = bus.iconView as? BusLocationView else { continue }
-            let actualLocation = busLocationView.position!
-            let bearing = calculateBearing(from: bus.position, to: actualLocation)
-            print("bearing:", bearing)
-            busLocationView.updateBus(with: bearing)
-        }
+//        print("idle")
+//        for bus in buses {
+//            guard let busLocationView = bus.iconView as? BusLocationView else { continue }
+//            let actualLocation = busLocationView.position!
+//            let bearing = calculateBearing(from: bus.position, to: actualLocation)
+//            print("bearing:", bearing)
+//            busLocationView.updateBus(with: bearing)
+//        }
     }
     
     func calculatePlacement(position: CLLocationCoordinate2D, view: BusLocationView) -> CLLocationCoordinate2D? {
@@ -564,6 +565,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     func centerMap(topHalfCentered: Bool = false) {
         
         // Note: Can use mapView.move(with: GMSCameraUpdate) instead of mapView.animate
+        
+        print("centerMap topHalfCentered:", topHalfCentered)
 
         if topHalfCentered {
             let bottom = (main.height / 2) - (mapPadding / 2)
