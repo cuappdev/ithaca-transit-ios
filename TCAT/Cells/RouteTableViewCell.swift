@@ -18,6 +18,8 @@ class RouteTableViewCell: UITableViewCell {
     
     let identifier: String = "Route cell"
     var route: Route?
+    var searchTime: Date?
+    var searchTimeType: SearchType?
     
     // MARK: Network vars
     
@@ -70,7 +72,7 @@ class RouteTableViewCell: UITableViewCell {
         positionDepartureTimeVertically(usingTravelTime: travelTimeLabel)
         positionArrowVertically(usingDepartureTime: departureTimeLabel)
         positionTopBorder()
-
+        
         contentView.addSubview(travelTimeLabel)
         contentView.addSubview(liveIndicatorView)
         contentView.addSubview(liveLabel)
@@ -136,8 +138,10 @@ class RouteTableViewCell: UITableViewCell {
 
     // MARK: Set Data
 
-    func setData(_ route: Route) {
+    func setData(_ route: Route, withSearchTime searchTime: Date?, withSearchTimeType searchTimeType: SearchType?) {
         self.route = route
+        self.searchTime = searchTime
+        self.searchTimeType = searchTimeType
         
         timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay as () -> Void), userInfo: nil, repeats: true)
         
@@ -153,11 +157,11 @@ class RouteTableViewCell: UITableViewCell {
         }
         
         if let firstDepartDirection = firstDepartDirection, let delay = firstDepartDirection.delay {
-            setDepartureTime(withTime: firstDepartDirection.startTime.addingTimeInterval(TimeInterval(delay)), withWalkingRoute: isWalkingRoute)
+            setDepartureTime(withDepartureTime: firstDepartDirection.startTime.addingTimeInterval(TimeInterval(delay)), withWalkingRoute: isWalkingRoute, withSearchTime: searchTime, withSearchTimeType: searchTimeType)
             setLiveElements(withStartTime: firstDepartDirection.startTime, withDelay: delay)
         }
         else {
-            setDepartureTime(withTime: route.departureTime, withWalkingRoute: isWalkingRoute)
+            setDepartureTime(withDepartureTime: route.departureTime, withWalkingRoute: isWalkingRoute, withSearchTime: searchTime, withSearchTimeType: searchTimeType)
         }
         
         routeDiagram.setData(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: isWalkingRoute)
@@ -209,7 +213,7 @@ class RouteTableViewCell: UITableViewCell {
             liveLabel.textColor = .white
             
             if let route = route {
-                setDepartureTime(withTime: route.departureTime, withWalkingRoute: route.isRawWalkingRoute())
+                setDepartureTime(withDepartureTime: route.departureTime, withWalkingRoute: route.isRawWalkingRoute(), withSearchTime: searchTime, withSearchTimeType: searchTimeType)
             }
         }
     }
@@ -220,13 +224,24 @@ class RouteTableViewCell: UITableViewCell {
         travelTimeLabel.sizeToFit()
     }
 
-    private func setDepartureTime(withTime departureTime: Date, withWalkingRoute isWalkingRoute: Bool){
+    private func setDepartureTime(withDepartureTime departureTime: Date, withWalkingRoute isWalkingRoute: Bool, withSearchTime searchTime: Date?, withSearchTimeType searchTimeType: SearchType?){
         if isWalkingRoute {
             departureTimeLabel.text = "Directions"
             departureTimeLabel.textColor = .mediumGrayColor
             arrowImageView.tintColor = .mediumGrayColor
         } else {
-            let time = Time.timeString(from: Date(), to: departureTime)
+            var time = ""
+            if let searchTime = searchTime, let searchTimeType = searchTimeType {
+                switch searchTimeType {
+                case .leaveAt:
+                    time = Time.timeString(from: searchTime, to: departureTime)
+                case .arriveBy:
+                    time = Time.timeString(from: Date(), to: departureTime)
+                }
+            }
+            else {
+                time = Time.timeString(from: Date(), to: departureTime)
+            }
             departureTimeLabel.text = "Board in \(time)"
             departureTimeLabel.textColor = .primaryTextColor
             arrowImageView.tintColor = .primaryTextColor

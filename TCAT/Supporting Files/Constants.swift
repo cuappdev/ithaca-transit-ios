@@ -71,6 +71,7 @@ struct Constants {
         static let searchPlaceholder = "Where to?"
         static let fromSearchBarPlaceholder = "Choose starting point..."
         static let toSearchBarPlaceholder = "Choose destination..."
+        static let datepickerLeaveNow = "Leave Now"
     }
     
     struct UserDefaults {
