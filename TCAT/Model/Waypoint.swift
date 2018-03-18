@@ -10,8 +10,11 @@ import UIKit
 import CoreLocation
 
 enum WaypointType: String {
+    /// The startLocation origin point of the trip
     case origin
+    /// The endLocation destination point of the trip
     case destination
+    /// Used for bus stops
     case stop
     case bus
     case walk
@@ -31,7 +34,7 @@ class Waypoint: NSObject {
     var iconView: UIView = UIView()
     var busNumber: Int = 0
     
-    init(lat: CLLocationDegrees, long: CLLocationDegrees, wpType: WaypointType, busNumber: Int = 0) {
+    init(lat: CLLocationDegrees, long: CLLocationDegrees, wpType: WaypointType, busNumber: Int = 0, isStop: Bool = false) {
         super.init()
         self.latitude = lat
         self.longitude = long
@@ -40,16 +43,14 @@ class Waypoint: NSObject {
         
         switch wpType {
         case .origin:
-            self.iconView = drawOriginIcon()
+            self.iconView = Circle(size: .large, style: .solid, color: isStop ? .tcatBlueColor : .mediumGrayColor)
         case .destination:
-            self.iconView = drawDestinationIcon()
-        case .stop:
-            self.iconView = drawStopIcon()
+            self.iconView = Circle(size: .large, style: .bordered, color: isStop ? .tcatBlueColor : .mediumGrayColor)
         case .bus:
-            self.iconView = drawBusPointIcon()
+            self.iconView = Circle(size: .small, style: .solid, color: .tcatBlueColor)
         case .walk:
-            self.iconView = drawWalkPointIcon()
-        case .none, .walking, .bussing:
+            self.iconView = Circle(size: .small, style: .solid, color: .mediumGrayColor)
+        case .none, .stop, .walking, .bussing:
             self.iconView = UIView()
         }
     }

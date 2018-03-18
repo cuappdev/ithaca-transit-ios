@@ -20,7 +20,7 @@ class Network {
     
     // MARK: Global Network Variables
     
-    static let networkType: NetworkType = .local
+    static let networkType: NetworkType = .debug
     static let apiVersion = "v1"
     
     /// Used for local backend testing

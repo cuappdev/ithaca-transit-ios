@@ -10,7 +10,9 @@ import UIKit
 
 enum CircleStyle {
     case solid
+    /// Thick border and center dot with same color, white donut.
     case bordered
+    /// Color is used as border, middle is white.
     case outline
 }
 

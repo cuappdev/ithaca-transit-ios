@@ -70,23 +70,41 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
             for (pathIndex, point) in direction.path.enumerated() {
 
+                let isStop: Bool = direction.type == .depart
                 var type: WaypointType = .none
-
-                if direction.type == .depart {
-                    
-                    type = .bussing
-
+                
+                // First Direction
+                if arrayIndex == 0 {
+                    // First Waypoint
                     if pathIndex == 0 {
-                        type = arrayIndex == 0 ? .origin : .bus
+                        if currentLocation == nil {
+                           type = .origin // Don't set, current location will show "start"
+                        }
                     }
-                        
+                    // Last Waypoint
                     else if pathIndex == direction.path.count - 1 {
-                        type = arrayIndex == directions.count - 1 ? .destination : .bus
+                        type = isStop ? .bus : .none
                     }
-
+                }
+                
+                // Last Direction
+                else if arrayIndex == directions.count - 1 {
+                    // First Waypoint
+                    if pathIndex == 0 {
+                        type = isStop ? .bus : .none
+                    }
+                    // Last Waypoint
+                    else if pathIndex == direction.path.count - 1 {
+                        type = .destination
+                    }
+                }
+                
+                // First & Last Bus Segments
+                else if direction.type == .depart && pathIndex == 0 || pathIndex == direction.path.count - 1 {
+                    type = .bus
                 }
 
-                let waypoint = Waypoint(lat: point.latitude, long: point.longitude, wpType: type)
+                let waypoint = Waypoint(lat: point.latitude, long: point.longitude, wpType: type, isStop: isStop)
                 waypoints.append(waypoint)
 
             }
