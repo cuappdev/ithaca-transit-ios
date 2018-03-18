@@ -29,8 +29,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
         // Log basic information
-        let payload = AppLaunchedPayload().toEvent()
-        RegisterSession.shared.logEvent(event: payload)
+        let payload = AppLaunchedPayload()
+        do {
+            let serial = try payload.toEvent().serializeJson()
+            print("info:", serial.description)
+        } catch {
+            
+        }
+
+        RegisterSession.shared.logEvent(event: payload.toEvent())
         
         // Initalize User Defaults
         if userDefaults.value(forKey: Constants.UserDefaults.onboardingShown) == nil {
@@ -100,10 +107,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             let allBusStops = stops.allStops
             if allBusStops.isEmpty {
                 let title = "Couldn't Fetch Bus Stops"
-                let message = "The app will continue trying upon launch. You can continue to use the app as normal."
+                let message = "The app will continue trying on launch. You can continue to use the app as normal."
                 let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
                 alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-                presentInApp(alertController)
+                UIApplication.shared.keyWindow?.presentInApp(alertController)
             } else {
                 let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
                 self.userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
