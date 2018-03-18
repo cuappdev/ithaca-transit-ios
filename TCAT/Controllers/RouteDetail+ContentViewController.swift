@@ -161,12 +161,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     override func viewSafeAreaInsetsDidChange() {
         if #available(iOS 11.0, *) {
             let top = view.safeAreaInsets.top
-            let bottom = drawerDisplayController?.summaryView.frame.height ?? 0
+            let bottom = view.safeAreaInsets.bottom + (drawerDisplayController?.summaryView.frame.height ?? 92)
             mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
-        } else {
-            print("Setting Padding pre-iOS 11")
         }
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -202,7 +199,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
-        mapView.paddingAdjustmentBehavior = .never // handled by our code
+        mapView.paddingAdjustmentBehavior = .never // handled by code
         mapView.setMinZoom(minZoom, maxZoom: maxZoom)
         mapView.settings.compassButton = true
         mapView.settings.myLocationButton = true
@@ -252,18 +249,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         self.isBannerShown = false
         self.banner = nil
         UIApplication.shared.statusBarStyle = .default
-    }
-    
-    // MARK: Programmatic Layout Constants
-    
-    /** Return height of status bar and possible navigation controller */
-    func statusNavHeight() -> CGFloat {
-        let navBarHeight = navigationController?.navigationBar.frame.height ?? 0
-        if #available(iOS 11.0, *) {
-            return navBarHeight + (navigationController?.view.safeAreaInsets.top ?? 0)
-        } else {
-            return navBarHeight + UIApplication.shared.statusBarFrame.height
-        }
     }
     
     // MARK: Location Manager Functions
@@ -450,11 +435,12 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     func bounceIndicators() {
         for indicator in busIndicators {
             guard let originalFrame = indicator.iconView?.frame else { continue }
-            let insetValue = originalFrame.size.width / 12
-            indicator.iconView?.frame = indicator.iconView!.frame.insetBy(dx: -insetValue, dy: -insetValue)
-            UIView.animate(withDuration: LiveIndicator.DURATION, delay: 0, usingSpringWithDamping: 1,
+            guard let originalTransform = indicator.iconView?.transform else { continue }
+            let insetValue = originalFrame.size.width / 24
+            indicator.iconView?.transform = CGAffineTransform(scaleX: insetValue, y: insetValue)
+            UIView.animate(withDuration: LiveIndicator.DURATION * 2, delay: 0, usingSpringWithDamping: 1,
                            initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
-                indicator.iconView?.frame = originalFrame
+                indicator.iconView?.transform = originalTransform
             })
         }
     }
@@ -564,12 +550,12 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         
         var topOffset: Double {
             let origin = mapView.projection.coordinate(for: CGPoint(x: 0, y: 0)).latitude
-            let withHeight = mapView.projection.coordinate(for: CGPoint(x: 0, y: view.frame.height)).latitude
+            let withHeight = mapView.projection.coordinate(for: CGPoint(x: 0, y: view.frame.size.height)).latitude
             return origin - withHeight
         }
         var sideOffset: Double {
             let origin = mapView.projection.coordinate(for: CGPoint(x: 0, y: 0)).latitude
-            let withHeight = mapView.projection.coordinate(for: CGPoint(x: view.frame.width / 2, y: 0)).latitude
+            let withHeight = mapView.projection.coordinate(for: CGPoint(x: view.frame.size.width, y: 0)).latitude
             return abs(origin - withHeight)
         }
         
@@ -636,34 +622,28 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     
     func calculateBearing(from marker: CLLocationCoordinate2D, to location: CLLocationCoordinate2D) -> Double {
         
-        func getBearingBetween(_ point1: CLLocationCoordinate2D, _ point2: CLLocationCoordinate2D) -> Double {
-            
-            func degreesToRadians(_ degrees: Any) -> Double {
-                let value = degrees as? Double ?? Double(degrees as! Int)
-                return value * .pi / 180
-            }
-            
-            func radiansToDegrees(_ radians: Any) -> Double {
-                let value = radians as? Double ?? Double(radians as! Int)
-                return value * 180 / .pi
-            }
-            
-            let lat1 = degreesToRadians(point1.latitude)
-            let lon1 = degreesToRadians(point1.longitude)
-            let lat2 = degreesToRadians(point2.latitude)
-            let lon2 = degreesToRadians(point2.longitude)
-            
-            let dLon = lon2 - lon1
-            
-            let y = sin(dLon) * cos(lat2)
-            let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
-            let radiansBearing = atan2(y, x)
-            
-            return radiansToDegrees(radiansBearing)
-            
+        func degreesToRadians(_ degrees: Any) -> Double {
+            let value = degrees as? Double ?? Double(degrees as! Int)
+            return value * .pi / 180
         }
         
-        return (getBearingBetween(location, marker) + 360).truncatingRemainder(dividingBy: 360)
+        func radiansToDegrees(_ radians: Any) -> Double {
+            let value = radians as? Double ?? Double(radians as! Int)
+            return value * 180 / .pi
+        }
+        
+        let lat1 = degreesToRadians(location.latitude)
+        let lon1 = degreesToRadians(location.longitude)
+        let lat2 = degreesToRadians(marker.latitude)
+        let lon2 = degreesToRadians(marker.longitude)
+        
+        let dLon = lon2 - lon1
+        
+        let y = sin(dLon) * cos(lat2)
+        let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
+        let radiansBearing = atan2(y, x)
+        
+        return (radiansToDegrees(radiansBearing) + 360).truncatingRemainder(dividingBy: 360)
         
     }
     
@@ -672,9 +652,13 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     /** Centers map around all waypoints in routePaths, and animates the map */
     func centerMap(topHalfCentered: Bool = false) {
         
+        var bottomOffset: CGFloat = (UIScreen.main.bounds.height / 2) - (mapPadding / 2)
+        if #available(iOS 11.0, *) {
+            bottomOffset -= view.safeAreaInsets.bottom
+        }
+        
         if topHalfCentered {
-            let bottom = (UIScreen.main.bounds.height / 2) - (mapPadding / 2)
-            let edgeInsets = UIEdgeInsets(top: mapPadding, left: mapPadding / 2, bottom: bottom, right: mapPadding / 2)
+            let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: mapPadding / 2, bottom: bottomOffset, right: mapPadding / 2)
             let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
             mapView.animate(with: update)
         } else {

@@ -58,14 +58,6 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         self.init(style: .grouped)
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        searchBar?.sizeToFit()
-        searchBar?.tintColor = UIColor.primaryTextColor
-//        if searchBar?.canBecomeFirstResponder == true {
-//            searchBar?.becomeFirstResponder()
-//        }
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         // Subscribe to Keyboard Notifications
@@ -92,9 +84,6 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         
         // Set Up LocationManager
         locationManager.delegate = self
-        if shouldShowCurrentLocation {
-            locationManager.requestLocation()
-        }
         
         // Set Up Sections For TableView
         seeAllStopsSection = Section(type: .seeAllStops, items: [.seeAllStops])
@@ -109,6 +98,19 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         searchBar?.becomeFirstResponder()
         searchBar?.tintColor = .searchBarCursorColor
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        searchBar?.sizeToFit()
+        searchBar?.tintColor = UIColor.primaryTextColor
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if shouldShowCurrentLocation {
+            locationManager.requestLocation()
+        }
     }
     
     override func didReceiveMemoryWarning() {
