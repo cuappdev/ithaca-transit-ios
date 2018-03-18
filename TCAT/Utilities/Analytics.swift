@@ -33,11 +33,26 @@ extension RegisterSession {
     
 }
 
+/// Log device information
+struct DeviceInfo: Codable {
+    
+    let model: String = UIDevice.current.modelName
+    let softwareVersion: String = UIDevice.current.systemVersion
+    let appVersion: String = Constants.App.version
+    let language: String = Locale.preferredLanguages.first ?? "n/a"
+    
+}
+
 // MARK: Event Payloads
+
+struct AppLaunchedPayload: Payload {
+    static let eventName: String = "App Launched"
+}
 
 struct SearchBarTappedEventPayload: Payload {
     
     static let eventName: String = "Search Bar Tapped"
+    static let deviceInfo = DeviceInfo()
     
     enum SearchBarTapLocation: String, Codable {
         case home
@@ -49,6 +64,7 @@ struct SearchBarTappedEventPayload: Payload {
 struct DestinationSearchedEventPayload: Payload {
     
     static let eventName: String = "Destination Searched"
+    static let deviceInfo = DeviceInfo()
     
     let destination: String
     let requestUrl: String?
@@ -58,15 +74,18 @@ struct DestinationSearchedEventPayload: Payload {
 
 struct RouteResultsCellTappedEventPayload: Payload {
     static let eventName: String = "Tapped Route Results Cell"
+    static let deviceInfo = DeviceInfo()
 }
 
 struct InformationViewControllerTappedEventPayload: Payload {
     static let eventName: String = "Tapped Big Blue Bus"
+    static let deviceInfo = DeviceInfo()
 }
 
 struct RouteSharedEventPayload: Payload {
     
     static let eventName: String = "Share Route"
+    static let deviceInfo = DeviceInfo()
     
     let activityType: String
     let didSelectAndCompleteShare: Bool
@@ -74,20 +93,10 @@ struct RouteSharedEventPayload: Payload {
     
 }
 
-struct DeviceInformationPayload: Payload {
-    
-    static let eventName: String = "Device Information"
-
-    static let model: String = UIDevice.current.modelName
-    static let softwareVersion: String = UIDevice.current.systemVersion
-    static let appVersion: String = Constants.App.version
-    static let language: String = Locale.preferredLanguages.first ?? "n/a"
-    
-}
-
 struct GetRoutesErrorPayload: Payload {
     
     static let eventName: String = "Get Routes Error"
+    static let deviceInfo = DeviceInfo()
     
     let description: String
     let url: String?

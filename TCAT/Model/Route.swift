@@ -154,7 +154,6 @@ class Route: NSObject, JSONDecodable {
     static func parseRoutes(in json: JSON, from: String?, to: String?,
                           _ completion: @escaping (_ routes: [Route], _ error: NSError?) -> Void) {
         
-        print("NEW SET")
         if json["success"].boolValue {
             let routes: [Route] = json["data"].arrayValue.map {
                 var augmentedJSON = $0
@@ -168,7 +167,6 @@ class Route: NSObject, JSONDecodable {
             let error = NSError(domain: "Route Calculation Failure", code: 300, userInfo: userInfo)
             completion([], error)
         }
-        print("=====")
         
     }
     

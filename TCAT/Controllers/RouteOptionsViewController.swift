@@ -32,6 +32,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     var searchBarView: SearchBarView!
     var locationManager: CLLocationManager!
+    var currentLocation: CLLocationCoordinate2D?
     var searchType: SearchBarType = .from
     var searchTimeType: SearchType = .leaveAt
     var searchFrom: Place?
@@ -430,8 +431,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // If haven't selected start location, set to current location
         if searchFrom == nil, let location = manager.location {
-            let currentLocationStop =  BusStop(name: Constants.Stops.currentLocation,
-                                               lat: location.coordinate.latitude, long: location.coordinate.longitude)
+            currentLocation = location.coordinate
+            let currentLocationStop = BusStop(name: Constants.Stops.currentLocation,
+                                               lat: location.coordinate.latitude,
+                                               long: location.coordinate.longitude)
             searchFrom = currentLocationStop
             searchBarView.resultsViewController?.currentLocation = currentLocationStop
             routeSelection.fromSearchbar.setTitle(currentLocationStop.name, for: .normal)
@@ -717,7 +720,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // Create RouteDetailViewController
     
     func createRouteDetailViewController(from route: Route) -> RouteDetailViewController? {
-        let contentViewController = RouteDetailContentViewController(route: route)
+        let contentViewController = RouteDetailContentViewController(route: route, currentLocation: currentLocation)
         guard let drawerViewController = contentViewController.drawerDisplayController else {
             return nil
         }

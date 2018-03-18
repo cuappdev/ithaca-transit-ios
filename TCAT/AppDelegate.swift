@@ -29,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
         // Log basic information
-        let payload = DeviceInformationPayload().toEvent()
+        let payload = AppLaunchedPayload().toEvent()
         RegisterSession.shared.logEvent(event: payload)
         
         // Initalize User Defaults

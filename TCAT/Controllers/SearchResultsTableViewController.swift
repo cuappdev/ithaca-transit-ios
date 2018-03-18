@@ -13,14 +13,13 @@ import CoreLocation
 import DZNEmptyDataSet
 import Crashlytics
 
-
 protocol DestinationDelegate {
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?)
 }
+
 protocol SearchBarCancelDelegate {
     func didCancel()
 }
-
 
 class SearchResultsTableViewController: UITableViewController, UISearchBarDelegate, UISearchResultsUpdating, CLLocationManagerDelegate, UnwindAllStopsTVCDelegate, UINavigationControllerDelegate {
     
@@ -96,7 +95,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
             locationManager.requestLocation()
         }
         
-        //Set Up Sections For TableView
+        // Set Up Sections For TableView
         seeAllStopsSection = Section(type: .seeAllStops, items: [.seeAllStops])
         recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
         favoritesSection = Section(type: .favorites, items: favorites)
@@ -283,14 +282,14 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         return cell
     }
     
-    /* Fetch Search Results*/
+    /* Fetch Search Results */
     @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if searchText.count > 0 {
             Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
                 self.searchResultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
                 self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
-                //self.tableViewIndexController.setHidden(true, animated: false)
+                // self.tableViewIndexController.setHidden(true, animated: false)
                 if !self.sections.isEmpty {
                     self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
                 }
@@ -300,7 +299,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         }
     }
     
-    /* ScrollView Delegate*/
+    /* ScrollView Delegate */
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if let cancelButton = searchBar?.value(forKey: "_cancelButton") as? UIButton {
             cancelButton.isEnabled = true
@@ -316,7 +315,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        //tableViewIndexController.setHidden(true, animated: false)
+        // tableViewIndexController.setHidden(true, animated: false)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {

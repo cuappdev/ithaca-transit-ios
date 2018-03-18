@@ -37,7 +37,7 @@ enum ItemType {
 
 extension SearchResultsTableViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
-        return -80.0
+        return 0
     }
     
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
@@ -79,9 +79,43 @@ class SearchTableViewManager {
     func parseGoogleJSON(searchText: String, json: JSON) -> Section {
         var itemTypes: [ItemType] = []
 
-        let busStopsWithLevenshtein: [(BusStop, Int)] = getAllStops().map({ ($0, String.fuzzPartialRatio(str1: $0.name.lowercased(), str2: searchText.lowercased())) })
+        let busStopsWithLevenshtein: [(BusStop, Int)] = getAllStops().map {
+            ($0, String.fuzzPartialRatio(str1: $0.name.lowercased(), str2: searchText.lowercased()))
+        }
         var filteredBusStops = busStopsWithLevenshtein.filter { $0.1 > Constants.Values.fuzzySearchMinimumValue }
-        filteredBusStops.sort(by: { $0.1 > $1.1} )
+        filteredBusStops.sort(by: { $0.1 > $1.1 })
+        
+        print("Stops Before")
+        filteredBusStops.forEach {
+            print($0.0.name)
+        }
+        
+        filteredBusStops.sort { (stopOne, stopTwo) in
+            
+            // Note: Return True if first element in tuple should be first
+            let oneMatches = stopOne.0.name.first == searchText.first
+            let twoMatches = stopTwo.0.name.first == searchText.first
+            
+            // If both start with same phrase, return alphabetical order
+            if oneMatches && twoMatches {
+                return stopOne.1 > stopTwo.1
+            }
+            // If oneMatches, return true. Otherwise, two must match, so return false
+            else if oneMatches || twoMatches {
+                return oneMatches
+            }
+            // Otherwise, return alphabetical order
+            else {
+                return stopOne.1 > stopTwo.1
+            }
+            
+        }
+        
+        print("Stops After")
+        filteredBusStops.forEach {
+            print($0.0.name)
+        }
+        
         itemTypes = filteredBusStops.map { ItemType.busStop($0.0) }
 
         var googleResults: [ItemType] = []

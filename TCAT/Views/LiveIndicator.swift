@@ -22,8 +22,8 @@ class LiveIndicator: UIView {
     fileprivate var views: [Any]!
     
     static let INTERVAL: TimeInterval = 4.0
+    static let DURATION: TimeInterval = 0.2
     
-    fileprivate let DURATION: TimeInterval = 0.2
     fileprivate let START_DELAY: TimeInterval = 0.0
     fileprivate let END_DELAY: TimeInterval = 0.0 // 0.25
     fileprivate let DIM_OPACITY: CGFloat = 0.5
@@ -102,7 +102,7 @@ class LiveIndicator: UIView {
                                   selector: #selector(self.animate(layer:)), userInfo: layer, repeats: true)
                 RunLoop.main.add(timer, forMode: .commonModes)
             }
-            timeInterval += DURATION
+            timeInterval += LiveIndicator.DURATION
         }
         
     }
@@ -137,10 +137,10 @@ class LiveIndicator: UIView {
         guard let view = timer.userInfo as? UIView
             else { return }
         
-        UIView.animate(withDuration: DURATION, delay: START_DELAY, options: .overrideInheritedOptions, animations: {
+        UIView.animate(withDuration: LiveIndicator.DURATION, delay: START_DELAY, options: .overrideInheritedOptions, animations: {
             view.alpha = self.DIM_OPACITY
         }, completion: { (completed) in
-            UIView.animate(withDuration: self.DURATION, delay: self.END_DELAY, options: .overrideInheritedOptions, animations: {
+            UIView.animate(withDuration: LiveIndicator.DURATION, delay: self.END_DELAY, options: .overrideInheritedOptions, animations: {
                 view.alpha = 1.0
             })
         })
@@ -155,7 +155,7 @@ class LiveIndicator: UIView {
         
         let fadeOutAnimation = CAKeyframeAnimation(keyPath: "opacity")
         fadeOutAnimation.beginTime = START_DELAY
-        fadeOutAnimation.duration = DURATION
+        fadeOutAnimation.duration = LiveIndicator.DURATION
         fadeOutAnimation.keyTimes = [0, 1]
         fadeOutAnimation.values = [1.0, DIM_OPACITY]
         fadeOutAnimation.autoreverses = true
