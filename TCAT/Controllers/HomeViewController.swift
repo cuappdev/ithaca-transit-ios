@@ -65,15 +65,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
         view.backgroundColor = .tableBackgroundColor
-        
-        infoButton.addTarget(self, action: #selector(openInformationScreen), for: .touchUpInside)
-        infoButton.snp.makeConstraints { (make) in
-            make.width.equalTo(30)
-            make.height.equalTo(38)
-        }
-        infoButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 0)
-        let rightBarButton = UIBarButtonItem(customView: infoButton)
-        navigationItem.setRightBarButton(rightBarButton, animated: false)
 
         tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
@@ -104,6 +95,17 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
         textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
         navigationItem.titleView = searchBar
+        
+        let rightBarButton = UIBarButtonItem(customView: infoButton)
+        navigationItem.setRightBarButton(rightBarButton, animated: true)
+        infoButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 0)
+        infoButton.contentVerticalAlignment = .center
+        infoButton.addTarget(self, action: #selector(openInformationScreen), for: .touchUpInside)
+        infoButton.snp.makeConstraints { (make) in
+            make.width.equalTo(30)
+            make.height.equalTo(38)
+        }
+        
     }
 
     func displayFavoritesTVC() {
@@ -392,7 +394,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         navigationItem.rightBarButtonItem = nil
-        RegisterSession.shared.logEvent(event: SearchBarTappedEventPayload(location: .home).toEvent())
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {

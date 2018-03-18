@@ -316,7 +316,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                             
                             let payload = GetRoutesErrorPayload(description: error?.userInfo["description"] as? String ?? "",
                                                                 url: error?.userInfo["url"] as? String)
-                            RegisterSession.shared.logEvent(event: payload.toEvent())
+                            RegisterSession.shared?.logEvent(event: payload.toEvent())
                             
                         } else {
                             if self.isBannerShown {
@@ -350,7 +350,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                         let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
                                                                     requestUrl: alamofireRequest.request?.url?.absoluteString,
                                                                     stopType: nil).toEvent()
-                        RegisterSession.shared.logEvent(event: event)
+                        RegisterSession.shared?.logEvent(event: event)
                     }
                         
                     else { // Catch error of coordinates not being found
@@ -474,7 +474,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         datePickerView.frame = newFrame
     }
 
-    @objc func showDatePicker(sender: UIButton){
+    @objc func showDatePicker(sender: UIButton) {
+        
         view.bringSubview(toFront: datePickerOverlay)
         view.bringSubview(toFront: datePickerView)
 
@@ -482,7 +483,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         if routeSelection.datepickerButton.titleLabel?.text?.lowercased() == "leave now" {
             datePickerView.setDatepickerDate(date: Date())
         }
-        else if let time = searchTime  {
+        else if let time = searchTime {
             datePickerView.setDatepickerDate(date: time)
         }
 
@@ -492,6 +493,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.6 // darken screen when pull up datepicker
         }
+        
+        let payload = DatePickerAccessedPayload()
+        RegisterSession.shared?.logEvent(event: payload.toEvent())
+        
     }
 
     @objc func dismissDatePicker(sender: UIButton) {
@@ -707,6 +712,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         locationManager.stopUpdatingLocation()
         if let routeDetailViewController = createRouteDetailViewController(from: routes[indexPath.row]) {
+            let payload = RouteResultsCellTappedEventPayload()
+            RegisterSession.shared?.logEvent(event: payload.toEvent())
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }
@@ -757,6 +764,10 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
         routeDetailViewController.isPeeking = true
         cell.transform = .identity
         previewingContext.sourceRect = routeResults.convert(cell.frame, to: view)
+        
+        let payload = RouteResultsCellPeekedPayload()
+        RegisterSession.shared?.logEvent(event: payload.toEvent())
+        
         return routeDetailViewController
         
     }

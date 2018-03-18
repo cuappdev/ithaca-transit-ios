@@ -70,7 +70,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
             for (pathIndex, point) in direction.path.enumerated() {
 
-                let isStop: Bool = direction.type == .depart
+                let isStop: Bool = direction.type != .walk
                 var type: WaypointType = .none
                 
                 // First Direction
@@ -141,20 +141,20 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
         
-        // Fake Bus
-        let bus = BusLocation(dataType: .validData, destination: "", deviation: 0, delay: 0, direction: "", displayStatus: "", gpsStatus: 0, heading: 0, lastStop: "", lastUpdated: Date(), latitude: 42.4491411, longitude: -76.4836815, name: 16, opStatus: "", routeID: "", runID: 0, speed: 0, tripID: "", vehicleID: 0)
-        let coords = CLLocationCoordinate2D(latitude: 42.4491411, longitude: -76.4836815)
-        let marker = GMSMarker(position: coords)
-        (bus.iconView as? BusLocationView)?.updateBus(to: coords, with: Double(bus.heading))
-        marker.iconView = bus.iconView
-        marker.appearAnimation = .pop
-        setIndex(of: marker, with: .bussing)
-        updateUserData(for: marker, with: [
-            Constants.BusUserData.actualCoordinates : coords,
-            Constants.BusUserData.vehicleID : 123456789
-        ])
-        marker.map = mapView
-        buses.append(marker)
+//        // Fake Bus
+//        let bus = BusLocation(dataType: .validData, destination: "", deviation: 0, delay: 0, direction: "", displayStatus: "", gpsStatus: 0, heading: 0, lastStop: "", lastUpdated: Date(), latitude: 42.4491411, longitude: -76.4836815, name: 16, opStatus: "", routeID: "", runID: 0, speed: 0, tripID: "", vehicleID: 0)
+//        let coords = CLLocationCoordinate2D(latitude: 42.4491411, longitude: -76.4836815)
+//        let marker = GMSMarker(position: coords)
+//        (bus.iconView as? BusLocationView)?.updateBus(to: coords, with: Double(bus.heading))
+//        marker.iconView = bus.iconView
+//        marker.appearAnimation = .pop
+//        setIndex(of: marker, with: .bussing)
+//        updateUserData(for: marker, with: [
+//            Constants.BusUserData.actualCoordinates : coords,
+//            Constants.BusUserData.vehicleID : 123456789
+//        ])
+//        marker.map = mapView
+//        buses.append(marker)
 
     }
     
@@ -202,7 +202,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
-        mapView.paddingAdjustmentBehavior = .always
+        mapView.paddingAdjustmentBehavior = .never // handled by our code
         mapView.setMinZoom(minZoom, maxZoom: maxZoom)
         mapView.settings.compassButton = true
         mapView.settings.myLocationButton = true

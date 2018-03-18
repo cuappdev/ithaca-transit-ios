@@ -10,6 +10,8 @@ import Foundation
 import SwiftyJSON
 import DZNEmptyDataSet
 import Fuzzywuzzy_swift
+import SwiftRegister
+
 let userDefaults = UserDefaults.standard
 
 struct Section {
@@ -85,11 +87,6 @@ class SearchTableViewManager {
         var filteredBusStops = busStopsWithLevenshtein.filter { $0.1 > Constants.Values.fuzzySearchMinimumValue }
         filteredBusStops.sort(by: { $0.1 > $1.1 })
         
-        print("Stops Before")
-        filteredBusStops.forEach {
-            print($0.0.name)
-        }
-        
         filteredBusStops.sort { (stopOne, stopTwo) in
             
             // Note: Return True if first element in tuple should be first
@@ -109,11 +106,6 @@ class SearchTableViewManager {
                 return stopOne.1 > stopTwo.1
             }
             
-        }
-        
-        print("Stops After")
-        filteredBusStops.forEach {
-            print($0.0.name)
         }
         
         itemTypes = filteredBusStops.map { ItemType.busStop($0.0) }
@@ -194,7 +186,8 @@ class SearchTableViewManager {
             default: return "this shouldn't ever fire"
             }
         })
-        let filteredPlaces = location is BusStop ? convertedPlaces.filter({ !areObjectsEqual(type: BusStop.self, a: location, b: $0)}) : convertedPlaces.filter({ !areObjectsEqual(type: PlaceResult.self, a: location, b: $0)})
+        let filteredPlaces = location is BusStop ? convertedPlaces.filter({ !areObjectsEqual(type: BusStop.self, a: location, b: $0)}) :
+            convertedPlaces.filter({ !areObjectsEqual(type: PlaceResult.self, a: location, b: $0)})
 
         var updatedPlaces: [Any]!
         if bottom {
@@ -205,6 +198,20 @@ class SearchTableViewManager {
         if updatedPlaces.count > limit { updatedPlaces.remove(at: updatedPlaces.count - 1)}
         let data = NSKeyedArchiver.archivedData(withRootObject: updatedPlaces)
         userDefaults.set(data, forKey: key)
+        
+        var locationName: String {
+            if let busStop = location as? BusStop {
+                return busStop.name
+            }
+            if let place = location as? PlaceResult {
+                return place.name
+            }
+            return ""
+        }
+        
+        let payload = FavoriteAddedPayload(name: locationName)
+        RegisterSession.shared?.logEvent(event: payload.toEvent())
+        
     }
 
     func prepareAllBusStopItems(allBusStops: [BusStop]) -> [ItemType] {

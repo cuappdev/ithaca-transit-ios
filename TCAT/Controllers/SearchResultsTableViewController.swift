@@ -12,6 +12,7 @@ import Alamofire
 import CoreLocation
 import DZNEmptyDataSet
 import Crashlytics
+import SwiftRegister
 
 protocol DestinationDelegate {
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?)
@@ -219,13 +220,20 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
             allStopsTVC.allStops = SearchTableViewManager.shared.getAllStops()
             allStopsTVC.unwindAllStopsTVCDelegate = self
         case .busStop(let busStop):
-            if busStop.name != Constants.Stops.currentLocation
-                && busStop.name != Constants.Phrases.firstFavorite {
+            if busStop.name != Constants.Stops.currentLocation && busStop.name != Constants.Phrases.firstFavorite {
                 SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: busStop, limit: 8)
             }
+            
+            let payload = BusStopTappedPayload(name: busStop.name)
+            RegisterSession.shared?.logEvent(event: payload.toEvent())
+            
             destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
         case .placeResult(let placeResult):
             SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: placeResult, limit: 8)
+            
+            let payload = GooglePlaceTappedPayload(name: placeResult.name)
+            RegisterSession.shared?.logEvent(event: payload.toEvent())
+            
             destinationDelegate?.didSelectDestination(busStop: nil, placeResult: placeResult)
         default: break
         }

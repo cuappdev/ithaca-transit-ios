@@ -28,16 +28,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         GMSServices.provideAPIKey(json["google-maps"].stringValue)
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
+        // Set Up Register, Fabric / Crashlytics (RELEASE)
+        #if !DEBUG
+            Fabric.with([Crashlytics.self])
+        #endif
+        
+        RegisterSession.startLogging()
+
         // Log basic information
         let payload = AppLaunchedPayload()
-        do {
-            let serial = try payload.toEvent().serializeJson()
-            print("info:", serial.description)
-        } catch {
-            
-        }
-
-        RegisterSession.shared.logEvent(event: payload.toEvent())
+        RegisterSession.shared?.log(payload)
         
         // Initalize User Defaults
         if userDefaults.value(forKey: Constants.UserDefaults.onboardingShown) == nil {
@@ -50,7 +50,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             userDefaults.set([Any](), forKey: Constants.UserDefaults.favorites)
         }
         
-        // Debug Onboarding
+        // Debug - Always Show Onboarding
         // userDefaults.set(false, forKey: Constants.UserDefaults.onboardingShown)
         
         getBusStops()
@@ -66,11 +66,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
-
-        // Initalize Fabric + Crashlytics (RELEASE)
-        #if !DEBUG
-            Fabric.with([Crashlytics.self])
-        #endif
         
         return true
     }

@@ -85,7 +85,7 @@ struct Constants {
     struct Values {
         static let maxDistanceBetweenStops = 160.0
         // Percentage close to a word
-        static let fuzzySearchMinimumValue = 75
+        static let fuzzySearchMinimumValue = 90
     }
     
     struct Stops {

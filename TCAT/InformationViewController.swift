@@ -73,7 +73,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
             make.height.equalTo(20)
         }
         
-        tcatImage.image = UIImage(named: "tcatbus")
+        tcatImage.image = UIImage(named: "tcat")
         tcatImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(busTapped)))
         tcatImage.isUserInteractionEnabled = true
         tcatImage.snp.makeConstraints { (make) in
@@ -120,6 +120,9 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
             make.right.equalTo(view)
             make.bottom.equalTo(view)
         }
+        
+        let payload = AboutPageOpenedPayload()
+        RegisterSession.shared?.logEvent(event: payload.toEvent())
         
     }
     
@@ -235,7 +238,8 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
             
         }
         
-        RegisterSession.shared.logEvent(event: InformationViewControllerTappedEventPayload().toEvent())
+        let payload = BusTappedEventPayload()
+        RegisterSession.shared?.logEvent(event: payload.toEvent())
         
     }
     

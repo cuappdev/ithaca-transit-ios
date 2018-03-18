@@ -303,13 +303,8 @@ func presentShareSheet(for route: Route) {
     activityVC.excludedActivityTypes = [.print, .assignToContact, .openInIBooks, .addToReadingList]
     activityVC.completionWithItemsHandler = { (activity, completed, items, error) in
         let sharingMethod = activity?.rawValue.replacingOccurrences(of: "com.apple.UIKit.activity.", with: "") ?? "None"
-        let _ = RegisterSession.shared.logEvent(event:
-            RouteSharedEventPayload(
-                activityType: sharingMethod,
-                didSelectAndCompleteShare: completed,
-                error: error?.localizedDescription
-            ).toEvent()
-        )
+        let payload = RouteSharedEventPayload(activityType: sharingMethod, didSelectAndCompleteShare: completed, error: error?.localizedDescription)
+        RegisterSession.shared?.logEvent(event: payload.toEvent())
     }
     
     UIApplication.shared.delegate?.window??.presentInApp(activityVC)

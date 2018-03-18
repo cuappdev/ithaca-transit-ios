@@ -180,12 +180,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         let originX = titleLabel.frame.minX + plainLabel.frame.size.width + 8
         var originY = titleLabel.frame.minY
         
-        switch titleLabel.numberOfLines() {
-        case 1:
-            originY += titleLabel.center.y - icon.frame.size.height / 2
-        default:
-            originY += titleLabel.font.lineHeight - icon.frame.size.height / 2 - CGFloat(titleLabel.numberOfLines() * 2)
-        }
+        originY += titleLabel.font.lineHeight - icon.frame.size.height / 2 - CGFloat(titleLabel.numberOfLines() * 2)
         
         icon.frame.origin = CGPoint(x: originX, y: originY)
         return icon
