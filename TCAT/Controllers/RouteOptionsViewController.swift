@@ -399,19 +399,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-        
         print("RouteOptionVC locationManager didFailWithError: \(error.localizedDescription)")
         locationManager.stopUpdatingLocation()
-        var boolean = true
+        var locationAuthReminder = true
         
         if let showReminder = userDefaults.value(forKey: Constants.UserDefaults.locationAuthReminder) as? Bool {
             if showReminder {
-                boolean = false
-            } else {
-                // If the user doesn't want to use location, auto show from field
-                // Currently not working, but such an edge case, leaving for now
-                self.searchingFrom()
-                return
+                locationAuthReminder = false
             }
         }
         
@@ -421,14 +415,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         alertController.addAction(UIAlertAction(title: "Dismiss", style: .default) { (_) in
-            userDefaults.set(boolean, forKey: Constants.UserDefaults.locationAuthReminder)
+            userDefaults.set(locationAuthReminder, forKey: Constants.UserDefaults.locationAuthReminder)
         })
         alertController.addAction(UIAlertAction(title: "Settings", style: .default) { (_) in
             UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
         })
 
         present(alertController, animated: true, completion: nil)
-        
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
