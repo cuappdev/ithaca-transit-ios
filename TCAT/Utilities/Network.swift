@@ -20,11 +20,11 @@ class Network {
     
     // MARK: Global Network Variables
     
-    static let networkType: NetworkType = .debug
+    static let networkType: NetworkType = .local
     static let apiVersion = "v1"
     
     /// Used for local backend testing
-    static let localIPAddress = "10.132.6.238"
+    static let localIPAddress = "10.131.152.124"
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
     
     /// Test server used for development

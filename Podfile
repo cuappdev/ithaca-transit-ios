@@ -27,13 +27,10 @@ target 'TCAT' do
   pod 'NotificationBannerSwift'
   pod 'Pulley', :git=> 'https://github.com/52inc/Pulley.git', :branch => 'master'
   pod 'Presentation'
-  
-  pod 'SnapKit'
-  pod 'MarqueeLabel'
 
 post_install do |installer|
     installer.pods_project.targets.each do |target|
-        if ['NotificationBannerSwift', 'SnapKit', 'MarqueeLabel', 'Fuzzywuzzy_swift', 'TRON', 'SwiftyJSON'].include? target.name
+        if ['NotificationBannerSwift', 'SnapKit', 'Fuzzywuzzy_swift', 'TRON', 'SwiftyJSON'].include? target.name
             target.build_configurations.each do |config|
                 config.build_settings['SWIFT_VERSION'] =  '4.0'
             end

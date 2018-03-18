@@ -89,7 +89,6 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         tableView.backgroundColor = .tableBackgroundColor
         tableView.showsVerticalScrollIndicator = false
         tableView.reloadData()
-        extendedLayoutIncludesOpaqueBars = true
         
         // Set Up LocationManager
         locationManager.delegate = self

@@ -2,25 +2,22 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "Bus Symbol.png",
+      "filename" : "Bus Stop1x.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Bus Symbol@2x.png",
+      "filename" : "Bus Stop2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Bus Symbol@3x.png",
+      "filename" : "Bus Stop3x.png",
       "scale" : "3x"
     }
   ],
   "info" : {
     "version" : 1,
     "author" : "xcode"
-  },
-  "properties" : {
-    "template-rendering-intent" : "template"
   }
 }

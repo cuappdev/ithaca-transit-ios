@@ -37,9 +37,9 @@ struct Constants {
     }
     
     struct BusUserData {
-        static let placedLocation = "placedLocation"
-        static let actualLocation = "actualLocation"
-        static let id = "id"
+        static let actualCoordinates = "actualCoords"
+        static let indicatorCoordinates = "indicatorCoords"
+        static let vehicleID = "vehicleID"
     }
     
     struct Cells {

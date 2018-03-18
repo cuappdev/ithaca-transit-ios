@@ -9,7 +9,7 @@
 import UIKit
 
 enum LiveIndicatorSize: Double {
-    case small = 6
+    case small = 8
     case large = 12
 }
 
@@ -52,7 +52,7 @@ class LiveIndicator: UIView {
     private func drawViews() {
         
         let dotSize: CGFloat = CGFloat(size.rawValue / 3.0)
-        dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - dotSize + 0.5, width: dotSize, height: dotSize))
+        dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - dotSize + 0.25, width: dotSize, height: dotSize))
         dot.layer.cornerRadius = dot.frame.width / 2
         dot.clipsToBounds = true
         dot.backgroundColor = color
