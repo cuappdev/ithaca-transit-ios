@@ -98,8 +98,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     func getBusStops() {
         Network.getAllStops().perform(withSuccess: { stops in
             let allBusStops = stops.allStops
-            let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
-            self.userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
+            if allBusStops.isEmpty {
+                let title = "Couldn't Fetch Bus Stops"
+                let message = "The app will continue trying upon launch. You can continue to use the app as normal."
+                let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                presentInApp(alertController)
+            } else {
+                let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
+                self.userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
+            }
         }, failure: { error in
             print("getBusStops error:", error)
         })

@@ -47,6 +47,7 @@ struct DeviceInfo: Codable {
 
 struct AppLaunchedPayload: Payload {
     static let eventName: String = "App Launched"
+    static let deviceInfo = DeviceInfo
 }
 
 struct SearchBarTappedEventPayload: Payload {
