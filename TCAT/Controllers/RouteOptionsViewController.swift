@@ -717,9 +717,38 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
         if sender.state == .began {
             let point = sender.location(in: routeResults)
             if let indexPath = routeResults.indexPathForRow(at: point) {
-                presentShareSheet(for: routes[indexPath.row])
+                presentShareSheet(withIndexPath: indexPath)
             }
         }
+    }
+    
+    private func presentShareSheet(withIndexPath indexPath: IndexPath) {
+        var activityItems: [Any] = []
+
+        if let cell = routeResults.cellForRow(at: indexPath) {
+            UIGraphicsBeginImageContext(cell.frame.size)
+            cell.layer.render(in: UIGraphicsGetCurrentContext()!)
+            let cellImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            activityItems.append(cellImage)
+        }
+        
+        let promotionalText = "Download Ithaca Transit on the App Store! \(Constants.App.appStoreLink)"
+        activityItems.append(promotionalText)
+        
+        let activityVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        activityVC.popoverPresentationController?.sourceView = view // so that iPads won't crash
+        activityVC.excludedActivityTypes = [.print, .assignToContact, .openInIBooks, .addToReadingList]
+        activityVC.completionWithItemsHandler = { (activity, completed, items, error) in
+            let sharingMethod = activity?.rawValue.replacingOccurrences(of: "com.apple.UIKit.activity.", with: "") ?? "None"
+            let _ = RegisterSession.shared.logEvent(event:
+                RouteSharedEventPayload(
+                    activityType: sharingMethod,
+                    didSelectAndCompleteShare: completed,
+                    error: error?.localizedDescription).toEvent())
+        }
+    
+        present(activityVC, animated: true, completion: nil)
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
