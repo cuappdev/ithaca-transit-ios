@@ -338,10 +338,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     if let alamofireRequest = request?.perform(withSuccess: { (routeJSON) in
                         Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
                             self.routes = parsedRoutes
-                            
-                            for (index, route) in self.routes.enumerated() {
-                                print("Directions \(index): \(route.rawDirections)")
-                            }
                             requestDidFinish(with: error) // 300 error
                         })
                     }, failure: { (networkError) in
