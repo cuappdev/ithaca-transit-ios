@@ -16,7 +16,7 @@ class OnboardingViewController: PresentationController {
     //
     
     /// Change the main view's background color
-    let backgroundColor: UIColor = .tcatBlueColor
+    let backgroundColor = UIColor(hex: "C0DDEB")
     
     //
     // Navigation
@@ -24,33 +24,60 @@ class OnboardingViewController: PresentationController {
     
     /// The text color of the navigation buttons
     let navigationAttributes: [NSAttributedStringKey : Any] = [
-        NSAttributedStringKey.foregroundColor : UIColor.white
+        NSAttributedStringKey.foregroundColor : UIColor(hex: "243C47")
     ]
     
     //
     // Labels
     //
     
-    /// The position of the main labels
-    let labelPosition = Position(left: 0.7, top: 0.35)
+    //
+    //  Header Label
+    //
     
-    /// Change the text font type
-    let textFontName = "HelveticaNeue"
+    /// The position of the header label
+    let titleLabelPosition = Position(left: 0.5, top: 0.2)
     
-    /// Change the text font size
-    let textFontSize: CGFloat = 34.0
+    let titleLabelFontName = Constants.Fonts.SanFrancisco.Bold
     
-    /// Change the text color
-    let textColor = UIColor(hex: "FFE8A9")
+    let titleLabelFontSize: CGFloat = 48.0
+    
+    let titleLabelTextColor = UIColor(hex: "243C47")
+    
+    let titleLabelMessages = [
+        
+        "Welcome to Ithaca Transit.",
+        "Live Tracking.",
+        "Search Anywhere.",
+        "Your Favorites.",
+        "All the best features. All in one app."
+        
+    ]
+    
+    //
+    // Detail Label
+    //
+    
+    /// The position of the main label
+    let detailLabelPosition = Position(left: 0.5, top: 0.35)
+    
+    /// Change the font type of text label
+    let detailLabelFontName = Constants.Fonts.SanFrancisco.Medium
+    
+    /// Change the font size of text label
+    let detailLabelFontSize: CGFloat = 32.0
+    
+    /// Change the text label color
+    let detailLabelTextColor = UIColor(hex: "243C47")
     
     /// Change the amount of messages in the view. The number of pages shown will equal the number of messages
-    let messages = [
+    let detailLabelMessages = [
         
-        "Parallax is a displacement or difference in the apparent position of an object viewed along two different lines of sight.",
-        "It's measured by the angle or semi-angle of inclination between those two lines.",
-        "The term is derived from the Greek word παράλλαξις (parallaxis), meaning 'alteration'.",
-        "Nearby objects have a larger parallax than more distant objects when observed from different positions.",
-        "http://en.wikipedia.org/wiki/Parallax"
+        "Beautiful and simple end-to-end navigation app for TCAT. Made by AppDev.",
+        "Know exactly where your bus is and when it will be there.",
+        "From Ithaca Mall to Taughannock Falls, search any location and get there fast.",
+        "All of your favorite destinations are just one tap away.",
+        ""
         
     ]
     
@@ -61,15 +88,11 @@ class OnboardingViewController: PresentationController {
     /// Set the asset type, position, and speed.
     let backgroundImages = [
         
-        BackgroundImage(name: "Trees", left: 0.0, top: 0.743, speed: -0.3),
-        BackgroundImage(name: "Bus", left: 0.02, top: 0.77, speed: 0.25),
-        BackgroundImage(name: "Truck", left: 1.3, top: 0.73, speed: -1.5),
-        BackgroundImage(name: "Roadlines", left: 0.0, top: 0.79, speed: -0.24),
-        BackgroundImage(name: "Houses", left: 0.0, top: 0.627, speed: -0.16),
-        BackgroundImage(name: "Hills", left: 0.0, top: 0.51, speed: -0.08),
-        BackgroundImage(name: "Mountains", left: 0.0, top: 0.29, speed: 0.0),
-        BackgroundImage(name: "Clouds", left: -0.415, top: 0.14, speed: 0.18),
-        BackgroundImage(name: "Sun", left: 0.8, top: 0.07, speed: 0.0)
+        BackgroundImage(name: "treesnroad", left: -2.7, top: 0.71, speed: -1.3),
+        BackgroundImage(name: "tcat", left: -0.60, top: 0.731, speed: 0.4),
+        BackgroundImage(name: "hill", left: -1.5, top: 0.55, speed: -0.5),
+        BackgroundImage(name: "mountain", left: -1.0, top: 0.41, speed: -0.2),
+        BackgroundImage(name: "cloud", left: -2.0, top: 0.10, speed: -0.1),
         
     ]
     
@@ -84,7 +107,7 @@ class OnboardingViewController: PresentationController {
     let groundViewPosition = Position(left: 0.0, bottom: 0.063)
     
     /// The background color of the ground view
-    let groundViewBackgroundColor: UIColor = .clear
+    let groundViewBackgroundColor = UIColor(hex: "243C47")
     
     
     
@@ -122,31 +145,6 @@ class OnboardingViewController: PresentationController {
         
     }
     
-    private lazy var leftButton: UIBarButtonItem = { [unowned self] in
-        let leftButton = UIBarButtonItem(
-            title: "Previous",
-            style: .plain,
-            target: self,
-            action: #selector(moveBack))
-        
-        leftButton.setTitleTextAttributes(navigationAttributes, for: .normal)
-        
-        return leftButton
-    }()
-    
-    private lazy var rightButton: UIBarButtonItem = { [unowned self] in
-        let rightButton = UIBarButtonItem(
-            title: "Next",
-            style: .plain,
-            target: self,
-            action: #selector(moveForward)
-        )
-        
-        rightButton.setTitleTextAttributes(navigationAttributes, for: .normal)
-        
-        return rightButton
-    }()
-    
     private lazy var dismissButton: UIBarButtonItem = { [unowned self] in
         let dismissButton = UIBarButtonItem(
             title: "Dismiss",
@@ -161,6 +159,7 @@ class OnboardingViewController: PresentationController {
     }()
     
     @objc func dismissView() {
+        
         if isInitialViewing {
             
             let rootVC = HomeViewController()
@@ -196,10 +195,10 @@ class OnboardingViewController: PresentationController {
         super.viewDidLoad()
         
         setNavigationTitle = false
-        navigationItem.leftBarButtonItem = dismissButton // isInitialViewing ? leftButton : dismissButton
-        navigationItem.rightBarButtonItem = isInitialViewing ? rightButton : nil
+        navigationItem.leftBarButtonItem = isInitialViewing ? nil : dismissButton
         
         view.backgroundColor = backgroundColor
+        UIApplication.shared.statusBarStyle = .default
         
         configureSlides()
         configureBackground()
@@ -207,31 +206,99 @@ class OnboardingViewController: PresentationController {
     
     private func configureSlides() {
         
+        let width = UIScreen.main.bounds.width < 550 ? UIScreen.main.bounds.width : 550
+        let height: CGFloat = 200
+        
+        // Detail Labels
+        
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         
-        let ratio: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
-        let font = UIFont(name: textFontName, size: textFontSize * ratio)!
+        let detailWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.8
+        let detailHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
+        
+        let detailFont = UIFont(name: detailLabelFontName, size: detailLabelFontSize * detailHeight)!
         
         let attributes = [
-            NSAttributedStringKey.font: font,
-            NSAttributedStringKey.foregroundColor: textColor,
+            NSAttributedStringKey.font: detailFont,
+            NSAttributedStringKey.foregroundColor: detailLabelTextColor,
             NSAttributedStringKey.paragraphStyle: paragraphStyle
         ]
         
-        let titles = messages.map { title -> Content in
-            let label = UILabel(frame: CGRect(x: 0, y: 0, width: 550 * ratio, height: 200 * ratio))
+        let detailTitles = detailLabelMessages.map { title -> Content in
+            let label = UILabel(frame: CGRect(x: 0, y: 0, width: width * detailWidth, height: height * detailHeight))
             label.numberOfLines = 5
             label.attributedText = NSAttributedString(string: title, attributes: attributes)
-            return Content(view: label, position: labelPosition)
+            return Content(view: label, position: detailLabelPosition)
         }
+        
+        // Title Labels
+        
+        let headerParagraphStyle = NSMutableParagraphStyle()
+        headerParagraphStyle.alignment = .center
+        
+        let headerWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.9
+        let headerHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
+        let headerFont = UIFont(name: titleLabelFontName, size: titleLabelFontSize * headerHeight)!
+        
+        let headerAttributes = [
+            NSAttributedStringKey.font: headerFont,
+            NSAttributedStringKey.foregroundColor: titleLabelTextColor,
+            NSAttributedStringKey.paragraphStyle: headerParagraphStyle
+        ]
+        
+        let headerTitles = titleLabelMessages.map { title -> Content in
+            let label = UILabel(frame: CGRect(x: 0, y: 0, width: width * headerWidth, height: height * headerHeight))
+            label.numberOfLines = 5
+            label.attributedText = NSAttributedString(string: title, attributes: headerAttributes)
+            return Content(view: label, position: titleLabelPosition)
+        }
+        
+        // Button
+        
+        let button = UIButton()
+        button.frame = CGRect(x: 0, y: 0, width: 160, height: 60)
+        button.layer.shadowOffset = CGSize(width: 0, height: 4)
+        button.layer.shadowColor = UIColor.mediumGrayColor.cgColor
+        button.layer.shadowOpacity = 0.5
+        button.setTitle("BEGIN", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
+        button.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Medium, size: 22)!
+        button.backgroundColor = .tcatBlueColor // UIColor(hex: "D65851")
+        button.layer.cornerRadius = 4
+        let buttonPosition = Position(left: 0.5, top: 0.5)
+        let startButton = Content(view: button, position: buttonPosition, centered: true)
+        
+        // Slides
         
         var slides = [SlideController]()
         
-        for index in 0..<messages.count {
-            let controller = SlideController(contents: [titles[index]])
-            controller.add(animations: [Content.centerTransition(forSlideContent: titles[index])])
+        for index in 0..<detailLabelMessages.count {
+            
+            var contents: [Content] = [detailTitles[index], headerTitles[index]]
+            
+            // Go Button
+            if index == detailLabelMessages.count - 1 {
+                contents.append(startButton)
+            }
+            
+            let controller = SlideController(contents: contents)
+            
+            // Title Labels
+            controller.add(animation: Content.centerTransition(forSlideContent: headerTitles[index]))
+            controller.add(animation: TransitionAnimation(content: headerTitles[index], destination: titleLabelPosition))
+            
+            // Detail Labels
+            let animation = Content.centerTransition(forSlideContent: detailTitles[index])
+            controller.add(animation: animation)
+            
+            // Button
+            controller.add(content: startButton)
+            controller.add(animation: Content.centerTransition(forSlideContent: startButton))
+            
             slides.append(controller)
+            
         }
         
         add(slides)

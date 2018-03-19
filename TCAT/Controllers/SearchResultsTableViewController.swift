@@ -12,15 +12,15 @@ import Alamofire
 import CoreLocation
 import DZNEmptyDataSet
 import Crashlytics
-
+import SwiftRegister
 
 protocol DestinationDelegate {
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?)
 }
+
 protocol SearchBarCancelDelegate {
     func didCancel()
 }
-
 
 class SearchResultsTableViewController: UITableViewController, UISearchBarDelegate, UISearchResultsUpdating, CLLocationManagerDelegate, UnwindAllStopsTVCDelegate, UINavigationControllerDelegate {
     
@@ -58,14 +58,6 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         self.init(style: .grouped)
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        searchBar?.sizeToFit()
-        searchBar?.tintColor = UIColor.primaryTextColor
-//        if searchBar?.canBecomeFirstResponder == true {
-//            searchBar?.becomeFirstResponder()
-//        }
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         // Subscribe to Keyboard Notifications
@@ -89,15 +81,11 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         tableView.backgroundColor = .tableBackgroundColor
         tableView.showsVerticalScrollIndicator = false
         tableView.reloadData()
-        extendedLayoutIncludesOpaqueBars = true
         
         // Set Up LocationManager
         locationManager.delegate = self
-        if shouldShowCurrentLocation {
-            locationManager.requestLocation()
-        }
         
-        //Set Up Sections For TableView
+        // Set Up Sections For TableView
         seeAllStopsSection = Section(type: .seeAllStops, items: [.seeAllStops])
         recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
         favoritesSection = Section(type: .favorites, items: favorites)
@@ -110,6 +98,19 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         searchBar?.becomeFirstResponder()
         searchBar?.tintColor = .searchBarCursorColor
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        searchBar?.sizeToFit()
+        searchBar?.tintColor = UIColor.primaryTextColor
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if shouldShowCurrentLocation {
+            locationManager.requestLocation()
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -129,7 +130,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     
     /* Location Manager Delegates */
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let firstLocation = locations.first, currentLocationSection.items.isEmpty {
+        if let firstLocation = locations.last {
             let currentLocationBusItem = ItemType.busStop(BusStop(name: Constants.Stops.currentLocation,
                                                                   lat: firstLocation.coordinate.latitude,
                                                                   long: firstLocation.coordinate.longitude))
@@ -140,6 +141,14 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         print("SearchResultsTableVC CLLocationManager didFailWithError: \(error)")
+        //this means they dont have location services enabled
+        if error._code == CLError.denied.rawValue {
+        let currentLocationBusItem = ItemType.busStop(BusStop(name: Constants.Stops.currentLocation,
+                                                              lat: 0.0,
+                                                              long: 0.0))
+        currentLocationSection = Section(type: .currentLocation, items: [currentLocationBusItem])
+        sections = createSections()
+        }
     }
     
     /* Keyboard Functions */
@@ -188,11 +197,11 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         return header
     }
 
-   override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0
     }
 
-   override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch sections[section].type {
         case .favorites, .recentSearches: return 50
         default: return 24
@@ -221,13 +230,26 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
             allStopsTVC.allStops = SearchTableViewManager.shared.getAllStops()
             allStopsTVC.unwindAllStopsTVCDelegate = self
         case .busStop(let busStop):
+            if busStop.lat == 0.0 && busStop.long == 0.0 {
+                showLocationDeniedAlert()
+                return
+            }
+
             if busStop.name != Constants.Stops.currentLocation
                 && busStop.name != Constants.Phrases.firstFavorite {
                 SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: busStop, limit: 8)
             }
+            
+            let payload = BusStopTappedPayload(name: busStop.name)
+            RegisterSession.shared?.log(payload)
+            
             destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
         case .placeResult(let placeResult):
             SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: placeResult, limit: 8)
+            
+            let payload = GooglePlaceTappedPayload(name: placeResult.name)
+            RegisterSession.shared?.log(payload)
+            
             destinationDelegate?.didSelectDestination(busStop: nil, placeResult: placeResult)
         default: break
         }
@@ -284,14 +306,14 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         return cell
     }
     
-    /* Fetch Search Results*/
+    /* Fetch Search Results */
     @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if searchText.count > 0 {
             Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
                 self.searchResultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
                 self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
-                //self.tableViewIndexController.setHidden(true, animated: false)
+                // self.tableViewIndexController.setHidden(true, animated: false)
                 if !self.sections.isEmpty {
                     self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
                 }
@@ -301,7 +323,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         }
     }
     
-    /* ScrollView Delegate*/
+    /* ScrollView Delegate */
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if let cancelButton = searchBar?.value(forKey: "_cancelButton") as? UIButton {
             cancelButton.isEnabled = true
@@ -317,7 +339,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        //tableViewIndexController.setHidden(true, animated: false)
+        // tableViewIndexController.setHidden(true, animated: false)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -339,4 +361,20 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         returningFromAllStopsBusStop = busStop
         returningFromAllStopsTVC = true
     }
+
+    func showLocationDeniedAlert() {
+        let alertController = UIAlertController(title: "Location Services Disabled",
+                                                message: "You need to enable Location Services in Settings",
+                                                preferredStyle: .alert)
+
+        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
+            UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alertController.addAction(settingsAction)
+        alertController.addAction(cancelAction)
+
+        present(alertController, animated: true, completion: nil)
+    }
+    
 }

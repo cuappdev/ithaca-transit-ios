@@ -5,140 +5,127 @@
 //  Created by Matthew Barker on 2/26/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
-
 import UIKit
 
 enum LiveIndicatorSize: Double {
-    case small = 6.5
+    case small = 9
     case large = 12
 }
 
 class LiveIndicator: UIView {
     
-    // MARK: View vars
+    fileprivate var dot: UIView!
+    fileprivate var smallArcLayer: CAShapeLayer!
+    fileprivate var largeArcLayer: CAShapeLayer!
     
-    var circleLayer: CAShapeLayer!
-    var smallArcLayer: CAShapeLayer!
-    var largeArcLayer: CAShapeLayer!
-    
-    // MARK: Animation vars
+    fileprivate var views: [Any]!
     
     static let INTERVAL: TimeInterval = 4.0
+    static let DURATION: TimeInterval = 0.2
     
-    let DURATION: TimeInterval = 0.2
-    let START_DELAY: TimeInterval = 0.0
-    let END_DELAY: TimeInterval = 0.0 // 0.25
-    let DIM_OPACITY: CGFloat = 0.5
-    let INTERVAL: TimeInterval = LiveIndicator.INTERVAL
+    fileprivate var DIM_OPACITY: CGFloat = 0.5
     
-    // MARK: Init
+    fileprivate let START_DELAY: TimeInterval = 0.0
+    fileprivate let END_DELAY: TimeInterval = 0.0
+    fileprivate let INTERVAL: TimeInterval = LiveIndicator.INTERVAL
+    
+    /// The color to draw the indicator with
+    var color: UIColor!
+    
+    /// The size of the view
+    var size: LiveIndicatorSize!
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    init(size: LiveIndicatorSize, color: UIColor) {
+    init(size: LiveIndicatorSize, color: UIColor = .white) {
+        
         super.init(frame: CGRect(x: 0, y: 0, width: size.rawValue, height: size.rawValue))
-
-        let lineWidth = frame.width/4
+        self.size = size
+        self.color = color
         
-        circleLayer = getCircleLayer(color: color)
-        largeArcLayer = getLargeArcLayer(color: color, lineWidth:  lineWidth)
-        smallArcLayer = getSmallArcLayer(color: color, lineWidth:  lineWidth)
+        DIM_OPACITY = size == .small ? 0 : 0.5
         
-        layer.addSublayer(circleLayer)
-        layer.addSublayer(largeArcLayer)
-        layer.addSublayer(smallArcLayer)
-        
-        resizeFrameToFitLayers(lineWidth: lineWidth)
-        
+        drawViews()
+        addViews()
         startAnimation()
-    }
-    
-    // MARK: Resize
-    
-    private func resizeFrameToFitLayers(lineWidth: CGFloat) {
-        frame = CGRect(x: frame.minX, y: frame.minY, width: frame.width + lineWidth, height: frame.height + lineWidth)
-        repositionLayer(circleLayer, withY: lineWidth)
-        repositionLayer(smallArcLayer, withY: lineWidth)
-        repositionLayer(largeArcLayer, withY: lineWidth)
-    }
-    
-    private func repositionLayer(_ layer: CAShapeLayer, withY y: CGFloat) {
-        layer.frame = CGRect(x: 0.0, y: y, width: layer.frame.width, height: layer.frame.height)
-    }
-    
-    // MARK: Create views
-    
-    private func getCircleLayer(color: UIColor) -> CAShapeLayer {
-        let circlePath = UIBezierPath(ovalIn: CGRect(x: 0.0, y: frame.maxY - frame.size.height/4, width: frame.size.width/4, height: frame.size.height/4))
         
-        let circleLayer = CAShapeLayer()
-        circleLayer.path = circlePath.cgPath
-        circleLayer.fillColor = color.cgColor
+        if size == .small {
+            let ratio: CGFloat = CGFloat(LiveIndicatorSize.small.rawValue / LiveIndicatorSize.large.rawValue)
+            self.transform = CGAffineTransform(scaleX: ratio, y: ratio)
+        }
         
-        return circleLayer
     }
     
-    private func getLargeArcLayer(color: UIColor, lineWidth: CGFloat) -> CAShapeLayer {
-        let radius = frame.size.height + lineWidth/2
+    /// Draw UIViews and layers based on type and color. Does not add them.
+    private func drawViews() {
         
-        let largeArcpath = UIBezierPath(arcCenter: CGPoint(x: 0, y: frame.maxY),
-                                        radius: radius,
-                                        startAngle:  .pi * (3 / 2) + asin((lineWidth/2) / (radius + (lineWidth/2))),
-                                        endAngle: -asin((lineWidth/2) / (radius + (lineWidth/2))),
-                                        clockwise: true)
-        let largeArcLayer = CAShapeLayer()
-        largeArcLayer.path = largeArcpath.cgPath
-        largeArcLayer.strokeColor = color.cgColor
-        largeArcLayer.fillColor = UIColor.clear.cgColor
-        largeArcLayer.lineWidth = frame.width/4
-        largeArcLayer.lineCap = kCALineCapRound
+        let size: Double = LiveIndicatorSize.large.rawValue // self.size.rawValue
         
-        return largeArcLayer
+        let dotSize: CGFloat = CGFloat(size / 3.0)
+        dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - dotSize + 0.25, width: dotSize, height: dotSize))
+        dot.layer.cornerRadius = dot.frame.width / 2
+        dot.clipsToBounds = true
+        dot.backgroundColor = color
+        
+        let arcOrigin = CGPoint(x: 1, y: frame.maxY - 1)
+        let constant: CGFloat = 2
+        let radius: CGFloat = CGFloat(size / 2.0 + 1.0)
+        
+        smallArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius, lineWidth: constant)
+        largeArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius + 2 * constant, lineWidth: constant)
+        
+        views = [dot, smallArcLayer, largeArcLayer]
+        
     }
     
-    private func getSmallArcLayer(color: UIColor, lineWidth: CGFloat) -> CAShapeLayer {
-        let radius = frame.size.height/2 + lineWidth/2
-        
-        let smallArcpath = UIBezierPath(arcCenter: CGPoint(x: 0, y: frame.maxY),
-                                        radius: radius,
-                                        startAngle:  .pi * (3 / 2) + asin((lineWidth/2) / (radius + (lineWidth/2))),
-                                        endAngle: -asin((lineWidth/2) / (radius + (lineWidth/2))),
-                                        clockwise: true)
-        let smallArcLayer = CAShapeLayer()
-        smallArcLayer.path = smallArcpath.cgPath
-        smallArcLayer.strokeColor = color.cgColor
-        smallArcLayer.fillColor = UIColor.clear.cgColor
-        smallArcLayer.lineWidth = frame.width/4
-        smallArcLayer.lineCap = kCALineCapRound
-        
-        return smallArcLayer
+    /// Add subviews and layers
+    private func addViews() {
+        addSubview(dot)
+        layer.addSublayer(smallArcLayer)
+        layer.addSublayer(largeArcLayer)
     }
     
-    // MARK: Set
-    
-    func setColor(to color: UIColor) {
-        circleLayer.fillColor = color.cgColor
-        smallArcLayer.strokeColor = color.cgColor
-        largeArcLayer.strokeColor = color.cgColor
+    private func createTopToLeftArc(origin: CGPoint, radius: CGFloat, lineWidth: CGFloat) -> CAShapeLayer {
+        let path = UIBezierPath(arcCenter: origin, radius: radius, startAngle: .pi * (3 / 2), endAngle: 0, clockwise: true)
+        let pathLayer = CAShapeLayer()
+        pathLayer.path = path.cgPath
+        pathLayer.strokeColor = color.cgColor
+        pathLayer.fillColor = UIColor.clear.cgColor
+        pathLayer.lineWidth = lineWidth
+        pathLayer.lineCap = kCALineCapRound
+        return pathLayer
     }
     
-    // MARK: Animate
-    
+    /// Being animating the live view
     func startAnimation() {
+        
         var timeInterval: TimeInterval = 0
         
-        for layer in [circleLayer, smallArcLayer, largeArcLayer] {
-            let timer = Timer(fireAt: Date().addingTimeInterval(timeInterval), interval: INTERVAL, target: self,
-                              selector: #selector(self.animateLayer), userInfo: layer, repeats: true)
-            RunLoop.main.add(timer, forMode: .commonModes)
-            timeInterval += DURATION
+        for element : Any in [dot, smallArcLayer, largeArcLayer] {
+            if let view = element as? UIView {
+                let timer = Timer(fireAt: Date().addingTimeInterval(timeInterval), interval: INTERVAL, target: self,
+                                  selector: #selector(self.animate(view:)), userInfo: view, repeats: true)
+                RunLoop.main.add(timer, forMode: .commonModes)
+            }
+            if let layer = element as? CAShapeLayer {
+                let timer = Timer(fireAt: Date().addingTimeInterval(timeInterval), interval: INTERVAL, target: self,
+                                  selector: #selector(self.animate(layer:)), userInfo: layer, repeats: true)
+                RunLoop.main.add(timer, forMode: .commonModes)
+            }
+            timeInterval += LiveIndicator.DURATION
         }
+        
     }
     
+    @objc private func execute(timer: Timer) {
+        (timer.userInfo as? Timer)?.fire()
+    }
+    
+    /// Stop live view animation
     func stopAnimation() {
-        for element : Any in [circleLayer, smallArcLayer, largeArcLayer] {
+        for element : Any in [dot, smallArcLayer, largeArcLayer] {
             if let view = element as? UIView {
                 view.layer.removeAllAnimations()
             }
@@ -148,21 +135,47 @@ class LiveIndicator: UIView {
         }
     }
     
+    /// DOES NOT WORK CURRENTLY
+    func setColor(to color: UIColor) {
+        self.color = color
+        dot.backgroundColor = color
+        smallArcLayer.strokeColor = color.cgColor
+        largeArcLayer.strokeColor = color.cgColor
+    }
+    
+    /// Dim, wait, and un-dim a UIView
+    @objc private func animate(view timer: Timer) {
+        
+        guard let view = timer.userInfo as? UIView
+            else { return }
+        
+        UIView.animate(withDuration: LiveIndicator.DURATION, delay: START_DELAY, options: .overrideInheritedOptions, animations: {
+            view.alpha = self.DIM_OPACITY
+        }, completion: { (completed) in
+            UIView.animate(withDuration: LiveIndicator.DURATION, delay: self.END_DELAY, options: .overrideInheritedOptions, animations: {
+                view.alpha = 1.0
+            })
+        })
+        
+    }
+    
     /// Dim, wait, and un-dim a CAShapeLayer
-    @objc private func animateLayer(_ timer: Timer) {
-        guard let layer = timer.userInfo as? CAShapeLayer else {
-            return
-        }
+    @objc private func animate(layer timer: Timer) {
+        
+        guard let layer = timer.userInfo as? CAShapeLayer
+            else { return }
         
         let fadeOutAnimation = CAKeyframeAnimation(keyPath: "opacity")
         fadeOutAnimation.beginTime = START_DELAY
-        fadeOutAnimation.duration = DURATION
+        fadeOutAnimation.duration = LiveIndicator.DURATION
         fadeOutAnimation.keyTimes = [0, 1]
         fadeOutAnimation.values = [1.0, DIM_OPACITY]
         fadeOutAnimation.autoreverses = true
         fadeOutAnimation.fillMode = kCAFillModeForwards
         fadeOutAnimation.isRemovedOnCompletion = true
         layer.add(fadeOutAnimation, forKey: "fadeOut")
+        
     }
     
 }
+

@@ -167,15 +167,6 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     }
     
     func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
-
-          // Update supported drawer positions to 2 options after inital load
-//        if drawer.drawerPosition == .partiallyRevealed {
-//            if !justLoaded {
-//               drawer.setNeedsSupportedDrawerPositionsUpdate()
-//            }
-//        } else {
-//            justLoaded = false
-//        }
         
         justLoaded = false
         
@@ -212,8 +203,6 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     
     func supportedDrawerPositions() -> [PulleyPosition] {
         return [.collapsed, .partiallyRevealed, .open]
-        // Switch from 3 states to 2 after loading
-        // return justLoaded ? [.collapsed, .partiallyRevealed, .open] : [.collapsed, .open]
     }
     
     // MARK: TableView Data Source and Delegate Functions
@@ -227,9 +216,9 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         let direction = directions[indexPath.row]
 
         if direction.type == .depart || direction.type == .transfer {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier)! as! LargeDetailTableViewCell
-            cell.setCell(direction, firstStep: indexPath.row == 0)
-            return cell.height()
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as? LargeDetailTableViewCell
+            cell?.setCell(direction, firstStep: indexPath.row == 0)
+            return cell?.height() ?? RouteDetailCellSize.largeHeight
         } else {
             return RouteDetailCellSize.smallHeight
         }

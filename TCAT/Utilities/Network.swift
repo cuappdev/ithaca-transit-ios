@@ -19,22 +19,22 @@ enum NetworkType: String {
 class Network {
 
     // MARK: Global Network Variables
-
-    static let networkType: NetworkType = .debug
+    
+    static let networkType: NetworkType = .release
     static let apiVersion = "v1"
 
     /// Used for local backend testing
-    static let localIPAddress = "10.132.6.238"
+    static let localIPAddress = "10.131.152.124"
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
 
     /// Test server used for development
-    static let debugIPAddress = "35.174.156.171"
-    static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)"
-
+    static let debugIPAddress = "34.238.157.63"
+    static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
+    
     /// Deployed server instance used for release
-    static let releaseIPAddress = "54.174.47.32"
-    static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)"
-
+    static let releaseIPAddress = "52.0.104.13"
+    static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
+    
     /// Network IP address being used for specified networkType
     static var ipAddress: String {
         switch networkType {
@@ -100,7 +100,7 @@ class Network {
             ]
 
             // for debugging
-            print("Route Request URL: \(address)/\(request.path)?arriveBy=\(request.parameters["arriveBy"]!)&end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)\n")
+            // print("Route Request URL: \(address)/\(request.path)?arriveBy=\(request.parameters["arriveBy"]!)&end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)\n")
 
             callback(request)
 
@@ -149,10 +149,9 @@ class Network {
     class func getDelay(tripId: String, stopId: String) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = mainTron.swiftyJSON.request("delay")
         request.method = .get
-        request.parameters = ["stopID": stopId, "tripID": tripId]
+        request.parameters = ["stopID" : stopId, "tripID" : tripId]
 
-
-        print("Delay request URL: \(address)/\(request.path)?stopID=\(request.parameters["stopID"]!)&tripID=\(request.parameters["tripID"]!)")
+        // print("Delay request URL: \(address)/\(request.path)?stopID=\(request.parameters["stopID"]!)&tripID=\(request.parameters["tripID"]!)")
 
         return request
     }
@@ -160,9 +159,7 @@ class Network {
 }
 
 class Error: JSONDecodable {
-    required init(json: JSON) {
-        // need to talk to shiv about what errors could be possibily returned
-    }
+    required init(json: JSON) {}
 }
 
 class AllBusStops: JSONDecodable {

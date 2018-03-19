@@ -16,7 +16,7 @@ class RouteTableViewCell: UITableViewCell {
 
     // MARK: Data vars
     
-    let identifier: String = "Route cell"
+    let identifier: String = "routeCell"
     var route: Route?
     var searchTime: Date?
     var searchTimeType: SearchType?
@@ -28,7 +28,7 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: View vars
 
     var travelTimeLabel: UILabel = UILabel()
-    var liveIndicatorView: LiveIndicator = LiveIndicator(size: .small, color: .white)
+    var liveIndicatorView: LiveIndicator = LiveIndicator(size: .small, color: .clear)
     var liveLabel: UILabel = UILabel()
     var departureTimeLabel: UILabel = UILabel()
     var arrowImageView: UIImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
@@ -209,9 +209,8 @@ class RouteTableViewCell: UITableViewCell {
             liveLabel.sizeToFit()
             positionLiveIndicatorView(usingLiveLabel: liveLabel)
         } else {
-            liveIndicatorView.setColor(to:.white)
-            liveLabel.textColor = .white
-            
+            liveIndicatorView.setColor(to: .clear)
+            liveLabel.textColor = .clear
             if let route = route {
                 setDepartureTime(withDepartureTime: route.departureTime, withWalkingRoute: route.isRawWalkingRoute(), withSearchTime: searchTime, withSearchTimeType: searchTimeType)
             }
@@ -260,9 +259,9 @@ class RouteTableViewCell: UITableViewCell {
 
     private func styleLiveElements() {
         // style live elements to be invisible before get live data
-        liveIndicatorView = LiveIndicator(size: .small, color: .white)
+        liveIndicatorView = LiveIndicator(size: .small, color: .clear)
         liveLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
-        liveLabel.textColor = .white
+        liveLabel.textColor = .clear
     }
 
     private func styleDepartureTime() {
@@ -312,7 +311,7 @@ class RouteTableViewCell: UITableViewCell {
     
     private func positionLiveIndicatorView(usingLiveLabel liveLabel: UILabel) {
         liveIndicatorView.center.x =  liveLabel.frame.maxX + liveLabelHorizontalSpaceFromLiveIndicator + (liveIndicatorView.frame.width/2)
-        liveIndicatorView.center.y = liveLabel.frame.maxY - liveIndicatorView.frame.height
+        liveIndicatorView.center.y = liveLabel.frame.maxY - liveIndicatorView.frame.height - 1
     }
     
     private func positionLiveLabel(usingTravelTime travelTimeLabel: UILabel) {

@@ -70,7 +70,7 @@ class Route: NSObject, JSONDecodable {
     /// A list of Direction objects (used for Route Detail)
     var directions: [Direction]
     
-    /// For route options vc
+    /// Raw, untampered with directions (for RouteOptionsViewController)
     var rawDirections: [Direction]
 
     /** A description of the starting location of the route (e.g. Current Location, Arts Quad)
@@ -101,9 +101,6 @@ class Route: NSObject, JSONDecodable {
         directions = json["directions"].arrayValue.map { Direction(from: $0) }
         rawDirections = json["directions"].arrayValue.map { Direction(from: $0) }
         
-        // Replace hard-coded destination
-        directions.last?.name = endName
-
         super.init()
 
         // Format raw directions
@@ -150,10 +147,15 @@ class Route: NSObject, JSONDecodable {
             if direction.type == .depart {
 
                 let beyondRange = index + 1 > directions.count - 1
-
-                // If this direction doesn't have a transfer afterwards
-                if !beyondRange && !directions[index+1].stayOnBusForTransfer {
-
+                let isLastDepart = index == directions.count - 1
+                
+                if direction.stayOnBusForTransfer {
+                    direction.type = .transfer
+                }
+                
+                // If this direction doesn't have a transfer afterwards, or is depart and last
+                if (!beyondRange && !directions[index+1].stayOnBusForTransfer) || isLastDepart {
+                    
                     // Create Arrival Direction
                     let arriveDirection = direction.copy() as! Direction
                     arriveDirection.type = .arrive
@@ -164,10 +166,6 @@ class Route: NSObject, JSONDecodable {
                     directions.insert(arriveDirection, at: index + offset + 1)
                     offset += 1
 
-                }
-
-                if direction.stayOnBusForTransfer {
-                    direction.type = .transfer
                 }
 
                 // Remove inital bus stop and departure bus stop

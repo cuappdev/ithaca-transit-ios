@@ -32,6 +32,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     var searchBarView: SearchBarView!
     var locationManager: CLLocationManager!
+    var currentLocation: CLLocationCoordinate2D?
     var searchType: SearchBarType = .from
     var searchTimeType: SearchType = .leaveAt
     var searchFrom: Place?
@@ -319,7 +320,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                             
                             let payload = GetRoutesErrorPayload(description: error?.userInfo["description"] as? String ?? "",
                                                                 url: error?.userInfo["url"] as? String)
-                            RegisterSession.shared.logEvent(event: payload.toEvent())
+                            RegisterSession.shared?.log(payload)
                             
                         } else {
                             if self.isBannerShown {
@@ -350,10 +351,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                         requestDidFinish(with: error)
                     })
                     { // Handle non-null request
-                        let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
+                        let payload = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
                                                                     requestUrl: alamofireRequest.request?.url?.absoluteString,
-                                                                    stopType: nil).toEvent()
-                        RegisterSession.shared.logEvent(event: event)
+                                                                    stopType: nil)
+                        RegisterSession.shared?.log(payload)
                     }
                         
                     else { // Catch error of coordinates not being found
@@ -427,8 +428,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // If haven't selected start location, set to current location
         if searchFrom == nil, let location = manager.location {
-            let currentLocationStop =  BusStop(name: Constants.Stops.currentLocation,
-                                               lat: location.coordinate.latitude, long: location.coordinate.longitude)
+            currentLocation = location.coordinate
+            let currentLocationStop = BusStop(name: Constants.Stops.currentLocation,
+                                               lat: location.coordinate.latitude,
+                                               long: location.coordinate.longitude)
             searchFrom = currentLocationStop
             searchBarView.resultsViewController?.currentLocation = currentLocationStop
             routeSelection.fromSearchbar.setTitle(currentLocationStop.name, for: .normal)
@@ -468,7 +471,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         datePickerView.frame = newFrame
     }
 
-    @objc func showDatePicker(sender: UIButton){
+    @objc func showDatePicker(sender: UIButton) {
+        
         view.bringSubview(toFront: datePickerOverlay)
         view.bringSubview(toFront: datePickerView)
 
@@ -483,6 +487,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.6 // darken screen when pull up datepicker
         }
+        
+        let payload = DatePickerAccessedPayload()
+        RegisterSession.shared?.log(payload)
+        
     }
 
     @objc func dismissDatePicker(sender: UIButton) {
@@ -533,7 +541,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: routeTableViewCellIdentifier)
         }
 
-        
         cell?.setData(routes[indexPath.row], withSearchTime: searchTime, withSearchTimeType: searchTimeType)
         cell?.positionSubviews()
         cell?.addSubviews()
@@ -688,6 +695,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         locationManager.stopUpdatingLocation()
         if let routeDetailViewController = createRouteDetailViewController(from: routes[indexPath.row]) {
+            let payload = RouteResultsCellTappedEventPayload()
+            RegisterSession.shared?.log(payload)
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }
@@ -701,7 +710,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // Create RouteDetailViewController
     
     func createRouteDetailViewController(from route: Route) -> RouteDetailViewController? {
-        let contentViewController = RouteDetailContentViewController(route: route)
+        let contentViewController = RouteDetailContentViewController(route: route, currentLocation: currentLocation)
         guard let drawerViewController = contentViewController.drawerDisplayController else {
             return nil
         }
@@ -717,38 +726,15 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
         if sender.state == .began {
             let point = sender.location(in: routeResults)
             if let indexPath = routeResults.indexPathForRow(at: point) {
-                presentShareSheet(withIndexPath: indexPath)
+                presentShareSheetWithImage(withIndexPath: indexPath)
             }
         }
     }
     
-    private func presentShareSheet(withIndexPath indexPath: IndexPath) {
-        var activityItems: [Any] = []
-
+    private func presentShareSheetWithImage(withIndexPath indexPath: IndexPath) {
         if let cell = routeResults.cellForRow(at: indexPath) {
-            UIGraphicsBeginImageContext(cell.frame.size)
-            cell.layer.render(in: UIGraphicsGetCurrentContext()!)
-            let cellImage = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            activityItems.append(cellImage)
+            presentShareSheet(from: view, for: routes[indexPath.row], with: cell.getImage())
         }
-        
-        let promotionalText = "Download Ithaca Transit on the App Store! \(Constants.App.appStoreLink)"
-        activityItems.append(promotionalText)
-        
-        let activityVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-        activityVC.popoverPresentationController?.sourceView = view // so that iPads won't crash
-        activityVC.excludedActivityTypes = [.print, .assignToContact, .openInIBooks, .addToReadingList]
-        activityVC.completionWithItemsHandler = { (activity, completed, items, error) in
-            let sharingMethod = activity?.rawValue.replacingOccurrences(of: "com.apple.UIKit.activity.", with: "") ?? "None"
-            let _ = RegisterSession.shared.logEvent(event:
-                RouteSharedEventPayload(
-                    activityType: sharingMethod,
-                    didSelectAndCompleteShare: completed,
-                    error: error?.localizedDescription).toEvent())
-        }
-    
-        present(activityVC, animated: true, completion: nil)
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
@@ -767,6 +753,10 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
         routeDetailViewController.isPeeking = true
         cell.transform = .identity
         previewingContext.sourceRect = routeResults.convert(cell.frame, to: view)
+        
+        let payload = RouteResultsCellPeekedPayload()
+        RegisterSession.shared?.log(payload)
+        
         return routeDetailViewController
         
     }
