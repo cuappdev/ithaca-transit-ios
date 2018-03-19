@@ -316,7 +316,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                             
                             let payload = GetRoutesErrorPayload(description: error?.userInfo["description"] as? String ?? "",
                                                                 url: error?.userInfo["url"] as? String)
-                            RegisterSession.shared?.logEvent(event: payload.toEvent())
+                            RegisterSession.shared?.log(payload)
                             
                         } else {
                             if self.isBannerShown {
@@ -347,10 +347,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                         requestDidFinish(with: error)
                     })
                     { // Handle non-null request
-                        let event = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
+                        let payload = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
                                                                     requestUrl: alamofireRequest.request?.url?.absoluteString,
-                                                                    stopType: nil).toEvent()
-                        RegisterSession.shared?.logEvent(event: event)
+                                                                    stopType: nil)
+                        RegisterSession.shared?.log(payload)
                     }
                         
                     else { // Catch error of coordinates not being found
@@ -495,7 +495,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
         
         let payload = DatePickerAccessedPayload()
-        RegisterSession.shared?.logEvent(event: payload.toEvent())
+        RegisterSession.shared?.log(payload)
         
     }
 
@@ -713,7 +713,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         locationManager.stopUpdatingLocation()
         if let routeDetailViewController = createRouteDetailViewController(from: routes[indexPath.row]) {
             let payload = RouteResultsCellTappedEventPayload()
-            RegisterSession.shared?.logEvent(event: payload.toEvent())
+            RegisterSession.shared?.log(payload)
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }
@@ -766,7 +766,7 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
         previewingContext.sourceRect = routeResults.convert(cell.frame, to: view)
         
         let payload = RouteResultsCellPeekedPayload()
-        RegisterSession.shared?.logEvent(event: payload.toEvent())
+        RegisterSession.shared?.log(payload)
         
         return routeDetailViewController
         

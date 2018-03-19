@@ -311,7 +311,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 switch busLocation.dataType {
                     
                 case .noData:
-                    // print("No Data for", direction.routeNumber)
+                    // print("No Data for", busLocation.routeNumber)
                     
                     if !self.noDataRouteList.contains(busLocation.routeNumber) {
                         self.noDataRouteList.append(busLocation.routeNumber)
@@ -327,7 +327,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     self.showBanner(message, status: .info)
                     
                 case .invalidData:
-                    // print("Invalid Data for", direction.routeNumber)
+                    // print("Invalid Data for", busLocation.routeNumber)
                     
                     if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
@@ -340,7 +340,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     self.showBanner(Constants.Banner.trackingLater, status: .info)
                     
                 case .validData:
-                    // print("Valid Data for", direction.routeNumber)
+                    // print("Valid Data for", busLocation.routeNumber)
                     
                     if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
@@ -568,13 +568,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         let pastBottomEdge = position.latitude < bottom
         let pastLeftEdge = position.longitude < left
         let pastRightEdge = position.longitude > right
-        
-        //        GMSVisibleRegion(
-        //            nearLeft: __C.CLLocationCoordinate2D(latitude: 42.442794190761489, longitude: -76.489242129027843),
-        //            nearRight: __C.CLLocationCoordinate2D(latitude: 42.442794190761489, longitude: -76.479822881519794),
-        //            farLeft: __C.CLLocationCoordinate2D(latitude: 42.456138223033271, longitude: -76.489242129027843),
-        //            farRight: __C.CLLocationCoordinate2D(latitude: 42.456138223033271, longitude: -76.479822881519794)
-        //        )
         
         // Set coordinate to most extreme on-screen map point if off screen
         var newPosition = position

@@ -167,9 +167,30 @@ class SummaryView: UIView {
         mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
         
         if let departDirection = (route.directions.filter { $0.type == .depart }).first {
-            mainLabel.text = "Depart at \(departDirection.startTimeDescription) from \(departDirection.name)"
+            
+            if let delay = departDirection.delay {
+                departDirection.startTime.addTimeInterval(TimeInterval(delay))
+            }
+            
+            let content = "Depart at \(departDirection.startTimeDescription) from \(departDirection.name)"
+            // This changes font to standard size. Label's font is different.
+            var attributedString = bold(pattern: departDirection.startTimeDescription, in: content)
+            attributedString = bold(pattern: departDirection.name, in: attributedString)
+            
+            if let delay = departDirection.delay {
+                var color: UIColor = .liveGreenColor
+                if delay > 0 {
+                    color = .liveRedColor
+                }
+                let range = (attributedString.string as NSString).range(of: departDirection.startTimeDescription)
+                attributedString.addAttribute(NSAttributedStringKey.foregroundColor, value: color, range: range)
+            }
+            
+            mainLabel.attributedText = attributedString
+            
         } else {
-            mainLabel.text = route.directions.first?.locationNameDescription ?? "Route Directions"
+            let content = route.directions.first?.locationNameDescription ?? "Route Directions"
+            mainLabel.attributedText = bold(pattern: route.directions.first?.name ?? "", in: content)
         }
         
         // Calculate and adjust label based on number of lines

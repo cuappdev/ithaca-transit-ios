@@ -109,7 +109,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     func displayFavoritesTVC() {
-        if favorites.count < 8 {
+        if favorites.count < 5 {
             presentFavoritesTVC()
         } else {
             let title = "Maximum Number of Favorites"

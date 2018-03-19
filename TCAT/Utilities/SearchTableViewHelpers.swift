@@ -210,7 +210,7 @@ class SearchTableViewManager {
         }
         
         let payload = FavoriteAddedPayload(name: locationName)
-        RegisterSession.shared?.logEvent(event: payload.toEvent())
+        RegisterSession.shared?.log(payload)
         
     }
 

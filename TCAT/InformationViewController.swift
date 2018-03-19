@@ -64,7 +64,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         
         hiddenLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 16)
         hiddenLabel.textColor = .primaryTextColor
-        hiddenLabel.text = "Walker wuz here"
+        hiddenLabel.text = "Ride on the Magic School Bus"
         hiddenLabel.textAlignment = .center
         hiddenLabel.backgroundColor = .clear
         hiddenLabel.snp.makeConstraints { (make) in
@@ -122,7 +122,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         }
         
         let payload = AboutPageOpenedPayload()
-        RegisterSession.shared?.logEvent(event: payload.toEvent())
+        RegisterSession.shared?.log(payload)
         
     }
     
@@ -234,12 +234,20 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
                             
                 self.tcatImage.frame.origin.x += constant
                             
-            })
+            }) { (completed) in
+                
+                let title = "Be-beep be-beep!"
+                let message = "says the TCAT bus."
+                let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                alertController.addAction(UIAlertAction(title: "✨📚🚌", style: .default, handler: nil))
+                self.present(alertController, animated: true)
+                
+            }
             
         }
         
         let payload = BusTappedEventPayload()
-        RegisterSession.shared?.logEvent(event: payload.toEvent())
+        RegisterSession.shared?.log(payload)
         
     }
     

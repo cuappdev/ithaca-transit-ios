@@ -30,7 +30,6 @@
 		BF456E0320489990005C611D /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
 		BF5CBAD11FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */; };
 		BF6095271FD7091B0013E538 /* CustomNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6095261FD7091B0013E538 /* CustomNavigationController.swift */; };
-		BF662F361F7323B400B21109 /* ActionOnboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */; };
 		BF73F0F31F60B0BD003B479D /* LocationObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF73F0F21F60B0BD003B479D /* LocationObject.swift */; };
 		BF74AC1A1F945D7D00AFD4E4 /* GoogleMapsBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */; };
 		BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */; };
@@ -130,7 +129,6 @@
 		BF456E0220489990005C611D /* BusLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocation.swift; path = Model/BusLocation.swift; sourceTree = "<group>"; };
 		BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "RouteDetail+DrawerViewController.swift"; path = "Controllers/RouteDetail+DrawerViewController.swift"; sourceTree = "<group>"; };
 		BF6095261FD7091B0013E538 /* CustomNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomNavigationController.swift; path = Controllers/CustomNavigationController.swift; sourceTree = "<group>"; };
-		BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActionOnboardViewController.swift; path = Controllers/ActionOnboardViewController.swift; sourceTree = "<group>"; };
 		BF73F0F21F60B0BD003B479D /* LocationObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationObject.swift; path = Model/LocationObject.swift; sourceTree = "<group>"; };
 		BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsBase.framework; path = Pods/GoogleMaps/Base/Frameworks/GoogleMapsBase.framework; sourceTree = "<group>"; };
 		BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsCore.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMapsCore.framework; sourceTree = "<group>"; };
@@ -399,7 +397,6 @@
 		DD47EA501E50D77D009C68EB /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				BF662F351F7323B400B21109 /* ActionOnboardViewController.swift */,
 				DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */,
 				BF6095261FD7091B0013E538 /* CustomNavigationController.swift */,
 				DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */,
@@ -790,7 +787,6 @@
 				DDB49C9A1E8857E000A99C35 /* BusStopTableViewCell.swift in Sources */,
 				DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */,
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
-				BF662F361F7323B400B21109 /* ActionOnboardViewController.swift in Sources */,
 				DD87F20A1E878CB5000C244B /* Loader.swift in Sources */,
 				DD3D9C341F942CF000B164D4 /* CoordinateVisitor.swift in Sources */,
 				DD3D9C211F94297100B164D4 /* Reachability.swift in Sources */,

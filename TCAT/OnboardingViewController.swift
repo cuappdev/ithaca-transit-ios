@@ -36,9 +36,9 @@ class OnboardingViewController: PresentationController {
     //
     
     /// The position of the header label
-    let titleLabelPosition = Position(left: 0.5, top: 0.20)
+    let titleLabelPosition = Position(left: 0.5, top: 0.2)
     
-    let titleLabelFontName = Constants.Fonts.SanFrancisco.Bold // "HelveticaNeue-Bold"
+    let titleLabelFontName = Constants.Fonts.SanFrancisco.Bold
     
     let titleLabelFontSize: CGFloat = 48.0
     
@@ -46,11 +46,11 @@ class OnboardingViewController: PresentationController {
     
     let titleLabelMessages = [
         
-        "Never miss the bus again.",
-        "Track buses in real time.",
-        "Search anything.",
-        "Simplify your transit.",
-        "You can delete Ride14850 now."
+        "Welcome to Ithaca Transit.",
+        "Live Tracking.",
+        "Search Anywhere.",
+        "Your Favorites.",
+        "All the best features. All in one app."
         
     ]
     
@@ -59,10 +59,10 @@ class OnboardingViewController: PresentationController {
     //
     
     /// The position of the main label
-    let detailLabelPosition = Position(left: 0.7, top: 0.4)
+    let detailLabelPosition = Position(left: 0.5, top: 0.35)
     
     /// Change the font type of text label
-    let detailLabelFontName = Constants.Fonts.SanFrancisco.Regular // "HelveticaNeue"
+    let detailLabelFontName = Constants.Fonts.SanFrancisco.Medium
     
     /// Change the font size of text label
     let detailLabelFontSize: CGFloat = 32.0
@@ -73,10 +73,10 @@ class OnboardingViewController: PresentationController {
     /// Change the amount of messages in the view. The number of pages shown will equal the number of messages
     let detailLabelMessages = [
         
-        "Welcome to Ithaca's simplest end-to-end navigation service for the TCAT, made by AppDev.",
-        "No more uncertainty. Know exactly where your bus is on the map.",
-        "From Teagle Hall to Taughannock Falls, search any location and get there fast.",
-        "Add your favorite places to find routes there in 1 tap.",
+        "Beautiful and simple end-to-end navigation app for TCAT. Made by AppDev.",
+        "Know exactly where your bus is and when it will be there.",
+        "From Ithaca Mall to Taughannock Falls, search any location and get there fast.",
+        "All of your favorite destinations are just one tap away.",
         ""
         
     ]
@@ -89,8 +89,7 @@ class OnboardingViewController: PresentationController {
     let backgroundImages = [
         
         BackgroundImage(name: "treesnroad", left: -2.7, top: 0.71, speed: -1.3),
-        BackgroundImage(name: "waterfall", left: -4.85, top: 0.71, speed: -0.71),
-        BackgroundImage(name: "tcat", left: -0.55, top: 0.731, speed: 0.4),
+        BackgroundImage(name: "tcat", left: -0.60, top: 0.731, speed: 0.4),
         BackgroundImage(name: "hill", left: -1.5, top: 0.55, speed: -0.5),
         BackgroundImage(name: "mountain", left: -1.0, top: 0.41, speed: -0.2),
         BackgroundImage(name: "cloud", left: -2.0, top: 0.10, speed: -0.1),
@@ -160,6 +159,7 @@ class OnboardingViewController: PresentationController {
     }()
     
     @objc func dismissView() {
+        
         if isInitialViewing {
             
             let rootVC = HomeViewController()
@@ -214,8 +214,10 @@ class OnboardingViewController: PresentationController {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         
-        let detailRatio: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
-        let detailFont = UIFont(name: detailLabelFontName, size: detailLabelFontSize * detailRatio)!
+        let detailWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.8
+        let detailHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
+        
+        let detailFont = UIFont(name: detailLabelFontName, size: detailLabelFontSize * detailHeight)!
         
         let attributes = [
             NSAttributedStringKey.font: detailFont,
@@ -224,7 +226,7 @@ class OnboardingViewController: PresentationController {
         ]
         
         let detailTitles = detailLabelMessages.map { title -> Content in
-            let label = UILabel(frame: CGRect(x: 0, y: 0, width: 550 * detailRatio, height: 200 * detailRatio))
+            let label = UILabel(frame: CGRect(x: 0, y: 0, width: width * detailWidth, height: height * detailHeight))
             label.numberOfLines = 5
             label.attributedText = NSAttributedString(string: title, attributes: attributes)
             return Content(view: label, position: detailLabelPosition)
@@ -235,8 +237,9 @@ class OnboardingViewController: PresentationController {
         let headerParagraphStyle = NSMutableParagraphStyle()
         headerParagraphStyle.alignment = .center
         
-        let headerRatio: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
-        let headerFont = UIFont(name: titleLabelFontName, size: titleLabelFontSize * detailRatio)!
+        let headerWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.9
+        let headerHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
+        let headerFont = UIFont(name: titleLabelFontName, size: titleLabelFontSize * headerHeight)!
         
         let headerAttributes = [
             NSAttributedStringKey.font: headerFont,
@@ -245,7 +248,7 @@ class OnboardingViewController: PresentationController {
         ]
         
         let headerTitles = titleLabelMessages.map { title -> Content in
-            let label = UILabel(frame: CGRect(x: 0, y: 0, width: width * 0.8, height: height * headerRatio))
+            let label = UILabel(frame: CGRect(x: 0, y: 0, width: width * headerWidth, height: height * headerHeight))
             label.numberOfLines = 5
             label.attributedText = NSAttributedString(string: title, attributes: headerAttributes)
             return Content(view: label, position: titleLabelPosition)
@@ -254,15 +257,15 @@ class OnboardingViewController: PresentationController {
         // Button
         
         let button = UIButton()
-        button.frame = CGRect(x: 0, y: 0, width: 120, height: 44)
+        button.frame = CGRect(x: 0, y: 0, width: 160, height: 60)
         button.layer.shadowOffset = CGSize(width: 0, height: 4)
         button.layer.shadowColor = UIColor.mediumGrayColor.cgColor
         button.layer.shadowOpacity = 0.5
         button.setTitle("BEGIN", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
-        button.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Medium, size: 16)!
-        button.backgroundColor = UIColor(hex: "D65851")
+        button.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Medium, size: 22)!
+        button.backgroundColor = .tcatBlueColor // UIColor(hex: "D65851")
         button.layer.cornerRadius = 4
         let buttonPosition = Position(left: 0.5, top: 0.5)
         let startButton = Content(view: button, position: buttonPosition, centered: true)
@@ -283,12 +286,12 @@ class OnboardingViewController: PresentationController {
             let controller = SlideController(contents: contents)
             
             // Title Labels
-            let headerPosition = Position(left: titleLabelPosition.left, top: titleLabelPosition.top)
             controller.add(animation: Content.centerTransition(forSlideContent: headerTitles[index]))
-            controller.add(animations: [TransitionAnimation(content: headerTitles[index], destination: headerPosition)])
+            controller.add(animation: TransitionAnimation(content: headerTitles[index], destination: titleLabelPosition))
             
             // Detail Labels
-            controller.add(animations: [Content.centerTransition(forSlideContent: detailTitles[index])])
+            let animation = Content.centerTransition(forSlideContent: detailTitles[index])
+            controller.add(animation: animation)
             
             // Button
             controller.add(content: startButton)

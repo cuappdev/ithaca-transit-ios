@@ -28,11 +28,11 @@ class Network {
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
     
     /// Test server used for development
-    static let debugIPAddress = "35.174.156.171"
+    static let debugIPAddress = "34.238.157.63"
     static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
     
     /// Deployed server instance used for release
-    static let releaseIPAddress = "54.174.47.32"
+    static let releaseIPAddress = "52.0.104.13"
     static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
     
     /// Network IP address being used for specified networkType

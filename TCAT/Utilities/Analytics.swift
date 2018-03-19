@@ -23,7 +23,7 @@ fileprivate func getSecretKey() -> String {
 
 extension RegisterSession {
     
-    static let endpoint: String = "18.232.90.215"
+    static let endpoint: String = "35.173.96.190"
     
     static var isLogging: Bool = false
     
@@ -50,20 +50,23 @@ extension RegisterSession {
     // Log events to both Fabric and Register
     func log(_ payload: Payload) {
         
-        // let registerEvent = payload.toEvent()
-        // logEvent(event: registerEvent)
+        // Register
+        payload.log(with: RegisterSession.shared)
         
+        // Fabric
         let fabricEvent = payload.convertToFabric()
-        print("dict", fabricEvent.attributes ?? [:])
         Answers.logCustomEvent(withName: fabricEvent.name, customAttributes: fabricEvent.attributes)
-        
-        print("Log \(fabricEvent.name)")
+        print("Logging \(fabricEvent.name):", fabricEvent.attributes ?? [:])
         
     }
     
 }
 
 extension Payload {
+    
+    func log(with session: RegisterSession?) {
+        session?.logEvent(event: self.toEvent())
+    }
     
     func convertToFabric() -> (name: String, attributes: [String : Any]?) {
         
@@ -77,10 +80,10 @@ extension Payload {
             for (key, value) in json["payload"] {
                 if key == "deviceInfo" {
                     for (infoKey, infoValue) in value {
-                        dict[infoKey] = infoValue
+                        dict[infoKey] = infoValue.stringValue
                     }
                 } else {
-                    dict[key] = value
+                    dict[key] = value.stringValue
                 }
             }
             

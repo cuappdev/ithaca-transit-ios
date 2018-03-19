@@ -227,14 +227,14 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
             }
             
             let payload = BusStopTappedPayload(name: busStop.name)
-            RegisterSession.shared?.logEvent(event: payload.toEvent())
+            RegisterSession.shared?.log(payload)
             
             destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
         case .placeResult(let placeResult):
             SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: placeResult, limit: 8)
             
             let payload = GooglePlaceTappedPayload(name: placeResult.name)
-            RegisterSession.shared?.logEvent(event: payload.toEvent())
+            RegisterSession.shared?.log(payload)
             
             destinationDelegate?.didSelectDestination(busStop: nil, placeResult: placeResult)
         default: break

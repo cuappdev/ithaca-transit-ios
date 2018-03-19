@@ -31,10 +31,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         // Set Up Register, Fabric / Crashlytics (RELEASE)
         #if !DEBUG
             Fabric.with([Crashlytics.self])
+            RegisterSession.startLogging()
         #endif
         
-        RegisterSession.startLogging()
-
         // Log basic information
         let payload = AppLaunchedPayload()
         RegisterSession.shared?.log(payload)
@@ -121,6 +120,11 @@ extension UIWindow {
     
     open override func motionBegan(_ motion: UIEventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
+            
+            if rootViewController is OnboardingViewController ||
+                (rootViewController as? UINavigationController)?.visibleViewController is OnboardingViewController {
+                return
+            }
             
             let title = "Submit Beta Feedback"
             let message = "You can help us make our app even better! Take screenshots within the app and tap below to submit."
