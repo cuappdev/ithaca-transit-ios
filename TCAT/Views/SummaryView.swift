@@ -168,13 +168,9 @@ class SummaryView: UIView {
         
         if let departDirection = (route.directions.filter { $0.type == .depart }).first {
             
-            if let delay = departDirection.delay {
-                departDirection.startTime.addTimeInterval(TimeInterval(delay))
-            }
-            
-            let content = "Depart at \(departDirection.startTimeDescription) from \(departDirection.name)"
+            let content = "Depart at \(departDirection.startTimeWithDelayDescription) from \(departDirection.name)"
             // This changes font to standard size. Label's font is different.
-            var attributedString = bold(pattern: departDirection.startTimeDescription, in: content)
+            var attributedString = bold(pattern: departDirection.startTimeWithDelayDescription, in: content)
             attributedString = bold(pattern: departDirection.name, in: attributedString)
             
             if let delay = departDirection.delay {
@@ -182,7 +178,7 @@ class SummaryView: UIView {
                 if delay > 0 {
                     color = .liveRedColor
                 }
-                let range = (attributedString.string as NSString).range(of: departDirection.startTimeDescription)
+                let range = (attributedString.string as NSString).range(of: departDirection.startTimeWithDelayDescription)
                 attributedString.addAttribute(NSAttributedStringKey.foregroundColor, value: color, range: range)
             }
             

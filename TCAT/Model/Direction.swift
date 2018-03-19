@@ -227,6 +227,24 @@ class Direction: NSObject, NSCopying {
     var endTimeDescription: String {
         return timeDescription(endTime)
     }
+    
+    /// Return the start time with the delay added.
+    var startTimeWithDelay: Date {
+        return startTime.addingTimeInterval(TimeInterval(delay ?? 0))
+    }
+    
+    /// Return the end time with the delay added.
+    var endTimeWithDelay: Date {
+        return endTime.addingTimeInterval(TimeInterval(delay ?? 0))
+    }
+    
+    var startTimeWithDelayDescription: String {
+        return timeDescription(startTimeWithDelay)
+    }
+    
+    var endTimeWithDelayDescription: String {
+        return timeDescription(endTimeWithDelay)
+    }
 
     private func timeDescription(_ time: Date) -> String {
         let formatter = DateFormatter()
