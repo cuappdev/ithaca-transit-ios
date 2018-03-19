@@ -72,8 +72,6 @@ class RouteDiagram: UIView {
     func setData(withDirections directions: [Direction], withTravelDistance travelDistance: Double, withWalkingRoute isWalkingRoute: Bool) {
         
         var first = 0
-        var stayOnBusForTransfer = false
-        
         for (index, direction) in directions.enumerated() {
             // if not walking route, skip first walking direction
             if !isWalkingRoute && index == first && direction.type == .walk {
@@ -82,18 +80,16 @@ class RouteDiagram: UIView {
             }
             
             // if route is not walking route and if on first stop in route, will have travel distance in stop label
-            let stopLabel = getStopLabel(withName: direction.name, withStayOnBusForTranfer: stayOnBusForTransfer, withDistance: !isWalkingRoute && index == first ? travelDistance : nil)
+            let stopLabel = getStopLabel(withName: direction.name, withStayOnBusForTranfer: direction.stayOnBusForTransfer, withDistance: !isWalkingRoute && index == first ? travelDistance : nil)
             let stopDot = getStopDot(fromDirections: directions, atIndex: index, withWalkingRoute: isWalkingRoute)
             let icon = getIcon(fromDirections: directions, atIndex: index, withDistance: isWalkingRoute && index == first ? travelDistance: nil)
             let routeLine = getRouteLine(fromDirections: directions, atIndex: index, withWalkingRoute: isWalkingRoute)
             
             let routeDiagramElement = RouteDiagramElement(stopLabel: stopLabel, stopDot: stopDot, icon: icon, routeLine: routeLine)
             
-            if stayOnBusForTransfer {
+            if direction.stayOnBusForTransfer {
                 routeDiagramElement.stayOnBusCoverUpView = getStayOnBusCoverUpView()
             }
-            stayOnBusForTransfer = direction.stayOnBusForTransfer
-            
             routeDiagramElements.append(routeDiagramElement)
         }
         

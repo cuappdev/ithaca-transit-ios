@@ -59,7 +59,6 @@ class RouteSelectionView: UIView {
         setLabel(toLabel, withText: "To")
         setSwapButton(withImage: #imageLiteral(resourceName: "swap"))
         setDatpickerButton(withImage: #imageLiteral(resourceName: "clock"))
-        setDatepickerButton(withTitle: "Leave Now")
         
         positionSubviews()
         addSubviews()
@@ -141,7 +140,19 @@ class RouteSelectionView: UIView {
         datepickerButton.setImage(image, for: .normal)
     }
     
-    private func setDatepickerButton(withTitle title: String){
+    func setDatepicker(withDate date: Date, withSearchTimeType searchTimeType: SearchType) {
+        let dateString = Time.dateString(from: date)
+        var title = ""
+        
+        if Calendar.current.isDateInToday(date) || Calendar.current.isDateInTomorrow(date) {
+            let verb = (searchTimeType == .arriveBy) ? "Arrive" : "Leave" //Use simply,"arrive" or "leave"
+            let day = Calendar.current.isDateInToday(date) ? "" : " tomorrow" //if today don't put day
+            title = "\(verb)\(day) at \(Time.timeString(from: date))"
+        }else{
+            let verb = (searchTimeType == .arriveBy) ? "Arrive by" : "Leave on" //Use "arrive by" or "leave on"
+            title = "\(verb) \(dateString)"
+        }
+        
         datepickerButton.setTitle(title, for: .normal)
     }
     
