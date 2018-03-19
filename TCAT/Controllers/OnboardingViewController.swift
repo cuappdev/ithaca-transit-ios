@@ -89,7 +89,7 @@ class OnboardingViewController: PresentationController {
     let backgroundImages = [
         
         BackgroundImage(name: "treesnroad", left: -2.7, top: 0.71, speed: -1.3),
-        BackgroundImage(name: "tcat", left: -0.60, top: 0.731, speed: 0.4),
+        BackgroundImage(name: "tcat", left: -0.60, top: 0.703, speed: 0.4),
         BackgroundImage(name: "hill", left: -1.5, top: 0.55, speed: -0.5),
         BackgroundImage(name: "mountain", left: -1.0, top: 0.41, speed: -0.2),
         BackgroundImage(name: "cloud", left: -2.0, top: 0.10, speed: -0.1),
