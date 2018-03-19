@@ -311,9 +311,7 @@ class RouteTableViewCell: UITableViewCell {
     
     private func positionLiveIndicatorView(usingLiveLabel liveLabel: UILabel) {
         liveIndicatorView.center.x =  liveLabel.frame.maxX + liveLabelHorizontalSpaceFromLiveIndicator + (liveIndicatorView.frame.width/2)
-        liveIndicatorView.center.y = liveLabel.frame.maxY - liveIndicatorView.frame.height
-        // old code
-        // liveIndicatorView.frame.origin.y = liveLabel.center.y - (liveIndicatorView.frame.height / 2) + 1
+        liveIndicatorView.center.y = liveLabel.frame.maxY - liveIndicatorView.frame.height - 1
     }
     
     private func positionLiveLabel(usingTravelTime travelTimeLabel: UILabel) {
