@@ -40,7 +40,7 @@ class RouteDiagram: UIView {
     let busIconLeftSpaceFromSuperview: CGFloat = 16.0
     let walkIconAndRouteLineHorizontalSpace: CGFloat = 36.0
     let stopDotAndStopLabelHorizontalSpace: CGFloat = 14.0
-    let stopLabelAndDistLabelHorizontalSpace: CGFloat = 5.5
+    let stopLabelAndDistLabelHorizontalSpace: CGFloat = 8
 
     // MARK: Init
 
@@ -364,7 +364,7 @@ class RouteDiagram: UIView {
     
     private func positionTravelDistanceLabel(_ travelDistanceLabel: UILabel, usingStopLabel stopLabel: UILabel) {
         let oldFrame = travelDistanceLabel.frame
-        let newFrame = CGRect(x: stopLabel.frame.maxX + stopLabelAndDistLabelHorizontalSpace, y: stopLabel.frame.minY, width: oldFrame.width, height: oldFrame.height)
+        let newFrame = CGRect(x: stopLabel.frame.maxX + stopLabelAndDistLabelHorizontalSpace, y: stopLabel.frame.minY - 1, width: oldFrame.width, height: oldFrame.height)
         
         travelDistanceLabel.frame = newFrame
     }

@@ -137,6 +137,8 @@ class Route: NSObject, JSONDecodable {
             }
         }
         
+        calculateTravelDistance(fromRawDirections: rawDirections)
+        
         // Parse and format directions
         
         // Variable to keep track of additions to direction list (Arrival Directions)
@@ -176,6 +178,7 @@ class Route: NSObject, JSONDecodable {
             }
 
         }
+        
     }
 
     // MARK: Parse JSON
