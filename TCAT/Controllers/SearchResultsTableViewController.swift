@@ -364,7 +364,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
 
     func showLocationDeniedAlert() {
         let alertController = UIAlertController(title: "Location Services Disabled",
-                                                message: "Enable Location Services in Settings",
+                                                message: "You need to enable Location Services in Settings",
                                                 preferredStyle: .alert)
 
         let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
@@ -376,4 +376,5 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
 
         present(alertController, animated: true, completion: nil)
     }
+    
 }
