@@ -360,7 +360,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
-        return 0
+        return -80
     }
 
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {

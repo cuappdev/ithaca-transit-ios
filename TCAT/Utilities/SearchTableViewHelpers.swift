@@ -39,7 +39,7 @@ enum ItemType {
 
 extension SearchResultsTableViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
-        return 0
+        return -80
     }
     
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
