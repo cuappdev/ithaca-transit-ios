@@ -187,9 +187,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         super.viewWillDisappear(animated)
         networkTimer?.invalidate()
         networkTimer = nil
-        UIApplication.shared.statusBarStyle = .default
-        banner?.dismiss()
-        banner = nil
+        hideBanner()
     }
 
     override func loadView() {

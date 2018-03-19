@@ -175,7 +175,7 @@ class SummaryView: UIView {
             
             if let delay = departDirection.delay {
                 var color: UIColor = .liveGreenColor
-                if delay > 0 {
+                if delay >= 1 {
                     color = .liveRedColor
                 }
                 let range = (attributedString.string as NSString).range(of: departDirection.startTimeWithDelayDescription)

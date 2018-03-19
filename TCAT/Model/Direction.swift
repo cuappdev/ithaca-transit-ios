@@ -151,7 +151,7 @@ class Direction: NSObject, NSCopying {
         delay = json["delay"].int
         
         // If depart direction, use bus stop locations (with id) for start and end
-        if type == .depart, let start = stops.first, let end = stops.last {
+        if type == .depart || type == .arrive, let start = stops.first, let end = stops.last {
             startLocation = start
             endLocation = end
         }

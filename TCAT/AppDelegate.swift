@@ -126,7 +126,7 @@ extension UIWindow {
                 return
             }
             
-            let title = "Submit Beta Feedback"
+            let title = "Submit Feedback"
             let message = "You can help us make our app even better! Take screenshots within the app and tap below to submit."
             let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
             

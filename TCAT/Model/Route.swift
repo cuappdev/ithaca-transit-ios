@@ -125,7 +125,7 @@ class Route: NSObject, JSONDecodable {
             }
             // Append extra arrive direction for depart ending location
             else if direction.type == .depart {
-                rawDirections.append(Direction(type: .arrive, name: endName, startLocation: direction.startLocation, endLocation: direction.endLocation, startTime: direction.startTime, endTime: direction.endTime, path: direction.path, travelDistance: direction.travelDistance, routeNumber: direction.routeNumber, stops: direction.stops, stayOnBusForTransfer: direction.stayOnBusForTransfer, tripIdentifiers: direction.tripIdentifiers, delay: direction.delay))
+                rawDirections.append(Direction(type: .arrive, name: direction.endLocation.name, startLocation: direction.startLocation, endLocation: direction.endLocation, startTime: direction.startTime, endTime: direction.endTime, path: direction.path, travelDistance: direction.travelDistance, routeNumber: direction.routeNumber, stops: direction.stops, stayOnBusForTransfer: direction.stayOnBusForTransfer, tripIdentifiers: direction.tripIdentifiers, delay: direction.delay))
             }
         }
         
@@ -134,6 +134,7 @@ class Route: NSObject, JSONDecodable {
         for (index, direction) in rawDirections.enumerated() {
             if index != last && index != first && direction.type == .walk {
                 direction.type = .arrive
+                direction.name = rawDirections[index - 1].endLocation.name
             }
         }
         
