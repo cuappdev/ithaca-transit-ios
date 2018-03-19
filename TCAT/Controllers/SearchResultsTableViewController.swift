@@ -130,7 +130,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     
     /* Location Manager Delegates */
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let firstLocation = locations.first, currentLocationSection.items.isEmpty {
+        if let firstLocation = locations.last {
             let currentLocationBusItem = ItemType.busStop(BusStop(name: Constants.Stops.currentLocation,
                                                                   lat: firstLocation.coordinate.latitude,
                                                                   long: firstLocation.coordinate.longitude))
@@ -141,6 +141,14 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         print("SearchResultsTableVC CLLocationManager didFailWithError: \(error)")
+        //this means they dont have location services enabled
+        if error._code == CLError.denied.rawValue {
+        let currentLocationBusItem = ItemType.busStop(BusStop(name: Constants.Stops.currentLocation,
+                                                              lat: 0.0,
+                                                              long: 0.0))
+        currentLocationSection = Section(type: .currentLocation, items: [currentLocationBusItem])
+        sections = createSections()
+        }
     }
     
     /* Keyboard Functions */
@@ -189,11 +197,11 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         return header
     }
 
-   override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0
     }
 
-   override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch sections[section].type {
         case .favorites, .recentSearches: return 50
         default: return 24
@@ -222,7 +230,13 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
             allStopsTVC.allStops = SearchTableViewManager.shared.getAllStops()
             allStopsTVC.unwindAllStopsTVCDelegate = self
         case .busStop(let busStop):
-            if busStop.name != Constants.Stops.currentLocation && busStop.name != Constants.Phrases.firstFavorite {
+            if busStop.lat == 0.0 && busStop.long == 0.0 {
+                showLocationDeniedAlert()
+                return
+            }
+
+            if busStop.name != Constants.Stops.currentLocation
+                && busStop.name != Constants.Phrases.firstFavorite {
                 SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: busStop, limit: 8)
             }
             
@@ -346,5 +360,20 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     func dismissSearchResultsVC(busStop: BusStop) {
         returningFromAllStopsBusStop = busStop
         returningFromAllStopsTVC = true
+    }
+
+    func showLocationDeniedAlert() {
+        let alertController = UIAlertController(title: "Location Services Disabled",
+                                                message: "Enable Location Services in Settings",
+                                                preferredStyle: .alert)
+
+        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
+            UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alertController.addAction(settingsAction)
+        alertController.addAction(cancelAction)
+
+        present(alertController, animated: true, completion: nil)
     }
 }
