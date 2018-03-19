@@ -14,7 +14,7 @@ class DatePickerView: UIView {
 
     var datepicker: UIDatePicker = UIDatePicker()
     var leaveNowSegmentedControl: UISegmentedControl = UISegmentedControl()
-    let leaveNowSegmentedControlOptions: [String] = ["Leave Now"]
+    let leaveNowSegmentedControlOptions: [String] = [Constants.Phrases.datepickerLeaveNow]
     var timeTypeSegmentedControl: UISegmentedControl = UISegmentedControl()
     let timeTypeSegmentedControlOptions: [String] = ["Leave At", "Arrive By"]
     var cancelButton: UIButton = UIButton()

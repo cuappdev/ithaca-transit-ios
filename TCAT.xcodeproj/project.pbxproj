@@ -58,7 +58,7 @@
 		DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */; };
 		DD659C8A20508E1B00506BAC /* WalkWithDistanceIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD659C8920508E1A00506BAC /* WalkWithDistanceIcon.swift */; };
 		DD87F20A1E878CB5000C244B /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD87F2091E878CB5000C244B /* Loader.swift */; };
-		DD99E2F61F6DB06A0073E8F7 /* KeyConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */; };
+		DD99E2F61F6DB06A0073E8F7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F51F6DB06A0073E8F7 /* Constants.swift */; };
 		DDA134451EC6A8CB00460B18 /* RouteLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA134441EC6A8CB00460B18 /* RouteLine.swift */; };
 		DDB49C941E8857D000A99C35 /* RouteDetail+ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C921E8857D000A99C35 /* RouteDetail+ContentViewController.swift */; };
 		DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */; };
@@ -158,7 +158,7 @@
 		DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Semibold.otf"; path = "Resources/SFText-Semibold.otf"; sourceTree = "<group>"; };
 		DD659C8920508E1A00506BAC /* WalkWithDistanceIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WalkWithDistanceIcon.swift; path = Views/WalkWithDistanceIcon.swift; sourceTree = "<group>"; };
 		DD87F2091E878CB5000C244B /* Loader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Loader.swift; path = Utilities/Loader.swift; sourceTree = "<group>"; };
-		DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KeyConstants.swift; path = "Supporting Files/KeyConstants.swift"; sourceTree = "<group>"; };
+		DD99E2F51F6DB06A0073E8F7 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = "Supporting Files/Constants.swift"; sourceTree = "<group>"; };
 		DDA134441EC6A8CB00460B18 /* RouteLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteLine.swift; path = Views/RouteLine.swift; sourceTree = "<group>"; };
 		DDB49C921E8857D000A99C35 /* RouteDetail+ContentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "RouteDetail+ContentViewController.swift"; path = "Controllers/RouteDetail+ContentViewController.swift"; sourceTree = "<group>"; };
 		DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LargeDetailTableViewCell.swift; path = Cells/LargeDetailTableViewCell.swift; sourceTree = "<group>"; };
@@ -299,7 +299,7 @@
 			isa = PBXGroup;
 			children = (
 				449A7C841D80D0E80019300C /* Info.plist */,
-				DD99E2F51F6DB06A0073E8F7 /* KeyConstants.swift */,
+				DD99E2F51F6DB06A0073E8F7 /* Constants.swift */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -791,7 +791,7 @@
 				DD3D9C341F942CF000B164D4 /* CoordinateVisitor.swift in Sources */,
 				DD3D9C211F94297100B164D4 /* Reachability.swift in Sources */,
 				DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */,
-				DD99E2F61F6DB06A0073E8F7 /* KeyConstants.swift in Sources */,
+				DD99E2F61F6DB06A0073E8F7 /* Constants.swift in Sources */,
 				DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */,
 				D183AA021E6CB092006A9A15 /* Extensions.swift in Sources */,
 				503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */,

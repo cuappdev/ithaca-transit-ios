@@ -66,7 +66,7 @@ class BusIcon: UIView {
             label.center.y = baseView.center.y
             label.frame.origin.x = image.frame.maxX + 4
             
-            liveIndicator = LiveIndicator(size: .large)
+            liveIndicator = LiveIndicator(size: .large, color: .white)
             liveIndicator!.frame.origin = CGPoint(x: label.frame.maxX + 6, y: label.frame.origin.y)
             liveIndicator!.center.y = baseView.center.y
             addSubview(liveIndicator!)

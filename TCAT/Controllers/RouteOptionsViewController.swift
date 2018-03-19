@@ -86,11 +86,17 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         view.addSubview(datePickerOverlay)
         view.sendSubview(toBack: datePickerOverlay)
         view.addSubview(routeResults)
-        view.addSubview(datePickerView) //so datePicker can go ontop of other views
+        view.addSubview(datePickerView) // so datePicker can go ontop of other views
 
         setRouteSelectionView(withDestination: searchTo)
         setupLocationManager()
 
+        // assume user wants to find routes that leave at current time and set datepicker accordingly
+        searchTime = Date()
+        if let searchTime = searchTime {
+            routeSelection.setDatepicker(withDate: searchTime, withSearchTimeType: searchTimeType)
+        }
+        
         searchForRoutes()
         
         // Check for 3D Touch availability
@@ -137,6 +143,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     private func setRouteSelectionView(withDestination destination: Place?){
+        routeSelection.fromSearchbar.setTitle(Constants.Phrases.fromSearchBarPlaceholder, for: .normal)
         routeSelection.toSearchbar.setTitle(destination?.name ?? "", for: .normal)
     }
 
@@ -184,18 +191,20 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         case .from:
 
             if let startingDestinationName = searchFrom?.name {
-                if startingDestinationName != Constants.Stops.currentLocation {
+                if startingDestinationName != Constants.Stops.currentLocation && startingDestinationName != Constants.Phrases.fromSearchBarPlaceholder {
                     searchBarText = startingDestinationName
                 }
             }
-            placeholder = "Choose starting point..."
+            placeholder = Constants.Phrases.fromSearchBarPlaceholder
 
         case .to:
 
             if let endingDestinationName = searchTo?.name {
-                searchBarText = endingDestinationName
+                if endingDestinationName != Constants.Stops.currentLocation {
+                    searchBarText = endingDestinationName
+                }
             }
-            placeholder = "Choose destination..."
+            placeholder = Constants.Phrases.toSearchBarPlaceholder
 
         }
 
@@ -276,11 +285,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func searchForRoutes() {
         
-        // If no date is set then date should be same as today's date
-        if routeSelection.datepickerButton.titleLabel?.text?.lowercased() == "leave now" {
-            searchTime = Date()
-        }
-
         if let time = searchTime,
             let startingDestination = searchFrom as? CoordinateAcceptor,
             let endingDestination = searchTo as? CoordinateAcceptor
@@ -396,19 +400,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-        
         print("RouteOptionVC locationManager didFailWithError: \(error.localizedDescription)")
         locationManager.stopUpdatingLocation()
-        var boolean = true
+        var locationAuthReminder = true
         
         if let showReminder = userDefaults.value(forKey: Constants.UserDefaults.locationAuthReminder) as? Bool {
             if showReminder {
-                boolean = false
-            } else {
-                // If the user doesn't want to use location, auto show from field
-                // Currently not working, but such an edge case, leaving for now
-                self.searchingFrom()
-                return
+                locationAuthReminder = false
             }
         }
         
@@ -418,14 +416,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         alertController.addAction(UIAlertAction(title: "Dismiss", style: .default) { (_) in
-            userDefaults.set(boolean, forKey: Constants.UserDefaults.locationAuthReminder)
+            userDefaults.set(locationAuthReminder, forKey: Constants.UserDefaults.locationAuthReminder)
         })
         alertController.addAction(UIAlertAction(title: "Settings", style: .default) { (_) in
             UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
         })
 
         present(alertController, animated: true, completion: nil)
-        
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -480,10 +477,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         view.bringSubview(toFront: datePickerView)
 
         // set up date on datepicker view
-        if routeSelection.datepickerButton.titleLabel?.text?.lowercased() == "leave now" {
-            datePickerView.setDatepickerDate(date: Date())
-        }
-        else if let time = searchTime {
+        if let time = searchTime  {
             datePickerView.setDatepickerDate(date: time)
         }
 
@@ -512,7 +506,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     @objc func saveDatePickerDate(sender: UIButton) {
         let date = datePickerView.getDate()
         searchTime = date
-        let dateString = Time.dateString(from: date)
         let segmentedControl = datePickerView.timeTypeSegmentedControl
 
         // Get selected time type
@@ -522,24 +515,14 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }else{
             searchTimeType = .leaveAt
         }
-
-        // Customize string based on date
-        var title = ""
-        if Calendar.current.isDateInToday(date) || Calendar.current.isDateInTomorrow(date) {
-            let verb = (searchTimeType == .arriveBy) ? "Arrive" : "Leave" //Use simply,"arrive" or "leave"
-            let day = Calendar.current.isDateInToday(date) ? "" : " tomorrow" //if today don't put day
-            title = "\(verb)\(day) at \(Time.timeString(from: date))"
-        }else{
-            let verb = (searchTimeType == .arriveBy) ? "Arrive by" : "Leave on" //Use "arrive by" or "leave on"
-            title = "\(verb) \(dateString)"
-        }
-        routeSelection.datepickerButton.setTitle(title, for: .normal)
+        
+        routeSelection.setDatepicker(withDate: date, withSearchTimeType: searchTimeType)
 
         dismissDatePicker(sender: sender)
 
         searchForRoutes()
     }
-
+    
     // MARK: Tableview Data Source
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -558,7 +541,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: routeTableViewCellIdentifier)
         }
 
-        cell?.setData(routes[indexPath.row])
+        cell?.setData(routes[indexPath.row], withSearchTime: searchTime, withSearchTimeType: searchTimeType)
         cell?.positionSubviews()
         cell?.addSubviews()
 
@@ -567,7 +550,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         cell?.addGestureRecognizer(longPressGestureRecognizer)
         
         setCellUserInteraction(cell, to: cellUserInteraction)
-
+        
         return cell!
     }
 
@@ -699,12 +682,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let directions = routes[indexPath.row].directions
-        let isWalkingRoute = routes[indexPath.row].isWalkingRoute()
+        let directions = routes[indexPath.row].rawDirections
+        let isWalkingRoute = routes[indexPath.row].isRawWalkingRoute()
 
         // if walking route, don't skip first walking direction. Ow skip first walking direction
         let numOfStops = isWalkingRoute ? directions.count : (directions.first?.type == .walk ? directions.count - 1 : directions.count)
-        let rowHeight = RouteTableViewCell().heightForCell(withNumOfStops: numOfStops, withNumOfWalkLines: routes[indexPath.row].getNumOfWalkLines())
+        let rowHeight = RouteTableViewCell().heightForCell(withNumOfStops: numOfStops, withNumOfWalkLines: routes[indexPath.row].getRawNumOfWalkLines())
 
         return rowHeight
     }
@@ -743,8 +726,14 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
         if sender.state == .began {
             let point = sender.location(in: routeResults)
             if let indexPath = routeResults.indexPathForRow(at: point) {
-                presentShareSheet(for: routes[indexPath.row])
+                presentShareSheetWithImage(withIndexPath: indexPath)
             }
+        }
+    }
+    
+    private func presentShareSheetWithImage(withIndexPath indexPath: IndexPath) {
+        if let cell = routeResults.cellForRow(at: indexPath) {
+            presentShareSheet(from: view, for: routes[indexPath.row], with: cell.getImage())
         }
     }
     

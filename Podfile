@@ -27,6 +27,7 @@ target 'TCAT' do
   pod 'NotificationBannerSwift', :git=> 'https://github.com/mattbarker016/NotificationBanner.git', :branch => 'mattbarker016/statusBannerFix'
   pod 'Pulley', :git=> 'https://github.com/52inc/Pulley.git', :branch => 'master'
   pod 'Presentation'
+  pod 'SnapKit'
 
 post_install do |installer|
     installer.pods_project.targets.each do |target|

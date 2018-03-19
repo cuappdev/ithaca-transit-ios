@@ -5,7 +5,6 @@
 //  Created by Matthew Barker on 2/26/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
-
 import UIKit
 
 enum LiveIndicatorSize: Double {
@@ -76,7 +75,7 @@ class LiveIndicator: UIView {
         
         smallArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius, lineWidth: constant)
         largeArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius + 2 * constant, lineWidth: constant)
-
+        
         views = [dot, smallArcLayer, largeArcLayer]
         
     }
@@ -179,3 +178,4 @@ class LiveIndicator: UIView {
     }
     
 }
+

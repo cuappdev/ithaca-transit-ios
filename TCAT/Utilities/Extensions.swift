@@ -59,14 +59,25 @@ extension MKPolyline {
     }
 }
 
-/** Round specific corners of UIView */
 extension UIView {
+    
+    /** Round specific corners of UIView */
     func roundCorners(corners: UIRectCorner, radius: CGFloat) {
         let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
         let mask = CAShapeLayer()
         mask.path = path.cgPath
         self.layer.mask = mask
     }
+    
+    /// Get UIImage of passed in view
+    func getImage() -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(frame.size, isOpaque, 0.0)
+        layer.render(in: UIGraphicsGetCurrentContext()!)
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return img
+    }
+    
 }
 
 extension UILabel {
@@ -294,13 +305,19 @@ extension Array : JSONDecodable {
 }
 
 /// Present a share sheet for a route in any context.
-func presentShareSheet(for route: Route) {
+func presentShareSheet(from view: UIView, for route: Route, with image: UIImage? = nil) {
     
     let shareContent = route.summaryDescription
     let promotionalText = "\n\nDownload Ithaca Transit on the App Store! \(Constants.App.appStoreLink)"
     
-    let activityVC = UIActivityViewController(activityItems: [shareContent, promotionalText], applicationActivities: nil)
+    var activityItems: [Any] = [shareContent, promotionalText]
+    if let image = image {
+        activityItems.insert(image, at: 0)
+    }
+    
+    let activityVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
     activityVC.excludedActivityTypes = [.print, .assignToContact, .openInIBooks, .addToReadingList]
+    activityVC.popoverPresentationController?.sourceView = view
     activityVC.completionWithItemsHandler = { (activity, completed, items, error) in
         let sharingMethod = activity?.rawValue.replacingOccurrences(of: "com.apple.UIKit.activity.", with: "") ?? "None"
         let payload = RouteSharedEventPayload(activityType: sharingMethod, didSelectAndCompleteShare: completed, error: error?.localizedDescription)

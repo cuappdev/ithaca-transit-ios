@@ -448,7 +448,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     // MARK: Share Function
     
     @objc func shareRoute() {
-        presentShareSheet(for: route)
+        presentShareSheet(from: view, for: route)
     }
     
     // MARK: Google Map View Delegate Functions

@@ -17,16 +17,16 @@ enum NetworkType: String {
 }
 
 class Network {
-    
+
     // MARK: Global Network Variables
     
     static let networkType: NetworkType = .release
     static let apiVersion = "v1"
-    
+
     /// Used for local backend testing
     static let localIPAddress = "10.131.152.124"
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
-    
+
     /// Test server used for development
     static let debugIPAddress = "34.238.157.63"
     static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
@@ -43,7 +43,7 @@ class Network {
         case .release: return releaseIPAddress
         }
     }
-    
+
     /// Network source currently being used
     static var address: String {
         switch networkType {
@@ -52,10 +52,10 @@ class Network {
         case .release: return releaseSource
         }
     }
-    
+
     static let mainTron = TRON(baseURL: Network.address)
     static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
-  
+
     static let placesClient = GMSPlacesClient.shared()
 
     class func getAllStops() -> APIRequest<AllBusStops, Error> {
@@ -73,7 +73,7 @@ class Network {
                 callback(startCoord, endCoord)
             }
         }
-        
+
     }
 
     class func getRoutes(start: CoordinateAcceptor, end: CoordinateAcceptor, time: Date, type: SearchType,
@@ -100,9 +100,7 @@ class Network {
             ]
 
             // for debugging
-            // print("Request URL: \(source)/\(request.path)?end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)")
-            
-            print("Request Parameters:", request.parameters)
+            // print("Route Request URL: \(address)/\(request.path)?arriveBy=\(request.parameters["arriveBy"]!)&end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)\n")
 
             callback(request)
 
@@ -123,45 +121,45 @@ class Network {
         ]
         return request
     }
-    
+
     class func getBusLocations(_ directions: [Direction]) -> APIRequest<BusLocationResult, Error> {
 
         let request: APIRequest<BusLocationResult, Error> = mainTron.swiftyJSON.request("tracking")
         request.method = .post
         let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
         let dictionary = departDirections.map { (direction) -> [String : Any] in
-            
+
             // The id of the location, or bus stop, the bus needs to get to
             let stopID = direction.startLocation.id
-            
+
             return [
                 "stopID"                :   stopID,
                 "routeID"               :   String(direction.routeNumber),
                 "tripIdentifiers"       :   direction.tripIdentifiers!
             ]
-            
+
         }
-        
+
         request.parameters = [ "data" : dictionary ]
         request.parameterEncoding = JSONEncoding.default
         return request
-        
+
     }
-    
+
     class func getDelay(tripId: String, stopId: String) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = mainTron.swiftyJSON.request("delay")
         request.method = .get
-        request.parameters = ["stopID": stopId, "tripID": tripId]
-        // print("Delay request URL: \(source)/delay?stopID=\(request.parameters["stopID"]!)&tripID=\(request.parameters["tripID"]!)")
+        request.parameters = ["stopID" : stopId, "tripID" : tripId]
+
+        // print("Delay request URL: \(address)/\(request.path)?stopID=\(request.parameters["stopID"]!)&tripID=\(request.parameters["tripID"]!)")
+
         return request
     }
-    
+
 }
 
 class Error: JSONDecodable {
-    required init(json: JSON) {
-        // need to talk to shiv about what errors could be possibily returned
-    }
+    required init(json: JSON) {}
 }
 
 class AllBusStops: JSONDecodable {
@@ -235,7 +233,7 @@ class BusLocationResult: JSONDecodable {
             print("BusLocation Init Failure")
         }
     }
-    
+
     func parseBusLocation(json: JSON) -> BusLocation {
 
         let dataType: BusDataType = {
@@ -269,7 +267,7 @@ class BusLocationResult: JSONDecodable {
         )
 
         return busLocation
-        
+
     }
 
 }
