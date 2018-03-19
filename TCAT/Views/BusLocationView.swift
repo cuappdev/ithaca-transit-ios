@@ -106,10 +106,7 @@ class BusLocationView: UIView {
             
         } else if let heading = heading {
             
-            print("Setting bearing with value:", heading)
             // Use endpoint-provided value to change bearing
-            // let newDegrees = heading - currentBearing
-            // let currentAngle: CGFloat = CGFloat(-1) * CGFloat(degreesToRadians(heading)) // CGFloat(degreesToRadians(newDegrees))
             let resetFromAngle = CGFloat(degreesToRadians(currentBearing))
             let setToAngle = CGFloat(-1) * CGFloat(degreesToRadians(heading))
             self.bearingIndicator.transform = CGAffineTransform(rotationAngle: resetFromAngle)
@@ -117,7 +114,7 @@ class BusLocationView: UIView {
             self.currentBearing = heading
             
         } else {
-            print("setBearing: no parameters passed in")
+            print("setBearing error: no parameters passed in")
         }
         
     }

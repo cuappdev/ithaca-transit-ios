@@ -37,9 +37,9 @@ struct Constants {
     }
     
     struct BusUserData {
-        static let placedLocation = "placedLocation"
-        static let actualLocation = "actualLocation"
-        static let id = "id"
+        static let actualCoordinates = "actualCoords"
+        static let indicatorCoordinates = "indicatorCoords"
+        static let vehicleID = "vehicleID"
     }
     
     struct Cells {
@@ -84,7 +84,8 @@ struct Constants {
     
     struct Values {
         static let maxDistanceBetweenStops = 160.0
-        static let fuzzySearchMinimumValue = 75
+        // Percentage close to a word
+        static let fuzzySearchMinimumValue = 90
     }
     
     struct Stops {

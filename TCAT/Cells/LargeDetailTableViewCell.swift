@@ -40,7 +40,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         titleLabel.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.textColor = .primaryTextColor
-        titleLabel.text = "Board"
+        titleLabel.text = direction != nil && direction.type == .transfer ? "Bus becomes" : "Board"
         titleLabel.sizeToFit()
         return titleLabel
     }
@@ -102,18 +102,17 @@ class LargeDetailTableViewCell: UITableViewCell {
                                       lastStep: false)
             contentView.addSubview(iconView!)
             
+            titleLabel = formatTitleLabel(titleLabel)
+            
             busIconView = BusIcon(type: .directionSmall, number: direction.routeNumber)
             busIconView = formatBusIconView(busIconView, titleLabel)
             contentView.addSubview(busIconView)
             
-            titleLabel = formatTitleLabel(titleLabel)
             detailLabel = formatDetailLabel(detailLabel, titleLabel)
             
             // Place bus icon and chevron accordingly
-            if titleLabel.frame.height > 60 {
-                busIconView.frame.origin.y = titleLabel.frame.minY + (titleLabel.font.lineHeight / 2)
-            }
             chevron.center.y = cellHeight / 2
+            
         }
         
         if direction.stops.isEmpty {
@@ -133,7 +132,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         //      while label.frame.maxX < busIconView.frame.maxX + 8 {
         // because it will occasionally run infinitely because of format func calls
         var accum = 0
-        while accum <= (direction.type == .transfer ? 34 : 16) {
+        while accum <= (16) {
             accum += 1
             label.text! += " "
             label.sizeToFit()
@@ -141,11 +140,10 @@ class LargeDetailTableViewCell: UITableViewCell {
         
         // Format and place labels
         
-        let content = direction.locationNameDescription
-        let attributedString = NSMutableAttributedString(string: label.text!)
-        attributedString.append(bold(pattern: self.direction.name, in: content))
+        let content = label.text! + direction.locationNameDescription
+        let attributedString = bold(pattern: direction.name, in: content)
         label.attributedText = attributedString
-        paragraphStyle.lineSpacing = 8
+        paragraphStyle.lineSpacing = 4
         
         label.numberOfLines = 0
         label.sizeToFit()
@@ -154,7 +152,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         
         attributedString.addAttribute(NSAttributedStringKey.paragraphStyle,
                                       value: paragraphStyle,
-                                      range: NSMakeRange(0, attributedString.length))
+                                      range: NSMakeRange(0, label.attributedText!.length))
         label.attributedText = attributedString
         
         return label
@@ -170,15 +168,21 @@ class LargeDetailTableViewCell: UITableViewCell {
         if timeString == "0 min" {  timeString = "1 min" }
         label.text = label.text! +  " • \(timeString)"
         
-        label.frame.origin.y = titleLabel.frame.maxY + labelSpacing
         label.sizeToFit()
+        label.frame.origin.y = titleLabel.frame.maxY + labelSpacing
         return label
     }
     
     /** Abstracted formatting of content for busIconView. Needs initialized titleLabel */
     func formatBusIconView(_ icon: BusIcon, _ titleLabel: UILabel) -> BusIcon {
-        icon.frame.origin = CGPoint(x: titleLabel.frame.maxX + 8,
-                                    y: titleLabel.frame.minY + titleLabel.font.lineHeight)
+        
+        let plainLabel = getTitleLabel()
+        let originX = titleLabel.frame.minX + plainLabel.frame.size.width + 8
+        var originY = titleLabel.frame.minY
+        
+        originY += titleLabel.font.lineHeight - icon.frame.size.height / 2 - CGFloat(titleLabel.numberOfLines() * 2)
+        
+        icon.frame.origin = CGPoint(x: originX, y: originY)
         return icon
     }
     

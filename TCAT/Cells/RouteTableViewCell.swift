@@ -191,8 +191,8 @@ class RouteTableViewCell: UITableViewCell {
             liveLabel.sizeToFit()
             positionLiveIndicatorViewHorizontally(usingLiveLabel: liveLabel)
         } else {
-            liveIndicatorView.setColor(to:.white)
-            liveLabel.textColor = .white
+            liveIndicatorView.setColor(to: .clear)
+            liveLabel.textColor = .clear
         }
     }
 
@@ -282,7 +282,7 @@ class RouteTableViewCell: UITableViewCell {
     }
     
     private func positionLiveIndicatorViewVertically(usingLiveLabel liveLabel: UILabel) {
-        liveIndicatorView.frame.origin.y = liveLabel.center.y - (liveIndicatorView.frame.height / 2)
+        liveIndicatorView.frame.origin.y = liveLabel.center.y - (liveIndicatorView.frame.height / 2) + 1
     }
     
     private func positionLiveLabel(usingTravelTime travelTimeLabel: UILabel) {

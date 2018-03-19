@@ -28,9 +28,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         GMSServices.provideAPIKey(json["google-maps"].stringValue)
         GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
         
+        // Set Up Register, Fabric / Crashlytics (RELEASE)
+        #if !DEBUG
+            Fabric.with([Crashlytics.self])
+            RegisterSession.startLogging()
+        #endif
+        
         // Log basic information
-        let payload = DeviceInformationPayload().toEvent()
-        RegisterSession.shared.logEvent(event: payload)
+        let payload = AppLaunchedPayload()
+        RegisterSession.shared?.log(payload)
         
         // Initalize User Defaults
         if userDefaults.value(forKey: Constants.UserDefaults.onboardingShown) == nil {
@@ -43,7 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             userDefaults.set([Any](), forKey: Constants.UserDefaults.favorites)
         }
         
-        // Debug Onboarding
+        // Debug - Always Show Onboarding
         // userDefaults.set(false, forKey: Constants.UserDefaults.onboardingShown)
         
         getBusStops()
@@ -59,11 +65,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
-
-        // Initalize Fabric + Crashlytics (RELEASE)
-        #if !DEBUG
-            Fabric.with([Crashlytics.self])
-        #endif
         
         return true
     }
@@ -98,8 +99,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     func getBusStops() {
         Network.getAllStops().perform(withSuccess: { stops in
             let allBusStops = stops.allStops
-            let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
-            self.userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
+            if allBusStops.isEmpty {
+                let title = "Couldn't Fetch Bus Stops"
+                let message = "The app will continue trying on launch. You can continue to use the app as normal."
+                let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                UIApplication.shared.keyWindow?.presentInApp(alertController)
+            } else {
+                let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
+                self.userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
+            }
         }, failure: { error in
             print("getBusStops error:", error)
         })
@@ -111,6 +120,11 @@ extension UIWindow {
     
     open override func motionBegan(_ motion: UIEventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
+            
+            if rootViewController is OnboardingViewController ||
+                (rootViewController as? UINavigationController)?.visibleViewController is OnboardingViewController {
+                return
+            }
             
             let title = "Submit Beta Feedback"
             let message = "You can help us make our app even better! Take screenshots within the app and tap below to submit."

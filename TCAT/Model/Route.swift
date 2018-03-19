@@ -96,9 +96,6 @@ class Route: NSObject, JSONDecodable {
         boundingBox = json["boundingBox"].parseBounds()
         numberOfTransfers = json["numberOfTransfers"].intValue
         directions = json["directions"].arrayValue.map { Direction(from: $0) }
-
-        // Replace hard-coded destination
-        directions.last?.name = endName
         
         super.init()
 
@@ -115,9 +112,14 @@ class Route: NSObject, JSONDecodable {
             if direction.type == .depart {
                 
                 let beyondRange = index + 1 > directions.count - 1
+                let isLastDepart = index == directions.count - 1
                 
-                // If this direction doesn't have a transfer afterwards
-                if !beyondRange && !directions[index+1].stayOnBusForTransfer {
+                if direction.stayOnBusForTransfer {
+                    direction.type = .transfer
+                }
+                
+                // If this direction doesn't have a transfer afterwards, or is depart and last
+                if (!beyondRange && !directions[index+1].stayOnBusForTransfer) || isLastDepart {
                     
                     // Create Arrival Direction
                     let arriveDirection = direction.copy() as! Direction
@@ -129,10 +131,6 @@ class Route: NSObject, JSONDecodable {
                     directions.insert(arriveDirection, at: index + offset + 1)
                     offset += 1
                     
-                }
-                
-                if direction.stayOnBusForTransfer {
-                    direction.type = .transfer
                 }
                 
                 // Remove inital bus stop and departure bus stop

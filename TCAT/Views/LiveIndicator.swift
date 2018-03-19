@@ -9,7 +9,7 @@
 import UIKit
 
 enum LiveIndicatorSize: Double {
-    case small = 6
+    case small = 9
     case large = 12
 }
 
@@ -22,11 +22,12 @@ class LiveIndicator: UIView {
     fileprivate var views: [Any]!
     
     static let INTERVAL: TimeInterval = 4.0
+    static let DURATION: TimeInterval = 0.2
     
-    fileprivate let DURATION: TimeInterval = 0.2
+    fileprivate var DIM_OPACITY: CGFloat = 0.5
+    
     fileprivate let START_DELAY: TimeInterval = 0.0
-    fileprivate let END_DELAY: TimeInterval = 0.0 // 0.25
-    fileprivate let DIM_OPACITY: CGFloat = 0.5
+    fileprivate let END_DELAY: TimeInterval = 0.0
     fileprivate let INTERVAL: TimeInterval = LiveIndicator.INTERVAL
     
     /// The color to draw the indicator with
@@ -40,26 +41,38 @@ class LiveIndicator: UIView {
     }
     
     init(size: LiveIndicatorSize, color: UIColor = .white) {
+        
         super.init(frame: CGRect(x: 0, y: 0, width: size.rawValue, height: size.rawValue))
         self.size = size
         self.color = color
+        
+        DIM_OPACITY = size == .small ? 0 : 0.5
+        
         drawViews()
         addViews()
         startAnimation()
+        
+        if size == .small {
+            let ratio: CGFloat = CGFloat(LiveIndicatorSize.small.rawValue / LiveIndicatorSize.large.rawValue)
+            self.transform = CGAffineTransform(scaleX: ratio, y: ratio)
+        }
+        
     }
     
     /// Draw UIViews and layers based on type and color. Does not add them.
     private func drawViews() {
         
-        let dotSize: CGFloat = CGFloat(size.rawValue / 3.0)
-        dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - dotSize + 0.5, width: dotSize, height: dotSize))
+        let size: Double = LiveIndicatorSize.large.rawValue // self.size.rawValue
+        
+        let dotSize: CGFloat = CGFloat(size / 3.0)
+        dot = UIView(frame: CGRect(x: 0 , y: frame.maxY - dotSize + 0.25, width: dotSize, height: dotSize))
         dot.layer.cornerRadius = dot.frame.width / 2
         dot.clipsToBounds = true
         dot.backgroundColor = color
         
         let arcOrigin = CGPoint(x: 1, y: frame.maxY - 1)
         let constant: CGFloat = 2
-        let radius: CGFloat = CGFloat(size.rawValue / 2.0 + 1.0)
+        let radius: CGFloat = CGFloat(size / 2.0 + 1.0)
         
         smallArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius, lineWidth: constant)
         largeArcLayer = createTopToLeftArc(origin: arcOrigin, radius: radius + 2 * constant, lineWidth: constant)
@@ -102,7 +115,7 @@ class LiveIndicator: UIView {
                                   selector: #selector(self.animate(layer:)), userInfo: layer, repeats: true)
                 RunLoop.main.add(timer, forMode: .commonModes)
             }
-            timeInterval += DURATION
+            timeInterval += LiveIndicator.DURATION
         }
         
     }
@@ -137,10 +150,10 @@ class LiveIndicator: UIView {
         guard let view = timer.userInfo as? UIView
             else { return }
         
-        UIView.animate(withDuration: DURATION, delay: START_DELAY, options: .overrideInheritedOptions, animations: {
+        UIView.animate(withDuration: LiveIndicator.DURATION, delay: START_DELAY, options: .overrideInheritedOptions, animations: {
             view.alpha = self.DIM_OPACITY
         }, completion: { (completed) in
-            UIView.animate(withDuration: self.DURATION, delay: self.END_DELAY, options: .overrideInheritedOptions, animations: {
+            UIView.animate(withDuration: LiveIndicator.DURATION, delay: self.END_DELAY, options: .overrideInheritedOptions, animations: {
                 view.alpha = 1.0
             })
         })
@@ -155,7 +168,7 @@ class LiveIndicator: UIView {
         
         let fadeOutAnimation = CAKeyframeAnimation(keyPath: "opacity")
         fadeOutAnimation.beginTime = START_DELAY
-        fadeOutAnimation.duration = DURATION
+        fadeOutAnimation.duration = LiveIndicator.DURATION
         fadeOutAnimation.keyTimes = [0, 1]
         fadeOutAnimation.values = [1.0, DIM_OPACITY]
         fadeOutAnimation.autoreverses = true

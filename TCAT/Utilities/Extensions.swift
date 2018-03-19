@@ -303,33 +303,44 @@ func presentShareSheet(for route: Route) {
     activityVC.excludedActivityTypes = [.print, .assignToContact, .openInIBooks, .addToReadingList]
     activityVC.completionWithItemsHandler = { (activity, completed, items, error) in
         let sharingMethod = activity?.rawValue.replacingOccurrences(of: "com.apple.UIKit.activity.", with: "") ?? "None"
-        let _ = RegisterSession.shared.logEvent(event:
-            RouteSharedEventPayload(
-                activityType: sharingMethod,
-                didSelectAndCompleteShare: completed,
-                error: error?.localizedDescription
-            ).toEvent()
-        )
+        let payload = RouteSharedEventPayload(activityType: sharingMethod, didSelectAndCompleteShare: completed, error: error?.localizedDescription)
+        RegisterSession.shared?.log(payload)
     }
     
     UIApplication.shared.delegate?.window??.presentInApp(activityVC)
     
 }
 
-/** Bold a phrase that appears in a string, and return the attributed string */
+/** Bold a phrase that appears in a string, and return the attributed string.
+    Only shows the last bolded phrase.
+ */
 func bold(pattern: String, in string: String) -> NSMutableAttributedString {
     let fontSize = UIFont.systemFontSize
-    let attributedString = NSMutableAttributedString(string: string,
-                                                     attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: fontSize)])
-    let boldFontAttribute = [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: fontSize)]
+    let fontAttribute = [NSAttributedStringKey.font : UIFont.systemFont(ofSize: fontSize)]
+    let attributedString = NSMutableAttributedString(string: string, attributes: fontAttribute)
+    return bold(pattern: pattern, in: attributedString)
+}
 
+/** Bold a phrase that appears in an attributed string, and return the attributed string */
+func bold(pattern: String, in attributedString: NSMutableAttributedString) -> NSMutableAttributedString {
+    
+    let string = attributedString.string
+    let newAttributedString = attributedString
+    let font = attributedString.attributes(at: 0, effectiveRange: nil)
+    guard let fontSize = (font[NSAttributedStringKey.font] as? UIFont)?.pointSize else {
+        return attributedString
+    }
+    
+    let boldFontAttribute = [NSAttributedStringKey.font : UIFont.boldSystemFont(ofSize: fontSize)]
+    
     do {
         let regex = try NSRegularExpression(pattern: pattern, options: [])
-        let ranges = regex.matches(in: string, options: [], range: NSMakeRange(0, string.count)).map {$0.range}
-        for range in ranges { attributedString.addAttributes(boldFontAttribute, range: range) }
+        let ranges = regex.matches(in: string, options: [], range: NSMakeRange(0, string.count)).map { $0.range }
+        for range in ranges { newAttributedString.addAttributes(boldFontAttribute, range: range) }
     } catch { }
-
-    return attributedString
+    
+    return newAttributedString
+    
 }
 
 func areObjectsEqual<T: Equatable>(type: T.Type, a: Any, b: Any) -> Bool {
