@@ -195,6 +195,7 @@ struct GetRoutesErrorPayload: Payload {
     static let eventName: String = "Get Routes Error"
     static let deviceInfo = DeviceInfo()
     
+    let type: String
     let description: String
     let url: String?
 }

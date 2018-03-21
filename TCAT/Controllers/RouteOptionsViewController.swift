@@ -318,7 +318,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                             self.banner?.show(queuePosition: .front, on: self.navigationController)
                             self.isBannerShown = true
                             
-                            let payload = GetRoutesErrorPayload(description: error?.userInfo["description"] as? String ?? "",
+                            let payload = GetRoutesErrorPayload(type: error?.domain ?? "No Error Type",
+                                                                description: error?.userInfo["description"] as? String ?? "",
                                                                 url: error?.userInfo["url"] as? String)
                             RegisterSession.shared?.log(payload)
                             
@@ -339,11 +340,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     if let alamofireRequest = request?.perform(withSuccess: { (routeJSON) in
                         Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
                             self.routes = parsedRoutes
-                            requestDidFinish(with: error) // 300 error
+                            requestDidFinish(with: error) // 300 error for Route Calculation Failure
                         })
                     }, failure: { (networkError) in
-                        let description = (networkError.errorDescription ?? "n/a") + " • " + (networkError.failureReason ?? "n/a")
-                        let error = NSError(domain: "Network Failure", code: 500, userInfo: [
+                        let domain = "Network Failure: \((networkError.error as NSError?)?.domain ?? "No Domain")"
+                        let description = (networkError.localizedDescription) + ", " + ((networkError.error as NSError?)?.description ?? "n/a")
+                        let error = NSError(domain: domain, code: 500, userInfo: [
                             "description" : description,
                             "url" : networkError.request?.url?.absoluteString ?? "n/a"
                         ])
@@ -358,7 +360,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     }
                         
                     else { // Catch error of coordinates not being found
-                        let error = NSError(domain: "Null Coordinates", code: 400, userInfo: nil)
+                        let error = NSError(domain: "Null Coordinates", code: 400, userInfo: [
+                            "description" : "Coordinates for Google Place don't exist."
+                        ])
                         requestDidFinish(with: error)
                     }
                     
