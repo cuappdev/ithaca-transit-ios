@@ -135,9 +135,6 @@ class RouteTableViewCell: UITableViewCell {
         // stop timer
         timer?.invalidate()
     }
-    
-    
-    
 
     // MARK: Set Data
 
