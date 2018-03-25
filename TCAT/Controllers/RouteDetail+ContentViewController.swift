@@ -230,12 +230,14 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     
     /// Show banner if no other status banner exists; turns status bar light
     func showBanner(_ message: String, status: BannerStyle) {
-        self.banner = StatusBarNotificationBanner(title: message, style: status)
-        self.banner!.autoDismiss = false
-        self.banner!.dismissOnTap = true
-        self.banner!.show(queuePosition: .front, on: navigationController)
-        self.isBannerShown = true
-        UIApplication.shared.statusBarStyle = .lightContent
+        if self.banner == nil {
+            self.banner = StatusBarNotificationBanner(title: message, style: status)
+            self.banner!.autoDismiss = false
+            self.banner!.dismissOnTap = true
+            self.banner!.show(queuePosition: .front, on: navigationController)
+            self.isBannerShown = true
+            UIApplication.shared.statusBarStyle = .lightContent
+        }
     }
     
     /// Dismisses and removes banner; turns status bar back to default
@@ -278,16 +280,51 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         
         let firstDepartDirection = directions.first(where: { $0.type == .depart })
         
+        /// Variable to make sure a nil direction being set to the delay isn't reset.
+        var shouldReset: Bool = true
+        
+        // Update delay variable of directions not directly related to transit.
+        func updateRemainingDirections(with optionalDelay: Int?) {
+            directions.filter { $0.type == .walk }.forEach { (direction) in
+                
+                // If no delay, nil the delay
+                guard let delay = optionalDelay else {
+                    direction.delay = nil
+                    return
+                }
+                
+                // Delay exists
+                
+                // Direction has existing delay
+                if direction.delay != nil {
+                    // Reset delay to accumulate new results
+                    if shouldReset { direction.delay = 0 }
+                    direction.delay! += delay
+                }
+                
+                // Direction doesn't have a delay
+                else {
+                    direction.delay = delay
+                    shouldReset = false
+                }
+                
+            }
+        }
+        
         for direction in directions {
             if let tripId = direction.tripIdentifiers?.first, let stopId = direction.stops.first?.id {
                 Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
                     if json["success"].boolValue {
+                        
                         // print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
                         direction.delay = json["data"]["delay"].int
+                        updateRemainingDirections(with: direction.delay)
+                        
                         self.drawerDisplayController?.tableView.reloadData()
                         if direction == firstDepartDirection { // update summary view
                             self.drawerDisplayController?.summaryView.setRoute()
                         }
+                        
                     }
                     else {
                         print("getDelays success : false")

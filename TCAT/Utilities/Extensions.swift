@@ -91,6 +91,32 @@ extension UILabel {
         let textSize = labelText.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, attributes: [.font: font], context: nil)
         return Int(textSize.height/charSize)
     }
+    
+    // Find the position of a string in a label
+    func boundingRect(of string: String) -> CGRect? {
+        
+        guard let range = self.text?.range(of: string) else { return nil }
+        let nsRange = string.nsRange(from: range)
+        
+        guard let attributedText = attributedText else { return nil }
+        
+        let textStorage = NSTextStorage(attributedString: attributedText)
+        let layoutManager = NSLayoutManager()
+        
+        textStorage.addLayoutManager(layoutManager)
+        
+        let textContainer = NSTextContainer(size: bounds.size)
+        textContainer.lineFragmentPadding = 0.0
+        
+        layoutManager.addTextContainer(textContainer)
+        
+        var glyphRange = NSRange()
+        
+        // Convert the range for glyphs.
+        layoutManager.characterRange(forGlyphRange: nsRange, actualGlyphRange: &glyphRange)
+        
+        return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
+    }
 }
 
 extension UIViewController {
@@ -177,10 +203,7 @@ extension JSON {
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
         let date = dateFormatter.date(from: self.stringValue) ?? Date.distantPast
-        
-        // Zero out seconds, floor the time
-        let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
-        return Calendar.current.date(from: dateComponents) ?? Date.distantPast
+        return Time.truncateSeconds(from: date)
     }
 
     /// Create coordinate object from JSON.
@@ -218,11 +241,21 @@ extension JSON {
 }
 
 extension String {
+    
+    /// See function name
     func capitalizingFirstLetter() -> String {
         let first = String(prefix(1)).capitalized
         let other = String(dropFirst()).lowercased()
         return first + other
     }
+    
+    /// Convert Range to NSRange
+    func nsRange(from range: Range<String.Index>) -> NSRange {
+        let from = range.lowerBound.encodedOffset
+        let to = range.upperBound.encodedOffset
+        return NSRange(location: from - startIndex.encodedOffset, length: to - from)
+    }
+    
 }
 
 extension CLLocationCoordinate2D {

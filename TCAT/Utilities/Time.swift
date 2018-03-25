@@ -5,7 +5,6 @@
 //  Created by Monica Ong on 2/26/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
-
 import Foundation
 
 class Time {
@@ -36,10 +35,6 @@ class Time {
         var days: Int = time.day!
         
         if minutes > 0 {
-            // If time difference is 3m 56s, closer to 4m difference than 3m
-            // Needed only for minutes since last measurement in series
-            let hasSignificantSeconds = time.second! >= 30
-            minutes = time.minute! + (hasSignificantSeconds ? 1 : 0)
             if minutes >= 60 { hours += 1 }
             minutes = minutes % 60
             timeStr = "\(minutes % 60) min"
@@ -70,12 +65,19 @@ class Time {
     
     /// Calculates time bt 2 dates, returns DateComponents
     static func dateComponents(from startTime: Date, to endTime: Date) -> DateComponents {
-        return Calendar.current.dateComponents([.hour, .minute, .day, .second], from: startTime, to: endTime)
+        return Calendar.current.dateComponents([.hour, .minute, .day], from: truncateSeconds(from: startTime), to: truncateSeconds(from: endTime))
     }
     
     /// Calculates dateComponenets for a single date
     static func dateComponents(from date: Date) -> DateComponents {
-        return Calendar.current.dateComponents([.year,.month,.day, .hour, .minute, .second], from: date)
+        return Calendar.current.dateComponents([.year,.month,.day, .hour, .minute], from: date)
+    }
+    
+    static func truncateSeconds(from date: Date) -> Date {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+        
+        return calendar.date(from: components)!
     }
     
     /// Takes time string formatted in "h:mm a" and returns today's date with that time

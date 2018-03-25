@@ -34,6 +34,9 @@ class SummaryView: UIView {
     /// The primary summary label
     fileprivate var mainLabel = UILabel()
     
+    /// The live indicator
+    fileprivate var liveIndicator = LiveIndicator(size: .small, color: .clear)
+    
     /// The secondary label (Trip Duration)
     fileprivate var secondaryLabel = UILabel()
     
@@ -159,7 +162,22 @@ class SummaryView: UIView {
             
         }
         
-        // MARK: Main Label Positioning
+        // MARK: Labels
+        
+        var color: UIColor = .primaryTextColor
+        
+        // Create space for Live Indicator
+        let testLabel = UILabel()
+        testLabel.text = " "
+        testLabel.sizeToFit()
+        let sizeOfSpace = testLabel.frame.size.width
+        var space = ""
+        let numberOfSpaces = Int(ceil(liveIndicator.frame.size.width / sizeOfSpace))
+        for _ in 1...numberOfSpaces {
+            space += " "
+        }
+        
+        // MARK: Main Label and Live Indicator Formatting
         
         let extraLabelPadding: CGFloat = 6
         
@@ -168,24 +186,38 @@ class SummaryView: UIView {
         
         if let departDirection = (route.directions.filter { $0.type == .depart }).first {
             
-            let content = "Depart at \(departDirection.startTimeWithDelayDescription) from \(departDirection.name)"
-            // This changes font to standard size. Label's font is different.
-            var attributedString = bold(pattern: departDirection.startTimeWithDelayDescription, in: content)
-            attributedString = bold(pattern: departDirection.name, in: attributedString)
+            var fragment = ""
             
-            var color: UIColor = .primaryTextColor
             if let delay = departDirection.delay {
+                fragment = " \(space)" // Include space for live indicator
                 if delay >= 60 {
                     color = .liveRedColor
                 } else {
                     color = .liveGreenColor
                 }
+                
+                liveIndicator.setColor(to: color)
+                
+            } else {
+                liveIndicator.setColor(to: .clear)
             }
+            
+            let content = "Depart at \(departDirection.startTimeWithDelayDescription)\(fragment) from \(departDirection.name)"
+            // This changes font to standard size. Label's font is different.
+            var attributedString = bold(pattern: departDirection.startTimeWithDelayDescription, in: content)
+            attributedString = bold(pattern: departDirection.name, in: attributedString)
             
             let range = (attributedString.string as NSString).range(of: departDirection.startTimeWithDelayDescription)
             attributedString.addAttribute(NSAttributedStringKey.foregroundColor, value: color, range: range)
             
             mainLabel.attributedText = attributedString
+            
+            if let stringRect = mainLabel.boundingRect(of: departDirection.startTimeWithDelayDescription + " ") {
+                liveIndicator.frame.origin.x = stringRect.maxX
+                liveIndicator.center.y = stringRect.midY
+            } else {
+                print("Couldn't find rectangle :/")
+            }
             
         } else {
             let content = route.directions.first?.locationNameDescription ?? "Route Directions"

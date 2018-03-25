@@ -118,30 +118,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 
 extension UIWindow {
     
-    open override func motionBegan(_ motion: UIEventSubtype, with event: UIEvent?) {
-        if motion == .motionShake {
-            
-            if rootViewController is OnboardingViewController ||
-                (rootViewController as? UINavigationController)?.visibleViewController is OnboardingViewController {
-                return
-            }
-            
-            let title = "Submit Feedback"
-            let message = "You can help us make our app even better! Take screenshots within the app and tap below to submit."
-            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            
-            let action = UIAlertAction(title: "Submit Feedback", style: .default, handler: { _ in
-                self.openFeedback()
-            })
-            let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-            
-            alertController.addAction(action)
-            alertController.addAction(cancel)
-            presentInApp(alertController)
-            
-        }
-    }
-    
     func openFeedback() {
         let safariViewController = SFSafariViewController(url: URL(string: Constants.App.feedbackLink)!)
         presentInApp(safariViewController)
