@@ -232,14 +232,14 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     
     /// Show banner if no other status banner exists; turns status bar light
     func showBanner(_ message: String, status: BannerStyle) {
-        if self.banner == nil {
+        // if self.banner == nil {
             self.banner = StatusBarNotificationBanner(title: message, style: status)
             self.banner!.autoDismiss = false
             self.banner!.dismissOnTap = true
             self.banner!.show(queuePosition: .front, on: navigationController)
             self.isBannerShown = true
             UIApplication.shared.statusBarStyle = .lightContent
-        }
+        // }
     }
     
     /// Dismisses and removes banner; turns status bar back to default
@@ -286,7 +286,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             if let tripId = direction.tripIdentifiers?.first, let stopId = direction.stops.first?.id {
                 Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
                     if json["success"].boolValue {
-                        print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
+                        // print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
                         direction.delay = json["data"]["delay"].int
                         self.drawerDisplayController?.tableView.reloadData()
                         if direction == firstDepartDirection { // update summary view
@@ -330,6 +330,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             
             var results: [BusDataType] = []
             
+            if result.busLocations.isEmpty {
+                // Possibly add information about no tracking available.
+            }
+            
             for busLocation in result.busLocations {
                 
                 results.append(busLocation.dataType)
@@ -337,7 +341,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 switch busLocation.dataType {
                     
                 case .noData:
-                    // print("No Data for", busLocation.routeNumber)
+                    print("No Data for", busLocation.routeNumber)
                     
                     if !self.noDataRouteList.contains(busLocation.routeNumber) {
                         self.noDataRouteList.append(busLocation.routeNumber)
@@ -353,7 +357,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     self.showBanner(message, status: .info)
                     
                 case .invalidData:
-                    // print("Invalid Data for", busLocation.routeNumber)
+                    print("Invalid Data for", busLocation.routeNumber)
                     
                     if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
@@ -366,7 +370,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     self.showBanner(Constants.Banner.trackingLater, status: .info)
                     
                 case .validData:
-                    // print("Valid Data for", busLocation.routeNumber)
+                    print("Valid Data for", busLocation.routeNumber)
                     
                     if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)

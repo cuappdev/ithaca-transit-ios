@@ -294,6 +294,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             currentlySearching = true
             routeResults.contentOffset = .zero
             routeResults.reloadData()
+            
+            // Prepare feedback on Network request
+            let tapticGenerator = UIImpactFeedbackGenerator(style: .medium)
+            tapticGenerator.prepare()
 
             // Check if to and from location is the same
             if searchFrom?.name != searchTo?.name {
@@ -329,6 +333,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                                 self.banner?.dismiss()
                                 self.banner = nil
                             }
+                            tapticGenerator.impactOccurred()
                         }
                         
                         UIApplication.shared.statusBarStyle = self.preferredStatusBarStyle
@@ -753,7 +758,7 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
             return nil
         }
         
-        routeDetailViewController.preferredContentSize = CGSize(width: 0.0, height: 0.0)
+        routeDetailViewController.preferredContentSize = .zero
         routeDetailViewController.isPeeking = true
         cell.transform = .identity
         previewingContext.sourceRect = routeResults.convert(cell.frame, to: view)
