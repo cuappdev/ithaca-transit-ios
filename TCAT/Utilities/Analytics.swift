@@ -145,7 +145,7 @@ struct GooglePlaceTappedPayload: Payload {
 /// Log front end route calculation
 struct DestinationSearchedEventPayload: Payload {
     static let eventName: String = "Destination Searched"
-    static let deviceInfo = DeviceInfo()
+    let deviceInfo = DeviceInfo()
     
     let destination: String
     let requestUrl: String?
@@ -155,7 +155,7 @@ struct DestinationSearchedEventPayload: Payload {
 /// Log tap on route leading to Route Detail view
 struct RouteResultsCellTappedEventPayload: Payload {
     static let eventName: String = "Opened Route Detail View"
-    static let deviceInfo = DeviceInfo()
+    let deviceInfo = DeviceInfo()
 }
 
 /// Log 3D touch Peek / Pop
@@ -171,19 +171,19 @@ struct DatePickerAccessedPayload: Payload {
 /// Log opening of About page
 struct AboutPageOpenedPayload: Payload {
     static let eventName: String = "About Page Opened"
-    static let deviceInfo = DeviceInfo()
+    let deviceInfo = DeviceInfo()
 }
 
 /// Log big blue bus tap
 struct BusTappedEventPayload: Payload {
     static let eventName: String = "Tapped Big Blue Bus"
-    static let deviceInfo = DeviceInfo()
+    let deviceInfo = DeviceInfo()
 }
 
 /// Log route sharing
 struct RouteSharedEventPayload: Payload {
     static let eventName: String = "Share Route"
-    static let deviceInfo = DeviceInfo()
+    let deviceInfo = DeviceInfo()
     
     let activityType: String
     let didSelectAndCompleteShare: Bool
@@ -193,7 +193,7 @@ struct RouteSharedEventPayload: Payload {
 // Log any errors when calculation routes
 struct GetRoutesErrorPayload: Payload {
     static let eventName: String = "Get Routes Error"
-    static let deviceInfo = DeviceInfo()
+    let deviceInfo = DeviceInfo()
     
     let type: String
     let description: String

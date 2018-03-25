@@ -209,8 +209,10 @@ class SearchTableViewManager {
             return ""
         }
         
-        let payload = FavoriteAddedPayload(name: locationName)
-        RegisterSession.shared?.log(payload)
+        if key == Constants.UserDefaults.favorites {
+            let payload = FavoriteAddedPayload(name: locationName)
+            RegisterSession.shared?.log(payload)
+        }
         
     }
 

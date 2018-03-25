@@ -25,8 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         // Set Up Google Services
         let json = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
-        GMSServices.provideAPIKey(json["google-maps"].stringValue)
-        GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
+        GMSServices.provideAPIKey(json["google"].stringValue)
+        GMSPlacesClient.provideAPIKey(json["google"].stringValue)
         
         // Set Up Register, Fabric / Crashlytics (RELEASE)
         #if !DEBUG
