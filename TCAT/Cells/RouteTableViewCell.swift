@@ -285,8 +285,9 @@ class RouteTableViewCell: UITableViewCell {
         positionLiveIndicatorView(usingLiveLabel: liveLabel)
     }
     
-    private func setDepartureTime(withStartTime startTime: Date, withDepartureTime departureTime: Date, late: Bool) {        
-       departureTimeLabel.text = "Board in \(Time.timeString(from: startTime, to: departureTime))"
+    private func setDepartureTime(withStartTime startTime: Date, withDepartureTime departureTime: Date, late: Bool) {
+        let boardTime = Time.timeString(from: startTime, to: departureTime)
+        departureTimeLabel.text = boardTime == "0 min" ? "Board now" : "Board in \(boardTime)"
         departureTimeLabel.textColor = late ? .liveRedColor : .primaryTextColor
         arrowImageView.tintColor = .primaryTextColor
         
