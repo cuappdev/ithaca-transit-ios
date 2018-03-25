@@ -113,7 +113,7 @@ class Route: NSObject, JSONDecodable {
                     direction.name = startName
                 }
                 else {
-                    direction.name = rawDirections[index - 1].name
+                    direction.name = rawDirections[index - 1].stops.last?.name ?? rawDirections[index - 1].name
                 }
             }
         }
