@@ -20,7 +20,7 @@ enum SearchBarType: String {
 }
 
 enum SearchType: String {
-    case arriveBy, leaveAt
+    case arriveBy, leaveAt, leaveNow
 }
 
 class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,
@@ -34,7 +34,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     var locationManager: CLLocationManager!
     var currentLocation: CLLocationCoordinate2D?
     var searchType: SearchBarType = .from
-    var searchTimeType: SearchType = .leaveAt
+    var searchTimeType: SearchType = .leaveNow
     var searchFrom: Place?
     var searchTo: Place?
     var searchTime: Date?
@@ -505,14 +505,22 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     @objc func saveDatePickerDate(sender: UIButton) {
         let prevDate = searchTime
+        let prevSearchTimeType = searchTimeType
+        
         let date = datePickerView.getDate()
         
         searchTime = date
         let segmentedControl = datePickerView.timeTypeSegmentedControl
+        let leaveNowSegmentControl = datePickerView.leaveNowSegmentedControl
+        
 
         // Get selected time type
         let selectedSegString = (segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)) ?? ""
-        if selectedSegString.lowercased().contains("arrive") {
+        
+        if leaveNowSegmentControl.selectedSegmentIndex != UISegmentedControlNoSegment {
+            searchTimeType = .leaveNow
+        }
+        else if selectedSegString.lowercased().contains("arrive") {
             searchTimeType = .arriveBy
         }else{
             searchTimeType = .leaveAt
@@ -521,16 +529,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeSelection.setDatepicker(withDate: date, withSearchTimeType: searchTimeType)
 
         dismissDatePicker(sender: sender)
-
-        guard let previousDate = prevDate else {
-            searchForRoutes()
-            return
-        }
         
-        // Only search for new routes if previous date not the same as chosen date
-        if Time.compare(date1: previousDate, date2: date) != .orderedSame {
-             searchForRoutes()
-        }
+        searchForRoutes()
     }
     
     // MARK: Tableview Data Source
@@ -713,6 +713,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if refreshControl.isRefreshing {
+            // Update leave now time in pull to refresh
+            if searchTimeType == .leaveNow {
+                let now = Date()
+                searchTime = now
+                routeSelection.setDatepicker(withDate: now, withSearchTimeType: searchTimeType)
+            }
+            
             searchForRoutes()
         }
     }

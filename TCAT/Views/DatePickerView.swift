@@ -51,6 +51,7 @@ class DatePickerView: UIView {
         setSegmentedControl(timeTypeSegmentedControl, withItems: timeTypeSegmentedControlOptions)
         let leaveAt = 0
         timeTypeSegmentedControl.selectedSegmentIndex = leaveAt
+        timeTypeSegmentedControl.addTarget(self, action: #selector(timeTypeSegmentedControlValueChanged(segmentControl:)), for: .valueChanged)
 
         setSegmentedControl(leaveNowSegmentedControl, withItems: leaveNowSegmentedControlOptions)
         leaveNowSegmentedControl.addTarget(self, action: #selector(leaveNowSegmentedControlValueChanged(segmentControl:)), for: .valueChanged)
@@ -65,6 +66,13 @@ class DatePickerView: UIView {
 
     // MARK: Segement Control
 
+    @objc private func timeTypeSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
+        let arriveBy = 1
+        if timeTypeSegmentedControl.selectedSegmentIndex == arriveBy {
+            leaveNowSegmentedControl.selectedSegmentIndex = UISegmentedControlNoSegment
+        }
+    }
+    
     @objc private func leaveNowSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
         datepicker.date = Date()
     }
@@ -72,10 +80,8 @@ class DatePickerView: UIView {
     // MARK: Datepicker
 
     @objc private func datepickerValueChanged(datepicker: UIDatePicker) {
-        let now = Date()
-        if Time.compare(date1: datepicker.date, date2: now) == ComparisonResult.orderedSame {
-            let leaveNow = 0
-            leaveNowSegmentedControl.selectedSegmentIndex = leaveNow
+        if Time.compare(date1: datepicker.date, date2: Date()) == ComparisonResult.orderedSame {
+            leaveNowSegmentedControl.selectedSegmentIndex = 0
         } else {
             leaveNowSegmentedControl.selectedSegmentIndex = UISegmentedControlNoSegment
         }
@@ -90,7 +96,7 @@ class DatePickerView: UIView {
 
     func setDatepickerTimeType(searchTimeType: SearchType) {
         switch searchTimeType {
-        case .leaveAt:
+        case .leaveAt, .leaveNow:
             timeTypeSegmentedControl.selectedSegmentIndex = 0
         case .arriveBy:
             timeTypeSegmentedControl.selectedSegmentIndex = 1

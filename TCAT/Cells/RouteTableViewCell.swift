@@ -167,7 +167,7 @@ class RouteTableViewCell: UITableViewCell {
             switch searchTimeType {
             case .leaveAt:
                 return searchTime
-            case .arriveBy:
+            default:
                 return Date()
             }
         }
