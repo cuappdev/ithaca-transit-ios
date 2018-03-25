@@ -161,16 +161,16 @@ class RouteTableViewCell: UITableViewCell {
         return route.departureTime
     }
     
-    // Return nil if startTime should be Date()
+    
     private func getStartTime(fromSearchTime searchTime: Date?, fromSearchTimeType searchTimeType: SearchType?) -> Date {
-        if let searchTime = searchTime, let searchTimeType = searchTimeType {
-            switch searchTimeType {
-            case .leaveAt:
-                return searchTime
-            default:
-                return Date()
-            }
-        }
+//        if let searchTime = searchTime, let searchTimeType = searchTimeType {
+//            switch searchTimeType {
+//            case .leaveAt:
+//                return searchTime
+//            default:
+//                return Date()
+//            }
+//        }
         
         return Date()
     }
