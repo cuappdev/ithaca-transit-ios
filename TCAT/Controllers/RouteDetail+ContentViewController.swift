@@ -376,7 +376,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                     }
                     
-                    if self.noDataRouteList.isEmpty {
+                    if self.noDataRouteList.isEmpty || self.isBannerShown {
                         self.hideBanner()
                     }
                     
