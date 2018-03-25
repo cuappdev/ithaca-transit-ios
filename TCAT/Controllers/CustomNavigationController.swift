@@ -63,18 +63,29 @@ class CustomNavigationController: UINavigationController, UINavigationController
     /// Return an instance of custom back button
     func customBackButton() -> UIBarButtonItem {
         
-        let backButton = UIButton(type: .system)
-        backButton.setImage(UIImage(named: "back"), for: .normal)
-        let attributedString = NSMutableAttributedString(string: "  Back")
+        let backButton = UIButton()
+        backButton.setImage(#imageLiteral(resourceName: "back"), for: .normal)
+        backButton.tintColor = .primaryTextColor
         
-        // raise back button text a hair - attention to detail, baby
-        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
-        
+        let attributes: [NSAttributedStringKey : Any] = [
+            NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)!,
+            NSAttributedStringKey.foregroundColor : UIColor.primaryTextColor,
+            NSAttributedStringKey.baselineOffset : 0.3
+        ]
+        let attributedString = NSMutableAttributedString(string: "  Back", attributes: attributes)
         backButton.setAttributedTitle(attributedString, for: .normal)
-        backButton.sizeToFit()
-        backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
-        return UIBarButtonItem(customView: backButton)
         
+        backButton.sizeToFit()
+        
+        // Expand frame to create bigger touch area
+        let leftInset: CGFloat = 30
+        backButton.frame = CGRect(x: backButton.frame.minX, y: backButton.frame.minY, width: backButton.frame.width + leftInset, height: backButton.frame.height + 100)
+        backButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, leftInset)
+        
+        backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
+        
+        
+        return UIBarButtonItem(customView: backButton)
     }
     
     /** Move back one view controller in navigationController stack */
