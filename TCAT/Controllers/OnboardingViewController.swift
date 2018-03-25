@@ -73,7 +73,7 @@ class OnboardingViewController: PresentationController {
     /// Change the amount of messages in the view. The number of pages shown will equal the number of messages
     let detailLabelMessages = [
         
-        "A b eautiful and simple end-to-end navigation app for TCAT. Made by AppDev.",
+        "A beautiful and simple end-to-end navigation app for TCAT. Made by AppDev.",
         "Know exactly where your bus is and when it will be there.",
         "From Ithaca Mall to Taughannock Falls, search any location and get there fast.",
         "All of your favorite destinations are just one tap away.",

@@ -294,7 +294,7 @@ class Route: NSObject, JSONDecodable {
             var line = "take Route \(number) from \(start) to \(end). "
             
             if direction.type == .transfer {
-                line = "the bus becomes Route \(number). Stay on board, and then debark at \(end)"
+                line = "the bus becomes Route \(number). Stay on board, and then get off at \(end)"
             }
 
             if index == 0 {

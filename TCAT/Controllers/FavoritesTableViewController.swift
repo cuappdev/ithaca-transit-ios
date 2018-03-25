@@ -36,7 +36,6 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate, 
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Constants.Cells.searchResultsIdentifier)
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
-        // tableView.reloadEmptyDataSet()
         tableView.tableFooterView = UIView()
         tableView.reloadEmptyDataSet()
         

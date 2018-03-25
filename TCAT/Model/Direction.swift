@@ -187,7 +187,7 @@ class Direction: NSObject, NSCopying {
             return "at \(name)"
 
         case .arrive:
-            return "Debark at \(name)"
+            return "Get off at \(name)"
 
         case .walk:
             return "Walk to \(name)"

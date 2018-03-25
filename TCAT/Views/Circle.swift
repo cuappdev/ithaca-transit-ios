@@ -57,7 +57,7 @@ class Circle: UIView {
                 
                 backgroundColor = .white
                 layer.borderColor = color.cgColor
-                layer.borderWidth = 1.0
+                layer.borderWidth = 2.0
             
         }
     }

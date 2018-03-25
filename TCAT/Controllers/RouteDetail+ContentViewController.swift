@@ -27,18 +27,18 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     var mapView: GMSMapView!
     var bounds = GMSCoordinateBounds()
 
-    var liveTrackingNetworkTimer: Timer? = nil
+    var liveTrackingNetworkTimer: Timer?
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
     var liveTrackingNetworkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
     
-    var busDelayNetworkTimer: Timer? = nil
+    var busDelayNetworkTimer: Timer?
     /// Number of seconds to wait before auto-refreshing bus delay network call.
     var busDelayNetworkRefreshRate: Double = 30
     
     var buses = [GMSMarker]()
     var busIndicators = [GMSMarker]()
     
-    var banner: StatusBarNotificationBanner? = nil
+    var banner: StatusBarNotificationBanner?
     var isBannerShown: Bool = false
 
     var route: Route!
@@ -185,9 +185,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         liveTrackingNetworkTimer?.invalidate()
-        liveTrackingNetworkTimer = nil
         busDelayNetworkTimer?.invalidate()
-        busDelayNetworkTimer = nil
         hideBanner()
     }
 
@@ -232,14 +230,12 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     
     /// Show banner if no other status banner exists; turns status bar light
     func showBanner(_ message: String, status: BannerStyle) {
-        // if self.banner == nil {
-            self.banner = StatusBarNotificationBanner(title: message, style: status)
-            self.banner!.autoDismiss = false
-            self.banner!.dismissOnTap = true
-            self.banner!.show(queuePosition: .front, on: navigationController)
-            self.isBannerShown = true
-            UIApplication.shared.statusBarStyle = .lightContent
-        // }
+        self.banner = StatusBarNotificationBanner(title: message, style: status)
+        self.banner!.autoDismiss = false
+        self.banner!.dismissOnTap = true
+        self.banner!.show(queuePosition: .front, on: navigationController)
+        self.isBannerShown = true
+        UIApplication.shared.statusBarStyle = .lightContent
     }
     
     /// Dismisses and removes banner; turns status bar back to default
@@ -341,7 +337,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 switch busLocation.dataType {
                     
                 case .noData:
-                    print("No Data for", busLocation.routeNumber)
+                    // print("No Data for", busLocation.routeNumber)
                     
                     if !self.noDataRouteList.contains(busLocation.routeNumber) {
                         self.noDataRouteList.append(busLocation.routeNumber)
@@ -357,7 +353,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     self.showBanner(message, status: .info)
                     
                 case .invalidData:
-                    print("Invalid Data for", busLocation.routeNumber)
+                    // print("Invalid Data for", busLocation.routeNumber)
                     
                     if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
@@ -370,7 +366,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     self.showBanner(Constants.Banner.trackingLater, status: .info)
                     
                 case .validData:
-                    print("Valid Data for", busLocation.routeNumber)
+                    // print("Valid Data for", busLocation.routeNumber)
                     
                     if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
