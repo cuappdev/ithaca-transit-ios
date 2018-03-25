@@ -742,15 +742,9 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
     @objc func handleLongPressGesture(_ sender: UILongPressGestureRecognizer) {
         if sender.state == .began {
             let point = sender.location(in: routeResults)
-            if let indexPath = routeResults.indexPathForRow(at: point) {
-                presentShareSheetWithImage(withIndexPath: indexPath)
+            if let indexPath = routeResults.indexPathForRow(at: point), let cell = routeResults.cellForRow(at: indexPath) {
+                presentShareSheet(from: view, for: routes[indexPath.row], with: cell.getImage())
             }
-        }
-    }
-    
-    private func presentShareSheetWithImage(withIndexPath indexPath: IndexPath) {
-        if let cell = routeResults.cellForRow(at: indexPath) {
-            presentShareSheet(from: view, for: routes[indexPath.row], with: cell.getImage())
         }
     }
     
