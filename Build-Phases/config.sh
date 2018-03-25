@@ -16,11 +16,8 @@ function readJson {
   fi; 
 }
 
-set -x;
-
-FABRIC_API_KEY=$(readJson ${SRCROOT}/TCAT/config.json fabric-api)
-FABRIC_BUILD_SECRET=$(readJson ${SRCROOT}/TCAT/config.json fabric-secret)
-
-printenv
+# set -x;
+# FABRIC_API_KEY=$(readJson ${SRCROOT}/TCAT/Supporting\ Files/config.json fabric-api)
+# FABRIC_BUILD_SECRET=$(readJson ${SRCROOT}/TCAT/Supporting\ Files/config.json fabric-secret)
 
 "${PODS_ROOT}/Fabric/run" $FABRIC_API_KEY $FABRIC_BUILD_SECRET

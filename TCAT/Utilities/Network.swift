@@ -117,7 +117,7 @@ class Network {
             "location" : "42.4440,-76.5019",
             "radius" : 24140,
             "input" : searchText,
-            "key" : googleJson["google"].stringValue
+            "key" : googleJson["google-places"].stringValue
         ]
         return request
     }

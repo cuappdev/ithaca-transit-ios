@@ -69,6 +69,7 @@ struct Constants {
     struct Phrases {
         static let firstFavorite = "Add Your First Favorite!"
         static let searchPlaceholder = "Where to?"
+        static let favoritesPlaceholder = "Search any destination"
         static let fromSearchBarPlaceholder = "Choose starting point..."
         static let toSearchBarPlaceholder = "Choose destination..."
         static let datepickerLeaveNow = "Leave Now"
@@ -87,8 +88,7 @@ struct Constants {
     
     struct Values {
         static let maxDistanceBetweenStops = 160.0
-        // Percentage close to a word
-        static let fuzzySearchMinimumValue = 90
+        static let fuzzySearchMinimumValue = 75
     }
     
     struct Stops {

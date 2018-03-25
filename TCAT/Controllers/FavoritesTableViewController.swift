@@ -7,12 +7,13 @@
 //
 
 import UIKit
+import DZNEmptyDataSet
 
-class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
+class FavoritesTableViewController: UITableViewController, UISearchBarDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate  {
 
     var fromOnboarding = false
     var timer: Timer?
-    var allStops: [BusStop]!
+    var searchBar = UISearchBar()
     var resultsSection: Section! {
         didSet {
             tableView.reloadData()
@@ -29,16 +30,31 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
             CustomNavigationController.buttonTitleTextAttributes, for: .normal
         )
         
-        allStops = SearchTableViewManager.shared.getAllStops()
+        resultsSection = Section(type: .searchResults, items: [ItemType]())
+        
         tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Constants.Cells.searchResultsIdentifier)
-
-        resultsSection = Section(type: .searchResults, items: [ItemType]())
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
+        // tableView.reloadEmptyDataSet()
+        tableView.tableFooterView = UIView()
+        tableView.reloadEmptyDataSet()
+        
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        searchBar.becomeFirstResponder()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        searchBar.endEditing(true)
     }
 
     @objc func dismissVC() {
@@ -60,7 +76,7 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
                 snapshot.removeFromSuperview()
             })
         } else {
-            dismiss(animated: true, completion: nil)
+            dismiss(animated: true)
         }
     }
 
@@ -71,13 +87,12 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return resultsSection.items.isEmpty ? allStops.count : resultsSection.items.count
+        return resultsSection.items.count
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let searchBar = UISearchBar()
         searchBar.isTranslucent = true
-        searchBar.placeholder = Constants.Phrases.searchPlaceholder
+        searchBar.placeholder = Constants.Phrases.favoritesPlaceholder
         searchBar.backgroundImage = UIImage()
         searchBar.alpha = 1.0
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
@@ -97,11 +112,6 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell!
-        if resultsSection.items.isEmpty {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busIdentifier, for: indexPath) as! BusStopCell
-            cell.textLabel?.text = allStops[indexPath.row].name
-            return cell
-        }
 
         let item = resultsSection.items[indexPath.row]
 
@@ -116,30 +126,47 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate {
         default:
             return UITableViewCell()
         }
+        
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
         cell.layoutMargins = .zero
         cell.layoutSubviews()
         return cell
+        
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if resultsSection.items.isEmpty { //we selected from allStops array
-            let busStopSelected = allStops[indexPath.row]
-            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, location: busStopSelected, limit: 5, bottom: true)
-        } else {
-            switch resultsSection.items[indexPath.row] {
-            case .busStop(let busStop):
-                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, location: busStop, limit: 5, bottom: true)
-            case .placeResult(let placeResult):
-                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, location: placeResult, limit: 5, bottom: true)
-            default:
-                break
-            }
+        
+        switch resultsSection.items[indexPath.row] {
+        case .busStop(let busStop):
+            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, location: busStop, limit: 5, bottom: true)
+        case .placeResult(let placeResult):
+            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, location: placeResult, limit: 5, bottom: true)
+        default:
+            break
         }
+        
         dismissVC()
     }
+    
+    // MARK: Empty Data Set
+    
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
+        return -80
+    }
+    
+    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        return #imageLiteral(resourceName: "search-large")
+    }
+    
+    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        let title = "Search for a destination"
+        let attrs = [NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor]
+        return NSAttributedString(string: title, attributes: attrs)
+    }
+    
+    // MARK: Search
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         timer?.invalidate()

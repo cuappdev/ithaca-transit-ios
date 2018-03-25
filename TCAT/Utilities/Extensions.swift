@@ -175,7 +175,10 @@ extension JSON {
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
         let date = dateFormatter.date(from: self.stringValue) ?? Date.distantPast
-        return date
+        
+        // Zero out seconds, floor the time
+        let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+        return Calendar.current.date(from: dateComponents) ?? Date.distantPast
     }
 
     /// Create coordinate object from JSON.

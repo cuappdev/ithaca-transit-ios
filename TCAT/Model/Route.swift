@@ -180,6 +180,12 @@ class Route: NSObject, JSONDecodable {
 
         }
         
+        for direction in directions {
+            print(direction.debugDescription)
+            print("=====")
+        }
+        print("#####\n#####\n#####")
+        
     }
 
     // MARK: Parse JSON
@@ -282,16 +288,20 @@ class Route: NSObject, JSONDecodable {
             description = "To get to \(endName),"
         }
 
-        let departDirections = directions.filter { $0.type == .depart }
+        let busDirections = directions.filter { $0.type == .depart || $0.type == .transfer }
 
-        for (index, direction) in departDirections.enumerated() {
+        for (index, direction) in busDirections.enumerated() {
 
             noDepartDirection = false
 
             let number = direction.routeNumber
             let start = direction.startLocation.name
             let end = direction.endLocation.name
-            let line = "take Route \(number) from \(start) to \(end). "
+            var line = "take Route \(number) from \(start) to \(end). "
+            
+            if direction.type == .transfer {
+                line = "the bus becomes Route \(number). Stay on board, and then debark at \(end)"
+            }
 
             if index == 0 {
                 description += " \(line)"
@@ -300,6 +310,8 @@ class Route: NSObject, JSONDecodable {
             }
 
         }
+        
+        description += "."
 
         // Walking Direction
         if noDepartDirection {

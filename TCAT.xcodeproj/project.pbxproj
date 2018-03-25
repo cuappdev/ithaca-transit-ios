@@ -748,7 +748,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Build-Phases/config.sh\"";
+			shellScript = "# \"${SRCROOT}/Build-Phases/config.sh\"\n\n\"${PODS_ROOT}/Fabric/run\" 50d77fbd594f6229f8bb9a3669ce18dce7dac38e c4401a88c4c1a9d9049b2fc4510d82cfcc45b7542af66ae6cab99ed52d13d5a6";
 		};
 /* End PBXShellScriptBuildPhase section */
 
