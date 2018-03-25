@@ -173,14 +173,17 @@ class SummaryView: UIView {
             var attributedString = bold(pattern: departDirection.startTimeWithDelayDescription, in: content)
             attributedString = bold(pattern: departDirection.name, in: attributedString)
             
+            var color: UIColor = .primaryTextColor
             if let delay = departDirection.delay {
-                var color: UIColor = .liveGreenColor
-                if delay >= 1 {
+                if delay >= 60 {
                     color = .liveRedColor
+                } else {
+                    color = .liveGreenColor
                 }
-                let range = (attributedString.string as NSString).range(of: departDirection.startTimeWithDelayDescription)
-                attributedString.addAttribute(NSAttributedStringKey.foregroundColor, value: color, range: range)
             }
+            
+            let range = (attributedString.string as NSString).range(of: departDirection.startTimeWithDelayDescription)
+            attributedString.addAttribute(NSAttributedStringKey.foregroundColor, value: color, range: range)
             
             mainLabel.attributedText = attributedString
             

@@ -13,6 +13,8 @@ import CoreLocation
 import TRON
 import SwiftRegister
 
+let increaseTapTargetTag: Int = 1865
+
 extension UIColor {
 
     @nonobjc static let tcatBlueColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1)

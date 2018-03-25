@@ -520,6 +520,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             
             let bearingView = UIImageView(image: #imageLiteral(resourceName: "indicator"))
             bearingView.frame.size = CGSize(width: bearingView.frame.width / 2, height: bearingView.frame.height / 2)
+            bearingView.tag = increaseTapTargetTag
             
             if let existingIndicator = busIndicators.first(where: {
                 let markerID = getUserData(for: $0, key: Constants.BusUserData.vehicleID) as? Int
@@ -584,9 +585,13 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             let withHeight = mapView.projection.coordinate(for: CGPoint(x: view.frame.size.width, y: 0)).latitude
             return abs(origin - withHeight)
         }
+        var bottomOffset: Double {
+            // In progress
+            return 0
+        }
         
         let top = bounds.farLeft.latitude - topOffset
-        let bottom = bounds.nearRight.latitude
+        let bottom = bounds.nearRight.latitude + bottomOffset
         let left = bounds.nearLeft.longitude - sideOffset
         let right = bounds.nearRight.longitude + sideOffset
         
