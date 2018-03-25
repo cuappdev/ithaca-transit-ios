@@ -239,6 +239,8 @@ class RouteTableViewCell: UITableViewCell {
                         self.setLiveElementsOnTime()
                         self.setDepartureTimeOnTime()
                     }
+                    
+                     route.getFirstDepartRawDirection()?.delay = delay
                 }
                 else {
                     self.hideLiveElements()
@@ -293,6 +295,7 @@ class RouteTableViewCell: UITableViewCell {
         
         departureTimeLabel.sizeToFit()
         positionArrowVertically(usingDepartureTime: departureTimeLabel)
+        positionDepartureTimeHorizontally(usingArrowImageView: arrowImageView)
     }
     
     private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
