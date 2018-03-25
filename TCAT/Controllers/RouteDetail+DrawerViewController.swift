@@ -250,7 +250,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
 
         else if direction.type == .walk || direction.type == .arrive {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as! SmallDetailTableViewCell
-            cell.setCell(direction, busEnd: direction.type == .arrive,
+            cell.setCell(direction,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)

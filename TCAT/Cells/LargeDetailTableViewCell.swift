@@ -95,11 +95,8 @@ class LargeDetailTableViewCell: UITableViewCell {
             titleLabel == nil || detailLabel == nil
         
         if shouldAddViews {
-            iconView = DetailIconView(height: cellHeight,
-                                      type: direction.type == .transfer ? .busTransfer : .busStart,
-                                      time: direction.startTimeDescription,
-                                      firstStep: firstStep,
-                                      lastStep: false)
+    
+            iconView = DetailIconView(direction: direction, height: cellHeight, firstStep: firstStep, lastStep: false)
             contentView.addSubview(iconView!)
             
             titleLabel = formatTitleLabel(titleLabel)
@@ -113,6 +110,8 @@ class LargeDetailTableViewCell: UITableViewCell {
             // Place bus icon and chevron accordingly
             chevron.center.y = cellHeight / 2
             
+        } else {
+            iconView?.updateTimes(with: direction)
         }
         
         if direction.stops.isEmpty {

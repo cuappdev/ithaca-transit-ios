@@ -8,52 +8,38 @@
 
 import UIKit
 
-enum IconType: String {
-    /// Show just the time of instruction. All gray.
-    case noBus
-    /// Shows icon and time with start of connector
-    case busStart
-    /// Shows icon and time with end of connector
-    case busEnd
-    /// Continues connection
-    case busTransfer
-}
-
 class DetailIconView: UIView {
     
+    fileprivate let timeLabelConstant: CGFloat = 8
     fileprivate let constant: CGFloat = 16
     fileprivate var shouldAddSubviews: Bool = true
     
     static let width: CGFloat = 114
     
-    var type: IconType!
-    var time: String!
+    var direction: Direction!
     
-    var timeLabel = UILabel()
+    var scheduledTimeLabel = UILabel()
+    var delayedTimeLabel = UILabel()
+    
     var connectorTop: UIView!
     var connectorBottom: UIView!
     var statusCircle: Circle!
     
-    init(height: CGFloat, type: IconType, time: String, firstStep: Bool, lastStep: Bool) {
+    init(direction: Direction, height: CGFloat, firstStep: Bool, lastStep: Bool) {
         
-//        print("""
-//            [DetailView] Init
-//                 height: \(height)
-//                   type: \(type),
-//                   time: \(time),
-//              firstStep: \(firstStep),
-//               lastStep: \(lastStep)
-//        """)
+        self.direction = direction
         
-        self.type = type
-        self.time = time
         let frame = CGRect(x: 0, y: 0, width: DetailIconView.width, height: height)
-        super.init(frame : frame)
+        super.init(frame: frame)
         
-        // Format and place time label
-        timeLabel.font = UIFont.systemFont(ofSize: 14)
-        timeLabel.textColor = .primaryTextColor
-        changeTime(time)
+        // Format and place time labels
+        scheduledTimeLabel.font = .systemFont(ofSize: 14)
+        scheduledTimeLabel.textColor = .primaryTextColor
+        delayedTimeLabel.font = .systemFont(ofSize: 14)
+        delayedTimeLabel.textColor = .liveRedColor
+        
+        updateScheduledTime()
+        updateDelayedTime()
         
         let linePosition = frame.maxX - constant
         
@@ -62,7 +48,7 @@ class DetailIconView: UIView {
         connectorBottom = UIView(frame: CGRect(x: linePosition, y: self.frame.height / 2, width: 4, height: self.frame.height / 2))
         connectorBottom.frame.origin.x -= connectorBottom.frame.width / 2
         
-        if type == .noBus {
+        if direction.type == .walk {
             if lastStep {
                 statusCircle = Circle(size: .large, style: .bordered, color: .lineDotColor)
                 connectorTop.backgroundColor = .lineDotColor
@@ -82,13 +68,13 @@ class DetailIconView: UIView {
                 connectorBottom.backgroundColor = .clear
             } else {
                 statusCircle = Circle(size: .small, style: .solid, color: .tcatBlueColor)
-                if type == .busStart {
+                if direction.type == .depart {
                     connectorTop.backgroundColor = .lineDotColor
                     connectorBottom.backgroundColor = .tcatBlueColor
-                } else if type == .busTransfer {
+                } else if direction.type == .transfer {
                     connectorTop.backgroundColor = .tcatBlueColor
                     connectorBottom.backgroundColor = .tcatBlueColor
-                } else { // busEnd
+                } else { // type == .arrive
                     connectorTop.backgroundColor = .tcatBlueColor
                     connectorBottom.backgroundColor = .lineDotColor
                 }
@@ -107,7 +93,8 @@ class DetailIconView: UIView {
         statusCircle.frame.origin.x = linePosition - (statusCircle.frame.width / 2)
         
         if shouldAddSubviews {
-            addSubview(timeLabel)
+            addSubview(scheduledTimeLabel)
+            addSubview(delayedTimeLabel)
             addSubview(connectorTop)
             addSubview(connectorBottom)
             addSubview(statusCircle)
@@ -116,22 +103,68 @@ class DetailIconView: UIView {
         
     }
     
+    // MARK: Utility Functions
+    
+    public func updateTimes(with newDirection: Direction, isLast: Bool = false) {
+        updateScheduledTime(with: newDirection)
+        updateDelayedTime(with: newDirection)
+    }
+    
+    /// Update scheduled label with direction's delay description. Use self.direction by default.
+    func updateScheduledTime(with newDirection: Direction? = nil, isLast: Bool = false) {
+        let direction: Direction = newDirection != nil ? newDirection! : self.direction
+        let timeString = isLast ? direction.endTimeDescription : direction.startTimeDescription
+        
+        scheduledTimeLabel.text = timeString
+        scheduledTimeLabel.sizeToFit()
+        scheduledTimeLabel.center = center
+        scheduledTimeLabel.frame.origin.x = constant
+        
+        if let delay = direction.delay, delay < 60 {
+            scheduledTimeLabel.textColor = .liveGreenColor
+            hideDelayedLabel()
+        } else {
+            scheduledTimeLabel.textColor = .primaryTextColor
+            scheduledTimeLabel.center.y -= timeLabelConstant
+        }
+        
+    }
+    
+    /// Update delayed label with direction's delay description. Use self.direction by default.
+    func updateDelayedTime(with newDirection: Direction? = nil, isLast: Bool = false) {
+        let direction: Direction = newDirection != nil ? newDirection! : self.direction
+        let timeString = isLast ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
+        
+        delayedTimeLabel.text = timeString
+        delayedTimeLabel.sizeToFit()
+        delayedTimeLabel.center.y = center.y + timeLabelConstant
+        delayedTimeLabel.frame.origin.x = constant
+        
+        if let delay = direction.delay, delay >= 60 {
+            delayedTimeLabel.textColor = .liveRedColor
+        } else {
+            hideDelayedLabel()
+        }
+        
+    }
+    
+    func hideDelayedLabel() {
+        delayedTimeLabel.isHidden = true
+        scheduledTimeLabel.center = center
+        scheduledTimeLabel.frame.origin.x = constant
+    }
+    
+    // MARK: Other
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
     func prepareForReuse() {
-        timeLabel.removeFromSuperview()
+        scheduledTimeLabel.removeFromSuperview()
         connectorTop.removeFromSuperview()
         connectorBottom.removeFromSuperview()
         statusCircle.removeFromSuperview()
-    }
-    
-    func changeTime(_ time: String) {
-        timeLabel.text = time
-        timeLabel.sizeToFit()
-        timeLabel.center = self.center
-        timeLabel.frame.origin.x = constant
     }
     
 }

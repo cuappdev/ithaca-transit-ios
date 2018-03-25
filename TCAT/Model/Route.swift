@@ -180,12 +180,6 @@ class Route: NSObject, JSONDecodable {
 
         }
         
-        for direction in directions {
-            print(direction.debugDescription)
-            print("=====")
-        }
-        print("#####\n#####\n#####")
-        
     }
 
     // MARK: Parse JSON

@@ -27,9 +27,13 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     var mapView: GMSMapView!
     var bounds = GMSCoordinateBounds()
 
-    var networkTimer: Timer? = nil
-    /// Number of seconds to wait before auto-refreshing network call, timed with live indicator
-    var networkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
+    var liveTrackingNetworkTimer: Timer? = nil
+    /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
+    var liveTrackingNetworkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
+    
+    var busDelayNetworkTimer: Timer? = nil
+    /// Number of seconds to wait before auto-refreshing bus delay network call.
+    var busDelayNetworkRefreshRate: Double = 30
     
     var buses = [GMSMarker]()
     var busIndicators = [GMSMarker]()
@@ -140,21 +144,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         shareButton.tintColor = .primaryTextColor
         guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
-        
-//        // Fake Bus
-//        let bus = BusLocation(dataType: .validData, destination: "", deviation: 0, delay: 0, direction: "", displayStatus: "", gpsStatus: 0, heading: 0, lastStop: "", lastUpdated: Date(), latitude: 42.4491411, longitude: -76.4836815, name: 16, opStatus: "", routeID: "", runID: 0, speed: 0, tripID: "", vehicleID: 0)
-//        let coords = CLLocationCoordinate2D(latitude: 42.4491411, longitude: -76.4836815)
-//        let marker = GMSMarker(position: coords)
-//        (bus.iconView as? BusLocationView)?.updateBus(to: coords, with: Double(bus.heading))
-//        marker.iconView = bus.iconView
-//        marker.appearAnimation = .pop
-//        setIndex(of: marker, with: .bussing)
-//        updateUserData(for: marker, with: [
-//            Constants.BusUserData.actualCoordinates : coords,
-//            Constants.BusUserData.vehicleID : 123456789
-//        ])
-//        marker.map = mapView
-//        buses.append(marker)
 
     }
     
@@ -173,20 +162,32 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if let timer = networkTimer {
+        // Live Tracking Network Timer
+        
+        if let timer = liveTrackingNetworkTimer {
             timer.invalidate()
         }
-
-        networkTimer = Timer.scheduledTimer(timeInterval: networkRefreshRate, target: self, selector: #selector(getBusLocations),
+        liveTrackingNetworkTimer = Timer.scheduledTimer(timeInterval: liveTrackingNetworkRefreshRate, target: self, selector: #selector(getBusLocations),
                                             userInfo: nil, repeats: true)
-        networkTimer!.fire()
+        liveTrackingNetworkTimer!.fire()
+        
+        // Bus Delay Network Timer
+        
+        if let timer = busDelayNetworkTimer {
+            timer.invalidate()
+        }
+        busDelayNetworkTimer = Timer.scheduledTimer(timeInterval: busDelayNetworkRefreshRate, target: self, selector: #selector(getDelays),
+                                                    userInfo: nil, repeats: true)
+        busDelayNetworkTimer!.fire()
 
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        networkTimer?.invalidate()
-        networkTimer = nil
+        liveTrackingNetworkTimer?.invalidate()
+        liveTrackingNetworkTimer = nil
+        busDelayNetworkTimer?.invalidate()
+        busDelayNetworkTimer = nil
         hideBanner()
     }
 
@@ -274,9 +275,36 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         // (self.parent as? PulleyViewController)?.bounceDrawer()
     }
     
-    // MARK: Live Tracking Functions
+    // MARK: Network Calls
     
-    // Kepp track of statuses of bus routes throughout view life cycle
+    /// Fetch delay information and update table view cells.
+    @objc func getDelays() {
+        
+        let firstDepartDirection = directions.first(where: { $0.type == .depart })
+        
+        for direction in directions {
+            if let tripId = direction.tripIdentifiers?.first, let stopId = direction.stops.first?.id {
+                Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
+                    if json["success"].boolValue {
+                        print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
+                        direction.delay = json["data"]["delay"].int
+                        self.drawerDisplayController?.tableView.reloadData()
+                        if direction == firstDepartDirection { // update summary view
+                            self.drawerDisplayController?.summaryView.setRoute()
+                        }
+                    }
+                    else {
+                        print("getDelays success : false")
+                    }
+                }, failure: { (error) in
+                    print("getDelays error: \(error.errorDescription ?? "")")
+                })
+            }
+        }
+        
+    }
+    
+    // Keep track of statuses of bus routes throughout view life cycle
     var noDataRouteList: [Int] = []
 
     /** Fetch live-tracking information for the first direction's bus route.
@@ -386,7 +414,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             let latencyConstant = 0.25
             
             CATransaction.begin()
-            CATransaction.setAnimationDuration(networkRefreshRate + latencyConstant)
+            CATransaction.setAnimationDuration(liveTrackingNetworkRefreshRate + latencyConstant)
             
             guard let iconView = bus.iconView as? BusLocationView else { return }
             newBus.appearAnimation = .none

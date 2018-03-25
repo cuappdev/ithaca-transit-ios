@@ -37,21 +37,19 @@ class SmallDetailTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setCell(_ direction: Direction, busEnd: Bool, firstStep: Bool, lastStep: Bool) {
+    func setCell(_ direction: Direction, firstStep: Bool, lastStep: Bool) {
         
         let shouldAddSubview = iconView == nil
-        
-        iconView = DetailIconView(height: cellHeight,
-                                  type: busEnd ? IconType.busEnd: IconType.noBus,
-                                  time: direction.startTimeDescription,
-                                  firstStep: firstStep,
-                                  lastStep: lastStep)
+
+        iconView = DetailIconView(direction: direction, height: cellHeight, firstStep: firstStep, lastStep: lastStep)
         
         if shouldAddSubview {
             contentView.addSubview(iconView!)
+        } else {
+            iconView?.updateTimes(with: direction)
         }
         
-        if busEnd {
+        if direction.type == .arrive {
             // Arrive Direction
             titleLabel.attributedText = bold(pattern: direction.name, in: direction.locationNameDescription)
         } else {
@@ -62,7 +60,7 @@ class SmallDetailTableViewCell: UITableViewCell {
             }
             titleLabel.attributedText = bold(pattern: direction.name, in: walkString)
             if lastStep {
-                iconView?.changeTime(direction.endTimeDescription)
+                iconView?.updateTimes(with: direction, isLast: true)
             }
         }
         
