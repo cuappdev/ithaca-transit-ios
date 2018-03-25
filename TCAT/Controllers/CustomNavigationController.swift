@@ -10,6 +10,9 @@ import UIKit
 
 class CustomNavigationController: UINavigationController, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
     
+    let additionalWidth: CGFloat = 30
+    let additionalHeight: CGFloat = 100
+    
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
         view.backgroundColor = .white
@@ -78,9 +81,8 @@ class CustomNavigationController: UINavigationController, UINavigationController
         backButton.sizeToFit()
         
         // Expand frame to create bigger touch area
-        let leftInset: CGFloat = 30
-        backButton.frame = CGRect(x: backButton.frame.minX, y: backButton.frame.minY, width: backButton.frame.width + leftInset, height: backButton.frame.height + 100)
-        backButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, leftInset)
+        backButton.frame = CGRect(x: backButton.frame.minX, y: backButton.frame.minY, width: backButton.frame.width + additionalWidth, height: backButton.frame.height + additionalHeight)
+        backButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, additionalWidth)
         
         backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
         

@@ -504,23 +504,18 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     @objc func saveDatePickerDate(sender: UIButton) {
-        let prevDate = searchTime
-        let prevSearchTimeType = searchTimeType
-        
         let date = datePickerView.getDate()
-        
         searchTime = date
-        let segmentedControl = datePickerView.timeTypeSegmentedControl
+        
+        let typeToSegmentControlElements = datePickerView.typeToSegmentControlElements
+        let timeTypeSegmentControl = datePickerView.timeTypeSegmentedControl
         let leaveNowSegmentControl = datePickerView.leaveNowSegmentedControl
         
-
         // Get selected time type
-        let selectedSegString = (segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)) ?? ""
-        
-        if leaveNowSegmentControl.selectedSegmentIndex != UISegmentedControlNoSegment {
+        if leaveNowSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.leaveNow]!.index {
             searchTimeType = .leaveNow
         }
-        else if selectedSegString.lowercased().contains("arrive") {
+        else if timeTypeSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.arriveBy]!.index {
             searchTimeType = .arriveBy
         }else{
             searchTimeType = .leaveAt
