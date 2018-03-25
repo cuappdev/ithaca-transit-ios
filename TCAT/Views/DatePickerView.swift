@@ -130,7 +130,7 @@ class DatePickerView: UIView {
 
     private func setDatepickerSettings(){
         let now = Date()
-//        datepicker.minimumDate = now
+        datepicker.minimumDate = now
 
         let next7Days = now.addingTimeInterval(7*24*60*60)
         datepicker.maximumDate = next7Days //set maximum date to 7 days from now

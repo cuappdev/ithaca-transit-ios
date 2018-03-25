@@ -504,7 +504,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     @objc func saveDatePickerDate(sender: UIButton) {
+        let prevDate = searchTime
         let date = datePickerView.getDate()
+        
         searchTime = date
         let segmentedControl = datePickerView.timeTypeSegmentedControl
 
@@ -520,7 +522,15 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         dismissDatePicker(sender: sender)
 
-        searchForRoutes()
+        guard let previousDate = prevDate else {
+            searchForRoutes()
+            return
+        }
+        
+        // Only search for new routes if previous date not the same as chosen date
+        if Time.compare(date1: previousDate, date2: date) != .orderedSame {
+             searchForRoutes()
+        }
     }
     
     // MARK: Tableview Data Source
