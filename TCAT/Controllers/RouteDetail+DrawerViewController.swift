@@ -270,13 +270,13 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
                 Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
                     if json["success"].boolValue {
                         
-                        print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
+                        // print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
                         direction.delay = json["data"]["delay"].int
                         updateRemainingDirections(with: direction.delay)
                         
                         self.tableView.reloadData()
-                        if direction == firstDepartDirection { // update summary view
-                            print("update summary view from content view controller")
+                        if direction == firstDepartDirection {
+                            // Update summary view
                             self.summaryView.setRoute(withDelay: true)
                         }
                         

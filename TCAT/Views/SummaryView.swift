@@ -13,7 +13,6 @@ class SummaryView: UIView {
     /// The route being used for the summary view
     var route: Route! {
         didSet {
-            print("didSetRoute")
             setRoute()
         }
     }
@@ -90,8 +89,6 @@ class SummaryView: UIView {
     
     /// Update summary card data and position accordingly
     func setRoute(withDelay: Bool = false) {
-        
-        print("setRoute firing")
 
         setBusIcons()
         
