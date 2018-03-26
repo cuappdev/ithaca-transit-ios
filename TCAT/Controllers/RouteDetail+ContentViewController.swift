@@ -159,13 +159,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         super.viewDidAppear(animated)
 
         // Live Tracking Network Timer
-        
-        if let timer = liveTrackingNetworkTimer {
-            timer.invalidate()
-        }
+        liveTrackingNetworkTimer?.invalidate()
         liveTrackingNetworkTimer = Timer.scheduledTimer(timeInterval: liveTrackingNetworkRefreshRate, target: self, selector: #selector(getBusLocations),
                                             userInfo: nil, repeats: true)
-        liveTrackingNetworkTimer!.fire()
+        liveTrackingNetworkTimer?.fire()
 
     }
     
