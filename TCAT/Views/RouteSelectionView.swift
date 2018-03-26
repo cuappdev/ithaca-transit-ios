@@ -145,9 +145,9 @@ class RouteSelectionView: UIView {
         var title = ""
         
         if Calendar.current.isDateInToday(date) || Calendar.current.isDateInTomorrow(date) {
-            let verb = (searchTimeType == .arriveBy) ? "Arrive" : "Leave" //Use simply,"arrive" or "leave"
-            let day = Calendar.current.isDateInToday(date) ? "" : " tomorrow" //if today don't put day
-            title = "\(verb)\(day) at \(Time.timeString(from: date))"
+            let verb = (searchTimeType == .arriveBy) ? "Arrive" : (searchTimeType == .leaveNow) ? "Leave now" : "Leave" //Use simply,"arrive" or "leave"
+            let day = Calendar.current.isDateInToday(date) ? "" : "tomorrow " //if today don't put day
+            title = (searchTimeType == .leaveNow) ? "\(verb) (\(day.capitalizingFirstLetter())\(Time.timeString(from: date)))" : "\(verb) \(day)at \(Time.timeString(from: date))"
         }else{
             let verb = (searchTimeType == .arriveBy) ? "Arrive by" : "Leave on" //Use "arrive by" or "leave on"
             title = "\(verb) \(dateString)"

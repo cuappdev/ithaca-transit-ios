@@ -10,6 +10,9 @@ import UIKit
 
 class CustomNavigationController: UINavigationController, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
     
+    let additionalWidth: CGFloat = 30
+    let additionalHeight: CGFloat = 100
+    
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
         view.backgroundColor = .white
@@ -63,18 +66,28 @@ class CustomNavigationController: UINavigationController, UINavigationController
     /// Return an instance of custom back button
     func customBackButton() -> UIBarButtonItem {
         
-        let backButton = UIButton(type: .system)
-        backButton.setImage(UIImage(named: "back"), for: .normal)
-        let attributedString = NSMutableAttributedString(string: "  Back")
+        let backButton = UIButton()
+        backButton.setImage(#imageLiteral(resourceName: "back"), for: .normal)
+        backButton.tintColor = .primaryTextColor
         
-        // raise back button text a hair - attention to detail, baby
-        attributedString.addAttribute(NSAttributedStringKey.baselineOffset, value: 0.3, range: NSMakeRange(0, attributedString.length))
-        
+        let attributes: [NSAttributedStringKey : Any] = [
+            NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)!,
+            NSAttributedStringKey.foregroundColor : UIColor.primaryTextColor,
+            NSAttributedStringKey.baselineOffset : 0.3
+        ]
+        let attributedString = NSMutableAttributedString(string: "  Back", attributes: attributes)
         backButton.setAttributedTitle(attributedString, for: .normal)
-        backButton.sizeToFit()
-        backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
-        return UIBarButtonItem(customView: backButton)
         
+        backButton.sizeToFit()
+        
+        // Expand frame to create bigger touch area
+        backButton.frame = CGRect(x: backButton.frame.minX, y: backButton.frame.minY, width: backButton.frame.width + additionalWidth, height: backButton.frame.height + additionalHeight)
+        backButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, additionalWidth)
+        
+        backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
+        
+        
+        return UIBarButtonItem(customView: backButton)
     }
     
     /** Move back one view controller in navigationController stack */

@@ -67,7 +67,7 @@ class RouteTableViewCell: UITableViewCell {
         styleTopBorder()
 
         positionTravelTime()
-        positionLiveLabel(usingTravelTime: travelTimeLabel)
+        positionLiveLabel(usingTravelTime: travelTimeLabel) // N2SELF: need this?
         positionLiveIndicatorView(usingTravelTime: travelTimeLabel)
         positionDepartureTimeVertically(usingTravelTime: travelTimeLabel)
         positionArrowVertically(usingDepartureTime: departureTimeLabel)
@@ -129,11 +129,50 @@ class RouteTableViewCell: UITableViewCell {
         cellSeperator.removeFromSuperview()
         bottomBorder.removeFromSuperview()
         
-        // make live elements invisible
-        setLiveElements(withStartTime: nil, withDelay: nil)
+        hideLiveElements()
         
         // stop timer
         timer?.invalidate()
+    }
+    
+    // MARK: Get Data
+
+    private func getDepartureAndArrivalTimes(fromRoute route: Route) -> (departureTime: Date, arrivalTime: Date) {
+        if let firstDepartDirection = route.getFirstDepartRawDirection(), let lastDepartDirection = route.getLastDepartRawDirection(){
+            return (departureTime: firstDepartDirection.startTime, arrivalTime: lastDepartDirection.endTime)
+        }
+            
+        return (departureTime: route.departureTime, arrivalTime: route.arrivalTime)
+    }
+    
+    private func getDelayedDepartureTime(fromRoute route: Route) -> Date? {
+        if let firstDepartDirection = route.getFirstDepartRawDirection(), let delay = firstDepartDirection.delay {
+            return firstDepartDirection.startTime.addingTimeInterval(TimeInterval(delay))
+        }
+        
+        return nil
+    }
+    
+    private func getDepartureTime(fromRoute route: Route) -> Date {
+        if let firstDepartDirection = route.getFirstDepartRawDirection() {
+            return firstDepartDirection.startTime
+        }
+        
+        return route.departureTime
+    }
+    
+    
+    private func getStartTime(fromSearchTime searchTime: Date?, fromSearchTimeType searchTimeType: SearchType?) -> Date {
+//        if let searchTime = searchTime, let searchTimeType = searchTimeType {
+//            switch searchTimeType {
+//            case .leaveAt:
+//                return searchTime
+//            default:
+//                return Date()
+//            }
+//        }
+        
+        return Date()
     }
 
     // MARK: Set Data
@@ -145,110 +184,134 @@ class RouteTableViewCell: UITableViewCell {
         
         timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay as () -> Void), userInfo: nil, repeats: true)
         
+        let (departureTime, arrivalTime) = getDepartureAndArrivalTimes(fromRoute: route)
+        setTravelTime(withDepartureTime: departureTime, withArrivalTime: arrivalTime)
+        
+        setDepartureTimeAndLiveElements(withRoute: route, withSearchTime: searchTime, withSearchTimeType: searchTimeType)
+        
+        routeDiagram.setData(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
+    }
+    
+    private func setDepartureTimeAndLiveElements(withRoute route: Route, withSearchTime searchTime: Date?, withSearchTimeType searchTimeType: SearchType?) {
         let isWalkingRoute = route.isRawWalkingRoute()
-        
-        let firstDepartDirection = route.getFirstDepartRawDirection()
 
-        if let firstDepartDirection = firstDepartDirection, let lastDepartDirection = route.getLastDepartRawDirection(){
-            setTravelTime(withDepartureTime: firstDepartDirection.startTime, withArrivalTime: lastDepartDirection.endTime)
+        if let delayedDepartureTime = getDelayedDepartureTime(fromRoute: route) {
+            if isWalkingRoute {
+                setDepartureTimeToWalking()
+            }
+            else {
+                setDepartureTime(withStartTime: getStartTime(fromSearchTime: searchTime, fromSearchTimeType: searchTimeType), withDepartureTime: delayedDepartureTime, late: true)
+            }
+            setLiveElementsToLate(withDepartureTime: delayedDepartureTime)
         }
         else {
-            setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
+            let departureTime = getDepartureTime(fromRoute: route)
+            if isWalkingRoute {
+                setDepartureTimeToWalking()
+            }
+            else {
+                setDepartureTime(withStartTime: getStartTime(fromSearchTime: searchTime, fromSearchTimeType: searchTimeType), withDepartureTime: departureTime, late: false)
+            }
         }
-        
-        if let firstDepartDirection = firstDepartDirection, let delay = firstDepartDirection.delay {
-            setDepartureTime(withDepartureTime: firstDepartDirection.startTime.addingTimeInterval(TimeInterval(delay)), withWalkingRoute: isWalkingRoute, withSearchTime: searchTime, withSearchTimeType: searchTimeType)
-            setLiveElements(withStartTime: firstDepartDirection.startTime, withDelay: delay)
-        }
-        else {
-            setDepartureTime(withDepartureTime: route.departureTime, withWalkingRoute: isWalkingRoute, withSearchTime: searchTime, withSearchTimeType: searchTimeType)
-        }
-        
-        routeDiagram.setData(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: isWalkingRoute)
     }
     
     @objc func updateLiveElementsWithDelay() {
-        if let route = route, let direction = route.getFirstDepartRawDirection(), let tripId = direction.tripIdentifiers?.first, let stopId = direction.stops.first?.id  {
+        if let route = route,
+            let direction = route.getFirstDepartRawDirection(),
+            let tripId = direction.tripIdentifiers?.first,
+            let stopId = direction.stops.first?.id  {
             Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
                 if json["success"].boolValue {
-                    self.setLiveElements(withStartTime: direction.startTime, withDelay: json["data"]["delay"].int)
+                    guard let delay = json["data"]["delay"].int else {
+                        self.hideLiveElements()
+                        self.setDepartureTimeAndLiveElements(withRoute: route, withSearchTime: self.searchTime, withSearchTimeType: self.searchTimeType)
+                        return
+                    }
+                    
+                    let oneMinute = 60
+                    if delay >= oneMinute {
+                        let lateTime = direction.startTime.addingTimeInterval(TimeInterval(delay))
+                        self.setLiveElementsToLate(withDepartureTime: lateTime)
+                        
+                        let startTime = self.getStartTime(fromSearchTime: self.searchTime, fromSearchTimeType: self.searchTimeType)
+                        self.setDepartureTime(withStartTime: startTime, withDepartureTime: lateTime, late: true)
+                    } else {
+                        self.setLiveElementsOnTime()
+                        self.setDepartureTimeOnTime()
+                    }
+                    
+                     route.getFirstDepartRawDirection()?.delay = delay
                 }
                 else {
-                    self.setLiveElements(withStartTime: nil, withDelay: nil)
-                }
+                    self.hideLiveElements()
+                    self.setDepartureTimeAndLiveElements(withRoute: route, withSearchTime: self.searchTime, withSearchTimeType: self.searchTimeType)                }
             }, failure: { (error) in
                 print("RouteTableViewCell setLiveElements(withStartTime:, withDelay:) error: \(error.errorDescription ?? "") Request url: \(error.request?.url?.absoluteString ?? "")")
-                self.setLiveElements(withStartTime: nil, withDelay: nil)
+                self.hideLiveElements()
+                self.setDepartureTimeAndLiveElements(withRoute: route, withSearchTime: self.searchTime, withSearchTimeType: self.searchTimeType)
             })
         }
         else {
-            self.setLiveElements(withStartTime: nil, withDelay: nil)
-        }
-        
-    }
-
-    private func setLiveElements(withStartTime startTime: Date?, withDelay delay: Int?) {
-        if let delay = delay, let startTime = startTime {
-            let oneMinute = 60
-            if delay >= oneMinute {
-                liveLabel.textColor = .liveRedColor
-                liveLabel.text = "Late - \(Time.timeString(from: startTime.addingTimeInterval(TimeInterval(delay))))"
-                liveIndicatorView.setColor(to: .liveRedColor)
-                
-                let time = Time.timeString(from: Date(), to: startTime.addingTimeInterval(TimeInterval(delay)))
-                departureTimeLabel.text = "Board in \(time)"
-                departureTimeLabel.sizeToFit()
-                departureTimeLabel.textColor = .liveRedColor
-            } else {
-                liveLabel.textColor = .liveGreenColor
-                liveLabel.text = "On Time"
-                liveIndicatorView.setColor(to:.liveGreenColor)
-                
-                departureTimeLabel.textColor = .liveGreenColor
-            }
-            liveLabel.sizeToFit()
-            positionLiveIndicatorView(usingLiveLabel: liveLabel)
-        } else {
-            liveIndicatorView.setColor(to: .clear)
-            liveLabel.textColor = .clear
+            self.hideLiveElements()
             if let route = route {
-                setDepartureTime(withDepartureTime: route.departureTime, withWalkingRoute: route.isRawWalkingRoute(), withSearchTime: searchTime, withSearchTimeType: searchTimeType)
+                self.setDepartureTimeAndLiveElements(withRoute: route, withSearchTime: self.searchTime, withSearchTimeType: self.searchTimeType)
             }
         }
     }
 
-
+    private func hideLiveElements() {
+        liveIndicatorView.setColor(to: .clear)
+        liveLabel.textColor = .clear
+    }
+    
+    private func setLiveElementsOnTime() {
+        liveLabel.textColor = .liveGreenColor
+        liveLabel.text = "On Time"
+        liveIndicatorView.setColor(to:.liveGreenColor)
+        
+        liveLabel.sizeToFit()
+        positionLiveIndicatorView(usingLiveLabel: liveLabel)
+    }
+    
+    private func setDepartureTimeOnTime() {
+        departureTimeLabel.textColor = .liveGreenColor
+        arrowImageView.tintColor = .primaryTextColor
+    }
+    
+    private func setLiveElementsToLate(withDepartureTime departureTime: Date) {
+        liveLabel.textColor = .liveRedColor
+        liveLabel.text = "Late - \(Time.timeString(from: departureTime))"
+        liveIndicatorView.setColor(to: .liveRedColor)
+        
+        liveLabel.sizeToFit()
+        positionLiveIndicatorView(usingLiveLabel: liveLabel)
+    }
+    
+    private func setDepartureTime(withStartTime startTime: Date, withDepartureTime departureTime: Date, late: Bool) {
+        let boardTime = Time.timeString(from: startTime, to: departureTime)
+        departureTimeLabel.text = boardTime == "0 min" ? "Board now" : "Board in \(boardTime)"
+        departureTimeLabel.textColor = late ? .liveRedColor : .primaryTextColor
+        arrowImageView.tintColor = .primaryTextColor
+        
+        departureTimeLabel.sizeToFit()
+        positionArrowVertically(usingDepartureTime: departureTimeLabel)
+        positionDepartureTimeHorizontally(usingArrowImageView: arrowImageView)
+    }
+    
     private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
         travelTimeLabel.text = "\(Time.timeString(from: departureTime)) - \(Time.timeString(from: arrivalTime))"
         travelTimeLabel.sizeToFit()
     }
-
-    private func setDepartureTime(withDepartureTime departureTime: Date, withWalkingRoute isWalkingRoute: Bool, withSearchTime searchTime: Date?, withSearchTimeType searchTimeType: SearchType?){
-        if isWalkingRoute {
-            departureTimeLabel.text = "Directions"
-            departureTimeLabel.textColor = .mediumGrayColor
-            arrowImageView.tintColor = .mediumGrayColor
-        } else {
-            var time = ""
-            if let searchTime = searchTime, let searchTimeType = searchTimeType {
-                switch searchTimeType {
-                case .leaveAt:
-                    time = Time.timeString(from: searchTime, to: departureTime)
-                case .arriveBy:
-                    time = Time.timeString(from: Date(), to: departureTime)
-                }
-            }
-            else {
-                time = Time.timeString(from: Date(), to: departureTime)
-            }
-            departureTimeLabel.text = "Board in \(time)"
-            departureTimeLabel.textColor = .primaryTextColor
-            arrowImageView.tintColor = .primaryTextColor
-        }
+    
+    private func setDepartureTimeToWalking() {
+        departureTimeLabel.text = "Directions"
+        departureTimeLabel.textColor = .mediumGrayColor
+        arrowImageView.tintColor = .mediumGrayColor
+        
         departureTimeLabel.sizeToFit()
         positionArrowVertically(usingDepartureTime: departureTimeLabel)
     }
-
+    
     // MARK: Style
 
     private func styleTravelTime() {
@@ -258,10 +321,8 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     private func styleLiveElements() {
-        // style live elements to be invisible before get live data
-        liveIndicatorView = LiveIndicator(size: .small, color: .clear)
         liveLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
-        liveLabel.textColor = .clear
+        hideLiveElements()
     }
 
     private func styleDepartureTime() {
