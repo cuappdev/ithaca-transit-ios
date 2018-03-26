@@ -32,6 +32,10 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     let main = UIScreen.main.bounds
     var justLoaded: Bool = true
     
+    var busDelayNetworkTimer: Timer?
+    /// Number of seconds to wait before auto-refreshing bus delay network call.
+    var busDelayNetworkRefreshRate: Double = 30
+    
     // MARK: Initalization
 
     init(route: Route) {
@@ -58,6 +62,24 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         if let drawer = self.parent as? RouteDetailViewController {
             drawer.initialDrawerPosition = .partiallyRevealed
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // Bus Delay Network Timer
+        if let timer = busDelayNetworkTimer {
+            timer.invalidate()
+        }
+        busDelayNetworkTimer = Timer.scheduledTimer(timeInterval: busDelayNetworkRefreshRate, target: self, selector: #selector(getDelays),
+                                                    userInfo: nil, repeats: true)
+        busDelayNetworkTimer!.fire()
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        busDelayNetworkTimer?.invalidate()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -203,6 +225,71 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     
     func supportedDrawerPositions() -> [PulleyPosition] {
         return [.collapsed, .partiallyRevealed, .open]
+    }
+    
+    // MARK: Network Calls
+    
+    /// Fetch delay information and update table view cells.
+    @objc func getDelays() {
+        
+        let firstDepartDirection = directions.first(where: { $0.type == .depart })
+        
+        /// Variable to make sure a nil direction being set to the delay isn't reset.
+        var shouldReset: Bool = true
+        
+        // Update delay variable of directions not directly related to transit.
+        func updateRemainingDirections(with optionalDelay: Int?) {
+            directions.filter { $0.type == .walk || $0.type == .arrive }.forEach { (direction) in
+                
+                // If no delay, nil the delay
+                guard let delay = optionalDelay else {
+                    direction.delay = nil
+                    return
+                }
+                
+                // Delay exists
+                
+                // Direction has existing delay
+                if direction.delay != nil {
+                    // Reset delay to accumulate new results
+                    if shouldReset { direction.delay = 0 }
+                    direction.delay! += delay
+                }
+                    
+                    // Direction doesn't have a delay
+                else {
+                    direction.delay = delay
+                    shouldReset = false
+                }
+                
+            }
+        }
+        
+        for direction in directions {
+            if let tripId = direction.tripIdentifiers?.first, let stopId = direction.stops.first?.id {
+                Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
+                    if json["success"].boolValue {
+                        
+                        print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
+                        direction.delay = json["data"]["delay"].int
+                        updateRemainingDirections(with: direction.delay)
+                        
+                        self.tableView.reloadData()
+                        if direction == firstDepartDirection { // update summary view
+                            print("update summary view from content view controller")
+                            self.summaryView.setRoute(withDelay: true)
+                        }
+                        
+                    }
+                    else {
+                        print("getDelays success : false")
+                    }
+                }, failure: { (error) in
+                    print("getDelays error: \(error.errorDescription ?? "")")
+                })
+            }
+        }
+        
     }
     
     // MARK: TableView Data Source and Delegate Functions

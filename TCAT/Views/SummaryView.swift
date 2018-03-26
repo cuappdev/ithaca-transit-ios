@@ -12,7 +12,10 @@ class SummaryView: UIView {
     
     /// The route being used for the summary view
     var route: Route! {
-        didSet { setRoute() }
+        didSet {
+            print("didSetRoute")
+            setRoute()
+        }
     }
     
     /// The puller tab used to indicate dragability
@@ -54,7 +57,7 @@ class SummaryView: UIView {
         super.init(coder: aDecoder)
     }
     
-    init(route: Route? = nil) {
+    init() {
         
         // View Initialization
         let height: CGFloat = 80 + tabInsetHeight
@@ -81,24 +84,118 @@ class SummaryView: UIView {
         secondaryLabel.textColor = .mediumGrayColor
         addSubview(secondaryLabel)
         
-        if route != nil {
-            setRoute()
-        }
+        addSubview(liveIndicator)
             
     }
     
-    /// Change the height of the view
-    func setHeight(to newHeight: CGFloat) {
-        frame.size.height = newHeight
-        setRoute() // go back and adjust positions based on change
+    /// Update summary card data and position accordingly
+    func setRoute(withDelay: Bool = false) {
+        
+        print("setRoute firing")
+
+        setBusIcons()
+        
+        var color: UIColor = .primaryTextColor
+        
+        // MARK: Main Label and Live Indicator Formatting
+        
+        let space = createStringWithSpaces()
+        let extraLabelPadding: CGFloat = 6
+        
+        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
+        mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
+        
+        if let departDirection = (route.directions.filter { $0.type == .depart }).first {
+            
+            var fragment = ""
+            
+            if withDelay {
+                if let delay = departDirection.delay {
+                    fragment = " \(space)" // Include space for live indicator
+                    if delay >= 60 {
+                        color = .liveRedColor
+                    } else {
+                        color = .liveGreenColor
+                    }
+                } else {
+                    color = .clear
+                }
+            }
+            
+            let content = "Depart at \(departDirection.startTimeWithDelayDescription)\(fragment) from \(departDirection.name)"
+            // This changes font to standard size. Label's font is different.
+            var attributedString = bold(pattern: departDirection.startTimeWithDelayDescription, in: content)
+            attributedString = bold(pattern: departDirection.name, in: attributedString)
+            
+            let range = (attributedString.string as NSString).range(of: departDirection.startTimeWithDelayDescription)
+            attributedString.addAttribute(NSAttributedStringKey.foregroundColor, value: color, range: range)
+            
+            mainLabel.attributedText = attributedString
+            
+            if withDelay {
+                if let stringRect = mainLabel.boundingRect(of: departDirection.startTimeWithDelayDescription + " ") {
+                    liveIndicator.frame.origin.x = mainLabel.frame.minX + stringRect.maxX
+                    liveIndicator.center.y = mainLabel.frame.minY + stringRect.midY + 1
+                    liveIndicator.setColor(to: color)
+                } else {
+                    print("[SummaryView] Could not find phrase in label")
+                    liveIndicator.setColor(to: .clear)
+                }
+            }
+            
+        } else {
+            let content = route.directions.first?.locationNameDescription ?? "Route Directions"
+            mainLabel.attributedText = bold(pattern: route.directions.first?.name ?? "", in: content)
+        }
+        
+        // Calculate and adjust label based on number of lines
+        let numOfLines = mainLabel.numberOfLines()
+        if numOfLines != mainLabel.numberOfLines {
+            mainLabel.numberOfLines = numOfLines
+        }
+        
+        // Reset main label positioning
+        mainLabel.sizeToFit()
+        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
+        mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
+        
+        // MARK: Secondary Label
+        
+        secondaryLabel.text = "Trip Duration: \(route.totalDuration) minute\(route.totalDuration == 1 ? "" : "s")"
+        secondaryLabel.sizeToFit()
+        secondaryLabel.frame.origin.x = mainLabel.frame.origin.x
+        
+        adjustLabelPositions()
+        
     }
     
-    /// Update summary card data and position accordingly
-    func setRoute() {
+    // Create string with enough space for Live Indicator
+    func createStringWithSpaces() -> String {
+        let testLabel = UILabel()
+        testLabel.font = mainLabel.font
+        testLabel.text = " "
+        testLabel.sizeToFit()
+        let sizeOfSpace = testLabel.frame.size.width
+        var space = ""
+        let numberOfSpaces = Int(ceil(liveIndicator.frame.size.width / sizeOfSpace)) + 1
+        for _ in 1...numberOfSpaces {
+            space += " "
+        }
+        return space
+    }
+    
+    func adjustLabelPositions() {
+        // Adjust labels vertically
+        let labelSpacing: CGFloat = 4
+        let totalLabelHeight = mainLabel.frame.size.height + secondaryLabel.frame.size.height + labelSpacing
+        let maximumY = safeAreaCenterY + (totalLabelHeight / 2)
+        secondaryLabel.frame.origin.y = maximumY - secondaryLabel.frame.height
+        mainLabel.frame.origin.y = secondaryLabel.frame.origin.y - mainLabel.frame.height - (labelSpacing)
+    }
+    
+    /// Add and place bus icons.
+    func setBusIcons() {
         
-        // MARK: Route Icons
-        
-        /// Constant for spacing for various elements
         let spacing: CGFloat = 12
         
         /// The center to use for the next bus icon. Initalized for 0-1 bus(es).
@@ -125,8 +222,8 @@ class SummaryView: UIView {
             addSubview(walkIcon)
             
         }
-        
-        // Place one sole bus icon
+            
+            // Place one sole bus icon
         else if busRoutes.count == 1 {
             
             // Create and add bus icon
@@ -136,8 +233,8 @@ class SummaryView: UIView {
             addSubview(busIcon)
             
         }
-        
-        // Place up to 2 bus icons. This will not support more buses without changes
+            
+            // Place up to 2 bus icons. This will not support more buses without changes
         else {
             
             // Adjust initial variables
@@ -154,7 +251,7 @@ class SummaryView: UIView {
                 
                 // Adjust center point
                 iconCenter.y += busIcon.frame.height + (spacing / 2)
-
+                
                 // Stop once two buses have been placed
                 if index == 1 { break }
                 
@@ -162,94 +259,9 @@ class SummaryView: UIView {
             
         }
         
-        // MARK: Labels
-        
-        var color: UIColor = .primaryTextColor
-        
-        // Create space for Live Indicator
-        let testLabel = UILabel()
-        testLabel.text = " "
-        testLabel.sizeToFit()
-        let sizeOfSpace = testLabel.frame.size.width
-        var space = ""
-        let numberOfSpaces = Int(ceil(liveIndicator.frame.size.width / sizeOfSpace))
-        for _ in 1...numberOfSpaces {
-            space += " "
-        }
-        
-        // MARK: Main Label and Live Indicator Formatting
-        
-        let extraLabelPadding: CGFloat = 6
-        
-        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
-        mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
-        
-        if let departDirection = (route.directions.filter { $0.type == .depart }).first {
-            
-            var fragment = ""
-            
-            if let delay = departDirection.delay {
-                fragment = " \(space)" // Include space for live indicator
-                if delay >= 60 {
-                    color = .liveRedColor
-                } else {
-                    color = .liveGreenColor
-                }
-                
-                liveIndicator.setColor(to: color)
-                
-            } else {
-                liveIndicator.setColor(to: .clear)
-            }
-            
-            let content = "Depart at \(departDirection.startTimeWithDelayDescription)\(fragment) from \(departDirection.name)"
-            // This changes font to standard size. Label's font is different.
-            var attributedString = bold(pattern: departDirection.startTimeWithDelayDescription, in: content)
-            attributedString = bold(pattern: departDirection.name, in: attributedString)
-            
-            let range = (attributedString.string as NSString).range(of: departDirection.startTimeWithDelayDescription)
-            attributedString.addAttribute(NSAttributedStringKey.foregroundColor, value: color, range: range)
-            
-            mainLabel.attributedText = attributedString
-            
-            if let stringRect = mainLabel.boundingRect(of: departDirection.startTimeWithDelayDescription + " ") {
-                liveIndicator.frame.origin.x = stringRect.maxX
-                liveIndicator.center.y = stringRect.midY
-            } else {
-                print("Couldn't find rectangle :/")
-            }
-            
-        } else {
-            let content = route.directions.first?.locationNameDescription ?? "Route Directions"
-            mainLabel.attributedText = bold(pattern: route.directions.first?.name ?? "", in: content)
-        }
-        
-        // Calculate and adjust label based on number of lines
-        let numOfLines = mainLabel.numberOfLines()
-        // let difference = numOfLines - mainLabel.numberOfLines
-        if numOfLines != mainLabel.numberOfLines {
-            // let delta = CGFloat(difference) * mainLabel.font.lineHeight
-            mainLabel.numberOfLines = numOfLines
-            setHeight(to: frame.size.height)
-        }
-        
-        // Reset main label positioning
-        mainLabel.sizeToFit()
-        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
-        mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
-        
-        // MARK: Secondary Label
-        
-        secondaryLabel.text = "Trip Duration: \(route.totalDuration) minute\(route.totalDuration == 1 ? "" : "s")"
-        secondaryLabel.sizeToFit()
-        secondaryLabel.frame.origin.x = mainLabel.frame.origin.x
-        
-        // Adjust labels vertically
-        let labelSpacing = spacing / 3
-        let totalLabelHeight = mainLabel.frame.size.height + secondaryLabel.frame.size.height + labelSpacing
-        let maximumY = safeAreaCenterY + (totalLabelHeight / 2)
-        secondaryLabel.frame.origin.y = maximumY - secondaryLabel.frame.height
-        mainLabel.frame.origin.y = secondaryLabel.frame.origin.y - mainLabel.frame.height - (labelSpacing)
+    }
+    
+    func setMainLabel() {
         
     }
     

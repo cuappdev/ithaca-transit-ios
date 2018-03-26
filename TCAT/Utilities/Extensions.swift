@@ -83,6 +83,7 @@ extension UIView {
 }
 
 extension UILabel {
+    
     /// Returns the number of lines the UILabel will take based on its width.
     func numberOfLines() -> Int {
         let maxSize = CGSize(width: frame.size.width, height: CGFloat(Float.infinity))
@@ -117,6 +118,7 @@ extension UILabel {
         
         return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
     }
+    
 }
 
 extension UIViewController {

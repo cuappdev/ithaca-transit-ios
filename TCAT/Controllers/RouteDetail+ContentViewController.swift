@@ -31,10 +31,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
     var liveTrackingNetworkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
     
-    var busDelayNetworkTimer: Timer?
-    /// Number of seconds to wait before auto-refreshing bus delay network call.
-    var busDelayNetworkRefreshRate: Double = 30
-    
     var buses = [GMSMarker]()
     var busIndicators = [GMSMarker]()
     
@@ -170,22 +166,12 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         liveTrackingNetworkTimer = Timer.scheduledTimer(timeInterval: liveTrackingNetworkRefreshRate, target: self, selector: #selector(getBusLocations),
                                             userInfo: nil, repeats: true)
         liveTrackingNetworkTimer!.fire()
-        
-        // Bus Delay Network Timer
-        
-        if let timer = busDelayNetworkTimer {
-            timer.invalidate()
-        }
-        busDelayNetworkTimer = Timer.scheduledTimer(timeInterval: busDelayNetworkRefreshRate, target: self, selector: #selector(getDelays),
-                                                    userInfo: nil, repeats: true)
-        busDelayNetworkTimer!.fire()
 
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         liveTrackingNetworkTimer?.invalidate()
-        busDelayNetworkTimer?.invalidate()
         hideBanner()
     }
 
@@ -274,68 +260,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     }
     
     // MARK: Network Calls
-    
-    /// Fetch delay information and update table view cells.
-    @objc func getDelays() {
-        
-        let firstDepartDirection = directions.first(where: { $0.type == .depart })
-        
-        /// Variable to make sure a nil direction being set to the delay isn't reset.
-        var shouldReset: Bool = true
-        
-        // Update delay variable of directions not directly related to transit.
-        func updateRemainingDirections(with optionalDelay: Int?) {
-            directions.filter { $0.type == .walk }.forEach { (direction) in
-                
-                // If no delay, nil the delay
-                guard let delay = optionalDelay else {
-                    direction.delay = nil
-                    return
-                }
-                
-                // Delay exists
-                
-                // Direction has existing delay
-                if direction.delay != nil {
-                    // Reset delay to accumulate new results
-                    if shouldReset { direction.delay = 0 }
-                    direction.delay! += delay
-                }
-                
-                // Direction doesn't have a delay
-                else {
-                    direction.delay = delay
-                    shouldReset = false
-                }
-                
-            }
-        }
-        
-        for direction in directions {
-            if let tripId = direction.tripIdentifiers?.first, let stopId = direction.stops.first?.id {
-                Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
-                    if json["success"].boolValue {
-                        
-                        // print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
-                        direction.delay = json["data"]["delay"].int
-                        updateRemainingDirections(with: direction.delay)
-                        
-                        self.drawerDisplayController?.tableView.reloadData()
-                        if direction == firstDepartDirection { // update summary view
-                            self.drawerDisplayController?.summaryView.setRoute()
-                        }
-                        
-                    }
-                    else {
-                        print("getDelays success : false")
-                    }
-                }, failure: { (error) in
-                    print("getDelays error: \(error.errorDescription ?? "")")
-                })
-            }
-        }
-        
-    }
     
     // Keep track of statuses of bus routes throughout view life cycle
     var noDataRouteList: [Int] = []
