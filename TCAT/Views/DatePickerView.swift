@@ -8,15 +8,26 @@
 
 import UIKit
 
+struct SegmentControlElement {
+    var title: String
+    var index: Int
+}
 class DatePickerView: UIView {
 
+    // MARK: Data vars
+    
+    let typeToSegmentControlElements: [SearchType : SegmentControlElement] = [
+        .leaveNow : SegmentControlElement(title: Constants.Phrases.datepickerLeaveNow, index: 0),
+        .leaveAt : SegmentControlElement(title: "Leave At", index: 0),
+        .arriveBy : SegmentControlElement(title: "Arrive By", index: 1)]
+    let leaveNowSegmentedControlOptions: [String]
+    let timeTypeSegmentedControlOptions: [String]
+    
     // MARK:  View vars
-
+    
     var datepicker: UIDatePicker = UIDatePicker()
     var leaveNowSegmentedControl: UISegmentedControl = UISegmentedControl()
-    let leaveNowSegmentedControlOptions: [String] = [Constants.Phrases.datepickerLeaveNow]
     var timeTypeSegmentedControl: UISegmentedControl = UISegmentedControl()
-    let timeTypeSegmentedControlOptions: [String] = ["Leave At", "Arrive By"]
     var cancelButton: UIButton = UIButton()
     var doneButton: UIButton = UIButton()
 
@@ -36,6 +47,9 @@ class DatePickerView: UIView {
     // MARK: Init
 
     override init(frame: CGRect){
+        leaveNowSegmentedControlOptions = [typeToSegmentControlElements[.leaveNow]!.title]
+        timeTypeSegmentedControlOptions = [typeToSegmentControlElements[.leaveAt]!.title, typeToSegmentControlElements[.arriveBy]!.title]
+        
         super.init(frame: frame)
 
         backgroundColor = .white
@@ -49,8 +63,8 @@ class DatePickerView: UIView {
         setDatepickerSettings()
 
         setSegmentedControl(timeTypeSegmentedControl, withItems: timeTypeSegmentedControlOptions)
-        let leaveAt = 0
-        timeTypeSegmentedControl.selectedSegmentIndex = leaveAt
+        timeTypeSegmentedControl.selectedSegmentIndex = typeToSegmentControlElements[.leaveAt]!.index
+        timeTypeSegmentedControl.addTarget(self, action: #selector(timeTypeSegmentedControlValueChanged(segmentControl:)), for: .valueChanged)
 
         setSegmentedControl(leaveNowSegmentedControl, withItems: leaveNowSegmentedControlOptions)
         leaveNowSegmentedControl.addTarget(self, action: #selector(leaveNowSegmentedControlValueChanged(segmentControl:)), for: .valueChanged)
@@ -65,6 +79,12 @@ class DatePickerView: UIView {
 
     // MARK: Segement Control
 
+    @objc private func timeTypeSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
+        if timeTypeSegmentedControl.selectedSegmentIndex == typeToSegmentControlElements[.arriveBy]!.index {
+            leaveNowSegmentedControl.selectedSegmentIndex = UISegmentedControlNoSegment
+        }
+    }
+    
     @objc private func leaveNowSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
         datepicker.date = Date()
     }
@@ -72,10 +92,8 @@ class DatePickerView: UIView {
     // MARK: Datepicker
 
     @objc private func datepickerValueChanged(datepicker: UIDatePicker) {
-        let now = Date()
-        if Time.compare(date1: datepicker.date, date2: now) == ComparisonResult.orderedSame {
-            let leaveNow = 0
-            leaveNowSegmentedControl.selectedSegmentIndex = leaveNow
+        if Time.compare(date1: datepicker.date, date2: Date()) == ComparisonResult.orderedSame {
+            leaveNowSegmentedControl.selectedSegmentIndex = typeToSegmentControlElements[.leaveNow]!.index
         } else {
             leaveNowSegmentedControl.selectedSegmentIndex = UISegmentedControlNoSegment
         }
@@ -90,10 +108,10 @@ class DatePickerView: UIView {
 
     func setDatepickerTimeType(searchTimeType: SearchType) {
         switch searchTimeType {
-        case .leaveAt:
-            timeTypeSegmentedControl.selectedSegmentIndex = 0
+        case .leaveAt, .leaveNow:
+            timeTypeSegmentedControl.selectedSegmentIndex = typeToSegmentControlElements[.leaveAt]!.index
         case .arriveBy:
-            timeTypeSegmentedControl.selectedSegmentIndex = 1
+            timeTypeSegmentedControl.selectedSegmentIndex = typeToSegmentControlElements[.arriveBy]!.index
         }
     }
 

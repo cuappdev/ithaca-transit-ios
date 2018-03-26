@@ -100,7 +100,7 @@ class Network {
             ]
 
             // for debugging
-            // print("Route Request URL: \(address)/\(request.path)?arriveBy=\(request.parameters["arriveBy"]!)&end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)\n")
+//             print("Route Request URL: \(address)\(request.path)?arriveBy=\(request.parameters["arriveBy"]!)&end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)&destinationName=\(request.parameters["destinationName"]!)\n")
 
             callback(request)
 
@@ -151,7 +151,7 @@ class Network {
         request.method = .get
         request.parameters = ["stopID" : stopId, "tripID" : tripId]
 
-        // print("Delay request URL: \(address)/\(request.path)?stopID=\(request.parameters["stopID"]!)&tripID=\(request.parameters["tripID"]!)")
+//         print("Delay request URL: \(address)\(request.path)?stopID=\(request.parameters["stopID"]!)&tripID=\(request.parameters["tripID"]!)")
 
         return request
     }

@@ -20,7 +20,7 @@ enum SearchBarType: String {
 }
 
 enum SearchType: String {
-    case arriveBy, leaveAt
+    case arriveBy, leaveAt, leaveNow
 }
 
 class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,
@@ -34,7 +34,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     var locationManager: CLLocationManager!
     var currentLocation: CLLocationCoordinate2D?
     var searchType: SearchBarType = .from
-    var searchTimeType: SearchType = .leaveAt
+    var searchTimeType: SearchType = .leaveNow
     var searchFrom: Place?
     var searchTo: Place?
     var searchTime: Date?
@@ -506,11 +506,16 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     @objc func saveDatePickerDate(sender: UIButton) {
         let date = datePickerView.getDate()
         searchTime = date
-        let segmentedControl = datePickerView.timeTypeSegmentedControl
-
+        
+        let typeToSegmentControlElements = datePickerView.typeToSegmentControlElements
+        let timeTypeSegmentControl = datePickerView.timeTypeSegmentedControl
+        let leaveNowSegmentControl = datePickerView.leaveNowSegmentedControl
+        
         // Get selected time type
-        let selectedSegString = (segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)) ?? ""
-        if selectedSegString.lowercased().contains("arrive") {
+        if leaveNowSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.leaveNow]!.index {
+            searchTimeType = .leaveNow
+        }
+        else if timeTypeSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.arriveBy]!.index {
             searchTimeType = .arriveBy
         }else{
             searchTimeType = .leaveAt
@@ -519,7 +524,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeSelection.setDatepicker(withDate: date, withSearchTimeType: searchTimeType)
 
         dismissDatePicker(sender: sender)
-
+        
         searchForRoutes()
     }
     
@@ -703,6 +708,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if refreshControl.isRefreshing {
+            // Update leave now time in pull to refresh
+            if searchTimeType == .leaveNow {
+                let now = Date()
+                searchTime = now
+                routeSelection.setDatepicker(withDate: now, withSearchTimeType: searchTimeType)
+            }
+            
             searchForRoutes()
         }
     }
@@ -725,15 +737,9 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
     @objc func handleLongPressGesture(_ sender: UILongPressGestureRecognizer) {
         if sender.state == .began {
             let point = sender.location(in: routeResults)
-            if let indexPath = routeResults.indexPathForRow(at: point) {
-                presentShareSheetWithImage(withIndexPath: indexPath)
+            if let indexPath = routeResults.indexPathForRow(at: point), let cell = routeResults.cellForRow(at: indexPath) {
+                presentShareSheet(from: view, for: routes[indexPath.row], with: cell.getImage())
             }
-        }
-    }
-    
-    private func presentShareSheetWithImage(withIndexPath indexPath: IndexPath) {
-        if let cell = routeResults.cellForRow(at: indexPath) {
-            presentShareSheet(from: view, for: routes[indexPath.row], with: cell.getImage())
         }
     }
     

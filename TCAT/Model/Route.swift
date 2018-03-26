@@ -113,19 +113,43 @@ class Route: NSObject, JSONDecodable {
                     direction.name = startName
                 }
                 else {
-                    direction.name = rawDirections[index - 1].name
+                    direction.name = rawDirections[index - 1].stops.last?.name ?? rawDirections[index - 1].name
                 }
             }
         }
         
+        // Append extra direction for ending location with ending destination name
         if let direction = rawDirections.last {
+            // Set stayOnBusForTransfer to false b/c ending location can never have transfer
             if direction.type == .walk {
-            // Append extra walk direction for walking ending location
-            rawDirections.append(Direction(type: .walk, name: endName, startLocation: direction.startLocation, endLocation: direction.endLocation, startTime: direction.startTime, endTime: direction.endTime, path: direction.path, travelDistance: direction.travelDistance, routeNumber: direction.routeNumber, stops: direction.stops, stayOnBusForTransfer: direction.stayOnBusForTransfer, tripIdentifiers: direction.tripIdentifiers, delay: direction.delay))
+            rawDirections.append(Direction(type: .walk,
+                                           name: endName,
+                                           startLocation: direction.startLocation,
+                                           endLocation: direction.endLocation,
+                                           startTime: direction.startTime,
+                                           endTime: direction.endTime,
+                                           path: direction.path,
+                                           travelDistance: direction.travelDistance,
+                                           routeNumber: direction.routeNumber,
+                                           stops: direction.stops,
+                                           stayOnBusForTransfer: false,
+                                           tripIdentifiers: direction.tripIdentifiers,
+                                           delay: direction.delay))
             }
-            // Append extra arrive direction for depart ending location
             else if direction.type == .depart {
-                rawDirections.append(Direction(type: .arrive, name: endName, startLocation: direction.startLocation, endLocation: direction.endLocation, startTime: direction.startTime, endTime: direction.endTime, path: direction.path, travelDistance: direction.travelDistance, routeNumber: direction.routeNumber, stops: direction.stops, stayOnBusForTransfer: direction.stayOnBusForTransfer, tripIdentifiers: direction.tripIdentifiers, delay: direction.delay))
+                rawDirections.append(Direction(type: .arrive,
+                                               name: endName,
+                                               startLocation: direction.startLocation,
+                                               endLocation: direction.endLocation,
+                                               startTime: direction.startTime,
+                                               endTime: direction.endTime,
+                                               path: direction.path,
+                                               travelDistance: direction.travelDistance,
+                                               routeNumber: direction.routeNumber,
+                                               stops: direction.stops,
+                                               stayOnBusForTransfer: false,
+                                               tripIdentifiers: direction.tripIdentifiers,
+                                               delay: direction.delay))
             }
         }
         
