@@ -24,13 +24,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // Set Up Google Services
-        let json = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
-        GMSServices.provideAPIKey(json["google-maps"].stringValue)
-        GMSPlacesClient.provideAPIKey(json["google-places"].stringValue)
+        GMSServices.provideAPIKey(Keys.googleMaps.value)
+        GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
         
         // Set Up Register, Fabric / Crashlytics (RELEASE)
         #if !DEBUG
-            Fabric.with([Crashlytics.self])
+            Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
             RegisterSession.startLogging()
         #endif
         

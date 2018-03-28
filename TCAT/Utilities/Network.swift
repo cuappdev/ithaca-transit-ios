@@ -113,7 +113,6 @@ class Network {
 
 
     class func getGooglePlaces(searchText: String) -> APIRequest<JSON, Error> {
-        let googleJson = try! JSON(data: Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!))
         let request: APIRequest<JSON, Error> = googleTron.swiftyJSON.request("json")
         request.method = .get
         request.parameters = [
@@ -121,7 +120,7 @@ class Network {
             "location" : "42.4440,-76.5019",
             "radius" : 24140,
             "input" : searchText,
-            "key" : googleJson["google-places"].stringValue
+            "key" : Keys.googlePlaces.value
         ]
         return request
     }
