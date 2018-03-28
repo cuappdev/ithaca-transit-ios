@@ -88,8 +88,7 @@ class Route: NSObject, JSONDecodable {
 
     required init(json: JSON) throws {
 
-        print("Route JSON", json)
-        print("===")
+        // print("Route JSON", json)
 
         departureTime = json["departureTime"].parseDate()
         arrivalTime = json["arrivalTime"].parseDate()
