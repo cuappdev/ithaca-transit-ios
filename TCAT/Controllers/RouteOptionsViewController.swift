@@ -672,6 +672,16 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         return customView
     }
+    
+    // Allow for pull to refresh in empty state
+    func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView!) -> Bool {
+        return true
+    }
+    
+    // Allow for pull to refresh in empty state
+    func emptyDataSetShouldAllowTouch(_ scrollView: UIScrollView!) -> Bool {
+        return true
+    }
 
     // MARK: Tableview Delegate
 
