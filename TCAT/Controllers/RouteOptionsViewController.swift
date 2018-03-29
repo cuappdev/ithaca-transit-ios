@@ -555,7 +555,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: routeTableViewCellIdentifier)
         }
 
-        cell?.setData(routes[indexPath.row], withSearchTime: searchTime, withSearchTimeType: searchTimeType)
+        cell?.setData(routes[indexPath.row])
         cell?.positionSubviews()
         cell?.addSubviews()
 

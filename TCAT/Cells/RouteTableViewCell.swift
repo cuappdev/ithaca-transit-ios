@@ -18,8 +18,6 @@ class RouteTableViewCell: UITableViewCell {
     
     let identifier: String = "routeCell"
     var route: Route?
-    var searchTime: Date?
-    var searchTimeType: SearchType?
     
     // MARK: Network vars
     
@@ -67,7 +65,7 @@ class RouteTableViewCell: UITableViewCell {
         styleTopBorder()
 
         positionTravelTime()
-        positionLiveLabel(usingTravelTime: travelTimeLabel) // N2SELF: need this?
+        positionLiveLabel(usingTravelTime: travelTimeLabel)
         positionLiveIndicatorView(usingTravelTime: travelTimeLabel)
         positionDepartureTimeVertically(usingTravelTime: travelTimeLabel)
         positionArrowVertically(usingDepartureTime: departureTimeLabel)
@@ -160,39 +158,23 @@ class RouteTableViewCell: UITableViewCell {
         
         return route.departureTime
     }
-    
-    
-    private func getStartTime(fromSearchTime searchTime: Date?, fromSearchTimeType searchTimeType: SearchType?) -> Date {
-//        if let searchTime = searchTime, let searchTimeType = searchTimeType {
-//            switch searchTimeType {
-//            case .leaveAt:
-//                return searchTime
-//            default:
-//                return Date()
-//            }
-//        }
-        
-        return Date()
-    }
 
     // MARK: Set Data
 
-    func setData(_ route: Route, withSearchTime searchTime: Date?, withSearchTimeType searchTimeType: SearchType?) {
+    func setData(_ route: Route) {
         self.route = route
-        self.searchTime = searchTime
-        self.searchTimeType = searchTimeType
         
         timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay as () -> Void), userInfo: nil, repeats: true)
         
         let (departureTime, arrivalTime) = getDepartureAndArrivalTimes(fromRoute: route)
         setTravelTime(withDepartureTime: departureTime, withArrivalTime: arrivalTime)
         
-        setDepartureTimeAndLiveElements(withRoute: route, withSearchTime: searchTime, withSearchTimeType: searchTimeType)
+        setDepartureTimeAndLiveElements(withRoute: route)
         
         routeDiagram.setData(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
     }
     
-    private func setDepartureTimeAndLiveElements(withRoute route: Route, withSearchTime searchTime: Date?, withSearchTimeType searchTimeType: SearchType?) {
+    private func setDepartureTimeAndLiveElements(withRoute route: Route) {
         let isWalkingRoute = route.isRawWalkingRoute()
 
         if let delayedDepartureTime = getDelayedDepartureTime(fromRoute: route) {
@@ -200,7 +182,7 @@ class RouteTableViewCell: UITableViewCell {
                 setDepartureTimeToWalking()
             }
             else {
-                setDepartureTime(withStartTime: getStartTime(fromSearchTime: searchTime, fromSearchTimeType: searchTimeType), withDepartureTime: delayedDepartureTime, late: true)
+                setDepartureTime(withStartTime: Date(), withDepartureTime: delayedDepartureTime, late: true)
             }
             setLiveElementsToLate(withDepartureTime: delayedDepartureTime)
         }
@@ -210,7 +192,7 @@ class RouteTableViewCell: UITableViewCell {
                 setDepartureTimeToWalking()
             }
             else {
-                setDepartureTime(withStartTime: getStartTime(fromSearchTime: searchTime, fromSearchTimeType: searchTimeType), withDepartureTime: departureTime, late: false)
+                setDepartureTime(withStartTime: Date(), withDepartureTime: departureTime, late: false)
             }
         }
     }
@@ -224,7 +206,7 @@ class RouteTableViewCell: UITableViewCell {
                 if json["success"].boolValue {
                     guard let delay = json["data"]["delay"].int else {
                         self.hideLiveElements()
-                        self.setDepartureTimeAndLiveElements(withRoute: route, withSearchTime: self.searchTime, withSearchTimeType: self.searchTimeType)
+                        self.setDepartureTimeAndLiveElements(withRoute: route)
                         return
                     }
                     
@@ -233,8 +215,7 @@ class RouteTableViewCell: UITableViewCell {
                         let lateTime = direction.startTime.addingTimeInterval(TimeInterval(delay))
                         self.setLiveElementsToLate(withDepartureTime: lateTime)
                         
-                        let startTime = self.getStartTime(fromSearchTime: self.searchTime, fromSearchTimeType: self.searchTimeType)
-                        self.setDepartureTime(withStartTime: startTime, withDepartureTime: lateTime, late: true)
+                        self.setDepartureTime(withStartTime: Date(), withDepartureTime: lateTime, late: true)
                     } else {
                         self.setLiveElementsOnTime()
                         self.setDepartureTimeOnTime()
@@ -244,17 +225,17 @@ class RouteTableViewCell: UITableViewCell {
                 }
                 else {
                     self.hideLiveElements()
-                    self.setDepartureTimeAndLiveElements(withRoute: route, withSearchTime: self.searchTime, withSearchTimeType: self.searchTimeType)                }
+                    self.setDepartureTimeAndLiveElements(withRoute: route)                }
             }, failure: { (error) in
                 print("RouteTableViewCell setLiveElements(withStartTime:, withDelay:) error: \(error.errorDescription ?? "") Request url: \(error.request?.url?.absoluteString ?? "")")
                 self.hideLiveElements()
-                self.setDepartureTimeAndLiveElements(withRoute: route, withSearchTime: self.searchTime, withSearchTimeType: self.searchTimeType)
+                self.setDepartureTimeAndLiveElements(withRoute: route)
             })
         }
         else {
             self.hideLiveElements()
             if let route = route {
-                self.setDepartureTimeAndLiveElements(withRoute: route, withSearchTime: self.searchTime, withSearchTimeType: self.searchTimeType)
+                self.setDepartureTimeAndLiveElements(withRoute: route)
             }
         }
     }
