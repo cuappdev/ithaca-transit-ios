@@ -51,13 +51,13 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     /** Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
      * dummy data will be used. The directions parameter have logical assumptions,
      * such as ArriveDirection always comes after DepartDirection. */
-    init(route: Route, currentLocation: CLLocationCoordinate2D? = nil) {
+    init(route: Route, currentLocation: CLLocationCoordinate2D?) {
         super.init(nibName: nil, bundle: nil)
         initializeRoute(route, currentLocation)
     }
 
     /** Construct Directions based on Route and parse Waypoint / Path data */
-    func initializeRoute(_ route: Route, _ currentLocation: CLLocationCoordinate2D? = nil) {
+    func initializeRoute(_ route: Route, _ currentLocation: CLLocationCoordinate2D?) {
 
         self.route = route
         self.directions = route.directions
@@ -120,7 +120,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     required convenience init(coder aDecoder: NSCoder) {
         let route = aDecoder.decodeObject(forKey: "route") as! Route
-        self.init(route: route)
+        self.init(route: route, currentLocation: nil)
     }
     
     // MARK: View-Related Functions
@@ -132,7 +132,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         locationManager.distanceFilter = 10
-        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
         
         // Set up Share button

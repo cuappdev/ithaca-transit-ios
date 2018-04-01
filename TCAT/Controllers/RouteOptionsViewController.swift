@@ -26,7 +26,8 @@ enum SearchType: String {
 class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,
                                   DestinationDelegate, SearchBarCancelDelegate,
                                   DZNEmptyDataSetSource, DZNEmptyDataSetDelegate,
-                                  CLLocationManagerDelegate {
+                                  CLLocationManagerDelegate,
+                                  UIViewControllerPreviewingDelegate {
     
     // MARK: Search bar vars
 
@@ -284,7 +285,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Process data
 
     func searchForRoutes() {
-        
         if let time = searchTime,
             let startingDestination = searchFrom as? CoordinateAcceptor,
             let endingDestination = searchTo as? CoordinateAcceptor
@@ -402,50 +402,94 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     private func setupLocationManager() {
         locationManager = CLLocationManager()
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         locationManager.distanceFilter = 10
-        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         print("RouteOptionVC locationManager didFailWithError: \(error.localizedDescription)")
-        locationManager.stopUpdatingLocation()
-        var locationAuthReminder = true
         
-        if let showReminder = userDefaults.value(forKey: Constants.UserDefaults.locationAuthReminder) as? Bool {
-            if showReminder {
-                locationAuthReminder = false
+        if error._code == CLError.denied.rawValue {
+            locationManager.stopUpdatingLocation()
+            
+            let alertController = UIAlertController(title: "Location Services Disabled", message: "Tap Settings to change your location permissions, or continue using a limited version of the app.", preferredStyle: .alert)
+            
+            let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
+                UIApplication.shared.open(URL(string: "App-prefs:root=LOCATION_SERVICES") ?? URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
             }
+            
+            guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
+                
+                userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
+                
+                let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+                alertController.addAction(cancelAction)
+                
+                alertController.addAction(settingsAction)
+                alertController.preferredAction = settingsAction
+                
+                present(alertController, animated: true)
+                
+                return
+            }
+            
+            if !showReminder {
+                return
+            }
+            
+            let dontRemindAgainAction = UIAlertAction(title: "Don't Remind Me Again", style: .default) { (_) in
+                userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
+            }
+            alertController.addAction(dontRemindAgainAction)
+            
+            alertController.addAction(settingsAction)
+            alertController.preferredAction = settingsAction
+            
+            present(alertController, animated: true)
         }
-        
-        // Most common, realistic error
-        let title = "Location Services Disabled"
-        let message = "Tap Settings to change your location permissions, or continue using a limited version of the app."
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-
-        alertController.addAction(UIAlertAction(title: "Dismiss", style: .default) { (_) in
-            userDefaults.set(locationAuthReminder, forKey: Constants.UserDefaults.locationAuthReminder)
-        })
-        alertController.addAction(UIAlertAction(title: "Settings", style: .default) { (_) in
-            UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
-        })
-
-        present(alertController, animated: true, completion: nil)
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = manager.location else {
+            return
+        }
+        
+        currentLocation = location.coordinate
+        updateSearchBarCurrentLocation(withCoordinate: location.coordinate)
+        
+        if let busStop = searchTo as? BusStop {
+            if busStop.name == Constants.Stops.currentLocation {
+               updateCurrentLocation(busStop, withCoordinate: location.coordinate)
+            }
+        }
+        
+        if let busStop = searchFrom as? BusStop {
+            if busStop.name == Constants.Stops.currentLocation {
+                updateCurrentLocation(busStop, withCoordinate: location.coordinate)
+            }
+        }
         // If haven't selected start location, set to current location
-        if searchFrom == nil, let location = manager.location {
-            currentLocation = location.coordinate
+        else {
             let currentLocationStop = BusStop(name: Constants.Stops.currentLocation,
-                                               lat: location.coordinate.latitude,
-                                               long: location.coordinate.longitude)
+                                              lat: location.coordinate.latitude,
+                                              long: location.coordinate.longitude)
             searchFrom = currentLocationStop
             searchBarView.resultsViewController?.currentLocation = currentLocationStop
             routeSelection.fromSearchbar.setTitle(currentLocationStop.name, for: .normal)
             searchForRoutes()
         }
+    }
+    
+    private func updateCurrentLocation(_ currentLocationStop: BusStop, withCoordinate coordinate: CLLocationCoordinate2D ) {
+        currentLocationStop.lat = coordinate.latitude
+        currentLocationStop.long = coordinate.longitude
+    }
+    
+    private func updateSearchBarCurrentLocation(withCoordinate coordinate: CLLocationCoordinate2D) {
+        searchBarView.resultsViewController?.currentLocation?.lat = coordinate.latitude
+        searchBarView.resultsViewController?.currentLocation?.long = coordinate.longitude
     }
 
     // MARK: Datepicker
@@ -738,7 +782,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
     }
     
-    // Create RouteDetailViewController
+    // MARK: RouteDetailViewController
     
     func createRouteDetailViewController(from route: Route) -> RouteDetailViewController? {
         let contentViewController = RouteDetailContentViewController(route: route, currentLocation: currentLocation)
@@ -749,9 +793,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                                          drawerViewController: drawerViewController)
     }
     
-}
-
-extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
+    // MARK: Previewing Delegate
     
     @objc func handleLongPressGesture(_ sender: UILongPressGestureRecognizer) {
         if sender.state == .began {
@@ -763,7 +805,6 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        
         let point = view.convert(location, to: routeResults)
         
         guard
@@ -783,7 +824,6 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
         RegisterSession.shared?.log(payload)
         
         return routeDetailViewController
-        
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
