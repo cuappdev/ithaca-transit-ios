@@ -115,7 +115,7 @@ class SummaryView: UIView {
                         color = .liveGreenColor
                     }
                 } else {
-                    color = .clear
+                    color = .primaryTextColor
                 }
             }
             
