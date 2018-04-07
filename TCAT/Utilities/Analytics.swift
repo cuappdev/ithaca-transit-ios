@@ -15,12 +15,6 @@ import Crashlytics
 
 fileprivate var registerSession: RegisterSession? = nil
 
-fileprivate func getSecretKey() -> String {
-    let configURL = Bundle.main.url(forResource: "config", withExtension: "json")!
-    let configJSON = try! JSON(Data(contentsOf: configURL))
-    return configJSON["register-secret"].stringValue
-}
-
 extension RegisterSession {
     
     static let endpoint: String = "35.173.96.190"
@@ -35,8 +29,7 @@ extension RegisterSession {
         
         guard let session = registerSession else {
             let url = URL(string: "http://\(endpoint)/api/")!
-            let secretKey = getSecretKey()
-            registerSession = RegisterSession(apiUrl: url, secretKey: secretKey)
+            registerSession = RegisterSession(apiUrl: url, secretKey: Keys.registerSecret.value)
             return registerSession!
         }
         return session
