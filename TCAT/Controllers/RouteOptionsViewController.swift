@@ -794,7 +794,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // Create RouteDetailViewController
     
     func createRouteDetailViewController(from route: Route) -> RouteDetailViewController? {
-        let contentViewController = RouteDetailContentViewController(route: route, currentLocation: currentLocation)
+        
+        var routeDetailCurrentLocation = currentLocation
+        if searchTo?.name != Constants.Stops.currentLocation && searchFrom?.name != Constants.Stops.currentLocation {
+            routeDetailCurrentLocation = nil // If route doesn't involve current location, don't pass along.
+        }
+        
+        let contentViewController = RouteDetailContentViewController(route: route, currentLocation: routeDetailCurrentLocation)
         guard let drawerViewController = contentViewController.drawerDisplayController else {
             return nil
         }

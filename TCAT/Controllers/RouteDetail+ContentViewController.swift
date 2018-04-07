@@ -63,6 +63,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         self.directions = route.directions
         self.currentLocation = currentLocation
         
+        let isWalkingRoute = directions.reduce(true) { $0 && $1.type == .walk }
+        
         // Plot the paths of all directions
         for (arrayIndex, direction) in directions.enumerated() {
 
@@ -71,24 +73,34 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             for (pathIndex, point) in direction.path.enumerated() {
 
                 let isStop: Bool = direction.type != .walk
-                var type: WaypointType = .none
+                var typeNotSet = true
+                var type: WaypointType = .none {
+                    didSet {
+                        typeNotSet = false
+                    }
+                }
                 
                 // First Direction
                 if arrayIndex == 0 {
                     // First Waypoint
                     if pathIndex == 0 {
-                        if currentLocation == nil {
-                           type = .origin // Don't set, current location will show "start"
+                        if currentLocation == nil || isWalkingRoute {
+                            type = .origin
                         }
                     }
                     // Last Waypoint
                     else if pathIndex == direction.path.count - 1 {
-                        type = isStop ? .bus : .none
+                        // Handle when first == last
+                        if directions.count == 1 {
+                            type = .destination
+                        } else {
+                            type = isStop ? .bus : .none
+                        }
                     }
                 }
                 
                 // Last Direction
-                else if arrayIndex == directions.count - 1 {
+                if typeNotSet && arrayIndex == directions.count - 1 {
                     // First Waypoint
                     if pathIndex == 0 {
                         type = isStop ? .bus : .none
@@ -100,7 +112,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 }
                 
                 // First & Last Bus Segments
-                else if direction.type == .depart && pathIndex == 0 || pathIndex == direction.path.count - 1 {
+                if typeNotSet && direction.type == .depart && (pathIndex == 0 || pathIndex == direction.path.count - 1) {
                     type = .bus
                 }
 
@@ -668,6 +680,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             path.map = mapView
             
             for waypoint in path.waypoints {
+                print("drawing waypoint:", waypoint.wpType)
                 let marker = GMSMarker(position: waypoint.coordinate)
                 marker.iconView = waypoint.iconView
                 marker.map = mapView
