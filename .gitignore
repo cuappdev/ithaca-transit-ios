@@ -1,5 +1,4 @@
 # Keys
-
 **/config.json
 **/Keys.plist
 
@@ -37,7 +36,7 @@ DerivedData
 *.perspectivev3
 !default.perspectivev3
 xcuserdata/
-.DS_Store
+xcshareddata/
 
 ## Other
 *.xccheckout

@@ -285,7 +285,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func searchForRoutes() {
         
-        if let time = searchTime,
+        if
+            let searchFrom = searchFrom,
+            let searchTo = searchTo,
+            let time = searchTime,
             let startingDestination = searchFrom as? CoordinateAcceptor,
             let endingDestination = searchTo as? CoordinateAcceptor
         {
@@ -298,11 +301,58 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             // Prepare feedback on Network request
             let tapticGenerator = UIImpactFeedbackGenerator(style: .medium)
             tapticGenerator.prepare()
+            
+            let sameLocation = searchFrom.name == searchTo.name
+            
+            /// Determine if coordinates in parameters are within range
+            func validCoordinates(_ requestParameters: [String : Any]?) -> Bool {
+                
+                let start = requestParameters?["start"] as? String ?? ""
+                let end = requestParameters?["end"] as? String ?? ""
+                let startCoordinates = start.components(separatedBy: ",").compactMap { Double($0) }
+                let endCoordinates = end.components(separatedBy: ",").compactMap { Double($0) }
+                
+                if startCoordinates.count < 2 || endCoordinates.count < 2 {
+                    return false
+                }
+                
+                let latitudeValues: [Double] = [startCoordinates[0], endCoordinates[0]]
+                let longitudeValues: [Double] = [startCoordinates[1], endCoordinates[1]]
+                
+                let validLatitudes = latitudeValues.reduce(true) { (result, latitude) -> Bool in
+                    return result && latitude <= Constants.Values.RouteBorders.northBorder &&
+                        latitude >= Constants.Values.RouteBorders.southBorder
+                }
+                
+                let validLongitudes = longitudeValues.reduce(true) { (result, longitude) -> Bool in
+                    return result && longitude <= Constants.Values.RouteBorders.eastBorder &&
+                        longitude >= Constants.Values.RouteBorders.westBorder
+                }
+                
+                return validLatitudes && validLongitudes
+                
+            }
+            
+            if sameLocation {
+                
+                let title = "You're here!"
+                let message = "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta)."
+                let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                let action = UIAlertAction(title: "😐😒🙄", style: .cancel, handler: nil)
+                alertController.addAction(action)
+                present(alertController, animated: true, completion: nil)
+                
+                currentlySearching = false
+                routeResults.reloadData()
+                
+            }
 
             // Check if to and from location is the same
-            if searchFrom?.name != searchTo?.name {
+            else {
                 
                 Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
+
+                    // Process Result
                     
                     if #available(iOS 10.0, *) {
                         self.routeResults.refreshControl?.endRefreshing()
@@ -310,13 +360,15 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                         self.refreshControl.endRefreshing()
                     }
                     
-                    func requestDidFinish(with error: NSError? = nil) {
+                    // Completion Handler
+                    
+                    func requestDidFinish(with error: NSError?, customMessage: String?) {
                         if let err = error {
                             
                             let message = err.code >= 400 ? "Could not connect to server" : "Route calculation error. Please retry."
                             let type: BannerStyle = err.code >= 400 ? .danger : .warning
                             
-                            self.banner = StatusBarNotificationBanner(title: message, style: type)
+                            self.banner = StatusBarNotificationBanner(title: customMessage ?? message, style: type)
                             self.banner?.autoDismiss = false
                             self.banner?.dismissOnTap = true
                             self.banner?.show(queuePosition: .front, on: self.navigationController)
@@ -341,6 +393,31 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                         self.routeResults.reloadData()
                         
                     }
+                    
+                    // Edge Case
+                    
+                    if !validCoordinates(request?.parameters) {
+                        
+                        let title = "Location Out Of Range"
+                        let message = "Try looking for another route with start and end locations closer to Tompkins County."
+                        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                        let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                        alertController.addAction(action)
+                        self.present(alertController, animated: true, completion: nil)
+                        
+                        self.currentlySearching = false
+                        self.routeResults.reloadData()
+                        
+                        let error = NSError(domain: title, code: 300, userInfo: [
+                            "description" : message,
+                            ])
+                        requestDidFinish(with: error, customMessage: title)
+                        
+                        return
+                        
+                    }
+                    
+                    // Handle Request
                     
                     if let alamofireRequest = request?.perform(withSuccess: { (routeJSON) in
                         Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
@@ -374,20 +451,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 }
                 
             } // end conditional ehecking names
-            
-            else {
-                
-                let title = "You're here!"
-                let message = "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta)."
-                let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-                let action = UIAlertAction(title: "😐😒🙄", style: .cancel, handler: nil)
-                alertController.addAction(action)
-                present(alertController, animated: true, completion: nil)
-                
-                currentlySearching = false
-                routeResults.reloadData()
-                
-            }
 
         } // end if let
 

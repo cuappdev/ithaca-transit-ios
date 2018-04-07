@@ -10,7 +10,7 @@ import UIKit
 import CoreLocation
 
 class BusStop: Place, CoordinateAcceptor {
-    
+
     var lat: CLLocationDegrees
     var long: CLLocationDegrees
     

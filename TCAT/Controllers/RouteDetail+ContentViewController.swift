@@ -193,14 +193,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         let bottom = drawerDisplayController?.summaryView.frame.height ?? 0
         mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
 
-        // Most extreme points on TCAT Route map
-        let north = 42.61321283145329
-        let east = -76.28125469914926
-        let south = 42.32796328578829
-        let west = -76.67690943302259
-
-        let northEast = CLLocationCoordinate2D(latitude: north, longitude: east)
-        let southWest = CLLocationCoordinate2D(latitude: south, longitude: west)
+        let northEast = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.north, longitude: Constants.Values.RouteMaxima.east)
+        let southWest = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.south, longitude: Constants.Values.RouteMaxima.west)
         let panBounds = GMSCoordinateBounds(coordinate: northEast, coordinate: southWest)
         mapView.cameraTargetBounds = panBounds
 
