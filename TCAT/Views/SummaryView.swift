@@ -201,7 +201,7 @@ class SummaryView: UIView {
         subviews.filter { $0.tag == iconTag }.removeViewsFromSuperview()
         
         // Create and place bus icons
-        let busRoutes: [Int] = route.directions.flatMap {
+        let busRoutes: [Int] = route.directions.compactMap {
             return $0.type == .depart ? $0.routeNumber : nil
         }
         
