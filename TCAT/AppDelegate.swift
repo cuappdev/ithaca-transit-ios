@@ -37,6 +37,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         let payload = AppLaunchedPayload()
         RegisterSession.shared?.log(payload)
         
+        // Check app version
+        if let version = userDefaults.value(forKey: Constants.UserDefaults.version) as? String {
+            if version != Constants.App.version {
+                // TODO: User has just updated the app.
+            }
+        }
+        
+        // Set version to be current version
+        userDefaults.set(Constants.App.version, forKey: Constants.UserDefaults.version)
+        
         // Initalize User Defaults
         if userDefaults.value(forKey: Constants.UserDefaults.onboardingShown) == nil {
             userDefaults.set(false, forKey: Constants.UserDefaults.onboardingShown)
