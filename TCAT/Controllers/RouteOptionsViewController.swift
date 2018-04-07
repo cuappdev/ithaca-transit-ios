@@ -362,7 +362,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     
                     // Completion Handler
                     
-                    func requestDidFinish(with error: NSError?, customMessage: String?) {
+                    func requestDidFinish(with error: NSError? = nil, customMessage: String? = nil) {
                         if let err = error {
                             
                             let message = err.code >= 400 ? "Could not connect to server" : "Route calculation error. Please retry."
@@ -410,7 +410,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                         
                         let error = NSError(domain: title, code: 300, userInfo: [
                             "description" : message,
-                            ])
+                        ])
                         requestDidFinish(with: error, customMessage: title)
                         
                         return
