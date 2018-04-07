@@ -470,8 +470,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 updateCurrentLocation(busStop, withCoordinate: location.coordinate)
             }
         }
+        
         // If haven't selected start location, set to current location
-        else {
+        if searchFrom == nil {
             let currentLocationStop = BusStop(name: Constants.Stops.currentLocation,
                                               lat: location.coordinate.latitude,
                                               long: location.coordinate.longitude)
