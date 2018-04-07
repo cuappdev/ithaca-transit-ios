@@ -182,7 +182,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         locationManager.delegate = self
-        locationManager.requestAlwaysAuthorization()
+        locationManager.requestWhenInUseAuthorization()
     }
 
     func createSections() -> [Section] {

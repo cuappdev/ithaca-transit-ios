@@ -404,7 +404,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         locationManager.distanceFilter = 10
-        locationManager.requestAlwaysAuthorization()
+        locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
     }
 
@@ -457,6 +457,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
         
         currentLocation = location.coordinate
+        
         updateSearchBarCurrentLocation(withCoordinate: location.coordinate)
         
         if let busStop = searchTo as? BusStop {

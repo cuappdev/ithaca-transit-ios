@@ -132,7 +132,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         locationManager.distanceFilter = 10
-        locationManager.requestAlwaysAuthorization()
+        locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
         // Set up Share button
