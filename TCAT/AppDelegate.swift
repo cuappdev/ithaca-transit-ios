@@ -16,7 +16,7 @@ import SafariServices
 import SwiftRegister
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
     let userDefaults = UserDefaults.standard
@@ -66,10 +66,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         self.window?.makeKeyAndVisible()
         
         return true
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-        print("AppDelegate locationManager didFailWithError: \(error)")
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
