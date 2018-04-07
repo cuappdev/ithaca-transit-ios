@@ -103,7 +103,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         searchBar?.sizeToFit()
-        searchBar?.tintColor = UIColor.primaryTextColor
+        searchBar?.tintColor = .primaryTextColor
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -374,7 +374,9 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
         alertController.addAction(settingsAction)
         alertController.addAction(cancelAction)
 
-        present(alertController, animated: true, completion: nil)
+        present(alertController, animated: true, completion: {
+            self.tableView.deselectRow(at: IndexPath(row: 0, section: 0), animated: true)
+        })
     }
     
 }

@@ -680,7 +680,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             path.map = mapView
             
             for waypoint in path.waypoints {
-                print("drawing waypoint:", waypoint.wpType)
                 let marker = GMSMarker(position: waypoint.coordinate)
                 marker.iconView = waypoint.iconView
                 marker.map = mapView

@@ -235,7 +235,6 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         /// Variable to make sure a nil direction being set to the delay isn't reset.
         var shouldReset: Bool = true
         
-        
         for direction in directions {
             
             if let tripId = direction.tripIdentifiers?.first, let stopId = direction.stops.first?.id {
@@ -247,7 +246,8 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
                         // print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
                         direction.delay = json["data"]["delay"].int
                         
-                        // Update delay variable of directions not directly related to transit.
+                        // Update delay variable of other directions
+                        
                         self.directions.filter { $0.type == .walk || $0.type == .arrive }.forEach { (direction) in
                             
                             // If no delay, nil the delay
@@ -265,7 +265,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
                                 direction.delay! += delay
                             }
                                 
-                                // Direction doesn't have a delay
+                            // Direction doesn't have a delay
                             else {
                                 direction.delay = delay
                                 shouldReset = false
