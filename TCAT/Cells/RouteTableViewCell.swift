@@ -164,14 +164,14 @@ class RouteTableViewCell: UITableViewCell {
     
     // MARK: Add subviews
     
-    func addSubviews() {
-        //        routeDiagram.addSubviews()
+    func addSubviewsToRouteDiagram() {
+        routeDiagram.addSubviews()
     }
 
     // MARK: Constraints
 
-    func activateSubviewsConstraints() {
-//        routeDiagram.positionSubviews()
+    func activateRouteDiagramConstraints() {
+        routeDiagram.positionSubviews()
     }
     
     private func activateConstraints() {
@@ -254,17 +254,6 @@ class RouteTableViewCell: UITableViewCell {
         cellSeparator.accessibilityIdentifier = "cellSeparator"
     }
     
-    // MARK: Reuse
-    
-    override func prepareForReuse() {
-        //        routeDiagram.prepareForReuse()
-        
-        hideLiveElements()
-        
-        // stop timer
-        timer?.invalidate()
-    }
-    
     // MARK: Get Data
     
     private func getDepartureAndArrivalTimes(fromRoute route: Route) -> (departureTime: Date, arrivalTime: Date) {
@@ -307,6 +296,17 @@ class RouteTableViewCell: UITableViewCell {
         
     }
     
+    // MARK: Reuse
+    
+    override func prepareForReuse() {
+        routeDiagram.prepareForReuse()
+        
+        hideLiveElements()
+        
+        // stop timer
+        timer?.invalidate()
+    }
+    
     // MARK: Set Data
     
     func setData(_ route: Route) {
@@ -319,7 +319,7 @@ class RouteTableViewCell: UITableViewCell {
         
         setDepartureTimeAndLiveElements(withRoute: route)
         
-        //        routeDiagram.setData(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
+        routeDiagram.setData(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
     }
     
     private func setDepartureTimeAndLiveElements(withRoute route: Route) {

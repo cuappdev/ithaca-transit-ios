@@ -604,8 +604,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
 
         cell?.setData(routes[indexPath.row])
-        cell?.addSubviews()
-        cell?.activateSubviewsConstraints()
+        cell?.addSubviewsToRouteDiagram()
+        cell?.activateRouteDiagramConstraints()
 
         // Add share action for long press gestures on non 3D Touch devices
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
