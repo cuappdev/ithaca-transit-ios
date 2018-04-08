@@ -57,7 +57,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     }
 
     /** Construct Directions based on Route and parse Waypoint / Path data */
-    func initializeRoute(_ route: Route, _ currentLocation: CLLocationCoordinate2D? = nil) {
+    func initializeRoute(_ route: Route, _ currentLocation: CLLocationCoordinate2D?) {
 
         self.route = route
         self.directions = route.directions
@@ -212,6 +212,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
         self.mapView = mapView
         view = mapView
+        
+        // Run to show bus indicators
+        mapView.delegate?.mapView?(mapView, didChange: mapView.camera)
         
     }
 

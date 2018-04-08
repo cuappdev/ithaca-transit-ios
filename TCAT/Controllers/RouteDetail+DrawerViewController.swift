@@ -34,7 +34,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     
     var busDelayNetworkTimer: Timer?
     /// Number of seconds to wait before auto-refreshing bus delay network call.
-    var busDelayNetworkRefreshRate: Double = 30
+    var busDelayNetworkRefreshRate: Double = 10
     
     // MARK: Initalization
 
@@ -62,6 +62,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         if let drawer = self.parent as? RouteDetailViewController {
             drawer.initialDrawerPosition = .partiallyRevealed
         }
+        summaryView.setRoute()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -230,63 +231,55 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     /// Fetch delay information and update table view cells.
     @objc func getDelays() {
         
-        let firstDepartDirection = directions.first(where: { $0.type == .depart })
+        // First depart direction
+        guard let delayDirection = directions.first(where: { $0.type == .depart }) else {
+            return
+        }
         
-        /// Variable to make sure a nil direction being set to the delay isn't reset.
-        var shouldReset: Bool = true
+        directions.forEach { $0.delay = nil }
         
-        for direction in directions {
+        let tripID = delayDirection.tripIdentifiers?.first
+        var stopID = delayDirection.stops.first?.id
+        
+        // Retrieve deleted stop ID (Route Parse) where first and last directions are removed.
+        if tripID != nil && stopID == nil {
+            stopID = route.rawDirections.first { (rawDir) -> Bool in
+                return rawDir.tripIdentifiers?.first == tripID
+            }?.stops.first?.id
+        }
+        
+        if let tripId = tripID, let stopId = stopID {
             
-            if let tripId = direction.tripIdentifiers?.first, let stopId = direction.stops.first?.id {
+            Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
                 
-                Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
+                if json["success"].boolValue {
                     
-                    if json["success"].boolValue {
-                        
-                        // print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
-                        direction.delay = json["data"]["delay"].int
-                        
-                        // Update delay variable of other directions
-                        
-                        self.directions.filter { $0.type == .walk || $0.type == .arrive }.forEach { (direction) in
-                            
-                            // If no delay, nil the delay
-                            guard let delay = direction.delay else {
-                                direction.delay = nil
-                                return
+                    // print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
+                    delayDirection.delay = json["data"]["delay"].int
+                    
+                    // Update delay variable of other ensuing directions
+                    
+                    self.directions.filter {
+                        let isAfter = self.directions.index(of: delayDirection)! < self.directions.index(of: $0)!
+                        return isAfter && $0.type == .walk || $0.type == .arrive
+                        }.forEach { (direction) in
+                            if let _ = direction.delay {
+                                direction.delay! += delayDirection.delay ?? 0
+                            } else {
+                                direction.delay = delayDirection.delay
                             }
-                            
-                            // Delay exists
-                            
-                            // Direction has existing delay
-                            if direction.delay != nil {
-                                // Reset delay to accumulate new results
-                                if shouldReset { direction.delay = 0 }
-                                direction.delay! += delay
-                            }
-                                
-                            // Direction doesn't have a delay
-                            else {
-                                direction.delay = delay
-                                shouldReset = false
-                            }
-                            
-                        }
-                        
-                        self.tableView.reloadData()
-                        if direction == firstDepartDirection {
-                            // Update summary view
-                            self.summaryView.setRoute(withDelay: true)
-                        }
-                        
                     }
-                    else {
-                        print("getDelays success: false")
-                    }
-                }, failure: { (error) in
-                    print("getDelays error: \(error.errorDescription ?? "")")
-                })
-            }
+                    
+                    self.tableView.reloadData()
+                    self.summaryView.setRoute()
+                    
+                }
+                else {
+                    print("getDelays success: false")
+                }
+            }, failure: { (error) in
+                print("getDelays error: \(error.errorDescription ?? "")")
+            })
         }
         
     }

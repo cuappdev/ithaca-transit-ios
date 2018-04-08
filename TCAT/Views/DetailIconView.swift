@@ -106,8 +106,8 @@ class DetailIconView: UIView {
     // MARK: Utility Functions
     
     public func updateTimes(with newDirection: Direction, isLast: Bool = false) {
-        updateScheduledTime(with: newDirection)
-        updateDelayedTime(with: newDirection)
+        updateScheduledTime(with: newDirection, isLast: isLast)
+        updateDelayedTime(with: newDirection, isLast: isLast)
     }
     
     /// Update scheduled label with direction's delay description. Use self.direction by default.
@@ -156,6 +156,7 @@ class DetailIconView: UIView {
         delayedTimeLabel.frame.origin.x = constant
         
         if let delay = direction.delay, delay >= 60, direction.type != .walk {
+            delayedTimeLabel.isHidden = false
             delayedTimeLabel.textColor = .liveRedColor
         } else {
             hideDelayedLabel()
@@ -175,11 +176,11 @@ class DetailIconView: UIView {
         super.init(coder: aDecoder)
     }
     
-    func prepareForReuse() {
-        scheduledTimeLabel.removeFromSuperview()
-        connectorTop.removeFromSuperview()
-        connectorBottom.removeFromSuperview()
-        statusCircle.removeFromSuperview()
-    }
+//    func prepareForReuse() {
+//        scheduledTimeLabel.removeFromSuperview()
+//        connectorTop.removeFromSuperview()
+//        connectorBottom.removeFromSuperview()
+//        statusCircle.removeFromSuperview()
+//    }
     
 }

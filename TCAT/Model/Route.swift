@@ -170,6 +170,8 @@ class Route: NSObject, JSONDecodable {
         var offset = 0
 
         for (index, direction) in directions.enumerated() {
+            
+            print("===")
 
             if direction.type == .depart {
 
@@ -193,6 +195,10 @@ class Route: NSObject, JSONDecodable {
                     directions.insert(arriveDirection, at: index + offset + 1)
                     offset += 1
 
+                }
+                
+                for (index, stop) in direction.stops.enumerated() {
+                    print("\(index):", stop.id)
                 }
 
                 // Remove inital bus stop and departure bus stop
