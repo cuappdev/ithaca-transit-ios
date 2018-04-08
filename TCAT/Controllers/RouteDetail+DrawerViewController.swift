@@ -261,7 +261,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
                     
                     self.directions.filter {
                         let isAfter = self.directions.index(of: delayDirection)! < self.directions.index(of: $0)!
-                        return isAfter && $0.type == .walk || $0.type == .arrive
+                        return isAfter && $0.type != .depart
                         }.forEach { (direction) in
                             if let _ = direction.delay {
                                 direction.delay! += delayDirection.delay ?? 0
@@ -350,9 +350,9 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         let direction = directions[indexPath.row]
         
         // Limit expandedCell to only one bus route at a time.
-//        if let cell = expandedCell, cell != tableView.cellForRow(at: indexPath) {
-//            toggleCellExpansion(at: tableView.indexPath(for: cell))
-//        }
+        if let cell = expandedCell, cell != tableView.cellForRow(at: indexPath) {
+            toggleCellExpansion(at: tableView.indexPath(for: cell))
+        }
 
         // Check if cell starts a bus direction, and should be expandable
         if direction.type == .depart || direction.type == .transfer {

@@ -213,9 +213,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         self.mapView = mapView
         view = mapView
         
-        // Run to show bus indicators
-        mapView.delegate?.mapView?(mapView, didChange: mapView.camera)
-        
     }
 
     // MARK: Status Bar Functions
@@ -368,6 +365,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
      */
     func setBusLocation(_ bus: BusLocation) {
         
+        let isFirstCall = buses.isEmpty
+        
         /// New bus coordinates
         let busCoords = CLLocationCoordinate2D(latitude: bus.latitude, longitude: bus.longitude)
         let existingBus = buses.first(where: {
@@ -419,6 +418,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             setIndex(of: marker, with: .bussing)
             marker.map = mapView
             buses.append(marker)
+            
+            // Run to present bus indicators (for first time)
+            if isFirstCall {
+                mapView.delegate?.mapView?(mapView, didChange: mapView.camera)
+            }
             
         }
         
@@ -497,6 +501,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             
             { // Update Indicator
                 if let placement = calculatePlacement(position: bus.position, view: bearingView) {
+                    
                     // existingIndicator.map = nil // Uncomment to avoid animation
                     existingIndicator.position = placement
                     existingIndicator.rotation = calculateBearing(from: placement, to: bus.position)
@@ -519,6 +524,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
                     let indicator = GMSMarker(position: placement)
                     indicator.appearAnimation = .pop
+                    indicator.rotation = calculateBearing(from: placement, to: bus.position)
                     indicator.iconView = bearingView
                     
                     updateUserData(for: indicator, with: [
@@ -541,6 +547,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         
         let padding: CGFloat = 16
         let bounds = mapView.projection.visibleRegion()
+        let isPartiallyRevealed = (self.parent as? RouteDetailViewController)?.drawerPosition == .partiallyRevealed
         
         var topOffset: Double {
             let origin = mapView.projection.coordinate(for: CGPoint(x: 0, y: 0)).latitude
@@ -553,8 +560,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             return abs(origin - withHeight)
         }
         var bottomOffset: Double {
-            // In progress
-            return 0
+            let constant = isPartiallyRevealed ? UIScreen.main.bounds.height / 2 - mapView.padding.bottom : 0
+            let origin = mapView.projection.coordinate(for: CGPoint(x: 0, y: 0)).latitude
+            let withHeight = mapView.projection.coordinate(for: CGPoint(x: 0, y: constant + view.frame.size.height)).latitude
+            return origin - withHeight
         }
         
         let top = bounds.farLeft.latitude - topOffset
@@ -592,10 +601,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             point.x += (view.frame.size.width / 2) + padding
         }
         if pastTopEdge {
-            point.y += padding
+            point.y += padding - (view.frame.size.width / 2)
         }
         if pastBottomEdge {
-            var inset: CGFloat = drawerDisplayController?.summaryView.frame.height ?? 0
+            var inset: CGFloat = isPartiallyRevealed ? 0 : drawerDisplayController?.summaryView.frame.height ?? 0
             if #available(iOS 11.0, *) {
                 inset += view.safeAreaInsets.bottom
             }
