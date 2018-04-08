@@ -14,6 +14,11 @@ enum LiveIndicatorSize: Double {
 
 class LiveIndicator: UIView {
     
+    // MARK: State vars
+    
+    let size: LiveIndicatorSize
+    let lineWidth: CGFloat
+    
     // MARK: View vars
     
     var circleLayer: CAShapeLayer!
@@ -23,7 +28,6 @@ class LiveIndicator: UIView {
     // MARK: Animation vars
     
     static let INTERVAL: TimeInterval = 4.0
-    
     static let DURATION: TimeInterval = 0.2
     let START_DELAY: TimeInterval = 0.0
     let END_DELAY: TimeInterval = 0.0 // 0.25
@@ -33,13 +37,16 @@ class LiveIndicator: UIView {
     // MARK: Init
     
     required init?(coder aDecoder: NSCoder) {
+        size = .small
+        lineWidth = CGFloat(size.rawValue)/4
         super.init(coder: aDecoder)
     }
     
     init(size: LiveIndicatorSize, color: UIColor) {
+        self.size = size
+        self.lineWidth = CGFloat(size.rawValue)/4
+
         super.init(frame: CGRect(x: 0, y: 0, width: size.rawValue, height: size.rawValue))
-        
-        let lineWidth = bounds.width/4
         
         circleLayer = getCircleLayer(color: color)
         largeArcLayer = getLargeArcLayer(color: color, lineWidth:  lineWidth)
@@ -55,6 +62,10 @@ class LiveIndicator: UIView {
     }
     
     // MARK: Resize
+    
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: CGFloat(size.rawValue) + lineWidth, height: CGFloat(size.rawValue) + lineWidth)
+    }
     
     private func resizeFrameToFitLayers(lineWidth: CGFloat) {
         frame = CGRect(x: frame.minX, y: frame.minY, width: frame.width + lineWidth, height: frame.height + lineWidth)
