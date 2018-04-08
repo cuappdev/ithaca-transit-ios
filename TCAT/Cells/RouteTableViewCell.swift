@@ -70,36 +70,21 @@ class RouteTableViewCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         departureTimeLabel = UILabel()
         arrowImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
-        
         departureStackView = UIStackView(arrangedSubviews: [departureTimeLabel, arrowImageView])
-        departureStackView.axis = .horizontal
-        departureStackView.spacing = spaceBtnDepartureElements
         
         travelTimeLabel = UILabel()
-
         timesStackView = UIStackView(arrangedSubviews: [travelTimeLabel, departureStackView])
-        timesStackView.axis = .horizontal
-        timesStackView.alignment = .center
         
         liveLabel = UILabel()
         liveIndicatorView = LiveIndicator(size: .small, color: .clear)
         stretchyFillerView = UIView()
-        
-        //  make stretchyFillerView’s horizontal content-hugging priority is lower than the label’s so it stretches to fill extra space
-        stretchyFillerView.setContentHuggingPriority(liveLabel.contentHuggingPriority(for: .horizontal) - 1, for: .horizontal)
-        
         liveStackView = UIStackView(arrangedSubviews: [liveLabel, liveIndicatorView, stretchyFillerView])
-        liveStackView.axis = .horizontal
-        liveStackView.alignment = .lastBaseline
-        liveStackView.spacing = spaceBtnLiveElements
         
         topBorder = UIView()
         routeDiagram = RouteDiagram()
         bottomBorder = UIView()
         cellSeparator = UIView()
-        
         verticalStackView = UIStackView(arrangedSubviews: [timesStackView, liveStackView, routeDiagram])
-        verticalStackView.axis = .vertical
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
@@ -112,9 +97,6 @@ class RouteTableViewCell: UITableViewCell {
         contentView.addSubview(verticalStackView)
         contentView.addSubview(bottomBorder)
         contentView.addSubview(cellSeparator)
-        
-        verticalStackView.layoutMargins = UIEdgeInsetsMake(topMargin, leftMargin, bottomMargin, rightMargin)
-        verticalStackView.isLayoutMarginsRelativeArrangement = true
         
         activateConstraints()
     }
@@ -130,32 +112,42 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Style
 
     private func styleVerticalStackView() {
+        verticalStackView.axis = .vertical
+        verticalStackView.layoutMargins = UIEdgeInsetsMake(topMargin, leftMargin, bottomMargin, rightMargin)
+        verticalStackView.isLayoutMarginsRelativeArrangement = true
+
         styleTimesStackView()
         styleLiveStackView()
     }
     
     private func styleTimesStackView() {
-        styleTravelTime()
-        styleDepartureElements()
-    }
-    
-    private func styleLiveStackView() {
-        styleLiveElements()
-    }
-    
-    private func styleTravelTime() {
+        timesStackView.axis = .horizontal
+        timesStackView.alignment = .center
+        
         travelTimeLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 16.0)
         travelTimeLabel.textColor = .primaryTextColor
+        
+        styleDepartureStackView()
     }
-
-    private func styleLiveElements() {
-        liveLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
-    }
-
-    private func styleDepartureElements() {
+    
+    private func styleDepartureStackView() {
+        departureStackView.axis = .horizontal
+        departureStackView.spacing = spaceBtnDepartureElements
+        
         departureTimeLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
         departureTimeLabel.textColor = .primaryTextColor
         arrowImageView.tintColor = .mediumGrayColor
+    }
+    
+    private func styleLiveStackView() {
+        //  make stretchyFillerView’s horizontal content-hugging priority is lower than the label’s so it stretches to fill extra space
+        stretchyFillerView.setContentHuggingPriority(liveLabel.contentHuggingPriority(for: .horizontal) - 1, for: .horizontal)
+        
+        liveStackView.axis = .horizontal
+        liveStackView.alignment = .lastBaseline
+        liveStackView.spacing = spaceBtnLiveElements
+        
+        liveLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
     }
 
     private func styleTopBorder() {
