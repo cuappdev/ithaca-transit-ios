@@ -51,7 +51,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     /** Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
      * dummy data will be used. The directions parameter have logical assumptions,
      * such as ArriveDirection always comes after DepartDirection. */
-    init(route: Route, currentLocation: CLLocationCoordinate2D? = nil) {
+    init(route: Route, currentLocation: CLLocationCoordinate2D?) {
         super.init(nibName: nil, bundle: nil)
         initializeRoute(route, currentLocation)
     }
@@ -132,7 +132,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     required convenience init(coder aDecoder: NSCoder) {
         let route = aDecoder.decodeObject(forKey: "route") as! Route
-        self.init(route: route)
+        self.init(route: route, currentLocation: nil)
     }
     
     // MARK: View-Related Functions

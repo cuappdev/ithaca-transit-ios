@@ -445,43 +445,41 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         if status == .denied {
             
-            var actions: [UIAlertAction] = []
-            
-            let theTitle = "Location Services Disabled"
-            let message = "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services."
-            var leftButton = "Cancel"
-            
-            if let showReminder = userDefaults.value(forKey: Constants.UserDefaults.locationAuthReminder) as? Bool {
-                if showReminder {
-                    actions.append(UIAlertAction(title: "Dismiss", style: .default))
-                    leftButton = "Don't Remind Me Again"
-                } else {
-                    return
-                }
-            } else {
-                userDefaults.set(true, forKey: Constants.UserDefaults.locationAuthReminder)
+            let alertController = UIAlertController(title: "Location Services Disabled", message: "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services.", preferredStyle: .alert)
+            let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
+                UIApplication.shared.open(URL(string: "App-prefs:root=LOCATION_SERVICES") ?? URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
+            }
+
+            guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
+                
+                userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
+                
+                let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+                alertController.addAction(cancelAction)
+                
+                alertController.addAction(settingsAction)
+                alertController.preferredAction = settingsAction
+                
+                present(alertController, animated: true)
+                
+                return
             }
             
-            let alertController = UIAlertController(title: theTitle, message: message, preferredStyle: .alert)
-            
-            // Cancel / Don't Remind Me Again
-            actions.append(UIAlertAction(title: leftButton, style: .default) { (_) in
-                if leftButton == "Don't Remind Me Again" {
-                    self.userDefaults.set(false, forKey: Constants.UserDefaults.locationAuthReminder)
-                }
-            })
-            
-            actions.append(UIAlertAction(title: "Settings", style: .default) { (_) in
-                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
-            })
-            
-            for action in actions {
-                alertController.addAction(action)
+            if !showReminder {
+                return
             }
+            
+            let dontRemindAgainAction = UIAlertAction(title: "Don't Remind Me Again", style: .default) { (_) in
+                self.userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
+            }
+            alertController.addAction(dontRemindAgainAction)
+            
+            alertController.addAction(settingsAction)
+            alertController.preferredAction = settingsAction
             
             present(alertController, animated: true)
+            
         }
-        
     }
     
 }
