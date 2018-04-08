@@ -79,7 +79,7 @@ struct Constants {
         
         static let version = "version"
         static let onboardingShown = "onboardingShown"
-        static let locationAuthReminder = "locationAuthReminder"
+        static let showLocationAuthReminder = "locationAuthReminder"
         
         static let recentSearch = "recentSearch"
         static let allBusStops = "allBusStops"
