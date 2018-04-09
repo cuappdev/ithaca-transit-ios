@@ -547,7 +547,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         
         let padding: CGFloat = 16
         let bounds = mapView.projection.visibleRegion()
-        let isPartiallyRevealed = (self.parent as? RouteDetailViewController)?.drawerPosition == .partiallyRevealed
+        let isPartiallyRevealed = (parent as? RouteDetailViewController)?.drawerPosition == .partiallyRevealed
         
         var topOffset: Double {
             let origin = mapView.projection.coordinate(for: CGPoint(x: 0, y: 0)).latitude
@@ -601,14 +601,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             point.x += (view.frame.size.width / 2) + padding
         }
         if pastTopEdge {
-            point.y += padding - (view.frame.size.width / 2)
+            point.y += padding - (view.frame.size.height / 2)
         }
         if pastBottomEdge {
-            var inset: CGFloat = isPartiallyRevealed ? 0 : drawerDisplayController?.summaryView.frame.height ?? 0
-            if #available(iOS 11.0, *) {
-                inset += view.safeAreaInsets.bottom
-            }
-            point.y -= padding + inset
+            let constant = isPartiallyRevealed ? 0 : view.frame.size.height
+            point.y -= padding + constant
         }
         
         // If no change needed, return nil.
