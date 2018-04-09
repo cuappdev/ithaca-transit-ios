@@ -106,32 +106,47 @@ class DetailIconView: UIView {
     // MARK: Utility Functions
     
     public func updateTimes(with newDirection: Direction, isLast: Bool = false) {
-        updateScheduledTime(with: newDirection)
-        updateDelayedTime(with: newDirection)
+        updateScheduledTime(with: newDirection, isLast: isLast)
+        updateDelayedTime(with: newDirection, isLast: isLast)
     }
     
     /// Update scheduled label with direction's delay description. Use self.direction by default.
     func updateScheduledTime(with newDirection: Direction? = nil, isLast: Bool = false) {
+        
         let direction: Direction = newDirection != nil ? newDirection! : self.direction
-        let timeString = isLast ? direction.endTimeDescription : direction.startTimeDescription
+        var timeString: String
+        
+        if direction.type == .walk {
+            timeString = isLast ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
+        } else {
+            timeString = isLast ? direction.endTimeDescription : direction.startTimeDescription
+        }
         
         scheduledTimeLabel.text = timeString
         scheduledTimeLabel.sizeToFit()
         scheduledTimeLabel.center = center
         scheduledTimeLabel.frame.origin.x = constant
         
-        if let delay = direction.delay, delay < 60 {
-            scheduledTimeLabel.textColor = .liveGreenColor
-            hideDelayedLabel()
-        } else {
+        if direction.type == .walk {
             scheduledTimeLabel.textColor = .primaryTextColor
-            scheduledTimeLabel.center.y -= timeLabelConstant
+            hideDelayedLabel()
+        }
+        
+        else {
+            if let delay = direction.delay, delay < 60 {
+                scheduledTimeLabel.textColor = .liveGreenColor
+                hideDelayedLabel()
+            } else {
+                scheduledTimeLabel.textColor = .primaryTextColor
+                scheduledTimeLabel.center.y -= timeLabelConstant
+            }
         }
         
     }
     
     /// Update delayed label with direction's delay description. Use self.direction by default.
     func updateDelayedTime(with newDirection: Direction? = nil, isLast: Bool = false) {
+        
         let direction: Direction = newDirection != nil ? newDirection! : self.direction
         let timeString = isLast ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
         
@@ -140,7 +155,8 @@ class DetailIconView: UIView {
         delayedTimeLabel.center.y = center.y + timeLabelConstant
         delayedTimeLabel.frame.origin.x = constant
         
-        if let delay = direction.delay, delay >= 60 {
+        if let delay = direction.delay, delay >= 60, direction.type != .walk {
+            delayedTimeLabel.isHidden = false
             delayedTimeLabel.textColor = .liveRedColor
         } else {
             hideDelayedLabel()
@@ -160,11 +176,11 @@ class DetailIconView: UIView {
         super.init(coder: aDecoder)
     }
     
-    func prepareForReuse() {
-        scheduledTimeLabel.removeFromSuperview()
-        connectorTop.removeFromSuperview()
-        connectorBottom.removeFromSuperview()
-        statusCircle.removeFromSuperview()
-    }
+//    func prepareForReuse() {
+//        scheduledTimeLabel.removeFromSuperview()
+//        connectorTop.removeFromSuperview()
+//        connectorBottom.removeFromSuperview()
+//        statusCircle.removeFromSuperview()
+//    }
     
 }

@@ -41,12 +41,11 @@ class SmallDetailTableViewCell: UITableViewCell {
         
         let shouldAddSubview = iconView == nil
 
-        iconView = DetailIconView(direction: direction, height: cellHeight, firstStep: firstStep, lastStep: lastStep)
-        
         if shouldAddSubview {
+            iconView = DetailIconView(direction: direction, height: cellHeight, firstStep: firstStep, lastStep: lastStep)
             contentView.addSubview(iconView!)
         } else {
-            iconView?.updateTimes(with: direction)
+            iconView?.updateTimes(with: direction, isLast: lastStep)
         }
         
         if direction.type == .arrive {
@@ -59,9 +58,6 @@ class SmallDetailTableViewCell: UITableViewCell {
                 walkString += " (\(direction.travelDistance.roundedString))"
             }
             titleLabel.attributedText = bold(pattern: direction.name, in: walkString)
-            if lastStep {
-                iconView?.updateTimes(with: direction, isLast: true)
-            }
         }
         
         titleLabel.sizeToFit()

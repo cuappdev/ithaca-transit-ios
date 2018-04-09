@@ -88,7 +88,7 @@ class SummaryView: UIView {
     }
     
     /// Update summary card data and position accordingly
-    func setRoute(withDelay: Bool = false) {
+    func setRoute() {
 
         setBusIcons()
         
@@ -106,17 +106,16 @@ class SummaryView: UIView {
             
             var fragment = ""
             
-            if withDelay {
-                if let delay = departDirection.delay {
-                    fragment = " \(space)" // Include space for live indicator
-                    if delay >= 60 {
-                        color = .liveRedColor
-                    } else {
-                        color = .liveGreenColor
-                    }
+            if let delay = departDirection.delay {
+                fragment = " \(space)" // Include space for live indicator
+                if delay >= 60 {
+                    color = .liveRedColor
                 } else {
-                    color = .clear
+                    color = .liveGreenColor
                 }
+            } else {
+                liveIndicator.setColor(to: .clear)
+                color = .primaryTextColor
             }
             
             let content = "Depart at \(departDirection.startTimeWithDelayDescription)\(fragment) from \(departDirection.name)"
@@ -129,16 +128,15 @@ class SummaryView: UIView {
             
             mainLabel.attributedText = attributedString
             
-            if withDelay {
-                if let stringRect = mainLabel.boundingRect(of: departDirection.startTimeWithDelayDescription + " ") {
-                    liveIndicator.frame.origin.x = mainLabel.frame.minX + stringRect.maxX
-                    liveIndicator.center.y = mainLabel.frame.minY + stringRect.midY + 1
-                    liveIndicator.setColor(to: color)
-                } else {
-                    print("[SummaryView] Could not find phrase in label")
-                    liveIndicator.setColor(to: .clear)
-                }
+            if let stringRect = mainLabel.boundingRect(of: departDirection.startTimeWithDelayDescription + " ") {
+                liveIndicator.frame.origin.x = mainLabel.frame.minX + stringRect.maxX
+                liveIndicator.center.y = mainLabel.frame.minY + stringRect.midY + 1
+                liveIndicator.setColor(to: departDirection.delay == nil ? .clear : color)
+            } else {
+                print("[SummaryView] Could not find phrase in label")
+                liveIndicator.setColor(to: .clear)
             }
+            
             
         } else {
             let content = route.directions.first?.locationNameDescription ?? "Route Directions"
@@ -201,7 +199,7 @@ class SummaryView: UIView {
         subviews.filter { $0.tag == iconTag }.removeViewsFromSuperview()
         
         // Create and place bus icons
-        let busRoutes: [Int] = route.directions.flatMap {
+        let busRoutes: [Int] = route.directions.compactMap {
             return $0.type == .depart ? $0.routeNumber : nil
         }
         
@@ -255,10 +253,6 @@ class SummaryView: UIView {
             }
             
         }
-        
-    }
-    
-    func setMainLabel() {
         
     }
     

@@ -34,7 +34,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     
     var busDelayNetworkTimer: Timer?
     /// Number of seconds to wait before auto-refreshing bus delay network call.
-    var busDelayNetworkRefreshRate: Double = 30
+    var busDelayNetworkRefreshRate: Double = 10
     
     // MARK: Initalization
 
@@ -62,6 +62,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         if let drawer = self.parent as? RouteDetailViewController {
             drawer.initialDrawerPosition = .partiallyRevealed
         }
+        summaryView.setRoute()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -230,62 +231,57 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     /// Fetch delay information and update table view cells.
     @objc func getDelays() {
         
-        let firstDepartDirection = directions.first(where: { $0.type == .depart })
-        
-        /// Variable to make sure a nil direction being set to the delay isn't reset.
-        var shouldReset: Bool = true
-        
-        // Update delay variable of directions not directly related to transit.
-        func updateRemainingDirections(with optionalDelay: Int?) {
-            directions.filter { $0.type == .walk || $0.type == .arrive }.forEach { (direction) in
-                
-                // If no delay, nil the delay
-                guard let delay = optionalDelay else {
-                    direction.delay = nil
-                    return
-                }
-                
-                // Delay exists
-                
-                // Direction has existing delay
-                if direction.delay != nil {
-                    // Reset delay to accumulate new results
-                    if shouldReset { direction.delay = 0 }
-                    direction.delay! += delay
-                }
-                    
-                    // Direction doesn't have a delay
-                else {
-                    direction.delay = delay
-                    shouldReset = false
-                }
-                
-            }
+        // First depart direction
+        guard let delayDirection = directions.first(where: { $0.type == .depart }) else {
+            return
         }
         
-        for direction in directions {
-            if let tripId = direction.tripIdentifiers?.first, let stopId = direction.stops.first?.id {
-                Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
-                    if json["success"].boolValue {
-                        
-                        // print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
-                        direction.delay = json["data"]["delay"].int
-                        updateRemainingDirections(with: direction.delay)
-                        
-                        self.tableView.reloadData()
-                        if direction == firstDepartDirection {
-                            // Update summary view
-                            self.summaryView.setRoute(withDelay: true)
+        directions.forEach { $0.delay = nil }
+        
+        let tripID = delayDirection.tripIdentifiers?.first
+        var stopID = delayDirection.stops.first?.id
+        
+        // Retrieve deleted stop ID (Route Parse) where first and last directions are removed.
+        if let tripID = tripID, stopID == nil {
+            stopID = self.route.rawDirections.first { (rawDir) -> Bool in
+                return rawDir.tripIdentifiers?.first == tripID
+            }?.stops.first?.id
+        }
+        
+        if let tripId = tripID, let stopId = stopID {
+            
+            Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
+                
+                if json["success"].boolValue {
+                    
+                    // print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
+                    delayDirection.delay = json["data"]["delay"].int
+                    
+                    // Update delay variable of other ensuing directions
+                    
+                    self.directions.filter {
+                        let isAfter = self.directions.index(of: delayDirection)! < self.directions.index(of: $0)!
+                        return isAfter && $0.type != .depart
+                    }
+                    
+                    .forEach { (direction) in
+                        if let _ = direction.delay {
+                            direction.delay! += delayDirection.delay ?? 0
+                        } else {
+                            direction.delay = delayDirection.delay
                         }
-                        
                     }
-                    else {
-                        print("getDelays success : false")
-                    }
-                }, failure: { (error) in
-                    print("getDelays error: \(error.errorDescription ?? "")")
-                })
-            }
+                    
+                    self.tableView.reloadData()
+                    self.summaryView.setRoute()
+                    
+                }
+                else {
+                    print("getDelays success: false")
+                }
+            }, failure: { (error) in
+                print("getDelays error: \(error.errorDescription ?? "")")
+            })
         }
         
     }
@@ -356,9 +352,9 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         let direction = directions[indexPath.row]
         
         // Limit expandedCell to only one bus route at a time.
-//        if let cell = expandedCell, cell != tableView.cellForRow(at: indexPath) {
-//            toggleCellExpansion(at: tableView.indexPath(for: cell))
-//        }
+        if let cell = expandedCell, cell != tableView.cellForRow(at: indexPath) {
+            toggleCellExpansion(at: tableView.indexPath(for: cell))
+        }
 
         // Check if cell starts a bus direction, and should be expandable
         if direction.type == .depart || direction.type == .transfer {

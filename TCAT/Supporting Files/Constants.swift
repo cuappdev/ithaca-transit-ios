@@ -77,6 +77,7 @@ struct Constants {
     
     struct UserDefaults {
         
+        static let version = "version"
         static let onboardingShown = "onboardingShown"
         static let showLocationAuthReminder = "locationAuthReminder"
         
@@ -87,8 +88,49 @@ struct Constants {
     }
     
     struct Values {
+        
         static let maxDistanceBetweenStops = 160.0
         static let fuzzySearchMinimumValue = 75
+        
+        /// The most extreme points of TCAT Routes
+        struct RouteMaxima {
+            
+            /// Max Latitude Value
+            static let north: Double = 42.61321283145329
+            /// Max Longitude Value
+            static let east: Double = -76.28125469914926
+            /// Min Latitude Value
+            static let south: Double = 42.32796328578829
+            /// Min Longitude Value
+            static let west: Double = -76.67690943302259
+            
+        }
+
+        /// The borders to use for valid TCAT bus service area
+        struct RouteBorders {
+            
+            // Calculated by converting latitudeMidpoint to radians and multuplying by oneLatDegree
+            // https://gis.stackexchange.com/questions/142326/calculating-longitude-length-in-miles
+            // let oneLatDegree = 69.172
+            // let latitudeMidpoint = 42.470588059
+            // let oneMileInLatitude = 1 / 69.172
+            // let oneMileInLongitude = 1 / 51.2738554594
+            // Conversion: 1º / x mi
+            
+            /// Max Latitude Value
+            static let northBorder: Double = 42.61321283145329 + (1 / 69.172)
+            /// Max Longitude Value
+            static let eastBorder: Double = -76.28125469914926 + (1 / 51.2738554594)
+            /// Min Latitude Value
+            static let southBorder: Double = 42.32796328578829 - (1 / 69.172)
+            /// Min Longitude Value
+            static let westBorder: Double = -76.67690943302259 - (1 / 51.2738554594)
+            
+        }
+        
+        
+
+        
     }
     
     struct Stops {

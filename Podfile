@@ -2,8 +2,10 @@
 platform :ios, '10.0'
 
 target 'TCAT' do
+    
   # Comment this line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
+  inhibit_all_warnings!
 
   # Pods for TCAT
   
@@ -13,7 +15,7 @@ target 'TCAT' do
   
   # Networking + Data
   pod 'Alamofire', '~> 4.7'
-  pod 'TRON', '~> 4.1.2', :inhibit_warnings => true
+  pod 'TRON', '~> 4.1.2'
   pod 'SwiftyJSON', '~> 4.0'
   
   # Analytics
@@ -23,21 +25,13 @@ target 'TCAT' do
 
   # UI Frameworks
   pod 'DZNEmptyDataSet'
-  pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/AAAstorga/Fuzzywuzzy_swift.git', :commit => '9c94253b2e83abffcce5014808fe1a22c6b97d90'
   pod 'NotificationBannerSwift', :git=> 'https://github.com/mattbarker016/NotificationBanner.git', :branch => 'mattbarker016/statusBannerFix'
-  pod 'Pulley', :git=> 'https://github.com/52inc/Pulley.git', :branch => 'master'
+  pod 'Pulley'
   pod 'Presentation'
   pod 'SnapKit'
 
-post_install do |installer|
-    installer.pods_project.targets.each do |target|
-        if ['NotificationBannerSwift', 'SnapKit', 'Fuzzywuzzy_swift', 'TRON', 'SwiftyJSON'].include? target.name
-            target.build_configurations.each do |config|
-                config.build_settings['SWIFT_VERSION'] =  '4.0'
-            end
-        end
-    end
-end
+  # Other
+  pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/AAAstorga/Fuzzywuzzy_swift.git'
 
   target 'TCATTests' do
     inherit! :search_paths

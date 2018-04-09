@@ -42,6 +42,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     var currentlySearching: Bool = false
 
     // MARK: View vars
+    
+    let mediumTapticGenerator = UIImpactFeedbackGenerator(style: .medium)
 
     var routeSelection: RouteSelectionView!
     var datePickerView: DatePickerView!
@@ -79,7 +81,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         setupRouteSelection()
         setupSearchBar()
-        setupDatepicker()
+        setupDatePicker()
         setupRouteResultsTableView()
         setupEmptyDataSet()
 
@@ -125,6 +127,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             banner = nil
             UIApplication.shared.statusBarStyle = .default
         }
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return isBannerShown ? .lightContent : .default
     }
 
     // MARK: Route Selection view
@@ -282,10 +288,76 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         searchBarView.searchController?.isActive = true
     }
 
-    // MARK: Process data
+    // MARK: Process Data
+    
+    /// Determine if coordinates in parameters are within range
+    func validCoordinates(_ requestParameters: [String : Any]?) -> Bool {
+        
+        let start = requestParameters?["start"] as? String ?? ""
+        let end = requestParameters?["end"] as? String ?? ""
+        let startCoordinates = start.components(separatedBy: ",").compactMap { Double($0) }
+        let endCoordinates = end.components(separatedBy: ",").compactMap { Double($0) }
+        
+        if startCoordinates.count < 2 || endCoordinates.count < 2 {
+            return false
+        }
+        
+        let latitudeValues: [Double] = [startCoordinates[0], endCoordinates[0]]
+        let longitudeValues: [Double] = [startCoordinates[1], endCoordinates[1]]
+        
+        let validLatitudes = latitudeValues.reduce(true) { (result, latitude) -> Bool in
+            return result && latitude <= Constants.Values.RouteBorders.northBorder &&
+                latitude >= Constants.Values.RouteBorders.southBorder
+        }
+        
+        let validLongitudes = longitudeValues.reduce(true) { (result, longitude) -> Bool in
+            return result && longitude <= Constants.Values.RouteBorders.eastBorder &&
+                longitude >= Constants.Values.RouteBorders.westBorder
+        }
+        
+        return validLatitudes && validLongitudes
+        
+    }
+    
+    /// Completion function to call once Network.getRoutes returns
+    func requestDidFinish(with error: NSError? = nil, customMessage: String? = nil) {
+        
+        if let err = error {
+            
+            let message = err.code >= 400 ? "Could not connect to server" : "Route calculation error. Please retry."
+            let type: BannerStyle = err.code >= 400 ? .danger : .warning
+            
+            banner = StatusBarNotificationBanner(title: customMessage ?? message, style: type)
+            banner?.autoDismiss = false
+            banner?.dismissOnTap = true
+            self.banner?.show(queuePosition: .front, on: self.navigationController)
+            self.isBannerShown = true
+            
+            let payload = GetRoutesErrorPayload(type: error?.domain ?? "No Error Type",
+                                                description: error?.userInfo["description"] as? String ?? "",
+                                                url: error?.userInfo["url"] as? String)
+            RegisterSession.shared?.log(payload)
+            
+        } else {
+            if isBannerShown {
+                isBannerShown = false
+                banner?.dismiss()
+                banner = nil
+            }
+            mediumTapticGenerator.impactOccurred()
+        }
+        
+        UIApplication.shared.statusBarStyle = preferredStatusBarStyle
+        currentlySearching = false
+        routeResults.reloadData()
+        
+    }
 
     func searchForRoutes() {
-        if let time = searchTime,
+      
+        if let searchFrom = searchFrom,
+            let searchTo = searchTo,
+            let time = searchTime,
             let startingDestination = searchFrom as? CoordinateAcceptor,
             let endingDestination = searchTo as? CoordinateAcceptor
         {
@@ -296,86 +368,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             routeResults.reloadData()
             
             // Prepare feedback on Network request
-            let tapticGenerator = UIImpactFeedbackGenerator(style: .medium)
-            tapticGenerator.prepare()
-
-            // Check if to and from location is the same
-            if searchFrom?.name != searchTo?.name {
-                
-                Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
-                    
-                    if #available(iOS 10.0, *) {
-                        self.routeResults.refreshControl?.endRefreshing()
-                    } else {
-                        self.refreshControl.endRefreshing()
-                    }
-                    
-                    func requestDidFinish(with error: NSError? = nil) {
-                        if let err = error {
-                            
-                            let message = err.code >= 400 ? "Could not connect to server" : "Route calculation error. Please retry."
-                            let type: BannerStyle = err.code >= 400 ? .danger : .warning
-                            
-                            self.banner = StatusBarNotificationBanner(title: message, style: type)
-                            self.banner?.autoDismiss = false
-                            self.banner?.dismissOnTap = true
-                            self.banner?.show(queuePosition: .front, on: self.navigationController)
-                            self.isBannerShown = true
-                            
-                            let payload = GetRoutesErrorPayload(type: error?.domain ?? "No Error Type",
-                                                                description: error?.userInfo["description"] as? String ?? "",
-                                                                url: error?.userInfo["url"] as? String)
-                            RegisterSession.shared?.log(payload)
-                            
-                        } else {
-                            if self.isBannerShown {
-                                self.isBannerShown = false
-                                self.banner?.dismiss()
-                                self.banner = nil
-                            }
-                            tapticGenerator.impactOccurred()
-                        }
-                        
-                        UIApplication.shared.statusBarStyle = self.preferredStatusBarStyle
-                        self.currentlySearching = false
-                        self.routeResults.reloadData()
-                        
-                    }
-                    
-                    if let alamofireRequest = request?.perform(withSuccess: { (routeJSON) in
-                        Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
-                            self.routes = parsedRoutes
-                            requestDidFinish(with: error) // 300 error for Route Calculation Failure
-                        })
-                    }, failure: { (networkError) in
-                        let domain = "Network Failure: \((networkError.error as NSError?)?.domain ?? "No Domain")"
-                        let description = (networkError.localizedDescription) + ", " + ((networkError.error as NSError?)?.description ?? "n/a")
-                        let error = NSError(domain: domain, code: 500, userInfo: [
-                            "description" : description,
-                            "url" : networkError.request?.url?.absoluteString ?? "n/a"
-                        ])
-                        self.routes = []
-                        requestDidFinish(with: error)
-                    })
-                    { // Handle non-null request
-                        let payload = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
-                                                                    requestUrl: alamofireRequest.request?.url?.absoluteString,
-                                                                    stopType: nil)
-                        RegisterSession.shared?.log(payload)
-                    }
-                        
-                    else { // Catch error of coordinates not being found
-                        let error = NSError(domain: "Null Coordinates", code: 400, userInfo: [
-                            "description" : "Coordinates for Google Place don't exist."
-                        ])
-                        requestDidFinish(with: error)
-                    }
-                    
-                }
-                
-            } // end conditional ehecking names
+            mediumTapticGenerator.prepare()
             
-            else {
+            let sameLocation = searchFrom.name == searchTo.name
+            
+            if sameLocation {
                 
                 let title = "You're here!"
                 let message = "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta)."
@@ -389,12 +386,79 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 
             }
 
+            // Check if to and from location is the same
+            else {
+                
+                Network.getRoutes(start: startingDestination, end: endingDestination, time: time, type: searchTimeType) { request in
+
+                    // Process Result
+                    
+                    if #available(iOS 10.0, *) {
+                        self.routeResults.refreshControl?.endRefreshing()
+                    } else {
+                        self.refreshControl.endRefreshing()
+                    }
+                    
+                    // Edge Case
+                    
+                    if !self.validCoordinates(request?.parameters) {
+                        
+                        let title = "Location Out Of Range"
+                        let message = "Try looking for another route with start and end locations closer to Tompkins County."
+                        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                        let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                        alertController.addAction(action)
+                        self.present(alertController, animated: true, completion: nil)
+                        
+                        self.currentlySearching = false
+                        self.routeResults.reloadData()
+                        
+                        let error = NSError(domain: title, code: 300, userInfo: [
+                            "description" : message,
+                        ])
+                        self.requestDidFinish(with: error, customMessage: title)
+                        
+                        return
+                        
+                    }
+                    
+                    // Handle Request
+                    
+                    if let alamofireRequest = request?.perform(withSuccess: { (routeJSON) in
+                        Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
+                            self.routes = parsedRoutes
+                            self.requestDidFinish(with: error) // 300 error for Route Calculation Failure
+                        })
+                    }, failure: { (networkError) in
+                        let domain = "Network Failure: \((networkError.error as NSError?)?.domain ?? "No Domain")"
+                        let description = (networkError.localizedDescription) + ", " + ((networkError.error as NSError?)?.description ?? "n/a")
+                        let error = NSError(domain: domain, code: 500, userInfo: [
+                            "description" : description,
+                            "url" : networkError.request?.url?.absoluteString ?? "n/a"
+                        ])
+                        self.routes = []
+                        self.requestDidFinish(with: error)
+                    })
+                    { // Handle non-null request
+                        let payload = DestinationSearchedEventPayload(destination: self.searchTo?.name ?? "",
+                                                                    requestUrl: alamofireRequest.request?.url?.absoluteString,
+                                                                    stopType: nil)
+                        RegisterSession.shared?.log(payload)
+                    }
+                        
+                    else { // Catch error of coordinates not being found
+                        let error = NSError(domain: "Null Coordinates", code: 400, userInfo: [
+                            "description" : "Coordinates for Google Place don't exist."
+                        ])
+                        self.requestDidFinish(with: error)
+                    }
+                    
+                }
+                
+            } // end conditional ehecking names
+
         } // end if let
 
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return isBannerShown ? .lightContent : .default
     }
 
     // MARK: Location Manager Delegate
@@ -494,9 +558,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         searchBarView.resultsViewController?.currentLocation?.long = coordinate.longitude
     }
 
-    // MARK: Datepicker
+    // MARK: Date Picker
 
-    private func setupDatepicker() {
+    private func setupDatePicker() {
         setupDatePickerView()
         setupDatePickerOverlay()
     }
@@ -787,7 +851,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: RouteDetailViewController
     
     func createRouteDetailViewController(from route: Route) -> RouteDetailViewController? {
-        let contentViewController = RouteDetailContentViewController(route: route, currentLocation: currentLocation)
+        
+        var routeDetailCurrentLocation = currentLocation
+        if searchTo?.name != Constants.Stops.currentLocation && searchFrom?.name != Constants.Stops.currentLocation {
+            routeDetailCurrentLocation = nil // If route doesn't involve current location, don't pass along.
+        }
+        
+        let contentViewController = RouteDetailContentViewController(route: route, currentLocation: routeDetailCurrentLocation)
         guard let drawerViewController = contentViewController.drawerDisplayController else {
             return nil
         }

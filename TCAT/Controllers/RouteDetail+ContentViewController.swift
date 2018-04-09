@@ -63,6 +63,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         self.directions = route.directions
         self.currentLocation = currentLocation
         
+        let isWalkingRoute = directions.reduce(true) { $0 && $1.type == .walk }
+        
         // Plot the paths of all directions
         for (arrayIndex, direction) in directions.enumerated() {
 
@@ -71,24 +73,34 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             for (pathIndex, point) in direction.path.enumerated() {
 
                 let isStop: Bool = direction.type != .walk
-                var type: WaypointType = .none
+                var typeNotSet = true
+                var type: WaypointType = .none {
+                    didSet {
+                        typeNotSet = false
+                    }
+                }
                 
                 // First Direction
                 if arrayIndex == 0 {
                     // First Waypoint
                     if pathIndex == 0 {
-                        if currentLocation == nil {
-                           type = .origin // Don't set, current location will show "start"
+                        if currentLocation == nil || isWalkingRoute {
+                            type = .origin
                         }
                     }
                     // Last Waypoint
                     else if pathIndex == direction.path.count - 1 {
-                        type = isStop ? .bus : .none
+                        // Handle when first == last
+                        if directions.count == 1 {
+                            type = .destination
+                        } else {
+                            type = isStop ? .bus : .none
+                        }
                     }
                 }
                 
                 // Last Direction
-                else if arrayIndex == directions.count - 1 {
+                if typeNotSet && arrayIndex == directions.count - 1 {
                     // First Waypoint
                     if pathIndex == 0 {
                         type = isStop ? .bus : .none
@@ -100,7 +112,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 }
                 
                 // First & Last Bus Segments
-                else if direction.type == .depart && pathIndex == 0 || pathIndex == direction.path.count - 1 {
+                if typeNotSet && direction.type == .depart && (pathIndex == 0 || pathIndex == direction.path.count - 1) {
                     type = .bus
                 }
 
@@ -193,14 +205,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         let bottom = drawerDisplayController?.summaryView.frame.height ?? 0
         mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
 
-        // Most extreme points on TCAT Route map
-        let north = 42.61321283145329
-        let east = -76.28125469914926
-        let south = 42.32796328578829
-        let west = -76.67690943302259
-
-        let northEast = CLLocationCoordinate2D(latitude: north, longitude: east)
-        let southWest = CLLocationCoordinate2D(latitude: south, longitude: west)
+        let northEast = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.north, longitude: Constants.Values.RouteMaxima.east)
+        let southWest = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.south, longitude: Constants.Values.RouteMaxima.west)
         let panBounds = GMSCoordinateBounds(coordinate: northEast, coordinate: southWest)
         mapView.cameraTargetBounds = panBounds
 
@@ -359,6 +365,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
      */
     func setBusLocation(_ bus: BusLocation) {
         
+        let isFirstCall = buses.isEmpty
+        
         /// New bus coordinates
         let busCoords = CLLocationCoordinate2D(latitude: bus.latitude, longitude: bus.longitude)
         let existingBus = buses.first(where: {
@@ -410,6 +418,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             setIndex(of: marker, with: .bussing)
             marker.map = mapView
             buses.append(marker)
+            
+            // Run to present bus indicators (for first time)
+            if isFirstCall {
+                mapView.delegate?.mapView?(mapView, didChange: mapView.camera)
+            }
             
         }
         
@@ -488,6 +501,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             
             { // Update Indicator
                 if let placement = calculatePlacement(position: bus.position, view: bearingView) {
+                    
                     // existingIndicator.map = nil // Uncomment to avoid animation
                     existingIndicator.position = placement
                     existingIndicator.rotation = calculateBearing(from: placement, to: bus.position)
@@ -510,7 +524,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
                     let indicator = GMSMarker(position: placement)
                     indicator.appearAnimation = .pop
+                    indicator.rotation = calculateBearing(from: placement, to: bus.position)
                     indicator.iconView = bearingView
+                    setIndex(of: indicator, with: .bussing)
                     
                     updateUserData(for: indicator, with: [
                         Constants.BusUserData.actualCoordinates : bus.position,
@@ -532,6 +548,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         
         let padding: CGFloat = 16
         let bounds = mapView.projection.visibleRegion()
+        let isPartiallyRevealed = (self.parent as? RouteDetailViewController)?.drawerPosition == .partiallyRevealed
         
         var topOffset: Double {
             let origin = mapView.projection.coordinate(for: CGPoint(x: 0, y: 0)).latitude
@@ -544,8 +561,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             return abs(origin - withHeight)
         }
         var bottomOffset: Double {
-            // In progress
-            return 0
+            let constant = isPartiallyRevealed ? UIScreen.main.bounds.height / 2 - mapView.padding.bottom : 0
+            let origin = mapView.projection.coordinate(for: CGPoint(x: 0, y: 0)).latitude
+            let withHeight = mapView.projection.coordinate(for: CGPoint(x: 0, y: constant + view.frame.size.height)).latitude
+            return origin - withHeight
         }
         
         let top = bounds.farLeft.latitude - topOffset
@@ -583,10 +602,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             point.x += (view.frame.size.width / 2) + padding
         }
         if pastTopEdge {
-            point.y += padding
+            point.y += padding - (view.frame.size.width / 2)
         }
         if pastBottomEdge {
-            var inset: CGFloat = drawerDisplayController?.summaryView.frame.height ?? 0
+            var inset: CGFloat = isPartiallyRevealed ? 0 : drawerDisplayController?.summaryView.frame.height ?? 0
             if #available(iOS 11.0, *) {
                 inset += view.safeAreaInsets.bottom
             }
@@ -659,6 +678,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             case .destination: return 3
             case .stop: return 1
             case .walking: return 0
+            // For live bus icon / indicators
             case .bussing: return 999 // large constant to place above other elements
             default: return 0
             }

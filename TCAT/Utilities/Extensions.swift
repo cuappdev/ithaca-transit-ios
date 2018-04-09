@@ -329,7 +329,7 @@ extension Array where Element: UIView {
 
 extension Array : JSONDecodable {
     public init(json: JSON) {
-        self.init(json.arrayValue.flatMap {
+        self.init(json.arrayValue.compactMap {
             if let type = Element.self as? JSONDecodable.Type {
                 let element : Element?
                 do {

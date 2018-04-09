@@ -36,7 +36,7 @@ class Network {
     static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
     
     /// Deployed server instance used for release
-    static let releaseIPAddress = "52.0.104.13"
+    static let releaseIPAddress = "transit-backend.cornellappdev.com" // 52.0.104.13
     static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
     
     /// Network IP address being used for specified networkType
