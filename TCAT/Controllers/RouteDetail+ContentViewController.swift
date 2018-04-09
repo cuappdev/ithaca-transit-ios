@@ -152,6 +152,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         shareButton.tintColor = .primaryTextColor
         guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
+        
+        // Debug Function
+        // createDebugBusIcon()
 
     }
     
@@ -701,5 +704,21 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         
     }
     
+    /// Create fake bus for debugging and testing bus indicators
+    func createDebugBusIcon() {
+        let bus = BusLocation(dataType: .validData, destination: "", deviation: 0, delay: 0, direction: "", displayStatus: "", gpsStatus: 0, heading: 0, lastStop: "", lastUpdated: Date(), latitude: 42.4491411, longitude: -76.4836815, name: 16, opStatus: "", routeID: "", runID: 0, speed: 0, tripID: "", vehicleID: 0)
+        let coords = CLLocationCoordinate2D(latitude: 42.4491411, longitude: -76.4836815)
+        let marker = GMSMarker(position: coords)
+        (bus.iconView as? BusLocationView)?.updateBus(to: coords, with: Double(bus.heading))
+        marker.iconView = bus.iconView
+        marker.appearAnimation = .pop
+        setIndex(of: marker, with: .bussing)
+        updateUserData(for: marker, with: [
+            Constants.BusUserData.actualCoordinates : coords,
+            Constants.BusUserData.vehicleID : 123456789
+            ])
+        marker.map = mapView
+        buses.append(marker)
+    }
 
 }
