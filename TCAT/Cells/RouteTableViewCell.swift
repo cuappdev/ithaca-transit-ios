@@ -63,7 +63,7 @@ class RouteTableViewCell: UITableViewCell {
     let arrowImageViewHeight: CGFloat = 11.5
     let arrowImageViewWidth: CGFloat = 6
     
-    let spaceBtnLiveElements: CGFloat = 2
+    let spaceBtnLiveElements: CGFloat = 4
 
     // MARK: Init
 
@@ -329,7 +329,9 @@ class RouteTableViewCell: UITableViewCell {
             let direction = route.getFirstDepartRawDirection(),
             let tripId = direction.tripIdentifiers?.first,
             let stopId = direction.stops.first?.id  {
+            
             Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
+                
                 if json["success"].boolValue {
                     guard let delay = json["data"]["delay"].int else {
                         self.setDepartureTimeAndLiveElements(withRoute: route)

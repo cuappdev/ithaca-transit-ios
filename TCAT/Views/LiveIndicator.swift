@@ -1,14 +1,14 @@
 //
 //  LiveIndicator.swift
-//  
 //
-//  Created by Monica Ong on 4/8/18.
+//  Created by Matt Barker & Monica Ong on 4/8/18.
+//  Copyright © 2018 cuappdev. All rights reserved.
 //
 
 import UIKit
 
 enum LiveIndicatorSize: Double {
-    case small = 6.5
+    case small = 8
     case large = 12
 }
 
@@ -30,7 +30,7 @@ class LiveIndicator: UIView {
     static let INTERVAL: TimeInterval = 4.0
     static let DURATION: TimeInterval = 0.2
     let START_DELAY: TimeInterval = 0.0
-    let END_DELAY: TimeInterval = 0.0 // 0.25
+    let END_DELAY: TimeInterval = 0.0
     let DIM_OPACITY: CGFloat = 0.5
     
     // MARK: Constraint vars
@@ -43,14 +43,15 @@ class LiveIndicator: UIView {
     
     required init?(coder aDecoder: NSCoder) {
         size = .small
-        lineWidth = CGFloat(size.rawValue)/4
+        lineWidth = CGFloat(size.rawValue) / 4
+
         super.init(coder: aDecoder)
     }
     
     init(size: LiveIndicatorSize, color: UIColor) {
         self.size = size
-        self.lineWidth = CGFloat(size.rawValue)/4
-
+        self.lineWidth = CGFloat(size.rawValue) / 4
+        
         super.init(frame: CGRect(x: 0, y: 0, width: size.rawValue, height: size.rawValue))
         
         circleLayer = getCircleLayer(color: color)
@@ -64,6 +65,7 @@ class LiveIndicator: UIView {
         resizeFrameToFitLayers(lineWidth: lineWidth)
         
         startAnimation()
+
     }
     
     // MARK: Resize
@@ -76,13 +78,15 @@ class LiveIndicator: UIView {
     }
     
     private func repositionLayer(_ layer: CAShapeLayer, withY y: CGFloat) {
-        layer.frame = CGRect(x: 0.0, y: y, width: layer.frame.width, height: layer.frame.height)
+        layer.frame = CGRect(x: 0, y: y, width: layer.frame.width, height: layer.frame.height)
+
     }
     
     // MARK: Create views
     
     private func getCircleLayer(color: UIColor) -> CAShapeLayer {
-        let circlePath = UIBezierPath(ovalIn: CGRect(x: 0.0, y: bounds.maxY - bounds.size.height/4, width: bounds.size.width/4, height: bounds.size.height/4))
+        let diameter = bounds.size.width / 4
+        let circlePath = UIBezierPath(ovalIn: CGRect(x: 0, y: bounds.maxY - diameter, width: diameter,  height: diameter))
         
         let circleLayer = CAShapeLayer()
         circleLayer.path = circlePath.cgPath
@@ -91,16 +95,19 @@ class LiveIndicator: UIView {
         return circleLayer
     }
     
+    private func drawBezierPath(radius: CGFloat, lineWidth: CGFloat) -> UIBezierPath {
+        return UIBezierPath(arcCenter: CGPoint(x: 0, y: bounds.maxY),
+                            radius: radius,
+                            startAngle:  .pi * (3/2) + asin((lineWidth / 2) / (radius + (lineWidth / 2))),
+                            endAngle: -asin((lineWidth / 2) / (radius + (lineWidth / 2))),
+                            clockwise: true)
+    }
+    
     private func getLargeArcLayer(color: UIColor, lineWidth: CGFloat) -> CAShapeLayer {
-        let radius = bounds.size.height + lineWidth/2
-        
-        let largeArcpath = UIBezierPath(arcCenter: CGPoint(x: 0, y: bounds.maxY),
-                                        radius: radius,
-                                        startAngle:  .pi * (3 / 2) + asin((lineWidth/2) / (radius + (lineWidth/2))),
-                                        endAngle: -asin((lineWidth/2) / (radius + (lineWidth/2))),
-                                        clockwise: true)
+        let radius = bounds.size.height + lineWidth / 2
+        let largeArcPath = drawBezierPath(radius: radius, lineWidth: lineWidth)
         let largeArcLayer = CAShapeLayer()
-        largeArcLayer.path = largeArcpath.cgPath
+        largeArcLayer.path = largeArcPath.cgPath
         largeArcLayer.strokeColor = color.cgColor
         largeArcLayer.fillColor = UIColor.clear.cgColor
         largeArcLayer.lineWidth = bounds.width/4
@@ -110,18 +117,13 @@ class LiveIndicator: UIView {
     }
     
     private func getSmallArcLayer(color: UIColor, lineWidth: CGFloat) -> CAShapeLayer {
-        let radius = bounds.size.height/2 + lineWidth/2
-        
-        let smallArcpath = UIBezierPath(arcCenter: CGPoint(x: 0, y: bounds.maxY),
-                                        radius: radius,
-                                        startAngle:  .pi * (3 / 2) + asin((lineWidth/2) / (radius + (lineWidth/2))),
-                                        endAngle: -asin((lineWidth/2) / (radius + (lineWidth/2))),
-                                        clockwise: true)
+        let radius = bounds.size.height / 2 + lineWidth / 2
+        let smallArcPath = drawBezierPath(radius: radius, lineWidth: lineWidth)
         let smallArcLayer = CAShapeLayer()
-        smallArcLayer.path = smallArcpath.cgPath
+        smallArcLayer.path = smallArcPath.cgPath
         smallArcLayer.strokeColor = color.cgColor
         smallArcLayer.fillColor = UIColor.clear.cgColor
-        smallArcLayer.lineWidth = bounds.width/4
+        smallArcLayer.lineWidth = bounds.width / 4
         smallArcLayer.lineCap = kCALineCapRound
         
         return smallArcLayer

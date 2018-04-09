@@ -231,36 +231,29 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     /// Fetch delay information and update table view cells.
     @objc func getDelays() {
         
-        // First depart direction
-        guard let delayDirection = directions.first(where: { $0.type == .depart }) else {
-            return
+        // First depart direction(s)
+        guard let delayDirection = route.getFirstDepartRawDirection() else {
+            return // Use rawDirection (preserves first stop metadata)
         }
+        let firstDepartDirection = self.directions.first(where: { $0.type == .depart })!
         
         directions.forEach { $0.delay = nil }
         
-        let tripID = delayDirection.tripIdentifiers?.first
-        var stopID = delayDirection.stops.first?.id
-        
-        // Retrieve deleted stop ID (Route Parse) where first and last directions are removed.
-        if let tripID = tripID, stopID == nil {
-            stopID = self.route.rawDirections.first { (rawDir) -> Bool in
-                return rawDir.tripIdentifiers?.first == tripID
-            }?.stops.first?.id
-        }
-        
-        if let tripId = tripID, let stopId = stopID {
+        if let tripId = delayDirection.tripIdentifiers?.first,
+            let stopId = delayDirection.stops.first?.id
+        {
             
             Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
                 
                 if json["success"].boolValue {
                     
-                    // print("Got delay of \(json["data"]["delay"].int ?? -1), reloading data")
                     delayDirection.delay = json["data"]["delay"].int
+                    firstDepartDirection.delay = json["data"]["delay"].int
                     
                     // Update delay variable of other ensuing directions
                     
                     self.directions.filter {
-                        let isAfter = self.directions.index(of: delayDirection)! < self.directions.index(of: $0)!
+                        let isAfter = self.directions.index(of: firstDepartDirection)! < self.directions.index(of: $0)!
                         return isAfter && $0.type != .depart
                     }
                     

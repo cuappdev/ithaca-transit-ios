@@ -365,8 +365,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
      */
     func setBusLocation(_ bus: BusLocation) {
         
-        let isFirstCall = buses.isEmpty
-        
         /// New bus coordinates
         let busCoords = CLLocationCoordinate2D(latitude: bus.latitude, longitude: bus.longitude)
         let existingBus = buses.first(where: {
@@ -419,12 +417,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             marker.map = mapView
             buses.append(marker)
             
-            // Run to present bus indicators (for first time)
-            if isFirstCall {
-                mapView.delegate?.mapView?(mapView, didChange: mapView.camera)
-            }
-            
         }
+        
+        // Update bus indicators (if map not moved)
+        mapView.delegate?.mapView?(mapView, didChange: mapView.camera)
         
     }
     
