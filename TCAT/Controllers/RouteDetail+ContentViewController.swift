@@ -526,6 +526,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     indicator.appearAnimation = .pop
                     indicator.rotation = calculateBearing(from: placement, to: bus.position)
                     indicator.iconView = bearingView
+                    setIndex(of: indicator, with: .bussing)
                     
                     updateUserData(for: indicator, with: [
                         Constants.BusUserData.actualCoordinates : bus.position,
@@ -677,6 +678,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             case .destination: return 3
             case .stop: return 1
             case .walking: return 0
+            // For live bus icon / indicators
             case .bussing: return 999 // large constant to place above other elements
             default: return 0
             }

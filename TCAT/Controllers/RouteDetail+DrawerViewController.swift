@@ -242,8 +242,8 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         var stopID = delayDirection.stops.first?.id
         
         // Retrieve deleted stop ID (Route Parse) where first and last directions are removed.
-        if tripID != nil && stopID == nil {
-            stopID = route.rawDirections.first { (rawDir) -> Bool in
+        if let tripID = tripID, stopID == nil {
+            stopID = self.route.rawDirections.first { (rawDir) -> Bool in
                 return rawDir.tripIdentifiers?.first == tripID
             }?.stops.first?.id
         }
@@ -262,12 +262,14 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
                     self.directions.filter {
                         let isAfter = self.directions.index(of: delayDirection)! < self.directions.index(of: $0)!
                         return isAfter && $0.type != .depart
-                        }.forEach { (direction) in
-                            if let _ = direction.delay {
-                                direction.delay! += delayDirection.delay ?? 0
-                            } else {
-                                direction.delay = delayDirection.delay
-                            }
+                    }
+                    
+                    .forEach { (direction) in
+                        if let _ = direction.delay {
+                            direction.delay! += delayDirection.delay ?? 0
+                        } else {
+                            direction.delay = delayDirection.delay
+                        }
                     }
                     
                     self.tableView.reloadData()
