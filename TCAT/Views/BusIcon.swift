@@ -8,34 +8,76 @@
 import UIKit
 
 enum BusIconType: String {
-    case directionSmall
-    case directionLarge
-    case liveTracking
+    case directionSmall, directionLarge, liveTracking
+    
+    /// Return BusIcon's frame width
+    var width: CGFloat {
+        switch self {
+        case .directionSmall:
+            return 48
+        case .liveTracking:
+            return 72
+        case .directionLarge:
+            return 72
+        }
+    }
+    
+    /// Return BusIcon's frame height
+    var height: CGFloat {
+        switch self {
+        case .directionSmall:
+            return 24
+        case .liveTracking:
+            return 30
+        case .directionLarge:
+            return 36
+        }
+    }
+    
+    /// Return BusIcon's corner radius
+    var cornerRadius: CGFloat {
+        switch self {
+        case .directionLarge:
+            return 8
+        default:
+            return 4
+        }
+    }
 }
 
 class BusIcon: UIView {
     
-    var number: Int = 99
+    // MARK: Data vars
+    
+    let type: BusIconType
+    let number: Int
+    
+    // MARK: View vars
     
     var baseView: UIView!
     var label: UILabel!
     var image: UIImageView!
     var liveIndicator: LiveIndicator?
     
+    // MARK: Constraint vars
+    
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: type.width, height: type.height)
+    }
+    
+    // MARK: Init
+    
     init(type: BusIconType, number: Int) {
-        
-        switch type {
-            case .directionSmall: super.init(frame: CGRect(x: 0, y: 0, width: 48, height: 24))
-            case .liveTracking : super.init(frame: CGRect(x: 0, y: 0, width: 72, height: 30))
-            case .directionLarge : super.init(frame: CGRect(x: 0, y: 0, width: 72, height: 36))
-        }
-        
+        self.type = type
         self.number = number
+
+        super.init(frame: CGRect(x: 0, y: 0, width: type.width, height: type.height))
+        
         self.backgroundColor = .clear
         
         baseView = UIView(frame: self.frame)
         baseView.backgroundColor = .tcatBlueColor
-        baseView.layer.cornerRadius = type == .directionLarge ? 8 : 4
+        baseView.layer.cornerRadius = type.cornerRadius
         addSubview(baseView)
         
         image = UIImageView(image: UIImage(named: "bus"))
@@ -75,15 +117,19 @@ class BusIcon: UIView {
         
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        type = .directionSmall
+        number = 99
+        super.init(coder: aDecoder)
+    }
+    
+    // MARK: Reuse
+    
     func prepareForReuse() {
         baseView.removeFromSuperview()
         label.removeFromSuperview()
         image.removeFromSuperview()
         liveIndicator?.removeFromSuperview()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
     }
     
 }

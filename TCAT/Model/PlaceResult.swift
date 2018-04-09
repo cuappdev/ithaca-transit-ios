@@ -35,7 +35,7 @@ class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
     }
     
     override func isEqual(_ object: Any?) -> Bool {
-        if (!super.isEqual(object)){
+        if (!super.isEqual(object)) {
             return false
         }
         

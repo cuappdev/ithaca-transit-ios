@@ -53,7 +53,7 @@ extension UIColor {
 
 extension UIView{
     
-    func boundInside(_ superView: UIView){
+    func boundInside(_ superView: UIView) {
         
         self.translatesAutoresizingMaskIntoConstraints = false
         superView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[subview]-0-|", options: NSLayoutFormatOptions(), metrics:nil, views:["subview":self]))

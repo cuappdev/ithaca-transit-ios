@@ -10,6 +10,11 @@ import UIKit
 
 class WalkWithDistanceIcon: UIView {
 
+    // MARK: Size vars
+    
+    let width: CGFloat
+    let height: CGFloat
+    
     // MARK: View vars
     
     var walkIcon: UIImageView
@@ -18,7 +23,15 @@ class WalkWithDistanceIcon: UIView {
     // MARK: Spacing vars
     
     let walkIconAndDistanceLabelVerticalSpace: CGFloat = 2.0
+    
+    // MARK: Constraint var
+    
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: width, height: height)
+    }
 
+    // MARK: Init
+    
     init(withDistance distance: Double) {
         travelDistanceLabel = UILabel()
         travelDistanceLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)
@@ -33,8 +46,8 @@ class WalkWithDistanceIcon: UIView {
         walkIcon.contentMode = .scaleAspectFit
         walkIcon.tintColor = .mediumGrayColor
         
-        let width: CGFloat = travelDistanceLabel.frame.width > 0 ? travelDistanceLabel.frame.width : 34.0
-        let height: CGFloat = walkIcon.frame.height + walkIconAndDistanceLabelVerticalSpace + travelDistanceLabel.frame.height
+        width = travelDistanceLabel.frame.width > 0 ? travelDistanceLabel.frame.width : 34.0
+        height = walkIcon.frame.height + walkIconAndDistanceLabelVerticalSpace + travelDistanceLabel.frame.height
         
         super.init(frame: CGRect(origin: CGPoint.zero, size:  CGSize(width: width, height: height)))
         

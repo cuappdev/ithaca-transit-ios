@@ -22,7 +22,7 @@ class RouteTableViewCell: UITableViewCell {
 
     // MARK: Data vars
     
-    let identifier: String = "routeCell"
+    static let identifier: String = "routeCell"
     var route: Route?
     
     // MARK: Network vars
@@ -31,121 +31,225 @@ class RouteTableViewCell: UITableViewCell {
 
     // MARK: View vars
 
-    var travelTimeLabel: UILabel = UILabel()
-    var liveIndicatorView: LiveIndicator = LiveIndicator(size: .small, color: .clear)
-    var liveLabel: UILabel = UILabel()
-    var departureTimeLabel: UILabel = UILabel()
-    var arrowImageView: UIImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
-
-    var routeDiagram: RouteDiagram = RouteDiagram()
-
-    var topBorder: UIView = UIView()
-    var bottomBorder: UIView = UIView()
-    var cellSeperator: UIView = UIView()
+    var timesStackView: UIStackView
+    var travelTimeLabel: UILabel
+    
+    var departureStackView: UIStackView
+    var departureTimeLabel: UILabel
+    var arrowImageView: UIImageView
+    
+    var liveStackView: UIStackView
+    var liveLabel: UILabel
+    var liveIndicatorView: LiveIndicator
+    var stretchyFillerView: UIView
+    
+    var verticalStackView: UIStackView
+    var topBorder: UIView
+    var routeDiagram: RouteDiagram
+    var bottomBorder: UIView
+    var cellSeparator: UIView
 
     // MARK: Spacing vars
-
-    let timeLabelLeftSpaceFromSuperview: CGFloat = 18.0
-    let timeLabelVerticalSpaceFromSuperview: CGFloat = 18.0
     
-    let liveLabelHorizontalSpaceFromLiveIndicator: CGFloat = 4.0
-    
-    let arrowImageViewRightSpaceFromSuperview: CGFloat = 12.0
-    let departureLabelSpaceFromArrowImageView: CGFloat = 8.0
-    
-    let timeLabelAndRouteDiagramVerticalSpace: CGFloat = 32.5
+    let leftMargin: CGFloat =  16
+    let topMargin: CGFloat = 16
+    let bottomMargin: CGFloat = 16
+    let rightMargin: CGFloat = 12
     
     let cellBorderHeight: CGFloat = 0.75
-    let cellSeparatorHeight: CGFloat = 8.0
+    let cellSeparatorHeight: CGFloat = 6.0
     
-    let routeDiagramAndCellSeparatorVerticalSpace: CGFloat = 16.5
+    let spaceBtnDepartureElements: CGFloat = 4
+    let arrowImageViewHeight: CGFloat = 11.5
+    let arrowImageViewWidth: CGFloat = 6
+    
+    let spaceBtnLiveElements: CGFloat = 2
 
     // MARK: Init
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        departureTimeLabel = UILabel()
+        arrowImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
+        departureStackView = UIStackView(arrangedSubviews: [departureTimeLabel, arrowImageView])
+        
+        travelTimeLabel = UILabel()
+        timesStackView = UIStackView(arrangedSubviews: [travelTimeLabel, departureStackView])
+        
+        liveLabel = UILabel()
+        liveIndicatorView = LiveIndicator(size: .small, color: .clear)
+        stretchyFillerView = UIView()
+        liveStackView = UIStackView(arrangedSubviews: [liveLabel, liveIndicatorView, stretchyFillerView])
+        
+        topBorder = UIView()
+        routeDiagram = RouteDiagram()
+        bottomBorder = UIView()
+        cellSeparator = UIView()
+        verticalStackView = UIStackView(arrangedSubviews: [timesStackView, liveStackView, routeDiagram])
+        
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        styleTravelTime()
-        styleLiveElements()
-        styleDepartureTime()
         styleTopBorder()
-
-        positionTravelTime()
-        positionLiveLabel(usingTravelTime: travelTimeLabel)
-        positionLiveIndicatorView(usingTravelTime: travelTimeLabel)
-        positionDepartureTimeVertically(usingTravelTime: travelTimeLabel)
-        positionArrowVertically(usingDepartureTime: departureTimeLabel)
-        positionTopBorder()
+        styleVerticalStackView()
+        styleBottomBorder()
+        styleCellSeparator()
         
-        contentView.addSubview(travelTimeLabel)
-        contentView.addSubview(liveIndicatorView)
-        contentView.addSubview(liveLabel)
-        contentView.addSubview(departureTimeLabel)
-        contentView.addSubview(arrowImageView)
         contentView.addSubview(topBorder)
+        contentView.addSubview(verticalStackView)
+        contentView.addSubview(bottomBorder)
+        contentView.addSubview(cellSeparator)
+        
+        activateConstraints()
     }
 
-    init() {
-        super.init(style: UITableViewCellStyle.default, reuseIdentifier: identifier)
-    }
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    convenience init() {
+        self.init(style: UITableViewCellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: Style
 
-    func heightForCell(withNumOfStops numOfStops: Int, withNumOfWalkLines numOfWalkLines: Int) -> CGFloat {
-        
-        let numOfSolidStopDots = numOfStops - 1
-        let numOfRouteLines = numOfSolidStopDots
-        let numOfBusLines = numOfRouteLines - numOfWalkLines
-        
-        let timeLabelHeight: CGFloat = 17.0
-        
-        let headerHeight = timeLabelVerticalSpaceFromSuperview + timeLabelHeight + timeLabelAndRouteDiagramVerticalSpace
-        
-        let solidStopDotDiameter: CGFloat = Circle(size: .small, style: .solid, color: .tcatBlueColor).frame.height
-        let busLineHeight: CGFloat = RouteDiagram.busLineHeight
-        let walkLineHeight: CGFloat = RouteDiagram.walkLineHeight
-        let destinationDotHeight: CGFloat = Circle(size: .medium, style: .bordered, color: .tcatBlueColor).frame.height
-        
-        let routeDiagramHeight = CGFloat(numOfSolidStopDots) * solidStopDotDiameter +
-                                 CGFloat(numOfBusLines) * busLineHeight +
-                                 CGFloat(numOfWalkLines) * walkLineHeight + destinationDotHeight
-        
-        let stopLabelHeight: CGFloat = 17.0 // add an extra stop label height for if the last label is two-lined
-        let footerHeight = stopLabelHeight + stopLabelHeight + cellSeparatorHeight
+    private func styleVerticalStackView() {
+        verticalStackView.axis = .vertical
+        verticalStackView.layoutMargins = UIEdgeInsetsMake(topMargin, leftMargin, bottomMargin, rightMargin)
+        verticalStackView.isLayoutMarginsRelativeArrangement = true
 
+        styleTimesStackView()
+        styleLiveStackView()
+    }
+    
+    private func styleTimesStackView() {
+        timesStackView.axis = .horizontal
+        timesStackView.alignment = .center
         
-        return headerHeight + routeDiagramHeight + footerHeight
+        travelTimeLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 16.0)
+        travelTimeLabel.textColor = .primaryTextColor
         
+        styleDepartureStackView()
+    }
+    
+    private func styleDepartureStackView() {
+        departureStackView.axis = .horizontal
+        departureStackView.spacing = spaceBtnDepartureElements
+        
+        departureTimeLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
+        departureTimeLabel.textColor = .primaryTextColor
+        arrowImageView.tintColor = .mediumGrayColor
+    }
+    
+    private func styleLiveStackView() {
+        //  make stretchyFillerView’s horizontal content-hugging priority is lower than the label’s so it stretches to fill extra space
+        stretchyFillerView.setContentHuggingPriority(liveLabel.contentHuggingPriority(for: .horizontal) - 1, for: .horizontal)
+        
+        liveStackView.axis = .horizontal
+        liveStackView.alignment = .lastBaseline
+        liveStackView.spacing = spaceBtnLiveElements
+        
+        liveLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
     }
 
-    // MARK: Reuse
+    private func styleTopBorder() {
+        topBorder.backgroundColor = .lineDotColor
+    }
 
-    override func prepareForReuse() {
-        routeDiagram.prepareForReuse()
+    private func styleBottomBorder() {
+        bottomBorder.backgroundColor = .lineDotColor
+    }
 
-        routeDiagram.removeFromSuperview()
-        cellSeperator.removeFromSuperview()
-        bottomBorder.removeFromSuperview()
+    private func styleCellSeparator() {
+        cellSeparator.backgroundColor = .tableBackgroundColor
+    }
+    
+    // MARK: Add subviews
+    
+    func addRouteDiagramSubviews() {
+        routeDiagram.addSubviews()
+    }
+
+    // MARK: Activate constraints
+
+    func activateRouteDiagramConstraints() {
+        routeDiagram.activateConstraints()
+    }
+    
+    private func activateConstraints() {
+        setTranslatesAutoresizingMaskIntoConstraints()
+        setDebugIdentifiers()
         
-        hideLiveElements()
+        NSLayoutConstraint.activate([
+            topBorder.topAnchor.constraint(equalTo: contentView.topAnchor),
+            topBorder.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            topBorder.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            topBorder.heightAnchor.constraint(equalToConstant: cellBorderHeight),
+            topBorder.bottomAnchor.constraint(equalTo: verticalStackView.topAnchor)
+        ])
         
-        // stop timer
-        timer?.invalidate()
+        NSLayoutConstraint.activate([
+            verticalStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            verticalStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            verticalStackView.bottomAnchor.constraint(equalTo: bottomBorder.topAnchor)
+        ])
+        
+        NSLayoutConstraint.activate([
+            bottomBorder.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            bottomBorder.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            bottomBorder.heightAnchor.constraint(equalToConstant: cellBorderHeight),
+            bottomBorder.bottomAnchor.constraint(equalTo: cellSeparator.topAnchor)
+        ])
+        
+        NSLayoutConstraint.activate([
+            cellSeparator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            cellSeparator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            cellSeparator.heightAnchor.constraint(equalToConstant: cellSeparatorHeight),
+            cellSeparator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
+        
+        NSLayoutConstraint.activate([
+            arrowImageView.heightAnchor.constraint(equalToConstant: arrowImageViewHeight),
+            arrowImageView.widthAnchor.constraint(equalToConstant: arrowImageViewWidth),
+            arrowImageView.centerYAnchor.constraint(equalTo: departureTimeLabel.centerYAnchor)
+        ])
+    }
+    
+    private func setTranslatesAutoresizingMaskIntoConstraints() {
+        let subviews = [timesStackView, travelTimeLabel,
+                        departureStackView, departureTimeLabel, arrowImageView,
+                        liveStackView, liveLabel, liveIndicatorView, stretchyFillerView,
+                        verticalStackView, topBorder, routeDiagram, bottomBorder, cellSeparator]
+        
+        subviews.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+    }
+    
+    /// For debugging constraint errors
+    private func setDebugIdentifiers() {
+        timesStackView.accessibilityIdentifier = "timesStackView"
+        travelTimeLabel.accessibilityIdentifier = "travelTimeLabel"
+        
+        departureStackView.accessibilityIdentifier = "departureStackView"
+        departureTimeLabel.accessibilityIdentifier = "departureTimeLabel"
+        arrowImageView.accessibilityIdentifier = "arrowImageView"
+        
+        liveStackView.accessibilityIdentifier = "liveStackView"
+        liveLabel.accessibilityIdentifier = "liveLabel"
+        liveIndicatorView.accessibilityIdentifier = "liveIndicatorView"
+        stretchyFillerView.accessibilityIdentifier = "stretchyFillerView"
+        
+        verticalStackView.accessibilityIdentifier = "verticalStackView"
+        topBorder.accessibilityIdentifier = "topBorder"
+        routeDiagram.accessibilityIdentifier = "routeDiagram"
+        bottomBorder.accessibilityIdentifier = "bottomBorder"
+        cellSeparator.accessibilityIdentifier = "cellSeparator"
     }
     
     // MARK: Get Data
-
+    
     private func getDepartureAndArrivalTimes(fromRoute route: Route) -> (departureTime: Date, arrivalTime: Date) {
-        if let firstDepartDirection = route.getFirstDepartRawDirection(), let lastDepartDirection = route.getLastDepartRawDirection(){
+        if let firstDepartDirection = route.getFirstDepartRawDirection(), let lastDepartDirection = route.getLastDepartRawDirection() {
             return (departureTime: firstDepartDirection.startTime, arrivalTime: lastDepartDirection.endTime)
         }
-            
+        
         return (departureTime: route.departureTime, arrivalTime: route.arrivalTime)
     }
     
@@ -180,9 +284,20 @@ class RouteTableViewCell: UITableViewCell {
         return .noDelay(date: route.departureTime)
         
     }
-
+    
+    // MARK: Reuse
+    
+    override func prepareForReuse() {
+        routeDiagram.prepareForReuse()
+        
+        hideLiveElements(animate: false)
+        
+        // stop timer
+        timer?.invalidate()
+    }
+    
     // MARK: Set Data
-
+    
     func setData(_ route: Route) {
         self.route = route
         
@@ -198,7 +313,7 @@ class RouteTableViewCell: UITableViewCell {
     
     private func setDepartureTimeAndLiveElements(withRoute route: Route) {
         let isWalkingRoute = route.isRawWalkingRoute()
-
+        
         if isWalkingRoute {
             setDepartureTimeToWalking()
             return
@@ -260,24 +375,41 @@ class RouteTableViewCell: UITableViewCell {
             liveLabel.textColor = .liveRedColor
             liveLabel.text = "Late - \(Time.timeString(from: delayedDepartureTime))"
             liveIndicatorView.setColor(to: .liveRedColor)
+            if liveStackView.isHidden {
+                showLiveElements()
+            }
             
         case .onTime(date: _):
             liveLabel.textColor = .liveGreenColor
             liveLabel.text = "On Time"
             liveIndicatorView.setColor(to:.liveGreenColor)
+            if liveStackView.isHidden {
+                showLiveElements()
+            }
             
         case .noDelay(date: _):
-            hideLiveElements()
+            if !liveStackView.isHidden {
+                hideLiveElements(animate: true)
+            }
             
         }
         
-        liveLabel.sizeToFit()
-        positionLiveIndicatorView(usingLiveLabel: liveLabel)
     }
     
-    private func hideLiveElements() {
-        liveIndicatorView.setColor(to: .clear)
-        liveLabel.textColor = .clear
+    private func showLiveElements() {
+        UIView.animate(withDuration: 0.3) {
+            self.liveStackView.isHidden = false
+        }
+    }
+    
+    private func hideLiveElements(animate: Bool) {
+        if animate {
+            UIView.animate(withDuration: 0.3) {
+                self.liveStackView.isHidden = true
+            }
+        } else {
+            self.liveStackView.isHidden = true
+        }
     }
     
     private func setDepartureTime(withStartTime startTime: Date, withDelayState delayState: DelayState) {
@@ -300,137 +432,21 @@ class RouteTableViewCell: UITableViewCell {
             let boardTime = Time.timeString(from: startTime, to: departureTime)
             departureTimeLabel.text = boardTime == "0 min" ? "Board now" : "Board in \(boardTime)"
             
-             departureTimeLabel.textColor = .primaryTextColor
+            departureTimeLabel.textColor = .primaryTextColor
             
         }
         
         arrowImageView.tintColor = .primaryTextColor
-        
-        departureTimeLabel.sizeToFit()
-        positionArrowVertically(usingDepartureTime: departureTimeLabel)
-        positionDepartureTimeHorizontally(usingArrowImageView: arrowImageView)
     }
     
-    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
+    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date) {
         travelTimeLabel.text = "\(Time.timeString(from: departureTime)) - \(Time.timeString(from: arrivalTime))"
-        travelTimeLabel.sizeToFit()
     }
     
     private func setDepartureTimeToWalking() {
         departureTimeLabel.text = "Directions"
         departureTimeLabel.textColor = .mediumGrayColor
         arrowImageView.tintColor = .mediumGrayColor
-        
-        departureTimeLabel.sizeToFit()
-        positionArrowVertically(usingDepartureTime: departureTimeLabel)
-    }
-    
-    // MARK: Style
-
-    private func styleTravelTime() {
-        travelTimeLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 16.0)
-        travelTimeLabel.textColor = .primaryTextColor
-        travelTimeLabel.sizeToFit()
-    }
-
-    private func styleLiveElements() {
-        liveLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
-        hideLiveElements()
-    }
-
-    private func styleDepartureTime() {
-        departureTimeLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
-        departureTimeLabel.textColor = .primaryTextColor
-        departureTimeLabel.sizeToFit()
-        arrowImageView.tintColor = .primaryTextColor
-    }
-
-    private func styleTopBorder() {
-        topBorder.backgroundColor = .lineDotColor
-    }
-
-    private func styleBottomBorder() {
-        bottomBorder.backgroundColor = .lineDotColor
-    }
-
-    private func styleCellSeperator() {
-        cellSeperator.backgroundColor = .tableBackgroundColor
-    }
-
-    // MARK: Positioning
-
-    func positionSubviews() {
-        positionLiveLabel(usingTravelTime: travelTimeLabel)
-        positionArrowHorizontally()
-        positionDepartureTimeHorizontally(usingArrowImageView: arrowImageView)
-        positionRouteDiagram(usingTravelTimeLabel: travelTimeLabel)
-
-        routeDiagram.positionSubviews()
-
-        styleCellSeperator()
-        styleBottomBorder()
-
-        positionCellSeperator(usingRouteDiagram: routeDiagram)
-        positionBottomBorder(usingCellSeperator: cellSeperator)
-    }
-
-    private func positionTravelTime() {
-        travelTimeLabel.frame = CGRect(x: timeLabelLeftSpaceFromSuperview, y: timeLabelVerticalSpaceFromSuperview, width: 50.5, height: 19)
-    }
-
-    private func positionLiveIndicatorView(usingTravelTime travelTimeLabel: UILabel) {
-        liveIndicatorView.center.x = travelTimeLabel.frame.minX + (liveIndicatorView.frame.width/2)
-        liveIndicatorView.center.y = travelTimeLabel.frame.maxY + liveIndicatorView.frame.height
-    }
-    
-    private func positionLiveIndicatorView(usingLiveLabel liveLabel: UILabel) {
-        liveIndicatorView.center.x =  liveLabel.frame.maxX + liveLabelHorizontalSpaceFromLiveIndicator + (liveIndicatorView.frame.width/2)
-        liveIndicatorView.center.y = liveLabel.frame.maxY - liveIndicatorView.frame.height - 1
-    }
-    
-    private func positionLiveLabel(usingTravelTime travelTimeLabel: UILabel) {
-        liveLabel.frame = CGRect(x: travelTimeLabel.frame.minX, y: travelTimeLabel.frame.maxY, width: liveLabel.frame.width, height: liveLabel.frame.height)
-    }
-
-    private func positionDepartureTimeVertically(usingTravelTime travelTimeLabel: UILabel) {
-        departureTimeLabel.frame = CGRect(x: 0, y: travelTimeLabel.frame.minY, width: 135, height: 20)
-    }
-
-    private func positionArrowVertically(usingDepartureTime departueTimeLabel: UILabel) {
-        arrowImageView.center.y = departureTimeLabel.center.y
-    }
-
-    private func positionTopBorder() {
-        topBorder.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: cellBorderHeight)
-    }
-
-    private func positionArrowHorizontally() {
-        arrowImageView.center.x = contentView.frame.width - arrowImageViewRightSpaceFromSuperview - (arrowImageView.frame.width/2)
-    }
-
-    private func positionDepartureTimeHorizontally(usingArrowImageView arrowImageView: UIImageView) {
-        departureTimeLabel.center.x = arrowImageView.frame.minX - departureLabelSpaceFromArrowImageView - (departureTimeLabel.frame.width/2)
-    }
-
-    private func positionRouteDiagram(usingTravelTimeLabel travelTimeLabel: UILabel) {
-        routeDiagram.frame = CGRect(x: 0, y: travelTimeLabel.frame.maxY + timeLabelAndRouteDiagramVerticalSpace, width: UIScreen.main.bounds.width, height: 75)
-    }
-
-    private func positionCellSeperator(usingRouteDiagram routeDiagram: RouteDiagram) {
-        cellSeperator.frame = CGRect(x: 0, y: contentView.frame.maxY - cellSeparatorHeight, width: UIScreen.main.bounds.width, height: cellSeparatorHeight)
-    }
-
-    private func positionBottomBorder(usingCellSeperator cellSeperator: UIView) {
-        bottomBorder.frame = CGRect(x: 0, y: cellSeperator.frame.minY, width: UIScreen.main.bounds.width, height: cellBorderHeight)
-    }
-
-    // MARK: Add subviews
-
-    func addSubviews() {
-        routeDiagram.addSubviews()
-        contentView.addSubview(routeDiagram)
-        contentView.addSubview(cellSeperator)
-        contentView.addSubview(bottomBorder)
     }
 
 }

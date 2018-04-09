@@ -46,7 +46,7 @@ class DatePickerView: UIView {
 
     // MARK: Init
 
-    override init(frame: CGRect){
+    override init(frame: CGRect) {
         leaveNowSegmentedControlOptions = [typeToSegmentControlElements[.leaveNow]!.title]
         timeTypeSegmentedControlOptions = [typeToSegmentControlElements[.leaveAt]!.title, typeToSegmentControlElements[.arriveBy]!.title]
         
@@ -122,23 +122,23 @@ class DatePickerView: UIView {
 
     // MARK: Style
 
-    private func styleDatepicker(){
+    private func styleDatepicker() {
         datepicker.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: datePickerHeight)
     }
 
-    private func styleSegmentedControl(_ segmentedControl: UISegmentedControl){
+    private func styleSegmentedControl(_ segmentedControl: UISegmentedControl) {
         segmentedControl.tintColor = .tcatBlueColor
         let segmentControlFont = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 13.0)
         segmentedControl.setTitleTextAttributes([NSAttributedStringKey.font: segmentControlFont!], for: .normal)
     }
 
-    private func styleCancelButton(){
+    private func styleCancelButton() {
         cancelButton.frame = CGRect(x: 0, y: 0, width: 60, height: buttonHeight)
         cancelButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 17.0)
         cancelButton.setTitleColor(.mediumGrayColor, for: .normal)
     }
 
-    private func styleDoneButton(){
+    private func styleDoneButton() {
         doneButton.frame = CGRect(x: 0, y: 0, width: 55, height: buttonHeight)
         doneButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 17.0)
         doneButton.setTitleColor(.tcatBlueColor, for: .normal)
@@ -146,7 +146,7 @@ class DatePickerView: UIView {
 
     // MARK: Set data
 
-    private func setDatepickerSettings(){
+    private func setDatepickerSettings() {
         let now = Date()
         datepicker.minimumDate = now
 
@@ -156,23 +156,23 @@ class DatePickerView: UIView {
         datepicker.addTarget(self, action: #selector(datepickerValueChanged(datepicker:)), for: .valueChanged)
     }
 
-    private func setSegmentedControl(_ segmentedContol: UISegmentedControl, withItems titles: [String]){
+    private func setSegmentedControl(_ segmentedContol: UISegmentedControl, withItems titles: [String]) {
         for i in titles.indices {
             segmentedContol.insertSegment(withTitle: titles[i], at: i, animated: false)
         }
     }
 
-    private func setCancelButton(withTitle title: String){
+    private func setCancelButton(withTitle title: String) {
         cancelButton.setTitle(title, for: .normal)
     }
 
-    private func setDoneButton(withTitle title: String){
+    private func setDoneButton(withTitle title: String) {
         doneButton.setTitle(title, for: .normal)
     }
 
     // MARK: Position
 
-    func positionSubviews(){
+    func positionSubviews() {
         positionCancelButton()
         positionDoneButton()
         positionTimeTypeSegmentedControl(usingCancelButton: cancelButton)
@@ -180,21 +180,21 @@ class DatePickerView: UIView {
         positionDatepicker(usingSegmentedControl: timeTypeSegmentedControl)
      }
 
-    private func positionCancelButton(){
+    private func positionCancelButton() {
         let oldFrame = cancelButton.frame
         let newFrame = CGRect(x: spaceBtButtonAndSuperviewSide, y: spaceBtButtonAndSuprviewTop, width: oldFrame.width, height: oldFrame.height)
 
         cancelButton.frame = newFrame
     }
 
-    private func positionDoneButton(){
+    private func positionDoneButton() {
         let oldFrame = doneButton.frame
         let newFrame = CGRect(x: self.frame.width - spaceBtButtonAndSuperviewSide - oldFrame.width, y: spaceBtButtonAndSuprviewTop, width: oldFrame.width, height: oldFrame.height)
 
         doneButton.frame = newFrame
     }
 
-    private func positionTimeTypeSegmentedControl(usingCancelButton cancelButton: UIButton){
+    private func positionTimeTypeSegmentedControl(usingCancelButton cancelButton: UIButton) {
         timeTypeSegmentedControl.frame = CGRect(x: 0, y: cancelButton.frame.maxY + spaceBtButtonAndSegmentedControl, width: (self.frame.width*(343/375) - spaceBtSegmentControls)*(2/3), height: segmentedControlHeight)
 
         timeTypeSegmentedControl.center.x = self.frame.width/2 + timeTypeSegmentedControl.frame.width/4 + spaceBtSegmentControls/2
@@ -205,7 +205,7 @@ class DatePickerView: UIView {
         leaveNowSegmentedControl.frame = CGRect(x: timeTypeSegmentedControl.frame.minX - spaceBtSegmentControls - width, y: timeTypeSegmentedControl.frame.minY, width: width, height: segmentedControlHeight)
     }
 
-    private func positionDatepicker(usingSegmentedControl segmentedControl: UISegmentedControl){
+    private func positionDatepicker(usingSegmentedControl segmentedControl: UISegmentedControl) {
         let oldFrame = datepicker.frame
         let newFrame = CGRect(x: 0, y: segmentedControl.frame.maxY + spaceBtSegmentControlAndDatePicker, width: oldFrame.width, height: oldFrame.height)
 
@@ -216,7 +216,7 @@ class DatePickerView: UIView {
 
     // MARK:  Add subviews
 
-    func addSubviews(){
+    func addSubviews() {
         addSubview(cancelButton)
         addSubview(doneButton)
         addSubview(timeTypeSegmentedControl)
