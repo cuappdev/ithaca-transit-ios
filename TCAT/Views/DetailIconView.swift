@@ -106,8 +106,11 @@ class DetailIconView: UIView {
     // MARK: Utility Functions
     
     public func updateTimes(with newDirection: Direction, isLast: Bool = false) {
-        updateScheduledTime(with: newDirection, isLast: isLast)
-        updateDelayedTime(with: newDirection, isLast: isLast)
+        DispatchQueue.main.async {
+            self.updateScheduledTime(with: newDirection, isLast: isLast)
+            self.updateDelayedTime(with: newDirection, isLast: isLast)
+            self.setNeedsDisplay()
+        }
     }
     
     /// Update scheduled label with direction's delay description. Use self.direction by default.
