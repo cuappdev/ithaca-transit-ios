@@ -44,6 +44,7 @@ class LiveIndicator: UIView {
     required init?(coder aDecoder: NSCoder) {
         size = .small
         lineWidth = CGFloat(size.rawValue) / 4
+
         super.init(coder: aDecoder)
     }
     
@@ -64,6 +65,7 @@ class LiveIndicator: UIView {
         resizeFrameToFitLayers(lineWidth: lineWidth)
         
         startAnimation()
+
     }
     
     // MARK: Resize
@@ -77,6 +79,7 @@ class LiveIndicator: UIView {
     
     private func repositionLayer(_ layer: CAShapeLayer, withY y: CGFloat) {
         layer.frame = CGRect(x: 0, y: y, width: layer.frame.width, height: layer.frame.height)
+
     }
     
     // MARK: Create views
@@ -176,4 +179,3 @@ class LiveIndicator: UIView {
     }
     
 }
-

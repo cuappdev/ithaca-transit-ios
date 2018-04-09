@@ -52,9 +52,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     var refreshControl = UIRefreshControl()
 
     let navigationBarTitle: String = "Route Options"
-    let routeTableViewCellIdentifier: String = RouteTableViewCell().identifier
     let routeResultsTitle: String = "Route Results"
-    let routeResultsHeaderHeight: CGFloat = 57.0
 
     // MARK:  Data vars
 
@@ -68,6 +66,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     var isBannerShown: Bool = false
     var cellUserInteraction: Bool = true
+    
+    // MARK: Spacing vars
+    
+    let estimatedRowHeight: CGFloat = 115
 
     // MARK: View Lifecycle
 
@@ -110,7 +112,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: routeTableViewCellIdentifier)
+        routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: RouteTableViewCell.identifier)
         setupReachability()
     }
 
@@ -149,12 +151,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeSelection.swapButton.addTarget(self, action: #selector(self.swapFromAndTo), for: .touchUpInside)
     }
 
-    private func setRouteSelectionView(withDestination destination: Place?){
+    private func setRouteSelectionView(withDestination destination: Place?) {
         routeSelection.fromSearchbar.setTitle(Constants.Phrases.fromSearchBarPlaceholder, for: .normal)
         routeSelection.toSearchbar.setTitle(destination?.name ?? "", for: .normal)
     }
 
-    @objc func swapFromAndTo(sender: UIButton){
+    @objc func swapFromAndTo(sender: UIButton) {
         //Swap data
         let searchFromOld = searchFrom
         searchFrom = searchTo
@@ -659,15 +661,15 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        var cell = tableView.dequeueReusableCell(withIdentifier: routeTableViewCellIdentifier, for: indexPath) as? RouteTableViewCell
+        var cell = tableView.dequeueReusableCell(withIdentifier: RouteTableViewCell.identifier, for: indexPath) as? RouteTableViewCell
 
         if cell == nil {
-            cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: routeTableViewCellIdentifier)
+            cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
         }
 
         cell?.setData(routes[indexPath.row])
-        cell?.positionSubviews()
-        cell?.addSubviews()
+        cell?.addRouteDiagramSubviews()
+        cell?.activateRouteDiagramConstraints()
 
         // Add share action for long press gestures on non 3D Touch devices
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
@@ -796,8 +798,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Tableview Delegate
 
     private func setupRouteResultsTableView() {
-        
-        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0)), style: .grouped)
+        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0)), style: .plain)
         routeResults.delegate = self
         routeResults.allowsSelection = true
         routeResults.dataSource = self
@@ -805,7 +806,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.backgroundColor = .tableBackgroundColor
         routeResults.alwaysBounceVertical = true //so table view doesn't scroll over top & bottom
         routeResults.showsVerticalScrollIndicator = false
-
+        
+        // so can have dynamic height cells
+        routeResults.estimatedRowHeight = estimatedRowHeight
+        routeResults.rowHeight = UITableViewAutomaticDimension
+        
         refreshControl.isHidden = true
 
         if #available(iOS 10.0, *) {
@@ -813,17 +818,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         } else {
             routeResults.addSubview(refreshControl)
         }
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let directions = routes[indexPath.row].rawDirections
-        let isWalkingRoute = routes[indexPath.row].isRawWalkingRoute()
-
-        // if walking route, don't skip first walking direction. Ow skip first walking direction
-        let numOfStops = isWalkingRoute ? directions.count : (directions.first?.type == .walk ? directions.count - 1 : directions.count)
-        let rowHeight = RouteTableViewCell().heightForCell(withNumOfStops: numOfStops, withNumOfWalkLines: routes[indexPath.row].getRawNumOfWalkLines())
-
-        return rowHeight
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -846,6 +840,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             
             searchForRoutes()
         }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let tableViewTopMargin: CGFloat = 12
+        return UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: tableViewTopMargin))
     }
     
     // MARK: RouteDetailViewController

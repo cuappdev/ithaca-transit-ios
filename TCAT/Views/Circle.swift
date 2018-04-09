@@ -24,9 +24,20 @@ enum CircleSize: Int {
 
 class Circle: UIView {
     
+    // MARK: Data vars
+    
+    let diameter: CGFloat
+    
+    // MARK: Constraint vars
+    
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: diameter, height: diameter)
+    }
+    
+    // MARK: Init
+    
     init(size: CircleSize, style: CircleStyle, color: UIColor) {
-        
-        let diameter: CGFloat = CGFloat(size.rawValue)
+        diameter = CGFloat(size.rawValue)
         super.init(frame: CGRect(x: 0, y: 0, width: diameter, height: diameter))
         
         layer.cornerRadius = frame.width / 2
@@ -63,6 +74,7 @@ class Circle: UIView {
     }
     
     required init?(coder aDecoder: NSCoder) {
+        diameter = CGFloat(CircleSize.small.rawValue)
         super.init(coder: aDecoder)
     }
     
