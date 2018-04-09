@@ -71,7 +71,7 @@ class DottedLine: RouteLine {
     
     // MARK: Init
     
-    init(x: CGFloat, y: CGFloat, height: CGFloat, color: UIColor){
+    init(x: CGFloat, y: CGFloat, height: CGFloat, color: UIColor) {
         super.init(x: x, y: y, height: height)
         
         let dashHeight: CGFloat = 3.75

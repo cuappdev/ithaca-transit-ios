@@ -184,33 +184,33 @@ class RouteTableViewCell: UITableViewCell {
             topBorder.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             topBorder.heightAnchor.constraint(equalToConstant: cellBorderHeight),
             topBorder.bottomAnchor.constraint(equalTo: verticalStackView.topAnchor)
-            ])
+        ])
         
         NSLayoutConstraint.activate([
             verticalStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             verticalStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             verticalStackView.bottomAnchor.constraint(equalTo: bottomBorder.topAnchor)
-            ])
+        ])
         
         NSLayoutConstraint.activate([
             bottomBorder.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             bottomBorder.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             bottomBorder.heightAnchor.constraint(equalToConstant: cellBorderHeight),
             bottomBorder.bottomAnchor.constraint(equalTo: cellSeparator.topAnchor)
-            ])
+        ])
         
         NSLayoutConstraint.activate([
             cellSeparator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             cellSeparator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             cellSeparator.heightAnchor.constraint(equalToConstant: cellSeparatorHeight),
             cellSeparator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-            ])
+        ])
         
         NSLayoutConstraint.activate([
             arrowImageView.heightAnchor.constraint(equalToConstant: arrowImageViewHeight),
             arrowImageView.widthAnchor.constraint(equalToConstant: arrowImageViewWidth),
             arrowImageView.centerYAnchor.constraint(equalTo: departureTimeLabel.centerYAnchor)
-            ])
+        ])
     }
     
     private func setTranslatesAutoresizingMaskIntoConstraints() {
@@ -257,7 +257,7 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Get Data
     
     private func getDepartureAndArrivalTimes(fromRoute route: Route) -> (departureTime: Date, arrivalTime: Date) {
-        if let firstDepartDirection = route.getFirstDepartRawDirection(), let lastDepartDirection = route.getLastDepartRawDirection(){
+        if let firstDepartDirection = route.getFirstDepartRawDirection(), let lastDepartDirection = route.getLastDepartRawDirection() {
             return (departureTime: firstDepartDirection.startTime, arrivalTime: lastDepartDirection.endTime)
         }
         
@@ -450,7 +450,7 @@ class RouteTableViewCell: UITableViewCell {
         arrowImageView.tintColor = .primaryTextColor
     }
     
-    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date){
+    private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date) {
         travelTimeLabel.text = "\(Time.timeString(from: departureTime)) - \(Time.timeString(from: arrivalTime))"
     }
     

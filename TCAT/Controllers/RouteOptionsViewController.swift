@@ -145,12 +145,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeSelection.swapButton.addTarget(self, action: #selector(self.swapFromAndTo), for: .touchUpInside)
     }
 
-    private func setRouteSelectionView(withDestination destination: Place?){
+    private func setRouteSelectionView(withDestination destination: Place?) {
         routeSelection.fromSearchbar.setTitle(Constants.Phrases.fromSearchBarPlaceholder, for: .normal)
         routeSelection.toSearchbar.setTitle(destination?.name ?? "", for: .normal)
     }
 
-    @objc func swapFromAndTo(sender: UIButton){
+    @objc func swapFromAndTo(sender: UIButton) {
         //Swap data
         let searchFromOld = searchFrom
         searchFrom = searchTo

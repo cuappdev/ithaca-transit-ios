@@ -57,7 +57,7 @@ class SearchTableViewManager {
     static let shared = SearchTableViewManager()
     private var allStops: [BusStop]?
 
-    private init(){}
+    private init() {}
     func getAllStops() -> [BusStop] {
         if let stops = allStops {
             return stops
