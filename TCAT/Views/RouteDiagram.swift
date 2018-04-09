@@ -11,8 +11,8 @@ import UIKit
 class RouteDiagramElement: NSObject {
 
     var stopLabel: UILabel
-    
     var stopDot: Circle
+    
     var icon: UIView?
     var stayOnBusCoverUpView: UIView?
     var routeLine: RouteLine?
@@ -35,8 +35,6 @@ class RouteDiagram: UIView {
     // MARK: Spacing vars
 
     let stopDotLeftSpaceFromSuperview: CGFloat = 77.0
-    static let walkLineHeight: CGFloat = 20.0
-    static let busLineHeight: CGFloat = 28.0
     let busIconLeftSpaceFromSuperview: CGFloat = 16.0
     let walkIconAndRouteLineHorizontalSpace: CGFloat = 36.0
     let stopDotAndStopLabelHorizontalSpace: CGFloat = 14.0
@@ -83,7 +81,7 @@ class RouteDiagram: UIView {
             let stopLabel = getStopLabel(withName: direction.name, withStayOnBusForTranfer: direction.stayOnBusForTransfer, withDistance: !isWalkingRoute && index == first ? travelDistance : nil)
             let stopDot = getStopDot(fromDirections: directions, atIndex: index, withWalkingRoute: isWalkingRoute)
             let icon = getIcon(fromDirections: directions, atIndex: index, withDistance: isWalkingRoute && index == first ? travelDistance: nil)
-            let routeLine = getRouteLine(fromDirections: directions, atIndex: index, withWalkingRoute: isWalkingRoute)
+            let routeLine = getRouteLine(fromDirections: directions, atIndex: index, withWalkingRoute: isWalkingRoute, withStopLabel: stopLabel)
             
             let routeDiagramElement = RouteDiagramElement(stopLabel: stopLabel, stopDot: stopDot, icon: icon, routeLine: routeLine)
             
@@ -167,6 +165,12 @@ class RouteDiagram: UIView {
         
         return testDistanceLabel
     }
+    
+    private func isStopLabelOneLine(_ stopLabel: UILabel) -> Bool {
+        let oneLineStopLabel = getStopLabel(withName: "Testing", withStayOnBusForTranfer: false, withDistance: 0.0)
+        
+        return stopLabel.intrinsicContentSize.height <= oneLineStopLabel.intrinsicContentSize.height
+    }
 
     private func getStopDot(fromDirections directions: [Direction], atIndex index: Int, withWalkingRoute isWalkingRoute: Bool) -> Circle {
         let directionType = directions[index].type
@@ -237,14 +241,16 @@ class RouteDiagram: UIView {
 
     }
 
-    private func getRouteLine(fromDirections directions: [Direction], atIndex index: Int, withWalkingRoute isWalkingRoute: Bool) -> RouteLine? {
+    private func getRouteLine(fromDirections directions: [Direction], atIndex index: Int, withWalkingRoute isWalkingRoute: Bool, withStopLabel stopLabel: UILabel) -> RouteLine? {
         let last = directions.count - 1
         if index == last {
             return nil
         }
+        
+        let isStopLabelSingleLine = isStopLabelOneLine(stopLabel)
 
         if isWalkingRoute {
-            let greyRouteLine = SolidLine(height: RouteDiagram.walkLineHeight, color: .mediumGrayColor)
+            let greyRouteLine = isStopLabelSingleLine ? SolidLine(color: .mediumGrayColor) : SolidLine(height: RouteLine.extendedHeight, color: .mediumGrayColor)
 
             return greyRouteLine
         }
@@ -253,12 +259,12 @@ class RouteDiagram: UIView {
         switch directionType {
 
             case .depart:
-                let solidBlueRouteLine = SolidLine(height: RouteDiagram.busLineHeight, color: .tcatBlueColor)
+                let solidBlueRouteLine = isStopLabelSingleLine ? SolidLine(color: .tcatBlueColor) : SolidLine(height: RouteLine.extendedHeight, color: .tcatBlueColor)
 
                 return solidBlueRouteLine
 
             default:
-                let dashedGreyRouteLine = DottedLine(height: RouteDiagram.walkLineHeight, color: .mediumGrayColor)
+                let dashedGreyRouteLine = isStopLabelSingleLine ? DottedLine(color: .mediumGrayColor) : DottedLine(height: RouteLine.extendedHeight, color: .mediumGrayColor)
 
                 return dashedGreyRouteLine
 
@@ -276,142 +282,137 @@ class RouteDiagram: UIView {
         return stayOnBusCoverUpView
     }
 
-    // MARK: Position
-
-    func positionSubviews() {
-
-        for i in routeDiagramElements.indices {
-
-            let stopDot = routeDiagramElements[i].stopDot
-            let stopLabel = routeDiagramElements[i].stopLabel
-
-            positionStopDot(stopDot, atIndex: i)
-            positionStopLabelVertically(stopLabel, usingStopDot: stopDot)
-
-            let first = 0
+    // MARK: Activate constraints
+    
+    func activateConstraints() {
+        setTranslatesAutoresizingMaskIntoConstraints()
+        setDebugIdentifiers()
+        
+        if let first = routeDiagramElements.first {
+            let stopDot = first.stopDot
+            let stopLabel = first.stopLabel
+            
+            let topMargin: CGFloat = 16
+            let spaceBtnStopDotAndStopLabel: CGFloat = 14
+            
+            NSLayoutConstraint.activate([
+                stopLabel.topAnchor.constraint(equalTo: topAnchor, constant: topMargin),
+                stopLabel.leadingAnchor.constraint(equalTo: stopDot.trailingAnchor, constant: spaceBtnStopDotAndStopLabel),
+                
+                stopDot.topAnchor.constraint(equalTo: stopLabel.topAnchor),
+            ])
+            
+            if let routeLine = first.routeLine {
+                NSLayoutConstraint.activate([
+                    routeLine.centerXAnchor.constraint(equalTo: stopDot.centerXAnchor),
+                    routeLine.topAnchor.constraint(equalTo: stopDot.bottomAnchor),
+                ])
+            }
+            
+            let spaceBtnBusIconAndRouteLine: CGFloat = 19.5
+            let spaceBtnWalkIconAndRouteLine: CGFloat = 38
+            let spaceBtnWalkWithDistanceIconAndRouteLine: CGFloat = 24
+            
+            let spaceBtnWalkIconAndSuperview: CGFloat = 20
+            
+            if let icon = first.icon, let routeLine = first.routeLine {
+                let spaceBtnIconAndRouteLine = icon is UIImageView ? spaceBtnWalkIconAndRouteLine : (icon is WalkWithDistanceIcon ? spaceBtnWalkWithDistanceIconAndRouteLine : spaceBtnBusIconAndRouteLine)
+                let spaceBtnIconAndSuperview = icon is UIImageView ? spaceBtnWalkIconAndSuperview : 0
+                NSLayoutConstraint.activate([
+                    icon.centerYAnchor.constraint(equalTo: routeLine.centerYAnchor),
+                    icon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: spaceBtnIconAndSuperview),
+                    icon.trailingAnchor.constraint(equalTo: routeLine.leadingAnchor, constant: -spaceBtnIconAndRouteLine)
+                ])
+            }
+        }
+        
+        let first = 0
+        for (i, current) in routeDiagramElements.enumerated() {
             if i == first {
-                positionFirstStopLabelHorizontally(stopLabel, usingStopDot: stopDot)
-            } else{
-                let prevStopLabel = routeDiagramElements[i-1].stopLabel
-                positionStopLabelHorizontally(stopLabel, usingPrevStopLabel: prevStopLabel)
+                continue
             }
             
-            if let routeLine = routeDiagramElements[i].routeLine {
-                positionRouteLine(routeLine, usingStopDot: stopDot)
-            }
-
-            if let routeLine = routeDiagramElements[i].routeLine,
-               let icon = routeDiagramElements[i].icon {
-                positionIcon(icon, usingRouteLine: routeLine)
+            let prev = routeDiagramElements[i-1]
+            
+            let stopDot = current.stopDot
+            
+            if let prevRouteLine = prev.routeLine {
+                NSLayoutConstraint.activate([
+                    stopDot.topAnchor.constraint(equalTo: prevRouteLine.bottomAnchor),
+                    stopDot.centerXAnchor.constraint(equalTo: prevRouteLine.centerXAnchor)
+                    ])
             }
             
-            if let stayOnBusCoverUpView = routeDiagramElements[i].stayOnBusCoverUpView {
-                positionStayOnBusCoverUpView(stayOnBusCoverUpView, usingStopDot: routeDiagramElements[i].stopDot)
-            }
-
-        }
-        
-        if let walkWithDistanceIcon = routeDiagramElements.first?.icon as? WalkWithDistanceIcon,
-            let routeLine = routeDiagramElements.first?.routeLine {
-            positionWalkWithDistanceIcon(walkWithDistanceIcon, usingRouteLine: routeLine, usingNextIcon: routeDiagramElements[1].icon)
-        }
-        
-        resizeHeight()
-    }
-
-    private func positionStopDot(_ stopDot: Circle, atIndex index: Int) {
-        let firstDot = 0
-
-        if(index == firstDot) {
-
-            stopDot.center.x = stopDotLeftSpaceFromSuperview + (stopDot.frame.width/2)
-            stopDot.center.y = (stopDot.frame.height/2)
-
-        }
-        else {
-
-            let previousRouteLine = routeDiagramElements[index-1].routeLine
-            let previousStopDot = routeDiagramElements[index-1].stopDot
-
-            stopDot.center.x = previousStopDot.center.x
-            stopDot.center.y = (previousRouteLine?.frame.maxY ?? (previousStopDot.frame.maxY + RouteDiagram.walkLineHeight)) + (stopDot.frame.height/2)
-
-        }
-
-    }
-
-    private func positionFirstStopLabelHorizontally(_ stopLabel: UILabel, usingStopDot stopDot: Circle) {
-        let oldFrame = stopLabel.frame
-        let newFrame = CGRect(x: stopDot.frame.maxX + stopDotAndStopLabelHorizontalSpace, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height)
-
-        stopLabel.frame = newFrame
-    }
-
-    private func positionStopLabelVertically(_ stopLabel: UILabel, usingStopDot stopDot: Circle) {
-        let testStopLabel = getTestStopLabel(withName: stopLabel.text!)
-        let oldFrame = stopLabel.frame
-        let newFrame = CGRect(x: oldFrame.minX, y: stopDot.center.y - (testStopLabel.frame.height/2), width: oldFrame.width, height: oldFrame.height)
-        
-        stopLabel.frame = newFrame
-    }
-
-    private func positionStopLabelHorizontally(_ stopLabel: UILabel, usingPrevStopLabel prevStopLabel: UILabel) {
-        let oldFrame = stopLabel.frame
-        let newFrame = CGRect(x: prevStopLabel.frame.minX, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height)
-
-        stopLabel.frame = newFrame
-    }
-    
-    private func positionTravelDistanceLabel(_ travelDistanceLabel: UILabel, usingStopLabel stopLabel: UILabel) {
-        let oldFrame = travelDistanceLabel.frame
-        let newFrame = CGRect(x: stopLabel.frame.maxX + stopLabelAndDistLabelHorizontalSpace, y: stopLabel.frame.minY - 1, width: oldFrame.width, height: oldFrame.height)
-        
-        travelDistanceLabel.frame = newFrame
-    }
-
-    private func positionRouteLine(_ routeLine: RouteLine, usingStopDot stopDot: Circle) {
-        routeLine.center.x = stopDot.center.x
-
-        let oldFrame = routeLine.frame
-        let newFrame = CGRect(x: oldFrame.minX, y: stopDot.frame.maxY, width: oldFrame.width, height: oldFrame.height)
-
-        routeLine.frame = newFrame
-    }
-    
-    private func positionIcon(_ icon: UIView, usingRouteLine routeLine: RouteLine) {
-        if icon is BusIcon {
-            positionBusIcon(icon as! BusIcon, usingRouteLine: routeLine)
-        }
-        else if icon is UIImageView {
-            positionWalkIcon(icon as! UIImageView, usingRouteLine: routeLine)
-        }
-    }
-
-    private func positionWalkIcon(_ walkIcon: UIImageView, usingRouteLine routeLine: RouteLine) {
-        walkIcon.center.x = routeLine.frame.minX - walkIconAndRouteLineHorizontalSpace - (walkIcon.frame.width/2)
-        walkIcon.center.y = routeLine.center.y
-    }
-
-    private func positionBusIcon(_ busIcon: BusIcon, usingRouteLine routeLine: RouteLine) {
-        busIcon.center.x = busIconLeftSpaceFromSuperview + (busIcon.frame.width/2)
-        busIcon.center.y = routeLine.center.y
-    }
-    
-    private func positionStayOnBusCoverUpView(_ stayOnBusCoverUpView: UIView, usingStopDot stopDot: Circle) {
-        stayOnBusCoverUpView.center.x = busIconLeftSpaceFromSuperview + (stayOnBusCoverUpView.frame.width/2)
-        stayOnBusCoverUpView.center.y = stopDot.center.y
-    }
-    
-    private func positionWalkWithDistanceIcon(_ walkWithDistanceIcon: WalkWithDistanceIcon, usingRouteLine routeLine: RouteLine, usingNextIcon nextIcon: UIView?) {
-        if let nextIcon = nextIcon {
-            walkWithDistanceIcon.center.x = nextIcon.center.x
-            walkWithDistanceIcon.center.y = routeLine.center.y
-        }
-        else {
-            let walkWithDistanceIconAndRouteLineHorizontalSpace: CGFloat = 22.0
+            let stopLabel = current.stopLabel
             
-            walkWithDistanceIcon.center.x = routeLine.frame.minX - walkWithDistanceIconAndRouteLineHorizontalSpace - (walkWithDistanceIcon.frame.width/2)
-            walkWithDistanceIcon.center.y = routeLine.center.y
+            NSLayoutConstraint.activate([
+                stopLabel.leadingAnchor.constraint(equalTo: prev.stopLabel.leadingAnchor),
+                stopLabel.topAnchor.constraint(equalTo: stopDot.topAnchor)
+            ])
+            
+            if let routeLine = current.routeLine {
+                NSLayoutConstraint.activate([
+                    routeLine.topAnchor.constraint(equalTo: stopDot.bottomAnchor),
+                    routeLine.centerXAnchor.constraint(equalTo: stopDot.centerXAnchor)
+                ])
+            }
+            
+            if let icon = current.icon, let routeLine = current.routeLine {
+                NSLayoutConstraint.activate([
+                    icon.centerYAnchor.constraint(equalTo: routeLine.centerYAnchor)
+                ])
+                
+                if let prevIcon = prev.icon {
+                    NSLayoutConstraint.activate([
+                        icon.centerXAnchor.constraint(equalTo: prevIcon.centerXAnchor)
+                    ])
+                }
+            }
+            
+            if let stayOnBusCoverUpView = current.stayOnBusCoverUpView, let icon = current.icon {
+                let busIconCornerRadius = BusIconType.directionSmall.cornerRadius
+                
+                NSLayoutConstraint.activate([
+                    stayOnBusCoverUpView.centerXAnchor.constraint(equalTo: icon.centerXAnchor),
+                    stayOnBusCoverUpView.bottomAnchor.constraint(equalTo: icon.topAnchor, constant: busIconCornerRadius),
+                    stayOnBusCoverUpView.widthAnchor.constraint(equalToConstant: icon.intrinsicContentSize.width),
+                ])
+                
+                if let prevIcon = prev.icon {
+                    NSLayoutConstraint.activate([
+                        stayOnBusCoverUpView.topAnchor.constraint(equalTo: prevIcon.bottomAnchor, constant: -busIconCornerRadius),
+                    ])
+                }
+            }
+        }
+        
+        if let lastStopLabel = routeDiagramElements.last?.stopLabel {
+            NSLayoutConstraint.activate([
+                lastStopLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
+            ])
+        }
+    }
+    
+    private func setTranslatesAutoresizingMaskIntoConstraints() {
+        for routeDiagramElement in routeDiagramElements {
+            routeDiagramElement.stopLabel.translatesAutoresizingMaskIntoConstraints = false
+            routeDiagramElement.stopDot.translatesAutoresizingMaskIntoConstraints = false
+            
+            routeDiagramElement.icon?.translatesAutoresizingMaskIntoConstraints = false
+            routeDiagramElement.stayOnBusCoverUpView?.translatesAutoresizingMaskIntoConstraints = false
+            routeDiagramElement.routeLine?.translatesAutoresizingMaskIntoConstraints = false
+        }
+    }
+    
+    /// For debugging constraint errors
+    private func setDebugIdentifiers() {
+        for (i, routeDiagramElement) in routeDiagramElements.enumerated() {
+            routeDiagramElement.stopLabel.accessibilityIdentifier = "stopLabel\(i)"
+            routeDiagramElement.stopDot.accessibilityIdentifier = "stopDot\(i)"
+            
+            routeDiagramElement.icon?.accessibilityIdentifier = "icon\(i)"
+            routeDiagramElement.stayOnBusCoverUpView?.accessibilityIdentifier = "stayOnBusCoverUpView\(i)"
+            routeDiagramElement.routeLine?.accessibilityIdentifier = "routeLine\(i)"
         }
     }
 

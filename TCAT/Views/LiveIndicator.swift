@@ -32,7 +32,12 @@ class LiveIndicator: UIView {
     let START_DELAY: TimeInterval = 0.0
     let END_DELAY: TimeInterval = 0.0 // 0.25
     let DIM_OPACITY: CGFloat = 0.5
-    let INTERVAL: TimeInterval = LiveIndicator.INTERVAL
+    
+    // MARK: Constraint vars
+    
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: CGFloat(size.rawValue) + lineWidth, height: CGFloat(size.rawValue) + lineWidth)
+    }
     
     // MARK: Init
     
@@ -62,10 +67,6 @@ class LiveIndicator: UIView {
     }
     
     // MARK: Resize
-    
-    override var intrinsicContentSize: CGSize {
-        return CGSize(width: CGFloat(size.rawValue) + lineWidth, height: CGFloat(size.rawValue) + lineWidth)
-    }
     
     private func resizeFrameToFitLayers(lineWidth: CGFloat) {
         frame = CGRect(x: frame.minX, y: frame.minY, width: frame.width + lineWidth, height: frame.height + lineWidth)
@@ -140,7 +141,7 @@ class LiveIndicator: UIView {
         var timeInterval: TimeInterval = 0
         
         for layer in [circleLayer, smallArcLayer, largeArcLayer] {
-            let timer = Timer(fireAt: Date().addingTimeInterval(timeInterval), interval: INTERVAL, target: self,
+            let timer = Timer(fireAt: Date().addingTimeInterval(timeInterval), interval: LiveIndicator.INTERVAL, target: self,
                               selector: #selector(self.animateLayer), userInfo: layer, repeats: true)
             RunLoop.main.add(timer, forMode: .commonModes)
             timeInterval += LiveIndicator.DURATION

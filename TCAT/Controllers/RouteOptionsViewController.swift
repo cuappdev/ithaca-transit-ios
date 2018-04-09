@@ -604,7 +604,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
 
         cell?.setData(routes[indexPath.row])
-        cell?.addSubviewsToRouteDiagram()
+        cell?.addRouteDiagramSubviews()
         cell?.activateRouteDiagramConstraints()
 
         // Add share action for long press gestures on non 3D Touch devices
@@ -734,7 +734,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Tableview Delegate
 
     private func setupRouteResultsTableView() {
-        
         routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0)), style: .plain)
         routeResults.delegate = self
         routeResults.allowsSelection = true
@@ -743,8 +742,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.backgroundColor = .tableBackgroundColor
         routeResults.alwaysBounceVertical = true //so table view doesn't scroll over top & bottom
         routeResults.showsVerticalScrollIndicator = false
+        
+        // so can have dynamic height cells
         routeResults.estimatedRowHeight = estimatedRowHeight
         routeResults.rowHeight = UITableViewAutomaticDimension
+        
         refreshControl.isHidden = true
 
         if #available(iOS 10.0, *) {
@@ -774,6 +776,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             
             searchForRoutes()
         }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let tableViewTopMargin: CGFloat = 12
+        return UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: tableViewTopMargin))
     }
     
     // MARK: RouteDetailViewController

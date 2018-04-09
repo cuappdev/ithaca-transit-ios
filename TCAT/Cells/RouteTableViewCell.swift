@@ -57,7 +57,7 @@ class RouteTableViewCell: UITableViewCell {
     let rightMargin: CGFloat = 12
     
     let cellBorderHeight: CGFloat = 0.75
-    let cellSeparatorHeight: CGFloat = 8.0
+    let cellSeparatorHeight: CGFloat = 6.0
     
     let spaceBtnDepartureElements: CGFloat = 4
     let arrowImageViewHeight: CGFloat = 11.5
@@ -164,14 +164,14 @@ class RouteTableViewCell: UITableViewCell {
     
     // MARK: Add subviews
     
-    func addSubviewsToRouteDiagram() {
+    func addRouteDiagramSubviews() {
         routeDiagram.addSubviews()
     }
 
-    // MARK: Constraints
+    // MARK: Activate constraints
 
     func activateRouteDiagramConstraints() {
-        routeDiagram.positionSubviews()
+        routeDiagram.activateConstraints()
     }
     
     private func activateConstraints() {
@@ -301,7 +301,7 @@ class RouteTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         routeDiagram.prepareForReuse()
         
-        hideLiveElements()
+        hideLiveElements(animate: false)
         
         // stop timer
         timer?.invalidate()
@@ -400,7 +400,7 @@ class RouteTableViewCell: UITableViewCell {
             
         case .noDelay(date: _):
             if !liveStackView.isHidden {
-                hideLiveElements()
+                hideLiveElements(animate: true)
             }
             
         }
@@ -413,8 +413,12 @@ class RouteTableViewCell: UITableViewCell {
         }
     }
     
-    private func hideLiveElements() {
-        UIView.animate(withDuration: 0.3) {
+    private func hideLiveElements(animate: Bool) {
+        if animate {
+            UIView.animate(withDuration: 0.3) {
+                self.liveStackView.isHidden = true
+            }
+        } else {
             self.liveStackView.isHidden = true
         }
     }
