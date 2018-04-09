@@ -10,6 +10,7 @@ import UIKit
 enum BusIconType: String {
     case directionSmall, directionLarge, liveTracking
     
+    /// Return BusIcon's frame width
     var width: CGFloat {
         switch self {
         case .directionSmall:
@@ -21,6 +22,7 @@ enum BusIconType: String {
         }
     }
     
+    /// Return BusIcon's frame height
     var height: CGFloat {
         switch self {
         case .directionSmall:
@@ -32,6 +34,7 @@ enum BusIconType: String {
         }
     }
     
+    /// Return BusIcon's corner radius
     var cornerRadius: CGFloat {
         switch self {
         case .directionLarge:

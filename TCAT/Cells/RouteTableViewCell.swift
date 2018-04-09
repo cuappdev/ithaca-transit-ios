@@ -214,23 +214,12 @@ class RouteTableViewCell: UITableViewCell {
     }
     
     private func setTranslatesAutoresizingMaskIntoConstraints() {
-        timesStackView.translatesAutoresizingMaskIntoConstraints = false
-        travelTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-    
-        departureStackView.translatesAutoresizingMaskIntoConstraints = false
-        departureTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        arrowImageView.translatesAutoresizingMaskIntoConstraints = false
-    
-        liveStackView.translatesAutoresizingMaskIntoConstraints = false
-        liveLabel.translatesAutoresizingMaskIntoConstraints = false
-        liveIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-        stretchyFillerView.translatesAutoresizingMaskIntoConstraints = false
-    
-        verticalStackView.translatesAutoresizingMaskIntoConstraints = false
-        topBorder.translatesAutoresizingMaskIntoConstraints = false
-        routeDiagram.translatesAutoresizingMaskIntoConstraints = false
-        bottomBorder.translatesAutoresizingMaskIntoConstraints = false
-        cellSeparator.translatesAutoresizingMaskIntoConstraints = false
+        let subviews = [timesStackView, travelTimeLabel,
+                        departureStackView, departureTimeLabel, arrowImageView,
+                        liveStackView, liveLabel, liveIndicatorView, stretchyFillerView,
+                        verticalStackView, topBorder, routeDiagram, bottomBorder, cellSeparator]
+        
+        subviews.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
     }
     
     /// For debugging constraint errors
