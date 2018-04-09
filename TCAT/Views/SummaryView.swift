@@ -130,7 +130,7 @@ class SummaryView: UIView {
             
             if let stringRect = mainLabel.boundingRect(of: departDirection.startTimeWithDelayDescription + " ") {
                 liveIndicator.frame.origin.x = mainLabel.frame.minX + stringRect.maxX
-                liveIndicator.center.y = mainLabel.frame.minY + stringRect.midY + 1
+                liveIndicator.center.y = mainLabel.frame.minY + stringRect.midY
                 liveIndicator.setColor(to: departDirection.delay == nil ? .clear : color)
             } else {
                 print("[SummaryView] Could not find phrase in label")
@@ -172,7 +172,7 @@ class SummaryView: UIView {
         testLabel.sizeToFit()
         let sizeOfSpace = testLabel.frame.size.width
         var space = ""
-        let numberOfSpaces = Int(ceil(liveIndicator.frame.size.width / sizeOfSpace)) + 1
+        let numberOfSpaces = Int(ceil(liveIndicator.intrinsicContentSize.width / sizeOfSpace))
         for _ in 1...numberOfSpaces {
             space += " "
         }

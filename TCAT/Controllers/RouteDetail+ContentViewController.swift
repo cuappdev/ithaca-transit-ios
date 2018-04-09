@@ -152,6 +152,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         shareButton.tintColor = .primaryTextColor
         guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
+        
+        // Debugging
+        // generateDebugBusIcon()
 
     }
     
@@ -548,7 +551,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         
         let padding: CGFloat = 16
         let bounds = mapView.projection.visibleRegion()
-        let isPartiallyRevealed = (self.parent as? RouteDetailViewController)?.drawerPosition == .partiallyRevealed
+        let isPartiallyRevealed = (parent as? RouteDetailViewController)?.drawerPosition == .partiallyRevealed
         
         var topOffset: Double {
             let origin = mapView.projection.coordinate(for: CGPoint(x: 0, y: 0)).latitude
@@ -602,14 +605,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             point.x += (view.frame.size.width / 2) + padding
         }
         if pastTopEdge {
-            point.y += padding - (view.frame.size.width / 2)
+            point.y += padding - (view.frame.size.height / 2)
         }
         if pastBottomEdge {
-            var inset: CGFloat = isPartiallyRevealed ? 0 : drawerDisplayController?.summaryView.frame.height ?? 0
-            if #available(iOS 11.0, *) {
-                inset += view.safeAreaInsets.bottom
-            }
-            point.y -= padding + inset
+            let constant = isPartiallyRevealed ? 0 : view.frame.size.height
+            point.y -= padding + constant
         }
         
         // If no change needed, return nil.
@@ -702,6 +702,25 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             }
             
         } // end for loop
+        
+    }
+    
+    /// Creates a Bus Icon on the map for debugging
+    func generateDebugBusIcon() {
+        
+        let bus = BusLocation(dataType: .validData, destination: "", deviation: 0, delay: 0, direction: "", displayStatus: "", gpsStatus: 0, heading: 0, lastStop: "", lastUpdated: Date(), latitude: 42.4491411, longitude: -76.4836815, name: 16, opStatus: "", routeID: "99", runID: 0, speed: 0, tripID: "", vehicleID: 0)
+        let coords = CLLocationCoordinate2D(latitude: 42.4491411, longitude: -76.4836815)
+        let marker = GMSMarker(position: coords)
+        (bus.iconView as? BusLocationView)?.updateBus(to: coords, with: Double(bus.heading))
+        marker.iconView = bus.iconView
+        marker.appearAnimation = .pop
+        setIndex(of: marker, with: .bussing)
+        updateUserData(for: marker, with: [
+            Constants.BusUserData.actualCoordinates : coords,
+            Constants.BusUserData.vehicleID : 123456789
+        ])
+        marker.map = mapView
+        buses.append(marker)
         
     }
     
