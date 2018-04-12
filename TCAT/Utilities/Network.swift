@@ -5,6 +5,7 @@
 //  Created by Austin Astorga on 4/6/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
+
 import Foundation
 import SwiftyJSON
 import TRON
@@ -24,11 +25,11 @@ class Network {
     // Change `networkType` to `.local` to work locally.
     // Change `localIPAddress` to be the proper address
     
-    static let networkType: NetworkType = .release
+    static let networkType: NetworkType = .local
     static let apiVersion = "v1"
 
     /// Used for local backend testing
-    static let localIPAddress = "10.131.152.124"
+    static let localIPAddress = "10.132.0.68"
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
 
     /// Test server used for development
