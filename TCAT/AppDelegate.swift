@@ -58,6 +58,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             userDefaults.set([Any](), forKey: Constants.UserDefaults.favorites)
         }
         
+        // Track number of app opens for Store Review prompt
+        StoreReviewHelper.incrementAppOpenedCount()
+        
         // Debug - Always Show Onboarding
         // userDefaults.set(false, forKey: Constants.UserDefaults.onboardingShown)
         

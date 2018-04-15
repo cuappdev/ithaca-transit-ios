@@ -26,6 +26,8 @@
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
 		BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0002211FB37D0A00773109 /* LoadingIndicator.swift */; };
 		BF1209FB1F7759C200A7C930 /* BusLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1209FA1F7759C200A7C930 /* BusLocationView.swift */; };
+		BF18AE102083B7F6000C3D82 /* StoreKitHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18AE0F2083B7F6000C3D82 /* StoreKitHelper.swift */; };
+		BF18AE122083B9B8000C3D82 /* Personality.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18AE112083B9B8000C3D82 /* Personality.swift */; };
 		BF456E0320489990005C611D /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
 		BF5C52A4207B96F0003C93B9 /* LiveIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */; };
 		BF5CBAD11FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */; };
@@ -126,6 +128,8 @@
 		97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
 		BF0002211FB37D0A00773109 /* LoadingIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoadingIndicator.swift; path = Views/LoadingIndicator.swift; sourceTree = "<group>"; };
 		BF1209FA1F7759C200A7C930 /* BusLocationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocationView.swift; path = Views/BusLocationView.swift; sourceTree = "<group>"; };
+		BF18AE0F2083B7F6000C3D82 /* StoreKitHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StoreKitHelper.swift; path = Utilities/StoreKitHelper.swift; sourceTree = "<group>"; };
+		BF18AE112083B9B8000C3D82 /* Personality.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Personality.swift; sourceTree = "<group>"; };
 		BF456E0220489990005C611D /* BusLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocation.swift; path = Model/BusLocation.swift; sourceTree = "<group>"; };
 		BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LiveIndicator.swift; path = Views/LiveIndicator.swift; sourceTree = "<group>"; };
 		BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "RouteDetail+DrawerViewController.swift"; path = "Controllers/RouteDetail+DrawerViewController.swift"; sourceTree = "<group>"; };
@@ -360,8 +364,10 @@
 				D183AA011E6CB092006A9A15 /* Extensions.swift */,
 				DD87F2091E878CB5000C244B /* Loader.swift */,
 				503EC38C1E96B85B00B3D4D4 /* Network.swift */,
+				BF18AE112083B9B8000C3D82 /* Personality.swift */,
 				DD3D9C201F94297100B164D4 /* Reachability.swift */,
 				5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */,
+				BF18AE0F2083B7F6000C3D82 /* StoreKitHelper.swift */,
 				DD5D233B1E6367A100F8DECE /* Time.swift */,
 			);
 			name = Utilities;
@@ -780,6 +786,7 @@
 				DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */,
 				E337970D1FC1606D00BCB28F /* InformationViewController.swift in Sources */,
 				503EC37B1E969ACD00B3D4D4 /* BusStopCell.swift in Sources */,
+				BF18AE122083B9B8000C3D82 /* Personality.swift in Sources */,
 				DDB49C9A1E8857E000A99C35 /* BusStopTableViewCell.swift in Sources */,
 				DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */,
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
@@ -805,6 +812,7 @@
 				DCB717101FB76EA600BE4D26 /* AllStopsTableViewController.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
 				DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */,
+				BF18AE102083B7F6000C3D82 /* StoreKitHelper.swift in Sources */,
 				DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */,
 				BFB86A07205C614C000794B2 /* OnboardingViewController.swift in Sources */,
 				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
