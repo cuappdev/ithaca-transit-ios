@@ -78,6 +78,7 @@ struct Constants {
     struct UserDefaults {
         
         static let version = "version"
+        static let appLaunchCount = "appLaunchCount"
         static let onboardingShown = "onboardingShown"
         static let showLocationAuthReminder = "locationAuthReminder"
         

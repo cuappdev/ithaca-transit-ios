@@ -15,8 +15,7 @@ struct StoreReviewHelper {
     
     /// MARK: Variables
     
-    /// Solely used for review prompt tracking. DO NOT USE AS METRIC.
-    private static let APP_OPENED_COUNT = "appOpenedCount"
+    private static let APP_OPENED_COUNT = Constants.UserDefaults.appLaunchCount
     
     // The number of app launches to ask for a review
     
@@ -37,6 +36,7 @@ struct StoreReviewHelper {
     }
     
     /// Ask for review at appropriate times in app lifecycle (not guaranteed to fire, Apple-controlled logic)
+    /// - override: Force a request of a review, overriding number of app launches
     static func checkAndAskForReview(override: Bool = false) {
         
         if override {

@@ -183,6 +183,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidAppear(animated)
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
+        
+        StoreReviewHelper.checkAndAskForReview()
+        
     }
 
     func createSections() -> [Section] {
