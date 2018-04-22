@@ -427,6 +427,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     // Handle Request
                     
                     if let alamofireRequest = request?.perform(withSuccess: { (routeJSON) in
+                        JsonFileManager.saveToDocuments(json: routeJSON)
+                        JsonFileManager.printAllJsons()
+                        
                         Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
                             self.routes = parsedRoutes
                             self.requestDidFinish(with: error) // 300 error for Route Calculation Failure

@@ -45,6 +45,7 @@
 		DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */; };
 		DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96451FC21B29009955C6 /* HeaderView.swift */; };
 		DCB717101FB76EA600BE4D26 /* AllStopsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */; };
+		DD04B1AD208CC5E4006C1C23 /* JsonFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD04B1AC208CC5E4006C1C23 /* JsonFileManager.swift */; };
 		DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
 		DD2F98A31E5150990005F6BC /* RouteOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */; };
@@ -146,6 +147,7 @@
 		DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FavoritesTableViewController.swift; path = Controllers/FavoritesTableViewController.swift; sourceTree = "<group>"; };
 		DC2E96451FC21B29009955C6 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeaderView.swift; path = Views/HeaderView.swift; sourceTree = "<group>"; };
 		DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AllStopsTableViewController.swift; path = Controllers/AllStopsTableViewController.swift; sourceTree = "<group>"; };
+		DD04B1AC208CC5E4006C1C23 /* JsonFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JsonFileManager.swift; path = Utilities/JsonFileManager.swift; sourceTree = "<group>"; };
 		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
 		DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteOptionsViewController.swift; path = Controllers/RouteOptionsViewController.swift; sourceTree = "<group>"; };
@@ -363,6 +365,7 @@
 				DD3D9C201F94297100B164D4 /* Reachability.swift */,
 				5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */,
 				DD5D233B1E6367A100F8DECE /* Time.swift */,
+				DD04B1AC208CC5E4006C1C23 /* JsonFileManager.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -792,6 +795,7 @@
 				D183AA021E6CB092006A9A15 /* Extensions.swift in Sources */,
 				503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */,
 				DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */,
+				DD04B1AD208CC5E4006C1C23 /* JsonFileManager.swift in Sources */,
 				DDE3BC231F5863D50014D2BB /* Place.swift in Sources */,
 				BF6095271FD7091B0013E538 /* CustomNavigationController.swift in Sources */,
 				BF5CBAD11FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift in Sources */,
