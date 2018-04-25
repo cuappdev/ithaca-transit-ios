@@ -9,8 +9,9 @@
 import UIKit
 import SafariServices
 import SwiftRegister
+import MessageUI
 
-class InformationViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class InformationViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate {
     
     var titleLabel = UILabel()
     var appDevImage = UIImageView()
@@ -29,7 +30,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
     
         [ // Section 0
             (name: "Show Onboarding", action: #selector(presentOnboarding)),
-            (name: "Send Feedback", action: #selector(openBugReportForm)),
+            (name: "Send Feedback", action: #selector(sendFeedback)),
         ],
         
         [ // Section 1
@@ -184,16 +185,106 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         present(navigationController, animated: true)
     }
     
-    @objc func openBugReportForm() {
-        open(Constants.App.feedbackLink)
+    @objc func sendFeedback() {
+        
+        let emailAddress = Constants.App.contactEmailAddress
+        let subject = "Ithaca Transit Feedback v\(Constants.App.version)"
+        
+        let fileName = ""
+        let extensionName = ""
+        
+        let mailComposerVC = MFMailComposeViewController()
+        mailComposerVC.mailComposeDelegate = self
+        var logRetreivalFailed = true
+        
+        // Attach logs
+        if let fileURL = Bundle.main.url(forResource: fileName, withExtension: extensionName) {
+            do {
+                let file = try Data(contentsOf: fileURL)
+                mailComposerVC.addAttachmentData(file, mimeType: "text/plain", fileName: fileName)
+                logRetreivalFailed = false
+            } catch _ { }
+        }
+        
+        // Message body
+        var html = ""
+        html += "<!DOCTYPE html>"
+        html += "<html>"
+        html += "<body>"
+        
+        html += "<h2>Ithaca Transit Feedback Form</h2>"
+        
+        html += "<b>Problem:</b>"
+        html += "<br><br>"
+        
+        if logRetreivalFailed {
+            html += "<b>How to Reproduce:</b>"
+            html += "<br><br>"
+        }
+        
+        html += "<b>Other Comments:</b>"
+        
+        html += "</body>"
+        html += "</html>"
+        
+        mailComposerVC.setToRecipients([emailAddress])
+        mailComposerVC.setSubject(subject)
+        mailComposerVC.setMessageBody(html, isHTML: true)
+        
+        if MFMailComposeViewController.canSendMail() {
+            present(mailComposerVC, animated: true)
+        } else {
+            mailComposerError()
+        }
+        
+    }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Swift.Error?) {
+        controller.dismiss(animated: true)
+        if let error = error {
+            print("error:", error)
+        }
+    }
+    
+    func mailComposerError() {
+        
+        func showMailAlert() {
+            
+            let title = "Send Feedback Error"
+            let message = "There was an unexpected error while sending feedback. Please email \(Constants.App.contactEmailAddress) and send feedback on this (embarassing) issue and any other feedback."
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (action) in
+                print("action?")
+            }))
+            present(alertController, animated: true)
+            
+        }
+        
+        let address = Constants.App.contactEmailAddress
+        let subject = "Ithaca Transit Feedback v\(Constants.App.version)"
+        
+        let coded = "mailto:\(address)?subject=\(subject)&body=\("")".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        
+        if let emailURL = URL(string: coded ?? "") {
+            if UIApplication.shared.canOpenURL(emailURL) {
+                UIApplication.shared.open(emailURL)
+            } else {
+                showMailAlert()
+            }
+        } else {
+            showMailAlert()
+        }
+
     }
     
     @objc func showMoreApps() {
-        open("https://itunes.apple.com/us/developer/walker-white/id1089672961", inApp: false)
+        let appStorePage = "https://itunes.apple.com/us/developer/walker-white/id1089672961"
+        open(appStorePage, inApp: false)
     }
     
     @objc func openTeamWebsite() {
-        open("http://www.cornellappdev.com")
+        let homePage = "http://www.cornellappdev.com"
+        open(homePage)
     }
     
     func open(_ url: String, inApp: Bool = true) {

@@ -8,135 +8,130 @@
 
 import Foundation
 
+struct Messages {
+    
+    struct Walking {
+        
+        static let phrases = [
+            "There's nothing wrong with a little exercise!",
+        ]
+        
+    }
+    
+    /// Phrases relating to a specific location
+    struct Locations {
+        
+        static let rpcc: [String] = [
+            "In the kitchen, wrist twistin' like it's Mongo 🎵",
+            "The best place for 1 AM calzones 😋",
+        ]
+        
+        static let mall: [String] = [
+            "Let's go to the mall... today! 🎵",
+            "You should play some lazer tag!",
+            "Catch a movie! 🎥"
+        ]
+        
+        static let target: [String] = [
+            "Do they even sell targets?",
+            "Can you get tar at target?",
+        ]
+        
+        static let wegmans: [String] = [
+            "Make sure you grab a liter of Dr. W!",
+            "Weg it up."
+        ]
+        
+        static let walmart: [String] = [
+            "But they don't sell any walls...",
+            "A small mom & pop shop owned by Wally and Marty",
+            "The only store big enough to have its own weather system"
+        ]
+        
+        static let chipotle: [String] = [
+            "Honestly, the new queso is a bit underwhelming...",
+            "Get there early before they run out of guac!",
+            "Try getting a quesarito, a secret menu item!"
+        ]
+        
+    }
+    
+}
+
+
+class LocationPhrases {
+    
+    static let places: [CustomLocation] = [
+        
+        CustomLocation(messages: Messages.Locations.rpcc, latitude: 0, longitude: 0, range: 0),
+        CustomLocation(messages: Messages.Locations.mall, latitude: 0, longitude: 0, range: 0),
+        CustomLocation(messages: Messages.Locations.target, latitude: 0, longitude: 0, range: 0),
+        CustomLocation(messages: Messages.Locations.wegmans, latitude: 0, longitude: 0, range: 0),
+        CustomLocation(messages: Messages.Locations.chipotle, latitude: 0, longitude: 0, range: 0),
+        
+    ]
+    
+    /// Return a string from the first location within the range of coordinates. Otherwise, return nil.
+    static func generateMessage(latitude: Double, longitude: Double) -> String? {
+        for place in places {
+            if place.isWithinRange(latitude: latitude, longitude: longitude) {
+                return selectMessage(from: place.messages)
+            }
+        }
+        return nil
+    }
+
+}
+
+
+class WalkingPhrases {
+    
+    static let messages: [String] = [
+        
+        "A little exercise never hurt anyone!",
+        "I hope it's a nice day!",
+        "Get yourself some Itha-calves",
+        
+    ]
+    
+    /// If route is solely a walking direction, return message. Otherwise, return nil.
+    static func generateMessage(route: Route) -> String? {
+        return route.isRawWalkingRoute() ? selectMessage(from: messages) : nil
+    }
+
+}
+
+// MARK: Utility Classes & Functions
+
 /// A custom location the a user searches for. Coordinates used for matching.
 struct CustomLocation: Equatable {
     
-    // MARK: Initializer
-    
+    /// Messages related to location
+    var messages: [String]
+    /// Latitude of location
     var latitude: Double
+    /// Longitude of location
     var longitude: Double
-    
     /// The amount of acceptable difference between coordinate values
     var range: Double
     
-    init(latitude: Double, longitude: Double, range: Double) {
+    init(messages: [String], latitude: Double, longitude: Double, range: Double) {
+        self.messages = messages
         self.latitude = latitude
         self.longitude = longitude
         self.range = range
     }
     
-    // MARK: Custom Locations
-    
-    static let rpcc = CustomLocation(latitude: 0, longitude: 0, range: 0)
-    
-    static let target = CustomLocation(latitude: 0, longitude: 0, range: 0)
-    
-    static let mall = CustomLocation(latitude: 0, longitude: 0, range: 0)
-    
-    // MARK: Variables
-    
-    /// Sorted in priority order; if locations overlap, the first location will be returned
-    static let array: [CustomLocation] = [
-    
-        // Mall-related
-        target,
-        mall,
-        
-        // School-related
-        rpcc,
-        
-    ]
+    /// Returns true is passed in coordinates are within the range of the location
+    func isWithinRange(latitude: Double, longitude: Double) -> Bool {
+        return range <= abs(self.latitude - latitude) && range <= abs(self.longitude - longitude)
+    }
     
 }
 
-/// The type of context with which to use Personality
-enum PersonalityType {
-    
-    // MARK: Cases
-    
-    
-    /// When route results show a walking only direction
-    case walkingDirection
-    
-    /// When a user's destination matches a custom location
-    case customLocation(_: CustomLocation)
-    
-    
-    // MARK: Variables
-    
-    
-    /// Custom phrases related to a specific context (PersonalityType)
-    var array: [String] {
-        
-        switch self {
-            
-            
-        case .walkingDirection:
-            
-            return [
-                "There's nothing wrong with a little exercise!",
-            ]
-            
-            
-        case .customLocation(let location):
-            
-            switch location {
-                
-            case CustomLocation.rpcc:
-                return [
-                    "In the kitchen, wrist twistin' like it's Mongo 🎵",
-                    "The best place for 1 AM calzones 😋",
-                ]
-                
-            case CustomLocation.mall:
-                return [
-                    "Let's go to the mall... today! 🎵",
-                    "You should play some lazer tag!",
-                    "Catch a movie! 🎥"
-                ]
-                
-            default:
-                return []
-                
-            } // end customLocation switch statement
-            
-            
-        } // end main switch statement
-        
-    } // end `array` variable declaration
-    
+/// Select random string from array
+func selectMessage(from messages: [String]) -> String {
+    let rand = Int(arc4random_uniform(UInt32(messages.count)))
+    return messages[rand]
 }
 
-/// An object that manages custom phrases to use in various app contexts
-struct Personality {
-    
-    var type: PersonalityType!
-    
-    init(type: PersonalityType) {
-        self.type = type
-    }
-    
-    // Return the set customLocation PersonalityType if the coordinates match a customLocation
-    static func customLocation(latitude: Double, longitude: Double) -> PersonalityType? {
-        
-        for location in CustomLocation.array {
-            
-            if location.range <= abs(location.latitude - latitude) &&
-                location.range <= abs(location.longitude - longitude) {
-                return .customLocation(location)
-            }
-            
-        }
-        
-        return nil
-        
-    }
-    
-    /// Return a random value in the Personality object's initialized array
-    func generateValue() -> String {
-        let array = self.type.array
-        let rand = Int(arc4random_uniform(UInt32(array.count)))
-        return array[rand]
-    }
-    
-}
