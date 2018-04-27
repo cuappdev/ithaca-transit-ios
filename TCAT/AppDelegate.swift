@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let userDefaults = UserDefaults.standard
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        JsonFileManager.deleteAllJsonFilesFromDisk()
+        JsonFileManager.shared.deleteAllJsonFilesFromDisk()
         
         // Set Up Google Services
         GMSServices.provideAPIKey(Keys.googleMaps.value)

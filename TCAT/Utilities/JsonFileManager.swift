@@ -14,11 +14,31 @@ import SwiftyJSON
 
 class JsonFileManager {
     
-    private static var documentsURL: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    // MARK: Singleton vars
+    
+    static let shared = JsonFileManager()
+    
+    // MARK: File vars
+    
+    private var documentsURL: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    private var logURL: URL
+    
+    // MARK: Initialization
+    
+    private init() {
+        do {
+            // create the destination url for the text file to be saved
+            logURL = documentsURL.appendingPathComponent("log.txt")
+            let line = "\(getTimeStamp(from: Date())): Initialized JsonFileManager"
+            try line.write(to: logURL, atomically: false, encoding: .utf8)
+        } catch {
+            print("JsonFileManager init: \(error)")
+        }
+    }
     
     // MARK: Manage Files
     
-    private static func getAllJsonsURLs() -> [URL]{
+    private func getAllJsonsURLs() -> [URL]{
         var jsonURLs: [URL] = []
 
         do {
@@ -43,7 +63,7 @@ class JsonFileManager {
     
     // MARK: Manage Disk
     
-    static func saveToDocuments(json: JSON) {
+    func saveToDocuments(json: JSON) {
         do {
             let jsonData = try json.rawData()
             
@@ -57,7 +77,7 @@ class JsonFileManager {
         }
     }
     
-    static func readFromDocuments(fileUrl: URL) -> Data? {
+    func readFromDocuments(fileUrl: URL) -> Data? {
         let filePath = getFilePath(fileURL: fileUrl)
         
         if FileManager.default.fileExists(atPath: filePath), let data = FileManager.default.contents(atPath: filePath) {
@@ -66,7 +86,7 @@ class JsonFileManager {
         return nil
     }
     
-    static func deleteAllJsonFilesFromDisk() {
+    func deleteAllJsonFilesFromDisk() {
         let jsonURLs = getAllJsonsURLs()
         
         for url in jsonURLs {
@@ -89,7 +109,7 @@ class JsonFileManager {
         print("JsonFileManager printData(): \(string!)")
     }
     
-    static func printAllJsons() {
+    func printAllJsons() {
         let jsonURLs = getAllJsonsURLs()
         
         print("JsonFileManager printAllJsons():")
@@ -102,13 +122,19 @@ class JsonFileManager {
     
     // MARK: Utilities
     
-    private static func getFileName(from date: Date) -> String {
+    private func getFileName(from date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd hh-mm-ss a"
         return formatter.string(from: date)
     }
     
-    private static func getFileComponents(fileURL: URL) -> (fileName: String, fileExtension: String) {
+    private func getTimeStamp(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M/d/y E h:mm:ss a (zzz)"
+        return formatter.string(from: date)
+    }
+    
+    private func getFileComponents(fileURL: URL) -> (fileName: String, fileExtension: String) {
         let fileURLParts = fileURL.path.components(separatedBy: "/")
         let fileName = fileURLParts.last
         let filenameParts = fileName?.components(separatedBy: ".")
@@ -116,7 +142,7 @@ class JsonFileManager {
         return (filenameParts![0], filenameParts![1])
     }
     
-    private static func getFilePath(fileURL: URL) -> String {
+    private func getFilePath(fileURL: URL) -> String {
         let (fileName: fileName, fileExtension: fileExtension) =  getFileComponents(fileURL: fileURL)
         
         return documentsURL.appendingPathComponent("\(fileName).\(fileExtension)").path

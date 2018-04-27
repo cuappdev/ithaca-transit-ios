@@ -427,8 +427,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     // Handle Request
                     
                     if let alamofireRequest = request?.perform(withSuccess: { (routeJSON) in
-                        JsonFileManager.saveToDocuments(json: routeJSON)
-                        JsonFileManager.printAllJsons()
+                        JsonFileManager.shared.saveToDocuments(json: routeJSON)
+                        JsonFileManager.shared.printAllJsons()
                         
                         Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
                             self.routes = parsedRoutes
