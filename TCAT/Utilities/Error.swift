@@ -8,11 +8,6 @@
 
 import Foundation
 
-enum CoordinateVisitorError: Swift.Error {
-    case GooglePlacesLookup(funcName: String, error: Swift.Error)
-    case PlaceResultNil(funcName: String, placeResult: PlaceResult)
-}
-
-enum NetworkError: Swift.Error {
+enum Coordinates: Swift.Error {
     
 }

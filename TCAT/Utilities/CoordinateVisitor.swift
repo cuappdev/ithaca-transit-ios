@@ -11,8 +11,12 @@ import CoreLocation
 import GooglePlaces
 
 protocol CoordinateAcceptor {
-    func accept(visitor: CoordinateVisitor, callback: @escaping (CLLocationCoordinate2D?) -> Void)
-    func getName() -> String
+    func accept(visitor: CoordinateVisitor, callback: @escaping (_ coord: CLLocationCoordinate2D?, _ error: Swift.Error?) -> Void)
+}
+
+enum CoordinateVisitorError: Swift.Error {
+    case GooglePlacesLookup(funcName: String, error: Swift.Error)
+    case PlaceResultNil(funcName: String, placeResult: PlaceResult)
 }
 
 class CoordinateVisitor: NSObject {
@@ -29,7 +33,7 @@ class CoordinateVisitor: NSObject {
             }
             
             guard let result = result else {
-                callback( nil, CoordinateVisitorError.PlaceResultNil(funcName: "visit(place:)", placeResult: place))
+                callback(nil, CoordinateVisitorError.PlaceResultNil(funcName: "visit(place:)", placeResult: place))
                 return
             }
             

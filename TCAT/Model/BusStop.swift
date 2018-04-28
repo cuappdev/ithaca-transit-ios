@@ -53,7 +53,7 @@ class BusStop: Place, CoordinateAcceptor {
     
     // MARK:  Visitor pattern
     
-    func accept(visitor: CoordinateVisitor, callback: @escaping (CLLocationCoordinate2D?) -> Void) {
+    func accept(visitor: CoordinateVisitor, callback: @escaping (_ coord: CLLocationCoordinate2D?, _ error: Swift.Error?) -> Void) {
         visitor.getCoordinate(from: self, callback: callback)
     }
 }
