@@ -69,7 +69,7 @@ class Network {
     }
 
     class func getCoordinates(start: CoordinateAcceptor, end: CoordinateAcceptor,
-                              callback: @escaping (_ startCoord: CLLocationCoordinate2D?, _ endCoord: CLLocationCoordinate2D?, _ error: Swift.Error?) -> Void ) {
+                              callback: @escaping (_ startCoord: CLLocationCoordinate2D?, _ endCoord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void ) {
         
         let visitor = CoordinateVisitor()
         
@@ -96,7 +96,7 @@ class Network {
     }
 
     class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, destinationName: String, time: Date, type: SearchType,
-                         callback: @escaping ((APIRequest<JSON, Error>?) -> Void)) {
+                         callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void) {
             let request: APIRequest<JSON, Error> = mainTron.swiftyJSON.request("route")
             request.method = .get
             request.parameters = [

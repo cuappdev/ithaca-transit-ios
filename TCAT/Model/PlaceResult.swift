@@ -64,7 +64,7 @@ class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
     
     // MARK: Visitor pattern
     
-    func accept(visitor: CoordinateVisitor, callback: @escaping (_ coord: CLLocationCoordinate2D?, _ error: Swift.Error?) -> Void) {
+    func accept(visitor: CoordinateVisitor, callback: @escaping (_ coord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void) {
         visitor.getCoordinate(from: self, callback: callback)
     }
 }
