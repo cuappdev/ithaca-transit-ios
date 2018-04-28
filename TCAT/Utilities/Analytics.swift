@@ -192,3 +192,11 @@ struct GetRoutesErrorPayload: Payload {
     let description: String
     let url: String?
 }
+
+// Log any errors when calculation routes
+struct FeedbackErrorPayload: Payload {
+    static let eventName: String = "Feedback Error"
+    let deviceInfo = DeviceInfo()
+    
+    let description: String
+}

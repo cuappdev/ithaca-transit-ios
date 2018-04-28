@@ -188,25 +188,77 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
     @objc func sendFeedback() {
         
         let emailAddress = Constants.App.contactEmailAddress
-        let subject = "Ithaca Transit Feedback v\(Constants.App.version)"
         
-        let fileName = ""
-        let extensionName = ""
+        if MFMailComposeViewController.canSendMail() {
         
-        let mailComposerVC = MFMailComposeViewController()
-        mailComposerVC.mailComposeDelegate = self
-        var logRetreivalFailed = true
+            let mailComposerVC = MFMailComposeViewController()
+            mailComposerVC.mailComposeDelegate = self
+            var didRetrieveLog = false
         
-        // Attach logs
-        if let fileURL = Bundle.main.url(forResource: fileName, withExtension: extensionName) {
-            do {
-                let file = try Data(contentsOf: fileURL)
-                mailComposerVC.addAttachmentData(file, mimeType: "text/plain", fileName: fileName)
-                logRetreivalFailed = false
-            } catch _ { }
+            let fileName = ""
+            let extensionName = ""
+            if let logs = retrieveLogs(at: fileName, with: extensionName) {
+                mailComposerVC.addAttachmentData(logs, mimeType: "text/plain", fileName: fileName)
+                didRetrieveLog = true
+            }
+        
+            let subject = "Ithaca Transit Feedback v\(Constants.App.version)"
+            let body = createMessageBody(didRetrieveLog: didRetrieveLog)
+        
+            mailComposerVC.setToRecipients([emailAddress])
+            mailComposerVC.setSubject(subject)
+            mailComposerVC.setMessageBody(body, isHTML: true)
+        
+            present(mailComposerVC, animated: true)
+            
+        } else {
+            
+            let title = "Couldn't Send Email"
+            let message = "To send your message with device logs, please add an email account in Settings > Accounts & Passwords > Add Account. You can also contact us at \(emailAddress) to send feedback."
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Email Settings", style: .default, handler: { (_) in
+                let path = "App-Prefs:"
+                if let url = URL(string: path), UIApplication.shared.canOpenURL(url) {
+                    self.open(path, inApp: false)
+                } else {
+                    self.open(UIApplicationOpenSettingsURLString)
+                }
+                let payload = FeedbackErrorPayload(description: "Opened Email Settings")
+                RegisterSession.shared?.log(payload)
+            }))
+            alertController.addAction(UIAlertAction(title: "Copied Address to Clipboard", style: .default, handler: { (_) in
+                UIPasteboard.general.string = Constants.App.contactEmailAddress
+                let payload = FeedbackErrorPayload(description: "Copy Address to Clipboard")
+                RegisterSession.shared?.log(payload)
+            }))
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (_) in
+                let payload = FeedbackErrorPayload(description: "Cancelled")
+                RegisterSession.shared?.log(payload)
+            }))
+            present(alertController, animated: true)
+            
         }
         
-        // Message body
+    }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Swift.Error?) {
+        controller.dismiss(animated: true)
+        if let error = error {
+            print("Mail Error:", error)
+        }
+    }
+    
+    /// Retrieve
+    func retrieveLogs(at fileName: String, with extensionName: String) -> Data? {
+        if let fileURL = Bundle.main.url(forResource: fileName, withExtension: extensionName) {
+            return try? Data(contentsOf: fileURL)
+        }
+        return nil
+    }
+    
+    /// Message body of HTML email message
+    func createMessageBody(didRetrieveLog: Bool) -> String {
+        
         var html = ""
         html += "<!DOCTYPE html>"
         html += "<html>"
@@ -217,7 +269,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         html += "<b>Problem:</b>"
         html += "<br><br>"
         
-        if logRetreivalFailed {
+        if !didRetrieveLog {
             html += "<b>How to Reproduce:</b>"
             html += "<br><br>"
         }
@@ -227,54 +279,8 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         html += "</body>"
         html += "</html>"
         
-        mailComposerVC.setToRecipients([emailAddress])
-        mailComposerVC.setSubject(subject)
-        mailComposerVC.setMessageBody(html, isHTML: true)
+        return html
         
-        if MFMailComposeViewController.canSendMail() {
-            present(mailComposerVC, animated: true)
-        } else {
-            mailComposerError()
-        }
-        
-    }
-    
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Swift.Error?) {
-        controller.dismiss(animated: true)
-        if let error = error {
-            print("error:", error)
-        }
-    }
-    
-    func mailComposerError() {
-        
-        func showMailAlert() {
-            
-            let title = "Send Feedback Error"
-            let message = "There was an unexpected error while sending feedback. Please email \(Constants.App.contactEmailAddress) and send feedback on this (embarassing) issue and any other feedback."
-            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (action) in
-                print("action?")
-            }))
-            present(alertController, animated: true)
-            
-        }
-        
-        let address = Constants.App.contactEmailAddress
-        let subject = "Ithaca Transit Feedback v\(Constants.App.version)"
-        
-        let coded = "mailto:\(address)?subject=\(subject)&body=\("")".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-        
-        if let emailURL = URL(string: coded ?? "") {
-            if UIApplication.shared.canOpenURL(emailURL) {
-                UIApplication.shared.open(emailURL)
-            } else {
-                showMailAlert()
-            }
-        } else {
-            showMailAlert()
-        }
-
     }
     
     @objc func showMoreApps() {
