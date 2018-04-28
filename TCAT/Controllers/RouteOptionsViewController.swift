@@ -390,7 +390,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             // Prepare feedback on Network request
             mediumTapticGenerator.prepare()
             
-            let sameLocation = searchFrom.name == searchTo.name
+            let sameLocation = (searchFrom.name == searchTo.name)
             if sameLocation {
                 requestDidFinish(perform: [.showAlert(title: "You're here!", message: "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta).", actionTitle: "😐😒🙄")])
             }
