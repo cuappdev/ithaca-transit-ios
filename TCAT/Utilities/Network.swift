@@ -112,6 +112,16 @@ class Network {
         
             callback(request)
     }
+    
+    class func getRequestUrl(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, destinationName: String, time: Date, type: SearchType) -> String {
+        let path = "route"
+        let arriveBy = (type == .arriveBy)
+        let end = "\(startCoord.latitude),\(endCoord.longitude)"
+        let start = "\(startCoord.latitude),\(endCoord.longitude)"
+        let time = time.timeIntervalSince1970
+        
+        return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(end)&start=\(start)&time=\(time)&destinationName=\(destinationName)"
+    }
 
 
     class func getGooglePlaces(searchText: String) -> APIRequest<JSON, Error> {

@@ -24,9 +24,14 @@ enum SearchType: String {
     case arriveBy, leaveAt, leaveNow
 }
 
+struct BannerInfo {
+    let title: String
+    let style: BannerStyle
+}
+
 enum RequestAction {
     case showAlert(title: String, message: String, actionTitle: String)
-    case showError(error: NSError, message: String?)
+    case showError(bannerInfo: BannerInfo, payload: GetRoutesErrorPayload)
     case hideBanner
 }
 
@@ -322,14 +327,26 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 requestDidFinish(perform: [.showAlert(title: "You're here!", message: "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta).", actionTitle: "😐😒🙄")])
             }
             else {
-                Network.getCoordinates(start: startPlace, end: endPlace) { (startCoord, endCoord, error) in
+                Network.getCoordinates(start: startPlace, end: endPlace) { (startCoord, endCoord, coordinateVisitorError) in
+                    
                     guard let startCoord = startCoord, let endCoord = endCoord else {
-                        // 2DO: requestDidFinish for nil and not nil error
-                        // What matt did for "Catch error of coordinates not being found"
-//                        let error = NSError(domain: "Null Coordinates", code: 400, userInfo: [
-//                            "description" : "Coordinates for Google Place don't exist."
-//                            ])
-//                        self.requestDidFinish(with: error)
+                        
+                        if let coordinateVisitorError = coordinateVisitorError {
+                            
+                            self.requestDidFinish(perform: [
+                                .showError(bannerInfo: BannerInfo(title: "Could not connect to server", style: .danger),
+                                           payload: GetRoutesErrorPayload(type: coordinateVisitorError.title, description: coordinateVisitorError.description, url: nil))
+                            ])
+                            
+                        } else {
+                            
+                            self.requestDidFinish(perform: [
+                                .showError(bannerInfo: BannerInfo(title: "Could not connect to server", style: .danger),
+                                           payload: GetRoutesErrorPayload(type: "Nil start and end coordinates and nil coordinateVisitorError", description: "", url: nil))
+                            ])
+                            
+                        }
+                        
                         return
                     }
                     
@@ -337,26 +354,39 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                         let title = "Location Out Of Range"
                         let message = "Try looking for another route with start and end locations closer to Tompkins County."
                         let actionTitle = "OK"
-                        let error = NSError(domain: title, code: 300, userInfo: ["description" : message])
                         
-                        self.requestDidFinish(perform: [.showAlert(title: title, message: message, actionTitle: actionTitle), .showError(error: error, message: title)])
+                        self.requestDidFinish(perform: [
+                            .showAlert(title: title, message: message, actionTitle: actionTitle),
+                            .showError(bannerInfo: BannerInfo(title: title, style: .warning),
+                                       payload: GetRoutesErrorPayload(type: title, description: message, url: nil))
+                        ])
+                        
                         return
                     }
                     
                     Network.getRoutes(startCoord: startCoord, endCoord: endCoord, destinationName: searchFrom.name, time: time, type: self.searchTimeType) { request in
-                        request.perform(withSuccess: self.processRouteJson, failure: self.processRequestError)
+                        let requestUrl = Network.getRequestUrl(startCoord: startCoord, endCoord: endCoord, destinationName: searchTo.name, time: time, type: self.searchTimeType)
+                        
+                        request.perform(withSuccess: { routeJson in
+                                                        self.processRouteJson(routeJSON: routeJson, requestUrl: requestUrl)
+                                                    },
+                                        failure: { requestError in
+                                                    self.processRequestError(error: requestError, requestUrl: requestUrl)
+                                                }
+                        )
+                        
+                        let payload = DestinationSearchedEventPayload(destination: searchTo.name,
+                                                                      requestUrl: requestUrl,
+                                                                      stopType: nil)
+                        RegisterSession.shared?.log(payload)
+
                     }
-                    // Not working anymore
-//                    let payload = DestinationSearchedEventPayload(destination: searchTo.name,
-//                                                                  requestUrl: alamofireRequest.request.url?.absoluteString,
-//                                                                  stopType: nil)
-//                    RegisterSession.shared?.log(payload)
                 }
             }
         }
     }
     
-    func processRouteJson(routeJSON: JSON) {
+    func processRouteJson(routeJSON: JSON, requestUrl: String) {
         JsonFileManager.shared.saveToDocuments(json: routeJSON)
         JsonFileManager.shared.printAllJsons()
         if let log = JsonFileManager.shared.readFromLog() {
@@ -365,9 +395,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         
         Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
             self.routes = parsedRoutes
+            
             if let error = error {
-                // 2DO: Get rid of using NSError and put in custom stuff need
-                self.requestDidFinish(perform: [.showError(error: error, message: nil)]) // 300 error for Route Calculation Failure
+                self.requestDidFinish(perform: [
+                    .showError(bannerInfo: BannerInfo(title: "Route calculation error. Please retry.", style: .warning),
+                               payload: GetRoutesErrorPayload(type: error.title, description: error.description, url: requestUrl))
+                ])
             }
             else {
                 self.requestDidFinish(perform: [.hideBanner])
@@ -375,15 +408,15 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         })
     }
     
-    func processRequestError(error: APIError<Error>) {
-        let domain = "Network Failure: \((error.error as NSError?)?.domain ?? "No Domain")"
+    func processRequestError(error: APIError<Error>, requestUrl: String) {
+        let title = "Network Failure: \((error.error as NSError?)?.domain ?? "No Domain")"
         let description = (error.localizedDescription) + ", " + ((error.error as NSError?)?.description ?? "n/a")
-        let error = NSError(domain: domain, code: 500, userInfo: [
-            "description" : description,
-            "url" : error.request?.url?.absoluteString ?? "n/a"
-            ])
+        
         self.routes = []
-        self.requestDidFinish(perform: [.showError(error: error, message: nil)])
+        self.requestDidFinish(perform: [
+            .showError(bannerInfo: BannerInfo(title: "Could not connect to server", style: .danger),
+                       payload: GetRoutesErrorPayload(type: title, description: description, url: requestUrl))
+        ])
     }
     
     /// Determine if coordinates in parameters are within range
@@ -417,20 +450,17 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 alertController.addAction(action)
                 present(alertController, animated: true, completion: nil)
                 
-            case .showError(error: let error, message: let customMessage):
-                let message = error.code >= 400 ? "Could not connect to server" : "Route calculation error. Please retry."
-                let type: BannerStyle = error.code >= 400 ? .danger : .warning
-                
-                banner = StatusBarNotificationBanner(title: customMessage ?? message, style: type)
+            case .showError(bannerInfo: let bannerInfo, payload: let payload):
+                banner = StatusBarNotificationBanner(title: bannerInfo.title, style: bannerInfo.style)
                 banner?.autoDismiss = false
                 banner?.dismissOnTap = true
                 banner?.show(queuePosition: .front, on: navigationController)
                 isBannerShown = true
                 
-                //                    let payload = GetRoutesErrorPayload(type: error.domain,
-                //                                                        description: error.userInfo["description"] as? String ?? "",
-                //                                                        url: error.userInfo["url"] as? String)
-                //                    RegisterSession.shared?.log(payload)
+//                let payload = GetRoutesErrorPayload(type: error.domain,
+//                                                    description: error.userInfo["description"] as? String ?? "",
+//                                                    url: error.userInfo["url"] as? String)
+                RegisterSession.shared?.log(payload)
                 
             case .hideBanner:
                 if isBannerShown {

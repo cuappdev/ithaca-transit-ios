@@ -14,9 +14,9 @@ protocol CoordinateAcceptor {
     func accept(visitor: CoordinateVisitor, callback: @escaping (_ coord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void)
 }
 
-enum CoordinateVisitorError: Swift.Error {
-    case GooglePlacesLookup(error: Swift.Error, description: String)
-    case PlaceResultNil(description: String)
+struct CoordinateVisitorError: Swift.Error {
+    let title: String
+    let description: String
 }
 
 class CoordinateVisitor: NSObject {
@@ -28,12 +28,12 @@ class CoordinateVisitor: NSObject {
         placesClient.lookUpPlaceID(place.placeID) { (result, error) in
             
             if let error = error {
-                callback(nil, CoordinateVisitorError.GooglePlacesLookup(error: error, description: "PlaceVisitor visit(place:) lookup place id query error: \(error.localizedDescription)"))
+                callback(nil, CoordinateVisitorError(title: "Google Places Lookup", description: "PlaceVisitor visit(place:) lookup place id query error: \(error.localizedDescription)"))
                 return
             }
             
             guard let result = result else {
-                callback(nil, CoordinateVisitorError.PlaceResultNil(description: "Network visit(place:) no place details for \(place.name) with id \(place.placeID)"))
+                callback(nil, CoordinateVisitorError(title: "PlaceResult is nil", description: "Network visit(place:) result is nil for \(place.name) with id \(place.placeID)"))
                 return
             }
             
