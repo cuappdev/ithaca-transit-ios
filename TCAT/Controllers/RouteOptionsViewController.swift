@@ -844,7 +844,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         locationManager.stopUpdatingLocation()
-        if let routeDetailViewController = createRouteDetailViewController(from: routes[indexPath.row]) {
+        if let routeDetailViewController = createRouteDetailViewController(from: indexPath) {
             let payload = RouteResultsCellTappedEventPayload()
             RegisterSession.shared?.log(payload)
             navigationController?.pushViewController(routeDetailViewController, animated: true)
@@ -871,14 +871,20 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     
     // MARK: RouteDetailViewController
     
-    func createRouteDetailViewController(from route: Route) -> RouteDetailViewController? {
+    func createRouteDetailViewController(from indexPath: IndexPath) -> RouteDetailViewController? {
         
+        let route = routes[indexPath.row]
         var routeDetailCurrentLocation = currentLocation
         if searchTo?.name != Constants.Stops.currentLocation && searchFrom?.name != Constants.Stops.currentLocation {
-            routeDetailCurrentLocation = nil // If route doesn't involve current location, don't pass along.
+            routeDetailCurrentLocation = nil // If route doesn't involve current location, don't pass along for view.
         }
         
-        let contentViewController = RouteDetailContentViewController(route: route, currentLocation: routeDetailCurrentLocation)
+        let routeOptionsCell = routeResults.cellForRow(at: indexPath) as? RouteTableViewCell
+        
+        let contentViewController = RouteDetailContentViewController(route: route,
+                                                                     currentLocation: routeDetailCurrentLocation,
+                                                                     routeOptionsCell: routeOptionsCell)
+        
         guard let drawerViewController = contentViewController.drawerDisplayController else {
             return nil
         }
@@ -903,7 +909,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         guard
             let indexPath = routeResults.indexPathForRow(at: point),
             let cell = routeResults.cellForRow(at: indexPath) as? RouteTableViewCell,
-            let routeDetailViewController = createRouteDetailViewController(from: routes[indexPath.row])
+            let routeDetailViewController = createRouteDetailViewController(from: indexPath)
         else {
             return nil
         }

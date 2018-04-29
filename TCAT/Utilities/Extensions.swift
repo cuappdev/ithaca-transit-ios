@@ -347,12 +347,14 @@ extension Array : JSONDecodable {
 /// Present a share sheet for a route in any context.
 func presentShareSheet(from view: UIView, for route: Route, with image: UIImage? = nil) {
     
-    let shareContent = route.summaryDescription
-    let promotionalText = "\n\nDownload Ithaca Transit on the App Store! \(Constants.App.appStoreLink)"
+    let shareText = route.summaryDescription
+    let promotionalText = "Download Ithaca Transit on the App Store! \(Constants.App.appStoreLink)"
     
-    var activityItems: [Any] = [shareContent, promotionalText]
-    if let image = image {
-        activityItems.insert(image, at: 0)
+    var activityItems: [Any] = [promotionalText]
+    if let shareImage = image {
+        activityItems.insert(shareImage, at: 0)
+    } else {
+        activityItems.insert(shareText, at: 0)
     }
     
     let activityVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
