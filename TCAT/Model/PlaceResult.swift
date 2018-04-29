@@ -46,6 +46,12 @@ class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
         return object.placeID == placeID
     }
     
+    // MARK: Print
+    
+    override var description: String {
+        return "PlaceResult(name: \(name), detail: \(detail), placeId: \(placeID))"
+    }
+    
     // MARK: NSCoding
     
     required init(coder aDecoder: NSCoder) {

@@ -9,6 +9,11 @@
 import UIKit
 import SwiftyJSON
 
+enum JsonType: String {
+    case routeJson
+    case delayJson
+}
+
 class JsonFileManager {
     
     // MARK: Singleton vars
@@ -17,21 +22,26 @@ class JsonFileManager {
     
     // MARK: File vars
     
-    private var documentsURL: URL
-    private var logURL: URL
+    private let documentsURL: URL
+    private let logURL: URL
+    private let logFileName = "log.txt"
+    
+    // MARK: Print vars
+    
+    private let fileName = "JsonFileManager"
     
     // MARK: Initialization
     
     private init() {
         do {
             documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-            logURL = documentsURL.appendingPathComponent("log.txt")
+            logURL = documentsURL.appendingPathComponent(logFileName)
             
-            let line = "\(getTimeStampString(from: Date())): Initialized JsonFileManager\n"
+            let line = "\(getTimeStampString(from: Date())): \(fileName) \(#function): Initialized JsonFileManager\n"
             try line.write(to: logURL, atomically: false, encoding: .utf8)
         }
         catch {
-            let line = "JsonFileManager init(): \(error)"
+            let line = "\(fileName) \(#function): \(error)"
             print(line)
             
             try? "\(getTimeStampString(from: Date())): \(line)\n".write(to: logURL, atomically: false, encoding: .utf8)
@@ -40,27 +50,17 @@ class JsonFileManager {
     
     // MARK: Manage Files
     
-    private func getAllJsonsURLs() -> [URL]{
-        var jsonURLs: [URL] = []
-
-        do {
-            let fileURLs = try FileManager.default.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil)
-            
-            for url in fileURLs {
-                let (fileName: _, fileExtension: fileExtension) = getFileComponents(fileURL: url)
-                
-                if fileExtension == "json" {
-                    jsonURLs.append(url)
-                }
-            }
-            
-            return jsonURLs
-        }
-        catch {
-            printAndLog(timestamp: Date(), line: "JsonFileManager getAllJsonsURLs(): Error while enumerating files at \(documentsURL.path): \(error.localizedDescription)")
-        }
+    func getAllFileUrls() -> [URL] {
+        return [logURL] + getAllJsonURLs()
+    }
+    
+    private func readFromDocuments(fileUrl: URL) -> Data? {
+        let filePath = getFilePath(fileURL: fileUrl)
         
-        return jsonURLs
+        if FileManager.default.fileExists(atPath: filePath), let data = FileManager.default.contents(atPath: filePath) {
+            return data
+        }
+        return nil
     }
     
     private func getFileComponents(fileURL: URL) -> (fileName: String, fileExtension: String) {
@@ -77,54 +77,68 @@ class JsonFileManager {
         return documentsURL.appendingPathComponent("\(fileName).\(fileExtension)").path
     }
     
-    // MARK: Read/write Jsons
+    // MARK: Manage Jsons
     
-    func saveToDocuments(json: JSON) {
+    func saveToDocuments(json: JSON, type: JsonType) {
         do {
             let jsonData = try json.rawData()
             
-            let fileName = getFileNameString(from: Date())
-            let fileExtension = "json"
-            let fileURL = documentsURL.appendingPathComponent("\(fileName).\(fileExtension)")
+            let jsonFileName = getFileNameString(from: Date())
+            let jsonFileExtension = "json"
+            let jsonFileURL = documentsURL.appendingPathComponent("\(jsonFileName).\(jsonFileExtension)")
             
-            try jsonData.write(to: fileURL, options: .atomic)
+            try jsonData.write(to: jsonFileURL, options: .atomic)
             
-            printAndLog(timestamp: Date(), line: "Wrote \(fileName).\(fileExtension) to documents directory")
+            printAndLog(timestamp: Date(), line: "\(fileName) \(#function): Wrote \(type) to documents directory. Name: \(jsonFileName).\(jsonFileExtension)")
         }
         catch {
-            printAndLog(timestamp: Date(), line: "JsonFileManager saveToDisk(): \(error)")
+            printAndLog(timestamp: Date(), line: "\(fileName) \(#function): \(error)")
         }
-    }
-    
-    func readFromDocuments(fileUrl: URL) -> Data? {
-        let filePath = getFilePath(fileURL: fileUrl)
-        
-        if FileManager.default.fileExists(atPath: filePath), let data = FileManager.default.contents(atPath: filePath) {
-            return data
-        }
-        return nil
     }
     
     func deleteAllJsonFilesFromDisk() {
-        let jsonURLs = getAllJsonsURLs()
+        let jsonURLs = getAllJsonURLs()
         
         for url in jsonURLs {
-            let filePath = getFilePath(fileURL: url)
+            let jsonFilePath = getFilePath(fileURL: url)
             
             do {
-                try FileManager.default.removeItem(atPath: filePath)
+                try FileManager.default.removeItem(atPath: jsonFilePath)
                 
-                let (fileName: fileName, fileExtension: fileExtension) = getFileComponents(fileURL: url)
-                printAndLog(timestamp: Date(), line: "Deleted \(fileName).\(fileExtension)")
+                let (fileName: jsonFileName, fileExtension: jsonFileExtension) = getFileComponents(fileURL: url)
+                printAndLog(timestamp: Date(), line: "\(fileName) \(#function): Deleted \(jsonFileName).\(jsonFileExtension)")
             }
             catch let error as NSError {
-                let (fileName: fileName, fileExtension: fileExtension) =  getFileComponents(fileURL: url)
-                printAndLog(timestamp: Date(), line: "FileManager deleteAllJsonFiles(): Error for \(fileName).\(fileExtension) \(error.debugDescription)")
+                let (fileName: jsonFileName, fileExtension: jsonFileExtension) =  getFileComponents(fileURL: url)
+                printAndLog(timestamp: Date(), line: "\(fileName) \(#function): Error for \(jsonFileName).\(jsonFileExtension) \(error.debugDescription)")
             }
         }
     }
     
-    // MARK: Read/write log
+    private func getAllJsonURLs() -> [URL]{
+        var jsonURLs: [URL] = []
+        
+        do {
+            let fileURLs = try FileManager.default.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil)
+            
+            for url in fileURLs {
+                let (fileName: _, fileExtension: fileExtension) = getFileComponents(fileURL: url)
+                
+                if fileExtension == "json" {
+                    jsonURLs.append(url)
+                }
+            }
+            
+            return jsonURLs
+        }
+        catch {
+            printAndLog(timestamp: Date(), line: "\(fileName) \(#function):: Error while enumerating files at \(documentsURL.path): \(error.localizedDescription)")
+        }
+        
+        return jsonURLs
+    }
+    
+    // MARK: Manage log
     
     func writeToLog(timestamp: Date, line: String) {
         if let data = "\(getTimeStampString(from: timestamp)): \(line)\n".data(using: .utf8), let fileHandle = FileHandle(forWritingAtPath: logURL.path) {
@@ -134,24 +148,35 @@ class JsonFileManager {
             fileHandle.seekToEndOfFile()
             fileHandle.write(data)
             
-            print("JsonFileManager writeToLog(): successful")
+            print("\(fileName) \(#function): successful")
         }
         else {
-            print("JsonFileManager writeToLog(): failed")
+            print("\(fileName) \(#function): failed")
         }
     }
     
     func readFromLog() -> String? {
         if let log = try? String(contentsOf: logURL, encoding: .utf8) {
-            print("JsonFileManager readFromLog(): successful")
+            print("\(fileName) \(#function): successful")
             return log
         }
         
-        print("JsonFileManager readFromLog(): failed")
+        print("\(fileName) \(#function): failed")
         return nil
     }
     
     // MARK: Print
+    
+    func printAllJsons() {
+        let jsonURLs = getAllJsonURLs()
+        
+        print("\(fileName) \(#function):")
+        for url in jsonURLs {
+            let (fileName: fileName, fileExtension: fileExtension) = getFileComponents(fileURL: url)
+            
+            print("    \(fileName).\(fileExtension)")
+        }
+    }
     
     private func printAndLog(timestamp: Date, line: String) {
         print(line)
@@ -160,18 +185,7 @@ class JsonFileManager {
     
     private func printData(_ data: Data) {
         let string = String(data: data, encoding: .utf8)
-        print("JsonFileManager printData(): \(string!)")
-    }
-    
-    func printAllJsons() {
-        let jsonURLs = getAllJsonsURLs()
-        
-        print("JsonFileManager printAllJsons():")
-        for url in jsonURLs {
-            let (fileName: fileName, fileExtension: fileExtension) = getFileComponents(fileURL: url)
-            
-            print("    \(fileName).\(fileExtension)")
-        }
+        print("\(fileName) \(#function): \(string!)")
     }
     
     // MARK: Date Formatting

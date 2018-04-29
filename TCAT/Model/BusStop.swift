@@ -35,6 +35,12 @@ class BusStop: Place, CoordinateAcceptor {
         return object.lat == lat && object.long == long
     }
     
+    // MARK: Print
+    
+    override var description: String {
+        return "BuStop(name: \(name), lat: \(lat), long: \(long))"
+    }
+    
     // MARK: NSCoding
     
     required init(coder aDecoder: NSCoder) {

@@ -95,7 +95,7 @@ class Network {
 
     }
 
-    class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, destinationName: String, time: Date, type: SearchType,
+    class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, endPlaceName: String, time: Date, type: SearchType,
                          callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void) {
             let request: APIRequest<JSON, Error> = mainTron.swiftyJSON.request("route")
             request.method = .get
@@ -104,11 +104,8 @@ class Network {
                 "end"               :   "\(startCoord.latitude),\(endCoord.longitude)",
                 "start"             :   "\(startCoord.latitude),\(endCoord.longitude)",
                 "time"              :   time.timeIntervalSince1970,
-                "destinationName"   :   destinationName
+                "destinationName"   :   endPlaceName
             ]
-
-            // for debugging
-//             print("Route Request URL: \(address)\(request.path)?arriveBy=\(request.parameters["arriveBy"]!)&end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)&destinationName=\(request.parameters["destinationName"]!)\n")
         
             callback(request)
     }
@@ -166,9 +163,13 @@ class Network {
         request.method = .get
         request.parameters = ["stopID" : stopId, "tripID" : tripId]
 
-         print("Delay request URL: \(address)\(request.path)?stopID=\(request.parameters["stopID"]!)&tripID=\(request.parameters["tripID"]!)")
-
         return request
+    }
+    
+    class func getDelayUrl(tripId: String, stopId: String) -> String {
+        let path = "delay"
+        
+        return "\(address)\(path)?stopID=\(stopId)&tripID=\(tripId)"
     }
 
 }

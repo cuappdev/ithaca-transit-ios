@@ -23,6 +23,7 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Data vars
     
     static let identifier: String = "routeCell"
+    private let fileName: String = "RouteTableViewCell"
     var route: Route?
     
     // MARK: Network vars
@@ -330,7 +331,11 @@ class RouteTableViewCell: UITableViewCell {
             let tripId = direction.tripIdentifiers?.first,
             let stopId = direction.stops.first?.id  {
             
+            JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Delay parameters: stopId: \(stopId). tripId: \(tripId).")
+            JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Delay requestUrl: \(Network.getDelayUrl(tripId: tripId, stopId: stopId))")
+            
             Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
+                JsonFileManager.shared.saveToDocuments(json: json, type: .delayJson)
                 
                 if json["success"].boolValue {
                     guard let delay = json["data"]["delay"].int else {
@@ -358,7 +363,7 @@ class RouteTableViewCell: UITableViewCell {
                     self.setDepartureTimeAndLiveElements(withRoute: route)
                 }
             }, failure: { (error) in
-                print("RouteTableViewCell setLiveElements(withStartTime:, withDelay:) error: \(error.errorDescription ?? "") Request url: \(error.request?.url?.absoluteString ?? "")")
+                print("\(self.fileName) \(#function) error: \(error.errorDescription ?? "") Request url: \(error.request?.url?.absoluteString ?? "")")
                 self.setDepartureTimeAndLiveElements(withRoute: route)
             })
         }

@@ -82,6 +82,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Spacing vars
     
     let estimatedRowHeight: CGFloat = 115
+    
+    // MARK: Print vars
+    
+    private let fileName: String = "RouteOptionsVc"
 
     // MARK: View Lifecycle
 
@@ -322,6 +326,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             // Prepare feedback on Network request
             mediumTapticGenerator.prepare()
 
+            JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Search parameters: startPlace: \(searchFrom). endPlace: \(searchTo). searchTime: \(Time.dateString(from: time)). searchTimeType: \(searchTimeType)")
+            
             let sameLocation = (searchFrom.name == searchTo.name)
             if sameLocation {
                 requestDidFinish(perform: [.showAlert(title: "You're here!", message: "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta).", actionTitle: "😐😒🙄")])
@@ -340,9 +346,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     return
                 }
                 
-                Network.getRoutes(startCoord: startCoord, endCoord: endCoord, destinationName: searchFrom.name, time: time, type: self.searchTimeType) { request in
+                Network.getRoutes(startCoord: startCoord, endCoord: endCoord, endPlaceName: searchFrom.name, time: time, type: self.searchTimeType) { request in
                     let requestUrl = Network.getRequestUrl(startCoord: startCoord, endCoord: endCoord, destinationName: searchTo.name, time: time, type: self.searchTimeType)
-                    self.processRequest(request: request, requestUrl: requestUrl, destinationName: searchTo.name)
+                    self.processRequest(request: request, requestUrl: requestUrl, endPlace: searchFrom)
                 }
                 
             }
@@ -379,23 +385,26 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             ])
     }
     
-    func processRequest(request: APIRequest<JSON, Error>, requestUrl: String, destinationName: String) {
+    func processRequest(request: APIRequest<JSON, Error>, requestUrl: String, endPlace: Place) {
+        JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Route requestUrl: \(requestUrl)")
+        
         request.perform(withSuccess: { routeJson in
-            self.processRouteJson(routeJSON: routeJson, requestUrl: requestUrl)
-        },
+                            self.processRouteJson(routeJSON: routeJson, requestUrl: requestUrl)
+                        },
                         failure: { requestError in
                             self.processRequestError(error: requestError, requestUrl: requestUrl)
-        }
+                        }
         )
         
-        let payload = DestinationSearchedEventPayload(destination: destinationName,
+        let payload = DestinationSearchedEventPayload(destination: endPlace.name,
                                                       requestUrl: requestUrl,
                                                       stopType: nil)
         RegisterSession.shared?.log(payload)
     }
     
     func processRouteJson(routeJSON: JSON, requestUrl: String) {
-        JsonFileManager.shared.saveToDocuments(json: routeJSON)
+        JsonFileManager.shared.saveToDocuments(json: routeJSON, type: .routeJson)
+        
         JsonFileManager.shared.printAllJsons()
         if let log = JsonFileManager.shared.readFromLog() {
             print(log)
@@ -494,7 +503,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-        print("RouteOptionVC locationManager didFailWithError: \(error.localizedDescription)")
+        print("\(fileName) \(#function): \(error.localizedDescription)")
         
         if error._code == CLError.denied.rawValue {
             locationManager.stopUpdatingLocation()
@@ -707,7 +716,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         do {
             try reachability?.startNotifier()
         } catch {
-            print("RouteOptionsVC setupReachability: Could not start reachability notifier")
+            print("\(fileName) \(#function): Could not start reachability notifier")
         }
     }
 
