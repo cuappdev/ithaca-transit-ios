@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 import GoogleMaps
 import GooglePlaces
 import SwiftyJSON
@@ -24,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // Set Up Google Services
+        FirebaseApp.configure()
         GMSServices.provideAPIKey(Keys.googleMaps.value)
         GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
         
@@ -125,11 +127,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 extension UIWindow {
-    
-    func openFeedback() {
-        let safariViewController = SFSafariViewController(url: URL(string: Constants.App.feedbackLink)!)
-        presentInApp(safariViewController)
-    }
     
     /// Find the visible view controller in the root navigation controller and present passed in view controlelr.
     func presentInApp(_ viewController: UIViewController) {

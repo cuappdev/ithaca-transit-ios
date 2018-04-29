@@ -19,8 +19,9 @@ target 'TCAT' do
   pod 'SwiftyJSON', '~> 4.0'
   
   # Analytics
+  pod 'Crashlytics', '~> 3.10'
   pod 'Fabric'
-  pod 'Crashlytics'
+  pod 'Firebase/Core'
   pod 'SwiftRegister', :git => 'https://github.com/cuappdev/register-client-ios.git', :branch => 'master'
 
   # UI Frameworks
