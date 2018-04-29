@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftRegister
 
 class CustomNavigationController: UINavigationController, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
     
@@ -33,6 +34,25 @@ class CustomNavigationController: UINavigationController, UINavigationController
             interactivePopGestureRecognizer?.delegate = self
             delegate = self
         }
+        
+        // Add screenshot listener, log file name
+        let notifName = NSNotification.Name.UIApplicationUserDidTakeScreenshot
+        NotificationCenter.default.addObserver(forName: notifName, object: nil, queue: .main) { notification in
+            var location = ""
+            if let viewControllerName = self.visibleViewController?.debugDescription {
+                if let dot = viewControllerName.index(of: "."), let end = viewControllerName.index(of: ":") {
+                    let start = viewControllerName.index(dot, offsetBy: 1)
+                    location = String(viewControllerName[start..<end])
+                } else {
+                    location = viewControllerName
+                }
+                print("Screenshot Taken:", location)
+                let payload = ScreenshotTakenPayload(location: location)
+                RegisterSession.shared?.log(payload)
+            }
+
+        }
+        
     }
     
     /// Attributed string details for the title text of a navigation controller

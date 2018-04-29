@@ -167,6 +167,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeSelection.toSearchbar.setTitle(searchTo?.name ?? "", for: .normal)
 
         searchForRoutes()
+        
+        // Analytics
+        let payload = RouteOptionsSettingsPayload(description: "Swapped To and From")
+        RegisterSession.shared?.log(payload)
+        
     }
 
     // MARK: Search bar
@@ -183,12 +188,16 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     @objc func searchingTo(sender: UIButton? = nil) {
         searchType = .to
         presentSearchBar()
+        let payload = RouteOptionsSettingsPayload(description: "Searching To Tapped")
+        RegisterSession.shared?.log(payload)
     }
 
     @objc func searchingFrom(sender: UIButton? = nil) {
         searchType = .from
         searchBarView.resultsViewController?.shouldShowCurrentLocation = true
         presentSearchBar()
+        let payload = RouteOptionsSettingsPayload(description: "Searching From Tapped")
+        RegisterSession.shared?.log(payload)
     }
 
     func presentSearchBar() {
@@ -609,7 +618,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             self.datePickerOverlay.alpha = 0.6 // darken screen when pull up datepicker
         }
         
-        let payload = DatePickerAccessedPayload()
+        let payload = RouteOptionsSettingsPayload(description: "Date Picker Accessed")
         RegisterSession.shared?.log(payload)
         
     }
@@ -625,6 +634,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     @objc func saveDatePickerDate(sender: UIButton) {
+        
         let date = datePickerView.getDate()
         searchTime = date
         
@@ -632,14 +642,22 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         let timeTypeSegmentControl = datePickerView.timeTypeSegmentedControl
         let leaveNowSegmentControl = datePickerView.leaveNowSegmentedControl
         
+        var buttonTapped = ""
+        
         // Get selected time type
         if leaveNowSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.leaveNow]!.index {
             searchTimeType = .leaveNow
+            buttonTapped = "Leave Now Tapped"
         }
+            
         else if timeTypeSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.arriveBy]!.index {
             searchTimeType = .arriveBy
-        }else{
+            buttonTapped = "Arrive By Tapped"
+        }
+        
+        else {
             searchTimeType = .leaveAt
+            buttonTapped = "Leave At Tapped"
         }
         
         routeSelection.setDatepicker(withDate: date, withSearchTimeType: searchTimeType)
@@ -647,6 +665,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         dismissDatePicker(sender: sender)
         
         searchForRoutes()
+        
+        let payload = RouteOptionsSettingsPayload(description: buttonTapped)
+        RegisterSession.shared?.log(payload)
+        
     }
     
     // MARK: Tableview Data Source
