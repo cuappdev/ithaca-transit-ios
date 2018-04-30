@@ -69,6 +69,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK:  Data vars
 
     var routes: [Route] = []
+    var invalidateTimers: Bool = false
 
     // MARK: Reachability vars
 
@@ -128,22 +129,37 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: RouteTableViewCell.identifier)
         setupReachability()
+        
+        invalidateTimers = false
+        if routes != [] {
+            routeResults.reloadData()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
         if #available(iOS 11, *) {
             addHeightToDatepicker(20) // add bottom padding to date picker for iPhone X
         }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
         takedownReachability()
         if isBannerShown {
             banner?.dismiss()
             banner = nil
             UIApplication.shared.statusBarStyle = .default
+        }
+        
+        invalidateTimers = true
+        if routes != [] {
+            routeResults.reloadData()
         }
     }
     
@@ -695,7 +711,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
         }
 
-        cell?.setData(routes[indexPath.row])
+        cell?.setData(route: routes[indexPath.row], rowNum: indexPath.row, invalidateTimers: invalidateTimers)
         cell?.addRouteDiagramSubviews()
         cell?.activateRouteDiagramConstraints()
 

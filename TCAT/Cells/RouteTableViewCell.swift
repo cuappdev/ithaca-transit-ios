@@ -29,6 +29,10 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Network vars
     
     var timer: Timer?
+    
+    // MARK: Log vars
+    
+    var cellRowNum: Int?
 
     // MARK: View vars
 
@@ -294,15 +298,31 @@ class RouteTableViewCell: UITableViewCell {
         hideLiveElements(animate: false)
         
         // stop timer
+        invalidateTimer()
+    }
+    
+    // MARK: Timer
+    
+    func setTimer() {
+        timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay as () -> Void), userInfo: nil, repeats: true)
+    }
+    
+    func invalidateTimer() {
         timer?.invalidate()
     }
     
     // MARK: Set Data
     
-    func setData(_ route: Route) {
+    func setData(route: Route, rowNum: Int, invalidateTimers: Bool) {
         self.route = route
+        self.cellRowNum = rowNum
         
-        timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay as () -> Void), userInfo: nil, repeats: true)
+        if invalidateTimers {
+            invalidateTimer()
+        }
+        else {
+            setTimer()
+        }
         
         let (departureTime, arrivalTime) = getDepartureAndArrivalTimes(fromRoute: route)
         setTravelTime(withDepartureTime: departureTime, withArrivalTime: arrivalTime)
@@ -331,11 +351,9 @@ class RouteTableViewCell: UITableViewCell {
             let tripId = direction.tripIdentifiers?.first,
             let stopId = direction.stops.first?.id  {
             
-            JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Delay parameters: stopId: \(stopId). tripId: \(tripId).")
-            JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Delay requestUrl: \(Network.getDelayUrl(tripId: tripId, stopId: stopId))")
-            
+            print("\(Date()): Delay request for cell \(cellRowNum ?? -1)")
+
             Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
-                JsonFileManager.shared.saveToDocuments(json: json, type: .delayJson)
                 
                 if json["success"].boolValue {
                     guard let delay = json["data"]["delay"].int else {
@@ -343,10 +361,18 @@ class RouteTableViewCell: UITableViewCell {
                         return
                     }
                     
+                    let isNewDelayValue = (route.getFirstDepartRawDirection()?.delay != delay)
+                    if isNewDelayValue {
+                        JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Delay parameters: stopId: \(stopId). tripId: \(tripId).")
+                        JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Delay requestUrl: \(Network.getDelayUrl(tripId: tripId, stopId: stopId))")
+                        JsonFileManager.shared.saveToDocuments(json: json, type: .delayJson(cellRowNum: self.cellRowNum ?? -1))
+                    }
+                    
                     let departTime = direction.startTime
                     let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
                     
-                    if Time.compare(date1: delayedDepartTime, date2: departTime) != .orderedSame {
+                    let isLateDelay = (Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending)
+                    if isLateDelay {
                         let delayState = DelayState.late(date: delayedDepartTime)
                         self.setDepartureTime(withStartTime: Date(), withDelayState: delayState)
                         self.setLiveElements(withDelayState: delayState)

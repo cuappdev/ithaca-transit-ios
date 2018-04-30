@@ -9,9 +9,18 @@
 import UIKit
 import SwiftyJSON
 
-enum JsonType: String {
+enum JsonType {
     case routeJson
-    case delayJson
+    case delayJson(cellRowNum: Int)
+    
+    func rawValue() -> String {
+        switch self {
+        case .routeJson:
+            return "routeJson"
+        case .delayJson(_):
+            return "delayJson"
+        }
+    }
 }
 
 class JsonFileManager {
@@ -83,7 +92,7 @@ class JsonFileManager {
         do {
             let jsonData = try json.rawData()
             
-            let jsonFileName = getFileNameString(from: Date())
+            let jsonFileName = getFileNameString(date: Date(), type: type)
             let jsonFileExtension = "json"
             let jsonFileURL = documentsURL.appendingPathComponent("\(jsonFileName).\(jsonFileExtension)")
             
@@ -190,10 +199,18 @@ class JsonFileManager {
     
     // MARK: Date Formatting
     
-    private func getFileNameString(from date: Date) -> String {
+    private func getFileNameString(date: Date, type: JsonType) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd a hh-mm-ss"
-        return formatter.string(from: date)
+        let dateString = formatter.string(from: date)
+        let jsonString = type.rawValue()
+        
+        switch type {
+            case .routeJson:
+                return "\(dateString) \(jsonString)"
+            case .delayJson(cellRowNum: let num):
+                return "\(dateString) \(jsonString) \(num)"
+        }
     }
     
     private func getTimeStampString(from date: Date) -> String {
