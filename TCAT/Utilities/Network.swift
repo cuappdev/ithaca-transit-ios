@@ -105,7 +105,7 @@ class Network {
             ]
 
             // for debugging
-//             print("Route Request URL: \(address)\(request.path)?arriveBy=\(request.parameters["arriveBy"]!)&end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)&destinationName=\(request.parameters["destinationName"]!)\n")
+             print("Route Request URL: \(address)\(request.path)?arriveBy=\(request.parameters["arriveBy"]!)&end=\(request.parameters["end"]!)&start=\(request.parameters["start"]!)&time=\(request.parameters["time"]!)&destinationName=\(request.parameters["destinationName"]!)\n")
 
             callback(request)
 
