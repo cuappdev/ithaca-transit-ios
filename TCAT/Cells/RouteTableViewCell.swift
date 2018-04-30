@@ -296,33 +296,13 @@ class RouteTableViewCell: UITableViewCell {
         routeDiagram.prepareForReuse()
         
         hideLiveElements(animate: false)
-        
-        // stop timer
-        invalidateTimer()
-    }
-    
-    // MARK: Timer
-    
-    func setTimer() {
-        timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay as () -> Void), userInfo: nil, repeats: true)
-    }
-    
-    func invalidateTimer() {
-        timer?.invalidate()
     }
     
     // MARK: Set Data
     
-    func setData(route: Route, rowNum: Int, invalidateTimers: Bool) {
+    func setData(route: Route, rowNum: Int) {
         self.route = route
         self.cellRowNum = rowNum
-        
-        if invalidateTimers {
-            invalidateTimer()
-        }
-        else {
-            setTimer()
-        }
         
         let (departureTime, arrivalTime) = getDepartureAndArrivalTimes(fromRoute: route)
         setTravelTime(withDepartureTime: departureTime, withArrivalTime: arrivalTime)

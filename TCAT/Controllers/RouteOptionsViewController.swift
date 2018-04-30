@@ -69,7 +69,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK:  Data vars
 
     var routes: [Route] = []
-    var invalidateTimers: Bool = false
+    var timers: [Int:Timer] = [:]
 
     // MARK: Reachability vars
 
@@ -133,7 +133,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: RouteTableViewCell.identifier)
         setupReachability()
         
-        invalidateTimers = false
+        // Reload data to activate timers again
         if routes != [] {
             routeResults.reloadData()
         }
@@ -157,10 +157,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             UIApplication.shared.statusBarStyle = .default
         }
         
-        invalidateTimers = true
-        if routes != [] {
-            routeResults.reloadData()
+        // Deactivate and remove timers
+        for (_, timer) in timers {
+            timer.invalidate()
         }
+        timers = [:]
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -336,6 +337,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             self.hideRefreshControl()
 
             routes = []
+            timers = [:]
             routeResults.contentOffset = .zero
             routeResults.reloadData()
 
@@ -421,13 +423,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func processRouteJson(routeJSON: JSON, requestUrl: String) {
         JsonFileManager.shared.saveToDocuments(json: routeJSON, type: .routeJson)
         
-        JsonFileManager.shared.printAllJsons()
-        if let log = JsonFileManager.shared.readFromLog() {
-            print(log)
-        }
-        
         Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
             self.routes = parsedRoutes
+            // set timers in cellForRowAt
             
             if let error = error {
                 self.requestDidFinish(perform: [
@@ -445,8 +443,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         let title = "Network Failure: \((error.error as NSError?)?.domain ?? "No Domain")"
         let description = (error.localizedDescription) + ", " + ((error.error as NSError?)?.description ?? "n/a")
         
-        self.routes = []
-        self.requestDidFinish(perform: [
+        routes = []
+        timers = [:]
+        requestDidFinish(perform: [
             .showError(bannerInfo: BannerInfo(title: "Could not connect to server", style: .danger),
                        payload: GetRoutesErrorPayload(type: title, description: description, url: requestUrl))
         ])
@@ -711,7 +710,14 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
         }
 
-        cell?.setData(route: routes[indexPath.row], rowNum: indexPath.row, invalidateTimers: invalidateTimers)
+        cell?.setData(route: routes[indexPath.row], rowNum: indexPath.row)
+        
+        // Activate timers
+        let timerDoesNotExist = (timers[indexPath.row] == nil)
+        if timerDoesNotExist {
+            timers[indexPath.row] = Timer.scheduledTimer(timeInterval: 5.0, target: cell, selector: #selector(RouteTableViewCell.updateLiveElementsWithDelay), userInfo: nil, repeats: true)
+        }
+        
         cell?.addRouteDiagramSubviews()
         cell?.activateRouteDiagramConstraints()
 
