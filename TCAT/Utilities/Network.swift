@@ -101,8 +101,8 @@ class Network {
             request.method = .get
             request.parameters = [
                 "arriveBy"          :   type == .arriveBy,
-                "end"               :   "\(startCoord.latitude),\(endCoord.longitude)",
-                "start"             :   "\(startCoord.latitude),\(endCoord.longitude)",
+                "end"               :   "\(endCoord.latitude),\(endCoord.longitude)",
+                "start"             :   "\(startCoord.latitude),\(startCoord.longitude)",
                 "time"              :   time.timeIntervalSince1970,
                 "destinationName"   :   endPlaceName
             ]
@@ -113,8 +113,8 @@ class Network {
     class func getRequestUrl(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, destinationName: String, time: Date, type: SearchType) -> String {
         let path = "route"
         let arriveBy = (type == .arriveBy)
-        let end = "\(startCoord.latitude),\(endCoord.longitude)"
-        let start = "\(startCoord.latitude),\(endCoord.longitude)"
+        let end = "\(endCoord.latitude),\(endCoord.longitude)"
+        let start =  "\(startCoord.latitude),\(startCoord.longitude)"
         let time = time.timeIntervalSince1970
         
         return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(end)&start=\(start)&time=\(time)&destinationName=\(destinationName)"
