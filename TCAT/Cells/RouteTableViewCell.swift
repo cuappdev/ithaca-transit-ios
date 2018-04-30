@@ -25,11 +25,7 @@ class RouteTableViewCell: UITableViewCell {
     static let identifier: String = "routeCell"
     private let fileName: String = "RouteTableViewCell"
     var route: Route?
-    
-    // MARK: Network vars
-    
-    var timer: Timer?
-    
+        
     // MARK: Log vars
     
     var cellRowNum: Int?
