@@ -11,7 +11,7 @@ import SwiftyJSON
 
 enum JsonType {
     case routeJson
-    case delayJson(cellRowNum: Int)
+    case delayJson(rowNum: Int)
     
     func rawValue() -> String {
         switch self {
@@ -208,7 +208,7 @@ class JsonFileManager {
         switch type {
             case .routeJson:
                 return "\(dateString) \(jsonString)"
-            case .delayJson(cellRowNum: let num):
+            case .delayJson(rowNum: let num):
                 return "\(dateString) \(jsonString) \(num)"
         }
     }

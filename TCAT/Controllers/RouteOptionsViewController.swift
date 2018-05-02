@@ -134,7 +134,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         setupReachability()
         
         // Reload data to activate timers again
-        if routes != [] {
+        if !routes.isEmpty {
             routeResults.reloadData()
         }
     }
@@ -707,7 +707,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         var cell = tableView.dequeueReusableCell(withIdentifier: RouteTableViewCell.identifier, for: indexPath) as? RouteTableViewCell
 
         if cell == nil {
-            cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
+            cell = RouteTableViewCell(rowNum: indexPath.row, style: UITableViewCellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
         }
 
         cell?.setData(route: routes[indexPath.row], rowNum: indexPath.row)

@@ -38,7 +38,7 @@ class BusStop: Place, CoordinateAcceptor {
     // MARK: Print
     
     override var description: String {
-        return "BuStop(name: \(name), lat: \(lat), long: \(long))"
+        return "BusStop(name: \(name), lat: \(lat), long: \(long))"
     }
     
     // MARK: NSCoding

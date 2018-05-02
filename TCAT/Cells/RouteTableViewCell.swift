@@ -28,7 +28,7 @@ class RouteTableViewCell: UITableViewCell {
         
     // MARK: Log vars
     
-    var cellRowNum: Int?
+    var rowNum: Int
 
     // MARK: View vars
 
@@ -67,8 +67,11 @@ class RouteTableViewCell: UITableViewCell {
     let spaceBtnLiveElements: CGFloat = 4
 
     // MARK: Init
+    
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    init(rowNum: Int, style: UITableViewCellStyle, reuseIdentifier: String?) {
+        self.rowNum = rowNum
+        
         departureTimeLabel = UILabel()
         arrowImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
         departureStackView = UIStackView(arrangedSubviews: [departureTimeLabel, arrowImageView])
@@ -100,10 +103,6 @@ class RouteTableViewCell: UITableViewCell {
         contentView.addSubview(cellSeparator)
         
         activateConstraints()
-    }
-
-    convenience init() {
-        self.init(style: UITableViewCellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -298,7 +297,7 @@ class RouteTableViewCell: UITableViewCell {
     
     func setData(route: Route, rowNum: Int) {
         self.route = route
-        self.cellRowNum = rowNum
+        self.rowNum = rowNum
         
         let (departureTime, arrivalTime) = getDepartureAndArrivalTimes(fromRoute: route)
         setTravelTime(withDepartureTime: departureTime, withArrivalTime: arrivalTime)
@@ -327,7 +326,7 @@ class RouteTableViewCell: UITableViewCell {
             let tripId = direction.tripIdentifiers?.first,
             let stopId = direction.stops.first?.id  {
             
-            print("\(Date()): Delay request for cell \(cellRowNum ?? -1)")
+            print("\(Date()): Delay request for cell \(rowNum)")
 
             Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
                 
@@ -341,7 +340,7 @@ class RouteTableViewCell: UITableViewCell {
                     if isNewDelayValue {
                         JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Delay parameters: stopId: \(stopId). tripId: \(tripId).")
                         JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Delay requestUrl: \(Network.getDelayUrl(tripId: tripId, stopId: stopId))")
-                        JsonFileManager.shared.saveToDocuments(json: json, type: .delayJson(cellRowNum: self.cellRowNum ?? -1))
+                        JsonFileManager.shared.saveToDocuments(json: json, type: .delayJson(rowNum: self.rowNum))
                     }
                     
                     let departTime = direction.startTime
