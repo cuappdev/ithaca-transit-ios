@@ -53,7 +53,8 @@ class JsonFileManager {
             let line = "\(fileName) \(#function): \(error)"
             print(line)
             
-            try? "\(getTimeStampString(from: Date())): \(line)\n".write(to: logURL, atomically: false, encoding: .utf8)
+            let logLine = "\(getTimeStampString(from: Date())): \(line)\n"
+            try? logLine.write(to: logURL, atomically: false, encoding: .utf8)
         }
     }
     
@@ -88,7 +89,7 @@ class JsonFileManager {
     
     // MARK: Manage Jsons
     
-    func saveToDocuments(json: JSON, type: JsonType) {
+    func saveJson(_ json: JSON, type: JsonType) {
         do {
             let jsonData = try json.rawData()
             
@@ -105,7 +106,7 @@ class JsonFileManager {
         }
     }
     
-    func deleteAllJsonFilesFromDisk() {
+    func deleteAllJsons() {
         let jsonURLs = getAllJsonURLs()
         
         for url in jsonURLs {
@@ -149,7 +150,19 @@ class JsonFileManager {
     
     // MARK: Manage log
     
-    func writeToLog(timestamp: Date, line: String) {
+    func logSearchParameters(timestamp: Date, startPlace: Place, endPlace: Place, searchTime: Date, searchTimeType: SearchType) {
+        logLine(timestamp: timestamp, line: "Search parameters: startPlace: \(startPlace). endPlace: \(endPlace). searchTime: \(Time.dateString(from: searchTime)). searchTimeType: \(searchTimeType)")
+    }
+    
+    func logDelayParemeters(timestamp: Date, stopId: String, tripId: String) {
+        logLine(timestamp: timestamp, line: "Delay parameters: stopId: \(stopId). tripId: \(tripId).")
+    }
+    
+    func logUrl(timestamp: Date, urlName: String, url: String) {
+        logLine(timestamp: timestamp, line: "\(urlName): \(url)")
+    }
+    
+    private func logLine(timestamp: Date, line: String) {
         if let data = "\(getTimeStampString(from: timestamp)): \(line)\n".data(using: .utf8), let fileHandle = FileHandle(forWritingAtPath: logURL.path) {
             defer {
                 fileHandle.closeFile()
@@ -164,7 +177,7 @@ class JsonFileManager {
         }
     }
     
-    func readFromLog() -> String? {
+    func readLog() -> String? {
         if let log = try? String(contentsOf: logURL, encoding: .utf8) {
             print("\(fileName) \(#function): successful")
             return log
@@ -189,7 +202,7 @@ class JsonFileManager {
     
     private func printAndLog(timestamp: Date, line: String) {
         print(line)
-        writeToLog(timestamp: timestamp, line: line)
+        logLine(timestamp: timestamp, line: line)
     }
     
     private func printData(_ data: Data) {

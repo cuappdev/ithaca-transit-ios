@@ -344,7 +344,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             // Prepare feedback on Network request
             mediumTapticGenerator.prepare()
 
-            JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Search parameters: startPlace: \(searchFrom). endPlace: \(searchTo). searchTime: \(Time.dateString(from: time)). searchTimeType: \(searchTimeType)")
+            JsonFileManager.shared.logSearchParameters(timestamp: Date(), startPlace: searchFrom, endPlace: searchTo, searchTime: time, searchTimeType: searchTimeType)
             
             let sameLocation = (searchFrom.name == searchTo.name)
             if sameLocation {
@@ -404,7 +404,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func processRequest(request: APIRequest<JSON, Error>, requestUrl: String, endPlace: Place) {
-        JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Route requestUrl: \(requestUrl)")
+        JsonFileManager.shared.logUrl(timestamp: Date(), urlName: "Route requestUrl", url: requestUrl)
         
         request.perform(withSuccess: { routeJson in
                             self.processRouteJson(routeJSON: routeJson, requestUrl: requestUrl)
@@ -421,7 +421,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func processRouteJson(routeJSON: JSON, requestUrl: String) {
-        JsonFileManager.shared.saveToDocuments(json: routeJSON, type: .routeJson)
+        JsonFileManager.shared.saveJson(routeJSON, type: .routeJson)
         
         Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
             self.routes = parsedRoutes

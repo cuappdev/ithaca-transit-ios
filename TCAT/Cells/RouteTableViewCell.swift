@@ -338,9 +338,9 @@ class RouteTableViewCell: UITableViewCell {
                     
                     let isNewDelayValue = (route.getFirstDepartRawDirection()?.delay != delay)
                     if isNewDelayValue {
-                        JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Delay parameters: stopId: \(stopId). tripId: \(tripId).")
-                        JsonFileManager.shared.writeToLog(timestamp: Date(), line: "Delay requestUrl: \(Network.getDelayUrl(tripId: tripId, stopId: stopId))")
-                        JsonFileManager.shared.saveToDocuments(json: json, type: .delayJson(rowNum: self.rowNum))
+                        JsonFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
+                        JsonFileManager.shared.logUrl(timestamp: Date(), urlName: "Delay requestUrl", url: Network.getDelayUrl(tripId: tripId, stopId: stopId))
+                        JsonFileManager.shared.saveJson(json, type: .delayJson(rowNum: self.rowNum))
                     }
                     
                     let departTime = direction.startTime
