@@ -43,21 +43,7 @@ class JsonFileManager {
     
     private init() {
         documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        
-        // Create log folder if necessary and set logURL
-        let logFolderURL = documentsURL.appendingPathComponent("log")
-        if !FileManager.default.fileExists(atPath: logFolderURL.path) {
-            do {
-                try FileManager.default.createDirectory(atPath: logFolderURL.absoluteString, withIntermediateDirectories: false, attributes: nil)
-                logURL = logFolderURL.appendingPathComponent(logFileName)
-            } catch let error as NSError {
-                print("Error creating directory: \(error.localizedDescription)")
-                logURL = documentsURL.appendingPathComponent(logFileName)
-            }
-        }
-        else {
-            logURL = logFolderURL.appendingPathComponent(logFileName)
-        }
+        logURL = documentsURL.appendingPathComponent(logFileName)
         
         do {
             let line = "\(getTimeStampString(from: Date())): \(fileName) \(#function): Initialized JsonFileManager\n"
