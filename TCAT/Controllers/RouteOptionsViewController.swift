@@ -425,8 +425,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         
         Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
             self.routes = parsedRoutes
-            // set timers in cellForRowAt
-            
             if let error = error {
                 self.requestDidFinish(perform: [
                     .showError(bannerInfo: BannerInfo(title: "Route calculation error. Please retry.", style: .warning),
@@ -707,7 +705,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         var cell = tableView.dequeueReusableCell(withIdentifier: RouteTableViewCell.identifier, for: indexPath) as? RouteTableViewCell
 
         if cell == nil {
-            cell = RouteTableViewCell(rowNum: indexPath.row, style: UITableViewCellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
+            cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
         }
 
         cell?.setData(route: routes[indexPath.row], rowNum: indexPath.row)

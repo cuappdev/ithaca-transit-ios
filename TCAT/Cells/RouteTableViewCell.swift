@@ -28,7 +28,7 @@ class RouteTableViewCell: UITableViewCell {
         
     // MARK: Log vars
     
-    var rowNum: Int
+    var rowNum: Int?
 
     // MARK: View vars
 
@@ -69,9 +69,7 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Init
     
 
-    init(rowNum: Int, style: UITableViewCellStyle, reuseIdentifier: String?) {
-        self.rowNum = rowNum
-        
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         departureTimeLabel = UILabel()
         arrowImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
         departureStackView = UIStackView(arrangedSubviews: [departureTimeLabel, arrowImageView])
@@ -326,8 +324,6 @@ class RouteTableViewCell: UITableViewCell {
             let tripId = direction.tripIdentifiers?.first,
             let stopId = direction.stops.first?.id  {
             
-            print("\(Date()): Delay request for cell \(rowNum)")
-
             Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
                 
                 if json["success"].boolValue {
@@ -340,7 +336,7 @@ class RouteTableViewCell: UITableViewCell {
                     if isNewDelayValue {
                         JsonFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
                         JsonFileManager.shared.logUrl(timestamp: Date(), urlName: "Delay requestUrl", url: Network.getDelayUrl(tripId: tripId, stopId: stopId))
-                        JsonFileManager.shared.saveJson(json, type: .delayJson(rowNum: self.rowNum))
+                        JsonFileManager.shared.saveJson(json, type: .delayJson(rowNum: self.rowNum ?? -1))
                     }
                     
                     let departTime = direction.startTime
