@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftyJSON
+import Zip
 
 enum JsonType {
     case routeJson
@@ -33,7 +34,9 @@ class JsonFileManager {
     
     private let documentsURL: URL
     private let logURL: URL
+    private let zipURL: URL
     private let logFileName = "log.txt"
+    private let zipFileName = "log.zip"
     
     // MARK: Print vars
     
@@ -44,6 +47,7 @@ class JsonFileManager {
     private init() {
         documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         logURL = documentsURL.appendingPathComponent(logFileName)
+        zipURL = documentsURL.appendingPathComponent(zipFileName)
         
         do {
             let line = "\(getTimeStampString(from: Date())): \(fileName) \(#function): Initialized JsonFileManager\n"
@@ -58,9 +62,38 @@ class JsonFileManager {
         }
     }
     
+    // MARK: Manage Zipping
+    
+    func getZipUrl() -> URL? {
+        let fileUrls = getAllFileUrls()
+        
+        do  {
+            try Zip.zipFiles(paths: fileUrls, zipFilePath: zipURL, password: nil, progress: nil)
+            printAndLog(timestamp: Date(), line: "\(fileName) \(#function): Zipped all files to \(zipURL)")
+            return zipURL
+        }
+        catch {
+            printAndLog(timestamp: Date(), line: "\(fileName) \(#function): \(error)")
+            return nil
+        }
+    }
+    
+    func deleteZip() {
+        if FileManager.default.fileExists(atPath: zipURL.path) {
+            do {
+                try FileManager.default.removeItem(atPath: zipURL.path)
+                
+                printAndLog(timestamp: Date(), line: "\(fileName) \(#function): Deleted \(zipFileName)")
+            }
+            catch let error as NSError {
+                printAndLog(timestamp: Date(), line: "\(fileName) \(#function): Error when deleting \(zipFileName) \(error.debugDescription)")
+            }
+        }
+    }
+    
     // MARK: Manage Files
     
-    func getAllFileUrls() -> [URL] {
+    private func getAllFileUrls() -> [URL] {
         return [logURL] + getAllJsonURLs()
     }
     
@@ -162,6 +195,16 @@ class JsonFileManager {
         logLine(timestamp: timestamp, line: "\(urlName): \(url)")
     }
     
+    func readLog() -> String? {
+        if let log = try? String(contentsOf: logURL, encoding: .utf8) {
+            print("\(fileName) \(#function): successful")
+            return log
+        }
+        
+        print("\(fileName) \(#function): failed")
+        return nil
+    }
+    
     private func logLine(timestamp: Date, line: String) {
         if let data = "\(getTimeStampString(from: timestamp)): \(line)\n".data(using: .utf8), let fileHandle = FileHandle(forWritingAtPath: logURL.path) {
             defer {
@@ -175,16 +218,6 @@ class JsonFileManager {
         else {
             print("\(fileName) \(#function): failed")
         }
-    }
-    
-    func readLog() -> String? {
-        if let log = try? String(contentsOf: logURL, encoding: .utf8) {
-            print("\(fileName) \(#function): successful")
-            return log
-        }
-        
-        print("\(fileName) \(#function): failed")
-        return nil
     }
     
     // MARK: Print
