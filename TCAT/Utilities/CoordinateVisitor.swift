@@ -11,38 +11,40 @@ import CoreLocation
 import GooglePlaces
 
 protocol CoordinateAcceptor {
-    func accept(visitor: CoordinateVisitor, callback: @escaping (CLLocationCoordinate2D?) -> Void)
-    func getName() -> String
+    func accept(visitor: CoordinateVisitor, callback: @escaping (_ coord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void)
+}
+
+struct CoordinateVisitorError: Swift.Error {
+    let title: String
+    let description: String
 }
 
 class CoordinateVisitor: NSObject {
     
     private let placesClient = GMSPlacesClient.shared()
     
-    func getCoordinate(from place: PlaceResult, callback: @escaping (CLLocationCoordinate2D?) -> Void) {
+    func getCoordinate(from place: PlaceResult, callback: @escaping (_ coord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void) {
         
         placesClient.lookUpPlaceID(place.placeID) { (result, error) in
             
             if let error = error {
-                print("PlaceVisitor visit(place:) lookup place id query error: \(error.localizedDescription)")
-                callback(nil)
+                callback(nil, CoordinateVisitorError(title: "Google Places Lookup", description: "PlaceVisitor visit(place:) lookup place id query error: \(error.localizedDescription)"))
                 return
             }
             
             guard let result = result else {
-                print("Network visit(place:) no place details for \(place.name) with id \(place.placeID) ")
-                callback(nil)
+                callback(nil, CoordinateVisitorError(title: "PlaceResult is nil", description: "Network visit(place:) result is nil for \(place.name) with id \(place.placeID)"))
                 return
             }
             
-            callback(result.coordinate)
+            callback(result.coordinate, nil)
         }
         
     }
     
-    func getCoordinate(from busStop: BusStop, callback: @escaping (CLLocationCoordinate2D?) -> Void) {
+    func getCoordinate(from busStop: BusStop, callback: @escaping (_ coord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void) {
         
-        callback(CLLocationCoordinate2D(latitude: busStop.lat, longitude: busStop.long))
+        callback(CLLocationCoordinate2D(latitude: busStop.lat, longitude: busStop.long), nil)
         
     }
 }

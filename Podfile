@@ -24,6 +24,9 @@ target 'TCAT' do
   pod 'Firebase/Core'
   pod 'SwiftRegister', :git => 'https://github.com/cuappdev/register-client-ios.git', :branch => 'master'
 
+  # File Management
+  pod 'Zip', '~> 1.1'
+
   # UI Frameworks
   pod 'DZNEmptyDataSet'
   pod 'NotificationBannerSwift', :git=> 'https://github.com/mattbarker016/NotificationBanner.git', :branch => 'mattbarker016/statusBannerFix'

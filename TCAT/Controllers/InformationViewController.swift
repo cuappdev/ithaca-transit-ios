@@ -194,11 +194,9 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
             let mailComposerVC = MFMailComposeViewController()
             mailComposerVC.mailComposeDelegate = self
             var didRetrieveLog = false
-        
-            let fileName = ""
-            let extensionName = ""
-            if let logs = retrieveLogs(at: fileName, with: extensionName) {
-                mailComposerVC.addAttachmentData(logs, mimeType: "text/plain", fileName: fileName)
+
+            if let logs = retrieveLogs() {
+                mailComposerVC.addAttachmentData(logs, mimeType: "application/zip", fileName: "Logs.zip")
                 didRetrieveLog = true
             }
         
@@ -249,8 +247,8 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
     }
     
     /// Retrieve
-    func retrieveLogs(at fileName: String, with extensionName: String) -> Data? {
-        if let fileURL = Bundle.main.url(forResource: fileName, withExtension: extensionName) {
+    func retrieveLogs() -> Data? {
+        if let fileURL = JSONFileManager.shared.getZipURL() {
             return try? Data(contentsOf: fileURL)
         }
         return nil
@@ -266,15 +264,16 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         
         html += "<h2>Ithaca Transit Feedback Form</h2>"
         
-        html += "<b>Problem:</b>"
-        html += "<br><br>"
+        html += "<b>Problem</b>"
+        html += "<br><br><br><br>"
         
         if !didRetrieveLog {
-            html += "<b>How to Reproduce:</b>"
-            html += "<br><br>"
+            html += "<b>How to Reproduce</b>"
+            html += "<br><br><br><br>"
         }
         
-        html += "<b>Other Comments:</b>"
+        html += "<b>Other Comments</b>"
+        html += "<br>"
         
         html += "</body>"
         html += "</html>"

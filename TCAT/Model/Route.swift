@@ -39,6 +39,11 @@ struct Bounds {
 
 }
 
+struct RouteCalculationError: Swift.Error {
+    let title: String
+    let description: String
+}
+
 class Route: NSObject, JSONDecodable {
 
     /// The time a user begins their journey
@@ -210,7 +215,7 @@ class Route: NSObject, JSONDecodable {
 
     /// Handle route calculation data request.
     static func parseRoutes(in json: JSON, from: String?, to: String?,
-                          _ completion: @escaping (_ routes: [Route], _ error: NSError?) -> Void) {
+                          _ completion: @escaping (_ routes: [Route], _ error: RouteCalculationError?) -> Void) {
 
         if json["success"].boolValue {
             let routes: [Route] = json["data"].arrayValue.map {
@@ -221,9 +226,7 @@ class Route: NSObject, JSONDecodable {
             }
             completion(routes, nil)
         } else {
-            let userInfo = ["description" : json["error"].stringValue]
-            let error = NSError(domain: "Route Calculation Failure", code: 300, userInfo: userInfo)
-            completion([], error)
+            completion([], RouteCalculationError(title: "Route Calculation Failure", description: json["error"].stringValue))
         }
 
     }

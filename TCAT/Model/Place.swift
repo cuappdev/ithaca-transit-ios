@@ -26,10 +26,6 @@ class Place: NSObject, NSCoding {
         return object.name == name
     }
     
-    func getName() -> String {
-        return name
-    }
-    
     // MARK: NSCoding
     
     required init(coder aDecoder: NSCoder) {
