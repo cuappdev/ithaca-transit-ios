@@ -88,7 +88,7 @@ class RouteTableViewCell: UITableViewCell {
         funMessage = UILabel()
         bottomBorder = UIView()
         cellSeparator = UIView()
-        verticalStackView = UIStackView(arrangedSubviews: [timesStackView, liveStackView, routeDiagram, funMessage])
+        verticalStackView = UIStackView(arrangedSubviews: [timesStackView, liveStackView, routeDiagram])
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
@@ -118,7 +118,7 @@ class RouteTableViewCell: UITableViewCell {
 
         styleTimesStackView()
         styleLiveStackView()
-        styleFunMessage()
+//        styleFunMessage()
     }
     
     private func styleTimesStackView() {
@@ -312,7 +312,7 @@ class RouteTableViewCell: UITableViewCell {
         
         routeDiagram.setData(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
         
-        setFunMessage()
+//        setFunMessage()
     }
     
     private func setDepartureTimeAndLiveElements(withRoute route: Route) {
