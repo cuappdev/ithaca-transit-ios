@@ -62,6 +62,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         if let drawer = self.parent as? RouteDetailViewController {
             drawer.initialDrawerPosition = .partiallyRevealed
         }
+        print("setting route VDL Drawer")
         summaryView.setRoute()
     }
     
@@ -240,6 +241,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
                     }
                     
                     self.tableView.reloadData()
+                    print("updating from endpoint")
                     self.summaryView.setRoute()
                     
                 }
@@ -377,7 +379,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
 
             toggleCellExpansion(at: indexPath)
             
-            tableView.scrollToRow(at: indexPath, at: .none, animated: true)
+            // tableView.scrollToRow(at: indexPath, at: .none, animated: true)
             // Adjust footer
             
             tableView.layoutIfNeeded()

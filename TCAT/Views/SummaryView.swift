@@ -1,5 +1,5 @@
 //
-//  LiveIndicator.swift
+//  SummaryView.swift
 //  TCAT
 //
 //  Created by Matthew Barker on 2/26/17.
@@ -11,11 +11,7 @@ import UIKit
 class SummaryView: UIView {
     
     /// The route being used for the summary view
-    var route: Route! {
-        didSet {
-            setRoute()
-        }
-    }
+    var route: Route!
     
     /// The puller tab used to indicate dragability
     fileprivate var tab = UIView(frame: CGRect(x: 0, y: 6, width: 32, height: 4))
@@ -128,7 +124,9 @@ class SummaryView: UIView {
             
             mainLabel.attributedText = attributedString
             
+            // Find time within label to place live indicator
             if let stringRect = mainLabel.boundingRect(of: departDirection.startTimeWithDelayDescription + " ") {
+                print("setting origin")
                 liveIndicator.frame.origin.x = mainLabel.frame.minX + stringRect.maxX
                 liveIndicator.center.y = mainLabel.frame.minY + stringRect.midY
                 liveIndicator.setColor(to: departDirection.delay == nil ? .clear : color)
