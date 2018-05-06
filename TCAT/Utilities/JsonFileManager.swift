@@ -197,7 +197,6 @@ class JsonFileManager {
     
     func readLog() -> String? {
         if let log = try? String(contentsOf: logURL, encoding: .utf8) {
-            print("\(fileName) \(#function): successful")
             return log
         }
         
@@ -211,9 +210,7 @@ class JsonFileManager {
                 fileHandle.closeFile()
             }
             fileHandle.seekToEndOfFile()
-            fileHandle.write(data)
-            
-            print("\(fileName) \(#function): successful")
+            fileHandle.write(data)            
         }
         else {
             print("\(fileName) \(#function): failed")
