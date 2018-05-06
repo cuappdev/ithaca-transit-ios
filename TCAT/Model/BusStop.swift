@@ -35,6 +35,12 @@ class BusStop: Place, CoordinateAcceptor {
         return object.lat == lat && object.long == long
     }
     
+    // MARK: Print
+    
+    override var description: String {
+        return "BusStop(name: \(name), lat: \(lat), long: \(long))"
+    }
+    
     // MARK: NSCoding
     
     required init(coder aDecoder: NSCoder) {
@@ -53,7 +59,7 @@ class BusStop: Place, CoordinateAcceptor {
     
     // MARK:  Visitor pattern
     
-    func accept(visitor: CoordinateVisitor, callback: @escaping (CLLocationCoordinate2D?) -> Void) {
+    func accept(visitor: CoordinateVisitor, callback: @escaping (_ coord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void) {
         visitor.getCoordinate(from: self, callback: callback)
     }
 }

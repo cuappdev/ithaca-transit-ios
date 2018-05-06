@@ -45,6 +45,7 @@
 		DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */; };
 		DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96451FC21B29009955C6 /* HeaderView.swift */; };
 		DCB717101FB76EA600BE4D26 /* AllStopsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */; };
+		DD04B1AD208CC5E4006C1C23 /* JsonFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD04B1AC208CC5E4006C1C23 /* JsonFileManager.swift */; };
 		DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
 		DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
 		DD2F98A31E5150990005F6BC /* RouteOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */; };
@@ -146,6 +147,7 @@
 		DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FavoritesTableViewController.swift; path = Controllers/FavoritesTableViewController.swift; sourceTree = "<group>"; };
 		DC2E96451FC21B29009955C6 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeaderView.swift; path = Views/HeaderView.swift; sourceTree = "<group>"; };
 		DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AllStopsTableViewController.swift; path = Controllers/AllStopsTableViewController.swift; sourceTree = "<group>"; };
+		DD04B1AC208CC5E4006C1C23 /* JsonFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JsonFileManager.swift; path = Utilities/JsonFileManager.swift; sourceTree = "<group>"; };
 		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
 		DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteOptionsViewController.swift; path = Controllers/RouteOptionsViewController.swift; sourceTree = "<group>"; };
@@ -363,6 +365,7 @@
 				DD3D9C201F94297100B164D4 /* Reachability.swift */,
 				5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */,
 				DD5D233B1E6367A100F8DECE /* Time.swift */,
+				DD04B1AC208CC5E4006C1C23 /* JsonFileManager.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -439,8 +442,6 @@
 				449A7C851D80D0E80019300C /* Sources */,
 				449A7C861D80D0E80019300C /* Frameworks */,
 				449A7C871D80D0E80019300C /* Resources */,
-				C2CF2DD167AF2DF4E89FC4E1 /* [CP] Embed Pods Frameworks */,
-				471BE4C567ADA403A39DCA4B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -460,8 +461,6 @@
 				449A7C901D80D0E80019300C /* Sources */,
 				449A7C911D80D0E80019300C /* Frameworks */,
 				449A7C921D80D0E80019300C /* Resources */,
-				43F72825CF93E880E7B1217D /* [CP] Embed Pods Frameworks */,
-				749B028EA3DE7EB5B13F1324 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -615,51 +614,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		43F72825CF93E880E7B1217D /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		471BE4C567ADA403A39DCA4B /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		749B028EA3DE7EB5B13F1324 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7C01627F386C89E7F1995831 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -683,6 +637,7 @@
 				"${BUILT_PRODUCTS_DIR}/SwiftRegister/SwiftRegister.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/TRON/TRON.framework",
+				"${BUILT_PRODUCTS_DIR}/Zip/Zip.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -702,6 +657,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftRegister.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TRON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Zip.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -724,21 +680,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C2CF2DD167AF2DF4E89FC4E1 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E3FCA3C71FAA5AFB0069BD0F /* ShellScript */ = {
@@ -792,6 +733,7 @@
 				D183AA021E6CB092006A9A15 /* Extensions.swift in Sources */,
 				503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */,
 				DDC83CA31E52B09D00D4EDDF /* LocationTableViewCell.swift in Sources */,
+				DD04B1AD208CC5E4006C1C23 /* JsonFileManager.swift in Sources */,
 				DDE3BC231F5863D50014D2BB /* Place.swift in Sources */,
 				BF6095271FD7091B0013E538 /* CustomNavigationController.swift in Sources */,
 				BF5CBAD11FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift in Sources */,
