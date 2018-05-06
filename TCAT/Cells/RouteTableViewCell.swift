@@ -47,6 +47,7 @@ class RouteTableViewCell: UITableViewCell {
     var verticalStackView: UIStackView
     var topBorder: UIView
     var routeDiagram: RouteDiagram
+    var funMessage: UILabel
     var bottomBorder: UIView
     var cellSeparator: UIView
 
@@ -84,9 +85,10 @@ class RouteTableViewCell: UITableViewCell {
         
         topBorder = UIView()
         routeDiagram = RouteDiagram()
+        funMessage = UILabel()
         bottomBorder = UIView()
         cellSeparator = UIView()
-        verticalStackView = UIStackView(arrangedSubviews: [timesStackView, liveStackView, routeDiagram])
+        verticalStackView = UIStackView(arrangedSubviews: [timesStackView, liveStackView, routeDiagram, funMessage])
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
@@ -116,6 +118,7 @@ class RouteTableViewCell: UITableViewCell {
 
         styleTimesStackView()
         styleLiveStackView()
+        styleFunMessage()
     }
     
     private func styleTimesStackView() {
@@ -146,6 +149,11 @@ class RouteTableViewCell: UITableViewCell {
         liveStackView.spacing = spaceBtnLiveElements
         
         liveLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
+    }
+    
+    private func styleFunMessage() {
+        funMessage.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 12.0)
+        funMessage.textColor = .primaryTextColor
     }
 
     private func styleTopBorder() {
@@ -215,7 +223,7 @@ class RouteTableViewCell: UITableViewCell {
         let subviews = [timesStackView, travelTimeLabel,
                         departureStackView, departureTimeLabel, arrowImageView,
                         liveStackView, liveLabel, liveIndicatorView, stretchyFillerView,
-                        verticalStackView, topBorder, routeDiagram, bottomBorder, cellSeparator]
+                        verticalStackView, topBorder, routeDiagram, funMessage, bottomBorder, cellSeparator]
         
         subviews.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
     }
@@ -303,6 +311,8 @@ class RouteTableViewCell: UITableViewCell {
         setDepartureTimeAndLiveElements(withRoute: route)
         
         routeDiagram.setData(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
+        
+        setFunMessage()
     }
     
     private func setDepartureTimeAndLiveElements(withRoute route: Route) {
@@ -316,6 +326,10 @@ class RouteTableViewCell: UITableViewCell {
         let delayState = getDelayState(fromRoute: route)
         setDepartureTime(withStartTime: Date(), withDelayState: delayState)
         setLiveElements(withDelayState: delayState)
+    }
+    
+    private func setFunMessage() {
+        funMessage.text = "Howdy! Here's a fun message! :)"
     }
     
     @objc func updateLiveElementsWithDelay() {
