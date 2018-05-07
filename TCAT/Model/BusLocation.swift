@@ -40,7 +40,7 @@ class BusLocation: NSObject {
     var tripID: String
     var vehicleID: Int
     
-    fileprivate var _iconView: UIView?
+    private var _iconView: UIView?
     
     init(dataType: BusDataType,
          destination: String,

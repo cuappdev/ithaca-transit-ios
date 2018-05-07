@@ -13,7 +13,7 @@ import SwiftyJSON
 import PromiseKit
 import Crashlytics
 
-fileprivate var registerSession: RegisterSession? = nil
+private var registerSession: RegisterSession? = nil
 
 extension RegisterSession {
     

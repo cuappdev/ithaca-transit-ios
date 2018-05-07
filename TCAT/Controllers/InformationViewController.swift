@@ -198,6 +198,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
             if let logs = retrieveLogs() {
                 mailComposerVC.addAttachmentData(logs, mimeType: "application/zip", fileName: "Logs.zip")
                 didRetrieveLog = true
+                JSONFileManager.shared.deleteZip()
             }
         
             let subject = "Ithaca Transit Feedback v\(Constants.App.version)"

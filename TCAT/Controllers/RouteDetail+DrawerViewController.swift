@@ -277,10 +277,9 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         
         let latitude = route.endCoords.latitude
         let longitude = route.endCoords.longitude
-        let message = LocationPhrases.generateMessage(latitude: latitude, longitude: longitude)
-        let usePhraseFooterView = message != nil
         
-        if usePhraseFooterView, let message = message {
+        // If the phraseFooterView should be used (because there is a message)
+        if let message = LocationPhrases.generateMessage(latitude: latitude, longitude: longitude) {
             
             let phraseLabelFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.phraseLabelFooterView)
                 as? PhraseLabelFooterView ?? PhraseLabelFooterView(reuseIdentifier: Constants.Footers.phraseLabelFooterView)

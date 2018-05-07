@@ -11,7 +11,10 @@
 import UIKit
 import StoreKit
 
-struct StoreReviewHelper {
+class StoreReviewHelper {
+    
+    /// Shared instance of class
+    static let shared = StoreReviewHelper()
     
     /// MARK: Variables
     
@@ -40,7 +43,7 @@ struct StoreReviewHelper {
     static func checkAndAskForReview(override: Bool = false) {
         
         if override {
-            StoreReviewHelper().requestReview()
+            StoreReviewHelper.shared.requestReview()
             return
         }
         
@@ -53,9 +56,9 @@ struct StoreReviewHelper {
         
         switch appOpenCount {
         case firstRequestLaunchCount, secondRequestLaunchCount, thirdRequestLaunchCount:
-            StoreReviewHelper().requestReview()
+            StoreReviewHelper.shared.requestReview()
         case _ where appOpenCount % futureRequestInterval == 0 :
-            StoreReviewHelper().requestReview()
+            StoreReviewHelper.shared.requestReview()
         default:
             break
         }

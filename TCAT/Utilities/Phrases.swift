@@ -97,7 +97,18 @@ struct Messages {
 }
 
 
-class LocationPhrases {
+class Phrases {
+    
+    /// Select random string from array
+    static func selectMessage(from messages: [String]) -> String {
+        let rand = Int(arc4random_uniform(UInt32(messages.count)))
+        return messages[rand]
+    }
+    
+}
+
+
+class LocationPhrases: Phrases {
     
     // For new places, use: https://boundingbox.klokantech.com set to CSV.
     
@@ -191,7 +202,7 @@ class LocationPhrases {
 }
 
 
-class WalkingPhrases {
+class WalkingPhrases: Phrases {
     
     /// If route is solely a walking direction, return message. Otherwise, return nil.
     static func generateMessage(route: Route) -> String? {
@@ -235,11 +246,5 @@ struct CustomLocation: Equatable {
         return isLatInRange && isLongInRange
     }
     
-}
-
-/// Select random string from array
-func selectMessage(from messages: [String]) -> String {
-    let rand = Int(arc4random_uniform(UInt32(messages.count)))
-    return messages[rand]
 }
 
