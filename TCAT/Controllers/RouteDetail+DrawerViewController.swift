@@ -110,38 +110,12 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         tableView.register(SmallDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.smallDetailCellIdentifier)
         tableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.largeDetailCellIdentifier)
         tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: Constants.Cells.busStopCellIdentifier)
+        tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.emptyFooterView)
+        tableView.register(PhraseLabelFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.phraseLabelFooterView)
         tableView.dataSource = self
         tableView.delegate = self
-        setTableViewFooter()
         
         view.addSubview(tableView)
-
-    }
-    
-    /// Create and / or adjust the tableView footer, including setting tap gesture recognizer.
-    func setTableViewFooter() {
-        
-        let lastCellIndexPath = IndexPath(row: tableView.numberOfRows(inSection: 0) - 1, section: 0)
-        var screenBottom = main.height
-        if #available(iOS 11.0, *) { screenBottom -= view.safeAreaInsets.bottom }
-        
-        // Calculate height of space between last cell and the bottom of the screen, also accounting for summary
-        var footerHeight = screenBottom - (tableView.cellForRow(at: lastCellIndexPath)?.frame.maxY ?? screenBottom) - summaryView.frame.height
-        
-        if tableView.tableFooterView != nil {
-            // remove footer when when additional cells are added
-            footerHeight = expandedCell != nil ? 0 : footerHeight
-            tableView.tableFooterView?.frame.size.height = footerHeight
-            tableView.tableFooterView?.layoutIfNeeded()
-        } else {
-            tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: footerHeight))
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
-            tapGesture.delegate = self
-            tableView.tableFooterView?.addGestureRecognizer(tapGesture)
-        }
-        
-        // Debugging
-        // tableView.tableFooterView?.backgroundColor = .summaryBackgroundColor
 
     }
     
@@ -298,6 +272,52 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         }
 
     }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        
+        let latitude = route.endCoords.latitude
+        let longitude = route.endCoords.longitude
+        
+        // If the phraseFooterView should be used (because there is a message)
+        if let message = LocationPhrases.generateMessage(latitude: latitude, longitude: longitude) {
+            
+            let phraseLabelFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.phraseLabelFooterView)
+                as? PhraseLabelFooterView ?? PhraseLabelFooterView(reuseIdentifier: Constants.Footers.phraseLabelFooterView)
+            phraseLabelFooterView.setupView(labelText: message)
+            return phraseLabelFooterView
+            
+        }
+        
+        // Empty Footer
+        else {
+            
+            let emptyFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.emptyFooterView) ??
+                UITableViewHeaderFooterView(reuseIdentifier: Constants.Footers.emptyFooterView)
+            
+            let lastCellIndexPath = IndexPath(row: tableView.numberOfRows(inSection: 0) - 1, section: 0)
+            var screenBottom = main.height
+            if #available(iOS 11.0, *) {
+                screenBottom -= view.safeAreaInsets.bottom
+            }
+            
+            // Calculate height of space between last cell and the bottom of the screen, also accounting for summary
+            var footerHeight = screenBottom - (tableView.cellForRow(at: lastCellIndexPath)?.frame.maxY ?? screenBottom) - summaryView.frame.height
+            footerHeight = expandedCell != nil ? 0 : footerHeight
+            
+            emptyFooterView.frame.size = CGSize(width: view.frame.width, height: footerHeight)
+            emptyFooterView.contentView.backgroundColor = .white
+            emptyFooterView.layoutIfNeeded()
+            if emptyFooterView.gestureRecognizers?.isEmpty == true {
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
+                tapGesture.delegate = self
+                emptyFooterView.addGestureRecognizer(tapGesture)
+            }
+            
+            return emptyFooterView
+            
+        }
+        
+    }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
@@ -356,8 +376,8 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
 
             toggleCellExpansion(at: indexPath)
             
-            tableView.scrollToRow(at: indexPath, at: .none, animated: true)
-            setTableViewFooter()
+            // tableView.scrollToRow(at: indexPath, at: .none, animated: true)
+            // Adjust footer
             
             tableView.layoutIfNeeded()
             tableView.layoutSubviews()

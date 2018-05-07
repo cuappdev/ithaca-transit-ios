@@ -13,7 +13,7 @@ import SwiftyJSON
 import PromiseKit
 import Crashlytics
 
-fileprivate var registerSession: RegisterSession? = nil
+private var registerSession: RegisterSession? = nil
 
 extension RegisterSession {
     
@@ -156,11 +156,6 @@ struct RouteResultsCellPeekedPayload: Payload {
     static let eventName: String = "Route Results Cell Peeked"
 }
 
-/// Log use of date picker in Route Options
-struct DatePickerAccessedPayload: Payload {
-    static let eventName: String = "Date Picker Accessed"
-}
-
 /// Log opening of About page
 struct AboutPageOpenedPayload: Payload {
     static let eventName: String = "About Page Opened"
@@ -183,7 +178,7 @@ struct RouteSharedEventPayload: Payload {
     let error: String?
 }
 
-// Log any errors when calculation routes
+/// Log any errors when calculating routes
 struct GetRoutesErrorPayload: Payload {
     static let eventName: String = "Get Routes Error"
     let deviceInfo = DeviceInfo()
@@ -191,4 +186,28 @@ struct GetRoutesErrorPayload: Payload {
     let type: String
     let description: String
     let url: String?
+}
+
+/// Log any errors when sending feedback
+struct FeedbackErrorPayload: Payload {
+    static let eventName: String = "Feedback Error"
+    let deviceInfo = DeviceInfo()
+    
+    let description: String
+}
+
+/// Log any errors when sending feedback
+struct RouteOptionsSettingsPayload: Payload {
+    static let eventName: String = "Route Options Changed"
+    let deviceInfo = DeviceInfo()
+    
+    let description: String
+}
+
+/// Screenshot taken within app
+struct ScreenshotTakenPayload: Payload {
+    static let eventName: String = "Screenshot Taken"
+    let deviceInfo = DeviceInfo()
+    
+    let location: String
 }

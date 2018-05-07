@@ -24,8 +24,8 @@ class BusLocationView: UIView {
     
     var busIcon: BusIcon!
     
-    fileprivate var bearingIndicator = UIImageView()
-    fileprivate var circle = UIView()
+    private var bearingIndicator = UIImageView()
+    private var circle = UIView()
     
     /// The current position of the bearing icon
     var currentBearing: Double = 0

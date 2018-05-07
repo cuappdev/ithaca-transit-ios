@@ -23,11 +23,12 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Data vars
     
     static let identifier: String = "routeCell"
+    private let fileName: String = "RouteTableViewCell"
     var route: Route?
+        
+    // MARK: Log vars
     
-    // MARK: Network vars
-    
-    var timer: Timer?
+    var rowNum: Int?
 
     // MARK: View vars
 
@@ -46,6 +47,7 @@ class RouteTableViewCell: UITableViewCell {
     var verticalStackView: UIStackView
     var topBorder: UIView
     var routeDiagram: RouteDiagram
+    var funMessage: UILabel
     var bottomBorder: UIView
     var cellSeparator: UIView
 
@@ -66,6 +68,7 @@ class RouteTableViewCell: UITableViewCell {
     let spaceBtnLiveElements: CGFloat = 4
 
     // MARK: Init
+    
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         departureTimeLabel = UILabel()
@@ -82,6 +85,7 @@ class RouteTableViewCell: UITableViewCell {
         
         topBorder = UIView()
         routeDiagram = RouteDiagram()
+        funMessage = UILabel()
         bottomBorder = UIView()
         cellSeparator = UIView()
         verticalStackView = UIStackView(arrangedSubviews: [timesStackView, liveStackView, routeDiagram])
@@ -101,10 +105,6 @@ class RouteTableViewCell: UITableViewCell {
         activateConstraints()
     }
 
-    convenience init() {
-        self.init(style: UITableViewCellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
-    }
-
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -118,6 +118,7 @@ class RouteTableViewCell: UITableViewCell {
 
         styleTimesStackView()
         styleLiveStackView()
+        // styleFunMessage()
     }
     
     private func styleTimesStackView() {
@@ -148,6 +149,11 @@ class RouteTableViewCell: UITableViewCell {
         liveStackView.spacing = spaceBtnLiveElements
         
         liveLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14.0)
+    }
+    
+    private func styleFunMessage() {
+        funMessage.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 12.0)
+        funMessage.textColor = .lightGray
     }
 
     private func styleTopBorder() {
@@ -217,7 +223,7 @@ class RouteTableViewCell: UITableViewCell {
         let subviews = [timesStackView, travelTimeLabel,
                         departureStackView, departureTimeLabel, arrowImageView,
                         liveStackView, liveLabel, liveIndicatorView, stretchyFillerView,
-                        verticalStackView, topBorder, routeDiagram, bottomBorder, cellSeparator]
+                        verticalStackView, topBorder, routeDiagram, funMessage, bottomBorder, cellSeparator]
         
         subviews.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
     }
@@ -291,17 +297,13 @@ class RouteTableViewCell: UITableViewCell {
         routeDiagram.prepareForReuse()
         
         hideLiveElements(animate: false)
-        
-        // stop timer
-        timer?.invalidate()
     }
     
     // MARK: Set Data
     
-    func setData(_ route: Route) {
+    func setData(route: Route, rowNum: Int) {
         self.route = route
-        
-        timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay as () -> Void), userInfo: nil, repeats: true)
+        self.rowNum = rowNum
         
         let (departureTime, arrivalTime) = getDepartureAndArrivalTimes(fromRoute: route)
         setTravelTime(withDepartureTime: departureTime, withArrivalTime: arrivalTime)
@@ -309,6 +311,8 @@ class RouteTableViewCell: UITableViewCell {
         setDepartureTimeAndLiveElements(withRoute: route)
         
         routeDiagram.setData(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
+        
+        // setFunMessage()
     }
     
     private func setDepartureTimeAndLiveElements(withRoute route: Route) {
@@ -322,6 +326,10 @@ class RouteTableViewCell: UITableViewCell {
         let delayState = getDelayState(fromRoute: route)
         setDepartureTime(withStartTime: Date(), withDelayState: delayState)
         setLiveElements(withDelayState: delayState)
+    }
+    
+    private func setFunMessage() {
+        funMessage.text = "Howdy! Here's a fun message! :)"
     }
     
     @objc func updateLiveElementsWithDelay() {
@@ -338,10 +346,18 @@ class RouteTableViewCell: UITableViewCell {
                         return
                     }
                     
+                    let isNewDelayValue = (route.getFirstDepartRawDirection()?.delay != delay)
+                    if isNewDelayValue {
+                        JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
+                        JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Network.getDelayUrl(tripId: tripId, stopId: stopId))
+                        JSONFileManager.shared.saveJSON(json, type: .delayJSON(rowNum: self.rowNum ?? -1))
+                    }
+                    
                     let departTime = direction.startTime
                     let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
                     
-                    if Time.compare(date1: delayedDepartTime, date2: departTime) != .orderedSame {
+                    let isLateDelay = (Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending)
+                    if isLateDelay {
                         let delayState = DelayState.late(date: delayedDepartTime)
                         self.setDepartureTime(withStartTime: Date(), withDelayState: delayState)
                         self.setLiveElements(withDelayState: delayState)
@@ -358,7 +374,7 @@ class RouteTableViewCell: UITableViewCell {
                     self.setDepartureTimeAndLiveElements(withRoute: route)
                 }
             }, failure: { (error) in
-                print("RouteTableViewCell setLiveElements(withStartTime:, withDelay:) error: \(error.errorDescription ?? "") Request url: \(error.request?.url?.absoluteString ?? "")")
+                print("\(self.fileName) \(#function) error: \(error.errorDescription ?? "") Request url: \(error.request?.url?.absoluteString ?? "")")
                 self.setDepartureTimeAndLiveElements(withRoute: route)
             })
         }

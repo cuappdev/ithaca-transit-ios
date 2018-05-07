@@ -1,5 +1,5 @@
 //
-//  LiveIndicator.swift
+//  SummaryView.swift
 //  TCAT
 //
 //  Created by Matthew Barker on 2/26/17.
@@ -11,17 +11,13 @@ import UIKit
 class SummaryView: UIView {
     
     /// The route being used for the summary view
-    var route: Route! {
-        didSet {
-            setRoute()
-        }
-    }
+    var route: Route!
     
     /// The puller tab used to indicate dragability
-    fileprivate var tab = UIView(frame: CGRect(x: 0, y: 6, width: 32, height: 4))
+    private var tab = UIView(frame: CGRect(x: 0, y: 6, width: 32, height: 4))
     
     /// Three times the height of the tab view (spacing + tabHeight + spacing)
-    fileprivate var tabInsetHeight: CGFloat = 12
+    private var tabInsetHeight: CGFloat = 12
     
     /// The usable height of the summaryView
     var safeAreaHeight: CGFloat {
@@ -34,23 +30,23 @@ class SummaryView: UIView {
     }
     
     /// The primary summary label
-    fileprivate var mainLabel = UILabel()
+    private var mainLabel = UILabel()
     
     /// The live indicator
-    fileprivate var liveIndicator = LiveIndicator(size: .small, color: .clear)
+    private var liveIndicator = LiveIndicator(size: .small, color: .clear)
     
     /// The secondary label (Trip Duration)
-    fileprivate var secondaryLabel = UILabel()
+    private var secondaryLabel = UILabel()
     
     /// Whether route icons have been set or not
-    fileprivate var didSetRoutes: Bool = false
+    private var didSetRoutes: Bool = false
     
     /// The device's bounds
-    fileprivate var main = UIScreen.main.bounds
+    private var main = UIScreen.main.bounds
     /// Constant for label padding
-    fileprivate let textLabelPadding: CGFloat = 16
+    private let textLabelPadding: CGFloat = 16
     /// Identifier for bus route icons
-    fileprivate let iconTag: Int = 14850
+    private let iconTag: Int = 14850
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -128,6 +124,7 @@ class SummaryView: UIView {
             
             mainLabel.attributedText = attributedString
             
+            // Find time within label to place live indicator
             if let stringRect = mainLabel.boundingRect(of: departDirection.startTimeWithDelayDescription + " ") {
                 liveIndicator.frame.origin.x = mainLabel.frame.minX + stringRect.maxX
                 liveIndicator.center.y = mainLabel.frame.minY + stringRect.midY

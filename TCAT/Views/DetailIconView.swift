@@ -10,9 +10,9 @@ import UIKit
 
 class DetailIconView: UIView {
     
-    fileprivate let timeLabelConstant: CGFloat = 8
-    fileprivate let constant: CGFloat = 16
-    fileprivate var shouldAddSubviews: Bool = true
+    private let timeLabelConstant: CGFloat = 8
+    private let constant: CGFloat = 16
+    private var shouldAddSubviews: Bool = true
     
     static let width: CGFloat = 114
     

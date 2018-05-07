@@ -23,10 +23,10 @@ struct Constants {
         static let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
         
         /// Developer email address to direct contact inquiries and emails toward
-        static let contactEmailAddress = "cornellappdev@gmail.com"
+        static let contactEmailAddress = "ithacatransit@gmail.com"
         
         /// Link to Google Forms for Feedback
-        static let feedbackLink = "https://goo.gl/forms/jYejUtVccVQ3UHH12"
+        // static let feedbackLink = "https://goo.gl/forms/jYejUtVccVQ3UHH12"
         
     }
     
@@ -54,6 +54,11 @@ struct Constants {
         static let informationCellIdentifier = "InformationCell"
     }
     
+    struct Footers {
+        static let emptyFooterView = "RouteDetailEmptyFooterView"
+        static let phraseLabelFooterView = "RouteDetailPhraseLabelFooterView"
+    }
+    
     /// Font identifiers
     struct Fonts {
         
@@ -78,6 +83,7 @@ struct Constants {
     struct UserDefaults {
         
         static let version = "version"
+        static let appLaunchCount = "appLaunchCount"
         static let onboardingShown = "onboardingShown"
         static let showLocationAuthReminder = "locationAuthReminder"
         

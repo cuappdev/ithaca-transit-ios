@@ -19,6 +19,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     
     // var loadingView: UIView!
     var drawerDisplayController: RouteDetailDrawerViewController?
+    var routeOptionsCell: RouteTableViewCell?
     
     var locationManager = CLLocationManager()
     var currentLocation: CLLocationCoordinate2D?
@@ -51,8 +52,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     /** Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
      * dummy data will be used. The directions parameter have logical assumptions,
      * such as ArriveDirection always comes after DepartDirection. */
-    init(route: Route, currentLocation: CLLocationCoordinate2D?) {
+    init(route: Route, currentLocation: CLLocationCoordinate2D?, routeOptionsCell: RouteTableViewCell?) {
         super.init(nibName: nil, bundle: nil)
+        self.routeOptionsCell = routeOptionsCell
         initializeRoute(route, currentLocation)
     }
 
@@ -132,7 +134,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     required convenience init(coder aDecoder: NSCoder) {
         let route = aDecoder.decodeObject(forKey: "route") as! Route
-        self.init(route: route, currentLocation: nil)
+        self.init(route: route, currentLocation: nil, routeOptionsCell: nil)
     }
     
     // MARK: View-Related Functions
@@ -444,7 +446,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     // MARK: Share Function
     
     @objc func shareRoute() {
-        presentShareSheet(from: view, for: route)
+        presentShareSheet(from: view, for: route, with: routeOptionsCell?.getImage())
     }
     
     // MARK: Google Map View Delegate Functions

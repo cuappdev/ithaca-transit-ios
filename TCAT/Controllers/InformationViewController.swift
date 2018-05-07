@@ -9,8 +9,9 @@
 import UIKit
 import SafariServices
 import SwiftRegister
+import MessageUI
 
-class InformationViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class InformationViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate {
     
     var titleLabel = UILabel()
     var appDevImage = UIImageView()
@@ -29,7 +30,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
     
         [ // Section 0
             (name: "Show Onboarding", action: #selector(presentOnboarding)),
-            (name: "Send Feedback", action: #selector(openBugReportForm)),
+            (name: "Send Feedback", action: #selector(sendFeedback)),
         ],
         
         [ // Section 1
@@ -184,16 +185,112 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         present(navigationController, animated: true)
     }
     
-    @objc func openBugReportForm() {
-        open(Constants.App.feedbackLink)
+    @objc func sendFeedback() {
+        
+        let emailAddress = Constants.App.contactEmailAddress
+        
+        if MFMailComposeViewController.canSendMail() {
+        
+            let mailComposerVC = MFMailComposeViewController()
+            mailComposerVC.mailComposeDelegate = self
+            var didRetrieveLog = false
+
+            if let logs = retrieveLogs() {
+                mailComposerVC.addAttachmentData(logs, mimeType: "application/zip", fileName: "Logs.zip")
+                didRetrieveLog = true
+                JSONFileManager.shared.deleteZip()
+            }
+        
+            let subject = "Ithaca Transit Feedback v\(Constants.App.version)"
+            let body = createMessageBody(didRetrieveLog: didRetrieveLog)
+        
+            mailComposerVC.setToRecipients([emailAddress])
+            mailComposerVC.setSubject(subject)
+            mailComposerVC.setMessageBody(body, isHTML: true)
+        
+            present(mailComposerVC, animated: true)
+            
+        } else {
+            
+            let title = "Couldn't Send Email"
+            let message = "To send your message with device logs, please add an email account in Settings > Accounts & Passwords > Add Account. You can also contact us at \(emailAddress) to send feedback."
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Email Settings", style: .default, handler: { (_) in
+                let path = "App-Prefs:"
+                if let url = URL(string: path), UIApplication.shared.canOpenURL(url) {
+                    self.open(path, inApp: false)
+                } else {
+                    self.open(UIApplicationOpenSettingsURLString)
+                }
+                let payload = FeedbackErrorPayload(description: "Opened Email Settings")
+                RegisterSession.shared?.log(payload)
+            }))
+            alertController.addAction(UIAlertAction(title: "Copied Address to Clipboard", style: .default, handler: { (_) in
+                UIPasteboard.general.string = Constants.App.contactEmailAddress
+                let payload = FeedbackErrorPayload(description: "Copy Address to Clipboard")
+                RegisterSession.shared?.log(payload)
+            }))
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (_) in
+                let payload = FeedbackErrorPayload(description: "Cancelled")
+                RegisterSession.shared?.log(payload)
+            }))
+            present(alertController, animated: true)
+            
+        }
+        
+    }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Swift.Error?) {
+        controller.dismiss(animated: true)
+        if let error = error {
+            print("Mail Error:", error)
+        }
+    }
+    
+    /// Retrieve
+    func retrieveLogs() -> Data? {
+        if let fileURL = JSONFileManager.shared.getZipURL() {
+            return try? Data(contentsOf: fileURL)
+        }
+        return nil
+    }
+    
+    /// Message body of HTML email message
+    func createMessageBody(didRetrieveLog: Bool) -> String {
+        
+        var html = ""
+        html += "<!DOCTYPE html>"
+        html += "<html>"
+        html += "<body>"
+        
+        html += "<h2>Ithaca Transit Feedback Form</h2>"
+        
+        html += "<b>Problem</b>"
+        html += "<br><br><br><br>"
+        
+        if !didRetrieveLog {
+            html += "<b>How to Reproduce</b>"
+            html += "<br><br><br><br>"
+        }
+        
+        html += "<b>Other Comments</b>"
+        html += "<br>"
+        
+        html += "</body>"
+        html += "</html>"
+        
+        return html
+        
     }
     
     @objc func showMoreApps() {
-        open("https://itunes.apple.com/us/developer/walker-white/id1089672961", inApp: false)
+        let appStorePage = "https://itunes.apple.com/us/developer/walker-white/id1089672961"
+        open(appStorePage, inApp: false)
     }
     
     @objc func openTeamWebsite() {
-        open("http://www.cornellappdev.com")
+        let homePage = "http://www.cornellappdev.com"
+        open(homePage)
     }
     
     func open(_ url: String, inApp: Bool = true) {
