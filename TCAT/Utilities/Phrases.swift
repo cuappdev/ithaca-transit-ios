@@ -51,13 +51,13 @@ struct Messages {
     static let balch: [String] = [
         "Home of the Balch Arch, aka the Barch!",
         "Treat yourself with a Louie's milkshake 😋",
-        "Dorm sweet dorm"
+        "Dorm sweet dorm!"
     ]
     
     static let schwartz: [String] = [
         "Try something new at CTB!",
         "I wonder if eHub is crowded... probably",
-        "Make your way through the hustle and bustle of Collegetown"
+        "Welcome to the hustle and bustle of Collegetown"
     ]
     
     // MARK: Ithaca

@@ -11,33 +11,32 @@ import SnapKit
 
 class PhraseLabelFooterView: UITableViewHeaderFooterView {
 
-    var label: UILabel = UILabel()
-    
-    override init(reuseIdentifier: String?) {
-        
-        super.init(reuseIdentifier: reuseIdentifier)
-        
-        contentView.backgroundColor = .white
-        
+    var label: UILabel {
+        let label = UILabel()
         label.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12)
         label.textColor = .lightGray
         label.numberOfLines = 0
         label.textAlignment = .left
         label.lineBreakMode = .byWordWrapping
-        
+        return label
+    }
+    
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
+        contentView.backgroundColor = .white
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    func setupView(labelText: String) {
+    func setupView(with message: String) {
         
-        if label.text == "" {
-            label.text = labelText
+        if !contentView.subviews.contains(label) {
             contentView.addSubview(label)
         }
-
+        
+        label.text = message
         label.snp.makeConstraints { (make) in
             let constant: CGFloat = 8
             make.leading.equalToSuperview().offset(RouteDetailCellSize.regularWidth)
