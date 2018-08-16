@@ -111,7 +111,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         tableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.largeDetailCellIdentifier)
         tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: Constants.Cells.busStopCellIdentifier)
         tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.emptyFooterView)
-        tableView.register(PhraseLabelFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.phraseLabelFooterView)
+        // tableView.register(PhraseLabelFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.phraseLabelFooterView)
         tableView.dataSource = self
         tableView.delegate = self
         
@@ -275,45 +275,29 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         
-        let latitude = route.endCoords.latitude
-        let longitude = route.endCoords.longitude
+        let emptyFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.emptyFooterView) ??
+            UITableViewHeaderFooterView(reuseIdentifier: Constants.Footers.emptyFooterView)
         
-        // If the phraseFooterView should be used (because there is a message)
-        if let message = LocationPhrases.generateMessage(latitude: latitude, longitude: longitude) {
-            let phraseLabelFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.phraseLabelFooterView)
-                as? PhraseLabelFooterView ?? PhraseLabelFooterView(reuseIdentifier: Constants.Footers.phraseLabelFooterView)
-            phraseLabelFooterView.setView(with: message)
-            return phraseLabelFooterView
+        let lastCellIndexPath = IndexPath(row: tableView.numberOfRows(inSection: 0) - 1, section: 0)
+        var screenBottom = main.height
+        if #available(iOS 11.0, *) {
+            screenBottom -= view.safeAreaInsets.bottom
         }
         
-        // Empty Footer
-        else {
-            
-            let emptyFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.emptyFooterView) ??
-                UITableViewHeaderFooterView(reuseIdentifier: Constants.Footers.emptyFooterView)
-            
-            let lastCellIndexPath = IndexPath(row: tableView.numberOfRows(inSection: 0) - 1, section: 0)
-            var screenBottom = main.height
-            if #available(iOS 11.0, *) {
-                screenBottom -= view.safeAreaInsets.bottom
-            }
-            
-            // Calculate height of space between last cell and the bottom of the screen, also accounting for summary
-            var footerHeight = screenBottom - (tableView.cellForRow(at: lastCellIndexPath)?.frame.maxY ?? screenBottom) - summaryView.frame.height
-            footerHeight = expandedCell != nil ? 0 : footerHeight
-            
-            emptyFooterView.frame.size = CGSize(width: view.frame.width, height: footerHeight)
-            emptyFooterView.contentView.backgroundColor = .white
-            emptyFooterView.layoutIfNeeded()
-            if emptyFooterView.gestureRecognizers?.isEmpty == true {
-                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
-                tapGesture.delegate = self
-                emptyFooterView.addGestureRecognizer(tapGesture)
-            }
-            
-            return emptyFooterView
-            
+        // Calculate height of space between last cell and the bottom of the screen, also accounting for summary
+        var footerHeight = screenBottom - (tableView.cellForRow(at: lastCellIndexPath)?.frame.maxY ?? screenBottom) - summaryView.frame.height
+        footerHeight = expandedCell != nil ? 0 : footerHeight
+        
+        emptyFooterView.frame.size = CGSize(width: view.frame.width, height: footerHeight)
+        emptyFooterView.contentView.backgroundColor = .white
+        emptyFooterView.layoutIfNeeded()
+        if emptyFooterView.gestureRecognizers?.isEmpty == true {
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
+            tapGesture.delegate = self
+            emptyFooterView.addGestureRecognizer(tapGesture)
         }
+        
+        return emptyFooterView
         
     }
 
