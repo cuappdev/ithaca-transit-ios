@@ -225,7 +225,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
                 let payload = FeedbackErrorPayload(description: "Opened Email Settings")
                 RegisterSession.shared?.log(payload)
             }))
-            alertController.addAction(UIAlertAction(title: "Copied Address to Clipboard", style: .default, handler: { (_) in
+            alertController.addAction(UIAlertAction(title: "Copy Address to Clipboard", style: .default, handler: { (_) in
                 UIPasteboard.general.string = Constants.App.contactEmailAddress
                 let payload = FeedbackErrorPayload(description: "Copy Address to Clipboard")
                 RegisterSession.shared?.log(payload)
@@ -265,16 +265,8 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         
         html += "<h2>Ithaca Transit Feedback Form</h2>"
         
-        html += "<b>Problem</b>"
+        html += "<b>General Feedback</b>"
         html += "<br><br><br><br>"
-        
-        if !didRetrieveLog {
-            html += "<b>How to Reproduce</b>"
-            html += "<br><br><br><br>"
-        }
-        
-        html += "<b>Other Comments</b>"
-        html += "<br>"
         
         html += "</body>"
         html += "</html>"
