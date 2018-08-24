@@ -24,22 +24,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        JSONFileManager.shared.deleteAllJSONs()
+        // Set Up Register, Fabric / Crashlytics (RELEASE)
+        // #if !DEBUG
+            Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
+            RegisterSession.startLogging()
+        // #endif
         
         // Set Up Google Services
         FirebaseApp.configure()
         GMSServices.provideAPIKey(Keys.googleMaps.value)
         GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
         
-        // Set Up Register, Fabric / Crashlytics (RELEASE)
-        #if !DEBUG
-            Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
-            RegisterSession.startLogging()
-        #endif
-        
         // Log basic information
         let payload = AppLaunchedPayload()
         RegisterSession.shared?.log(payload)
+        
+        JSONFileManager.shared.deleteAllJSONs()
         
         // Check app version
         if let version = userDefaults.value(forKey: Constants.UserDefaults.version) as? String {
