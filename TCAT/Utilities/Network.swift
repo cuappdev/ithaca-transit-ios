@@ -122,6 +122,7 @@ class Network {
     class func getGooglePlacesAutocompleteResults(searchText: String) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("places")
         request.method = .post
+            request.parameterEncoding = JSONEncoding.default
         request.parameters = [
             "query" : searchText
         ]
