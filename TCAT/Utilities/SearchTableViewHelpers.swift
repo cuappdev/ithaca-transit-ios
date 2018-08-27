@@ -111,9 +111,12 @@ class SearchTableViewManager {
         itemTypes = filteredBusStops.map { ItemType.busStop($0.0) }
 
         var googleResults: [ItemType] = []
-        if let predictionsArray = json["predictions"].array {
-            for result in predictionsArray {
-                let placeResult = PlaceResult(name: result["structured_formatting"]["main_text"].stringValue, detail: result["structured_formatting"]["secondary_text"].stringValue, placeID: result["place_id"].stringValue)
+        if json["success"].boolValue, let autocompleteResults = json["data"].array {
+            for result in autocompleteResults {
+                let name = result["name"].stringValue
+                let detail = result["address"].stringValue
+                let placeID = result["place_id"].stringValue
+                let placeResult = PlaceResult(name: name, detail: detail, placeID: placeID)
                 let isPlaceABusStop = filteredBusStops.contains(where: { (stop) -> Bool in
                     placeResult.name.contains(stop.0.name)
                 })
@@ -122,6 +125,7 @@ class SearchTableViewManager {
                 }
             }
         }
+        
         return Section(type: .searchResults, items: googleResults + itemTypes)
     }
 

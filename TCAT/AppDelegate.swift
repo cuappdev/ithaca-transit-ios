@@ -25,10 +25,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // Set Up Register, Fabric / Crashlytics (RELEASE)
-        // #if !DEBUG
+        #if !DEBUG
             Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
             RegisterSession.startLogging()
-        // #endif
+        #endif
         
         // Set Up Google Services
         FirebaseApp.configure()

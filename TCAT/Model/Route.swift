@@ -116,8 +116,7 @@ class Route: NSObject, JSONDecodable {
                 // Change walking direction name to name of location walking from
                 if index == first {
                     direction.name = startName
-                }
-                else {
+                } else {
                     direction.name = rawDirections[index - 1].stops.last?.name ?? rawDirections[index - 1].name
                 }
             }
@@ -126,35 +125,23 @@ class Route: NSObject, JSONDecodable {
         // Append extra direction for ending location with ending destination name
         if let direction = rawDirections.last {
             // Set stayOnBusForTransfer to false b/c ending location can never have transfer
-            if direction.type == .walk {
-            rawDirections.append(Direction(type: .walk,
-                                           name: endName,
-                                           startLocation: direction.startLocation,
-                                           endLocation: direction.endLocation,
-                                           startTime: direction.startTime,
-                                           endTime: direction.endTime,
-                                           path: direction.path,
-                                           travelDistance: direction.travelDistance,
-                                           routeNumber: direction.routeNumber,
-                                           stops: direction.stops,
-                                           stayOnBusForTransfer: false,
-                                           tripIdentifiers: direction.tripIdentifiers,
-                                           delay: direction.delay))
-            }
-            else if direction.type == .depart {
-                rawDirections.append(Direction(type: .arrive,
-                                               name: endName,
-                                               startLocation: direction.startLocation,
-                                               endLocation: direction.endLocation,
-                                               startTime: direction.startTime,
-                                               endTime: direction.endTime,
-                                               path: direction.path,
-                                               travelDistance: direction.travelDistance,
-                                               routeNumber: direction.routeNumber,
-                                               stops: direction.stops,
-                                               stayOnBusForTransfer: false,
-                                               tripIdentifiers: direction.tripIdentifiers,
-                                               delay: direction.delay))
+            if direction.type == .walk || direction.type == .depart {
+                let newDirection = Direction(
+                    type: direction.type == .depart ? .arrive : .walk,
+                    name: endName,
+                    startLocation: direction.startLocation,
+                    endLocation: direction.endLocation,
+                    startTime: direction.startTime,
+                    endTime: direction.endTime,
+                    path: direction.path,
+                    travelDistance: direction.travelDistance,
+                    routeNumber: direction.routeNumber,
+                    stops: direction.stops,
+                    stayOnBusForTransfer: false,
+                    tripIdentifiers: direction.tripIdentifiers,
+                    delay: direction.delay
+                )
+                rawDirections.append(newDirection)
             }
         }
         
@@ -205,6 +192,11 @@ class Route: NSObject, JSONDecodable {
                     direction.stops.removeFirst()
                     direction.stops.removeLast()
                 }
+            }
+            
+            // Change name of last direction to be endName
+            if direction == directions.last {
+                direction.name = endName
             }
 
         }

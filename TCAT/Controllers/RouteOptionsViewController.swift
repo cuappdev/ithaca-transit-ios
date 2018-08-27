@@ -533,7 +533,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             let alertController = UIAlertController(title: "Location Services Disabled", message: "Tap Settings to change your location permissions, or continue using a limited version of the app.", preferredStyle: .alert)
             
             let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
-                UIApplication.shared.open(URL(string: "App-prefs:root=LOCATION_SERVICES") ?? URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
+                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
             }
             
             guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {

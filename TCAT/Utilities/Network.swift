@@ -37,7 +37,7 @@ class Network {
     static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
     
     /// Deployed server instance used for release
-    static let releaseIPAddress = "159.89.35.27" // "transit-backend.cornellappdev.com"
+    static let releaseIPAddress = "transit-backend.cornellappdev.com"
     static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
     
     /// Network IP address being used for specified networkType
@@ -58,13 +58,10 @@ class Network {
         }
     }
 
-    static let mainTron = TRON(baseURL: Network.address)
-    static let googleTron = TRON(baseURL: "https://maps.googleapis.com/maps/api/place/autocomplete/")
-
-    static let placesClient = GMSPlacesClient.shared()
+    static let tron = TRON(baseURL: Network.address)
 
     class func getAllStops() -> APIRequest<AllBusStops, Error> {
-        let request: APIRequest<AllBusStops, Error> = mainTron.swiftyJSON.request("allStops")
+        let request: APIRequest<AllBusStops, Error> = tron.swiftyJSON.request("allStops")
         request.method = .get
         return request
     }
@@ -98,7 +95,7 @@ class Network {
 
     class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, endPlaceName: String, time: Date, type: SearchType,
                          callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void) {
-            let request: APIRequest<JSON, Error> = mainTron.swiftyJSON.request("route")
+            let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
             request.method = .get
             request.parameters = [
                 "arriveBy"          :   type == .arriveBy,
@@ -122,22 +119,19 @@ class Network {
     }
 
 
-    class func getGooglePlaces(searchText: String) -> APIRequest<JSON, Error> {
-        let request: APIRequest<JSON, Error> = googleTron.swiftyJSON.request("json")
-        request.method = .get
+    class func getGooglePlacesAutocompleteResults(searchText: String) -> APIRequest<JSON, Error> {
+        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("places")
+        request.method = .post
+            request.parameterEncoding = JSONEncoding.default
         request.parameters = [
-            "strictbounds" : "",
-            "location" : "42.4440,-76.5019",
-            "radius" : 24140,
-            "input" : searchText,
-            "key" : Keys.googlePlaces.value
+            "query" : searchText
         ]
         return request
     }
 
     class func getBusLocations(_ directions: [Direction]) -> APIRequest<BusLocationResult, Error> {
 
-        let request: APIRequest<BusLocationResult, Error> = mainTron.swiftyJSON.request("tracking")
+        let request: APIRequest<BusLocationResult, Error> = tron.swiftyJSON.request("tracking")
         request.method = .post
         let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
         let dictionary = departDirections.map { (direction) -> [String : Any] in
@@ -160,7 +154,7 @@ class Network {
     }
 
     class func getDelay(tripId: String, stopId: String) -> APIRequest<JSON, Error> {
-        let request: APIRequest<JSON, Error> = mainTron.swiftyJSON.request("delay")
+        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("delay")
         request.method = .get
         request.parameters = ["stopID" : stopId, "tripID" : tripId]
 

@@ -425,7 +425,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if searchText.count > 0 {
-            Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
+            Network.getGooglePlacesAutocompleteResults(searchText: searchText).perform(withSuccess: { responseJson in
                 self.searchResultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
                 self.tableView.contentOffset = .zero
                 self.sections = [self.searchResultsSection]
@@ -450,7 +450,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             
             let alertController = UIAlertController(title: "Location Services Disabled", message: "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services.", preferredStyle: .alert)
             let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
-                UIApplication.shared.open(URL(string: "App-prefs:root=LOCATION_SERVICES") ?? URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
+                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
             }
 
             guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
