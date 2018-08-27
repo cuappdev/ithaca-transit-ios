@@ -368,7 +368,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
                                                 preferredStyle: .alert)
 
         let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
-            UIApplication.shared.open(URL(string: "App-prefs:root=LOCATION_SERVICES") ?? URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
+            UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alertController.addAction(settingsAction)
