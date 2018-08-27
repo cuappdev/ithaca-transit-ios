@@ -18,7 +18,7 @@ import SnapKit
 import SwiftRegister
 
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate, AddFavoritesDelegate, CLLocationManagerDelegate {
-    
+
     let userDefaults = UserDefaults.standard
     let cornellDestinations = [(name: "North Campus", stops: "RPCC, Balch Hall, Appel, Helen Newman, Jessup Field"),
                                (name: "West Campus", stops: "Baker Flagpole, Baker Flagpole (Slopeside)"),
@@ -31,7 +31,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var isNetworkDown = false
     var searchResultsSection: Section!
     var sectionIndexes: [String: Int]! = [:]
-    var tableView : UITableView!
+    var tableView: UITableView!
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
@@ -43,23 +43,23 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             tableView.reloadData()
         }
     }
-    
+
     let reachability = Reachability(hostname: Network.ipAddress)
     var isBannerShown = false
-    
+
     var banner: StatusBarNotificationBanner?
-    
+
     func tctSectionHeaderFont() -> UIFont? {
         return UIFont.systemFont(ofSize: 14)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Add Notification Observers
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
-        
+
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
         navigationController?.navigationBar.barTintColor = .white
@@ -95,7 +95,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
         textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
         navigationItem.titleView = searchBar
-        
+
         let rightBarButton = UIBarButtonItem(customView: infoButton)
         navigationItem.setRightBarButton(rightBarButton, animated: true)
         infoButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 0)
@@ -105,7 +105,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             make.width.equalTo(30)
             make.height.equalTo(38)
         }
-        
+
     }
 
     func displayFavoritesTVC() {
@@ -134,7 +134,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             searchBar.becomeFirstResponder()
         }
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return isBannerShown ? .lightContent : .default
     }
@@ -161,7 +161,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 }
                 sections = createSections()
                 self.searchBar.isUserInteractionEnabled = true
-            
+
         }
         UIApplication.shared.statusBarStyle = preferredStatusBarStyle
     }
@@ -178,14 +178,14 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
         sections = createSections()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
-        
+
         StoreReviewHelper.checkAndAskForReview()
-        
+
     }
 
     func createSections() -> [Section] {
@@ -246,7 +246,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let navController = CustomNavigationController(rootViewController: favoritesTVC)
         present(navController, animated: true, completion: nil)
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50.0
     }
@@ -268,9 +268,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             sections = createSections()
         }
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var itemType : ItemType?
+        var itemType: ItemType?
         var cell: UITableViewCell!
         switch sections[indexPath.section].type {
         case .cornellDestination:
@@ -279,7 +279,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             itemType = sections[indexPath.section].items[indexPath.row]
         default: break
         }
-        
+
         if let itemType = itemType {
             switch itemType {
             case .busStop(let busStop):
@@ -300,16 +300,16 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 cell.accessoryType = .disclosureIndicator
             }
         }
-        
+
         cell.textLabel?.font = tctSectionHeaderFont()
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
         cell.layoutMargins = .zero
         cell.layoutSubviews()
-        
+
         return cell
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch sections[section].type {
         case .cornellDestination: return cornellDestinations.count
@@ -319,14 +319,14 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         default: return 0
         }
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var itemType: ItemType
         let optionsVC = RouteOptionsViewController()
         let allStopsTVC = AllStopsTableViewController()
         var didSelectAllStops = false
         var presentOptionsVC = true
-        
+
         switch sections[indexPath.section].type {
         case .cornellDestination:
             itemType = .cornellDestination
@@ -359,7 +359,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         if presentOptionsVC {
             navigationController?.pushViewController(vcToPush, animated: true)
         }
-        
+
     }
 
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
@@ -375,48 +375,48 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
-    
+
     /* Keyboard Functions */
     @objc func keyboardWillShow(_ notification: Notification) {
         isKeyboardVisible = true
     }
-    
+
     @objc func keyboardWillHide(_ notification: Notification) {
         isKeyboardVisible = false
     }
-    
+
     /* ScrollView Delegate */
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
             cancelButton.isEnabled = true
         }
     }
-    
+
     /* SearchBar Delegates */
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         navigationItem.rightBarButtonItem = nil
     }
-    
+
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.placeholder = Constants.Phrases.searchPlaceholder
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.endEditing(true)
         searchBar.text = nil
-        
+
         let submitBugBarButton = UIBarButtonItem(customView: infoButton)
         navigationItem.setRightBarButton(submitBugBarButton, animated: false)
         sections = createSections()
         tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
-        
+
     }
-    
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         timer?.invalidate()
         timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
     }
-    
+
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.endEditing(true)
     }
@@ -434,57 +434,55 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             sections = createSections()
         }
     }
-    
+
     /* Open information screen */
     @objc func openInformationScreen() {
         let informationViewController = InformationViewController()
         let navigationVC = CustomNavigationController(rootViewController: informationViewController)
         present(navigationVC, animated: true)
     }
-    
+
     // MARK: Location Manager Delegate
-    
+
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        
+
         if status == .denied {
-            
+
             let alertController = UIAlertController(title: "Location Services Disabled", message: "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services.", preferredStyle: .alert)
             let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
                 UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
             }
 
             guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
-                
+
                 userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
-                
+
                 let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
                 alertController.addAction(cancelAction)
-                
+
                 alertController.addAction(settingsAction)
                 alertController.preferredAction = settingsAction
-                
+
                 present(alertController, animated: true)
-                
+
                 return
             }
-            
+
             if !showReminder {
                 return
             }
-            
+
             let dontRemindAgainAction = UIAlertAction(title: "Don't Remind Me Again", style: .default) { (_) in
                 self.userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
             }
             alertController.addAction(dontRemindAgainAction)
-            
+
             alertController.addAction(settingsAction)
             alertController.preferredAction = settingsAction
-            
+
             present(alertController, animated: true)
-            
+
         }
     }
-    
+
 }
-
-

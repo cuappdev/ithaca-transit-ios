@@ -11,19 +11,19 @@
 import UIKit
 
 class LoadingIndicator: RPCircularProgress {
-    
+
     required init() {
         super.init()
-        
+
         enableIndeterminate()
         trackTintColor = .mediumGrayColor
         progressTintColor = .searchBarPlaceholderTextColor
         thicknessRatio = 0.25
-        
+
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
 }

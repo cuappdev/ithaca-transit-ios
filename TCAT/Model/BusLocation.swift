@@ -19,7 +19,7 @@ enum BusDataType: String {
 }
 
 class BusLocation: NSObject {
-    
+
     var dataType: BusDataType
     var destination: String
     var deviation: Int
@@ -39,9 +39,9 @@ class BusLocation: NSObject {
     var speed: Int
     var tripID: String
     var vehicleID: Int
-    
+
     private var _iconView: UIView?
-    
+
     init(dataType: BusDataType,
          destination: String,
          deviation: Int,
@@ -82,13 +82,13 @@ class BusLocation: NSObject {
         self.tripID = tripID
         self.vehicleID = vehicleID
     }
-    
+
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(self.routeID, forKey: "routeID")
     }
-    
+
     var iconView: UIView {
-        
+
         if let iconView = _iconView {
             return iconView
         } else {
@@ -96,12 +96,12 @@ class BusLocation: NSObject {
             _iconView = BusLocationView(number: Int(routeID) ?? 0, bearing: heading, position: coordinates)
             return _iconView!
         }
-        
+
     }
-    
+
     /// The Int type of routeID. Defaults to 0 if can't cast to Int
     var routeNumber: Int {
         return Int(routeID) ?? 0
     }
-    
+
 }

@@ -10,16 +10,16 @@ import UIKit
 import Pulley
 
 class RouteDetailViewController: PulleyViewController {
-    
+
     /// True if view is being peeked from Route Options
     var isPeeking: Bool = false
-    
+
     override func viewDidLoad() {
-        
+
         super.viewDidLoad()
-        
+
         title = "Route Details"
-        
+
         drawerCornerRadius = 16
         shadowOpacity = 0.25
         shadowRadius = 4
@@ -28,21 +28,21 @@ class RouteDetailViewController: PulleyViewController {
         animationDuration = 0.5
         animationSpringDamping = 0.8
         animationSpringInitialVelocity = 2.5
-        
+
         let threshold: CGFloat = 20
         snapMode = .nearestPositionUnlessExceeded(threshold: threshold)
-        
+
         // Set left back button
         navigationItem.leftBarButtonItem?.setTitleTextAttributes(
             CustomNavigationController.buttonTitleTextAttributes, for: .normal
         )
-        
+
     }
-    
+
     /// 3D Touch Peep Pop Action(s)
     override var previewActionItems: [UIPreviewActionItem] {
 
-        let shareAction = UIPreviewAction(title: "Share", style: .default, handler: { (previewAction, viewController) -> Void in
+        let shareAction = UIPreviewAction(title: "Share", style: .default, handler: { (_, viewController) -> Void in
 
             guard
                 let routeDetailViewController = viewController as? RouteDetailViewController,
@@ -58,13 +58,13 @@ class RouteDetailViewController: PulleyViewController {
         return [shareAction]
 
     }
-    
+
     // MARK: Initializers
-    
+
     required init(contentViewController: UIViewController, drawerViewController: UIViewController) {
         super.init(contentViewController: contentViewController, drawerViewController: drawerViewController)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }

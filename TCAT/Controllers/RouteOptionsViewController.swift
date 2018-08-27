@@ -40,7 +40,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                                   DZNEmptyDataSetSource, DZNEmptyDataSetDelegate,
                                   CLLocationManagerDelegate,
                                   UIViewControllerPreviewingDelegate {
-    
+
     // MARK: Search bar vars
 
     var searchBarView: SearchBarView!
@@ -54,7 +54,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     var showRouteSearchingLoader: Bool = false
 
     // MARK: View vars
-    
+
     let mediumTapticGenerator = UIImpactFeedbackGenerator(style: .medium)
 
     var routeSelection: RouteSelectionView!
@@ -66,26 +66,26 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     let navigationBarTitle: String = "Route Options"
     let routeResultsTitle: String = "Route Results"
 
-    // MARK:  Data vars
+    // MARK: Data vars
 
     var routes: [Route] = []
-    var timers: [Int:Timer] = [:]
+    var timers: [Int: Timer] = [:]
 
     // MARK: Reachability vars
 
     let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
 
-    var banner: StatusBarNotificationBanner? = nil
+    var banner: StatusBarNotificationBanner?
 
     var isBannerShown: Bool = false
     var cellUserInteraction: Bool = true
-    
+
     // MARK: Spacing vars
-    
+
     let estimatedRowHeight: CGFloat = 115
-    
+
     // MARK: Print vars
-    
+
     private let fileName: String = "RouteOptionsVc"
 
     // MARK: View Lifecycle
@@ -118,21 +118,21 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         if let searchTime = searchTime {
             routeSelection.setDatepicker(withDate: searchTime, withSearchTimeType: searchTimeType)
         }
-        
+
         searchForRoutes()
-        
+
         // Check for 3D Touch availability
         if traitCollection.forceTouchCapability == .available {
             registerForPreviewing(with: self, sourceView: view)
         }
-        
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: RouteTableViewCell.identifier)
         setupReachability()
-        
+
         // Reload data to activate timers again
         if !routes.isEmpty {
             routeResults.reloadData()
@@ -141,7 +141,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         if #available(iOS 11, *) {
             addHeightToDatepicker(20) // add bottom padding to date picker for iPhone X
         }
@@ -149,21 +149,21 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         takedownReachability()
         if isBannerShown {
             banner?.dismiss()
             banner = nil
             UIApplication.shared.statusBarStyle = .default
         }
-        
+
         // Deactivate and remove timers
         for (_, timer) in timers {
             timer.invalidate()
         }
         timers = [:]
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return isBannerShown ? .lightContent : .default
     }
@@ -200,11 +200,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeSelection.toSearchbar.setTitle(searchTo?.name ?? "", for: .normal)
 
         searchForRoutes()
-        
+
         // Analytics
         let payload = RouteOptionsSettingsPayload(description: "Swapped To and From")
         RegisterSession.shared?.log(payload)
-        
+
     }
 
     // MARK: Search bar
@@ -279,7 +279,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             if let result = busStop {
                 searchFrom = result
                 routeSelection.fromSearchbar.setTitle(result.name, for: .normal)
-            }else if let result = placeResult{
+            } else if let result = placeResult {
                 searchFrom = result
                 routeSelection.fromSearchbar.setTitle(result.name, for: .normal)
             }
@@ -289,7 +289,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             if let result = busStop {
                 searchTo = result
                 routeSelection.toSearchbar.setTitle(result.name, for: .normal)
-            }else if let result = placeResult {
+            } else if let result = placeResult {
                 searchTo = result
                 routeSelection.toSearchbar.setTitle(result.name, for: .normal)
             }
@@ -305,7 +305,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     // Variable to remember back button when hiding
-    var backButton: UIBarButtonItem? = nil
+    var backButton: UIBarButtonItem?
 
     private func hideSearchBar() {
         if #available(iOS 11.0, *) {
@@ -335,13 +335,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Process Data
 
     func searchForRoutes() {
-      
+
         if let searchFrom = searchFrom,
            let searchTo = searchTo,
            let time = searchTime,
            let startPlace = searchFrom as? CoordinateAcceptor,
            let endPlace = searchTo as? CoordinateAcceptor {
-            
+
             showRouteSearchingLoader = true
             self.hideRefreshControl()
 
@@ -354,67 +354,67 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             mediumTapticGenerator.prepare()
 
             JSONFileManager.shared.logSearchParameters(timestamp: Date(), startPlace: searchFrom, endPlace: searchTo, searchTime: time, searchTimeType: searchTimeType)
-            
+
             let sameLocation = (searchFrom.name == searchTo.name)
             if sameLocation {
                 requestDidFinish(perform: [.showAlert(title: "You're here!", message: "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta).", actionTitle: "😐😒🙄")])
                 return
             }
-            
+
             Network.getCoordinates(start: startPlace, end: endPlace) { (startCoord, endCoord, coordinateVisitorError) in
-                
+
                 guard let startCoord = startCoord, let endCoord = endCoord else {
                     self.processNoCoordinates(coordinateVisitorError: coordinateVisitorError)
                     return
                 }
-                
+
                 if !self.validCoordinates(startCoord: startCoord, endCoord: endCoord) {
                     self.processInvalidCoordinates()
                     return
                 }
-                
+
                 Network.getRoutes(startCoord: startCoord, endCoord: endCoord, endPlaceName: searchFrom.name, time: time, type: self.searchTimeType) { request in
                     let requestUrl = Network.getRequestUrl(startCoord: startCoord, endCoord: endCoord, destinationName: searchTo.name, time: time, type: self.searchTimeType)
                     self.processRequest(request: request, requestUrl: requestUrl, endPlace: searchFrom)
                 }
-                
+
             }
         }
     }
-    
+
     func processNoCoordinates(coordinateVisitorError: CoordinateVisitorError?) {
         if let coordinateVisitorError = coordinateVisitorError {
-            
+
             self.requestDidFinish(perform: [
                 .showError(bannerInfo: BannerInfo(title: "Could not connect to server", style: .danger),
                            payload: GetRoutesErrorPayload(type: coordinateVisitorError.title, description: coordinateVisitorError.description, url: nil))
                 ])
-            
+
         } else {
-            
+
             self.requestDidFinish(perform: [
                 .showError(bannerInfo: BannerInfo(title: "Could not connect to server", style: .danger),
                            payload: GetRoutesErrorPayload(type: "Nil start and end coordinates and nil coordinateVisitorError", description: "", url: nil))
                 ])
-            
+
         }
     }
-    
+
     func processInvalidCoordinates() {
         let title = "Location Out Of Range"
         let message = "Try looking for another route with start and end locations closer to Tompkins County."
         let actionTitle = "OK"
-        
+
         self.requestDidFinish(perform: [
             .showAlert(title: title, message: message, actionTitle: actionTitle),
             .showError(bannerInfo: BannerInfo(title: title, style: .warning),
                        payload: GetRoutesErrorPayload(type: title, description: message, url: nil))
             ])
     }
-    
+
     func processRequest(request: APIRequest<JSON, Error>, requestUrl: String, endPlace: Place) {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestUrl)
-        
+
         request.perform(withSuccess: { routeJson in
                             self.processRouteJson(routeJSON: routeJson, requestUrl: requestUrl)
                         },
@@ -422,16 +422,16 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                             self.processRequestError(error: requestError, requestUrl: requestUrl)
                         }
         )
-        
+
         let payload = DestinationSearchedEventPayload(destination: endPlace.name,
                                                       requestUrl: requestUrl,
                                                       stopType: nil)
         RegisterSession.shared?.log(payload)
     }
-    
+
     func processRouteJson(routeJSON: JSON, requestUrl: String) {
         JSONFileManager.shared.saveJSON(routeJSON, type: .routeJSON)
-        
+
         Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
             self.routes = parsedRoutes
             if let error = error {
@@ -439,17 +439,16 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     .showError(bannerInfo: BannerInfo(title: "Route calculation error. Please retry.", style: .warning),
                                payload: GetRoutesErrorPayload(type: error.title, description: error.description, url: requestUrl))
                 ])
-            }
-            else {
+            } else {
                 self.requestDidFinish(perform: [.hideBanner])
             }
         })
     }
-    
+
     func processRequestError(error: APIError<Error>, requestUrl: String) {
         let title = "Network Failure: \((error.error as NSError?)?.domain ?? "No Domain")"
         let description = (error.localizedDescription) + ", " + ((error.error as NSError?)?.description ?? "n/a")
-        
+
         routes = []
         timers = [:]
         requestDidFinish(perform: [
@@ -457,45 +456,45 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                        payload: GetRoutesErrorPayload(type: title, description: description, url: requestUrl))
         ])
     }
-    
+
     func validCoordinates(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D) -> Bool {
         let latitudeValues = [startCoord.latitude, endCoord.latitude]
         let longitudeValues  = [startCoord.longitude, endCoord.longitude]
-        
+
         let validLatitudes = latitudeValues.reduce(true) { (result, latitude) -> Bool in
             return result && latitude <= Constants.Values.RouteBorders.northBorder &&
                 latitude >= Constants.Values.RouteBorders.southBorder
         }
-        
+
         let validLongitudes = longitudeValues.reduce(true) { (result, longitude) -> Bool in
             return result && longitude <= Constants.Values.RouteBorders.eastBorder &&
                 longitude >= Constants.Values.RouteBorders.westBorder
         }
-        
+
         return validLatitudes && validLongitudes
     }
-    
+
     func requestDidFinish(perform actions: [RequestAction]) {
-        
+
         for action in actions {
-            
+
             switch action {
-                
+
             case .showAlert(title: let title, message: let message, actionTitle: let actionTitle):
                 let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
                 let action = UIAlertAction(title: actionTitle, style: .cancel, handler: nil)
                 alertController.addAction(action)
                 present(alertController, animated: true, completion: nil)
-                
+
             case .showError(bannerInfo: let bannerInfo, payload: let payload):
                 banner = StatusBarNotificationBanner(title: bannerInfo.title, style: bannerInfo.style)
                 banner?.autoDismiss = false
                 banner?.dismissOnTap = true
                 banner?.show(queuePosition: .front, on: navigationController)
                 isBannerShown = true
-                
+
                 RegisterSession.shared?.log(payload)
-                
+
             case .hideBanner:
                 if isBannerShown {
                     isBannerShown = false
@@ -503,11 +502,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     banner = nil
                 }
                 mediumTapticGenerator.impactOccurred()
-                
+
             }
-            
+
         }
-        
+
         UIApplication.shared.statusBarStyle = preferredStatusBarStyle
         showRouteSearchingLoader = false
         routeResults.reloadData()
@@ -526,43 +525,43 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         print("\(fileName) \(#function): \(error.localizedDescription)")
-        
+
         if error._code == CLError.denied.rawValue {
             locationManager.stopUpdatingLocation()
-            
+
             let alertController = UIAlertController(title: "Location Services Disabled", message: "Tap Settings to change your location permissions, or continue using a limited version of the app.", preferredStyle: .alert)
-            
+
             let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
                 UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
             }
-            
+
             guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
-                
+
                 userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
-                
+
                 let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
                 alertController.addAction(cancelAction)
-                
+
                 alertController.addAction(settingsAction)
                 alertController.preferredAction = settingsAction
-                
+
                 present(alertController, animated: true)
-                
+
                 return
             }
-            
+
             if !showReminder {
                 return
             }
-            
+
             let dontRemindAgainAction = UIAlertAction(title: "Don't Remind Me Again", style: .default) { (_) in
                 userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
             }
             alertController.addAction(dontRemindAgainAction)
-            
+
             alertController.addAction(settingsAction)
             alertController.preferredAction = settingsAction
-            
+
             present(alertController, animated: true)
         }
     }
@@ -571,23 +570,23 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         guard let location = manager.location else {
             return
         }
-        
+
         currentLocation = location.coordinate
-        
+
         updateSearchBarCurrentLocation(withCoordinate: location.coordinate)
-        
+
         if let busStop = searchTo as? BusStop {
             if busStop.name == Constants.Stops.currentLocation {
                updateCurrentLocation(busStop, withCoordinate: location.coordinate)
             }
         }
-        
+
         if let busStop = searchFrom as? BusStop {
             if busStop.name == Constants.Stops.currentLocation {
                 updateCurrentLocation(busStop, withCoordinate: location.coordinate)
             }
         }
-        
+
         // If haven't selected start location, set to current location
         if searchFrom == nil {
             let currentLocationStop = BusStop(name: Constants.Stops.currentLocation,
@@ -599,12 +598,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             searchForRoutes()
         }
     }
-    
+
     private func updateCurrentLocation(_ currentLocationStop: BusStop, withCoordinate coordinate: CLLocationCoordinate2D ) {
         currentLocationStop.lat = coordinate.latitude
         currentLocationStop.long = coordinate.longitude
     }
-    
+
     private func updateSearchBarCurrentLocation(withCoordinate coordinate: CLLocationCoordinate2D) {
         searchBarView.resultsViewController?.currentLocation?.lat = coordinate.latitude
         searchBarView.resultsViewController?.currentLocation?.long = coordinate.longitude
@@ -643,12 +642,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     @objc func showDatePicker(sender: UIButton) {
-        
+
         view.bringSubview(toFront: datePickerOverlay)
         view.bringSubview(toFront: datePickerView)
 
         // set up date on datepicker view
-        if let time = searchTime  {
+        if let time = searchTime {
             datePickerView.setDatepickerDate(date: time)
         }
 
@@ -658,72 +657,68 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.6 // darken screen when pull up datepicker
         }
-        
+
         let payload = RouteOptionsSettingsPayload(description: "Date Picker Accessed")
         RegisterSession.shared?.log(payload)
-        
+
     }
 
     @objc func dismissDatePicker(sender: UIButton) {
         UIView.animate(withDuration: 0.5, animations: {
             self.datePickerView.center.y = self.view.frame.height + (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.0
-        }) { (completion) in
+        }) { (_) in
             self.view.sendSubview(toBack: self.datePickerOverlay)
             self.view.sendSubview(toBack: self.datePickerView)
         }
     }
 
     @objc func saveDatePickerDate(sender: UIButton) {
-        
+
         let date = datePickerView.getDate()
         searchTime = date
-        
+
         let typeToSegmentControlElements = datePickerView.typeToSegmentControlElements
         let timeTypeSegmentControl = datePickerView.timeTypeSegmentedControl
         let leaveNowSegmentControl = datePickerView.leaveNowSegmentedControl
-        
+
         var buttonTapped = ""
-        
+
         // Get selected time type
         if leaveNowSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.leaveNow]!.index {
             searchTimeType = .leaveNow
             buttonTapped = "Leave Now Tapped"
-        }
-            
-        else if timeTypeSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.arriveBy]!.index {
+        } else if timeTypeSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.arriveBy]!.index {
             searchTimeType = .arriveBy
             buttonTapped = "Arrive By Tapped"
-        }
-        
-        else {
+        } else {
             searchTimeType = .leaveAt
             buttonTapped = "Leave At Tapped"
         }
-        
+
         routeSelection.setDatepicker(withDate: date, withSearchTimeType: searchTimeType)
 
         dismissDatePicker(sender: sender)
-        
+
         searchForRoutes()
-        
+
         let payload = RouteOptionsSettingsPayload(description: buttonTapped)
         RegisterSession.shared?.log(payload)
-        
+
     }
-    
+
     // MARK: Tableview Data Source
 
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return routes.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+
         var cell = tableView.dequeueReusableCell(withIdentifier: RouteTableViewCell.identifier, for: indexPath) as? RouteTableViewCell
 
         if cell == nil {
@@ -731,22 +726,22 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
 
         cell?.setData(route: routes[indexPath.row], rowNum: indexPath.row)
-        
+
         // Activate timers
         let timerDoesNotExist = (timers[indexPath.row] == nil)
         if timerDoesNotExist {
             timers[indexPath.row] = Timer.scheduledTimer(timeInterval: 5.0, target: cell!, selector: #selector(RouteTableViewCell.updateLiveElementsWithDelay), userInfo: nil, repeats: true)
         }
-        
+
         cell?.addRouteDiagramSubviews()
         cell?.activateRouteDiagramConstraints()
 
         // Add share action for long press gestures on non 3D Touch devices
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
         cell?.addGestureRecognizer(longPressGestureRecognizer)
-        
+
         setCellUserInteraction(cell, to: cellUserInteraction)
-        
+
         return cell!
     }
 
@@ -819,13 +814,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     }
 
     func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
-        
+
         let customView = UIView()
         var symbolView = UIView()
 
         if showRouteSearchingLoader {
             symbolView = LoadingIndicator()
-        }  else {
+        } else {
             let imageView = UIImageView(image: #imageLiteral(resourceName: "road"))
             imageView.contentMode = .scaleAspectFit
             symbolView = imageView
@@ -840,7 +835,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         customView.addSubview(symbolView)
         customView.addSubview(titleLabel)
 
-        symbolView.snp.makeConstraints{ (make) in
+        symbolView.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview().offset(showRouteSearchingLoader ? -20 : -22.5)
             make.width.equalTo(showRouteSearchingLoader ? 40 : 45)
@@ -854,12 +849,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         return customView
     }
-    
+
     // Allow for pull to refresh in empty state
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView!) -> Bool {
         return true
     }
-    
+
     // Allow for pull to refresh in empty state
     func emptyDataSetShouldAllowTouch(_ scrollView: UIScrollView!) -> Bool {
         return true
@@ -876,11 +871,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         routeResults.backgroundColor = .tableBackgroundColor
         routeResults.alwaysBounceVertical = true //so table view doesn't scroll over top & bottom
         routeResults.showsVerticalScrollIndicator = false
-        
+
         // so can have dynamic height cells
         routeResults.estimatedRowHeight = estimatedRowHeight
         routeResults.rowHeight = UITableViewAutomaticDimension
-        
+
         setupRefreshControl()
     }
 
@@ -892,25 +887,25 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }
-    
+
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let tableViewTopMargin: CGFloat = 12
         return UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: tableViewTopMargin))
     }
-    
+
     // MARK: Refresh Control
-    
+
     private func setupRefreshControl() {
         refreshControl = UIRefreshControl()
         refreshControl.isHidden = true
-        
+
         if #available(iOS 10.0, *) {
             routeResults.refreshControl = refreshControl
         } else {
             routeResults.addSubview(refreshControl)
         }
     }
-    
+
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if refreshControl.isRefreshing {
             // Update leave now time in pull to refresh
@@ -919,11 +914,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 searchTime = now
                 routeSelection.setDatepicker(withDate: now, withSearchTimeType: searchTimeType)
             }
-            
+
             searchForRoutes()
         }
     }
-    
+
     func hideRefreshControl() {
         if #available(iOS 10.0, *) {
             routeResults.refreshControl?.endRefreshing()
@@ -931,32 +926,32 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             refreshControl.endRefreshing()
         }
     }
-    
+
     // MARK: RouteDetailViewController
-    
+
     func createRouteDetailViewController(from indexPath: IndexPath) -> RouteDetailViewController? {
-        
+
         let route = routes[indexPath.row]
         var routeDetailCurrentLocation = currentLocation
         if searchTo?.name != Constants.Stops.currentLocation && searchFrom?.name != Constants.Stops.currentLocation {
             routeDetailCurrentLocation = nil // If route doesn't involve current location, don't pass along for view.
         }
-        
+
         let routeOptionsCell = routeResults.cellForRow(at: indexPath) as? RouteTableViewCell
-        
+
         let contentViewController = RouteDetailContentViewController(route: route,
                                                                      currentLocation: routeDetailCurrentLocation,
                                                                      routeOptionsCell: routeOptionsCell)
-        
+
         guard let drawerViewController = contentViewController.drawerDisplayController else {
             return nil
         }
         return RouteDetailViewController(contentViewController: contentViewController,
                                          drawerViewController: drawerViewController)
     }
-    
+
     // MARK: Previewing Delegate
-    
+
     @objc func handleLongPressGesture(_ sender: UILongPressGestureRecognizer) {
         if sender.state == .began {
             let point = sender.location(in: routeResults)
@@ -965,10 +960,10 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             }
         }
     }
-    
+
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         let point = view.convert(location, to: routeResults)
-        
+
         guard
             let indexPath = routeResults.indexPathForRow(at: point),
             let cell = routeResults.cellForRow(at: indexPath) as? RouteTableViewCell,
@@ -976,21 +971,21 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         else {
             return nil
         }
-        
+
         routeDetailViewController.preferredContentSize = .zero
         routeDetailViewController.isPeeking = true
         cell.transform = .identity
         previewingContext.sourceRect = routeResults.convert(cell.frame, to: view)
-        
+
         let payload = RouteResultsCellPeekedPayload()
         RegisterSession.shared?.log(payload)
-        
+
         return routeDetailViewController
     }
-    
+
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         (viewControllerToCommit as? RouteDetailViewController)?.isPeeking = false
         navigationController?.pushViewController(viewControllerToCommit, animated: true)
     }
-    
+
 }

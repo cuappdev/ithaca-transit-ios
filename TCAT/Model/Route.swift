@@ -74,7 +74,7 @@ class Route: NSObject, JSONDecodable {
 
     /// A list of Direction objects (used for Route Detail)
     var directions: [Direction]
-    
+
     /// Raw, untampered with directions (for RouteOptionsViewController)
     var rawDirections: [Direction]
 
@@ -105,7 +105,7 @@ class Route: NSObject, JSONDecodable {
         numberOfTransfers = json["numberOfTransfers"].intValue
         directions = json["directions"].arrayValue.map { Direction(from: $0) }
         rawDirections = json["directions"].arrayValue.map { Direction(from: $0) }
-        
+
         super.init()
 
         // Format raw directions
@@ -121,7 +121,7 @@ class Route: NSObject, JSONDecodable {
                 }
             }
         }
-        
+
         // Append extra direction for ending location with ending destination name
         if let direction = rawDirections.last {
             // Set stayOnBusForTransfer to false b/c ending location can never have transfer
@@ -144,7 +144,7 @@ class Route: NSObject, JSONDecodable {
                 rawDirections.append(newDirection)
             }
         }
-        
+
         // Change all walking directions, except for first and last direction, to arrive
         let last = rawDirections.count - 1
         for (index, direction) in rawDirections.enumerated() {
@@ -153,11 +153,11 @@ class Route: NSObject, JSONDecodable {
                 direction.name = rawDirections[index - 1].endLocation.name
             }
         }
-        
+
         calculateTravelDistance(fromRawDirections: rawDirections)
-        
+
         // Parse and format directions
-        
+
         // Variable to keep track of additions to direction list (Arrival Directions)
         var offset = 0
 
@@ -167,14 +167,14 @@ class Route: NSObject, JSONDecodable {
 
                 let beyondRange = index + 1 > directions.count - 1
                 let isLastDepart = index == directions.count - 1
-                
+
                 if direction.stayOnBusForTransfer {
                     direction.type = .transfer
                 }
-                
+
                 // If this direction doesn't have a transfer afterwards, or is depart and last
                 if (!beyondRange && !directions[index+1].stayOnBusForTransfer) || isLastDepart {
-                    
+
                     // Create Arrival Direction
                     let arriveDirection = direction.copy() as! Direction
                     arriveDirection.type = .arrive
@@ -193,14 +193,14 @@ class Route: NSObject, JSONDecodable {
                     direction.stops.removeLast()
                 }
             }
-            
+
             // Change name of last direction to be endName
             if direction == directions.last {
                 direction.name = endName
             }
 
         }
-        
+
     }
 
     // MARK: Parse JSON
@@ -311,7 +311,7 @@ class Route: NSObject, JSONDecodable {
             let start = direction.startLocation.name
             let end = direction.endLocation.name
             var line = "take Route \(number) from \(start) to \(end). "
-            
+
             if direction.type == .transfer {
                 line = "the bus becomes Route \(number). Stay on board, and then get off at \(end)"
             }
@@ -323,7 +323,7 @@ class Route: NSObject, JSONDecodable {
             }
 
         }
-        
+
         description += "."
 
         // Walking Direction

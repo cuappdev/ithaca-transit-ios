@@ -20,18 +20,18 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
         label.lineBreakMode = .byWordWrapping
         return label
     }
-    
+
     override init(reuseIdentifier: String?) {
         print("[PhraseLabelFooterView] init")
         super.init(reuseIdentifier: reuseIdentifier)
         contentView.backgroundColor = .white
         addSubview(label)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
     override func updateConstraints() {
         print("[PhraseLabelFooterView] updateConstraints")
         label.snp.makeConstraints { (make) in
@@ -40,7 +40,7 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
             make.trailing.equalToSuperview().offset(-constant)
         }
     }
-    
+
     override func layoutSubviews() {
         print("[PhraseLabelFooterView] layoutSubviews")
         label.snp.makeConstraints { (make) in
@@ -49,7 +49,7 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
             make.trailing.equalToSuperview().offset(-constant)
         }
     }
-    
+
     func setView(with message: String) {
         label.text = message
     }

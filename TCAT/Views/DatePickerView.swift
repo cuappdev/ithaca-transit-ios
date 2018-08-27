@@ -15,16 +15,16 @@ struct SegmentControlElement {
 class DatePickerView: UIView {
 
     // MARK: Data vars
-    
-    let typeToSegmentControlElements: [SearchType : SegmentControlElement] = [
-        .leaveNow : SegmentControlElement(title: Constants.Phrases.datepickerLeaveNow, index: 0),
-        .leaveAt : SegmentControlElement(title: "Leave At", index: 0),
-        .arriveBy : SegmentControlElement(title: "Arrive By", index: 1)]
+
+    let typeToSegmentControlElements: [SearchType: SegmentControlElement] = [
+        .leaveNow: SegmentControlElement(title: Constants.Phrases.datepickerLeaveNow, index: 0),
+        .leaveAt: SegmentControlElement(title: "Leave At", index: 0),
+        .arriveBy: SegmentControlElement(title: "Arrive By", index: 1)]
     let leaveNowSegmentedControlOptions: [String]
     let timeTypeSegmentedControlOptions: [String]
-    
-    // MARK:  View vars
-    
+
+    // MARK: View vars
+
     var datepicker: UIDatePicker = UIDatePicker()
     var leaveNowSegmentedControl: UISegmentedControl = UISegmentedControl()
     var timeTypeSegmentedControl: UISegmentedControl = UISegmentedControl()
@@ -49,7 +49,7 @@ class DatePickerView: UIView {
     override init(frame: CGRect) {
         leaveNowSegmentedControlOptions = [typeToSegmentControlElements[.leaveNow]!.title]
         timeTypeSegmentedControlOptions = [typeToSegmentControlElements[.leaveAt]!.title, typeToSegmentControlElements[.arriveBy]!.title]
-        
+
         super.init(frame: frame)
 
         backgroundColor = .white
@@ -84,7 +84,7 @@ class DatePickerView: UIView {
             leaveNowSegmentedControl.selectedSegmentIndex = UISegmentedControlNoSegment
         }
     }
-    
+
     @objc private func leaveNowSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
         datepicker.date = Date()
     }
@@ -214,7 +214,7 @@ class DatePickerView: UIView {
         datepicker.center.x = self.frame.width/2
     }
 
-    // MARK:  Add subviews
+    // MARK: Add subviews
 
     func addSubviews() {
         addSubview(cancelButton)

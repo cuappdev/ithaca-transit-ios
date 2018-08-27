@@ -22,4 +22,3 @@ class LocationTableViewCell: UITableViewCell {
     }
 
 }
-

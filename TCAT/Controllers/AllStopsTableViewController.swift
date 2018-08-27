@@ -32,7 +32,7 @@ class AllStopsTableViewController: UITableViewController {
     }
 
     override func viewDidLoad() {
-        
+
         super.viewDidLoad()
         sectionIndexes = sectionIndexesForBusStop()
 
@@ -53,7 +53,7 @@ class AllStopsTableViewController: UITableViewController {
         }
 
         tableView.tableFooterView = UIView()
-        
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -62,19 +62,19 @@ class AllStopsTableViewController: UITableViewController {
     }
 
     func sectionIndexesForBusStop() -> [String: [BusStop]] {
-        
+
         var sectionIndexDictionary: [String: [BusStop]] = [:]
         var currBusStopArray: [BusStop] = []
-        
+
         currentChar = allStops.first?.name.capitalized.first
 
         var numberBusStops: [BusStop] = {
             guard let firstStop = allStops.first else { return [] }
             return [firstStop]
         }()
-        
+
         if let _ = currentChar {
-            
+
             for busStop in allStops {
                 if let firstChar = busStop.name.capitalized.first {
                     if currentChar != firstChar {
@@ -93,14 +93,14 @@ class AllStopsTableViewController: UITableViewController {
                     }
                 }
             }
-            
+
         }
-        
+
         sectionIndexDictionary["#"] = numberBusStops
         return sectionIndexDictionary
-        
+
         // When no bus stops, empty with only "#"
-        
+
     }
 
     // MARK: - Table view data source
@@ -120,7 +120,7 @@ class AllStopsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sectionIndexes[sortedKeys[section]]?.count ?? 0
     }
-    
+
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let inset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
         if cell.responds(to: #selector(setter: UITableViewCell.separatorInset)) {
