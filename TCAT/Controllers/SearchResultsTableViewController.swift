@@ -310,7 +310,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if searchText.count > 0 {
-            Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
+            Network.getGooglePlacesAutocompleteResults(searchText: searchText).perform(withSuccess: { responseJson in
                 self.searchResultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
                 self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
                 // self.tableViewIndexController.setHidden(true, animated: false)

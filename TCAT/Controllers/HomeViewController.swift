@@ -425,7 +425,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if searchText.count > 0 {
-            Network.getGooglePlaces(searchText: searchText).perform(withSuccess: { responseJson in
+            Network.getGooglePlacesAutocompleteResults(searchText: searchText).perform(withSuccess: { responseJson in
                 self.searchResultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
                 self.tableView.contentOffset = .zero
                 self.sections = [self.searchResultsSection]
