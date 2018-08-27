@@ -37,7 +37,7 @@ class Network {
     static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
     
     /// Deployed server instance used for release
-    static let releaseIPAddress = "159.89.35.27" // "transit-backend.cornellappdev.com"
+    static let releaseIPAddress = "transit-backend.cornellappdev.com"
     static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
     
     /// Network IP address being used for specified networkType
@@ -121,7 +121,7 @@ class Network {
 
     class func getGooglePlacesAutocompleteResults(searchText: String) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("places")
-        request.method = .get
+        request.method = .post
         request.parameters = [
             "query" : searchText
         ]
