@@ -435,7 +435,8 @@
 				449A7C731D80D0E80019300C /* Resources */,
 				7C01627F386C89E7F1995831 /* [CP] Embed Pods Frameworks */,
 				292FC78093845444B1E8A99C /* [CP] Copy Pods Resources */,
-				E3FCA3C71FAA5AFB0069BD0F /* ShellScript */,
+				E3FCA3C71FAA5AFB0069BD0F /* Build Secrets */,
+				BF9D285421348AEB004FDAB3 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -763,13 +764,28 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E3FCA3C71FAA5AFB0069BD0F /* ShellScript */ = {
+		BF9D285421348AEB004FDAB3 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"";
+		};
+		E3FCA3C71FAA5AFB0069BD0F /* Build Secrets */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Build Secrets";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;

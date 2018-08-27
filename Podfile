@@ -36,6 +36,7 @@ target 'TCAT' do
 
   # Other
   pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/lxian/Fuzzywuzzy_swift.git'
+  pod 'SwiftLint'
 
   target 'TCATTests' do
     inherit! :search_paths
