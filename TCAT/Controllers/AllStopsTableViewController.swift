@@ -181,7 +181,7 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
     }
     
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let title = "Couldn't Get Stops 😟 "
+        let title = "Couldn't get stops 😟 "
         let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
