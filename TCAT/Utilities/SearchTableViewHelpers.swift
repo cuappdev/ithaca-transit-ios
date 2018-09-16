@@ -176,6 +176,7 @@ class SearchTableViewManager {
             default: return ""
             }
         }
+        updateShortcutItems(favorites: itemsToStore)
         let data = NSKeyedArchiver.archivedData(withRootObject: itemsToStore)
         userDefaults.set(data, forKey: Constants.UserDefaults.favorites)
         return newFavoritesList
@@ -200,6 +201,7 @@ class SearchTableViewManager {
             updatedPlaces = [location] + filteredPlaces
         }
         if updatedPlaces.count > limit { updatedPlaces.remove(at: updatedPlaces.count - 1)}
+        updateShortcutItems(favorites: updatedPlaces)
         let data = NSKeyedArchiver.archivedData(withRootObject: updatedPlaces)
         userDefaults.set(data, forKey: key)
         
@@ -243,6 +245,19 @@ class SearchTableViewManager {
             }
         }
         return sectionIndexDictionary
+    }
+    
+    func updateShortcutItems(favorites: [Any]) {
+        var shortcutItems = [UIApplicationShortcutItem]()
+        if let favorites = favorites as? [Place] {
+            for item in favorites {
+                let data = NSKeyedArchiver.archivedData(withRootObject: item)
+                let placeInfo: [AnyHashable: Any] = ["place": data]
+                let shortcutItem = UIApplicationShortcutItem(type: item.name, localizedTitle: item.name, localizedSubtitle: nil, icon: UIApplicationShortcutIcon(type: .location), userInfo: placeInfo)
+                shortcutItems.append(shortcutItem)
+            }
+            UIApplication.shared.shortcutItems = shortcutItems
+        }
     }
 }
 

@@ -24,6 +24,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
+        // Update shortcut items
+        var shortcutItems = [UIApplicationShortcutItem]()
+        let favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
+        for itemType in favorites {
+            switch itemType {
+            case .busStop(let busStop):
+                let data = NSKeyedArchiver.archivedData(withRootObject: busStop)
+                let placeInfo: [AnyHashable: Any] = ["place": data]
+                let shortcutItem = UIApplicationShortcutItem(type: busStop.name, localizedTitle: busStop.name, localizedSubtitle: nil, icon: UIApplicationShortcutIcon(type: .location), userInfo: placeInfo)
+                shortcutItems.append(shortcutItem)
+            case .placeResult(let placeResult):
+                let data = NSKeyedArchiver.archivedData(withRootObject: placeResult)
+                let placeInfo: [AnyHashable: Any] = ["place": data]
+                let shortcutItem = UIApplicationShortcutItem(type: placeResult.name, localizedTitle: placeResult.name, localizedSubtitle: nil, icon: UIApplicationShortcutIcon(type: .location), userInfo: placeInfo)
+                shortcutItems.append(shortcutItem)
+            case .cornellDestination: break
+            case .seeAllStops: break
+            }
+        }
+        UIApplication.shared.shortcutItems = shortcutItems
+        
         // Set Up Register, Fabric / Crashlytics (RELEASE)
         #if !DEBUG
             Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
@@ -84,6 +105,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return true
     }
+    
+    func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        
+        handleShortcut(item: shortcutItem)
+    }
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -105,6 +131,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+    
+    func handleShortcut(item: UIApplicationShortcutItem) {
+        let optionsVC = RouteOptionsViewController()
+        if let shortcutData = item.userInfo {
+            let placeData = NSKeyedUnarchiver.unarchiveObject(with: shortcutData["place"] as! Data)
+            guard let destination = placeData as? Place else {
+                return
+            }
+            optionsVC.searchTo = destination
+            
+            if let navController = window?.rootViewController as? UINavigationController{
+                navController.pushViewController(optionsVC, animated: true)
+            }
+        }
     }
 
     /* Get all bus stops and store in userDefaults */
