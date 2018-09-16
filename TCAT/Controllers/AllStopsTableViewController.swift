@@ -7,12 +7,13 @@
 //
 
 import UIKit
+import DZNEmptyDataSet
 
 protocol UnwindAllStopsTVCDelegate {
     func dismissSearchResultsVC(busStop: BusStop)
 }
 
-class AllStopsTableViewController: UITableViewController {
+class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
     var allStops: [BusStop]!
     var sectionIndexes: [String: [BusStop]]!
@@ -37,7 +38,9 @@ class AllStopsTableViewController: UITableViewController {
         sectionIndexes = sectionIndexesForBusStop()
 
         sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
-        sortedKeys.append("#")
+        if (!allStops.isEmpty) {
+            sortedKeys.append("#")
+        }
 
         title = "All Stops"
         tableView.sectionIndexColor = .primaryTextColor
@@ -52,7 +55,10 @@ class AllStopsTableViewController: UITableViewController {
             automaticallyAdjustsScrollViewInsets = false
         }
 
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
+        tableView.contentOffset = .zero
         
     }
 
@@ -96,7 +102,10 @@ class AllStopsTableViewController: UITableViewController {
             
         }
         
-        sectionIndexDictionary["#"] = numberBusStops
+        if (!allStops.isEmpty) {
+            sectionIndexDictionary["#"] = numberBusStops
+        }
+        
         return sectionIndexDictionary
         
         // When no bus stops, empty with only "#"
@@ -164,5 +173,18 @@ class AllStopsTableViewController: UITableViewController {
     @objc func backAction() {
         navigationController?.popViewController(animated: true)
     }
+    
+    // MARK: DZNEmptyDataSet
+    
+    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        return #imageLiteral(resourceName: "road")
+    }
+    
+    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        let title = "Error Retrieving Stops"
+        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
+        return NSAttributedString(string: title, attributes: attrs)
+    }
+
 
 }
