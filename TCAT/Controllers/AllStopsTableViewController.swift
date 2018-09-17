@@ -38,7 +38,8 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
         sectionIndexes = sectionIndexesForBusStop()
 
         sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
-        if (!allStops.isEmpty) {
+        if !allStops.isEmpty {
+            // Adding "#" to keys for bus stops that start with a number
             sortedKeys.append("#")
         }
 
@@ -58,6 +59,7 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
+        // Set top of table view to align with scroll view
         tableView.contentOffset = .zero
         
     }
@@ -99,17 +101,15 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
                     }
                 }
             }
-            
         }
         
-        if (!allStops.isEmpty) {
+        if !allStops.isEmpty {
+            // Adding "#" to section indexes for bus stops that start with a number
             sectionIndexDictionary["#"] = numberBusStops
         }
         
         return sectionIndexDictionary
-        
-        // When no bus stops, empty with only "#"
-        
+
     }
 
     // MARK: - Table view data source
@@ -177,11 +177,11 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
     // MARK: DZNEmptyDataSet
     
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        return #imageLiteral(resourceName: "road")
+        return #imageLiteral(resourceName: "emptyPin")
     }
     
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let title = "Couldn't get stops 😟 "
+        let title = "Couldn't get stops 😟"
         let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
