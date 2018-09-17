@@ -29,7 +29,7 @@ class AppShortcuts {
 
     func shortcutItem(for place: Place) -> UIApplicationShortcutItem {
         let data = NSKeyedArchiver.archivedData(withRootObject: place)
-        let placeInfo: [AnyHashable: Any] = ["place": data]
+        let placeInfo: [String: Data] = ["place": data]
         let shortcutItem = UIApplicationShortcutItem(type: place.name, localizedTitle: place.name, localizedSubtitle: nil, icon: UIApplicationShortcutIcon(type: .favorite), userInfo: placeInfo)
         return shortcutItem
     }

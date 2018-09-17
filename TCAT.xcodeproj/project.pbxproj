@@ -499,7 +499,7 @@
 				TargetAttributes = {
 					449A7C741D80D0E80019300C = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = 524YAK9BG3;
+						DevelopmentTeam = ZGMCXU7X3U;
 						LastSwiftMigration = 0910;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -955,7 +955,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 47;
-				DEVELOPMENT_TEAM = 524YAK9BG3;
+				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -967,7 +967,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DDEBUG";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "$(inherited) \"-D\" \"COCOAPODS\"";
-				PRODUCT_BUNDLE_IDENTIFIER = com.1cornellappdev.tcat;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
@@ -985,7 +985,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 47;
-				DEVELOPMENT_TEAM = 524YAK9BG3;
+				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -995,7 +995,7 @@
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.1cornellappdev.tcat;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;

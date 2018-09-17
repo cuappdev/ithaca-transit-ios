@@ -184,13 +184,13 @@ class SearchTableViewManager {
 
     func insertPlace(for key: String, location: Any, limit: Int, bottom: Bool = false) {
         let placeItemTypes = retrieveRecentPlaces(for: key)
-        let convertedPlaces = placeItemTypes.map({ item -> Any in
+        let convertedPlaces = placeItemTypes.map{ item -> Any in
             switch item {
             case .busStop(let busStop): return busStop
             case .placeResult(let placeResult): return placeResult
             default: return "this shouldn't ever fire"
             }
-        })
+        }
         let filteredPlaces = location is BusStop ? convertedPlaces.filter({ !areObjectsEqual(type: BusStop.self, a: location, b: $0)}) :
             convertedPlaces.filter({ !areObjectsEqual(type: PlaceResult.self, a: location, b: $0)})
 

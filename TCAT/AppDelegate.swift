@@ -115,11 +115,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func handleShortcut(item: UIApplicationShortcutItem) {
         let optionsVC = RouteOptionsViewController()
-        if let shortcutData = item.userInfo {
-            let placeData = NSKeyedUnarchiver.unarchiveObject(with: shortcutData["place"] as! Data)
-            guard let destination = placeData as? Place else {
-                return
-            }
+        if let shortcutData = item.userInfo as? [String: Data] {
+            guard let destination = NSKeyedUnarchiver.unarchiveObject(with: shortcutData["place"]!) as? Place
+                else {return}
             optionsVC.searchTo = destination
             if let navController = window?.rootViewController as? UINavigationController{
                 navController.pushViewController(optionsVC, animated: true)
