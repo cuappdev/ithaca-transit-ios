@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		004B3E1BCB8013F9C1F4C3A7 /* Pods_TCATTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */; };
+		224EB5A5214F2F01008232C2 /* AppShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224EB5A4214F2F01008232C2 /* AppShortcuts.swift */; };
 		4036E23543D87A22BF6B0023 /* Pods_TCATUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */; };
 		449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C781D80D0E80019300C /* AppDelegate.swift */; };
 		449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C7C1D80D0E80019300C /* Main.storyboard */; };
@@ -106,6 +107,7 @@
 		00AAC04EC20FD099C317E4DF /* Pods-TCATTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.release.xcconfig"; sourceTree = "<group>"; };
 		0A53C1C936C7282DCAB7292F /* Pods-TCATUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		0DD68D5FD4D1CFE82BA753E7 /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
+		224EB5A4214F2F01008232C2 /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppShortcuts.swift; path = Utilities/AppShortcuts.swift; sourceTree = "<group>"; };
 		449A7C751D80D0E80019300C /* TCAT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCAT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C781D80D0E80019300C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		449A7C7D1D80D0E80019300C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -377,6 +379,7 @@
 				5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */,
 				BF18AE0F2083B7F6000C3D82 /* StoreReviewHelper.swift */,
 				DD5D233B1E6367A100F8DECE /* Time.swift */,
+				224EB5A4214F2F01008232C2 /* AppShortcuts.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -454,8 +457,6 @@
 				449A7C851D80D0E80019300C /* Sources */,
 				449A7C861D80D0E80019300C /* Frameworks */,
 				449A7C871D80D0E80019300C /* Resources */,
-				A333F557E686EBADD9F4B15F /* [CP] Embed Pods Frameworks */,
-				41C870DE3F6D4404D446DD7E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -475,8 +476,6 @@
 				449A7C901D80D0E80019300C /* Sources */,
 				449A7C911D80D0E80019300C /* Frameworks */,
 				449A7C921D80D0E80019300C /* Resources */,
-				0A51D236AFF885CC054FB961 /* [CP] Embed Pods Frameworks */,
-				7F9068C77B95D0EF47938374 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -575,21 +574,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0A51D236AFF885CC054FB961 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		0DD807D4971138217FA4C33E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -646,21 +630,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		41C870DE3F6D4404D446DD7E /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7C01627F386C89E7F1995831 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -671,7 +640,7 @@
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
 				"${BUILT_PRODUCTS_DIR}/Fuzzywuzzy_swift/Fuzzywuzzy_swift.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/Log/Log.framework",
 				"${BUILT_PRODUCTS_DIR}/MarqueeLabel/MarqueeLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/NotificationBannerSwift/NotificationBannerSwift.framework",
@@ -693,7 +662,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DZNEmptyDataSet.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Fuzzywuzzy_swift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Log.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MarqueeLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NotificationBannerSwift.framework",
@@ -715,21 +684,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7F9068C77B95D0EF47938374 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		8F523521CC9B937AEFB99FF9 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -746,21 +700,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A333F557E686EBADD9F4B15F /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E3FCA3C71FAA5AFB0069BD0F /* ShellScript */ = {
@@ -796,6 +735,7 @@
 				BF73F0F31F60B0BD003B479D /* LocationObject.swift in Sources */,
 				BFF41EB2204365E800E0696B /* SummaryView.swift in Sources */,
 				DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */,
+				224EB5A5214F2F01008232C2 /* AppShortcuts.swift in Sources */,
 				BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */,
 				DDA134451EC6A8CB00460B18 /* RouteLine.swift in Sources */,
 				BFA53FEE1FD45D7000E770DF /* RouteDetailViewController.swift in Sources */,
