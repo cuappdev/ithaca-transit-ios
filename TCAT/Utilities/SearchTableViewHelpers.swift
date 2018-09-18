@@ -41,11 +41,11 @@ extension SearchResultsTableViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
         return -80
     }
-    
+
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
         return #imageLiteral(resourceName: "emptyPin")
     }
-    
+
     func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let locationNotFound = "Location not found"
         let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
@@ -86,13 +86,13 @@ class SearchTableViewManager {
         }
         var filteredBusStops = busStopsWithLevenshtein.filter { $0.1 > Constants.Values.fuzzySearchMinimumValue }
         filteredBusStops.sort(by: { $0.1 > $1.1 })
-        
+
         filteredBusStops.sort { (stopOne, stopTwo) in
-            
+
             // Note: Return True if first element in tuple should be first
             let oneMatches = stopOne.0.name.first == searchText.first
             let twoMatches = stopTwo.0.name.first == searchText.first
-            
+
             // If both start with same phrase, return alphabetical order
             if oneMatches && twoMatches {
                 return stopOne.1 > stopTwo.1
@@ -105,9 +105,9 @@ class SearchTableViewManager {
             else {
                 return stopOne.1 > stopTwo.1
             }
-            
+
         }
-        
+
         itemTypes = filteredBusStops.map { ItemType.busStop($0.0) }
 
         var googleResults: [ItemType] = []
@@ -125,7 +125,7 @@ class SearchTableViewManager {
                 }
             }
         }
-        
+
         return Section(type: .searchResults, items: googleResults + itemTypes)
     }
 
@@ -178,18 +178,19 @@ class SearchTableViewManager {
         }
         let data = NSKeyedArchiver.archivedData(withRootObject: itemsToStore)
         userDefaults.set(data, forKey: Constants.UserDefaults.favorites)
+        AppShortcuts.shared.updateShortcutItems()
         return newFavoritesList
     }
 
     func insertPlace(for key: String, location: Any, limit: Int, bottom: Bool = false) {
         let placeItemTypes = retrieveRecentPlaces(for: key)
-        let convertedPlaces = placeItemTypes.map( { item -> Any in
+        let convertedPlaces = placeItemTypes.map{ item -> Any in
             switch item {
             case .busStop(let busStop): return busStop
             case .placeResult(let placeResult): return placeResult
             default: return "this shouldn't ever fire"
             }
-        })
+        }
         let filteredPlaces = location is BusStop ? convertedPlaces.filter({ !areObjectsEqual(type: BusStop.self, a: location, b: $0)}) :
             convertedPlaces.filter({ !areObjectsEqual(type: PlaceResult.self, a: location, b: $0)})
 
@@ -202,7 +203,8 @@ class SearchTableViewManager {
         if updatedPlaces.count > limit { updatedPlaces.remove(at: updatedPlaces.count - 1)}
         let data = NSKeyedArchiver.archivedData(withRootObject: updatedPlaces)
         userDefaults.set(data, forKey: key)
-        
+        AppShortcuts.shared.updateShortcutItems()
+
         var locationName: String {
             if let busStop = location as? BusStop {
                 return busStop.name
@@ -212,12 +214,12 @@ class SearchTableViewManager {
             }
             return ""
         }
-        
+
         if key == Constants.UserDefaults.favorites {
             let payload = FavoriteAddedPayload(name: locationName)
             RegisterSession.shared?.log(payload)
         }
-        
+
     }
 
     func prepareAllBusStopItems(allBusStops: [BusStop]) -> [ItemType] {
@@ -244,8 +246,17 @@ class SearchTableViewManager {
         }
         return sectionIndexDictionary
     }
+
+    func updateShortcutItems(favorites: [Any]) {
+        var shortcutItems = [UIApplicationShortcutItem]()
+        if let favorites = favorites as? [Place] {
+            for item in favorites {
+                let data = NSKeyedArchiver.archivedData(withRootObject: item)
+                let placeInfo: [AnyHashable: Any] = ["place": data]
+                let shortcutItem = UIApplicationShortcutItem(type: item.name, localizedTitle: item.name, localizedSubtitle: nil, icon: UIApplicationShortcutIcon(type: .location), userInfo: placeInfo)
+                shortcutItems.append(shortcutItem)
+            }
+            UIApplication.shared.shortcutItems = shortcutItems
+        }
+    }
 }
-
-
-
-

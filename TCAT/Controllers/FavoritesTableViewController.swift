@@ -145,7 +145,6 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate, 
         default:
             break
         }
-        
         dismissVC()
     }
     

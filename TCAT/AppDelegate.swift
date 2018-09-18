@@ -23,6 +23,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let userDefaults = UserDefaults.standard
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        // Update shortcut items
+        AppShortcuts.shared.updateShortcutItems()
         
         // Set Up Register, Fabric / Crashlytics (RELEASE)
         #if !DEBUG
@@ -84,6 +86,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return true
     }
+    
+    func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        handleShortcut(item: shortcutItem)
+    }
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -105,6 +111,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+    
+    func handleShortcut(item: UIApplicationShortcutItem) {
+        let optionsVC = RouteOptionsViewController()
+        if let shortcutData = item.userInfo as? [String: Data] {
+            guard let destination = NSKeyedUnarchiver.unarchiveObject(with: shortcutData["place"]!) as? Place
+                else {return}
+            optionsVC.searchTo = destination
+            if let navController = window?.rootViewController as? UINavigationController{
+                navController.pushViewController(optionsVC, animated: true)
+            }
+        }
     }
 
     /* Get all bus stops and store in userDefaults */
