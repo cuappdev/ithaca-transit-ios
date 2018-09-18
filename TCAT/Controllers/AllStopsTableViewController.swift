@@ -7,12 +7,13 @@
 //
 
 import UIKit
+import DZNEmptyDataSet
 
 protocol UnwindAllStopsTVCDelegate {
     func dismissSearchResultsVC(busStop: BusStop)
 }
 
-class AllStopsTableViewController: UITableViewController {
+class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
     var allStops: [BusStop]!
     var sectionIndexes: [String: [BusStop]]!
@@ -37,7 +38,10 @@ class AllStopsTableViewController: UITableViewController {
         sectionIndexes = sectionIndexesForBusStop()
 
         sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
-        sortedKeys.append("#")
+        if !allStops.isEmpty {
+            // Adding "#" to keys for bus stops that start with a number
+            sortedKeys.append("#")
+        }
 
         title = "All Stops"
         tableView.sectionIndexColor = .primaryTextColor
@@ -52,7 +56,11 @@ class AllStopsTableViewController: UITableViewController {
             automaticallyAdjustsScrollViewInsets = false
         }
 
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
+        // Set top of table view to align with scroll view
+        tableView.contentOffset = .zero
         
     }
 
@@ -93,14 +101,15 @@ class AllStopsTableViewController: UITableViewController {
                     }
                 }
             }
-            
         }
         
-        sectionIndexDictionary["#"] = numberBusStops
+        if !allStops.isEmpty {
+            // Adding "#" to section indexes for bus stops that start with a number
+            sectionIndexDictionary["#"] = numberBusStops
+        }
+        
         return sectionIndexDictionary
-        
-        // When no bus stops, empty with only "#"
-        
+
     }
 
     // MARK: - Table view data source
@@ -164,5 +173,16 @@ class AllStopsTableViewController: UITableViewController {
     @objc func backAction() {
         navigationController?.popViewController(animated: true)
     }
-
+    
+    // MARK: DZNEmptyDataSet
+    
+    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        return #imageLiteral(resourceName: "emptyPin")
+    }
+    
+    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        let title = "Couldn't get stops 😟"
+        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
+        return NSAttributedString(string: title, attributes: attrs)
+    }
 }
