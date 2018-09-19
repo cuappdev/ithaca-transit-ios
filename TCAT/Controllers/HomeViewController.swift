@@ -17,7 +17,7 @@ import SafariServices
 import SnapKit
 import SwiftRegister
 
-class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate, AddFavoritesDelegate, CLLocationManagerDelegate {
+class HomeViewController: UIViewController{
     
     let userDefaults = UserDefaults.standard
     let cornellDestinations = [(name: "North Campus", stops: "RPCC, Balch Hall, Appel, Helen Newman, Jessup Field"),
@@ -108,19 +108,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
     }
 
-    func displayFavoritesTVC() {
-        if favorites.count < 5 {
-            presentFavoritesTVC()
-        } else {
-            let title = "Maximum Number of Favorites"
-            let message = "To add more favorites, please swipe left and delete one first."
-            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            let done = UIAlertAction(title: "Got It!", style: .default)
-            alertController.addAction(done)
-            present(alertController, animated: true, completion: nil)
-        }
-    }
-
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
@@ -203,70 +190,58 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         return allSections.filter { $0.items.count > 0 }
     }
 
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
-    }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = HeaderView()
-
-        switch sections[section].type {
-        case .cornellDestination:
-            header.setupView(labelText: "Get There Now", displayAddButton: false)
-        case .recentSearches:
-            header.setupView(labelText: "Recent Searches", displayAddButton: false)
-        case .favorites:
-            header.setupView(labelText: "Favorite Destinations", displayAddButton: true)
-            header.addFavoritesDelegate = self
-        case .seeAllStops, .searchResults:
-            return nil
-        default: break
-        }
-
-        return header
-    }
-
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return nil
-    }
-
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 0
-    }
-
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-         switch sections[section].type {
-         case .favorites, .recentSearches: return 50
-         default: return 24
-        }
-    }
-
     @objc func presentFavoritesTVC(sender: UIButton? = nil) {
         let favoritesTVC = FavoritesTableViewController()
         let navController = CustomNavigationController(rootViewController: favoritesTVC)
         present(navController, animated: true, completion: nil)
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50.0
+    /* Keyboard Functions */
+    @objc func keyboardWillShow(_ notification: Notification) {
+        isKeyboardVisible = true
+    }
+    
+    @objc func keyboardWillHide(_ notification: Notification) {
+        isKeyboardVisible = false
+    }
+    
+    /* ScrollView Delegate */
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
+            cancelButton.isEnabled = true
+        }
     }
 
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section == 0 && !favorites.isEmpty
-    }
-
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            let itemTypeToDelete = sections[indexPath.section].items[indexPath.row]
-            switch itemTypeToDelete {
-            case .busStop(let busStop):
-                favorites = SearchTableViewManager.shared.deleteFavorite(favorite: busStop, allFavorites: favorites)
-            case .placeResult(let placeResult):
-                favorites = SearchTableViewManager.shared.deleteFavorite(favorite: placeResult, allFavorites: favorites)
-            default: break
-            }
+    /* Get Search Results */
+    @objc func getPlaces(timer: Timer) {
+        let searchText = (timer.userInfo as! [String: String])["searchText"]!
+        if searchText.count > 0 {
+            Network.getGooglePlacesAutocompleteResults(searchText: searchText).perform(withSuccess: { responseJson in
+                self.searchResultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
+                self.tableView.contentOffset = .zero
+                self.sections = [self.searchResultsSection]
+            })
+        } else {
             sections = createSections()
         }
+    }
+    
+    /* Open information screen */
+    @objc func openInformationScreen() {
+        let informationViewController = InformationViewController()
+        let navigationVC = CustomNavigationController(rootViewController: informationViewController)
+        present(navigationVC, animated: true)
+    }
+}
+
+// MARK: TableView DataSource
+extension HomeViewController: UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return sections.count
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section == 0 && !favorites.isEmpty
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -319,6 +294,61 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         default: return 0
         }
     }
+}
+
+// MARK: TableView Delegate
+extension HomeViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = HeaderView()
+        
+        switch sections[section].type {
+        case .cornellDestination:
+            header.setupView(labelText: "Get There Now", displayAddButton: false)
+        case .recentSearches:
+            header.setupView(labelText: "Recent Searches", displayAddButton: false)
+        case .favorites:
+            header.setupView(labelText: "Favorite Destinations", displayAddButton: true)
+            header.addFavoritesDelegate = self
+        case .seeAllStops, .searchResults:
+            return nil
+        default: break
+        }
+        
+        return header
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch sections[section].type {
+        case .favorites, .recentSearches: return 50
+        default: return 24
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50.0
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let itemTypeToDelete = sections[indexPath.section].items[indexPath.row]
+            switch itemTypeToDelete {
+            case .busStop(let busStop):
+                favorites = SearchTableViewManager.shared.deleteFavorite(favorite: busStop, allFavorites: favorites)
+            case .placeResult(let placeResult):
+                favorites = SearchTableViewManager.shared.deleteFavorite(favorite: placeResult, allFavorites: favorites)
+            default: break
+            }
+            sections = createSections()
+        }
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var itemType: ItemType
@@ -345,14 +375,14 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 presentOptionsVC = false
                 presentFavoritesTVC()
             } else {
-            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: busStop, limit: 8)
-            optionsVC.searchTo = busStop
+                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: busStop, limit: 8)
+                optionsVC.searchTo = busStop
             }
         case .placeResult(let placeResult):
             SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: placeResult, limit: 8)
             optionsVC.searchTo = placeResult
         }
-
+        
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
         let vcToPush = didSelectAllStops ? allStopsTVC : optionsVC
@@ -361,38 +391,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
         
     }
+}
 
-    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
-        return -80
-    }
-
-    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        return isNetworkDown ? #imageLiteral(resourceName: "noInternet") : #imageLiteral(resourceName: "emptyPin")
-    }
-
-    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
-        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
-        return NSAttributedString(string: title, attributes: attrs)
-    }
-    
-    /* Keyboard Functions */
-    @objc func keyboardWillShow(_ notification: Notification) {
-        isKeyboardVisible = true
-    }
-    
-    @objc func keyboardWillHide(_ notification: Notification) {
-        isKeyboardVisible = false
-    }
-    
-    /* ScrollView Delegate */
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
-            cancelButton.isEnabled = true
-        }
-    }
-    
-    /* SearchBar Delegates */
+// MARK: Search Bar Delegate
+extension HomeViewController: UISearchBarDelegate {
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
@@ -420,30 +422,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.endEditing(true)
     }
+}
 
-    /* Get Search Results */
-    @objc func getPlaces(timer: Timer) {
-        let searchText = (timer.userInfo as! [String: String])["searchText"]!
-        if searchText.count > 0 {
-            Network.getGooglePlacesAutocompleteResults(searchText: searchText).perform(withSuccess: { responseJson in
-                self.searchResultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
-                self.tableView.contentOffset = .zero
-                self.sections = [self.searchResultsSection]
-            })
-        } else {
-            sections = createSections()
-        }
-    }
-    
-    /* Open information screen */
-    @objc func openInformationScreen() {
-        let informationViewController = InformationViewController()
-        let navigationVC = CustomNavigationController(rootViewController: informationViewController)
-        present(navigationVC, animated: true)
-    }
-    
-    // MARK: Location Manager Delegate
-    
+// MARK: Location Delegate
+extension HomeViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         
         if status == .denied {
@@ -452,7 +434,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
                 UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
             }
-
+            
             guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
                 
                 userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
@@ -484,7 +466,38 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             
         }
     }
-    
 }
 
+// MARK: DZN Empty Data Set Source
+extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
+        return -80
+    }
+    
+    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        return isNetworkDown ? #imageLiteral(resourceName: "noInternet") : #imageLiteral(resourceName: "emptyPin")
+    }
+    
+    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
+        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
+        return NSAttributedString(string: title, attributes: attrs)
+    }
+}
+
+// MARK: AddFavorites Delegate
+extension HomeViewController: AddFavoritesDelegate {
+    func displayFavoritesTVC() {
+        if favorites.count < 5 {
+            presentFavoritesTVC()
+        } else {
+            let title = "Maximum Number of Favorites"
+            let message = "To add more favorites, please swipe left and delete one first."
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let done = UIAlertAction(title: "Got It!", style: .default)
+            alertController.addAction(done)
+            present(alertController, animated: true, completion: nil)
+        }
+    }
+}
 
