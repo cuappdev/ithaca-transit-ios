@@ -185,4 +185,24 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
         let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
+    
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControlState) -> NSAttributedString! {
+        let title = "Retry"
+        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.buttonColor]
+        return NSAttributedString(string: title, attributes: attrs)
+    }
+    
+    func emptyDataSet(_ scrollView: UIScrollView!, didTap button: UIButton!) {
+        self.allStops = SearchTableViewManager.shared.getAllStops()
+        print(allStops.count)
+        
+        sectionIndexes = sectionIndexesForBusStop()
+        
+        sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
+        if !allStops.isEmpty {
+            // Adding "#" to keys for bus stops that start with a number
+            sortedKeys.append("#")
+        }
+        tableView.reloadData()
+    }
 }
