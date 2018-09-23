@@ -106,7 +106,9 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
         return sectionIndexDictionary
     }
     
+    /// Retrieves the keys from the sectionIndexDictionary
     func sortedKeysForBusStops() -> [String]{
+        // Don't include key '#'
         sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
         
         if !allStops.isEmpty {
