@@ -439,6 +439,7 @@
 				7C01627F386C89E7F1995831 /* [CP] Embed Pods Frameworks */,
 				292FC78093845444B1E8A99C /* [CP] Copy Pods Resources */,
 				E3FCA3C71FAA5AFB0069BD0F /* ShellScript */,
+				2292F9DB215722ED00C8C931 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -592,13 +593,26 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		2292F9DB215722ED00C8C931 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
 		292FC78093845444B1E8A99C /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh",
+				"${SRCROOT}/Pods/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh",
 				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
 				"${PODS_ROOT}/GooglePlaces/Frameworks/GooglePlaces.framework/Resources/GooglePlaces.bundle",
 			);
@@ -609,7 +623,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		2E3D0C0A5BDEC0DF37BFA6ED /* [CP] Check Pods Manifest.lock */ = {
@@ -636,7 +650,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh",
+				"${SRCROOT}/Pods/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
 				"${BUILT_PRODUCTS_DIR}/Fuzzywuzzy_swift/Fuzzywuzzy_swift.framework",
