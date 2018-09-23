@@ -59,15 +59,18 @@ class SearchTableViewManager {
 
     private init() {}
     func getAllStops() -> [BusStop] {
-        if let stops = allStops {
-            return stops
+        if let stops = allStops{
+            // Check if not empty so that an empty array isn't returned 
+            if stops != [] {
+                return stops
+            }
         }
         let stops = getAllBusStops()
         allStops = stops
         return stops
     }
 
-    private func getAllBusStops() -> [BusStop] {
+    func getAllBusStops() -> [BusStop] {
         if let allBusStops = userDefaults.value(forKey: Constants.UserDefaults.allBusStops) as? Data,
             var busStopArray = NSKeyedUnarchiver.unarchiveObject(with: allBusStops) as? [BusStop] {
             /// Creating "fake" bus stop to remove Google Places central Collegetown location choice

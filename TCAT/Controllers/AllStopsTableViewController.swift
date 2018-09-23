@@ -36,12 +36,7 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
         
         super.viewDidLoad()
         sectionIndexes = sectionIndexesForBusStop()
-
-        sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
-        if !allStops.isEmpty {
-            // Adding "#" to keys for bus stops that start with a number
-            sortedKeys.append("#")
-        }
+        sortedKeys = sortedKeysForBusStops()
 
         title = "All Stops"
         tableView.sectionIndexColor = .primaryTextColor
@@ -109,7 +104,17 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
         }
         
         return sectionIndexDictionary
-
+    }
+    
+    func sortedKeysForBusStops() -> [String]{
+        sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
+        
+        if !allStops.isEmpty {
+            // Adding "#" to keys for bus stops that start with a number
+            sortedKeys.append("#")
+        }
+        
+        return sortedKeys
     }
 
     // MARK: - Table view data source
@@ -193,16 +198,28 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
     }
     
     func emptyDataSet(_ scrollView: UIScrollView!, didTap button: UIButton!) {
-        self.allStops = SearchTableViewManager.shared.getAllStops()
-        print(allStops.count)
-        
-        sectionIndexes = sectionIndexesForBusStop()
-        
-        sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
-        if !allStops.isEmpty {
-            // Adding "#" to keys for bus stops that start with a number
-            sortedKeys.append("#")
+        retryNetwork{() -> Void in
+            // Retry getting data from user defaults
+            self.allStops = SearchTableViewManager.shared.getAllStops()
+            // Set up table information
+            self.sectionIndexes = self.sectionIndexesForBusStop()
+            self.sortedKeys = self.sortedKeysForBusStops()
+    
+            self.tableView.reloadData()
         }
-        tableView.reloadData()
+    }
+    
+    func retryNetwork(completion: @escaping () -> Void) {
+        Network.getAllStops().perform(withSuccess: { stops in
+            let allBusStops = stops.allStops
+            if !allBusStops.isEmpty {
+                //Only updating user defaults if retriving from network is successful
+                let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
+                userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
+            }
+            completion()
+        }, failure: { error in
+            print("retryNetwork error:", error)
+        })
     }
 }
