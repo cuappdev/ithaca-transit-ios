@@ -64,13 +64,16 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
         // Dispose of any resources that can be recreated.
     }
 
+    // MARK: - Table view data source
+
+    /// Retrieves the section indexes for the bus stops
     func sectionIndexesForBusStop() -> [String: [BusStop]] {
         
         var sectionIndexDictionary: [String: [BusStop]] = [:]
         var currBusStopArray: [BusStop] = []
         
         currentChar = allStops.first?.name.capitalized.first
-
+        
         var numberBusStops: [BusStop] = {
             guard let firstStop = allStops.first else { return [] }
             return [firstStop]
@@ -118,9 +121,17 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
         
         return sortedKeys
     }
-
-    // MARK: - Table view data source
-
+    
+    func setUpTableOnRetry() {
+        // Retry getting data from user defaults
+        self.allStops = SearchTableViewManager.shared.getAllStops()
+        // Set up table information
+        self.sectionIndexes = self.sectionIndexesForBusStop()
+        self.sortedKeys = self.sortedKeysForBusStops()
+        
+        self.tableView.reloadData()
+    }
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return sectionIndexes.count
     }
@@ -201,13 +212,7 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
     
     func emptyDataSet(_ scrollView: UIScrollView!, didTap button: UIButton!) {
         retryNetwork{() -> Void in
-            // Retry getting data from user defaults
-            self.allStops = SearchTableViewManager.shared.getAllStops()
-            // Set up table information
-            self.sectionIndexes = self.sectionIndexesForBusStop()
-            self.sortedKeys = self.sortedKeysForBusStops()
-    
-            self.tableView.reloadData()
+            setUpTableOnRetry()
         }
     }
     
@@ -215,13 +220,13 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
         Network.getAllStops().perform(withSuccess: { stops in
             let allBusStops = stops.allStops
             if !allBusStops.isEmpty {
-                //Only updating user defaults if retriving from network is successful
+                // Only updating user defaults if retriving from network is successful
                 let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
                 userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
             }
             completion()
         }, failure: { error in
-            print("retryNetwork error:", error)
+            print("AllStopsTableViewController.retryNetwork error:", error)
         })
     }
 }

@@ -61,7 +61,7 @@ class SearchTableViewManager {
     func getAllStops() -> [BusStop] {
         if let stops = allStops{
             // Check if not empty so that an empty array isn't returned 
-            if stops != [] {
+            if !stops.isEmpty {
                 return stops
             }
         }
