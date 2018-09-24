@@ -81,8 +81,7 @@ class AllStopsTableViewController: UITableViewController {
             return [firstStop]
         }()
 
-        if let _ = currentChar {
-
+        if currentChar != nil {
             for busStop in allStops {
                 if let firstChar = busStop.name.capitalized.first {
                     if currentChar != firstChar {
@@ -177,7 +176,7 @@ class AllStopsTableViewController: UITableViewController {
 }
 
 // MARK: DZN EmptyDataSet Delegate
-extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
+extension AllStopsTableViewController: DZNEmptyDataSetSource {
 
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
         return #imageLiteral(resourceName: "emptyPin")

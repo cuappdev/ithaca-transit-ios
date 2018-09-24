@@ -55,17 +55,8 @@ class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
     // MARK: NSCoding
 
     required init(coder aDecoder: NSCoder) {
-        if let detailKey = aDecoder.decodeObject(forKey: detailKey) as? String {
-            detail = detailKey
-        } else {
-            detail = ""
-        }
-        if let placeIdKey = aDecoder.decodeObject(forKey: placeIDKey) as? String {
-            placeID = placeIdKey
-        } else {
-            placeID = ""
-        }
-
+        placeID = (aDecoder.decodeObject(forKey: placeIDKey) as? String) ?? ""
+        detail = (aDecoder.decodeObject(forKey: placeIDKey) as? String) ?? ""
         super.init(coder: aDecoder)
     }
 

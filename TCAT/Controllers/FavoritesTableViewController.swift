@@ -64,18 +64,20 @@ class FavoritesTableViewController: UITableViewController {
             let desiredViewController = CustomNavigationController(rootViewController: rootVC)
 
             if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-                let snapshot: UIView = appDelegate.window!.snapshotView(afterScreenUpdates: true)!
-                desiredViewController.view.addSubview(snapshot)
-                
-                appDelegate.window?.rootViewController = desiredViewController
-                userDefaults.setValue(true, forKey: Constants.UserDefaults.onboardingShown)
+                if let window = appDelegate.window {
+                    let snapshot: UIView = window.snapshotView(afterScreenUpdates: true)!
+                    desiredViewController.view.addSubview(snapshot)
+                    
+                    appDelegate.window?.rootViewController = desiredViewController
+                    userDefaults.setValue(true, forKey: Constants.UserDefaults.onboardingShown)
 
-                UIView.animate(withDuration: 0.5, animations: {
-                    snapshot.layer.opacity = 0
-                    snapshot.layer.transform = CATransform3DMakeScale(1.5, 1.5, 1.5)
-                }, completion: { _ in
-                    snapshot.removeFromSuperview()
-                })
+                    UIView.animate(withDuration: 0.5, animations: {
+                        snapshot.layer.opacity = 0
+                        snapshot.layer.transform = CATransform3DMakeScale(1.5, 1.5, 1.5)
+                    }, completion: { _ in
+                        snapshot.removeFromSuperview()
+                    })
+                }
             }
         } else {
             dismiss(animated: true)
@@ -157,7 +159,7 @@ class FavoritesTableViewController: UITableViewController {
     }
 }
     // MARK: Empty Data Set
-extension FavoritesTableViewController: DZNEmptyDataSetDelegate, DZNEmptyDataSetSource {
+extension FavoritesTableViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
         return -80
     }

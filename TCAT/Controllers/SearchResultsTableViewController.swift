@@ -61,8 +61,14 @@ class SearchResultsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Subscribe to Keyboard Notifications
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillShow),
+                                               name: .UIKeyboardWillShow,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillHide),
+                                               name: .UIKeyboardWillHide,
+                                               object: nil)
 
         //Fetch RecentLocation and Favorites
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
@@ -214,7 +220,9 @@ class SearchResultsTableViewController: UITableViewController {
 
             if busStop.name != Constants.Stops.currentLocation
                 && busStop.name != Constants.Phrases.firstFavorite {
-                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: busStop, limit: 8)
+                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch,
+                                                          location: busStop,
+                                                          limit: 8)
             }
 
             let payload = BusStopTappedPayload(name: busStop.name)
@@ -222,7 +230,9 @@ class SearchResultsTableViewController: UITableViewController {
 
             destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
         case .placeResult(let placeResult):
-            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: placeResult, limit: 8)
+            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch,
+                                                      location: placeResult,
+                                                      limit: 8)
 
             let payload = GooglePlaceTappedPayload(name: placeResult.name)
             RegisterSession.shared?.log(payload)
@@ -259,10 +269,10 @@ class SearchResultsTableViewController: UITableViewController {
             case .busStop(let busStop):
                 let identifier = busStop.name == Constants.Stops.currentLocation ?
                     Constants.Cells.currentLocationIdentifier : Constants.Cells.busIdentifier
-                cell = tableView.dequeueReusableCell(withIdentifier: identifier) as! BusStopCell
+                cell = tableView.dequeueReusableCell(withIdentifier: identifier) as? BusStopCell
                 cell.textLabel?.text = busStop.name
             case .placeResult(let placeResult):
-                cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.searchResultsIdentifier) as! SearchResultsCell
+                cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.searchResultsIdentifier) as? SearchResultsCell
                 cell.textLabel?.text = placeResult.name
                 cell.detailTextLabel?.text = placeResult.detail
             case .seeAllStops:
@@ -281,32 +291,38 @@ class SearchResultsTableViewController: UITableViewController {
 
         return cell
     }
+}
 
-    /* ScrollView Delegate */
+// MARK: ScrollView Delegate
+extension SearchResultsTableViewController {
+    
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if let cancelButton = searchBar?.value(forKey: "_cancelButton") as? UIButton {
             cancelButton.isEnabled = true
         }
     }
-
+    
     func showLocationDeniedAlert() {
         let alertController = UIAlertController(title: "Location Services Disabled",
                                                 message: "You need to enable Location Services in Settings",
                                                 preferredStyle: .alert)
-
+        
         let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
-            UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
+            UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!,
+                                      options: [:],
+                                      completionHandler: nil)
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alertController.addAction(settingsAction)
         alertController.addAction(cancelAction)
-
+        
         present(alertController, animated: true, completion: {
             self.tableView.deselectRow(at: IndexPath(row: 0, section: 0), animated: true)
         })
     }
 }
-    // MARK: Search Bar Delegate
+
+// MARK: Search Bar Delegate
 extension SearchResultsTableViewController: UISearchBarDelegate, UISearchResultsUpdating {
 
     @objc func getPlaces(timer: Timer) {
@@ -349,12 +365,14 @@ extension SearchResultsTableViewController: UISearchBarDelegate, UISearchResults
                                      repeats: false)
     }
 }
+
 extension SearchResultsTableViewController: UnwindAllStopsTVCDelegate {
     func dismissSearchResultsVC(busStop: BusStop) {
         returningFromAllStopsBusStop = busStop
         returningFromAllStopsTVC = true
     }
 }
+
 // MARK: - Location Manager Delegates
 extension SearchResultsTableViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
