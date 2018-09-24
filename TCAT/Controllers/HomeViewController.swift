@@ -15,7 +15,6 @@ import NotificationBannerSwift
 import Crashlytics
 import SafariServices
 import SnapKit
-import SwiftRegister
 
 class HomeViewController: UIViewController {
 
