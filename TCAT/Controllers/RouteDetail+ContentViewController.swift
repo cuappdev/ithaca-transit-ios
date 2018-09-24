@@ -13,7 +13,6 @@ import MapKit
 import SwiftyJSON
 import NotificationBannerSwift
 import Pulley
-import SwiftRegister
 
 class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate {
     

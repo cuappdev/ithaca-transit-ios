@@ -15,7 +15,6 @@ import NotificationBannerSwift
 import Crashlytics
 import SafariServices
 import SnapKit
-import SwiftRegister
 
 class HomeViewController: UIViewController {
 
@@ -57,13 +56,13 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
 
         // Add Notification Observers
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
         navigationController?.navigationBar.barTintColor = .white
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         view.backgroundColor = .tableBackgroundColor
 
         tableView = UITableView(frame: .zero, style: .grouped)
@@ -339,7 +338,7 @@ extension HomeViewController: UITableViewDelegate {
         return 50.0
     }
 
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let itemTypeToDelete = sections[indexPath.section].items[indexPath.row]
             switch itemTypeToDelete {
@@ -436,7 +435,7 @@ extension HomeViewController: CLLocationManagerDelegate {
             let alertMessage = "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services."
             let alertController = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
             let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
-                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
 
             guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
@@ -484,7 +483,7 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
-        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
+        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
 }
@@ -503,4 +502,9 @@ extension HomeViewController: AddFavoritesDelegate {
             present(alertController, animated: true, completion: nil)
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

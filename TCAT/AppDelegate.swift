@@ -14,7 +14,7 @@ import SwiftyJSON
 import Fabric
 import Crashlytics
 import SafariServices
-import SwiftRegister
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -22,14 +22,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     let userDefaults = UserDefaults.standard
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
         
         // Set Up Register, Fabric / Crashlytics (RELEASE)
         #if !DEBUG
             Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
-            RegisterSession.startLogging()
         #endif
         
         // Set Up Google Services
@@ -39,7 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Log basic information
         let payload = AppLaunchedPayload()
-        RegisterSession.shared?.log(payload)
+        Analytics.shared.log(payload)
         
         JSONFileManager.shared.deleteAllJSONs()
         

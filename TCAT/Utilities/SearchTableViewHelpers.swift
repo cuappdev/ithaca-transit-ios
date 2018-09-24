@@ -10,7 +10,6 @@ import Foundation
 import SwiftyJSON
 import DZNEmptyDataSet
 import Fuzzywuzzy_swift
-import SwiftRegister
 
 let userDefaults = UserDefaults.standard
 
@@ -48,7 +47,7 @@ extension SearchResultsTableViewController: DZNEmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let locationNotFound = "Location not found"
-        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
+        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: locationNotFound, attributes: attrs)
     }
 }
@@ -219,7 +218,7 @@ class SearchTableViewManager {
 
         if key == Constants.UserDefaults.favorites {
             let payload = FavoriteAddedPayload(name: locationName)
-            RegisterSession.shared?.log(payload)
+            Analytics.shared.log(payload)
         }
 
     }
@@ -259,7 +258,7 @@ class SearchTableViewManager {
                                                              localizedTitle: item.name,
                                                              localizedSubtitle: nil,
                                                              icon: UIApplicationShortcutIcon(type: .location),
-                                                             userInfo: placeInfo)
+                                                             userInfo: placeInfo as! [String : NSSecureCoding])
                 shortcutItems.append(shortcutItem)
             }
             UIApplication.shared.shortcutItems = shortcutItems

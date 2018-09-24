@@ -13,7 +13,6 @@ import DZNEmptyDataSet
 import NotificationBannerSwift
 import Crashlytics
 import Pulley
-import SwiftRegister
 import TRON
 
 enum SearchBarType: String {
@@ -106,7 +105,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
         view.addSubview(routeSelection)
         view.addSubview(datePickerOverlay)
-        view.sendSubview(toBack: datePickerOverlay)
+        view.sendSubviewToBack(datePickerOverlay)
         view.addSubview(routeResults)
         view.addSubview(datePickerView) // so datePicker can go ontop of other views
 
@@ -203,7 +202,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         
         // Analytics
         let payload = RouteOptionsSettingsPayload(description: "Swapped To and From")
-        RegisterSession.shared?.log(payload)
+        Analytics.shared.log(payload)
         
     }
 
@@ -222,7 +221,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         searchType = .to
         presentSearchBar()
         let payload = RouteOptionsSettingsPayload(description: "Searching To Tapped")
-        RegisterSession.shared?.log(payload)
+        Analytics.shared.log(payload)
     }
 
     @objc func searchingFrom(sender: UIButton? = nil) {
@@ -230,7 +229,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         searchBarView.resultsViewController?.shouldShowCurrentLocation = true
         presentSearchBar()
         let payload = RouteOptionsSettingsPayload(description: "Searching From Tapped")
-        RegisterSession.shared?.log(payload)
+        Analytics.shared.log(payload)
     }
 
     func presentSearchBar() {
@@ -426,7 +425,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         let payload = DestinationSearchedEventPayload(destination: endPlace.name,
                                                       requestUrl: requestUrl,
                                                       stopType: nil)
-        RegisterSession.shared?.log(payload)
+        Analytics.shared.log(payload)
     }
     
     func processRouteJson(routeJSON: JSON, requestUrl: String) {
@@ -494,7 +493,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 banner?.show(queuePosition: .front, on: navigationController)
                 isBannerShown = true
                 
-                RegisterSession.shared?.log(payload)
+                Analytics.shared.log(payload)
                 
             case .hideBanner:
                 if isBannerShown {
@@ -533,7 +532,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             let alertController = UIAlertController(title: "Location Services Disabled", message: "Tap Settings to change your location permissions, or continue using a limited version of the app.", preferredStyle: .alert)
             
             let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
-                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
             
             guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
@@ -644,8 +643,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     @objc func showDatePicker(sender: UIButton) {
         
-        view.bringSubview(toFront: datePickerOverlay)
-        view.bringSubview(toFront: datePickerView)
+        view.bringSubviewToFront(datePickerOverlay)
+        view.bringSubviewToFront(datePickerView)
 
         // set up date on datepicker view
         if let time = searchTime  {
@@ -660,7 +659,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
         
         let payload = RouteOptionsSettingsPayload(description: "Date Picker Accessed")
-        RegisterSession.shared?.log(payload)
+        Analytics.shared.log(payload)
         
     }
 
@@ -669,8 +668,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             self.datePickerView.center.y = self.view.frame.height + (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.0
         }) { (completion) in
-            self.view.sendSubview(toBack: self.datePickerOverlay)
-            self.view.sendSubview(toBack: self.datePickerView)
+            self.view.sendSubviewToBack(self.datePickerOverlay)
+            self.view.sendSubviewToBack(self.datePickerView)
         }
     }
 
@@ -708,7 +707,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         searchForRoutes()
         
         let payload = RouteOptionsSettingsPayload(description: buttonTapped)
-        RegisterSession.shared?.log(payload)
+        Analytics.shared.log(payload)
         
     }
     
@@ -727,7 +726,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         var cell = tableView.dequeueReusableCell(withIdentifier: RouteTableViewCell.identifier, for: indexPath) as? RouteTableViewCell
 
         if cell == nil {
-            cell = RouteTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
+            cell = RouteTableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
         }
 
         cell?.setData(route: routes[indexPath.row], rowNum: indexPath.row)
@@ -879,7 +878,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         
         // so can have dynamic height cells
         routeResults.estimatedRowHeight = estimatedRowHeight
-        routeResults.rowHeight = UITableViewAutomaticDimension
+        routeResults.rowHeight = UITableView.automaticDimension
         
         setupRefreshControl()
     }
@@ -888,7 +887,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         locationManager.stopUpdatingLocation()
         if let routeDetailViewController = createRouteDetailViewController(from: indexPath) {
             let payload = RouteResultsCellTappedEventPayload()
-            RegisterSession.shared?.log(payload)
+            Analytics.shared.log(payload)
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }
@@ -983,7 +982,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         previewingContext.sourceRect = routeResults.convert(cell.frame, to: view)
         
         let payload = RouteResultsCellPeekedPayload()
-        RegisterSession.shared?.log(payload)
+        Analytics.shared.log(payload)
         
         return routeDetailViewController
     }
@@ -993,4 +992,9 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         navigationController?.pushViewController(viewControllerToCommit, animated: true)
     }
     
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

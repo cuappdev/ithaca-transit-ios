@@ -8,58 +8,21 @@
 // To log an event, use the shared RegisterSession (RegisterSession.shared)
 
 import Foundation
-import SwiftRegister
 import SwiftyJSON
-import PromiseKit
 import Crashlytics
 
-private var registerSession: RegisterSession? = nil
 
-extension RegisterSession {
+class Analytics {
+    static let shared = Analytics()
     
-    static let endpoint: String = "35.173.96.190"
-    
-    static var isLogging: Bool = false
-    
-    static var shared: RegisterSession? {
-        
-        if !isLogging {
-            return nil
-        }
-        
-        guard let session = registerSession else {
-            let url = URL(string: "http://\(endpoint)/api/")!
-            registerSession = RegisterSession(apiUrl: url, secretKey: Keys.registerSecret.value)
-            return registerSession!
-        }
-        return session
-        
-    }
-    
-    static func startLogging() {
-        isLogging = true
-    }
-    
-    // Log events to both Fabric and Register
     func log(_ payload: Payload) {
-        
-        // Register
-        payload.log(with: RegisterSession.shared)
-        
-        // Fabric
         let fabricEvent = payload.convertToFabric()
         Answers.logCustomEvent(withName: fabricEvent.name, customAttributes: fabricEvent.attributes)
         print("Logging \(fabricEvent.name):", fabricEvent.attributes ?? [:])
-        
     }
-    
 }
 
 extension Payload {
-    
-    func log(with session: RegisterSession?) {
-        session?.logEvent(event: self.toEvent())
-    }
     
     func convertToFabric() -> (name: String, attributes: [String : Any]?) {
         

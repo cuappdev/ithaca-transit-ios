@@ -23,8 +23,8 @@ class OnboardingViewController: PresentationController {
     //
     
     /// The text color of the navigation buttons
-    let navigationAttributes: [NSAttributedStringKey : Any] = [
-        NSAttributedStringKey.foregroundColor : UIColor(hex: "243C47")
+    let navigationAttributes: [NSAttributedString.Key : Any] = [
+        NSAttributedString.Key.foregroundColor : UIColor(hex: "243C47")
     ]
     
     //
@@ -186,9 +186,14 @@ class OnboardingViewController: PresentationController {
         UIApplication.shared.statusBarStyle = .default
     }
     
+    
     convenience init(initialViewing: Bool) {
         self.init(pages: [])
         self.isInitialViewing = initialViewing
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -220,9 +225,9 @@ class OnboardingViewController: PresentationController {
         let detailFont = UIFont(name: detailLabelFontName, size: detailLabelFontSize * detailHeight)!
         
         let attributes = [
-            NSAttributedStringKey.font: detailFont,
-            NSAttributedStringKey.foregroundColor: detailLabelTextColor,
-            NSAttributedStringKey.paragraphStyle: paragraphStyle
+            NSAttributedString.Key.font: detailFont,
+            NSAttributedString.Key.foregroundColor: detailLabelTextColor,
+            NSAttributedString.Key.paragraphStyle: paragraphStyle
         ]
         
         let detailTitles = detailLabelMessages.map { title -> Content in
@@ -242,9 +247,9 @@ class OnboardingViewController: PresentationController {
         let headerFont = UIFont(name: titleLabelFontName, size: titleLabelFontSize * headerHeight)!
         
         let headerAttributes = [
-            NSAttributedStringKey.font: headerFont,
-            NSAttributedStringKey.foregroundColor: titleLabelTextColor,
-            NSAttributedStringKey.paragraphStyle: headerParagraphStyle
+            NSAttributedString.Key.font: headerFont,
+            NSAttributedString.Key.foregroundColor: titleLabelTextColor,
+            NSAttributedString.Key.paragraphStyle: headerParagraphStyle
         ]
         
         let headerTitles = titleLabelMessages.map { title -> Content in

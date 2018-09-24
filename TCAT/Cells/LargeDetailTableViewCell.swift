@@ -56,7 +56,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         return detailLabel
     }
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         chevron = getChevron()
@@ -149,7 +149,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         label.frame.size.width = (chevron.frame.minX - 12) - cellWidth
         label.frame.origin.y = edgeSpacing // - paragraphStyle.lineSpacing
         
-        attributedString.addAttribute(NSAttributedStringKey.paragraphStyle,
+        attributedString.addAttribute(NSAttributedString.Key.paragraphStyle,
                                       value: paragraphStyle,
                                       range: NSMakeRange(0, label.attributedText!.length))
         label.attributedText = attributedString

@@ -57,7 +57,7 @@ class AllStopsTableViewController: UITableViewController {
         }
 
         tableView.emptyDataSetSource = self
-        tableView.emptyDataSetDelegate = self
+        //tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
         // Set top of table view to align with scroll view
         tableView.contentOffset = .zero
@@ -184,7 +184,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource {
 
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let title = "Couldn't get stops 😟"
-        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
+        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
 }

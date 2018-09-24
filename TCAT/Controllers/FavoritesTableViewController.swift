@@ -24,7 +24,7 @@ class FavoritesTableViewController: UITableViewController {
         super.viewDidLoad()
 
         title = fromOnboarding ? "Add Favorites" : "Add Favorite"
-        let systemItem: UIBarButtonSystemItem = fromOnboarding ? .done : .cancel
+        let systemItem: UIBarButtonItem.SystemItem = fromOnboarding ? .done : .cancel
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem,
                                                             target: self,
                                                             action: #selector(dismissVC))
@@ -37,7 +37,7 @@ class FavoritesTableViewController: UITableViewController {
         tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Constants.Cells.searchResultsIdentifier)
         tableView.emptyDataSetSource = self
-        tableView.emptyDataSetDelegate = self
+        //tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
         tableView.reloadEmptyDataSet()
 
@@ -170,7 +170,7 @@ extension FavoritesTableViewController: DZNEmptyDataSetSource {
 
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let title = "Search for a destination"
-        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
+        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
 }

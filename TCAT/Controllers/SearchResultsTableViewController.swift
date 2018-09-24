@@ -12,7 +12,6 @@ import Alamofire
 import CoreLocation
 import DZNEmptyDataSet
 import Crashlytics
-import SwiftRegister
 
 protocol DestinationDelegate {
     func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?)
@@ -63,11 +62,11 @@ class SearchResultsTableViewController: UITableViewController {
         // Subscribe to Keyboard Notifications
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyboardWillShow),
-                                               name: .UIKeyboardWillShow,
+                                               name: UIResponder.keyboardWillShowNotification,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyboardWillHide),
-                                               name: .UIKeyboardWillHide,
+                                               name: UIResponder.keyboardWillHideNotification,
                                                object: nil)
 
         //Fetch RecentLocation and Favorites
@@ -226,7 +225,7 @@ class SearchResultsTableViewController: UITableViewController {
             }
 
             let payload = BusStopTappedPayload(name: busStop.name)
-            RegisterSession.shared?.log(payload)
+            Analytics.shared.log(payload)
 
             destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
         case .placeResult(let placeResult):
@@ -235,7 +234,7 @@ class SearchResultsTableViewController: UITableViewController {
                                                       limit: 8)
 
             let payload = GooglePlaceTappedPayload(name: placeResult.name)
-            RegisterSession.shared?.log(payload)
+            Analytics.shared.log(payload)
 
             destinationDelegate?.didSelectDestination(busStop: nil, placeResult: placeResult)
         default: break
@@ -308,8 +307,8 @@ extension SearchResultsTableViewController {
                                                 preferredStyle: .alert)
         
         let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
-            UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!,
-                                      options: [:],
+            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
+                                      options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]),
                                       completionHandler: nil)
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -405,4 +404,9 @@ extension SearchResultsTableViewController: UINavigationControllerDelegate {
             destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

@@ -111,9 +111,9 @@ class RouteDiagram: UIView {
         stopLabel.lineBreakMode = .byWordWrapping
         stopLabel.numberOfLines = 0
         
-        let stopNameAttrs: [NSAttributedStringKey : Any] = [
-            NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)!,
-            NSAttributedStringKey.foregroundColor : UIColor.primaryTextColor
+        let stopNameAttrs: [NSAttributedString.Key : Any] = [
+            NSAttributedString.Key.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)!,
+            NSAttributedString.Key.foregroundColor : UIColor.primaryTextColor
         ]
         let stopName = NSMutableAttributedString(string: name, attributes: stopNameAttrs)
 
@@ -127,9 +127,9 @@ class RouteDiagram: UIView {
                 addLinebreak = true
             }
             
-            let travelDistanceAttrs: [NSAttributedStringKey : Any] = [
-                NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)!,
-                NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor
+            let travelDistanceAttrs: [NSAttributedString.Key : Any] = [
+                NSAttributedString.Key.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)!,
+                NSAttributedString.Key.foregroundColor : UIColor.mediumGrayColor
             ]
             
             let travelDistance = NSMutableAttributedString(string: addLinebreak ? "\n\(distance.roundedString) away" : " \(distance.roundedString) away", attributes: travelDistanceAttrs)
@@ -137,9 +137,9 @@ class RouteDiagram: UIView {
         }
         
         if stayOnBusForTranfer {
-            let stayOnBusAttrs: [NSAttributedStringKey : Any] = [
-                NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)!,
-                NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor
+            let stayOnBusAttrs: [NSAttributedString.Key : Any] = [
+                NSAttributedString.Key.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)!,
+                NSAttributedString.Key.foregroundColor : UIColor.mediumGrayColor
             ]
             let stayOnBus = NSMutableAttributedString(string:"\nStay on board", attributes: stayOnBusAttrs)
             stopName.append(stayOnBus)

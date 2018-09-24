@@ -111,7 +111,7 @@ class LiveIndicator: UIView {
         largeArcLayer.strokeColor = color.cgColor
         largeArcLayer.fillColor = UIColor.clear.cgColor
         largeArcLayer.lineWidth = bounds.width/4
-        largeArcLayer.lineCap = kCALineCapRound
+        largeArcLayer.lineCap = CAShapeLayerLineCap.round
         
         return largeArcLayer
     }
@@ -124,7 +124,7 @@ class LiveIndicator: UIView {
         smallArcLayer.strokeColor = color.cgColor
         smallArcLayer.fillColor = UIColor.clear.cgColor
         smallArcLayer.lineWidth = bounds.width / 4
-        smallArcLayer.lineCap = kCALineCapRound
+        smallArcLayer.lineCap = CAShapeLayerLineCap.round
         
         return smallArcLayer
     }
@@ -145,7 +145,7 @@ class LiveIndicator: UIView {
         for layer in [circleLayer, smallArcLayer, largeArcLayer] {
             let timer = Timer(fireAt: Date().addingTimeInterval(timeInterval), interval: LiveIndicator.INTERVAL, target: self,
                               selector: #selector(self.animateLayer), userInfo: layer, repeats: true)
-            RunLoop.main.add(timer, forMode: .commonModes)
+            RunLoop.main.add(timer, forMode: RunLoop.Mode.common)
             timeInterval += LiveIndicator.DURATION
         }
     }
@@ -173,7 +173,7 @@ class LiveIndicator: UIView {
         fadeOutAnimation.keyTimes = [0, 1]
         fadeOutAnimation.values = [1.0, DIM_OPACITY]
         fadeOutAnimation.autoreverses = true
-        fadeOutAnimation.fillMode = kCAFillModeForwards
+        fadeOutAnimation.fillMode = CAMediaTimingFillMode.forwards
         fadeOutAnimation.isRemovedOnCompletion = true
         layer.add(fadeOutAnimation, forKey: "fadeOut")
     }

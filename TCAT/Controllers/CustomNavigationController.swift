@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SwiftRegister
 
 class CustomNavigationController: UINavigationController, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
     
@@ -38,24 +37,24 @@ class CustomNavigationController: UINavigationController, UINavigationController
         }
         
         // Add screenshot listener, log view controller name
-        let notifName = NSNotification.Name.UIApplicationUserDidTakeScreenshot
+        let notifName = UIApplication.userDidTakeScreenshotNotification
         NotificationCenter.default.addObserver(forName: notifName, object: nil, queue: .main) { notification in
             guard let currentViewController = self.visibleViewController else { return }
             let payload = ScreenshotTakenPayload(location: "\(type(of: currentViewController))")
-            RegisterSession.shared?.log(payload)
+            Analytics.shared.log(payload)
         }
         
     }
     
     /// Attributed string details for the title text of a navigation controller
-    let titleTextAttributes: [NSAttributedStringKey: Any] = [
+    let titleTextAttributes: [NSAttributedString.Key: Any] = [
         .font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 18)!,
         .foregroundColor : UIColor.black
     ]
     
     /// Attributed string details for the back button text of a navigation controller
     static let buttonTitleTextAttributes = [
-        NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)!
+        NSAttributedString.Key.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)!
     ]
     
     func customizeAppearance() {
@@ -82,10 +81,10 @@ class CustomNavigationController: UINavigationController, UINavigationController
         backButton.setImage(#imageLiteral(resourceName: "back"), for: .normal)
         backButton.tintColor = .primaryTextColor
         
-        let attributes: [NSAttributedStringKey : Any] = [
-            NSAttributedStringKey.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)!,
-            NSAttributedStringKey.foregroundColor : UIColor.primaryTextColor,
-            NSAttributedStringKey.baselineOffset : 0.3
+        let attributes: [NSAttributedString.Key : Any] = [
+            NSAttributedString.Key.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)!,
+            NSAttributedString.Key.foregroundColor : UIColor.primaryTextColor,
+            NSAttributedString.Key.baselineOffset : 0.3
         ]
         let attributedString = NSMutableAttributedString(string: "  Back", attributes: attributes)
         backButton.setAttributedTitle(attributedString, for: .normal)
@@ -94,7 +93,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
         
         // Expand frame to create bigger touch area
         backButton.frame = CGRect(x: backButton.frame.minX, y: backButton.frame.minY, width: backButton.frame.width + additionalWidth, height: backButton.frame.height + additionalHeight)
-        backButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, additionalWidth)
+        backButton.contentEdgeInsets = UIEdgeInsets.init(top: 0, left: 0, bottom: 0, right: additionalWidth)
         
         backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
         

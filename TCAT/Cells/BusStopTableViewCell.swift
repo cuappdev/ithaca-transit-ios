@@ -20,7 +20,7 @@ class BusStopTableViewCell: UITableViewCell {
     var connectorBottom: UIView!
     var statusCircle: Circle!
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         titleLabel = UILabel()
