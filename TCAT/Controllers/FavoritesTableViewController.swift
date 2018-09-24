@@ -63,9 +63,9 @@ class FavoritesTableViewController: UITableViewController {
             let rootVC = HomeViewController()
             let desiredViewController = CustomNavigationController(rootViewController: rootVC)
 
-            if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-                if let window = appDelegate.window {
-                    let snapshot: UIView = window.snapshotView(afterScreenUpdates: true)!
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+                let window = appDelegate.window,
+                let snapshot = window.snapshotView(afterScreenUpdates: true) {
                     desiredViewController.view.addSubview(snapshot)
                     
                     appDelegate.window?.rootViewController = desiredViewController
@@ -78,7 +78,6 @@ class FavoritesTableViewController: UITableViewController {
                         snapshot.removeFromSuperview()
                     })
                 }
-            }
         } else {
             dismiss(animated: true)
         }
