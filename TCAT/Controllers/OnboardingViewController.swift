@@ -188,7 +188,7 @@ class OnboardingViewController: PresentationController {
     
     init(initialViewing: Bool) {
         self.isInitialViewing = initialViewing
-        super.init(transitionStyle: UIPageViewController.TransitionStyle.scroll, navigationOrientation: UIPageViewController.NavigationOrientation.horizontal, options: nil)
+        super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
     required init?(coder: NSCoder) {
