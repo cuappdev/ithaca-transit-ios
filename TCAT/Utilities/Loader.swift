@@ -79,13 +79,13 @@ open class Loader
         CATransaction.commit()
     }
     
-    open static func addLoaderTo(_ list : ListLoadable )
+    public static func addLoaderTo(_ list : ListLoadable )
     {
         self.addLoaderToViews(list.ld_visibleContentViews())
     }
     
     
-    open static func removeLoaderFrom(_ list : ListLoadable )
+    public static func removeLoaderFrom(_ list : ListLoadable )
     {
         self.removeLoaderFromViews(list.ld_visibleContentViews())
     }

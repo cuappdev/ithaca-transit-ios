@@ -258,7 +258,7 @@ class SearchTableViewManager {
                                                              localizedTitle: item.name,
                                                              localizedSubtitle: nil,
                                                              icon: UIApplicationShortcutIcon(type: .location),
-                                                             userInfo: placeInfo as! [String : NSSecureCoding])
+                                                             userInfo: placeInfo as? [String : NSSecureCoding])
                 shortcutItems.append(shortcutItem)
             }
             UIApplication.shared.shortcutItems = shortcutItems
