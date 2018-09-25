@@ -19,7 +19,6 @@ class AllStopsTableViewController: UITableViewController {
     var sectionIndexes: [String: [BusStop]]!
     var sortedKeys: [String]!
     var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
-    var navController: UINavigationController!
     var height: CGFloat?
     var currentChar: Character?
 

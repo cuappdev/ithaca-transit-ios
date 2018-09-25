@@ -152,7 +152,7 @@ class HomeViewController: UIViewController {
                 self.searchBar.isUserInteractionEnabled = true
             }
         }
-        UIApplication.shared.statusBarStyle = preferredStatusBarStyle
+        setNeedsStatusBarAppearanceUpdate()
     }
 
     override func viewWillDisappear(_ animated: Bool) {

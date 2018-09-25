@@ -46,7 +46,6 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         
         view.backgroundColor = .tableBackgroundColor
         navigationController?.navigationBar.tintColor = .primaryTextColor
-        UIApplication.shared.statusBarStyle = .default
         
         view.addSubview(hiddenLabel)
         view.addSubview(tcatImage)
@@ -124,6 +123,10 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         let payload = AboutPageOpenedPayload()
         Analytics.shared.log(payload)
         
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .default
     }
     
     // MARK: Table View Data Source

@@ -153,7 +153,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         if isBannerShown {
             banner?.dismiss()
             banner = nil
-            UIApplication.shared.statusBarStyle = .default
+            isBannerShown = false
+            setNeedsStatusBarAppearanceUpdate()
         }
         
         // Deactivate and remove timers
@@ -507,7 +508,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             
         }
         
-        UIApplication.shared.statusBarStyle = preferredStatusBarStyle
+        setNeedsStatusBarAppearanceUpdate()
         showRouteSearchingLoader = false
         routeResults.reloadData()
     }
@@ -788,9 +789,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 setUserInteraction(to: true)
 
         }
-
-        UIApplication.shared.statusBarStyle = preferredStatusBarStyle
-
+        setNeedsStatusBarAppearanceUpdate()
     }
 
     private func setUserInteraction(to userInteraction: Bool) {
