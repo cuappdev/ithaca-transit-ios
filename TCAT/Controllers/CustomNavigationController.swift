@@ -166,12 +166,11 @@ class OnboardingNavigationController: UINavigationController {
         return visibleViewController
     }
     
-    // DO NOT REMOVE ANYTHING BELOW, WILL CRASH WITHOUT
-    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
+    // Do NOT remove this initializer; OnboardingNavigationController will crash without it.
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
