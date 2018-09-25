@@ -162,8 +162,8 @@ class OnboardingNavigationController: UINavigationController {
         navigationBar.isTranslucent = true
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
+    open override var childForStatusBarStyle: UIViewController? {
+        return visibleViewController
     }
     
     // DO NOT REMOVE ANYTHING BELOW, WILL CRASH WITHOUT
