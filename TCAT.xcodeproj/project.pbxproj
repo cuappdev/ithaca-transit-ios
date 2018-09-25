@@ -153,8 +153,8 @@
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Analytics.swift; path = Utilities/Analytics.swift; sourceTree = "<group>"; };
 		D183AA011E6CB092006A9A15 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = Utilities/Extensions.swift; sourceTree = "<group>"; };
-		D94BD2FC2159993D00C9214E /* Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Keys.plist; path = ../../../../Downloads/Keys.plist; sourceTree = "<group>"; };
-		D94BD2FE2159994400C9214E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D94BD2FC2159993D00C9214E /* Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Keys.plist; path = "Supporting Files/Keys.plist"; sourceTree = "<group>"; };
+		D94BD2FE2159994400C9214E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Supporting Files/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D94BD30021599E3200C9214E /* EventPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPayload.swift; sourceTree = "<group>"; };
 		DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FavoritesTableViewController.swift; path = Controllers/FavoritesTableViewController.swift; sourceTree = "<group>"; };
 		DC2E96451FC21B29009955C6 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeaderView.swift; path = Views/HeaderView.swift; sourceTree = "<group>"; };
@@ -441,8 +441,8 @@
 				449A7C731D80D0E80019300C /* Resources */,
 				7C01627F386C89E7F1995831 /* [CP] Embed Pods Frameworks */,
 				292FC78093845444B1E8A99C /* [CP] Copy Pods Resources */,
-				E3FCA3C71FAA5AFB0069BD0F /* ShellScript */,
-				2292F9DB215722ED00C8C931 /* ShellScript */,
+				E3FCA3C71FAA5AFB0069BD0F /* Fabric Configuration */,
+				2292F9DB215722ED00C8C931 /* SwiftLint Script */,
 			);
 			buildRules = (
 			);
@@ -461,6 +461,8 @@
 				449A7C851D80D0E80019300C /* Sources */,
 				449A7C861D80D0E80019300C /* Frameworks */,
 				449A7C871D80D0E80019300C /* Resources */,
+				046C7FE1354D5CA231D4B0DB /* [CP] Embed Pods Frameworks */,
+				46E366F31C5FDE5AE2F1856C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -480,6 +482,8 @@
 				449A7C901D80D0E80019300C /* Sources */,
 				449A7C911D80D0E80019300C /* Frameworks */,
 				449A7C921D80D0E80019300C /* Resources */,
+				D7D6F3AD37AAA12DFFBEE2FD /* [CP] Embed Pods Frameworks */,
+				53F5B40EB43DEC59D709CAAF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -578,6 +582,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		046C7FE1354D5CA231D4B0DB /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		0DD807D4971138217FA4C33E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -596,13 +615,14 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		2292F9DB215722ED00C8C931 /* ShellScript */ = {
+		2292F9DB215722ED00C8C931 /* SwiftLint Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "SwiftLint Script";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -645,6 +665,36 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		46E366F31C5FDE5AE2F1856C /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		53F5B40EB43DEC59D709CAAF /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		7C01627F386C89E7F1995831 /* [CP] Embed Pods Frameworks */ = {
@@ -709,13 +759,29 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E3FCA3C71FAA5AFB0069BD0F /* ShellScript */ = {
+		D7D6F3AD37AAA12DFFBEE2FD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E3FCA3C71FAA5AFB0069BD0F /* Fabric Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Fabric Configuration";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -958,7 +1024,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0DD68D5FD4D1CFE82BA753E7 /* Pods-TCAT.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -988,7 +1053,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 81725F2EBEBD3D184BFD0635 /* Pods-TCAT.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;

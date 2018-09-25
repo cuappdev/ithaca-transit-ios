@@ -186,10 +186,9 @@ class OnboardingViewController: PresentationController {
         UIApplication.shared.statusBarStyle = .default
     }
     
-    
-    convenience init(initialViewing: Bool) {
-        self.init(pages: [])
+    init(initialViewing: Bool) {
         self.isInitialViewing = initialViewing
+        super.init(transitionStyle: UIPageViewController.TransitionStyle.scroll, navigationOrientation: UIPageViewController.NavigationOrientation.horizontal, options: nil)
     }
     
     required init?(coder: NSCoder) {
