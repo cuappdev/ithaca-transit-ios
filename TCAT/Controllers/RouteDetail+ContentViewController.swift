@@ -35,7 +35,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     var busIndicators = [GMSMarker]()
     
     var banner: StatusBarNotificationBanner?
-    var isBannerShown: Bool = false
+    var isBannerShown = false {
+        didSet {
+            setNeedsStatusBarAppearanceUpdate()
+        }
+    }
 
     var route: Route!
     var directions: [Direction] = []
@@ -233,7 +237,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             self.banner!.dismissOnTap = true
             self.banner!.show(queuePosition: .front, on: navigationController)
             self.isBannerShown = true
-            setNeedsStatusBarAppearanceUpdate()
         }
     }
     
@@ -242,7 +245,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         self.banner?.dismiss()
         self.isBannerShown = false
         self.banner = nil
-        setNeedsStatusBarAppearanceUpdate()
     }
     
     // MARK: Location Manager Functions
