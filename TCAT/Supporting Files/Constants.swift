@@ -23,7 +23,7 @@ struct Constants {
         static let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
         
         /// Developer email address to direct contact inquiries and emails toward
-        static let contactEmailAddress = "ithacatransit@gmail.com"
+        static let contactEmailAddress = "ithacatransit@cornellappdev.com"
         
         /// Link to Google Forms for Feedback
         // static let feedbackLink = "https://goo.gl/forms/jYejUtVccVQ3UHH12"
