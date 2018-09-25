@@ -28,9 +28,9 @@ target 'TCAT' do
     
     # UI Frameworks
     pod 'DZNEmptyDataSet'
-    pod 'NotificationBannerSwift', '~> 1.7' #:git=> 'https://github.com/mattbarker016/NotificationBanner.git', :branch => 'mattbarker016/statusBannerFix'
+    pod 'NotificationBannerSwift', '~> 1.7'
     pod 'Pulley', '~> 2.6'
-    pod 'Presentation'
+    pod 'Presentation', :git=> 'https://github.com/mattbarker016/Presentation.git'
     pod 'SnapKit'
     
     # Other
