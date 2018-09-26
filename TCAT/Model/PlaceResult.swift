@@ -24,14 +24,16 @@ class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
         self.placeID = placeID
 
         super.init(name: name)
+        print(description)
     }
 
     required convenience init(json: JSON) throws {
         let name = json["structured_formatting"]["main_text"].stringValue
         let detail = json["structured_formatting"]["secondary_text"].stringValue
         let placeID = json["place_id"].stringValue
-
+        
         self.init(name: name, detail: detail, placeID: placeID)
+        print(description)
     }
 
     override func isEqual(_ object: Any?) -> Bool {
@@ -55,8 +57,8 @@ class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
     // MARK: NSCoding
 
     required init(coder aDecoder: NSCoder) {
+        detail = (aDecoder.decodeObject(forKey: detailKey) as? String) ?? ""
         placeID = (aDecoder.decodeObject(forKey: placeIDKey) as? String) ?? ""
-        detail = (aDecoder.decodeObject(forKey: placeIDKey) as? String) ?? ""
         super.init(coder: aDecoder)
     }
 
