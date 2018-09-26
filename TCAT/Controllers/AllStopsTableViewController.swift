@@ -122,6 +122,7 @@ class AllStopsTableViewController: UITableViewController {
     
     func setUpTableOnRetry() {
         // Retry getting data from user defaults
+        print("retry getting data from user defaults")
         self.allStops = SearchTableViewManager.shared.getAllStops()
         // Set up table information
         self.sectionIndexes = self.sectionIndexesForBusStop()
@@ -205,19 +206,21 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource {
         return NSAttributedString(string: title, attributes: attrs)
     }
     
-    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControlState) -> NSAttributedString! {
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
         let title = "Retry"
-        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.buttonColor]
+        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.buttonColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
     
-    func emptyDataSet(_ scrollView: UIScrollView!, didTap button: UIButton!) {
+    func emptyDataSet(_ scrollView: UIScrollView!, didTapButton: UIButton!) {
+        print("button tapped")
         retryNetwork{() -> Void in
-            setUpTableOnRetry()
+            self.setUpTableOnRetry()
         }
     }
     
     func retryNetwork(completion: @escaping () -> Void) {
+        print("retry network")
         Network.getAllStops().perform(withSuccess: { stops in
             let allBusStops = stops.allStops
             if !allBusStops.isEmpty {
