@@ -34,7 +34,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     var buses = [GMSMarker]()
     var busIndicators = [GMSMarker]()
     
-    var banner: StatusBarNotificationBanner? {
+    var banner: StatusBarNotificationBanner?
+    var isBannerShown = false {
         didSet {
             setNeedsStatusBarAppearanceUpdate()
         }
@@ -163,7 +164,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return banner != nil ? .lightContent : .default
+        return isBannerShown ? .lightContent : .default
     }
     
     override func viewSafeAreaInsetsDidChange() {
@@ -192,7 +193,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         liveTrackingNetworkTimer?.invalidate()
-        // Remove banner
         hideBanner()
     }
 
@@ -227,22 +227,24 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         
     }
 
-    // MARK: Banner / Status Bar Functions
+    // MARK: Status Bar Functions
     
     /// Show banner if no other status banner exists; turns status bar light
     func showBanner(_ message: String, status: BannerStyle) {
-        hideBanner()
-        banner = StatusBarNotificationBanner(title: message, style: status)
-        banner?.autoDismiss = false
-        banner?.dismissOnTap = true
-        banner?.show(queuePosition: .front, on: navigationController)
+        if self.banner == nil {
+            self.banner = StatusBarNotificationBanner(title: message, style: status)
+            self.banner!.autoDismiss = false
+            self.banner!.dismissOnTap = true
+            self.banner!.show(queuePosition: .front, on: navigationController)
+            self.isBannerShown = true
+        }
     }
     
-    /// Dismisses and removes banner; sets banner to nil for status bar changes.
+    /// Dismisses and removes banner; turns status bar back to default
     func hideBanner() {
-        // Dismiss current banner, if any
-        banner?.dismiss()
-        banner = nil
+        self.banner?.dismiss()
+        self.isBannerShown = false
+        self.banner = nil
     }
     
     // MARK: Location Manager Functions
@@ -301,7 +303,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             if result.busLocations.isEmpty {
                 // print("No Bus Locations")
                 // Reset banner in case transitioned from Error to Online - No Bus Locations
-                self.hideBanner()
+                if self.isBannerShown {
+                    self.hideBanner()
+                }
                 
                 // Possibly add information about no tracking available.
             }
@@ -348,7 +352,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                     }
                     
-                    if self.noDataRouteList.isEmpty {
+                    if self.noDataRouteList.isEmpty || self.isBannerShown {
                         self.hideBanner()
                     }
                     
