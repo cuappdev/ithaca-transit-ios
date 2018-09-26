@@ -24,7 +24,6 @@ class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
         self.placeID = placeID
 
         super.init(name: name)
-        print(description)
     }
 
     required convenience init(json: JSON) throws {
@@ -33,7 +32,6 @@ class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
         let placeID = json["place_id"].stringValue
         
         self.init(name: name, detail: detail, placeID: placeID)
-        print(description)
     }
 
     override func isEqual(_ object: Any?) -> Bool {
