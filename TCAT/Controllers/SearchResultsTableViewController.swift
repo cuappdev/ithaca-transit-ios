@@ -246,7 +246,6 @@ class SearchResultsTableViewController: UITableViewController {
             if let parentIsSearch = self.parent?.isKind(of: UISearchController.self), parentIsSearch {
                 let navController = self.parent?.presentingViewController?.navigationController
                 navController?.delegate = self
-                allStopsTVC.navController = navController
                 navController?.pushViewController(allStopsTVC, animated: true)
             }
         }

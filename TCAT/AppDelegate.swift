@@ -76,7 +76,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : HomeViewController()
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
-        UIApplication.shared.statusBarStyle = showOnboarding ? .lightContent : .default
         
         // Initalize window without storyboard
         self.window = UIWindow(frame: UIScreen.main.bounds)
@@ -114,11 +113,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func handleShortcut(item: UIApplicationShortcutItem) {
         let optionsVC = RouteOptionsViewController()
-        if let shortcutData = item.userInfo as? [String: Data] {
-            guard let destination = NSKeyedUnarchiver.unarchiveObject(with: shortcutData["place"]!) as? Place
-                else {return}
+        if let shortcutData = item.userInfo as? [String : Data] {
+            guard
+                let place = shortcutData["place"],
+                let destination = NSKeyedUnarchiver.unarchiveObject(with: place) as? Place
+            else {
+                print("[AppDelegate] Unable to access shortcutData['place']")
+                return
+            }
             optionsVC.searchTo = destination
-            if let navController = window?.rootViewController as? UINavigationController{
+            if let navController = window?.rootViewController as? UINavigationController {
                 navController.pushViewController(optionsVC, animated: true)
             }
         }

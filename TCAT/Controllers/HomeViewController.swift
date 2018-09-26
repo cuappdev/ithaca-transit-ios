@@ -44,7 +44,11 @@ class HomeViewController: UIViewController {
     }
 
     let reachability = Reachability(hostname: Network.ipAddress)
-    var isBannerShown = false
+    var isBannerShown = false {
+        didSet {
+            setNeedsStatusBarAppearanceUpdate()
+        }
+    }
 
     var banner: StatusBarNotificationBanner?
 
@@ -152,7 +156,6 @@ class HomeViewController: UIViewController {
                 self.searchBar.isUserInteractionEnabled = true
             }
         }
-        UIApplication.shared.statusBarStyle = preferredStatusBarStyle
     }
 
     override func viewWillDisappear(_ animated: Bool) {

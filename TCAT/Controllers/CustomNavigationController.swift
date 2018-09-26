@@ -27,6 +27,10 @@ class CustomNavigationController: UINavigationController, UINavigationController
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
+    open override var childForStatusBarStyle: UIViewController? {
+        return visibleViewController
+    }
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -158,17 +162,17 @@ class OnboardingNavigationController: UINavigationController {
         navigationBar.isTranslucent = true
     }
     
+    open override var childForStatusBarStyle: UIViewController? {
+        return visibleViewController
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
+    // Do NOT remove this initializer; OnboardingNavigationController will crash without it.
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        UIApplication.shared.statusBarStyle = .lightContent
     }
     
 }

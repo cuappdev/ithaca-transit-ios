@@ -183,7 +183,6 @@ class OnboardingViewController: PresentationController {
             dismiss(animated: true)
         }
         
-        UIApplication.shared.statusBarStyle = .default
     }
     
     init(initialViewing: Bool) {
@@ -202,10 +201,13 @@ class OnboardingViewController: PresentationController {
         navigationItem.leftBarButtonItem = isInitialViewing ? nil : dismissButton
         
         view.backgroundColor = backgroundColor
-        UIApplication.shared.statusBarStyle = .default
         
         configureSlides()
         configureBackground()
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .default
     }
     
     private func configureSlides() {

@@ -76,7 +76,11 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     var banner: StatusBarNotificationBanner? = nil
 
-    var isBannerShown: Bool = false
+    var isBannerShown = false {
+        didSet {
+            setNeedsStatusBarAppearanceUpdate()
+        }
+    }
     var cellUserInteraction: Bool = true
     
     // MARK: Spacing vars
@@ -153,7 +157,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         if isBannerShown {
             banner?.dismiss()
             banner = nil
-            UIApplication.shared.statusBarStyle = .default
+            isBannerShown = false
         }
         
         // Deactivate and remove timers
@@ -507,7 +511,6 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             
         }
         
-        UIApplication.shared.statusBarStyle = preferredStatusBarStyle
         showRouteSearchingLoader = false
         routeResults.reloadData()
     }
@@ -771,14 +774,12 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         let reachability = notification.object as! Reachability
 
         switch reachability.connection {
-
             case .none:
                 banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
                 banner!.autoDismiss = false
                 banner!.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
                 isBannerShown = true
                 setUserInteraction(to: false)
-
             case .cellular, .wifi:
                 if isBannerShown {
                     banner?.dismiss()
@@ -786,11 +787,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                     isBannerShown = false
                 }
                 setUserInteraction(to: true)
-
         }
-
-        UIApplication.shared.statusBarStyle = preferredStatusBarStyle
-
     }
 
     private func setUserInteraction(to userInteraction: Bool) {
