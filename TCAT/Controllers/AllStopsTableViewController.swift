@@ -9,17 +9,16 @@
 import UIKit
 import DZNEmptyDataSet
 
-protocol UnwindAllStopsTVCDelegate {
+protocol UnwindAllStopsTVCDelegate{
     func dismissSearchResultsVC(busStop: BusStop)
 }
 
-class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
+class AllStopsTableViewController: UITableViewController {
 
     var allStops: [BusStop]!
     var sectionIndexes: [String: [BusStop]]!
     var sortedKeys: [String]!
     var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
-    var navController: UINavigationController!
     var height: CGFloat?
     var currentChar: Character?
 
@@ -33,7 +32,7 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
     }
 
     override func viewDidLoad() {
-        
+
         super.viewDidLoad()
         sectionIndexes = sectionIndexesForBusStop()
         sortedKeys = sortedKeysForBusStops()
@@ -52,11 +51,11 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
         }
 
         tableView.emptyDataSetSource = self
-        tableView.emptyDataSetDelegate = self
+        //tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
         // Set top of table view to align with scroll view
         tableView.contentOffset = .zero
-        
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -68,19 +67,18 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
 
     /// Retrieves the section indexes for the bus stops
     func sectionIndexesForBusStop() -> [String: [BusStop]] {
-        
+
         var sectionIndexDictionary: [String: [BusStop]] = [:]
         var currBusStopArray: [BusStop] = []
-        
+
         currentChar = allStops.first?.name.capitalized.first
         
         var numberBusStops: [BusStop] = {
             guard let firstStop = allStops.first else { return [] }
             return [firstStop]
         }()
-        
-        if let _ = currentChar {
-            
+
+        if currentChar != nil {
             for busStop in allStops {
                 if let firstChar = busStop.name.capitalized.first {
                     if currentChar != firstChar {
@@ -100,12 +98,12 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
                 }
             }
         }
-        
+
         if !allStops.isEmpty {
             // Adding "#" to section indexes for bus stops that start with a number
             sectionIndexDictionary["#"] = numberBusStops
         }
-        
+
         return sectionIndexDictionary
     }
     
@@ -147,7 +145,8 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sectionIndexes[sortedKeys[section]]?.count ?? 0
     }
-    
+
+    // MARK: - TableView Delegate
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let inset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
         if cell.responds(to: #selector(setter: UITableViewCell.separatorInset)) {
@@ -191,16 +190,18 @@ class AllStopsTableViewController: UITableViewController, DZNEmptyDataSetSource,
     @objc func backAction() {
         navigationController?.popViewController(animated: true)
     }
-    
-    // MARK: DZNEmptyDataSet
-    
+}
+
+// MARK: DZN EmptyDataSet Delegate
+extension AllStopsTableViewController: DZNEmptyDataSetSource {
+
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
         return #imageLiteral(resourceName: "emptyPin")
     }
-    
+
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let title = "Couldn't get stops 😟"
-        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
+        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
     

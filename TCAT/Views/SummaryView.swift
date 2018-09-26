@@ -120,7 +120,7 @@ class SummaryView: UIView {
             attributedString = bold(pattern: departDirection.name, in: attributedString)
             
             let range = (attributedString.string as NSString).range(of: departDirection.startTimeWithDelayDescription)
-            attributedString.addAttribute(NSAttributedStringKey.foregroundColor, value: color, range: range)
+            attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: range)
             
             mainLabel.attributedText = attributedString
             

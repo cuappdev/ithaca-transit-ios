@@ -56,8 +56,8 @@ extension UIView{
     func boundInside(_ superView: UIView) {
         
         self.translatesAutoresizingMaskIntoConstraints = false
-        superView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[subview]-0-|", options: NSLayoutFormatOptions(), metrics:nil, views:["subview":self]))
-        superView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[subview]-0-|", options: NSLayoutFormatOptions(), metrics:nil, views:["subview":self]))
+        superView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[subview]-0-|", options: NSLayoutConstraint.FormatOptions(), metrics:nil, views:["subview":self]))
+        superView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[subview]-0-|", options: NSLayoutConstraint.FormatOptions(), metrics:nil, views:["subview":self]))
         
         
     }
@@ -79,13 +79,13 @@ open class Loader
         CATransaction.commit()
     }
     
-    open static func addLoaderTo(_ list : ListLoadable )
+    public static func addLoaderTo(_ list : ListLoadable )
     {
         self.addLoaderToViews(list.ld_visibleContentViews())
     }
     
     
-    open static func removeLoaderFrom(_ list : ListLoadable )
+    public static func removeLoaderFrom(_ list : ListLoadable )
     {
         self.removeLoaderFromViews(list.ld_visibleContentViews())
     }
@@ -205,7 +205,7 @@ extension UIView
         gradientAnimation.toValue = [NSNumber(value: 0 as Double),NSNumber(value: 1 as Double),NSNumber(value: 1 as Double),NSNumber(value: 1 + (gradientWidth - gradientFirstStop) as Double),NSNumber(value: 1 + gradientWidth as Double)]
         
         gradientAnimation.repeatCount = Float.infinity
-        gradientAnimation.fillMode = kCAFillModeForwards
+        gradientAnimation.fillMode = CAMediaTimingFillMode.forwards
         gradientAnimation.isRemovedOnCompletion = false
         gradientAnimation.duration = loaderDuration
         gradient.add(gradientAnimation ,forKey:"locations")

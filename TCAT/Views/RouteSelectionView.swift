@@ -87,7 +87,7 @@ class RouteSelectionView: UIView {
         searchbar.setTitleColor(.primaryTextColor, for: .normal)
         searchbar.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
         searchbar.contentHorizontalAlignment = .left
-        searchbar.contentEdgeInsets = UIEdgeInsetsMake(0, searchbarTextSpaceFromLeft, 0, 0)
+        searchbar.contentEdgeInsets = UIEdgeInsets.init(top: 0, left: searchbarTextSpaceFromLeft, bottom: 0, right: 0)
         searchbar.layer.cornerRadius = searchbarHeight/4
         searchbar.layer.masksToBounds = true
     }
