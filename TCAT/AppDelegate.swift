@@ -133,24 +133,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Network.getAllStops().perform(withSuccess: { stops in
             let allBusStops = stops.allStops
             if allBusStops.isEmpty {
-                self.handleGetAllStopsError()
+                let title = "Couldn't Fetch Bus Stops"
+                let message = "The app will continue trying on launch. You can continue to use the app as normal."
+                let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                UIApplication.shared.keyWindow?.presentInApp(alertController)
             } else {
                 let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
                 self.userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
             }
         }, failure: { error in
             print("getBusStops error:", error)
-            self.handleGetAllStopsError()
         })
-    }
-    
-    /// Present an alert indicating bus stops weren't fetched.
-    func handleGetAllStopsError() {
-        let title = "Couldn't Fetch Bus Stops"
-        let message = "The app will continue trying on launch. You can continue to use the app as normal."
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-        UIApplication.shared.keyWindow?.presentInApp(alertController)
     }
     
 }
