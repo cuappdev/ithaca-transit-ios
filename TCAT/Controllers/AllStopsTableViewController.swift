@@ -235,6 +235,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             if let activityIndicator = self.activityIndicator {
                 activityIndicator.stopAnimating()
             }
+            self.activityIndicator = nil
         }
     }
 
