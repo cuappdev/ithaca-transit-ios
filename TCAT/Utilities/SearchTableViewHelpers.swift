@@ -58,7 +58,7 @@ class SearchTableViewManager {
 
     private init() {}
     func getAllStops() -> [BusStop] {
-        if let stops = allStops{
+        if let stops = allStops {
             // Check if not empty so that an empty array isn't returned 
             if !stops.isEmpty {
                 return stops
@@ -72,10 +72,13 @@ class SearchTableViewManager {
     func getAllBusStops() -> [BusStop] {
         if let allBusStops = userDefaults.value(forKey: Constants.UserDefaults.allBusStops) as? Data,
             var busStopArray = NSKeyedUnarchiver.unarchiveObject(with: allBusStops) as? [BusStop] {
+            // Check if empty so that an empty array isn't returned
+            if !busStopArray.isEmpty {
             /// Creating "fake" bus stop to remove Google Places central Collegetown location choice
-            let collegetownStop = BusStop(name: "Collegetown", lat: 42.442558, long: -76.485336)
-            busStopArray.append(collegetownStop)
-            return busStopArray
+                let collegetownStop = BusStop(name: "Collegetown", lat: 42.442558, long: -76.485336)
+                busStopArray.append(collegetownStop)
+                return busStopArray
+            }
         }
         return [BusStop]()
     }
@@ -261,7 +264,7 @@ class SearchTableViewManager {
                                                              localizedTitle: item.name,
                                                              localizedSubtitle: nil,
                                                              icon: UIApplicationShortcutIcon(type: .location),
-                                                             userInfo: placeInfo as? [String : NSSecureCoding])
+                                                             userInfo: placeInfo as? [String: NSSecureCoding])
                 shortcutItems.append(shortcutItem)
             }
             UIApplication.shared.shortcutItems = shortcutItems
