@@ -44,13 +44,12 @@ class HomeViewController: UIViewController {
     }
 
     let reachability = Reachability(hostname: Network.ipAddress)
-    var isBannerShown = false {
+
+    var banner: StatusBarNotificationBanner? {
         didSet {
             setNeedsStatusBarAppearanceUpdate()
         }
     }
-
-    var banner: StatusBarNotificationBanner?
 
     func tctSectionHeaderFont() -> UIFont? {
         return UIFont.systemFont(ofSize: 14)
@@ -114,8 +113,7 @@ class HomeViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(reachabilityChanged(note:)),
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)),
                                                name: .reachabilityChanged,
                                                object: reachability)
         do {
@@ -129,29 +127,26 @@ class HomeViewController: UIViewController {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return isBannerShown ? .lightContent : .default
+        return banner != nil ? .lightContent : .default
     }
 
-    @objc func reachabilityChanged(note: Notification) {
-        if let reachability = note.object as? Reachability {
+    @objc func reachabilityChanged(_ notification: Notification) {
+        if let reachability = notification.object as? Reachability {
+            
+            // Dismiss current banner, if any
+            banner?.dismiss()
+            banner = nil
+            
             switch reachability.connection {
             case .none:
-                if !isBannerShown {
-                    banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
-                    banner!.autoDismiss = false
-                    banner!.show(queuePosition: .front, on: navigationController)
-                    isBannerShown = true
-                }
+                banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
+                banner?.autoDismiss = false
+                banner?.show(queuePosition: .front, on: navigationController)
                 self.isNetworkDown = true
                 self.sectionIndexes = [:]
                 self.searchBar.isUserInteractionEnabled = false
                 self.sections = []
             case .cellular, .wifi:
-                if isBannerShown {
-                    banner?.dismiss()
-                    banner = nil
-                    isBannerShown = false
-                }
                 sections = createSections()
                 self.searchBar.isUserInteractionEnabled = true
             }
@@ -160,8 +155,12 @@ class HomeViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        // Takedown reachability
         reachability?.stopNotifier()
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+        // Remove banner
+        banner?.dismiss()
+        banner = nil
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -177,7 +176,6 @@ class HomeViewController: UIViewController {
         locationManager.requestWhenInUseAuthorization()
 
         StoreReviewHelper.checkAndAskForReview()
-
     }
 
     func createSections() -> [Section] {

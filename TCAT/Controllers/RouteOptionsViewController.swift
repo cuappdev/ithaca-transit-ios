@@ -50,7 +50,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     var searchFrom: Place?
     var searchTo: Place?
     var searchTime: Date?
-    var showRouteSearchingLoader: Bool = false
+    var showRouteSearchingLoader = false
 
     // MARK: View vars
     
@@ -68,20 +68,19 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK:  Data vars
 
     var routes: [Route] = []
-    var timers: [Int:Timer] = [:]
+    var timers: [Int : Timer] = [:]
 
     // MARK: Reachability vars
 
     let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
 
-    var banner: StatusBarNotificationBanner? = nil
-
-    var isBannerShown = false {
+    var banner: StatusBarNotificationBanner? {
         didSet {
             setNeedsStatusBarAppearanceUpdate()
         }
     }
-    var cellUserInteraction: Bool = true
+
+    var cellUserInteraction = true
     
     // MARK: Spacing vars
     
@@ -152,23 +151,19 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        takedownReachability()
-        if isBannerShown {
-            banner?.dismiss()
-            banner = nil
-            isBannerShown = false
-        }
-        
+        // Takedown reachability
+        reachability?.stopNotifier()
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+        // Remove banner
+        banner?.dismiss()
+        banner = nil
         // Deactivate and remove timers
-        for (_, timer) in timers {
-            timer.invalidate()
-        }
+        timers.values.forEach { $0.invalidate() }
         timers = [:]
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return isBannerShown ? .lightContent : .default
+        return banner != nil ? .lightContent : .default
     }
 
     // MARK: Route Selection view
@@ -493,20 +488,13 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             case .showError(bannerInfo: let bannerInfo, payload: let payload):
                 banner = StatusBarNotificationBanner(title: bannerInfo.title, style: bannerInfo.style)
                 banner?.autoDismiss = false
-                banner?.dismissOnTap = true
                 banner?.show(queuePosition: .front, on: navigationController)
-                isBannerShown = true
-                
                 Analytics.shared.log(payload)
                 
             case .hideBanner:
-                if isBannerShown {
-                    isBannerShown = false
-                    banner?.dismiss()
-                    banner = nil
-                }
+                banner?.dismiss()
                 mediumTapticGenerator.impactOccurred()
-                
+
             }
             
         }
@@ -755,7 +743,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK: Reachability
 
     private func setupReachability() {
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .reachabilityChanged, object: reachability)
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(notification:)),
+                                               name: .reachabilityChanged, object: reachability)
 
         do {
             try reachability?.startNotifier()
@@ -763,30 +752,23 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             print("\(fileName) \(#function): Could not start reachability notifier")
         }
     }
-
-    private func takedownReachability() {
-        reachability?.stopNotifier()
-        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
-    }
-
-    @objc private func reachabilityChanged(_ notification: Notification) {
-
-        let reachability = notification.object as! Reachability
-
-        switch reachability.connection {
+    
+    @objc func reachabilityChanged(notification: Notification) {
+        if let reachability = notification.object as? Reachability {
+            
+            // Dismiss current banner, if any
+            banner?.dismiss()
+            banner = nil
+            
+            switch reachability.connection {
             case .none:
                 banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
-                banner!.autoDismiss = false
-                banner!.show(queuePosition: .front, bannerPosition: .top, on: self.navigationController)
-                isBannerShown = true
+                banner?.autoDismiss = false
+                banner?.show(queuePosition: .front, bannerPosition: .top, on: navigationController)
                 setUserInteraction(to: false)
             case .cellular, .wifi:
-                if isBannerShown {
-                    banner?.dismiss()
-                    banner = nil
-                    isBannerShown = false
-                }
                 setUserInteraction(to: true)
+            }
         }
     }
 
