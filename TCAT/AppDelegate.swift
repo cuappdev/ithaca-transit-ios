@@ -117,7 +117,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             guard
                 let place = shortcutData["place"],
                 let destination = NSKeyedUnarchiver.unarchiveObject(with: place) as? Place
-            else { return }
+            else {
+                print("[AppDelegate] Unable to access shortcutData['place']")
+                return
+            }
             optionsVC.searchTo = destination
             if let navController = window?.rootViewController as? UINavigationController {
                 navController.pushViewController(optionsVC, animated: true)
