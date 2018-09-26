@@ -74,7 +74,7 @@ class SearchTableViewManager {
             var busStopArray = NSKeyedUnarchiver.unarchiveObject(with: allBusStops) as? [BusStop] {
             // Check if empty so that an empty array isn't returned
             if !busStopArray.isEmpty {
-            /// Creating "fake" bus stop to remove Google Places central Collegetown location choice
+                /// Creating "fake" bus stop to remove Google Places central Collegetown location choice
                 let collegetownStop = BusStop(name: "Collegetown", lat: 42.442558, long: -76.485336)
                 busStopArray.append(collegetownStop)
                 return busStopArray

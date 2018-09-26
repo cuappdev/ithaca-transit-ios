@@ -21,6 +21,8 @@ class AllStopsTableViewController: UITableViewController {
     var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
     var height: CGFloat?
     var currentChar: Character?
+    var showActivityIndicator = false
+    var activityIndicator: UIActivityIndicatorView!
 
     override func viewWillLayoutSubviews() {
         if let y = navigationController?.navigationBar.frame.maxY {
@@ -56,6 +58,7 @@ class AllStopsTableViewController: UITableViewController {
         // Set top of table view to align with scroll view
         tableView.contentOffset = .zero
 
+        setUpActivityIndicator()
     }
 
     // MARK: TableView DataSource
@@ -192,25 +195,49 @@ class AllStopsTableViewController: UITableViewController {
 // MARK: DZNEmptyDataSet 
 extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
+    func setUpActivityIndicator() {
+        activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
+        view.addSubview(activityIndicator!)
+        activityIndicator.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview()
+        }
+    }
+
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        if showActivityIndicator {
+            return nil
+        }
         return #imageLiteral(resourceName: "emptyPin")
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let title = "Couldn't get stops 😟"
+        if showActivityIndicator {
+            return nil
+        }
+        let title = "Couldn't Get Stops"
         let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
+        if showActivityIndicator {
+            return nil
+        }
         let title = "Retry"
         let attrs = [NSAttributedString.Key.foregroundColor: UIColor.buttonColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
-    
+
     func emptyDataSet(_ scrollView: UIScrollView!, didTap didTapButton: UIButton!) {
+        showActivityIndicator = true
+        tableView.reloadData()
+        setUpActivityIndicator()
+        activityIndicator.startAnimating()
+
         retryNetwork {() -> Void in
             self.setUpTableOnRetry()
+            self.activityIndicator.stopAnimating()
         }
     }
 
