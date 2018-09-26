@@ -58,17 +58,12 @@ class AllStopsTableViewController: UITableViewController {
 
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     // MARK: - Table view data source
 
     /// Retrieves the section indexes for the bus stops
     func sectionIndexesForBusStop() -> [String: [BusStop]] {
 
-        var sectionIndexDictionary: [String: [BusStop]] = [:]
+        var sectionIndexDictionary: [String : [BusStop]] = [:]
         var currBusStopArray: [BusStop] = []
 
         currentChar = allStops.first?.name.capitalized.first
@@ -110,7 +105,9 @@ class AllStopsTableViewController: UITableViewController {
     /// Retrieves the keys from the sectionIndexDictionary
     func sortedKeysForBusStops() -> [String]{
         // Don't include key '#'
-        sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
+        sortedKeys = Array(sectionIndexes.keys)
+            .sorted()
+            .filter { $0 != "#" }
         
         if !allStops.isEmpty {
             // Adding "#" to keys for bus stops that start with a number
@@ -201,7 +198,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource {
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let title = "Couldn't get stops 😟"
+        let title = "Couldn't Get Stops 😟"
         let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
