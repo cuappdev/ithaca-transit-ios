@@ -13,7 +13,6 @@ import MapKit
 import SwiftyJSON
 import NotificationBannerSwift
 import Pulley
-import SwiftRegister
 
 class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate {
     
@@ -36,7 +35,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     var busIndicators = [GMSMarker]()
     
     var banner: StatusBarNotificationBanner?
-    var isBannerShown: Bool = false
+    var isBannerShown = false {
+        didSet {
+            setNeedsStatusBarAppearanceUpdate()
+        }
+    }
 
     var route: Route!
     var directions: [Direction] = []
@@ -160,6 +163,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return isBannerShown ? .lightContent : .default
+    }
+    
     override func viewSafeAreaInsetsDidChange() {
         if #available(iOS 11.0, *) {
             let top = view.safeAreaInsets.top
@@ -230,7 +237,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             self.banner!.dismissOnTap = true
             self.banner!.show(queuePosition: .front, on: navigationController)
             self.isBannerShown = true
-            UIApplication.shared.statusBarStyle = .lightContent
         }
     }
     
@@ -239,7 +245,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         self.banner?.dismiss()
         self.isBannerShown = false
         self.banner = nil
-        UIApplication.shared.statusBarStyle = .default
     }
     
     // MARK: Location Manager Functions
@@ -296,6 +301,12 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             var results: [BusDataType] = []
             
             if result.busLocations.isEmpty {
+                // print("No Bus Locations")
+                // Reset banner in case transitioned from Error to Online - No Bus Locations
+                if self.isBannerShown {
+                    self.hideBanner()
+                }
+                
                 // Possibly add information about no tracking available.
             }
             
@@ -353,7 +364,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             
         }) { (error) in
             
-            print("RouteDetailVC getBusLocations Error:", error)
+            print("RouteDetailVC getBusLocations Error:", error.localizedDescription)
             self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
             
         } // network completion handler end

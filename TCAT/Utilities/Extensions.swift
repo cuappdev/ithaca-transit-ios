@@ -11,7 +11,6 @@ import MapKit
 import SwiftyJSON
 import CoreLocation
 import TRON
-import SwiftRegister
 
 let increaseTapTargetTag: Int = 1865
 
@@ -363,7 +362,7 @@ func presentShareSheet(from view: UIView, for route: Route, with image: UIImage?
     activityVC.completionWithItemsHandler = { (activity, completed, items, error) in
         let sharingMethod = activity?.rawValue.replacingOccurrences(of: "com.apple.UIKit.activity.", with: "") ?? "None"
         let payload = RouteSharedEventPayload(activityType: sharingMethod, didSelectAndCompleteShare: completed, error: error?.localizedDescription)
-        RegisterSession.shared?.log(payload)
+        Analytics.shared.log(payload)
     }
     
     UIApplication.shared.delegate?.window??.presentInApp(activityVC)
@@ -375,7 +374,7 @@ func presentShareSheet(from view: UIView, for route: Route, with image: UIImage?
  */
 func bold(pattern: String, in string: String) -> NSMutableAttributedString {
     let fontSize = UIFont.systemFontSize
-    let fontAttribute = [NSAttributedStringKey.font : UIFont.systemFont(ofSize: fontSize)]
+    let fontAttribute = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: fontSize)]
     let attributedString = NSMutableAttributedString(string: string, attributes: fontAttribute)
     return bold(pattern: pattern, in: attributedString)
 }
@@ -386,11 +385,11 @@ func bold(pattern: String, in attributedString: NSMutableAttributedString) -> NS
     let string = attributedString.string
     let newAttributedString = attributedString
     let font = attributedString.attributes(at: 0, effectiveRange: nil)
-    guard let fontSize = (font[NSAttributedStringKey.font] as? UIFont)?.pointSize else {
+    guard let fontSize = (font[NSAttributedString.Key.font] as? UIFont)?.pointSize else {
         return attributedString
     }
     
-    let boldFontAttribute = [NSAttributedStringKey.font : UIFont.boldSystemFont(ofSize: fontSize)]
+    let boldFontAttribute = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: fontSize)]
     
     do {
         let regex = try NSRegularExpression(pattern: pattern, options: [])

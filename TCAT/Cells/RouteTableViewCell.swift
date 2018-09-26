@@ -70,7 +70,7 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Init
     
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         departureTimeLabel = UILabel()
         arrowImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
         departureStackView = UIStackView(arrangedSubviews: [departureTimeLabel, arrowImageView])
@@ -113,7 +113,7 @@ class RouteTableViewCell: UITableViewCell {
 
     private func styleVerticalStackView() {
         verticalStackView.axis = .vertical
-        verticalStackView.layoutMargins = UIEdgeInsetsMake(topMargin, leftMargin, bottomMargin, rightMargin)
+        verticalStackView.layoutMargins = UIEdgeInsets.init(top: topMargin, left: leftMargin, bottom: bottomMargin, right: rightMargin)
         verticalStackView.isLayoutMarginsRelativeArrangement = true
 
         styleTimesStackView()

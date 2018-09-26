@@ -106,7 +106,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         tableView.frame.size = CGSize(width: main.width, height: main.height - summaryView.frame.height)
         tableView.bounces = false
         tableView.estimatedRowHeight = RouteDetailCellSize.smallHeight
-        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.register(SmallDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.smallDetailCellIdentifier)
         tableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.largeDetailCellIdentifier)
         tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: Constants.Cells.busStopCellIdentifier)
@@ -387,14 +387,14 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         
         cell.isExpanded = !cell.isExpanded
         
-        let transitionOptionsOne: UIViewAnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
+        let transitionOptionsOne: UIView.AnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
         UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsOne, animations: {
             cell.chevron.isHidden = true
         })
         
         cell.chevron.transform = cell.chevron.transform.rotated(by: CGFloat.pi)
         
-        let transitionOptionsTwo: UIViewAnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
+        let transitionOptionsTwo: UIView.AnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
         UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsTwo, animations: {
             cell.chevron.isHidden = false
         })

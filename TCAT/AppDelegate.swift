@@ -14,7 +14,7 @@ import SwiftyJSON
 import Fabric
 import Crashlytics
 import SafariServices
-import SwiftRegister
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -22,14 +22,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     let userDefaults = UserDefaults.standard
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
         
         // Set Up Register, Fabric / Crashlytics (RELEASE)
         #if !DEBUG
             Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
-            RegisterSession.startLogging()
         #endif
         
         // Set Up Google Services
@@ -39,7 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Log basic information
         let payload = AppLaunchedPayload()
-        RegisterSession.shared?.log(payload)
+        Analytics.shared.log(payload)
         
         JSONFileManager.shared.deleteAllJSONs()
         
@@ -77,7 +76,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : HomeViewController()
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
-        UIApplication.shared.statusBarStyle = showOnboarding ? .lightContent : .default
         
         // Initalize window without storyboard
         self.window = UIWindow(frame: UIScreen.main.bounds)
@@ -115,11 +113,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func handleShortcut(item: UIApplicationShortcutItem) {
         let optionsVC = RouteOptionsViewController()
-        if let shortcutData = item.userInfo as? [String: Data] {
-            guard let destination = NSKeyedUnarchiver.unarchiveObject(with: shortcutData["place"]!) as? Place
-                else {return}
+        if let shortcutData = item.userInfo as? [String : Data] {
+            guard
+                let place = shortcutData["place"],
+                let destination = NSKeyedUnarchiver.unarchiveObject(with: place) as? Place
+            else {
+                print("[AppDelegate] Unable to access shortcutData['place']")
+                return
+            }
             optionsVC.searchTo = destination
-            if let navController = window?.rootViewController as? UINavigationController{
+            if let navController = window?.rootViewController as? UINavigationController {
                 navController.pushViewController(optionsVC, animated: true)
             }
         }

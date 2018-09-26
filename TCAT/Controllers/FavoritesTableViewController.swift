@@ -9,7 +9,7 @@
 import UIKit
 import DZNEmptyDataSet
 
-class FavoritesTableViewController: UITableViewController, UISearchBarDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate  {
+class FavoritesTableViewController: UITableViewController {
 
     var fromOnboarding = false
     var timer: Timer?
@@ -22,35 +22,37 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate, 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         title = fromOnboarding ? "Add Favorites" : "Add Favorite"
-        let systemItem: UIBarButtonSystemItem = fromOnboarding ? .done : .cancel
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem, target: self, action: #selector(dismissVC))
+        let systemItem: UIBarButtonItem.SystemItem = fromOnboarding ? .done : .cancel
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem,
+                                                            target: self,
+                                                            action: #selector(dismissVC))
         navigationItem.rightBarButtonItem?.setTitleTextAttributes(
             CustomNavigationController.buttonTitleTextAttributes, for: .normal
         )
-        
+
         resultsSection = Section(type: .searchResults, items: [ItemType]())
-        
+
         tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Constants.Cells.searchResultsIdentifier)
         tableView.emptyDataSetSource = self
-        tableView.emptyDataSetDelegate = self
+        //tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
         tableView.reloadEmptyDataSet()
-        
+
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         searchBar.becomeFirstResponder()
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         searchBar.endEditing(true)
@@ -61,26 +63,27 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate, 
             let rootVC = HomeViewController()
             let desiredViewController = CustomNavigationController(rootViewController: rootVC)
 
-            let appDelegate = UIApplication.shared.delegate as! AppDelegate
-            let snapshot: UIView = appDelegate.window!.snapshotView(afterScreenUpdates: true)!
-            desiredViewController.view.addSubview(snapshot)
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+                let window = appDelegate.window,
+                let snapshot = window.snapshotView(afterScreenUpdates: true) {
+                    desiredViewController.view.addSubview(snapshot)
+                    
+                    appDelegate.window?.rootViewController = desiredViewController
+                    userDefaults.setValue(true, forKey: Constants.UserDefaults.onboardingShown)
 
-            appDelegate.window?.rootViewController = desiredViewController
-            userDefaults.setValue(true, forKey: Constants.UserDefaults.onboardingShown)
-
-            UIView.animate(withDuration: 0.5, animations: {
-                snapshot.layer.opacity = 0
-                snapshot.layer.transform = CATransform3DMakeScale(1.5, 1.5, 1.5)
-            }, completion: { _ in
-                snapshot.removeFromSuperview()
-            })
+                    UIView.animate(withDuration: 0.5, animations: {
+                        snapshot.layer.opacity = 0
+                        snapshot.layer.transform = CATransform3DMakeScale(1.5, 1.5, 1.5)
+                    }, completion: { _ in
+                        snapshot.removeFromSuperview()
+                    })
+                }
         } else {
             dismiss(animated: true)
         }
     }
 
     // MARK: - Table view data source
-
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -116,65 +119,75 @@ class FavoritesTableViewController: UITableViewController, UISearchBarDelegate, 
 
         switch item {
         case .busStop(let busStop):
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busIdentifier, for: indexPath) as! BusStopCell
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busIdentifier, for: indexPath) as? BusStopCell
             cell.textLabel?.text = busStop.name
         case .placeResult(let placeResult):
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.searchResultsIdentifier, for: indexPath) as! SearchResultsCell
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.searchResultsIdentifier, for: indexPath) as? SearchResultsCell
             cell.textLabel?.text = placeResult.name
             cell.detailTextLabel?.text = placeResult.detail
         default:
             return UITableViewCell()
         }
-        
+
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
         cell.layoutMargins = .zero
         cell.layoutSubviews()
         return cell
-        
+
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
+
         switch resultsSection.items[indexPath.row] {
         case .busStop(let busStop):
-            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, location: busStop, limit: 5, bottom: true)
+            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites,
+                                                      location: busStop,
+                                                      limit: 5,
+                                                      bottom: true)
         case .placeResult(let placeResult):
-            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, location: placeResult, limit: 5, bottom: true)
+            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites,
+                                                      location: placeResult,
+                                                      limit: 5,
+                                                      bottom: true)
         default:
             break
         }
         dismissVC()
     }
-    
+}
     // MARK: Empty Data Set
-    
+extension FavoritesTableViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
         return -80
     }
-    
+
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
         return #imageLiteral(resourceName: "search-large")
     }
-    
+
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let title = "Search for a destination"
-        let attrs = [NSAttributedStringKey.foregroundColor : UIColor.mediumGrayColor]
+        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
-    
+}
     // MARK: Search
-
+extension FavoritesTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
+        timer = Timer.scheduledTimer(timeInterval: 0.2,
+                                     target: self,
+                                     selector: #selector(getPlaces),
+                                     userInfo: ["searchText": searchText],
+                                     repeats: false)
     }
 
     /* Get Search Results */
     @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
-        if searchText.count > 0 {
+        if !searchText.isEmpty {
             Network.getGooglePlacesAutocompleteResults(searchText: searchText).perform(withSuccess: { responseJson in
                 self.resultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
                 self.tableView.contentOffset = .zero

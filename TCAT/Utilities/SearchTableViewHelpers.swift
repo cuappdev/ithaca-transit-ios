@@ -10,7 +10,6 @@ import Foundation
 import SwiftyJSON
 import DZNEmptyDataSet
 import Fuzzywuzzy_swift
-import SwiftRegister
 
 let userDefaults = UserDefaults.standard
 
@@ -48,7 +47,7 @@ extension SearchResultsTableViewController: DZNEmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let locationNotFound = "Location not found"
-        let attrs = [NSAttributedStringKey.foregroundColor: UIColor.mediumGrayColor]
+        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: locationNotFound, attributes: attrs)
     }
 }
@@ -131,18 +130,19 @@ class SearchTableViewManager {
 
     func retrieveRecentPlaces(for key: String) -> [ItemType] {
         if let storedPlaces = userDefaults.value(forKey: key) as? Data {
-            let places = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as! [Any]
-            var itemTypes: [ItemType] = []
-            for place in places {
-                if let busStop = place as? BusStop {
-                    itemTypes.append(.busStop(busStop))
-                }
-                if let searchResult = place as? PlaceResult {
-                    itemTypes.append(.placeResult(searchResult))
-                }
+            if let places = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any] {
+                var itemTypes: [ItemType] = []
+                for place in places {
+                    if let busStop = place as? BusStop {
+                        itemTypes.append(.busStop(busStop))
+                    }
+                    if let searchResult = place as? PlaceResult {
+                        itemTypes.append(.placeResult(searchResult))
+                    }
 
+                }
+                return itemTypes
             }
-            return itemTypes
         }
         return [ItemType]()
     }
@@ -184,14 +184,15 @@ class SearchTableViewManager {
 
     func insertPlace(for key: String, location: Any, limit: Int, bottom: Bool = false) {
         let placeItemTypes = retrieveRecentPlaces(for: key)
-        let convertedPlaces = placeItemTypes.map{ item -> Any in
+        let convertedPlaces = placeItemTypes.map { item -> Any in
             switch item {
             case .busStop(let busStop): return busStop
             case .placeResult(let placeResult): return placeResult
             default: return "this shouldn't ever fire"
             }
         }
-        let filteredPlaces = location is BusStop ? convertedPlaces.filter({ !areObjectsEqual(type: BusStop.self, a: location, b: $0)}) :
+        let filteredPlaces = location is BusStop ?
+            convertedPlaces.filter({ !areObjectsEqual(type: BusStop.self, a: location, b: $0)}) :
             convertedPlaces.filter({ !areObjectsEqual(type: PlaceResult.self, a: location, b: $0)})
 
         var updatedPlaces: [Any]!
@@ -217,7 +218,7 @@ class SearchTableViewManager {
 
         if key == Constants.UserDefaults.favorites {
             let payload = FavoriteAddedPayload(name: locationName)
-            RegisterSession.shared?.log(payload)
+            Analytics.shared.log(payload)
         }
 
     }
@@ -253,7 +254,11 @@ class SearchTableViewManager {
             for item in favorites {
                 let data = NSKeyedArchiver.archivedData(withRootObject: item)
                 let placeInfo: [AnyHashable: Any] = ["place": data]
-                let shortcutItem = UIApplicationShortcutItem(type: item.name, localizedTitle: item.name, localizedSubtitle: nil, icon: UIApplicationShortcutIcon(type: .location), userInfo: placeInfo)
+                let shortcutItem = UIApplicationShortcutItem(type: item.name,
+                                                             localizedTitle: item.name,
+                                                             localizedSubtitle: nil,
+                                                             icon: UIApplicationShortcutIcon(type: .location),
+                                                             userInfo: placeInfo as? [String : NSSecureCoding])
                 shortcutItems.append(shortcutItem)
             }
             UIApplication.shared.shortcutItems = shortcutItems

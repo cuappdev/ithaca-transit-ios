@@ -7,8 +7,7 @@
 //
 
 import UIKit
-import SafariServices
-import SwiftRegister
+import SafariServices 
 import MessageUI
 
 class InformationViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate {
@@ -47,7 +46,6 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         
         view.backgroundColor = .tableBackgroundColor
         navigationController?.navigationBar.tintColor = .primaryTextColor
-        UIApplication.shared.statusBarStyle = .default
         
         view.addSubview(hiddenLabel)
         view.addSubview(tcatImage)
@@ -123,8 +121,12 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         }
         
         let payload = AboutPageOpenedPayload()
-        RegisterSession.shared?.log(payload)
+        Analytics.shared.log(payload)
         
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .default
     }
     
     // MARK: Table View Data Source
@@ -220,19 +222,19 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
                 if let url = URL(string: path), UIApplication.shared.canOpenURL(url) {
                     self.open(path, inApp: false)
                 } else {
-                    self.open(UIApplicationOpenSettingsURLString)
+                    self.open(UIApplication.openSettingsURLString)
                 }
                 let payload = FeedbackErrorPayload(description: "Opened Email Settings")
-                RegisterSession.shared?.log(payload)
+                Analytics.shared.log(payload)
             }))
             alertController.addAction(UIAlertAction(title: "Copy Address to Clipboard", style: .default, handler: { (_) in
                 UIPasteboard.general.string = Constants.App.contactEmailAddress
                 let payload = FeedbackErrorPayload(description: "Copy Address to Clipboard")
-                RegisterSession.shared?.log(payload)
+                Analytics.shared.log(payload)
             }))
             alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (_) in
                 let payload = FeedbackErrorPayload(description: "Cancelled")
-                RegisterSession.shared?.log(payload)
+                Analytics.shared.log(payload)
             }))
             present(alertController, animated: true)
             
@@ -307,7 +309,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         let delay: TimeInterval = 0
         let damping: CGFloat = 0.6
         let velocity: CGFloat = 0
-        let options: UIViewAnimationOptions = .curveEaseInOut
+        let options: UIView.AnimationOptions = .curveEaseInOut
         
         UIView.animate(withDuration: duration, delay: delay, usingSpringWithDamping: damping,
                        initialSpringVelocity: velocity, options: options, animations: {
@@ -336,7 +338,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         }
         
         let payload = BusTappedEventPayload()
-        RegisterSession.shared?.log(payload)
+        Analytics.shared.log(payload)
         
     }
     
