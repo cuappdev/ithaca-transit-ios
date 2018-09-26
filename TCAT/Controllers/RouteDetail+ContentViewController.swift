@@ -233,9 +233,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     func showBanner(_ message: String, status: BannerStyle) {
         hideBanner()
         banner = StatusBarNotificationBanner(title: message, style: status)
-        banner!.autoDismiss = false
-        banner!.dismissOnTap = true
-        banner!.show(queuePosition: .front, on: navigationController)
+        banner?.autoDismiss = false
+        banner?.dismissOnTap = true
+        banner?.show(queuePosition: .front, on: navigationController)
     }
     
     /// Dismisses and removes banner; sets banner to nil for status bar changes.

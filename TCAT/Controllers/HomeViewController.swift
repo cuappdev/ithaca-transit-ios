@@ -140,8 +140,8 @@ class HomeViewController: UIViewController {
             switch reachability.connection {
             case .none:
                 banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
-                banner!.autoDismiss = false
-                banner!.show(queuePosition: .front, on: navigationController)
+                banner?.autoDismiss = false
+                banner?.show(queuePosition: .front, on: navigationController)
                 self.isNetworkDown = true
                 self.sectionIndexes = [:]
                 self.searchBar.isUserInteractionEnabled = false

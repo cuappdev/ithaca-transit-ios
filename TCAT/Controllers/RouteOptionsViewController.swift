@@ -50,7 +50,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     var searchFrom: Place?
     var searchTo: Place?
     var searchTime: Date?
-    var showRouteSearchingLoader: Bool = false
+    var showRouteSearchingLoader = false
 
     // MARK: View vars
     
@@ -68,7 +68,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     // MARK:  Data vars
 
     var routes: [Route] = []
-    var timers: [Int:Timer] = [:]
+    var timers: [Int : Timer] = [:]
 
     // MARK: Reachability vars
 
@@ -80,7 +80,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
     }
 
-    var cellUserInteraction: Bool = true
+    var cellUserInteraction = true
     
     // MARK: Spacing vars
     
@@ -158,7 +158,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         banner?.dismiss()
         banner = nil
         // Deactivate and remove timers
-        for (_, timer) in timers { timer.invalidate() }
+        timers.values.forEach { $0.invalidate() }
         timers = [:]
     }
     
@@ -763,8 +763,8 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
             switch reachability.connection {
             case .none:
                 banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
-                banner!.autoDismiss = false
-                banner!.show(queuePosition: .front, bannerPosition: .top, on: navigationController)
+                banner?.autoDismiss = false
+                banner?.show(queuePosition: .front, bannerPosition: .top, on: navigationController)
                 setUserInteraction(to: false)
             case .cellular, .wifi:
                 setUserInteraction(to: true)
