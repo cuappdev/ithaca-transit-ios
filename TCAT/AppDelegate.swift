@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
         
-        // Set Up Register, Fabric / Crashlytics (RELEASE)
+        // Set Up Analytics
         #if !DEBUG
             Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
         #endif
@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Check app version
         if let version = userDefaults.value(forKey: Constants.UserDefaults.version) as? String {
             if version != Constants.App.version {
-                // TODO: User has just updated the app.
+                // User has just updated the app.
             }
         }
         
