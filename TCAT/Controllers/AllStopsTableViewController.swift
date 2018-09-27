@@ -21,6 +21,7 @@ class AllStopsTableViewController: UITableViewController {
     var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
     var height: CGFloat?
     var currentChar: Character?
+    var activityIndicator: UIActivityIndicatorView?
 
     override func viewWillLayoutSubviews() {
         if let y = navigationController?.navigationBar.frame.maxY {
@@ -37,14 +38,15 @@ class AllStopsTableViewController: UITableViewController {
         sectionIndexes = sectionIndexesForBusStop()
 
         sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
+        
+        // Adding "#" to keys for bus stops that start with a number
         if !allStops.isEmpty {
-            // Adding "#" to keys for bus stops that start with a number
             sortedKeys.append("#")
         }
 
         title = "All Stops"
         tableView.sectionIndexColor = .primaryTextColor
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: "BusStop")
+        tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
         tableView.cellLayoutMarginsFollowReadableWidth = false
 
         if #available(iOS 11.0, *) {
@@ -56,16 +58,11 @@ class AllStopsTableViewController: UITableViewController {
         }
 
         tableView.emptyDataSetSource = self
-        //tableView.emptyDataSetDelegate = self
+        tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
         // Set top of table view to align with scroll view
         tableView.contentOffset = .zero
 
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     func sectionIndexesForBusStop() -> [String: [BusStop]] {
@@ -101,13 +98,38 @@ class AllStopsTableViewController: UITableViewController {
             }
         }
 
+        // Adding "#" to section indexes for bus stops that start with a number
         if !allStops.isEmpty {
-            // Adding "#" to section indexes for bus stops that start with a number
             sectionIndexDictionary["#"] = numberBusStops
         }
 
         return sectionIndexDictionary
 
+    }
+    
+    /// Retrieves the keys from the sectionIndexDictionary
+    func sortedKeysForBusStops() -> [String] {
+        // Don't include key '#'
+        sortedKeys = Array(sectionIndexes.keys)
+            .sorted()
+            .filter { $0 != "#" }
+        
+        if !allStops.isEmpty {
+            // Adding "#" to keys for bus stops that start with a number
+            sortedKeys.append("#")
+        }
+        
+        return sortedKeys
+    }
+    
+    func setUpTableOnRetry() {
+        // Retry getting data from user defaults
+        self.allStops = SearchTableViewManager.shared.getAllStops()
+        // Set up table information
+        self.sectionIndexes = self.sectionIndexesForBusStop()
+        self.sortedKeys = self.sortedKeysForBusStops()
+        
+        self.tableView.reloadData()
     }
 
     // MARK: - Table view data source
@@ -143,7 +165,7 @@ class AllStopsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "BusStop", for: indexPath) as! BusStopCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busIdentifier, for: indexPath) as! BusStopCell
         let section = sectionIndexes[sortedKeys[indexPath.section]]
         cell.textLabel?.text = section?[indexPath.row].name
         return cell
@@ -174,21 +196,32 @@ class AllStopsTableViewController: UITableViewController {
     }
 }
 
-// MARK: DZN EmptyDataSet Delegate
-extension AllStopsTableViewController: DZNEmptyDataSetSource {
+// MARK: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate
+extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
+    
+    func setUpActivityIndicator() {
+        activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
+        if let activityIndicator = activityIndicator {
+            view.addSubview(activityIndicator)
+            activityIndicator.snp.makeConstraints { (make) in
+                make.centerX.equalToSuperview()
+                make.centerY.equalToSuperview()
+            }
+        }
+    }
 
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
         return #imageLiteral(resourceName: "emptyPin")
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let title = "Couldn't get stops 😟"
+        let title = "Couldn't Get Stops"
         let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
-        if let _ = activityIndicator {
+        if activityIndicator != nil {
             return nil
         }
         let title = "Retry"
@@ -198,16 +231,12 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource {
 
     func emptyDataSet(_ scrollView: UIScrollView!, didTap didTapButton: UIButton!) {
         setUpActivityIndicator()
-        if let activityIndicator = activityIndicator {
-            tableView.reloadData()
-            activityIndicator.startAnimating()
-        }
+        tableView.reloadData()
+        activityIndicator?.startAnimating()
         retryNetwork { () -> Void in
-            self.setUpTableOnRetry()
-            if let activityIndicator = self.activityIndicator {
-                activityIndicator.stopAnimating()
-            }
+            self.activityIndicator?.stopAnimating()
             self.activityIndicator = nil
+            self.setUpTableOnRetry()
         }
     }
 
@@ -222,6 +251,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource {
             completion()
         }, failure: { error in
             print("AllStopsTableViewController.retryNetwork error:", error)
+            completion()
         })
     }
 
