@@ -9,7 +9,7 @@
 import UIKit
 import DZNEmptyDataSet
 
-protocol UnwindAllStopsTVCDelegate{
+protocol UnwindAllStopsTVCDelegate {
     func dismissSearchResultsVC(busStop: BusStop)
 }
 
@@ -38,7 +38,7 @@ class AllStopsTableViewController: UITableViewController {
         sectionIndexes = sectionIndexesForBusStop()
 
         sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
-        
+
         // Adding "#" to keys for bus stops that start with a number
         if !allStops.isEmpty {
             sortedKeys.append("#")
@@ -106,29 +106,29 @@ class AllStopsTableViewController: UITableViewController {
         return sectionIndexDictionary
 
     }
-    
+
     /// Retrieves the keys from the sectionIndexDictionary
     func sortedKeysForBusStops() -> [String] {
         // Don't include key '#'
         sortedKeys = Array(sectionIndexes.keys)
             .sorted()
             .filter { $0 != "#" }
-        
+
         if !allStops.isEmpty {
             // Adding "#" to keys for bus stops that start with a number
             sortedKeys.append("#")
         }
-        
+
         return sortedKeys
     }
-    
+
     func setUpTableOnRetry() {
         // Retry getting data from user defaults
         self.allStops = SearchTableViewManager.shared.getAllStops()
         // Set up table information
         self.sectionIndexes = self.sectionIndexesForBusStop()
         self.sortedKeys = self.sortedKeysForBusStops()
-        
+
         self.tableView.reloadData()
     }
 
@@ -198,7 +198,7 @@ class AllStopsTableViewController: UITableViewController {
 
 // MARK: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate
 extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-    
+
     func setUpActivityIndicator() {
         activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
         if let activityIndicator = activityIndicator {
@@ -211,10 +211,13 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
     }
 
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        return #imageLiteral(resourceName: "emptyPin")
+        return activityIndicator != nil ? nil : #imageLiteral(resourceName: "emptyPin")
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        if activityIndicator != nil {
+            return nil
+        }
         let title = "Couldn't Get Stops"
         let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
         return NSAttributedString(string: title, attributes: attrs)
