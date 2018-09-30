@@ -42,6 +42,7 @@ class HomeViewController: UIViewController {
             tableView.reloadData()
         }
     }
+    var activityIndicator: UIActivityIndicatorView?
 
     let reachability = Reachability(hostname: Network.ipAddress)
 
@@ -136,6 +137,9 @@ class HomeViewController: UIViewController {
             // Dismiss current banner, if any
             banner?.dismiss()
             banner = nil
+            // Dismiss current activity indicator, if any
+            activityIndicator?.stopAnimating()
+            activityIndicator = nil
             
             switch reachability.connection {
             case .none:
@@ -161,6 +165,9 @@ class HomeViewController: UIViewController {
         // Remove banner
         banner?.dismiss()
         banner = nil
+        // Remove activity indicator
+        activityIndicator?.stopAnimating()
+        activityIndicator = nil
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -479,13 +486,47 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     }
 
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        return isNetworkDown ? #imageLiteral(resourceName: "noInternet") : #imageLiteral(resourceName: "emptyPin")
+        if activityIndicator == nil {
+            return isNetworkDown ? #imageLiteral(resourceName: "noInternet") : #imageLiteral(resourceName: "emptyPin")
+        }
+        return nil
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
-        return NSAttributedString(string: title, attributes: attrs)
+        if activityIndicator == nil {
+            let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
+            let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
+            return NSAttributedString(string: title, attributes: attrs)
+        }
+        return nil
+    }
+    
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
+        if activityIndicator == nil {
+            let title = "Retry"
+            let attrs = [NSAttributedString.Key.foregroundColor: UIColor.tcatBlueColor]
+            return NSAttributedString(string: title, attributes: attrs)
+        }
+        return nil
+    }
+    
+    func setUpActivityIndicator() {
+        activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
+        if let activityIndicator = activityIndicator {
+            view.addSubview(activityIndicator)
+            activityIndicator.snp.makeConstraints { (make) in
+                make.centerX.equalToSuperview()
+                make.centerY.equalToSuperview()
+            }
+        }
+    }
+    
+    func emptyDataSet(_ scrollView: UIScrollView!, didTap didTapButton: UIButton!) {
+        setUpActivityIndicator()
+        if let activityIndicator = activityIndicator {
+            tableView.reloadData()
+            activityIndicator.startAnimating()
+        }
     }
 }
 
