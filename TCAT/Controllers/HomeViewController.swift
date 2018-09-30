@@ -151,6 +151,7 @@ class HomeViewController: UIViewController {
                 self.searchBar.isUserInteractionEnabled = false
                 self.sections = []
             case .cellular, .wifi:
+                self.isNetworkDown = false
                 sections = createSections()
                 self.searchBar.isUserInteractionEnabled = true
             }
@@ -526,6 +527,14 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
         if let activityIndicator = activityIndicator {
             tableView.reloadData()
             activityIndicator.startAnimating()
+            
+            // Have activity indicator time out after two seconds
+            let delay = 2
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)) {
+                activityIndicator.stopAnimating()
+                self.activityIndicator = nil
+                self.tableView.reloadData()
+            }
         }
     }
 }
