@@ -97,7 +97,6 @@ struct GooglePlaceTappedPayload: Payload {
     let name: String
 }
 
-// MARK: Important
 /// Log front end route calculation
 struct DestinationSearchedEventPayload: Payload {
     static let eventName: String = "Destination Searched"
@@ -105,7 +104,6 @@ struct DestinationSearchedEventPayload: Payload {
     
     let destination: String
     let requestUrl: String?
-    let stopType: String?
 }
 
 /// Log tap on route leading to Route Detail view
@@ -173,4 +171,11 @@ struct ScreenshotTakenPayload: Payload {
     let deviceInfo = DeviceInfo()
     
     let location: String
+}
+
+struct HomeScreenQuickActionUsedPayload: Payload {
+    static let eventName: String = "Home Screen Quick Action Used"
+    let deviceInfo = DeviceInfo()
+    
+    let name: String
 }

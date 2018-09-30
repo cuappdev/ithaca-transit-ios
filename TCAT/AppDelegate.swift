@@ -125,6 +125,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if let navController = window?.rootViewController as? UINavigationController {
                 navController.pushViewController(optionsVC, animated: true)
             }
+            let payload = HomeScreenQuickActionUsedPayload(name: destination.name)
+            Analytics.shared.log(payload)
         }
     }
 
