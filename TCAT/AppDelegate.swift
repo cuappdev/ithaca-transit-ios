@@ -14,6 +14,7 @@ import SwiftyJSON
 import Fabric
 import Crashlytics
 import SafariServices
+import WhatsNewKit
 
 
 @UIApplicationMain
@@ -41,13 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Analytics.shared.log(payload)
         
         JSONFileManager.shared.deleteAllJSONs()
-        
-        // Check app version
-        if let version = userDefaults.value(forKey: Constants.UserDefaults.version) as? String {
-            if version != Constants.App.version {
-                // TODO: User has just updated the app.
-            }
-        }
         
         // Set version to be current version
         userDefaults.set(Constants.App.version, forKey: Constants.UserDefaults.version)
@@ -81,6 +75,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
+        
+        // Check app version
+        if let version = userDefaults.value(forKey: Constants.UserDefaults.version) as? String {
+            if version != Constants.App.version {
+                showWhatsNew(items: [])
+            }
+        }
         
         return true
     }
@@ -147,7 +148,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         })
     }
     
+    func showWhatsNew(items: [WhatsNew.Item]) {
+        let whatsNew = WhatsNew(
+            // The Title
+            title: "WhatsNewKit",
+            // The features you want to showcase
+            items: items
+        )
+        // Initialize WhatsNewViewController with WhatsNew
+        let whatsNewViewController = WhatsNewViewController(
+            whatsNew: whatsNew
+        )
+        
+        // Present it 🤩
+        UIApplication.shared.keyWindow?.presentInApp(whatsNewViewController)
+    }
 }
+    
+    
+    
 
 extension UIWindow {
     

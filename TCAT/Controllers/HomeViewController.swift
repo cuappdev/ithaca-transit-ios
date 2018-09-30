@@ -34,6 +34,7 @@ class HomeViewController: UIViewController {
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
+    var whatsNewView: WhatsNewHeaderView!
     var recentLocations: [ItemType] = []
     var favorites: [ItemType] = []
     var isKeyboardVisible = false
@@ -63,6 +64,8 @@ class HomeViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 
+        self.automaticallyAdjustsScrollViewInsets = false
+        
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
         navigationController?.navigationBar.barTintColor = .white
@@ -75,6 +78,8 @@ class HomeViewController: UIViewController {
         tableView.dataSource = self
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
+        
+        createWhatsNewView()
 
         tableView.separatorColor = .lineDotColor
         tableView.keyboardDismissMode = .onDrag
@@ -199,6 +204,22 @@ class HomeViewController: UIViewController {
         let favoritesTVC = FavoritesTableViewController()
         let navController = CustomNavigationController(rootViewController: favoritesTVC)
         present(navController, animated: true, completion: nil)
+    }
+
+    func createWhatsNewView() {
+        whatsNewView = WhatsNewHeaderView()
+        tableView.tableHeaderView = whatsNewView
+        whatsNewView.whatsNewDelegate = self
+        whatsNewView.layoutIfNeeded()
+        whatsNewView.snp.makeConstraints { (make) in
+            make.top.equalTo(tableView.snp.top)
+            make.leading.equalTo(tableView.snp.leading)
+            make.centerX.equalTo(tableView.snp.centerX)
+            make.height.equalTo(whatsNewView.backgroundView.frame.height-10)
+        }
+        print(whatsNewView.backgroundView.frame.height)
+        tableView.tableHeaderView = whatsNewView
+        tableView.contentOffset = .zero
     }
 
     /* Keyboard Functions */
@@ -504,6 +525,23 @@ extension HomeViewController: AddFavoritesDelegate {
             alertController.addAction(done)
             present(alertController, animated: true, completion: nil)
         }
+    }
+}
+
+extension HomeViewController: WhatsNewDelegate {
+    func okButtonPressed() {
+        UIView.animate(withDuration: 2) {
+            for view in self.whatsNewView.subviews {
+                view.alpha = 0
+            }
+        }
+        tableView.tableHeaderView = nil
+        tableView.contentOffset = .zero
+        view.layoutIfNeeded()
+    }
+    
+    func cardPressed() {
+        print("Card Pressed")
     }
 }
 
