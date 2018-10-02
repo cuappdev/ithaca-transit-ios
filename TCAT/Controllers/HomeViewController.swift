@@ -133,14 +133,14 @@ class HomeViewController: UIViewController {
 
     @objc func reachabilityChanged(_ notification: Notification) {
         if let reachability = notification.object as? Reachability {
-            
+
             // Dismiss current banner, if any
             banner?.dismiss()
             banner = nil
             // Dismiss current activity indicator, if any
             activityIndicator?.stopAnimating()
             activityIndicator = nil
-            
+
             switch reachability.connection {
             case .none:
                 banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
@@ -501,7 +501,7 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
         }
         return nil
     }
-    
+
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
         if activityIndicator == nil {
             let title = "Retry"
@@ -510,7 +510,7 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
         }
         return nil
     }
-    
+
     func setUpActivityIndicator() {
         activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
         if let activityIndicator = activityIndicator {
@@ -521,16 +521,21 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
             }
         }
     }
-    
+
     func emptyDataSet(_ scrollView: UIScrollView!, didTap didTapButton: UIButton!) {
         setUpActivityIndicator()
         if let activityIndicator = activityIndicator {
             tableView.reloadData()
             activityIndicator.startAnimating()
-            
-            // Have activity indicator time out after two seconds
-            let delay = 2
+
+            // Have activity indicator time out after one second
+            let delay = 1
             DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)) {
+                // if the empty state is the "Location Not Found" state, clear the text in the search bar
+                if !self.isNetworkDown {
+                    self.searchBar.text = nil
+                    self.searchBar.placeholder = Constants.Phrases.searchPlaceholder
+                }
                 activityIndicator.stopAnimating()
                 self.activityIndicator = nil
                 self.tableView.reloadData()
@@ -556,6 +561,6 @@ extension HomeViewController: AddFavoritesDelegate {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }
