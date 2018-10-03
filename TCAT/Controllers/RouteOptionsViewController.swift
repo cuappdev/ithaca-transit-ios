@@ -378,7 +378,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                 
                 Network.getRoutes(startCoord: startCoord, endCoord: endCoord, endPlaceName: searchFrom.name, time: time, type: self.searchTimeType) { request in
                     let requestUrl = Network.getRequestUrl(startCoord: startCoord, endCoord: endCoord, destinationName: searchTo.name, time: time, type: self.searchTimeType)
-                    self.processRequest(request: request, requestUrl: requestUrl, endPlace: searchFrom)
+                    self.processRequest(request: request, requestUrl: requestUrl, endPlace: searchTo)
                 }
                 
             }
@@ -426,9 +426,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
                         }
         )
         
-        let payload = DestinationSearchedEventPayload(destination: endPlace.name,
-                                                      requestUrl: requestUrl,
-                                                      stopType: nil)
+        let payload = DestinationSearchedEventPayload(destination: endPlace.name, requestUrl: requestUrl)
         Analytics.shared.log(payload)
     }
     

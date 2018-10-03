@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
         
-        // Set Up Register, Fabric / Crashlytics (RELEASE)
+        // Set Up Analytics
         #if !DEBUG
             Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
         #endif
@@ -43,6 +43,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         JSONFileManager.shared.deleteAllJSONs()
         
+        // Check app version
+        if let version = userDefaults.value(forKey: Constants.UserDefaults.version) as? String {
+            if version != Constants.App.version {
+                // User has just updated the app.
+            }
+        }
+
         // Set version to be current version
         userDefaults.set(Constants.App.version, forKey: Constants.UserDefaults.version)
         
@@ -129,6 +136,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if let navController = window?.rootViewController as? UINavigationController {
                 navController.pushViewController(optionsVC, animated: true)
             }
+            let payload = HomeScreenQuickActionUsedPayload(name: destination.name)
+            Analytics.shared.log(payload)
         }
     }
 
