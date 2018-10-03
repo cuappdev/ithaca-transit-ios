@@ -79,8 +79,7 @@ class HomeViewController: UIViewController {
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
         
-        createWhatsNewView()
-
+        
         tableView.separatorColor = .lineDotColor
         tableView.keyboardDismissMode = .onDrag
         tableView.tableFooterView = UIView()
@@ -95,6 +94,18 @@ class HomeViewController: UIViewController {
             make.leading.trailing.bottom.equalToSuperview()
             make.top.equalTo((navigationController?.navigationBar.bounds.maxY)!)
         }
+        
+        if let whatsNewDismissed = userDefaults.value(forKey: Constants.UserDefaults.whatsNewDismissed) as? Bool {
+            if !whatsNewDismissed {
+                if #available(iOS 11.0, *) {
+                    tableView.contentInsetAdjustmentBehavior = .never
+                } else {
+                    automaticallyAdjustsScrollViewInsets = false
+                }
+                createWhatsNewView()
+            }
+        }
+        
 
         searchBar = UISearchBar()
         searchBar.placeholder = Constants.Phrases.searchPlaceholder
@@ -207,19 +218,14 @@ class HomeViewController: UIViewController {
     }
 
     func createWhatsNewView() {
-        whatsNewView = WhatsNewHeaderView()
+        whatsNewView = WhatsNewHeaderView(frame: .zero)
+        whatsNewView.layoutIfNeeded()
+        let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: whatsNewView.backgroundView.frame.height+16)
+        whatsNewView.frame = frame
         tableView.tableHeaderView = whatsNewView
         whatsNewView.whatsNewDelegate = self
-        whatsNewView.layoutIfNeeded()
-        whatsNewView.snp.makeConstraints { (make) in
-            make.top.equalTo(tableView.snp.top)
-            make.leading.equalTo(tableView.snp.leading)
-            make.centerX.equalTo(tableView.snp.centerX)
-            make.height.equalTo(whatsNewView.backgroundView.frame.height-10)
-        }
-        print(whatsNewView.backgroundView.frame.height)
-        tableView.tableHeaderView = whatsNewView
-        tableView.contentOffset = .zero
+        tableView.contentInset = UIEdgeInsets(top: 32, left: 0, bottom: 0, right: 0)
+        tableView.contentOffset = CGPoint(x: 0, y: -32)
     }
 
     /* Keyboard Functions */
@@ -233,8 +239,10 @@ class HomeViewController: UIViewController {
 
     /* ScrollView Delegate */
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
-            cancelButton.isEnabled = true
+        if let searchBar = searchBar {
+            if let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
+                cancelButton.isEnabled = true
+            }
         }
     }
 
@@ -530,14 +538,38 @@ extension HomeViewController: AddFavoritesDelegate {
 
 extension HomeViewController: WhatsNewDelegate {
     func okButtonPressed() {
-        UIView.animate(withDuration: 2) {
+        userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
+        let lastRowIndex = IndexPath(row: 0, section: sections.count - 1)
+        let lastRowFrame = tableView.rectForRow(at: lastRowIndex)
+        tableView.contentInset = UIEdgeInsets(top: tableView.contentInset.top,
+                                              left: tableView.contentInset.left,
+                                              bottom: tableView.frame.height - lastRowFrame.height - lastRowFrame.origin.y + whatsNewView.backgroundView.frame.height - 16,
+                                              right: tableView.contentInset.right)
+        let favoritesIndex = IndexPath(row: 0, section: 0)
+        UIView.animate(withDuration: 0.5, animations: {
+            self.tableView.scrollToRow(at: favoritesIndex, at: .top, animated: false)
             for view in self.whatsNewView.subviews {
-                view.alpha = 0
+                view.snp.updateConstraints({ (make) in
+                    make.height.equalTo(0)
+                    make.width.equalTo(0)
+                })
+                for subview in view.subviews {
+                    if let label = subview as? UILabel {
+                        label.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+                    }
+                    if let button = subview as? UIButton {
+                        button.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+                    }
+                    
+                }
+            }
+            self.whatsNewView.layoutIfNeeded()
+        }) { (completed) in
+            if completed {
+                self.tableView.tableHeaderView = nil
+                self.tableView.contentInset = .zero
             }
         }
-        tableView.tableHeaderView = nil
-        tableView.contentOffset = .zero
-        view.layoutIfNeeded()
     }
     
     func cardPressed() {

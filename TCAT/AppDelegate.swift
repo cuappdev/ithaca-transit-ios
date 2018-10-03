@@ -56,6 +56,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if userDefaults.value(forKey: Constants.UserDefaults.favorites) == nil {
             userDefaults.set([Any](), forKey: Constants.UserDefaults.favorites)
         }
+        if userDefaults.value(forKey: Constants.UserDefaults.whatsNewDismissed) == nil {
+            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
+        }
         
         // Track number of app opens for Store Review prompt
         StoreReviewHelper.incrementAppOpenedCount()

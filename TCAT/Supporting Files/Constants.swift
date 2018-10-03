@@ -86,6 +86,7 @@ struct Constants {
         static let appLaunchCount = "appLaunchCount"
         static let onboardingShown = "onboardingShown"
         static let showLocationAuthReminder = "locationAuthReminder"
+        static let whatsNewDismissed = "whatsNewDismissed"
         
         static let recentSearch = "recentSearch"
         static let allBusStops = "allBusStops"

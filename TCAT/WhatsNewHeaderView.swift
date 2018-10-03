@@ -24,7 +24,7 @@ class WhatsNewHeaderView: UIView {
     var backgroundView: UIView!
     
     override init(frame: CGRect) {
-        super.init(frame: .zero)
+        super.init(frame: frame)
         createBackgroundView()
         createUpdateDescription()
         createWhatsNewHeader()
@@ -35,6 +35,7 @@ class WhatsNewHeaderView: UIView {
     
     func createBackgroundView() {
         backgroundView = UIView()
+        backgroundView.tag = 123
         backgroundView.backgroundColor = .white
         backgroundView.layer.cornerRadius = 14
         backgroundView.clipsToBounds = true
@@ -93,38 +94,42 @@ class WhatsNewHeaderView: UIView {
     override func updateConstraints() {
         super.updateConstraints()
         backgroundView.snp.makeConstraints { (make) in
-            make.top.equalTo(snp.top).offset(16)
-            make.leading.equalTo(snp.leading).offset(16)
-            make.trailing.equalTo(snp.trailing).offset(-16)
-            make.height.equalTo(160)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(UIScreen.main.bounds.width - 32)
+            make.height.equalTo(150)
+            make.bottom.equalTo(snp.bottom)
         }
         
         whatsNewHeader.snp.makeConstraints { (make) in
-            make.top.equalToSuperview().offset(16)
             make.centerX.equalToSuperview()
             make.height.equalTo(whatsNewHeader.intrinsicContentSize.height)
             make.width.equalTo(whatsNewHeader.intrinsicContentSize.width)
+            make.bottom.equalTo(updateTitle.snp.top).offset(-8)
         }
         
         updateTitle.snp.makeConstraints { (make) in
-            make.top.equalTo(whatsNewHeader.snp.bottom).offset(8)
             make.centerX.equalToSuperview()
             make.height.equalTo(updateTitle.intrinsicContentSize.height)
             make.width.equalTo(updateTitle.intrinsicContentSize.width)
+            make.bottom.equalTo(updateDescription.snp.top).offset(-6)
         }
         
         updateDescription.snp.makeConstraints { (make) in
-            make.top.equalTo(updateTitle.snp.bottom)
+            make.bottom.equalTo(dismissButton.snp.top).offset(-12)
             make.centerX.equalToSuperview()
-            make.height.equalTo(updateDescription.intrinsicContentSize.height * 2.5)
+            if let text = updateDescription.text {
+                make.height.equalTo(text.heightWithConstrainedWidth(width: 300, font: updateDescription.font))
+            } else {
+                make.height.equalTo(0)
+            }
+            
             make.width.equalTo(300)
         }
         dismissButton.snp.makeConstraints { (make) in
-            make.top.equalTo(updateDescription.snp.bottom).offset(12)
             make.centerX.equalToSuperview()
             make.width.equalTo(90)
             make.height.equalTo(dismissButton.intrinsicContentSize.height)
-            print(dismissButton.intrinsicContentSize.height)
+            make.bottom.equalTo(snp.bottom).offset(-16)
         }
     }
     
@@ -140,4 +145,12 @@ class WhatsNewHeaderView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+}
+
+extension String {
+    func heightWithConstrainedWidth(width: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let boundingBox = self.boundingRect(with: constraintRect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [NSAttributedString.Key.font: font], context: nil)
+        return boundingBox.height
+    }
 }
