@@ -35,7 +35,6 @@ class WhatsNewHeaderView: UIView {
     
     func createBackgroundView() {
         backgroundView = UIView()
-        backgroundView.tag = 123
         backgroundView.backgroundColor = .white
         backgroundView.layer.cornerRadius = 14
         backgroundView.clipsToBounds = true

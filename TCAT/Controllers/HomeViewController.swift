@@ -64,8 +64,6 @@ class HomeViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 
-        self.automaticallyAdjustsScrollViewInsets = false
-        
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
         navigationController?.navigationBar.barTintColor = .white
@@ -78,8 +76,7 @@ class HomeViewController: UIViewController {
         tableView.dataSource = self
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
-        
-        
+
         tableView.separatorColor = .lineDotColor
         tableView.keyboardDismissMode = .onDrag
         tableView.tableFooterView = UIView()
@@ -94,7 +91,7 @@ class HomeViewController: UIViewController {
             make.leading.trailing.bottom.equalToSuperview()
             make.top.equalTo((navigationController?.navigationBar.bounds.maxY)!)
         }
-        
+
         if let whatsNewDismissed = userDefaults.value(forKey: Constants.UserDefaults.whatsNewDismissed) as? Bool {
             if !whatsNewDismissed {
                 if #available(iOS 11.0, *) {
@@ -105,7 +102,6 @@ class HomeViewController: UIViewController {
                 createWhatsNewView()
             }
         }
-        
 
         searchBar = UISearchBar()
         searchBar.placeholder = Constants.Phrases.searchPlaceholder
@@ -560,7 +556,7 @@ extension HomeViewController: WhatsNewDelegate {
                     if let button = subview as? UIButton {
                         button.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
                     }
-                    
+
                 }
             }
             self.whatsNewView.layoutIfNeeded()
@@ -571,13 +567,13 @@ extension HomeViewController: WhatsNewDelegate {
             }
         }
     }
-    
+
     func cardPressed() {
         print("Card Pressed")
     }
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }
