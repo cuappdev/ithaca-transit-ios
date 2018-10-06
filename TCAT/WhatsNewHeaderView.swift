@@ -39,7 +39,7 @@ class WhatsNewHeaderView: UIView {
         backgroundView.layer.cornerRadius = 14
         backgroundView.clipsToBounds = true
         backgroundView.layer.borderWidth = 1
-        backgroundView.layer.borderColor = UIColor(red: 233/255, green: 235/255, blue: 238/255, alpha: 1).cgColor
+        backgroundView.layer.borderColor = UIColor.tableBackgroundColor.cgColor
         
         let wholeCardTapped = UITapGestureRecognizer()
         wholeCardTapped.addTarget(self, action: #selector(cardTapped))
@@ -52,7 +52,7 @@ class WhatsNewHeaderView: UIView {
         whatsNewHeader = UILabel()
         whatsNewHeader.text = "NEW IN ITHACA TRANSIT"
         whatsNewHeader.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 10)
-        whatsNewHeader.textColor = UIColor(red: 8/255, green: 160/255, blue: 224/255, alpha: 1)
+        whatsNewHeader.textColor = UIColor.tcatBlueColor
         
         backgroundView.addSubview(whatsNewHeader)
     }
@@ -70,7 +70,7 @@ class WhatsNewHeaderView: UIView {
         updateDescription = UILabel()
         updateDescription.text = "Force Touch the app icon to search your favorites even faster."
         updateDescription.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)
-        updateDescription.textColor = UIColor(red: 144/255, green: 148/255, blue: 156/255, alpha: 1)
+        updateDescription.textColor = UIColor.mediumGrayColor
         updateDescription.numberOfLines = 0
         updateDescription.textAlignment = .center
         
@@ -82,9 +82,9 @@ class WhatsNewHeaderView: UIView {
         dismissButton.setTitle("OK", for: .normal)
         dismissButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Semibold, size: 14)
         dismissButton.addTarget(self, action: #selector(okButtonPressed), for: .touchUpInside)
-        dismissButton.backgroundColor = UIColor(red: 8/255, green: 160/255, blue: 224/255, alpha: 1)
+        dismissButton.backgroundColor = UIColor.tcatBlueColor
         dismissButton.setTitleColor(.white, for: .normal)
-        dismissButton.layer.cornerRadius = 14.5
+        dismissButton.layer.cornerRadius = dismissButton.intrinsicContentSize.height/2
         dismissButton.clipsToBounds = true
         
         backgroundView.addSubview(dismissButton)
@@ -144,12 +144,4 @@ class WhatsNewHeaderView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-}
-
-extension String {
-    func heightWithConstrainedWidth(width: CGFloat, font: UIFont) -> CGFloat {
-        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
-        let boundingBox = self.boundingRect(with: constraintRect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [NSAttributedString.Key.font: font], context: nil)
-        return boundingBox.height
-    }
 }

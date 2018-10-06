@@ -257,6 +257,11 @@ extension String {
         return NSRange(location: from - startIndex.encodedOffset, length: to - from)
     }
     
+    func heightWithConstrainedWidth(width: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let boundingBox = self.boundingRect(with: constraintRect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [NSAttributedString.Key.font: font], context: nil)
+        return boundingBox.height
+    }
 }
 
 extension CLLocationCoordinate2D {

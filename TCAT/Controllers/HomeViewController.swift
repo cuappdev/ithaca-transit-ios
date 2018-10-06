@@ -92,15 +92,13 @@ class HomeViewController: UIViewController {
             make.top.equalTo((navigationController?.navigationBar.bounds.maxY)!)
         }
 
-        if let whatsNewDismissed = userDefaults.value(forKey: Constants.UserDefaults.whatsNewDismissed) as? Bool {
-            if !whatsNewDismissed {
-                if #available(iOS 11.0, *) {
-                    tableView.contentInsetAdjustmentBehavior = .never
-                } else {
-                    automaticallyAdjustsScrollViewInsets = false
-                }
-                createWhatsNewView()
+        if let whatsNewDismissed = userDefaults.value(forKey: Constants.UserDefaults.whatsNewDismissed) as? Bool, !whatsNewDismissed {
+            if #available(iOS 11.0, *) {
+                tableView.contentInsetAdjustmentBehavior = .never
+            } else {
+                automaticallyAdjustsScrollViewInsets = false
             }
+            createWhatsNewView()
         }
 
         searchBar = UISearchBar()
@@ -235,10 +233,8 @@ class HomeViewController: UIViewController {
 
     /* ScrollView Delegate */
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if let searchBar = searchBar {
-            if let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
-                cancelButton.isEnabled = true
-            }
+        if let searchBar = searchBar, let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
+            cancelButton.isEnabled = true
         }
     }
 

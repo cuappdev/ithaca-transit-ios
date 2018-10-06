@@ -22,6 +22,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
     let userDefaults = UserDefaults.standard
+    let userDataInits: [(key: String, defaultValue: Any)] = [
+        (key: Constants.UserDefaults.onboardingShown, defaultValue: false),
+        (key: Constants.UserDefaults.recentSearch, defaultValue: [Any]()),
+        (key: Constants.UserDefaults.favorites, defaultValue: [Any]()),
+        (key: Constants.UserDefaults.whatsNewDismissed, defaultValue: false)
+    ]
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Update shortcut items
@@ -49,22 +55,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 // User has just updated the app.
             }
         }
-
-        // Set version to be current version
-        userDefaults.set(Constants.App.version, forKey: Constants.UserDefaults.version)
         
-        // Initalize User Defaults
-        if userDefaults.value(forKey: Constants.UserDefaults.onboardingShown) == nil {
-            userDefaults.set(false, forKey: Constants.UserDefaults.onboardingShown)
-        }
-        if userDefaults.value(forKey: Constants.UserDefaults.recentSearch) == nil {
-            userDefaults.set([Any](), forKey: Constants.UserDefaults.recentSearch)
-        }
-        if userDefaults.value(forKey: Constants.UserDefaults.favorites) == nil {
-            userDefaults.set([Any](), forKey: Constants.UserDefaults.favorites)
-        }
-        if userDefaults.value(forKey: Constants.UserDefaults.whatsNewDismissed) == nil {
-            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
+        for (key, defaultValue) in userDataInits {
+            if userDefaults.value(forKey: key) == nil {
+                userDefaults.set(defaultValue, forKey: key)
+            }
         }
         
         // Track number of app opens for Store Review prompt
@@ -92,6 +87,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 showWhatsNew(items: [])
             }
         }
+        
+        // Set version to be current version
+        userDefaults.set(Constants.App.version, forKey: Constants.UserDefaults.version)
         
         return true
     }

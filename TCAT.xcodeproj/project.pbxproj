@@ -413,13 +413,13 @@
 		DD47EA501E50D77D009C68EB /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */,
 				BF6095261FD7091B0013E538 /* CustomNavigationController.swift */,
 				DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */,
 				50A19BAD1E4C214000AD6768 /* HomeViewController.swift */,
 				E337970C1FC1606D00BCB28F /* InformationViewController.swift */,
 				BFB86A06205C614C000794B2 /* OnboardingViewController.swift */,
 				BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */,
-				DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */,
 				DDB49C921E8857D000A99C35 /* RouteDetail+ContentViewController.swift */,
 				BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */,
 				DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */,

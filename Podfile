@@ -32,7 +32,7 @@ target 'TCAT' do
     pod 'Pulley', '~> 2.6'
     pod 'Presentation', :git=> 'https://github.com/mattbarker016/Presentation.git'
     pod 'SnapKit'
-    pod 'WhatsNewKit', '~> 1.0.0'
+    pod 'WhatsNewKit', '~> 1.1.2'
     
     # Other
     pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/AAAstorga/Fuzzywuzzy_swift.git'
