@@ -42,7 +42,7 @@ class HomeViewController: UIViewController {
             tableView.reloadData()
         }
     }
-    var activityIndicator: UIActivityIndicatorView?
+    var loadingIndicator: LoadingIndicator?
 
     let reachability = Reachability(hostname: Network.ipAddress)
 
@@ -137,9 +137,9 @@ class HomeViewController: UIViewController {
             // Dismiss current banner, if any
             banner?.dismiss()
             banner = nil
-            // Dismiss current activity indicator, if any
-            activityIndicator?.stopAnimating()
-            activityIndicator = nil
+            // Dismiss current loading indicator, if any
+            loadingIndicator?.removeFromSuperview()
+            loadingIndicator = nil
 
             switch reachability.connection {
             case .none:
@@ -167,8 +167,8 @@ class HomeViewController: UIViewController {
         banner?.dismiss()
         banner = nil
         // Remove activity indicator
-        activityIndicator?.stopAnimating()
-        activityIndicator = nil
+        loadingIndicator?.removeFromSuperview()
+        loadingIndicator = nil
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -482,53 +482,55 @@ extension HomeViewController: CLLocationManagerDelegate {
 
 // MARK: DZN Empty Data Set Source
 extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
         return -80
     }
 
-    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        if activityIndicator == nil {
-            return isNetworkDown ? #imageLiteral(resourceName: "noInternet") : #imageLiteral(resourceName: "emptyPin")
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        if loadingIndicator != nil {
+            return nil
         }
-        return nil
+        return isNetworkDown ? #imageLiteral(resourceName: "noInternet") : #imageLiteral(resourceName: "emptyPin")
     }
 
-    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        if activityIndicator == nil {
-            let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
-            let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
-            return NSAttributedString(string: title, attributes: attrs)
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        if loadingIndicator != nil {
+            return nil
         }
-        return nil
+        let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
+        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
+        return NSAttributedString(string: title, attributes: attrs)
     }
 
-    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
-        if activityIndicator == nil {
-            let title = "Retry"
-            let attrs = [NSAttributedString.Key.foregroundColor: UIColor.tcatBlueColor]
-            return NSAttributedString(string: title, attributes: attrs)
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        if loadingIndicator != nil {
+            return nil
         }
-        return nil
+        let title = "Retry"
+        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.tcatBlueColor]
+        return NSAttributedString(string: title, attributes: attrs)
     }
 
-    func setUpActivityIndicator() {
-        activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
-        if let activityIndicator = activityIndicator {
-            view.addSubview(activityIndicator)
-            activityIndicator.snp.makeConstraints { (make) in
+    func setUpLoadingIndicator() {
+        loadingIndicator = LoadingIndicator()
+        if let loadingIndicator = loadingIndicator {
+            view.addSubview(loadingIndicator)
+            print("added loading indicator")
+            loadingIndicator.snp.makeConstraints { (make) in
                 make.centerX.equalToSuperview()
                 make.centerY.equalToSuperview()
+                make.width.equalTo(40)
+                make.height.equalTo(40)
             }
         }
     }
 
     func emptyDataSet(_ scrollView: UIScrollView!, didTap didTapButton: UIButton!) {
-        setUpActivityIndicator()
-        if let activityIndicator = activityIndicator {
+        setUpLoadingIndicator()
+        if let loadingIndicator = loadingIndicator {
             tableView.reloadData()
-            activityIndicator.startAnimating()
 
-            // Have activity indicator time out after one second
+            // Have loading indicator time out after one second
             let delay = 1
             DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)) {
                 // if the empty state is the "Location Not Found" state, clear the text in the search bar
@@ -536,8 +538,8 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
                     self.searchBar.text = nil
                     self.searchBar.placeholder = Constants.Phrases.searchPlaceholder
                 }
-                activityIndicator.stopAnimating()
-                self.activityIndicator = nil
+                self.loadingIndicator?.removeFromSuperview()
+                self.loadingIndicator = nil
                 self.tableView.reloadData()
             }
         }
