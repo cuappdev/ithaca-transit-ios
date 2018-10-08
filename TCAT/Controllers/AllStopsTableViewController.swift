@@ -21,7 +21,7 @@ class AllStopsTableViewController: UITableViewController {
     var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
     var height: CGFloat?
     var currentChar: Character?
-    var activityIndicator: UIActivityIndicatorView?
+    var loadingIndicator: LoadingIndicator?
 
     override func viewWillLayoutSubviews() {
         if let y = navigationController?.navigationBar.frame.maxY {
@@ -191,23 +191,26 @@ class AllStopsTableViewController: UITableViewController {
 
 // MARK: DZNEmptyDataSet 
 extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-    func setUpActivityIndicator() {
-        activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
-        if let activityIndicator = activityIndicator {
-            view.addSubview(activityIndicator)
-            activityIndicator.snp.makeConstraints { (make) in
+    func setUpLoadingIndicator() {
+        loadingIndicator = LoadingIndicator()
+        if let loadingIndicator = loadingIndicator {
+            view.addSubview(loadingIndicator)
+            print("added loading indicator")
+            loadingIndicator.snp.makeConstraints { (make) in
                 make.centerX.equalToSuperview()
                 make.centerY.equalToSuperview()
+                make.width.equalTo(40)
+                make.height.equalTo(40)
             }
         }
     }
 
-    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        return activityIndicator != nil ? nil : #imageLiteral(resourceName: "emptyPin")
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        return loadingIndicator != nil ? nil : #imageLiteral(resourceName: "emptyPin")
     }
 
-    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        if let _ = activityIndicator {
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        if loadingIndicator != nil {
             return nil
         }
         let title = "Couldn't Get Stops"
@@ -215,8 +218,8 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
         return NSAttributedString(string: title, attributes: attrs)
     }
 
-    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
-        if let _ = activityIndicator {
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        if loadingIndicator != nil {
             return nil
         }
         let title = "Retry"
@@ -224,17 +227,13 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
         return NSAttributedString(string: title, attributes: attrs)
     }
 
-    func emptyDataSet(_ scrollView: UIScrollView!, didTap didTapButton: UIButton!) {
-        setUpActivityIndicator()
-        if let activityIndicator = activityIndicator {
-            tableView.reloadData()
-            activityIndicator.startAnimating()
-        }
+    func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
+        setUpLoadingIndicator()
+        tableView.reloadData()
         retryNetwork { () -> Void in
+            self.loadingIndicator?.removeFromSuperview()
+            self.loadingIndicator = nil
             self.setUpTableOnRetry()
-            if let activityIndicator = self.activityIndicator {
-                activityIndicator.stopAnimating()
-            }
         }
     }
 
@@ -249,6 +248,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             completion()
         }, failure: { error in
             print("AllStopsTableViewController.retryNetwork error:", error)
+            completion()
         })
     }
 }
