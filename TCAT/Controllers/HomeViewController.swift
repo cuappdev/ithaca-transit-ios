@@ -92,15 +92,6 @@ class HomeViewController: UIViewController {
             make.top.equalTo((navigationController?.navigationBar.bounds.maxY)!)
         }
 
-        if let whatsNewDismissed = userDefaults.value(forKey: Constants.UserDefaults.whatsNewDismissed) as? Bool, !whatsNewDismissed {
-            if #available(iOS 11.0, *) {
-                tableView.contentInsetAdjustmentBehavior = .never
-            } else {
-                automaticallyAdjustsScrollViewInsets = false
-            }
-            createWhatsNewView()
-        }
-
         searchBar = UISearchBar()
         searchBar.placeholder = Constants.Phrases.searchPlaceholder
         searchBar.delegate = self
@@ -118,7 +109,8 @@ class HomeViewController: UIViewController {
             make.width.equalTo(30)
             make.height.equalTo(38)
         }
-
+        
+        createWhatsNewView()
     }
 
     override func viewDidLayoutSubviews() {
@@ -212,14 +204,18 @@ class HomeViewController: UIViewController {
     }
 
     func createWhatsNewView() {
-        whatsNewView = WhatsNewHeaderView(frame: .zero)
-        whatsNewView.layoutIfNeeded()
-        let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: whatsNewView.backgroundView.frame.height+16)
-        whatsNewView.frame = frame
-        tableView.tableHeaderView = whatsNewView
-        whatsNewView.whatsNewDelegate = self
-        tableView.contentInset = UIEdgeInsets(top: 32, left: 0, bottom: 0, right: 0)
-        tableView.contentOffset = CGPoint(x: 0, y: -32)
+        whatsNewView = WhatsNewHeaderView(updateName: "App Shortcuts for Favorites",
+                                          description: "Force Touch the app icon to search your favorites even faster.")
+        let containerView = UIView()
+        containerView.addSubview(whatsNewView)
+        whatsNewView.snp.makeConstraints { (make) in
+            let padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+            make.edges.equalToSuperview().inset(padding)
+        }
+        tableView.tableHeaderView = containerView
+        containerView.snp.makeConstraints { (make) in
+            make.top.centerX.width.equalToSuperview()
+        }
     }
 
     /* Keyboard Functions */
