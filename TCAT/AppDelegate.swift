@@ -160,7 +160,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func showWhatsNew(items: [WhatsNew.Item]) {
         let whatsNew = WhatsNew(
-            // The Title
             title: "WhatsNewKit",
             // The features you want to showcase
             items: items

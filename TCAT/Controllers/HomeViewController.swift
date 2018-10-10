@@ -89,7 +89,13 @@ class HomeViewController: UIViewController {
 
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
-            make.top.equalTo((navigationController?.navigationBar.bounds.maxY)!)
+            
+            if #available(iOS 11.0, *) {
+                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            } else {
+                make.top.equalToSuperview().offset(view.layoutMargins.top)
+            }
+            
         }
 
         searchBar = UISearchBar()
@@ -206,7 +212,9 @@ class HomeViewController: UIViewController {
     func createWhatsNewView() {
         whatsNewView = WhatsNewHeaderView(updateName: "App Shortcuts for Favorites",
                                           description: "Force Touch the app icon to search your favorites even faster.")
+        whatsNewView.whatsNewDelegate = self
         let containerView = UIView()
+        containerView.backgroundColor = UIColor.tableBackgroundColor
         containerView.addSubview(whatsNewView)
         whatsNewView.snp.makeConstraints { (make) in
             let padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
@@ -510,7 +518,22 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
 // MARK: AddFavorites Delegate
 extension HomeViewController: AddFavoritesDelegate {
+    
     func displayFavoritesTVC() {
+        // TABLEVIEW attributes before it fucks up
+        print(tableView.tableHeaderView)
+        print(tableView.contentInset)
+        print(tableView.contentOffset)
+        print(tableView.frame)
+        
+        tableView.tableHeaderView = nil
+        
+        print(tableView.tableHeaderView)
+        print(tableView.contentInset)
+        print(tableView.contentOffset)
+        print(tableView.frame)
+        
+        // TABLEVIEW attributes after it fucks up
         if favorites.count < 5 {
             presentFavoritesTVC()
         } else {
@@ -524,40 +547,43 @@ extension HomeViewController: AddFavoritesDelegate {
     }
 }
 
+// MARK: WhatsNew Delegate
 extension HomeViewController: WhatsNewDelegate {
+    
     func okButtonPressed() {
         userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
-        let lastRowIndex = IndexPath(row: 0, section: sections.count - 1)
-        let lastRowFrame = tableView.rectForRow(at: lastRowIndex)
-        tableView.contentInset = UIEdgeInsets(top: tableView.contentInset.top,
-                                              left: tableView.contentInset.left,
-                                              bottom: tableView.frame.height - lastRowFrame.height - lastRowFrame.origin.y + whatsNewView.backgroundView.frame.height - 16,
-                                              right: tableView.contentInset.right)
-        let favoritesIndex = IndexPath(row: 0, section: 0)
-        UIView.animate(withDuration: 0.5, animations: {
-            self.tableView.scrollToRow(at: favoritesIndex, at: .top, animated: false)
-            for view in self.whatsNewView.subviews {
-                view.snp.updateConstraints({ (make) in
-                    make.height.equalTo(0)
-                    make.width.equalTo(0)
-                })
-                for subview in view.subviews {
-                    if let label = subview as? UILabel {
-                        label.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-                    }
-                    if let button = subview as? UIButton {
-                        button.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-                    }
-
-                }
-            }
-            self.whatsNewView.layoutIfNeeded()
-        }) { (completed) in
-            if completed {
-                self.tableView.tableHeaderView = nil
-                self.tableView.contentInset = .zero
-            }
-        }
+        tableView.tableHeaderView = nil
+//        let lastRowIndex = IndexPath(row: 0, section: sections.count - 1)
+//        let lastRowFrame = tableView.rectForRow(at: lastRowIndex)
+//        tableView.contentInset = UIEdgeInsets(top: tableView.contentInset.top,
+//                                              left: tableView.contentInset.left,
+//                                              bottom: tableView.frame.height - lastRowFrame.height - lastRowFrame.origin.y + whatsNewView.frame.height - 16,
+//                                              right: tableView.contentInset.right)
+//        let favoritesIndex = IndexPath(row: 0, section: 0)
+//        UIView.animate(withDuration: 0.5, animations: {
+//            self.tableView.scrollToRow(at: favoritesIndex, at: .top, animated: false)
+//            for view in self.whatsNewView.subviews {
+//                view.snp.updateConstraints{ (make) in
+//                    make.height.equalTo(0)
+//                    make.width.equalTo(0)
+//                }
+//                for subview in view.subviews {
+//                    if let label = subview as? UILabel {
+//                        label.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+//                    }
+//                    if let button = subview as? UIButton {
+//                        button.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+//                    }
+//
+//                }
+//            }
+//            self.whatsNewView.layoutIfNeeded()
+//        }) { (completed) in
+//            if completed {
+//                self.tableView.tableHeaderView = nil
+//                self.tableView.contentInset = .zero
+//            }
+//        }
     }
 
     func cardPressed() {
