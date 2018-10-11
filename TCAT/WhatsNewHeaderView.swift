@@ -22,6 +22,7 @@ class WhatsNewHeaderView: UIView {
     var updateDescription: UILabel!
     var whatsNewHeader: UILabel!
     var backgroundView: UIView!
+    let containerPadding = UIEdgeInsets(top: 16, left: 16, bottom: -32, right: 16)
     
     init (updateName: String, description: String) {
         super.init(frame: .zero)
@@ -97,13 +98,18 @@ class WhatsNewHeaderView: UIView {
         }
         
         updateDescription.snp.makeConstraints { (make) in
+            let leadingOffset = CGFloat(32)
+            let trailingOffset = CGFloat(-32)
             make.top.equalTo(updateTitle.snp.bottom).offset(6)
             make.centerX.equalToSuperview()
-            make.leading.equalToSuperview().offset(40)
-            make.trailing.equalToSuperview().offset(-40)
-            if let text = updateDescription.text, frame.width != 0 {
-                print(frame.width)
-                make.height.equalTo(text.heightWithConstrainedWidth(width: frame.width - 80, font: updateDescription.font))
+            make.leading.equalToSuperview().offset(leadingOffset)
+            make.trailing.equalToSuperview().offset(trailingOffset)
+            if let containerView = superview,
+                let tableView = containerView.superview,
+                let wholeView = tableView.superview,
+                let description = updateDescription.text {
+                let totalWidthPadding = containerPadding.left + containerPadding.right + leadingOffset + trailingOffset
+                make.height.equalTo(description.heightWithConstrainedWidth(width: wholeView.frame.width - totalWidthPadding, font: updateDescription.font))
             }
         }
         

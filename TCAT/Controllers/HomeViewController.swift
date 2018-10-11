@@ -30,7 +30,7 @@ class HomeViewController: UIViewController {
     var isNetworkDown = false
     var searchResultsSection: Section!
     var sectionIndexes: [String: Int]! = [:]
-    var tableView: UITableView!
+    var tableView: homeTableView!
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
@@ -70,7 +70,7 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         view.backgroundColor = .tableBackgroundColor
 
-        tableView = UITableView(frame: .zero, style: .grouped)
+        tableView = homeTableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
@@ -217,9 +217,9 @@ class HomeViewController: UIViewController {
         containerView.backgroundColor = UIColor.tableBackgroundColor
         containerView.addSubview(whatsNewView)
         whatsNewView.snp.makeConstraints { (make) in
-            let padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-            make.edges.equalToSuperview().inset(padding)
+            make.edges.equalToSuperview().inset(whatsNewView.containerPadding)
         }
+
         tableView.tableHeaderView = containerView
         containerView.snp.makeConstraints { (make) in
             make.top.centerX.width.equalToSuperview()
@@ -520,20 +520,6 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 extension HomeViewController: AddFavoritesDelegate {
     
     func displayFavoritesTVC() {
-        // TABLEVIEW attributes before it fucks up
-        print(tableView.tableHeaderView)
-        print(tableView.contentInset)
-        print(tableView.contentOffset)
-        print(tableView.frame)
-        
-        tableView.tableHeaderView = nil
-        
-        print(tableView.tableHeaderView)
-        print(tableView.contentInset)
-        print(tableView.contentOffset)
-        print(tableView.frame)
-        
-        // TABLEVIEW attributes after it fucks up
         if favorites.count < 5 {
             presentFavoritesTVC()
         } else {
@@ -543,6 +529,18 @@ extension HomeViewController: AddFavoritesDelegate {
             let done = UIAlertAction(title: "Got It!", style: .default)
             alertController.addAction(done)
             present(alertController, animated: true, completion: nil)
+        }
+    }
+}
+
+class homeTableView: UITableView {
+    override var tableHeaderView: UIView? {
+        didSet {
+            if tableHeaderView == nil {
+                self.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
+            } else {
+                self.contentInset = .zero
+            }
         }
     }
 }
