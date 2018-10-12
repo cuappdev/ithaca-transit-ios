@@ -61,7 +61,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         let backButtonItem = UIBarButtonItem(customView: dismissButton)
         navigationItem.setRightBarButton(backButtonItem, animated: false)
         
-        hiddenLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 16)
+        hiddenLabel.font = UIFont.style(Fonts.SanFrancisco.regular, size: 16)
         hiddenLabel.textColor = .primaryTextColor
         hiddenLabel.text = "Ride on the Magic School Bus"
         hiddenLabel.textAlignment = .center
@@ -83,7 +83,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
             make.trailing.equalToSuperview().offset(-40)
         }
         
-        titleLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Medium, size: 16)
+        titleLabel.font = UIFont.style(Fonts.SanFrancisco.medium, size: 16)
         titleLabel.textColor = UIColor.primaryTextColor
         titleLabel.text = "Made by Cornell App Development"
         titleLabel.backgroundColor = .clear
@@ -94,7 +94,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
             make.height.equalTo(20)
         }
         
-        descriptionLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)
+        descriptionLabel.font = UIFont.style(Fonts.SanFrancisco.regular, size: 14)
         descriptionLabel.textColor = UIColor.primaryTextColor
         descriptionLabel.text = "An Engineering Project Team\nat Cornell University"
         descriptionLabel.numberOfLines = 0
@@ -146,7 +146,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         cell.selectionStyle = .none
         cell.backgroundColor = .white
         cell.textLabel?.textColor = .primaryTextColor
-        cell.textLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)
+        cell.textLabel?.font = UIFont.style(Fonts.SanFrancisco.regular, size: 14)
         cell.textLabel?.textAlignment = .center
         
         // Set cell content

@@ -6,7 +6,7 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 /// App-wide constants
 struct Constants {
@@ -57,18 +57,6 @@ struct Constants {
     struct Footers {
         static let emptyFooterView = "RouteDetailEmptyFooterView"
         static let phraseLabelFooterView = "RouteDetailPhraseLabelFooterView"
-    }
-    
-    /// Font identifiers
-    struct Fonts {
-        
-        struct SanFrancisco {
-            static let Regular = "SFUIText-Regular"
-            static let Medium = "SFUIText-Medium"
-            static let Bold = "SFUIText-Bold"
-            static let Semibold = "SFUIText-Semibold"
-        }
-        
     }
     
     struct Phrases {

@@ -52,13 +52,13 @@ class CustomNavigationController: UINavigationController, UINavigationController
     
     /// Attributed string details for the title text of a navigation controller
     let titleTextAttributes: [NSAttributedString.Key: Any] = [
-        .font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 18)!,
+        .font : UIFont.style(Fonts.SanFrancisco.regular, size: 18),
         .foregroundColor : UIColor.black
     ]
     
     /// Attributed string details for the back button text of a navigation controller
-    static let buttonTitleTextAttributes = [
-        NSAttributedString.Key.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)!
+    static let buttonTitleTextAttributes: [NSAttributedString.Key : Any] = [
+        NSAttributedString.Key.font : UIFont.style(Fonts.SanFrancisco.regular, size: 14)
     ]
     
     func customizeAppearance() {
@@ -86,7 +86,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
         backButton.tintColor = .primaryTextColor
         
         let attributes: [NSAttributedString.Key : Any] = [
-            NSAttributedString.Key.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)!,
+            NSAttributedString.Key.font : UIFont.style(Fonts.SanFrancisco.regular, size: 14.0),
             NSAttributedString.Key.foregroundColor : UIColor.primaryTextColor,
             NSAttributedString.Key.baselineOffset : 0.3
         ]

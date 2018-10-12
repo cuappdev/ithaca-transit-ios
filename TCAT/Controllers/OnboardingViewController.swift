@@ -38,7 +38,7 @@ class OnboardingViewController: PresentationController {
     /// The position of the header label
     let titleLabelPosition = Position(left: 0.5, top: 0.2)
     
-    let titleLabelFontName = Constants.Fonts.SanFrancisco.Bold
+    let titleLabelFontName = Fonts.SanFrancisco.bold
     
     let titleLabelFontSize: CGFloat = 48.0
     
@@ -62,7 +62,7 @@ class OnboardingViewController: PresentationController {
     let detailLabelPosition = Position(left: 0.5, top: 0.35)
     
     /// Change the font type of text label
-    let detailLabelFontName = Constants.Fonts.SanFrancisco.Medium
+    let detailLabelFontName = Fonts.SanFrancisco.medium
     
     /// Change the font size of text label
     let detailLabelFontSize: CGFloat = 32.0
@@ -223,7 +223,7 @@ class OnboardingViewController: PresentationController {
         let detailWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.8
         let detailHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
         
-        let detailFont = UIFont(name: detailLabelFontName, size: detailLabelFontSize * detailHeight)!
+        let detailFont = UIFont.style(detailLabelFontName, size: detailLabelFontSize * detailHeight)!
         
         let attributes = [
             NSAttributedString.Key.font: detailFont,
@@ -245,7 +245,7 @@ class OnboardingViewController: PresentationController {
         
         let headerWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.9
         let headerHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
-        let headerFont = UIFont(name: titleLabelFontName, size: titleLabelFontSize * headerHeight)!
+        let headerFont = UIFont.style(titleLabelFontName, size: titleLabelFontSize * headerHeight)!
         
         let headerAttributes = [
             NSAttributedString.Key.font: headerFont,
@@ -270,7 +270,7 @@ class OnboardingViewController: PresentationController {
         button.setTitle("BEGIN", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
-        button.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Medium, size: 22)!
+        button.titleLabel?.font = UIFont.style(Fonts.SanFrancisco.medium, size: 22)
         button.backgroundColor = .tcatBlueColor // UIColor(hex: "D65851")
         button.layer.cornerRadius = 4
         let buttonPosition = Position(left: 0.5, top: 0.5)
