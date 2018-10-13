@@ -16,10 +16,19 @@ import UIKit
 struct Fonts {
     
     struct SanFrancisco {
-        static let regular = "SFProDisplay-Regular"
-        static let medium = "SFProDisplay-Medium"
-        static let semibold = "SFProDisplay-Semibold"
-        static let bold = "SFProDisplay-Bold"
+        
+        // Pro Display (New)
+//        static let regular = "SFProDisplay-Regular"
+//        static let medium = "SFProDisplay-Medium"
+//        static let semibold = "SFProDisplay-Semibold"
+//        static let bold = "SFProDisplay-Bold"
+        
+        // UI Text (Old)
+        static let regular = "SFUIText-Regular"
+        static let medium = "SFUIText-Medium"
+        static let semibold = "SFUIText-Semibold"
+        static let bold = "SFUIText-Bold"
+        
     }
     
     struct System {
@@ -37,34 +46,7 @@ extension UIFont {
     
     /// Generate fonts for app usage
     static func style(_ name: String, size: CGFloat) -> UIFont {
-        
         return UIFont(name: name, size: size)!
-        
-        let sanFrancisco: [String] = [
-            Fonts.SanFrancisco.regular,
-            Fonts.SanFrancisco.medium,
-            Fonts.SanFrancisco.semibold,
-            Fonts.SanFrancisco.bold
-        ]
-        
-        // Installed San Francisco Font
-        if sanFrancisco.contains(name) {
-            print(UIFont.fontNames(forFamilyName: "SF Pro Display"))
-            let fontStringArray = name.split(separator: "-")
-            let textStyle = fontStringArray.last ?? ""
-            let descriptor = UIFontDescriptor(fontAttributes: [
-                UIFontDescriptor.AttributeName.name : name,
-                /*UIFontDescriptor.AttributeName.family : "SF Pro Display",*/
-                /*UIFontDescriptor.AttributeName.textStyle : textStyle*/
-            ])
-            return UIFont(descriptor: descriptor, size: size)
-        }
-        
-        // System Font
-        else {
-            
-        }
-        
     }
     
 }
