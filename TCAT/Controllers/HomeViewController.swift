@@ -490,7 +490,7 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
         if loadingIndicator != nil {
             return nil
         }
-        return isNetworkDown ? #imageLiteral(resourceName: "noInternet") : #imageLiteral(resourceName: "emptyPin")
+        return isNetworkDown ? #imageLiteral(resourceName: "noWifi") : #imageLiteral(resourceName: "emptyPin")
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
@@ -515,7 +515,6 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
         loadingIndicator = LoadingIndicator()
         if let loadingIndicator = loadingIndicator {
             view.addSubview(loadingIndicator)
-            print("added loading indicator")
             loadingIndicator.snp.makeConstraints { (make) in
                 make.centerX.equalToSuperview()
                 make.centerY.equalToSuperview()
@@ -525,9 +524,9 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
         }
     }
 
-    func emptyDataSet(_ scrollView: UIScrollView!, didTap didTapButton: UIButton!) {
+    func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
         setUpLoadingIndicator()
-        if let loadingIndicator = loadingIndicator {
+        if loadingIndicator != nil {
             tableView.reloadData()
 
             // Have loading indicator time out after one second
