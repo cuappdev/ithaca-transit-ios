@@ -62,8 +62,8 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
     let navigationBarTitle: String = "Route Options"
     let routeResultsTitle: String = "Route Results"
 
-    /// activity indicator for empty state view
-    var activityIndicator: UIActivityIndicatorView?
+    /// loading indicator for empty state view
+    var loadingIndicator: LoadingIndicator?
 
     // MARK: Data vars
 
@@ -927,15 +927,15 @@ extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDele
         routeResults.contentOffset = .zero
     }
 
-    func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
+    func customView(forEmptyDataSet scrollView: UIScrollView) -> UIView? {
 
         let customView = UIView()
         var symbolView = UIView()
 
         if showRouteSearchingLoader {
             symbolView = LoadingIndicator()
-        } else if activityIndicator == nil {
-            let imageView = UIImageView(image: #imageLiteral(resourceName: "road"))
+        } else {
+            let imageView = UIImageView(image: #imageLiteral(resourceName: "noRoutes"))
             imageView.contentMode = .scaleAspectFit
             symbolView = imageView
         }
@@ -943,85 +943,61 @@ extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDele
         let retryButton = UIButton()
         retryButton.setTitle("Retry", for: .normal)
         retryButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
-        retryButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
+        retryButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 16.0)
         retryButton.addTarget(self, action: #selector(tappedRetryButton), for: .touchUpInside)
 
         let titleLabel = UILabel()
-        titleLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
+        titleLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 18.0)
         titleLabel.textColor = .mediumGrayColor
-        titleLabel.text = showRouteSearchingLoader ? "Looking for routes..." : "No Routes Found"
+        titleLabel.text = showRouteSearchingLoader ? "Looking For Routes..." : "No Routes Found"
         titleLabel.sizeToFit()
 
-        if activityIndicator == nil {
-            customView.addSubview(symbolView)
-            customView.addSubview(titleLabel)
-            if !showRouteSearchingLoader {
-                customView.addSubview(retryButton)
-            }
+        customView.addSubview(symbolView)
+        customView.addSubview(titleLabel)
+        if !showRouteSearchingLoader {
+            customView.addSubview(retryButton)
         }
 
-        if activityIndicator == nil {
-            symbolView.snp.makeConstraints { (make) in
-                make.centerX.equalToSuperview()
-                make.centerY.equalToSuperview().offset(showRouteSearchingLoader ? -20 : -22.5)
-                make.width.equalTo(showRouteSearchingLoader ? 40 : 45)
-                make.height.equalTo(showRouteSearchingLoader ? 40 : 45)
-            }
+        symbolView.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            let offset = navigationController?.navigationBar.frame.height ?? 0 + routeSelection.frame.height
+            make.centerY.equalToSuperview().offset((showRouteSearchingLoader ? -20 : -40)+(-offset/2))
+            make.width.equalTo(showRouteSearchingLoader ? 40 : 160)
+            make.height.equalTo(showRouteSearchingLoader ? 40 : 160)
+        }
 
-            titleLabel.snp.makeConstraints { (make) in
-                make.top.equalTo(symbolView.snp.bottom).offset(10)
-                make.centerX.equalTo(symbolView.snp.centerX)
-            }
+        titleLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(symbolView.snp.bottom).offset(10)
+            make.centerX.equalTo(symbolView.snp.centerX)
+        }
 
-            if !showRouteSearchingLoader {
-                retryButton.snp.makeConstraints { (make) in
-                    make.top.equalTo(titleLabel.snp.bottom).offset(10)
-                    make.centerX.equalTo(titleLabel.snp.centerX)
-                }
+        if !showRouteSearchingLoader {
+            retryButton.snp.makeConstraints { (make) in
+                make.top.equalTo(titleLabel.snp.bottom).offset(10)
+                make.centerX.equalTo(titleLabel.snp.centerX)
+                make.height.equalTo(16)
             }
         }
 
         return customView
     }
 
-    func setUpActivityIndicator() {
-        activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
-        if let activityIndicator = activityIndicator {
-            view.addSubview(activityIndicator)
-            activityIndicator.snp.makeConstraints { (make) in
-                make.centerX.equalToSuperview()
-                make.centerY.equalToSuperview()
-            }
-        }
-    }
-
     @objc func tappedRetryButton(button: UIButton) {
-        searchForRoutes()
-        if routes.isEmpty {
-            setUpActivityIndicator()
-            if let activityIndicator = activityIndicator {
-                routeResults.reloadData()
-                activityIndicator.startAnimating()
-
-                // Have activity indicator time out after one second
-                let delay = 1
-                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)) {
-                    activityIndicator.stopAnimating()
-                    self.activityIndicator = nil
-                    self.routeResults.reloadData()
-                }
-            }
-        }
+        showRouteSearchingLoader = true
         routeResults.reloadData()
+        let delay = 1
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)) {
+            self.searchForRoutes()
+        }
     }
 
     // Don't allow pull to refresh in empty state -- want users to use the retry button
-    func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView!) -> Bool {
+    func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
         return false
     }
 
-    // Allow for pull to refresh in empty state
-    func emptyDataSetShouldAllowTouch(_ scrollView: UIScrollView!) -> Bool {
+    // Allow for touch in empty state
+    func emptyDataSetShouldAllowTouch(_ scrollView: UIScrollView) -> Bool {
         return true
     }
 
