@@ -195,7 +195,6 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
         loadingIndicator = LoadingIndicator()
         if let loadingIndicator = loadingIndicator {
             view.addSubview(loadingIndicator)
-            print("added loading indicator")
             loadingIndicator.snp.makeConstraints { (make) in
                 make.centerX.equalToSuperview()
                 make.centerY.equalToSuperview()
@@ -223,7 +222,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             return nil
         }
         let title = "Retry"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.buttonColor]
+        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.tcatBlueColor]
         return NSAttributedString(string: title, attributes: attrs)
     }
 
