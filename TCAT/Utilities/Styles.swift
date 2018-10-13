@@ -40,6 +40,7 @@ struct Fonts {
 
 extension UIFont {
     
+    /// Generate fonts for app usage
     static func style(_ name: String, size: CGFloat) -> UIFont {
         
         print("name:", name)
@@ -67,31 +68,6 @@ extension UIFont {
         }
         
     }
-    
-    // Sizes
-    
-    // 12
-    
-    // RouteTableViewCell
-    //  funMessage
-    
-    // 14
-    
-    // RouteTableViewCell
-    //  departureTimeLabel
-    //  liveLabel
-    
-    // 16
-    
-    // RouteTableViewCell
-    //  travelTimeLabel
-    //
-    
-    // 18
-    
-    // CustomNavigationController
-    //  titleTextAttributes
-    
     
 }
 
