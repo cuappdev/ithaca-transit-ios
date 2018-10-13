@@ -97,7 +97,7 @@ class SummaryView: UIView {
         
         mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
         mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
-        let mainLabelBoldFont = UIFont.style(Fonts.System.bold, size: 16)
+        let mainLabelBoldFont = UIFont.style(Fonts.System.semibold, size: 14)
         
         if let departDirection = (route.directions.filter { $0.type == .depart }).first {
             

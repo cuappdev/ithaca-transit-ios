@@ -23,16 +23,10 @@ struct Fonts {
     }
     
     struct System {
-        private static let regularFont = UIFont.systemFont(ofSize: UIFont.systemFontSize, weight: UIFont.Weight.regular)
-        static let regular = regularFont.fontDescriptor.fontAttributes[UIFontDescriptor.AttributeName.name] as! String
-        
-        private static let semiboldFont = UIFont.systemFont(ofSize: UIFont.systemFontSize, weight: UIFont.Weight.semibold)
-        static let semibold = semiboldFont.fontDescriptor.fontAttributes[UIFontDescriptor.AttributeName.name] as! String
-        
-        private static let boldFont = UIFont.systemFont(ofSize: UIFont.systemFontSize, weight: UIFont.Weight.bold)
-        static let bold = boldFont.fontDescriptor.fontAttributes[UIFontDescriptor.AttributeName.name] as! String
-        
-        // Make sure NSString as! String works
+        static let systemFontSize: CGFloat = 14 // Same as UIFont.systemFontSize
+        static let regular = UIFont.systemFont(ofSize: systemFontSize, weight: .regular).fontName
+        static let semibold = UIFont.systemFont(ofSize: systemFontSize, weight: .semibold).fontName
+        static let bold = UIFont.systemFont(ofSize: systemFontSize, weight: .bold).fontName
         // Was previously UIFont.boldSystemFont(ofSize: UIFont.systemFontSize)
     }
     
@@ -42,31 +36,7 @@ extension UIFont {
     
     /// Generate fonts for app usage
     static func style(_ name: String, size: CGFloat) -> UIFont {
-        
-        print("name:", name)
         return UIFont(name: name, size: size)!
-        
-        let sanFrancisco: [String] = [
-            Fonts.SanFrancisco.regular,
-            Fonts.SanFrancisco.medium,
-            Fonts.SanFrancisco.semibold,
-            Fonts.SanFrancisco.bold
-        ]
-        
-        let system: [String] = [
-            Fonts.System.regular,
-            Fonts.System.semibold,
-            Fonts.System.bold
-        ]
-        
-        if sanFrancisco.contains(name) {
-            
-        }
-        
-        if system.contains(name) {
-
-        }
-        
     }
     
 }

@@ -223,7 +223,7 @@ class OnboardingViewController: PresentationController {
         let detailWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.8
         let detailHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
         
-        let detailFont = UIFont.style(detailLabelFontName, size: detailLabelFontSize * detailHeight)!
+        let detailFont = UIFont.style(detailLabelFontName, size: detailLabelFontSize * detailHeight)
         
         let attributes = [
             NSAttributedString.Key.font: detailFont,
