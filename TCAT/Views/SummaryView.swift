@@ -67,7 +67,7 @@ class SummaryView: UIView {
         addSubview(tab)
         
         // Place and format top summary label
-        mainLabel.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.regular)
+        mainLabel.font = UIFont.style(Fonts.System.regular, size: 16)
         mainLabel.textColor = .primaryTextColor
         mainLabel.numberOfLines = 1
         mainLabel.allowsDefaultTighteningForTruncation = true
@@ -75,7 +75,7 @@ class SummaryView: UIView {
         addSubview(mainLabel)
         
         // Place and format secondary label
-        secondaryLabel.font = .systemFont(ofSize: 12, weight: UIFont.Weight.regular)
+        secondaryLabel.font = UIFont.style(Fonts.System.regular, size: 12)
         secondaryLabel.textColor = .mediumGrayColor
         addSubview(secondaryLabel)
         
@@ -97,6 +97,7 @@ class SummaryView: UIView {
         
         mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
         mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
+        let mainLabelBoldFont = UIFont.style(Fonts.System.bold, size: 16)
         
         if let departDirection = (route.directions.filter { $0.type == .depart }).first {
             
@@ -116,8 +117,11 @@ class SummaryView: UIView {
             
             let content = "Depart at \(departDirection.startTimeWithDelayDescription)\(fragment) from \(departDirection.name)"
             // This changes font to standard size. Label's font is different.
-            var attributedString = bold(pattern: departDirection.startTimeWithDelayDescription, in: content)
-            attributedString = bold(pattern: departDirection.name, in: attributedString)
+            var attributedString = bold(pattern: departDirection.startTimeWithDelayDescription,
+                                       in: content,
+                                       from: mainLabel.font,
+                                       to: mainLabelBoldFont)
+            attributedString = bold(pattern: departDirection.name, in: attributedString, to: mainLabelBoldFont)
             
             let range = (attributedString.string as NSString).range(of: departDirection.startTimeWithDelayDescription)
             attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: range)
@@ -137,7 +141,8 @@ class SummaryView: UIView {
             
         } else {
             let content = route.directions.first?.locationNameDescription ?? "Route Directions"
-            mainLabel.attributedText = bold(pattern: route.directions.first?.name ?? "", in: content)
+            mainLabel.attributedText = bold(pattern: route.directions.first?.name ?? "", in: content,
+                                            from: mainLabel.font, to: mainLabelBoldFont)
         }
         
         // Calculate and adjust label based on number of lines

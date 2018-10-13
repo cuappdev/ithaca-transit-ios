@@ -43,11 +43,11 @@ class CornellDestinationCell: UITableViewCell {
         imageView?.tintColor = .tcatBlueColor
 
         textLabel?.frame = CGRect(x: labelXPosition, y: 8.0, width: frame.width - labelWidth, height: labelHeight)
-        textLabel?.font = .systemFont(ofSize: 13)
+        textLabel?.font = UIFont.style(Fonts.System.regular, size: 13)
 
         detailTextLabel?.frame = CGRect(x: labelXPosition, y: 0, width: frame.width - labelWidth, height: labelHeight)
         detailTextLabel?.center.y = bounds.height - 15.0
         detailTextLabel?.textColor = .mediumGrayColor
-        detailTextLabel?.font = .systemFont(ofSize: 12)
+        detailTextLabel?.font = UIFont.style(Fonts.System.regular, size: 12)
     }
 }

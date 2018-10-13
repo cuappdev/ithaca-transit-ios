@@ -245,7 +245,7 @@ class OnboardingViewController: PresentationController {
         
         let headerWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.9
         let headerHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
-        let headerFont = UIFont.style(titleLabelFontName, size: titleLabelFontSize * headerHeight)!
+        let headerFont = UIFont.style(titleLabelFontName, size: titleLabelFontSize * headerHeight)
         
         let headerAttributes = [
             NSAttributedString.Key.font: headerFont,

@@ -372,28 +372,24 @@ func presentShareSheet(from view: UIView, for route: Route, with image: UIImage?
 /** Bold a phrase that appears in a string, and return the attributed string.
     Only shows the last bolded phrase.
  */
-func bold(pattern: String, in string: String) -> NSMutableAttributedString {
-    let fontSize = UIFont.systemFontSize
-    let fontAttribute = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: fontSize)]
+func bold(pattern: String, in string: String, from font: UIFont, to boldFont: UIFont) -> NSMutableAttributedString {
+    let fontAttribute = [NSAttributedString.Key.font : font]
     let attributedString = NSMutableAttributedString(string: string, attributes: fontAttribute)
-    return bold(pattern: pattern, in: attributedString)
+    return bold(pattern: pattern, in: attributedString, to: boldFont)
 }
 
 /** Bold a phrase that appears in an attributed string, and return the attributed string */
-func bold(pattern: String, in attributedString: NSMutableAttributedString) -> NSMutableAttributedString {
+func bold(pattern: String, in string: NSMutableAttributedString, to boldFont: UIFont) -> NSMutableAttributedString {
     
-    let string = attributedString.string
+    let attributedString: NSMutableAttributedString = string
     let newAttributedString = attributedString
-    let font = attributedString.attributes(at: 0, effectiveRange: nil)
-    guard let fontSize = (font[NSAttributedString.Key.font] as? UIFont)?.pointSize else {
-        return attributedString
-    }
+    let plain_string: String = attributedString.string
     
-    let boldFontAttribute = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: fontSize)]
+    let boldFontAttribute = [NSAttributedString.Key.font : boldFont]
     
     do {
         let regex = try NSRegularExpression(pattern: pattern, options: [])
-        let ranges = regex.matches(in: string, options: [], range: NSMakeRange(0, string.count)).map { $0.range }
+        let ranges = regex.matches(in: plain_string, options: [], range: NSMakeRange(0, plain_string.count)).map { $0.range }
         for range in ranges { newAttributedString.addAttributes(boldFontAttribute, range: range) }
     } catch { }
     

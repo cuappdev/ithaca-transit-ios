@@ -53,7 +53,7 @@ class HomeViewController: UIViewController {
     var banner: StatusBarNotificationBanner?
 
     func tctSectionHeaderFont() -> UIFont? {
-        return UIFont.systemFont(ofSize: 14)
+        return UIFont.style(Fonts.System.regular, size: 14)
     }
 
     override func viewDidLoad() {

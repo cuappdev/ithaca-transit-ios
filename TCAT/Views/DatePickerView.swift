@@ -129,7 +129,7 @@ class DatePickerView: UIView {
     private func styleSegmentedControl(_ segmentedControl: UISegmentedControl) {
         segmentedControl.tintColor = .tcatBlueColor
         let segmentControlFont = UIFont.style(Fonts.SanFrancisco.regular, size: 13.0)
-        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font: segmentControlFont!], for: .normal)
+        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font: segmentControlFont], for: .normal)
     }
 
     private func styleCancelButton() {
