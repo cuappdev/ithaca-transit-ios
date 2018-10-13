@@ -37,10 +37,10 @@
 	<string>Allow the app to save photos.</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>SFText-Medium.otf</string>
-		<string>SFText-Regular.otf</string>
-		<string>SFText-Semibold.otf</string>
-		<string>SFText-Bold.otf</string>
+		<string>SF-Pro-Display-Regular.otf</string>
+		<string>SF-Pro-Display-Medium.otf</string>
+		<string>SF-Pro-Display-Semibold.otf</string>
+		<string>SF-Pro-Display-Bold.otf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

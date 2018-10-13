@@ -39,6 +39,10 @@
 		BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */; };
 		BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */; };
 		BF84609E217139A30027FB62 /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF84609D217139A30027FB62 /* Styles.swift */; };
+		BF8460A32172A5220027FB62 /* SF-Pro-Display-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF84609F2172A5200027FB62 /* SF-Pro-Display-Regular.otf */; };
+		BF8460A42172A5220027FB62 /* SF-Pro-Display-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF8460A02172A5200027FB62 /* SF-Pro-Display-Bold.otf */; };
+		BF8460A52172A5220027FB62 /* SF-Pro-Display-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF8460A12172A5210027FB62 /* SF-Pro-Display-Semibold.otf */; };
+		BF8460A62172A5220027FB62 /* SF-Pro-Display-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF8460A22172A5210027FB62 /* SF-Pro-Display-Medium.otf */; };
 		BFA53FEE1FD45D7000E770DF /* RouteDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */; };
 		BFB86A07205C614C000794B2 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB86A06205C614C000794B2 /* OnboardingViewController.swift */; };
 		BFCA712D206AC69000E4CCE5 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCA712C206AC69000E4CCE5 /* Keys.swift */; };
@@ -63,9 +67,6 @@
 		DD3D9C341F942CF000B164D4 /* CoordinateVisitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */; };
 		DD3D9C361F945F2A00B164D4 /* RPCircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */; };
 		DD5D233C1E6367A100F8DECE /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5D233B1E6367A100F8DECE /* Time.swift */; };
-		DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */; };
-		DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */; };
-		DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */; };
 		DD659C8A20508E1B00506BAC /* WalkWithDistanceIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD659C8920508E1A00506BAC /* WalkWithDistanceIcon.swift */; };
 		DD87F20A1E878CB5000C244B /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD87F2091E878CB5000C244B /* Loader.swift */; };
 		DD99E2F61F6DB06A0073E8F7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F51F6DB06A0073E8F7 /* Constants.swift */; };
@@ -84,7 +85,6 @@
 		DDE0A9311F096A3E005CD01C /* RouteDiagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */; };
 		DDE3BC231F5863D50014D2BB /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE3BC221F5863D50014D2BB /* Place.swift */; };
 		E337970D1FC1606D00BCB28F /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E337970C1FC1606D00BCB28F /* InformationViewController.swift */; };
-		E34490CD1F8EF00A0064D284 /* SFText-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -146,6 +146,10 @@
 		BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsCore.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMapsCore.framework; sourceTree = "<group>"; };
 		BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMaps.framework; sourceTree = "<group>"; };
 		BF84609D217139A30027FB62 /* Styles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Styles.swift; path = Utilities/Styles.swift; sourceTree = "<group>"; };
+		BF84609F2172A5200027FB62 /* SF-Pro-Display-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Display-Regular.otf"; path = "Supporting Files/SF-Pro-Display-Regular.otf"; sourceTree = "<group>"; };
+		BF8460A02172A5200027FB62 /* SF-Pro-Display-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Display-Bold.otf"; path = "Supporting Files/SF-Pro-Display-Bold.otf"; sourceTree = "<group>"; };
+		BF8460A12172A5210027FB62 /* SF-Pro-Display-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Display-Semibold.otf"; path = "Supporting Files/SF-Pro-Display-Semibold.otf"; sourceTree = "<group>"; };
+		BF8460A22172A5210027FB62 /* SF-Pro-Display-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Display-Medium.otf"; path = "Supporting Files/SF-Pro-Display-Medium.otf"; sourceTree = "<group>"; };
 		BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDetailViewController.swift; path = Controllers/RouteDetailViewController.swift; sourceTree = "<group>"; };
 		BFB86A06205C614C000794B2 /* OnboardingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OnboardingViewController.swift; path = Controllers/OnboardingViewController.swift; sourceTree = "<group>"; };
 		BFCA712C206AC69000E4CCE5 /* Keys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Keys.swift; path = "Supporting Files/Keys.swift"; sourceTree = "<group>"; };
@@ -171,9 +175,6 @@
 		DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoordinateVisitor.swift; path = Utilities/CoordinateVisitor.swift; sourceTree = "<group>"; };
 		DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RPCircularProgress.swift; path = Views/RPCircularProgress.swift; sourceTree = "<group>"; };
 		DD5D233B1E6367A100F8DECE /* Time.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Time.swift; path = Utilities/Time.swift; sourceTree = "<group>"; };
-		DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Medium.otf"; path = "Supporting Files/SFText-Medium.otf"; sourceTree = "<group>"; };
-		DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Regular.otf"; path = "Supporting Files/SFText-Regular.otf"; sourceTree = "<group>"; };
-		DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Semibold.otf"; path = "Supporting Files/SFText-Semibold.otf"; sourceTree = "<group>"; };
 		DD659C8920508E1A00506BAC /* WalkWithDistanceIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WalkWithDistanceIcon.swift; path = Views/WalkWithDistanceIcon.swift; sourceTree = "<group>"; };
 		DD87F2091E878CB5000C244B /* Loader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Loader.swift; path = Utilities/Loader.swift; sourceTree = "<group>"; };
 		DD99E2F51F6DB06A0073E8F7 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = "Supporting Files/Constants.swift"; sourceTree = "<group>"; };
@@ -193,7 +194,6 @@
 		DDE3BC221F5863D50014D2BB /* Place.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Place.swift; path = Model/Place.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E337970C1FC1606D00BCB28F /* InformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InformationViewController.swift; path = Controllers/InformationViewController.swift; sourceTree = "<group>"; };
-		E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFText-Bold.otf"; path = "Supporting Files/SFText-Bold.otf"; sourceTree = "<group>"; };
 		E69224A160B2B078827D28A1 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -318,12 +318,20 @@
 				D94BD2FE2159994400C9214E /* GoogleService-Info.plist */,
 				449A7C841D80D0E80019300C /* Info.plist */,
 				D94BD2FC2159993D00C9214E /* Keys.plist */,
-				E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */,
-				DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */,
-				DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */,
-				DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */,
+				BF8460A72172A7A90027FB62 /* Fonts */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		BF8460A72172A7A90027FB62 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				BF8460A02172A5200027FB62 /* SF-Pro-Display-Bold.otf */,
+				BF8460A22172A5210027FB62 /* SF-Pro-Display-Medium.otf */,
+				BF84609F2172A5200027FB62 /* SF-Pro-Display-Regular.otf */,
+				BF8460A12172A5210027FB62 /* SF-Pro-Display-Semibold.otf */,
+			);
+			name = Fonts;
 			sourceTree = "<group>";
 		};
 		DD2F988E1E50D8660005F6BC /* Base.lproj */ = {
@@ -553,15 +561,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E34490CD1F8EF00A0064D284 /* SFText-Bold.otf in Resources */,
+				BF8460A52172A5220027FB62 /* SF-Pro-Display-Semibold.otf in Resources */,
 				D94BD3042159A21800C9214E /* GoogleService-Info.plist in Resources */,
-				DD623C8E1E6D0585005ED004 /* SFText-Regular.otf in Resources */,
+				BF8460A62172A5220027FB62 /* SF-Pro-Display-Medium.otf in Resources */,
 				449A7C831D80D0E80019300C /* LaunchScreen.storyboard in Resources */,
-				DD623C8F1E6D0585005ED004 /* SFText-Semibold.otf in Resources */,
-				DD623C8D1E6D0585005ED004 /* SFText-Medium.otf in Resources */,
 				D94BD3052159A24600C9214E /* Keys.plist in Resources */,
 				449A7C801D80D0E80019300C /* Assets.xcassets in Resources */,
+				BF8460A32172A5220027FB62 /* SF-Pro-Display-Regular.otf in Resources */,
 				449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */,
+				BF8460A42172A5220027FB62 /* SF-Pro-Display-Bold.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
