@@ -369,10 +369,11 @@
 		DD2F98941E50D8DC0005F6BC /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				224EB5A4214F2F01008232C2 /* AppShortcuts.swift */,
 				CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */,
 				DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */,
+				D94BD30021599E3200C9214E /* EventPayload.swift */,
 				D183AA011E6CB092006A9A15 /* Extensions.swift */,
-				BF84609D217139A30027FB62 /* Styles.swift */,
 				DD04B1AC208CC5E4006C1C23 /* JSONFileManager.swift */,
 				DD87F2091E878CB5000C244B /* Loader.swift */,
 				503EC38C1E96B85B00B3D4D4 /* Network.swift */,
@@ -380,9 +381,8 @@
 				DD3D9C201F94297100B164D4 /* Reachability.swift */,
 				5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */,
 				BF18AE0F2083B7F6000C3D82 /* StoreReviewHelper.swift */,
+				BF84609D217139A30027FB62 /* Styles.swift */,
 				DD5D233B1E6367A100F8DECE /* Time.swift */,
-				224EB5A4214F2F01008232C2 /* AppShortcuts.swift */,
-				D94BD30021599E3200C9214E /* EventPayload.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
