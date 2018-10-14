@@ -8,17 +8,17 @@ Download on the App Store [here](https://itunes.apple.com/app/id1290883721).
 
 ## Download Project
 
-1. Install [Xcode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12).
-2. Clone this repository.
-3. Open Terminal and run the following:
+0. Install [Xcode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12).
+1. Clone this repository.
+2. Open Terminal and run the below code. Installing Cocoapods takes a bit, you can do Step 3 while it downloads.
 
 ```
 cd tcat-ios
-sudo gem install cocoapods // skip if already installed
+sudo gem install cocoapods // can skip if already installed
 pod install
 ```
 
-4. While you're waiting for that, go to pinned messages in `#transit-ios` in Slack and **download `Keys.plist` and `GoogleServiceInfo.plist`**. Within the `tcat-ios` folder, place these files in `tcat-ios/TCAT/Supporting Files/`.
+3. Go to pinned messages in `#transit-ios` in Slack and download `Keys.plist` and `GoogleServiceInfo.plist`. Within the `tcat-ios` folder you cloned, place these files in `/tcat-ios/TCAT/Supporting Files/`.
 
 4. Open the `.xcworkspace` file.
 5. Change any relevant network settings for testing (see below).
