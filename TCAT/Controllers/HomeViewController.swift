@@ -115,7 +115,7 @@ class HomeViewController: UIViewController {
         super.viewDidLayoutSubviews()
 
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(reachabilityChanged(note:)),
+                                               selector: #selector(reachabilityChanged(_:)),
                                                name: .reachabilityChanged,
                                                object: reachability)
         do {
@@ -129,7 +129,7 @@ class HomeViewController: UIViewController {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return isBannerShown ? .lightContent : .default
+        return banner != nil ? .lightContent : .default
     }
 
 

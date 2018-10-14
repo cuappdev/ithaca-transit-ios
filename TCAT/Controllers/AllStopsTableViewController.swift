@@ -37,12 +37,7 @@ class AllStopsTableViewController: UITableViewController {
         super.viewDidLoad()
         sectionIndexes = sectionIndexesForBusStop()
 
-        sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
-
-        // Adding "#" to keys for bus stops that start with a number
-        if !allStops.isEmpty {
-            sortedKeys.append("#")
-        }
+        sortedKeys = sortedKeysForBusStops()
 
         title = "All Stops"
         tableView.sectionIndexColor = .primaryTextColor
@@ -236,7 +231,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
     func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
         setUpLoadingIndicator()
         tableView.reloadData()
-        retryNetwork { () -> Void in
+        retryNetwork {
             self.loadingIndicator?.removeFromSuperview()
             self.loadingIndicator = nil
             self.setUpTableOnRetry()
