@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
         
-        // Set Up Register, Fabric / Crashlytics (RELEASE)
+        // Set Up Analytics
         #if !DEBUG
             Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
         #endif
@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Check app version
         if let version = userDefaults.value(forKey: Constants.UserDefaults.version) as? String {
             if version != Constants.App.version {
-                // TODO: User has just updated the app.
+                // User has just updated the app.
             }
         }
         
@@ -125,6 +125,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if let navController = window?.rootViewController as? UINavigationController {
                 navController.pushViewController(optionsVC, animated: true)
             }
+            let payload = HomeScreenQuickActionUsedPayload(name: destination.name)
+            Analytics.shared.log(payload)
         }
     }
 
@@ -133,24 +135,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Network.getAllStops().perform(withSuccess: { stops in
             let allBusStops = stops.allStops
             if allBusStops.isEmpty {
-                self.handleGetAllStopsError()
+                let title = "Couldn't Fetch Bus Stops"
+                let message = "The app will continue trying on launch. You can continue to use the app as normal."
+                let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                UIApplication.shared.keyWindow?.presentInApp(alertController)
             } else {
                 let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
                 self.userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
             }
         }, failure: { error in
             print("getBusStops error:", error)
-            self.handleGetAllStopsError()
         })
-    }
-    
-    /// Present an alert indicating bus stops weren't fetched.
-    func handleGetAllStopsError() {
-        let title = "Couldn't Fetch Bus Stops"
-        let message = "The app will continue trying on launch. You can continue to use the app as normal."
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-        UIApplication.shared.keyWindow?.presentInApp(alertController)
     }
     
 }

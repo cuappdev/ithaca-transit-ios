@@ -154,7 +154,7 @@
 		D183AA011E6CB092006A9A15 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = Utilities/Extensions.swift; sourceTree = "<group>"; };
 		D94BD2FC2159993D00C9214E /* Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Keys.plist; path = "Supporting Files/Keys.plist"; sourceTree = "<group>"; };
 		D94BD2FE2159994400C9214E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Supporting Files/GoogleService-Info.plist"; sourceTree = "<group>"; };
-		D94BD30021599E3200C9214E /* EventPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPayload.swift; sourceTree = "<group>"; };
+		D94BD30021599E3200C9214E /* EventPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EventPayload.swift; path = Utilities/EventPayload.swift; sourceTree = "<group>"; };
 		DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FavoritesTableViewController.swift; path = Controllers/FavoritesTableViewController.swift; sourceTree = "<group>"; };
 		DC2E96451FC21B29009955C6 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeaderView.swift; path = Views/HeaderView.swift; sourceTree = "<group>"; };
 		DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AllStopsTableViewController.swift; path = Controllers/AllStopsTableViewController.swift; sourceTree = "<group>"; };
@@ -313,10 +313,10 @@
 			children = (
 				DD99E2F51F6DB06A0073E8F7 /* Constants.swift */,
 				BFCA712C206AC69000E4CCE5 /* Keys.swift */,
-				449A7C841D80D0E80019300C /* Info.plist */,
-				E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */,
 				D94BD2FE2159994400C9214E /* GoogleService-Info.plist */,
+				449A7C841D80D0E80019300C /* Info.plist */,
 				D94BD2FC2159993D00C9214E /* Keys.plist */,
+				E34490CC1F8EEFFF0064D284 /* SFText-Bold.otf */,
 				DD623C8A1E6D0585005ED004 /* SFText-Medium.otf */,
 				DD623C8B1E6D0585005ED004 /* SFText-Regular.otf */,
 				DD623C8C1E6D0585005ED004 /* SFText-Semibold.otf */,
@@ -458,6 +458,8 @@
 				449A7C851D80D0E80019300C /* Sources */,
 				449A7C861D80D0E80019300C /* Frameworks */,
 				449A7C871D80D0E80019300C /* Resources */,
+				046C7FE1354D5CA231D4B0DB /* [CP] Embed Pods Frameworks */,
+				46E366F31C5FDE5AE2F1856C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -477,6 +479,8 @@
 				449A7C901D80D0E80019300C /* Sources */,
 				449A7C911D80D0E80019300C /* Frameworks */,
 				449A7C921D80D0E80019300C /* Resources */,
+				D7D6F3AD37AAA12DFFBEE2FD /* [CP] Embed Pods Frameworks */,
+				53F5B40EB43DEC59D709CAAF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -575,6 +579,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		046C7FE1354D5CA231D4B0DB /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		0DD807D4971138217FA4C33E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -613,7 +632,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh",
+				"${SRCROOT}/Pods/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh",
 				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
 				"${PODS_ROOT}/GooglePlaces/Frameworks/GooglePlaces.framework/Resources/GooglePlaces.bundle",
 			);
@@ -624,7 +643,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		2E3D0C0A5BDEC0DF37BFA6ED /* [CP] Check Pods Manifest.lock */ = {
@@ -645,13 +664,43 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		46E366F31C5FDE5AE2F1856C /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		53F5B40EB43DEC59D709CAAF /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		7C01627F386C89E7F1995831 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh",
+				"${SRCROOT}/Pods/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
 				"${BUILT_PRODUCTS_DIR}/Fuzzywuzzy_swift/Fuzzywuzzy_swift.framework",
@@ -684,7 +733,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		8F523521CC9B937AEFB99FF9 /* [CP] Check Pods Manifest.lock */ = {
@@ -705,6 +754,21 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		D7D6F3AD37AAA12DFFBEE2FD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		E3FCA3C71FAA5AFB0069BD0F /* Fabric Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
@@ -717,7 +781,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Build-Phases/fabric-config.sh\"\n\n";
+			shellScript = "\"${SRCROOT}/TCAT/Supporting Files/fabric-config.sh\"\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

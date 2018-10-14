@@ -36,11 +36,17 @@ class AllStopsTableViewController: UITableViewController {
 
         super.viewDidLoad()
         sectionIndexes = sectionIndexesForBusStop()
-        sortedKeys = sortedKeysForBusStops()
+
+        sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
+
+        // Adding "#" to keys for bus stops that start with a number
+        if !allStops.isEmpty {
+            sortedKeys.append("#")
+        }
 
         title = "All Stops"
         tableView.sectionIndexColor = .primaryTextColor
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: "BusStop")
+        tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
         tableView.cellLayoutMarginsFollowReadableWidth = false
 
         if #available(iOS 11.0, *) {
@@ -56,11 +62,9 @@ class AllStopsTableViewController: UITableViewController {
         tableView.tableFooterView = UIView()
         // Set top of table view to align with scroll view
         tableView.contentOffset = .zero
+
     }
 
-    // MARK: TableView DataSource
-
-    /// Retrieves the section indexes for the bus stops
     func sectionIndexesForBusStop() -> [String: [BusStop]] {
 
         var sectionIndexDictionary: [String: [BusStop]] = [:]
@@ -94,12 +98,13 @@ class AllStopsTableViewController: UITableViewController {
             }
         }
 
+        // Adding "#" to section indexes for bus stops that start with a number
         if !allStops.isEmpty {
-            // Adding "#" to section indexes for bus stops that start with a number
             sectionIndexDictionary["#"] = numberBusStops
         }
 
         return sectionIndexDictionary
+
     }
 
     /// Retrieves the keys from the sectionIndexDictionary
@@ -126,6 +131,8 @@ class AllStopsTableViewController: UITableViewController {
 
         self.tableView.reloadData()
     }
+
+    // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         return sectionIndexes.count
@@ -158,7 +165,7 @@ class AllStopsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "BusStop", for: indexPath) as! BusStopCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busIdentifier, for: indexPath) as! BusStopCell
         let section = sectionIndexes[sortedKeys[indexPath.section]]
         cell.textLabel?.text = section?[indexPath.row].name
         return cell
@@ -189,7 +196,7 @@ class AllStopsTableViewController: UITableViewController {
     }
 }
 
-// MARK: DZNEmptyDataSet 
+// MARK: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate
 extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     func setUpLoadingIndicator() {
         loadingIndicator = LoadingIndicator()
@@ -250,4 +257,5 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             completion()
         })
     }
+
 }

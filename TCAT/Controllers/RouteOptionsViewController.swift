@@ -47,7 +47,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
     var searchFrom: Place?
     var searchTo: Place?
     var searchTime: Date?
-    var showRouteSearchingLoader = false
+    var showRouteSearchingLoader: Bool = false
 
     // MARK: View vars
 
@@ -61,9 +61,6 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
     let navigationBarTitle: String = "Route Options"
     let routeResultsTitle: String = "Route Results"
-
-    /// loading indicator for empty state view
-    var loadingIndicator: LoadingIndicator?
 
     // MARK: Data vars
 
@@ -81,7 +78,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
     }
 
     var cellUserInteraction = true
-
+                                    
     // MARK: Spacing vars
 
     let estimatedRowHeight: CGFloat = 115
@@ -163,7 +160,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return banner != nil ? .lightContent : .default
+        return isBannerShown ? .lightContent : .default
     }
 
     // MARK: Route Selection view
@@ -373,7 +370,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
                 Network.getRoutes(startCoord: startCoord, endCoord: endCoord, endPlaceName: searchFrom.name, time: time, type: self.searchTimeType) { request in
                     let requestUrl = Network.getRequestUrl(startCoord: startCoord, endCoord: endCoord, destinationName: searchTo.name, time: time, type: self.searchTimeType)
-                    self.processRequest(request: request, requestUrl: requestUrl, endPlace: searchFrom)
+                    self.processRequest(request: request, requestUrl: requestUrl, endPlace: searchTo)
                 }
 
             }
@@ -421,9 +418,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                         }
         )
 
-        let payload = DestinationSearchedEventPayload(destination: endPlace.name,
-                                                      requestUrl: requestUrl,
-                                                      stopType: nil)
+        let payload = DestinationSearchedEventPayload(destination: endPlace.name, requestUrl: requestUrl)
         Analytics.shared.log(payload)
     }
 
@@ -487,13 +482,20 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
             case .showError(bannerInfo: let bannerInfo, payload: let payload):
                 banner = StatusBarNotificationBanner(title: bannerInfo.title, style: bannerInfo.style)
                 banner?.autoDismiss = false
+                banner?.dismissOnTap = true
                 banner?.show(queuePosition: .front, on: navigationController)
+                isBannerShown = true
+                
                 Analytics.shared.log(payload)
 
             case .hideBanner:
-                banner?.dismiss()
+                if isBannerShown {
+                    isBannerShown = false
+                    banner?.dismiss()
+                    banner = nil
+                }
                 mediumTapticGenerator.impactOccurred()
-
+                
             }
 
         }
@@ -603,8 +605,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
     // MARK: Reachability
 
     private func setupReachability() {
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(notification:)),
-                                               name: .reachabilityChanged, object: reachability)
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .reachabilityChanged, object: reachability)
 
         do {
             try reachability?.startNotifier()
@@ -631,6 +632,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
             }
         }
     }
+
 
     private func setUserInteraction(to userInteraction: Bool) {
         cellUserInteraction = userInteraction

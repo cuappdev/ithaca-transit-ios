@@ -114,7 +114,8 @@ class HomeViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)),
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(reachabilityChanged(note:)),
                                                name: .reachabilityChanged,
                                                object: reachability)
         do {
@@ -128,8 +129,9 @@ class HomeViewController: UIViewController {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return banner != nil ? .lightContent : .default
+        return isBannerShown ? .lightContent : .default
     }
+
 
     @objc func reachabilityChanged(_ notification: Notification) {
         if let reachability = notification.object as? Reachability {
@@ -160,7 +162,6 @@ class HomeViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        // Takedown reachability
         reachability?.stopNotifier()
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
         // Remove banner
@@ -184,6 +185,7 @@ class HomeViewController: UIViewController {
         locationManager.requestWhenInUseAuthorization()
 
         StoreReviewHelper.checkAndAskForReview()
+
     }
 
     func createSections() -> [Section] {

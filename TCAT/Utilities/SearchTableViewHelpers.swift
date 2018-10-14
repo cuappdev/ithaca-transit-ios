@@ -59,7 +59,7 @@ class SearchTableViewManager {
     private init() {}
     func getAllStops() -> [BusStop] {
         if let stops = allStops {
-            // Check if not empty so that an empty array isn't returned 
+            // Check if not empty so that an empty array isn't returned
             if !stops.isEmpty {
                 return stops
             }
@@ -69,7 +69,7 @@ class SearchTableViewManager {
         return stops
     }
 
-    func getAllBusStops() -> [BusStop] {
+    private func getAllBusStops() -> [BusStop] {
         if let allBusStops = userDefaults.value(forKey: Constants.UserDefaults.allBusStops) as? Data,
             var busStopArray = NSKeyedUnarchiver.unarchiveObject(with: allBusStops) as? [BusStop] {
             // Check if empty so that an empty array isn't returned
