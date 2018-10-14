@@ -15,6 +15,7 @@ import NotificationBannerSwift
 import Crashlytics
 import SafariServices
 import SnapKit
+import WhatsNewKit
 
 class HomeViewController: UIViewController {
 
@@ -118,7 +119,7 @@ class HomeViewController: UIViewController {
             make.height.equalTo(38)
         }
         
-        if let key = userDefaults.value(forKey: Constants.UserDefaults.whatsNewDismissed) as? Bool, !key {
+        if !VersionStore().has(version: WhatsNew.Version.current()) {
             createWhatsNewView()
         }
     }

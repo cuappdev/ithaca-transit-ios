@@ -22,6 +22,7 @@ struct Constants {
         /// The app version within the App Store (e.g. "1.4.2") [String value of `CFBundleShortVersionString`]
         static let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
         
+        
         /// Developer email address to direct contact inquiries and emails toward
         static let contactEmailAddress = "ithacatransit@cornellappdev.com"
         

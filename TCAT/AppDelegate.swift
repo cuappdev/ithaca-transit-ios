@@ -82,14 +82,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.makeKeyAndVisible()
         
         // Check app version
-        if let version = userDefaults.value(forKey: Constants.UserDefaults.version) as? String {
-            if version != Constants.App.version {
-                showWhatsNew(items: [])
-            }
-        }
+        // Commented out for this update
+        //if !VersionStore().has(version: WhatsNew.Version.current()) {showWhatsNew(items: [])}
         
         // Set version to be current version
-        userDefaults.set(Constants.App.version, forKey: Constants.UserDefaults.version)
+        VersionStore().set(version: WhatsNew.Version.current())
         
         return true
     }
