@@ -41,6 +41,9 @@ class HomeViewController: UIViewController {
     var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
+            if sections.isEmpty {
+                tableView.tableHeaderView = nil
+            }
         }
     }
 
@@ -89,7 +92,7 @@ class HomeViewController: UIViewController {
 
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
-            
+
             if #available(iOS 11.0, *) {
                 make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             } else {
@@ -115,7 +118,7 @@ class HomeViewController: UIViewController {
             make.height.equalTo(38)
         }
         
-        if !tableView.isEmptyDataSetVisible {
+        if let key = userDefaults.value(forKey: Constants.UserDefaults.whatsNewDismissed) as? Bool, !key {
             createWhatsNewView()
         }
     }
@@ -155,6 +158,7 @@ class HomeViewController: UIViewController {
                 self.sectionIndexes = [:]
                 self.searchBar.isUserInteractionEnabled = false
                 self.sections = []
+                self.tableView.tableHeaderView = nil
             case .cellular, .wifi:
                 if isBannerShown {
                     banner?.dismiss()
@@ -177,7 +181,9 @@ class HomeViewController: UIViewController {
         super.viewWillAppear(animated)
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
-        sections = createSections()
+        if !isNetworkDown {
+            sections = createSections()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -215,7 +221,7 @@ class HomeViewController: UIViewController {
                                           description: "Force Touch the app icon to search your favorites even faster.")
         whatsNewView.whatsNewDelegate = self
         let containerView = UIView()
-        containerView.backgroundColor = UIColor.tableBackgroundColor
+        containerView.backgroundColor = .clear
         containerView.addSubview(whatsNewView)
         whatsNewView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview().inset(whatsNewView.containerPadding)
