@@ -30,7 +30,7 @@ class HomeViewController: UIViewController {
     var isNetworkDown = false
     var searchResultsSection: Section!
     var sectionIndexes: [String: Int]! = [:]
-    var tableView: homeTableView!
+    var tableView: HomeTableView!
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
@@ -70,7 +70,7 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         view.backgroundColor = .tableBackgroundColor
 
-        tableView = homeTableView(frame: .zero, style: .grouped)
+        tableView = HomeTableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
@@ -95,7 +95,6 @@ class HomeViewController: UIViewController {
             } else {
                 make.top.equalToSuperview().offset(view.layoutMargins.top)
             }
-            
         }
 
         searchBar = UISearchBar()
@@ -116,7 +115,9 @@ class HomeViewController: UIViewController {
             make.height.equalTo(38)
         }
         
-        createWhatsNewView()
+        if !tableView.isEmptyDataSetVisible {
+            createWhatsNewView()
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -533,59 +534,45 @@ extension HomeViewController: AddFavoritesDelegate {
     }
 }
 
-class homeTableView: UITableView {
-    override var tableHeaderView: UIView? {
-        didSet {
-            if tableHeaderView == nil {
-                self.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
-            } else {
-                self.contentInset = .zero
-            }
-        }
-    }
-}
-
 // MARK: WhatsNew Delegate
 extension HomeViewController: WhatsNewDelegate {
     
     func okButtonPressed() {
         userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
-        tableView.tableHeaderView = nil
-//        let lastRowIndex = IndexPath(row: 0, section: sections.count - 1)
-//        let lastRowFrame = tableView.rectForRow(at: lastRowIndex)
-//        tableView.contentInset = UIEdgeInsets(top: tableView.contentInset.top,
-//                                              left: tableView.contentInset.left,
-//                                              bottom: tableView.frame.height - lastRowFrame.height - lastRowFrame.origin.y + whatsNewView.frame.height - 16,
-//                                              right: tableView.contentInset.right)
-//        let favoritesIndex = IndexPath(row: 0, section: 0)
-//        UIView.animate(withDuration: 0.5, animations: {
-//            self.tableView.scrollToRow(at: favoritesIndex, at: .top, animated: false)
-//            for view in self.whatsNewView.subviews {
-//                view.snp.updateConstraints{ (make) in
-//                    make.height.equalTo(0)
-//                    make.width.equalTo(0)
-//                }
-//                for subview in view.subviews {
-//                    if let label = subview as? UILabel {
-//                        label.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-//                    }
-//                    if let button = subview as? UIButton {
-//                        button.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-//                    }
-//
-//                }
-//            }
-//            self.whatsNewView.layoutIfNeeded()
-//        }) { (completed) in
-//            if completed {
-//                self.tableView.tableHeaderView = nil
-//                self.tableView.contentInset = .zero
-//            }
-//        }
+        tableView.beginUpdates()
+        tableView.animating = true
+        UIView.animate(withDuration: 0.35, animations: {
+            if let containerView = self.tableView.tableHeaderView {
+                self.tableView.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
+                containerView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01).translatedBy(x: 0, y: -6000)
+            }
+        }, completion: {(completed) in
+            if completed {
+                self.tableView.animating = false
+                self.tableView.tableHeaderView = nil
+            }
+        })
+        tableView.endUpdates()
     }
 
     func cardPressed() {
         print("Card Pressed")
+    }
+}
+
+// MARK: Custom TableView
+class HomeTableView: UITableView {
+    var animating = false
+    override var tableHeaderView: UIView? {
+        didSet {
+            if !animating {
+                if tableHeaderView == nil {
+                    self.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
+                } else {
+                    self.contentInset = .zero
+                }
+            }
+        }
     }
 }
 
