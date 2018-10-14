@@ -141,10 +141,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         
         let content = label.text! + direction.locationNameDescription
         let labelBoldFont = UIFont.style(Fonts.System.semibold, size: 14)
-        let attributedString = bold(pattern: direction.name,
-                                    in: content,
-                                    from: label.font,
-                                    to: labelBoldFont)
+        let attributedString = direction.name.bold(in: content, from: label.font, to: labelBoldFont)
         label.attributedText = attributedString
         paragraphStyle.lineSpacing = 4
         

@@ -117,11 +117,11 @@ class SummaryView: UIView {
             
             let content = "Depart at \(departDirection.startTimeWithDelayDescription)\(fragment) from \(departDirection.name)"
             // This changes font to standard size. Label's font is different.
-            var attributedString = bold(pattern: departDirection.startTimeWithDelayDescription,
+            var attributedString = departDirection.startTimeWithDelayDescription.bold(
                                        in: content,
                                        from: mainLabel.font,
                                        to: mainLabelBoldFont)
-            attributedString = bold(pattern: departDirection.name, in: attributedString, to: mainLabelBoldFont)
+            attributedString = departDirection.name.bold(in: attributedString, to: mainLabelBoldFont)
             
             let range = (attributedString.string as NSString).range(of: departDirection.startTimeWithDelayDescription)
             attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: range)
@@ -141,8 +141,8 @@ class SummaryView: UIView {
             
         } else {
             let content = route.directions.first?.locationNameDescription ?? "Route Directions"
-            mainLabel.attributedText = bold(pattern: route.directions.first?.name ?? "", in: content,
-                                            from: mainLabel.font, to: mainLabelBoldFont)
+            let pattern = route.directions.first?.name ?? ""
+            mainLabel.attributedText = pattern.bold(in: content, from: mainLabel.font, to: mainLabelBoldFont)
         }
         
         // Calculate and adjust label based on number of lines
