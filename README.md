@@ -18,7 +18,7 @@ sudo gem install cocoapods // skip if already installed
 pod install
 ```
 
-4. While you're waiting for that, go to `#transit-ios` and 
+4. While you're waiting for that, go to pinned messages in `#transit-ios` in Slack and **download `Keys.plist` and `GoogleServiceInfo.plist`**. Within the `tcat-ios` folder, place these files in `tcat-ios/TCAT/Supporting Files/`.
 
 4. Open the `.xcworkspace` file.
 5. Change any relevant network settings for testing (see below).
@@ -38,9 +38,11 @@ At the top of the Network class, you can edit whether the app uses the release, 
 
 `networkType = .release | .debug | .local`
 
-`localIPAddress: String`
-`debugIPAddress: String`
-`releaseIPAddress: String`
+```
+localIPAddress: String
+debugIPAddress: String
+releaseIPAddress: String
+```
 
 # Product Description
 
