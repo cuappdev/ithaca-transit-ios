@@ -1,8 +1,24 @@
 # Ithaca Transit
 
-![Ithaca Transit Icon](https://raw.githubusercontent.com/cuappdev/tcat-ios/master/app-icon.png)
+<img width="256" alt="Ithaca Transit App Icon" src="https://raw.githubusercontent.com/cuappdev/tcat-ios/master/app-icon.png">
 
 Download on the App Store [here](https://itunes.apple.com/app/id1290883721).
+
+# Product Description
+
+Introducing [Ithaca Transit](https://itunes.apple.com/app/id1290883721), a new end-to-end navigation service for built for the TCAT bus service. A free and open-source app, Ithaca Transit offers a diverse range of features in beautiful, clean interface to help get you where you need to go.
+
+### Live Bus Tracking
+
+Want to know is the bus is running late (again) or where it’s even at? We’ve got you covered. View actual bus locations on the map and see expected delay times, all in one easy-to-use interface. We use the latest dynamic transit data directly from TCAT to ensure the most up-to-date information.
+
+### Search Anywhere
+
+Ithaca Transit integrates with Google Places to allow you to search bus routes to any destination in the country. Search up Chipotle or Waffle Frolic and let the app take care of the rest, including accurate walking directions!
+
+### Your Favorites
+
+Easily bookmark your favorite bus stops and destinations for one tap access to routes. Blazing!
 
 # Build Instructions
 
@@ -44,22 +60,10 @@ debugIPAddress: String
 releaseIPAddress: String
 ```
 
-# Product Description
+# Contributions
 
-Introducing Ithaca Transit, a new end-to-end navigation service for built for the TCAT bus service. A free and open-source app, Ithaca Transit offers a diverse range of features in beautiful, clean interface to help get you where you need to go.
+We're proud to be an open-source development team. If you want to help contribute or improve Ithaca Transit, feel free to submit any issues or pull requests. You can also contact us at [ithacatransit@cornellappdev.com](mailto:ithacatransit@cornellappdev.com).
 
-### Live Bus Tracking
+# Made by Cornell App Development
 
-Want to know is the bus is running late (again) or where it’s even at? We’ve got you covered. View actual bus locations on the map and see expected delay times, all in one easy-to-use interface. We use the latest dynamic transit data directly from TCAT to ensure the most up-to-date information.
-
-### Search Anywhere
-
-Ithaca Transit integrates with Google Places to allow you to search bus routes to any destination in the country. Search up Chipotle or Waffle Frolic and let the app take care of the rest, including accurate walking directions!
-
-### Your Favorites
-
-Easily bookmark your favorite bus stops and destinations for one tap access to routes. Blazing!
-
-## Made by Cornell AppDev
-
-Cornell AppDev is an engineering project team at Cornell University dedicated to designing and developing mobile applications. We were founded in 2014 and have since released apps for Cornell and beyond, from Eatery and Big Red Shuttle to Pollo and Recast. Our goal is to produce apps that benefit the Cornell community and the local Ithaca area as well as promote open-source development with the community. We have a diverse team of software engineers and product designers that collaborate to create apps from an idea to a reality. Cornell AppDev also aims to foster innovation and learning through training courses, campus initiatives, and collaborative research and development. For more information, visit our [website](http://www.cornellappdev.com) and follow us on [Instagram](https://www.instagram.com/cornellappdev/).
+Cornell AppDev is an engineering project team at Cornell University dedicated to designing and developing mobile applications. We were founded in 2014 and have since released apps for Cornell and beyond, like [Eatery](https://itunes.apple.com/us/app/eatery-cornell-dining/id1089672962?mt=8). Our goal is to produce apps that benefit the Cornell community and the local Ithaca area as well as promote open-source development with the community. We have a diverse team of software engineers and product designers that collaborate to create apps from an idea to a reality. Cornell AppDev also aims to foster innovation and learning through training courses, campus initiatives, and collaborative research and development. For more information, visit our [website](http://www.cornellappdev.com) and follow us on [Instagram](https://www.instagram.com/cornellappdev/).
