@@ -132,7 +132,6 @@ class HomeViewController: UIViewController {
         return banner != nil ? .lightContent : .default
     }
 
-
     @objc func reachabilityChanged(_ notification: Notification) {
         if let reachability = notification.object as? Reachability {
 

@@ -78,7 +78,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
     }
 
     var cellUserInteraction = true
-                                    
+
     // MARK: Spacing vars
 
     let estimatedRowHeight: CGFloat = 115
@@ -160,7 +160,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return isBannerShown ? .lightContent : .default
+        return banner != nil ? .lightContent : .default
     }
 
     // MARK: Route Selection view
@@ -484,18 +484,15 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                 banner?.autoDismiss = false
                 banner?.dismissOnTap = true
                 banner?.show(queuePosition: .front, on: navigationController)
-                isBannerShown = true
-                
+
                 Analytics.shared.log(payload)
 
             case .hideBanner:
-                if isBannerShown {
-                    isBannerShown = false
-                    banner?.dismiss()
-                    banner = nil
-                }
+                banner?.dismiss()
+                banner = nil
+                NotificationBannerQueue.default.removeAll()
                 mediumTapticGenerator.impactOccurred()
-                
+
             }
 
         }
@@ -605,8 +602,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
     // MARK: Reachability
 
     private func setupReachability() {
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .reachabilityChanged, object: reachability)
-
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(notification:)), name: .reachabilityChanged, object: reachability)
         do {
             try reachability?.startNotifier()
         } catch {
@@ -632,7 +628,6 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
             }
         }
     }
-
 
     private func setUserInteraction(to userInteraction: Bool) {
         cellUserInteraction = userInteraction
