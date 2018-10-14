@@ -4,6 +4,46 @@
 
 Download on the App Store [here](https://itunes.apple.com/app/id1290883721).
 
+# Build Instructions
+
+## Download Project
+
+1. Install [Xcode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12).
+2. Clone this repository.
+3. Open Terminal and run the following:
+
+```
+cd tcat-ios
+sudo gem install cocoapods // skip if already installed
+pod install
+```
+
+4. While you're waiting for that, go to `#transit-ios` and 
+
+4. Open the `.xcworkspace` file.
+5. Change any relevant network settings for testing (see below).
+
+## Build & Run
+
+1. Click the Play icon in the top-left of the toolbar. By default, this will load the app in the simulator.
+2. To change the simulator's location, within the Simulator.app menu bar, go to `Debug > Location` and click on `Custom Location`. Goldwin Smith Hall's coordinates are **42.449071, -76.483759**.
+
+*Note:* To build on your own device, you need to be signed into an Apple Developer account and have proper provisioning profiles. Talk to Matt about this (it's a pain). Hopefully he will update this in the future with better instructions.
+
+### Updating Network Settings
+
+In Xcode, locate Network.swift or Network+Endpoints.swift. This should be in `TCAT/Utilities` or `TCAT/Network` under the TCAT project.
+
+At the top of the Network class, you can edit whether the app uses the release, debug, or local server, as well as which IP address each one points to.
+
+`networkType = .release | .debug | .local`
+
+`localIPAddress: String`
+`debugIPAddress: String`
+`releaseIPAddress: String`
+
+# Product Description
+
 Introducing Ithaca Transit, a new end-to-end navigation service for built for the TCAT bus service. A free and open-source app, Ithaca Transit offers a diverse range of features in beautiful, clean interface to help get you where you need to go.
 
 ### Live Bus Tracking
