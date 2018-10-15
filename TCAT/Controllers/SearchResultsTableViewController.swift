@@ -50,7 +50,7 @@ class SearchResultsTableViewController: UITableViewController {
     }
 
     func tctSectionHeaderFont() -> UIFont? {
-        return UIFont.systemFont(ofSize: 14)
+        return .style(Fonts.System.regular, size: 14)
     }
 
     convenience init() {

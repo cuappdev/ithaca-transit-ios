@@ -44,7 +44,7 @@ class BusStopCell: UITableViewCell {
 
         textLabel?.frame = CGRect(x: labelXPosition, y: 0.0, width: frame.width - labelWidth, height: labelHeight)
         textLabel?.center.y = bounds.height / 2.0
-        textLabel?.font = .systemFont(ofSize: 13)
+        textLabel?.font = .style(Fonts.System.regular, size: 13)
     }
 
 }

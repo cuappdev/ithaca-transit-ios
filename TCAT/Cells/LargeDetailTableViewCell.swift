@@ -37,7 +37,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     func getTitleLabel() -> UILabel {
         let titleLabel = UILabel()
         titleLabel.frame = CGRect(x: cellWidth, y: 0, width: chevron.frame.minX - cellWidth, height: 20)
-        titleLabel.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+        titleLabel.font = .style(Fonts.System.regular, size: 14)
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.textColor = .primaryTextColor
         titleLabel.text = direction != nil && direction.type == .transfer ? "Bus becomes" : "Board"
@@ -48,7 +48,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     func getDetailLabel() -> UILabel {
         let detailLabel = UILabel()
         detailLabel.frame = CGRect(x: cellWidth, y: 0, width: 20, height: 20)
-        detailLabel.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+        detailLabel.font = .style(Fonts.System.regular, size: 14)
         detailLabel.textColor = .mediumGrayColor
         detailLabel.text = "Detail Label"
         detailLabel.lineBreakMode = .byWordWrapping
@@ -140,7 +140,8 @@ class LargeDetailTableViewCell: UITableViewCell {
         // Format and place labels
         
         let content = label.text! + direction.locationNameDescription
-        let attributedString = bold(pattern: direction.name, in: content)
+        let labelBoldFont: UIFont = .style(Fonts.System.semibold, size: 14)
+        let attributedString = direction.name.bold(in: content, from: label.font, to: labelBoldFont)
         label.attributedText = attributedString
         paragraphStyle.lineSpacing = 4
         
@@ -149,8 +150,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         label.frame.size.width = (chevron.frame.minX - 12) - cellWidth
         label.frame.origin.y = edgeSpacing // - paragraphStyle.lineSpacing
         
-        attributedString.addAttribute(NSAttributedString.Key.paragraphStyle,
-                                      value: paragraphStyle,
+        attributedString.addAttribute(.paragraphStyle, value: paragraphStyle,
                                       range: NSMakeRange(0, label.attributedText!.length))
         label.attributedText = attributedString
         

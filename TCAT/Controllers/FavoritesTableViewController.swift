@@ -169,8 +169,7 @@ extension FavoritesTableViewController: DZNEmptyDataSetSource {
 
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let title = "Search for a destination"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
-        return NSAttributedString(string: title, attributes: attrs)
+        return NSAttributedString(string: title, attributes: [.foregroundColor : UIColor.mediumGrayColor])
     }
 }
     // MARK: Search

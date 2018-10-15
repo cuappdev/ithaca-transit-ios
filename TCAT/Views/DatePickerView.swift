@@ -128,19 +128,20 @@ class DatePickerView: UIView {
 
     private func styleSegmentedControl(_ segmentedControl: UISegmentedControl) {
         segmentedControl.tintColor = .tcatBlueColor
-        let segmentControlFont = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 13.0)
-        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font: segmentControlFont!], for: .normal)
+        segmentedControl.setTitleTextAttributes(
+            [.font: UIFont.style(Fonts.SanFrancisco.regular, size: 13.0)],
+            for: .normal)
     }
 
     private func styleCancelButton() {
         cancelButton.frame = CGRect(x: 0, y: 0, width: 60, height: buttonHeight)
-        cancelButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 17.0)
+        cancelButton.titleLabel?.font = .style(Fonts.SanFrancisco.regular, size: 17.0)
         cancelButton.setTitleColor(.mediumGrayColor, for: .normal)
     }
 
     private func styleDoneButton() {
         doneButton.frame = CGRect(x: 0, y: 0, width: 55, height: buttonHeight)
-        doneButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 17.0)
+        doneButton.titleLabel?.font = .style(Fonts.SanFrancisco.regular, size: 17.0)
         doneButton.setTitleColor(.tcatBlueColor, for: .normal)
     }
 

@@ -15,9 +15,9 @@ import TRON
 let increaseTapTargetTag: Int = 1865
 
 extension UIColor {
-
+    
     @nonobjc static let tcatBlueColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1)
-
+    
     @nonobjc static let buttonColor = UIColor(red: 0 / 255, green: 118 / 255, blue: 255 / 255, alpha: 1)
     @nonobjc static let primaryTextColor = UIColor(white: 34 / 255, alpha: 1)
     @nonobjc static let secondaryTextColor = UIColor(white: 74 / 255, alpha: 1)
@@ -257,6 +257,37 @@ extension String {
         return NSRange(location: from - startIndex.encodedOffset, length: to - from)
     }
     
+    /** Bold a phrase that appears in a string, and return the attributed string. Only shows the last bolded phrase.
+     
+        - Parameter containerText: The string to scan through and make `self` bold inside.
+        - Parameter originalFont: The initial font of the containerText.
+        - Parameter boldFont: The font to make the bold string.
+     */
+    func bold(in containerText: String, from originalFont: UIFont, to boldFont: UIFont) -> NSMutableAttributedString {
+        let attributedString = NSMutableAttributedString(string: containerText, attributes: [.font : originalFont])
+        return self.bold(in: attributedString, to: boldFont)
+    }
+    
+    /** Bold a phrase that appears in an attributed string, and return the attributed string */
+    func bold(in containerText: NSMutableAttributedString, to boldFont: UIFont) -> NSMutableAttributedString {
+        
+        let pattern = self
+        let attributedString: NSMutableAttributedString = containerText
+        let newAttributedString = attributedString
+        let plain_string: String = attributedString.string
+        
+        do {
+            let regex = try NSRegularExpression(pattern: pattern, options: [])
+            let ranges = regex.matches(in: plain_string, options: [], range: NSMakeRange(0, plain_string.count)).map { $0.range }
+            for range in ranges { newAttributedString.addAttributes([.font : boldFont], range: range) }
+        } catch {
+            print("bold NSRegularExpression failed")
+        }
+        
+        return newAttributedString
+        
+    }
+    
 }
 
 extension CLLocationCoordinate2D {
@@ -366,38 +397,6 @@ func presentShareSheet(from view: UIView, for route: Route, with image: UIImage?
     }
     
     UIApplication.shared.delegate?.window??.presentInApp(activityVC)
-    
-}
-
-/** Bold a phrase that appears in a string, and return the attributed string.
-    Only shows the last bolded phrase.
- */
-func bold(pattern: String, in string: String) -> NSMutableAttributedString {
-    let fontSize = UIFont.systemFontSize
-    let fontAttribute = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: fontSize)]
-    let attributedString = NSMutableAttributedString(string: string, attributes: fontAttribute)
-    return bold(pattern: pattern, in: attributedString)
-}
-
-/** Bold a phrase that appears in an attributed string, and return the attributed string */
-func bold(pattern: String, in attributedString: NSMutableAttributedString) -> NSMutableAttributedString {
-    
-    let string = attributedString.string
-    let newAttributedString = attributedString
-    let font = attributedString.attributes(at: 0, effectiveRange: nil)
-    guard let fontSize = (font[NSAttributedString.Key.font] as? UIFont)?.pointSize else {
-        return attributedString
-    }
-    
-    let boldFontAttribute = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: fontSize)]
-    
-    do {
-        let regex = try NSRegularExpression(pattern: pattern, options: [])
-        let ranges = regex.matches(in: string, options: [], range: NSMakeRange(0, string.count)).map { $0.range }
-        for range in ranges { newAttributedString.addAttributes(boldFontAttribute, range: range) }
-    } catch { }
-    
-    return newAttributedString
     
 }
 
