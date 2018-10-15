@@ -53,7 +53,7 @@ class HomeViewController: UIViewController {
     var banner: StatusBarNotificationBanner?
 
     func tctSectionHeaderFont() -> UIFont? {
-        return UIFont.style(Fonts.System.regular, size: 14)
+        return .style(Fonts.System.regular, size: 14)
     }
 
     override func viewDidLoad() {
@@ -66,7 +66,7 @@ class HomeViewController: UIViewController {
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
         navigationController?.navigationBar.barTintColor = .white
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white]
         view.backgroundColor = .tableBackgroundColor
 
         tableView = UITableView(frame: .zero, style: .grouped)
@@ -486,8 +486,7 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
-        return NSAttributedString(string: title, attributes: attrs)
+        return NSAttributedString(string: title, attributes: [.foregroundColor : UIColor.mediumGrayColor])
     }
 }
 

@@ -24,7 +24,7 @@ class OnboardingViewController: PresentationController {
     
     /// The text color of the navigation buttons
     let navigationAttributes: [NSAttributedString.Key : Any] = [
-        NSAttributedString.Key.foregroundColor : UIColor(hex: "243C47")
+        .foregroundColor : UIColor(hex: "243C47")
     ]
     
     //
@@ -188,7 +188,7 @@ class OnboardingViewController: PresentationController {
     init(initialViewing: Bool) {
         self.isInitialViewing = initialViewing
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-    }
+    } 
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -223,12 +223,10 @@ class OnboardingViewController: PresentationController {
         let detailWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.8
         let detailHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
         
-        let detailFont = UIFont.style(detailLabelFontName, size: detailLabelFontSize * detailHeight)
-        
-        let attributes = [
-            NSAttributedString.Key.font: detailFont,
-            NSAttributedString.Key.foregroundColor: detailLabelTextColor,
-            NSAttributedString.Key.paragraphStyle: paragraphStyle
+        let attributes: [NSAttributedString.Key : Any] = [
+            .font: UIFont.style(detailLabelFontName, size: detailLabelFontSize * detailHeight),
+            .foregroundColor: detailLabelTextColor,
+            .paragraphStyle: paragraphStyle
         ]
         
         let detailTitles = detailLabelMessages.map { title -> Content in
@@ -245,12 +243,11 @@ class OnboardingViewController: PresentationController {
         
         let headerWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.9
         let headerHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
-        let headerFont = UIFont.style(titleLabelFontName, size: titleLabelFontSize * headerHeight)
         
-        let headerAttributes = [
-            NSAttributedString.Key.font: headerFont,
-            NSAttributedString.Key.foregroundColor: titleLabelTextColor,
-            NSAttributedString.Key.paragraphStyle: headerParagraphStyle
+        let headerAttributes: [NSAttributedString.Key : Any] = [
+            .font: UIFont.style(titleLabelFontName, size: titleLabelFontSize * headerHeight),
+            .foregroundColor: titleLabelTextColor,
+            .paragraphStyle: headerParagraphStyle
         ]
         
         let headerTitles = titleLabelMessages.map { title -> Content in
@@ -270,7 +267,7 @@ class OnboardingViewController: PresentationController {
         button.setTitle("BEGIN", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.style(Fonts.SanFrancisco.medium, size: 22)
+        button.titleLabel?.font = .style(Fonts.SanFrancisco.medium, size: 22)
         button.backgroundColor = .tcatBlueColor // UIColor(hex: "D65851")
         button.layer.cornerRadius = 4
         let buttonPosition = Position(left: 0.5, top: 0.5)

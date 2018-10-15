@@ -67,7 +67,7 @@ class SummaryView: UIView {
         addSubview(tab)
         
         // Place and format top summary label
-        mainLabel.font = UIFont.style(Fonts.System.regular, size: 16)
+        mainLabel.font = .style(Fonts.System.regular, size: 16)
         mainLabel.textColor = .primaryTextColor
         mainLabel.numberOfLines = 1
         mainLabel.allowsDefaultTighteningForTruncation = true
@@ -75,7 +75,7 @@ class SummaryView: UIView {
         addSubview(mainLabel)
         
         // Place and format secondary label
-        secondaryLabel.font = UIFont.style(Fonts.System.regular, size: 12)
+        secondaryLabel.font = .style(Fonts.System.regular, size: 12)
         secondaryLabel.textColor = .mediumGrayColor
         addSubview(secondaryLabel)
         
@@ -97,7 +97,7 @@ class SummaryView: UIView {
         
         mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
         mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
-        let mainLabelBoldFont = UIFont.style(Fonts.System.semibold, size: 14)
+        let mainLabelBoldFont: UIFont = .style(Fonts.System.semibold, size: 14)
         
         if let departDirection = (route.directions.filter { $0.type == .depart }).first {
             
@@ -124,7 +124,7 @@ class SummaryView: UIView {
             attributedString = departDirection.name.bold(in: attributedString, to: mainLabelBoldFont)
             
             let range = (attributedString.string as NSString).range(of: departDirection.startTimeWithDelayDescription)
-            attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: range)
+            attributedString.addAttribute(.foregroundColor, value: color, range: range)
             
             mainLabel.attributedText = attributedString
             

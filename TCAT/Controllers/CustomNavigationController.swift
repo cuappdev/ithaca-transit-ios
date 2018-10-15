@@ -58,7 +58,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
     
     /// Attributed string details for the back button text of a navigation controller
     static let buttonTitleTextAttributes: [NSAttributedString.Key : Any] = [
-        NSAttributedString.Key.font : UIFont.style(Fonts.SanFrancisco.regular, size: 14)
+        .font : UIFont.style(Fonts.SanFrancisco.regular, size: 14)
     ]
     
     func customizeAppearance() {
@@ -86,9 +86,9 @@ class CustomNavigationController: UINavigationController, UINavigationController
         backButton.tintColor = .primaryTextColor
         
         let attributes: [NSAttributedString.Key : Any] = [
-            NSAttributedString.Key.font : UIFont.style(Fonts.SanFrancisco.regular, size: 14.0),
-            NSAttributedString.Key.foregroundColor : UIColor.primaryTextColor,
-            NSAttributedString.Key.baselineOffset : 0.3
+            .font : UIFont.style(Fonts.SanFrancisco.regular, size: 14.0),
+            .foregroundColor : UIColor.primaryTextColor,
+            .baselineOffset : 0.3
         ]
         let attributedString = NSMutableAttributedString(string: "  Back", attributes: attributes)
         backButton.setAttributedTitle(attributedString, for: .normal)

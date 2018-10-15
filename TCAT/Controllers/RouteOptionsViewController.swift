@@ -826,7 +826,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
         }
 
         let titleLabel = UILabel()
-        titleLabel.font = UIFont.style(Fonts.SanFrancisco.regular, size: 14.0)
+        titleLabel.font = .style(Fonts.SanFrancisco.regular, size: 14.0)
         titleLabel.textColor = .mediumGrayColor
         titleLabel.text = showRouteSearchingLoader ? "Looking for routes..." : "No Routes Found"
         titleLabel.sizeToFit()

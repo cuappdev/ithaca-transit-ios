@@ -219,8 +219,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             return nil
         }
         let title = "Couldn't Get Stops"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
-        return NSAttributedString(string: title, attributes: attrs)
+        return NSAttributedString(string: title, attributes: [.foregroundColor : UIColor.mediumGrayColor])
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
@@ -228,8 +227,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             return nil
         }
         let title = "Retry"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.buttonColor]
-        return NSAttributedString(string: title, attributes: attrs)
+        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.buttonColor])
     }
 
     func emptyDataSet(_ scrollView: UIScrollView!, didTap didTapButton: UIButton!) {

@@ -264,8 +264,7 @@ extension String {
         - Parameter boldFont: The font to make the bold string.
      */
     func bold(in containerText: String, from originalFont: UIFont, to boldFont: UIFont) -> NSMutableAttributedString {
-        let fontAttribute = [NSAttributedString.Key.font : originalFont]
-        let attributedString = NSMutableAttributedString(string: containerText, attributes: fontAttribute)
+        let attributedString = NSMutableAttributedString(string: containerText, attributes: [.font : originalFont])
         return self.bold(in: attributedString, to: boldFont)
     }
     
@@ -277,12 +276,10 @@ extension String {
         let newAttributedString = attributedString
         let plain_string: String = attributedString.string
         
-        let boldFontAttribute = [NSAttributedString.Key.font : boldFont]
-        
         do {
             let regex = try NSRegularExpression(pattern: pattern, options: [])
             let ranges = regex.matches(in: plain_string, options: [], range: NSMakeRange(0, plain_string.count)).map { $0.range }
-            for range in ranges { newAttributedString.addAttributes(boldFontAttribute, range: range) }
+            for range in ranges { newAttributedString.addAttributes([.font : boldFont], range: range) }
         } catch {
             print("bold NSRegularExpression failed")
         }
