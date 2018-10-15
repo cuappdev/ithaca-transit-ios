@@ -77,7 +77,7 @@ class RouteSelectionView: UIView {
     
     private func styleLabel(_ label: UILabel) {
         fromLabel.frame = CGRect(x: 0, y: 0, width: 40, height: 20)
-        label.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
+        label.font = .style(Fonts.SanFrancisco.regular, size: 14.0)
         label.textColor = .black
     }
     
@@ -85,7 +85,7 @@ class RouteSelectionView: UIView {
         searchbar.frame = CGRect(x: 0, y: 0, width: 243, height: searchbarHeight)
         searchbar.backgroundColor = .tableBackgroundColor
         searchbar.setTitleColor(.primaryTextColor, for: .normal)
-        searchbar.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
+        searchbar.titleLabel?.font = .style(Fonts.SanFrancisco.regular, size: 14.0)
         searchbar.contentHorizontalAlignment = .left
         searchbar.contentEdgeInsets = UIEdgeInsets.init(top: 0, left: searchbarTextSpaceFromLeft, bottom: 0, right: 0)
         searchbar.layer.cornerRadius = searchbarHeight/4
@@ -110,7 +110,7 @@ class RouteSelectionView: UIView {
         
         datepickerButton.tintColor = .mediumGrayColor
         datepickerButton.setTitleColor(.mediumGrayColor, for: .normal)
-        datepickerButton.titleLabel?.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
+        datepickerButton.titleLabel?.font = .style(Fonts.SanFrancisco.regular, size: 14.0)
         
         datepickerButton.backgroundColor = .white
         

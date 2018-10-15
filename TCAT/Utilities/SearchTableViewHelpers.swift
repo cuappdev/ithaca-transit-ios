@@ -47,8 +47,7 @@ extension SearchResultsTableViewController: DZNEmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         let locationNotFound = "Location not found"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
-        return NSAttributedString(string: locationNotFound, attributes: attrs)
+        return NSAttributedString(string: locationNotFound, attributes: [.foregroundColor: UIColor.mediumGrayColor])
     }
 }
 

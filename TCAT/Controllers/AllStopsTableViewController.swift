@@ -216,8 +216,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             return nil
         } else {
             let title = "Couldn't Get Stops"
-            let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
-            return NSAttributedString(string: title, attributes: attrs)
+          return NSAttributedString(string: title, attributes: [.foregroundColor : UIColor.mediumGrayColor])
         }
     }
 
@@ -227,8 +226,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             return nil
         } else {
             let title = "Retry"
-            let attrs = [NSAttributedString.Key.foregroundColor: UIColor.tcatBlueColor]
-            return NSAttributedString(string: title, attributes: attrs)
+            return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.tcatBlueColor])
         }
     }
 

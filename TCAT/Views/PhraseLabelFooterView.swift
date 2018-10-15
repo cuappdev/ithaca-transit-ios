@@ -13,7 +13,7 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
 
     var label: UILabel {
         let label = UILabel()
-        label.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12)
+        label.font = .style(Fonts.SanFrancisco.regular, size: 12)
         label.textColor = .lightGray
         label.numberOfLines = 0
         label.textAlignment = .left
