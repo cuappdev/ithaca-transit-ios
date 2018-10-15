@@ -67,7 +67,7 @@ class FavoritesTableViewController: UITableViewController {
                 let window = appDelegate.window,
                 let snapshot = window.snapshotView(afterScreenUpdates: true) {
                     desiredViewController.view.addSubview(snapshot)
-                    
+
                     appDelegate.window?.rootViewController = desiredViewController
                     userDefaults.setValue(true, forKey: Constants.UserDefaults.onboardingShown)
 
@@ -159,15 +159,15 @@ class FavoritesTableViewController: UITableViewController {
 }
     // MARK: Empty Data Set
 extension FavoritesTableViewController: DZNEmptyDataSetSource {
-    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
         return -80
     }
 
-    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
         return #imageLiteral(resourceName: "search-large")
     }
 
-    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         let title = "Search for a destination"
         return NSAttributedString(string: title, attributes: [.foregroundColor : UIColor.mediumGrayColor])
     }
