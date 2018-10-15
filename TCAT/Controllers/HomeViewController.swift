@@ -53,10 +53,6 @@ class HomeViewController: UIViewController {
         }
     }
 
-    func tctSectionHeaderFont() -> UIFont? {
-        return .style(Fonts.System.regular, size: 14)
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -293,7 +289,7 @@ extension HomeViewController: UITableViewDataSource {
             }
         }
 
-        cell.textLabel?.font = tctSectionHeaderFont()
+        cell.textLabel?.font = .style(Fonts.System.regular, size: 14)
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
         cell.layoutMargins = .zero
