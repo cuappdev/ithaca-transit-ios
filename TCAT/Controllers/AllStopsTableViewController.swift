@@ -22,6 +22,7 @@ class AllStopsTableViewController: UITableViewController {
     var height: CGFloat?
     var currentChar: Character?
     var loadingIndicator: LoadingIndicator?
+    var isLoading: Bool { return loadingIndicator != nil }
 
     override func viewWillLayoutSubviews() {
         if let y = navigationController?.navigationBar.frame.maxY {
@@ -206,27 +207,29 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
 
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
         // If loading indicator is being shown, don't display image
-        return loadingIndicator != nil ? nil : #imageLiteral(resourceName: "serverDown")
+        return isLoading ? nil : #imageLiteral(resourceName: "serverDown")
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         // If loading indicator is being shown, don't display description
-        if loadingIndicator != nil {
+        if isLoading {
             return nil
+        } else {
+            let title = "Couldn't Get Stops"
+            let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
+            return NSAttributedString(string: title, attributes: attrs)
         }
-        let title = "Couldn't Get Stops"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
-        return NSAttributedString(string: title, attributes: attrs)
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
-        /// If loading indicator is being shown, don't display button
-        if loadingIndicator != nil {
+        // If loading indicator is being shown, don't display button
+        if isLoading {
             return nil
+        } else {
+            let title = "Retry"
+            let attrs = [NSAttributedString.Key.foregroundColor: UIColor.tcatBlueColor]
+            return NSAttributedString(string: title, attributes: attrs)
         }
-        let title = "Retry"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.tcatBlueColor]
-        return NSAttributedString(string: title, attributes: attrs)
     }
 
     func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {

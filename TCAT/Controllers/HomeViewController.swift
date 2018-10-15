@@ -43,6 +43,7 @@ class HomeViewController: UIViewController {
         }
     }
     var loadingIndicator: LoadingIndicator?
+    var isLoading: Bool { return loadingIndicator != nil }
 
     let reachability = Reachability(hostname: Network.ipAddress)
 
@@ -493,30 +494,34 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
         // If loading indicator is being shown, don't display image
-        if loadingIndicator != nil {
+        if isLoading {
             return nil
+        } else {
+            return isNetworkDown ? #imageLiteral(resourceName: "noWifi") : #imageLiteral(resourceName: "noRoutes")
         }
-        return isNetworkDown ? #imageLiteral(resourceName: "noWifi") : #imageLiteral(resourceName: "noRoutes")
+
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         // If loading indicator is being shown, don't display description
-        if loadingIndicator != nil {
+        if isLoading {
             return nil
+        } else {
+            let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
+            let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
+            return NSAttributedString(string: title, attributes: attrs)
         }
-        let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
-        return NSAttributedString(string: title, attributes: attrs)
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
         // If loading indicator is being shown, don't display button
-        if loadingIndicator != nil {
+        if isLoading {
             return nil
+        } else {
+            let title = "Retry"
+            let attrs = [NSAttributedString.Key.foregroundColor: UIColor.tcatBlueColor]
+            return NSAttributedString(string: title, attributes: attrs)
         }
-        let title = "Retry"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.tcatBlueColor]
-        return NSAttributedString(string: title, attributes: attrs)
     }
 
     func setUpLoadingIndicator() {
@@ -532,7 +537,7 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
     func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
         setUpLoadingIndicator()
-        if loadingIndicator != nil {
+        if isLoading {
             tableView.reloadData()
 
             // Have loading indicator time out after one second
