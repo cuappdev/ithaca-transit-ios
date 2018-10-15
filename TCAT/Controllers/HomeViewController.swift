@@ -133,29 +133,31 @@ class HomeViewController: UIViewController {
     }
 
     @objc func reachabilityChanged(_ notification: Notification) {
-        if let reachability = notification.object as? Reachability {
+        guard let reachability = notification.object as? Reachability else {
+            return
+        }
 
-            // Dismiss current banner, if any
-            banner?.dismiss()
-            banner = nil
-            // Dismiss current loading indicator, if any
-            loadingIndicator?.removeFromSuperview()
-            loadingIndicator = nil
+        // Dismiss current banner, if any
+        banner?.dismiss()
+        banner = nil
 
-            switch reachability.connection {
-            case .none:
-                banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
-                banner?.autoDismiss = false
-                banner?.show(queuePosition: .front, on: navigationController)
-                self.isNetworkDown = true
-                self.sectionIndexes = [:]
-                self.searchBar.isUserInteractionEnabled = false
-                self.sections = []
-            case .cellular, .wifi:
-                self.isNetworkDown = false
-                sections = createSections()
-                self.searchBar.isUserInteractionEnabled = true
-            }
+        // Dismiss current loading indicator, if any
+        loadingIndicator?.removeFromSuperview()
+        loadingIndicator = nil
+
+        switch reachability.connection {
+        case .none:
+            banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
+            banner?.autoDismiss = false
+            banner?.show(queuePosition: .front, on: navigationController)
+            self.isNetworkDown = true
+            self.sectionIndexes = [:]
+            self.searchBar.isUserInteractionEnabled = false
+            self.sections = []
+        case .cellular, .wifi:
+            self.isNetworkDown = false
+            sections = createSections()
+            self.searchBar.isUserInteractionEnabled = true
         }
     }
 
@@ -163,9 +165,11 @@ class HomeViewController: UIViewController {
         super.viewWillDisappear(animated)
         reachability?.stopNotifier()
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+
         // Remove banner
         banner?.dismiss()
         banner = nil
+
         // Remove activity indicator
         loadingIndicator?.removeFromSuperview()
         loadingIndicator = nil
@@ -488,13 +492,15 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     }
 
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        // If loading indicator is being shown, don't display image
         if loadingIndicator != nil {
             return nil
         }
-        return isNetworkDown ? #imageLiteral(resourceName: "noWifi") : #imageLiteral(resourceName: "emptyPin")
+        return isNetworkDown ? #imageLiteral(resourceName: "noWifi") : #imageLiteral(resourceName: "noRoutes")
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display description
         if loadingIndicator != nil {
             return nil
         }
@@ -504,6 +510,7 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display button
         if loadingIndicator != nil {
             return nil
         }
@@ -517,10 +524,8 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
         if let loadingIndicator = loadingIndicator {
             view.addSubview(loadingIndicator)
             loadingIndicator.snp.makeConstraints { (make) in
-                make.centerX.equalToSuperview()
-                make.centerY.equalToSuperview()
-                make.width.equalTo(40)
-                make.height.equalTo(40)
+                make.center.equalToSuperview()
+                make.width.height.equalTo(40)
             }
         }
     }

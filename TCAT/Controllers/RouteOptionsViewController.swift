@@ -958,9 +958,8 @@ extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDele
         symbolView.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
             let offset = navigationController?.navigationBar.frame.height ?? 0 + routeSelection.frame.height
-            make.centerY.equalToSuperview().offset((showRouteSearchingLoader ? -20 : -40)+(-offset/2))
-            make.width.equalTo(showRouteSearchingLoader ? 40 : 160)
-            make.height.equalTo(showRouteSearchingLoader ? 40 : 160)
+            make.centerY.equalToSuperview().offset((showRouteSearchingLoader ? -20 : -60)+(-offset/2))
+            make.width.height.equalTo(showRouteSearchingLoader ? 40 : 180)
         }
 
         titleLabel.snp.makeConstraints { (make) in

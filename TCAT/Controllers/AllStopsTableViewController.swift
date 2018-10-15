@@ -198,19 +198,19 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
         if let loadingIndicator = loadingIndicator {
             view.addSubview(loadingIndicator)
             loadingIndicator.snp.makeConstraints { (make) in
-                make.centerX.equalToSuperview()
-                make.centerY.equalToSuperview()
-                make.width.equalTo(40)
-                make.height.equalTo(40)
+                make.center.equalToSuperview()
+                make.width.height.equalTo(40)
             }
         }
     }
 
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
-        return loadingIndicator != nil ? nil : #imageLiteral(resourceName: "emptyPin")
+        // If loading indicator is being shown, don't display image
+        return loadingIndicator != nil ? nil : #imageLiteral(resourceName: "serverDown")
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display description
         if loadingIndicator != nil {
             return nil
         }
@@ -220,6 +220,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        /// If loading indicator is being shown, don't display button
         if loadingIndicator != nil {
             return nil
         }
