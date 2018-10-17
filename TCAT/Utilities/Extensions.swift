@@ -15,17 +15,17 @@ import TRON
 let increaseTapTargetTag: Int = 1865
 
 extension UIColor {
-    
+
     @nonobjc static let tcatBlueColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1)
-    
+
     @nonobjc static let buttonColor = UIColor(red: 0 / 255, green: 118 / 255, blue: 255 / 255, alpha: 1)
     @nonobjc static let primaryTextColor = UIColor(white: 34 / 255, alpha: 1)
     @nonobjc static let secondaryTextColor = UIColor(white: 74 / 255, alpha: 1)
     @nonobjc static let tableHeaderColor = UIColor(white: 100 / 255, alpha: 1)
-    
+
     @nonobjc static let lineDotColor = UIColor(white: 216 / 255, alpha: 1)
     @nonobjc static let mediumGrayColor = UIColor(white: 155 / 255, alpha: 1)
-    
+
     @nonobjc static let tableViewHeaderTextColor = UIColor(white: 71 / 255, alpha: 1)
     @nonobjc static let tableBackgroundColor = UIColor(white: 242 / 255, alpha: 1)
     @nonobjc static let summaryBackgroundColor = UIColor(white: 248 / 255, alpha: 1)
@@ -33,7 +33,7 @@ extension UIColor {
     @nonobjc static let searchBarCursorColor = UIColor.black
     @nonobjc static let searchBarPlaceholderTextColor = UIColor(red: 214 / 255, green: 216 / 255, blue: 220 / 255, alpha: 1)
     @nonobjc static let noInternetTextColor = UIColor(red: 0.0, green: 118 / 255, blue: 255 / 255, alpha: 1)
-    
+
     @nonobjc static let liveGreenColor = UIColor(red: 39 / 255, green: 174 / 255, blue: 96 / 255, alpha: 1)
     @nonobjc static let liveRedColor = UIColor(red: 214 / 255, green: 48 / 255, blue: 79 / 255, alpha: 1)
 
@@ -42,11 +42,11 @@ extension UIColor {
         let hex = Int(hex, radix: 16)!
         self.init(red:(hex >> 16) & 0xff, green:(hex >> 8) & 0xff, blue:hex & 0xff)
     }
-    
+
     convenience init(red: Int, green: Int, blue: Int) {
         self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
     }
-    
+
 }
 
 extension MKPolyline {
@@ -61,7 +61,7 @@ extension MKPolyline {
 }
 
 extension UIView {
-    
+
     /** Round specific corners of UIView */
     func roundCorners(corners: UIRectCorner, radius: CGFloat) {
         let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
@@ -69,7 +69,7 @@ extension UIView {
         mask.path = path.cgPath
         self.layer.mask = mask
     }
-    
+
     /// Get UIImage of passed in view
     func getImage() -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(frame.size, isOpaque, 0.0)
@@ -78,11 +78,11 @@ extension UIView {
         UIGraphicsEndImageContext()
         return img
     }
-    
+
 }
 
 extension UILabel {
-    
+
     /// Returns the number of lines the UILabel will take based on its width.
     func numberOfLines() -> Int {
         let maxSize = CGSize(width: frame.size.width, height: CGFloat(Float.infinity))
@@ -91,33 +91,33 @@ extension UILabel {
         let textSize = labelText.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, attributes: [.font: font], context: nil)
         return Int(textSize.height/charSize)
     }
-    
+
     // Find the position of a string in a label
     func boundingRect(of string: String) -> CGRect? {
-        
+
         guard let range = self.text?.range(of: string) else { return nil }
         let nsRange = string.nsRange(from: range)
-        
+
         guard let attributedText = attributedText else { return nil }
-        
+
         let textStorage = NSTextStorage(attributedString: attributedText)
         let layoutManager = NSLayoutManager()
-        
+
         textStorage.addLayoutManager(layoutManager)
-        
+
         let textContainer = NSTextContainer(size: bounds.size)
         textContainer.lineFragmentPadding = 0.0
-        
+
         layoutManager.addTextContainer(textContainer)
-        
+
         var glyphRange = NSRange()
-        
+
         // Convert the range for glyphs.
         layoutManager.characterRange(forGlyphRange: nsRange, actualGlyphRange: &glyphRange)
-        
+
         return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
     }
-    
+
 }
 
 extension UIViewController {
@@ -139,11 +139,11 @@ extension UIViewController {
 }
 
 extension UIDevice {
-    
+
     // Updated 3/16 - https://stackoverflow.com/questions/26028918/how-to-determine-the-current-iphone-device-model
-    
+
     var modelName: String {
-        
+
         var systemInfo = utsname()
         uname(&systemInfo)
         let machineMirror = Mirror(reflecting: systemInfo.machine)
@@ -151,9 +151,9 @@ extension UIDevice {
             guard let value = element.value as? Int8, value != 0 else { return identifier }
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
-        
+
         switch identifier {
-            
+
         case "iPod5,1":                                 return "iPod Touch 5"
         case "iPod7,1":                                 return "iPod Touch 6"
         case "iPhone3,1", "iPhone3,2", "iPhone3,3":     return "iPhone 4"
@@ -190,10 +190,10 @@ extension UIDevice {
         case "AudioAccessory1,1":                       return "HomePod"
         case "i386", "x86_64":                          return "Simulator"
         default:                                        return identifier
-            
+
         }
     }
-    
+
 }
 
 extension JSON {
@@ -242,23 +242,28 @@ extension JSON {
 }
 
 extension String {
-    
+
     /// See function name
     func capitalizingFirstLetter() -> String {
         let first = String(prefix(1)).capitalized
         let other = String(dropFirst()).lowercased()
         return first + other
     }
-    
+
     /// Convert Range to NSRange
     func nsRange(from range: Range<String.Index>) -> NSRange {
         let from = range.lowerBound.encodedOffset
         let to = range.upperBound.encodedOffset
         return NSRange(location: from - startIndex.encodedOffset, length: to - from)
     }
-    
+
+    func heightWithConstrainedWidth(width: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let boundingBox = self.boundingRect(with: constraintRect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [NSAttributedString.Key.font: font], context: nil)
+        return boundingBox.height
+    }
     /** Bold a phrase that appears in a string, and return the attributed string. Only shows the last bolded phrase.
-     
+
         - Parameter containerText: The string to scan through and make `self` bold inside.
         - Parameter originalFont: The initial font of the containerText.
         - Parameter boldFont: The font to make the bold string.
@@ -267,15 +272,15 @@ extension String {
         let attributedString = NSMutableAttributedString(string: containerText, attributes: [.font : originalFont])
         return self.bold(in: attributedString, to: boldFont)
     }
-    
+
     /** Bold a phrase that appears in an attributed string, and return the attributed string */
     func bold(in containerText: NSMutableAttributedString, to boldFont: UIFont) -> NSMutableAttributedString {
-        
+
         let pattern = self
         let attributedString: NSMutableAttributedString = containerText
         let newAttributedString = attributedString
         let plain_string: String = attributedString.string
-        
+
         do {
             let regex = try NSRegularExpression(pattern: pattern, options: [])
             let ranges = regex.matches(in: plain_string, options: [], range: NSMakeRange(0, plain_string.count)).map { $0.range }
@@ -283,11 +288,10 @@ extension String {
         } catch {
             print("bold NSRegularExpression failed")
         }
-        
+
         return newAttributedString
-        
+
     }
-    
 }
 
 extension CLLocationCoordinate2D {
@@ -311,43 +315,43 @@ extension CLLocationCoordinate2D {
 }
 
 extension Double {
-    
+
     /** Convert distance from meters to proper unit (based on size)
-     
+
      - Huge Distances: 16 mi
      - Medium Distances: 3.2 mi
      - Small Distances: 410 ft (412 ft -> 410 ft)
-     
+
      */
     var roundedString: String {
-        
+
         let numberOfMetersInMile = 1609.34
         var distanceInMiles = self / numberOfMetersInMile
-        
+
         switch distanceInMiles {
-            
+
         case let x where x >= 10:
             return "\(Int(distanceInMiles)) mi"
-            
+
         case let x where x < 0.1:
             var distanceInFeet = distanceInMiles * 5280
             var temporaryValue = distanceInFeet.roundTo(places: 0) / 10.0
             distanceInFeet = temporaryValue.roundTo(places: 0) * 10.0
             return "\(Int(distanceInFeet)) ft"
-            
+
         default:
             return "\(distanceInMiles.roundTo(places: 1)) mi"
-            
+
         }
-        
+
     }
-    
+
     /// Rounds the double to decimal places value
     mutating func roundTo(places: Int) -> Double {
         let divisor = pow(10.0, Double(places))
         return Darwin.round(self * divisor) / divisor
     }
-    
+
 }
 
 extension Array where Element: UIView {
@@ -376,17 +380,17 @@ extension Array : JSONDecodable {
 
 /// Present a share sheet for a route in any context.
 func presentShareSheet(from view: UIView, for route: Route, with image: UIImage? = nil) {
-    
+
     let shareText = route.summaryDescription
     let promotionalText = "Download Ithaca Transit on the App Store! \(Constants.App.appStoreLink)"
-    
+
     var activityItems: [Any] = [promotionalText]
     if let shareImage = image {
         activityItems.insert(shareImage, at: 0)
     } else {
         activityItems.insert(shareText, at: 0)
     }
-    
+
     let activityVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
     activityVC.excludedActivityTypes = [.print, .assignToContact, .openInIBooks, .addToReadingList]
     activityVC.popoverPresentationController?.sourceView = view
@@ -395,9 +399,9 @@ func presentShareSheet(from view: UIView, for route: Route, with image: UIImage?
         let payload = RouteSharedEventPayload(activityType: sharingMethod, didSelectAndCompleteShare: completed, error: error?.localizedDescription)
         Analytics.shared.log(payload)
     }
-    
+
     UIApplication.shared.delegate?.window??.presentInApp(activityVC)
-    
+
 }
 
 func areObjectsEqual<T: Equatable>(type: T.Type, a: Any, b: Any) -> Bool {

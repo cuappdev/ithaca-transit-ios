@@ -137,7 +137,7 @@ class SearchResultsTableViewController: UITableViewController {
     @objc func keyboardWillHide(_ notification: Notification) {
         isKeyboardVisible = false
     }
-    
+
     /* TableView Methods */
     override func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
@@ -289,18 +289,18 @@ class SearchResultsTableViewController: UITableViewController {
 
 // MARK: ScrollView Delegate
 extension SearchResultsTableViewController {
-    
+
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if let cancelButton = searchBar?.value(forKey: "_cancelButton") as? UIButton {
             cancelButton.isEnabled = true
         }
     }
-    
+
     func showLocationDeniedAlert() {
         let alertController = UIAlertController(title: "Location Services Disabled",
                                                 message: "You need to enable Location Services in Settings",
                                                 preferredStyle: .alert)
-        
+
         let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
                                       options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]),
@@ -309,7 +309,7 @@ extension SearchResultsTableViewController {
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alertController.addAction(settingsAction)
         alertController.addAction(cancelAction)
-        
+
         present(alertController, animated: true, completion: {
             self.tableView.deselectRow(at: IndexPath(row: 0, section: 0), animated: true)
         })
@@ -402,6 +402,6 @@ extension SearchResultsTableViewController: UINavigationControllerDelegate {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }
