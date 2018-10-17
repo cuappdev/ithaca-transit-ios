@@ -50,7 +50,7 @@ class WhatsNewHeaderView: UIView {
     func createUpdateTitle(updateName: String) {
         updateTitle = UILabel()
         updateTitle.text = updateName
-        updateTitle.font = UIFont.style(Fonts.SanFrancisco.Bold, size: 18)
+        updateTitle.font = UIFont.style(Fonts.SanFrancisco.bold, size: 18)
 
         addSubview(updateTitle)
     }
@@ -58,7 +58,7 @@ class WhatsNewHeaderView: UIView {
     func createUpdateDescription (description: String) {
         updateDescription = UILabel()
         updateDescription.text = description
-        updateDescription.font = UIFont.style(Fonts.SanFrancisco.Regular, size: 14)
+        updateDescription.font = UIFont.style(Fonts.SanFrancisco.regular, size: 14)
         updateDescription.textColor = UIColor.mediumGrayColor
         updateDescription.numberOfLines = 0
         updateDescription.textAlignment = .center
@@ -69,7 +69,7 @@ class WhatsNewHeaderView: UIView {
     func createDismissButton() {
         dismissButton = UIButton()
         dismissButton.setTitle("OK", for: .normal)
-        dismissButton.titleLabel?.font = UIFont.style(Fonts.SanFrancisco.Semibold, size: 14)
+        dismissButton.titleLabel?.font = UIFont.style(Fonts.SanFrancisco.semibold, size: 14)
         dismissButton.addTarget(self, action: #selector(okButtonPressed), for: .touchUpInside)
         dismissButton.backgroundColor = UIColor.tcatBlueColor
         dismissButton.setTitleColor(.white, for: .normal)

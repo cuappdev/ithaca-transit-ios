@@ -445,8 +445,10 @@ extension HomeViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         navigationItem.rightBarButtonItem = nil
-        if !whatsNewView.isHidden && tableView.tableHeaderView != nil {
-            dismissCardTemp()
+        if let whatsNewView = whatsNewView, let tableView = tableView {
+            if !whatsNewView.isHidden && tableView.tableHeaderView != nil {
+                hideCard()
+            }
         }
     }
 
@@ -459,8 +461,10 @@ extension HomeViewController: UISearchBarDelegate {
         let submitBugBarButton = UIBarButtonItem(customView: infoButton)
         navigationItem.setRightBarButton(submitBugBarButton, animated: false)
         sections = createSections()
-        if whatsNewView.isHidden && tableView.tableHeaderView != nil {
-            unHideCard()
+        if let whatsNewView = whatsNewView, let tableView = tableView {
+            if whatsNewView.isHidden && tableView.tableHeaderView != nil {
+                showCard()
+            }
         }
     }
 
@@ -521,7 +525,7 @@ extension HomeViewController: CLLocationManagerDelegate {
 
 // MARK: DZN Empty Data Set Source
 extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
         // If tableview header is hidden, increase offset to center EmptyDataSet view
         return tableView.tableHeaderView == nil ? -80 : (-80 - tableView.contentInset.top)
     }
@@ -629,9 +633,9 @@ extension HomeViewController: WhatsNewDelegate {
     /// Hide card when user is searching for Bus Stops
     func hideCard() {
         UIView.animate(withDuration: 0.35, animations: {
-            self.tableView.contentInset = .init(top: -whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
+            self.tableView.contentInset = .init(top: -self.whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
             self.whatsNewView.alpha = 0
-            for subview in whatsNewView.subviews {
+            for subview in self.whatsNewView.subviews {
                 subview.alpha = 0
             }
         }) { (completed) in
@@ -645,7 +649,7 @@ extension HomeViewController: WhatsNewDelegate {
             self.tableView.contentInset = .zero
             self.tableView.contentOffset = .zero
             self.whatsNewView.alpha = 1
-            for subview in whatsNewView.subviews {
+            for subview in self.whatsNewView.subviews {
                 subview.alpha = 1
             }
         }) { (completed) in
