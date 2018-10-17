@@ -20,8 +20,7 @@ struct Constants {
         static let appStoreLink: String = "https://itunes.apple.com/app/id\(storeIdentifier)"
 
         /// The app version within the App Store (e.g. "1.4.2") [String value of `CFBundleShortVersionString`]
-        //static let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
-        static let version = "2.0.0"
+        static let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
 
         /// Developer email address to direct contact inquiries and emails toward
         static let contactEmailAddress = "ithacatransit@cornellappdev.com"

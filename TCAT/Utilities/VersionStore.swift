@@ -13,11 +13,10 @@ class VersionStore: WhatsNewVersionStore {
     /// Returns true if update has been seen
     func has(version: WhatsNew.Version) -> Bool {
         var isNotNewVersion = false
-        let isVersionPatch = version.patch > 3
+        let isVersionPatch = version.patch > 0
         if let appVersion = userDefaults.string(forKey: Constants.UserDefaults.version) {
             isNotNewVersion = version == WhatsNew.Version(stringLiteral: appVersion)
         }
-        print (isNotNewVersion)
         return isVersionPatch || isNotNewVersion
     }
 
