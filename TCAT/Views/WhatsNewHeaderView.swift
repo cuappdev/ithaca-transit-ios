@@ -17,18 +17,19 @@ protocol WhatsNewDelegate {
 class WhatsNewHeaderView: UIView {
 
     var whatsNewDelegate: WhatsNewDelegate?
+    
     var updateTitle: UILabel!
     var dismissButton: UIButton!
     var updateDescription: UILabel!
     var whatsNewHeader: UILabel!
     var backgroundView: UIView!
+    
     let containerPadding = UIEdgeInsets(top: 16, left: 16, bottom: -32, right: 16)
 
-    init (updateName: String, description: String) {
+    init(updateName: String, description: String) {
         super.init(frame: .zero)
 
         backgroundColor = .white
-
         layer.cornerRadius = 16
         clipsToBounds = true
 
@@ -47,15 +48,15 @@ class WhatsNewHeaderView: UIView {
         addSubview(whatsNewHeader)
     }
 
-    func createUpdateTitle(updateName: String) {
+    func createUpdateTitle(title: String) {
         updateTitle = UILabel()
-        updateTitle.text = updateName
+        updateTitle.text = title
         updateTitle.font = UIFont.style(Fonts.SanFrancisco.bold, size: 18)
 
         addSubview(updateTitle)
     }
 
-    func createUpdateDescription (description: String) {
+    func createUpdateDescription(description: String) {
         updateDescription = UILabel()
         updateDescription.text = description
         updateDescription.font = UIFont.style(Fonts.SanFrancisco.regular, size: 14)
@@ -97,18 +98,20 @@ class WhatsNewHeaderView: UIView {
         }
 
         updateDescription.snp.makeConstraints { (make) in
-            let leadingOffset = CGFloat(32)
-            let trailingOffset = CGFloat(-32)
+            let value = CGFloat(32)
             make.top.equalTo(updateTitle.snp.bottom).offset(6)
             make.centerX.equalToSuperview()
-            make.leading.equalToSuperview().offset(leadingOffset)
-            make.trailing.equalToSuperview().offset(trailingOffset)
-            if let containerView = superview,
+            make.leading.trailing.equalToSuperview().inset(value)
+            if
+                let containerView = superview,
                 let tableView = containerView.superview,
                 let wholeView = tableView.superview,
-                let description = updateDescription.text {
-                let totalWidthPadding = containerPadding.left + containerPadding.right + leadingOffset + trailingOffset
-                make.height.equalTo(description.heightWithConstrainedWidth(width: wholeView.frame.width - totalWidthPadding, font: updateDescription.font))
+                let description = updateDescription.text
+            {
+                let totalWidthPadding = containerPadding.left + containerPadding.right
+                let widthValue = wholeView.frame.width - totalWidthPadding
+                let heightValue = description.heightWithConstrainedWidth(width: widthValue, font: updateDescription.font)
+                make.height.equalTo(ceil(heightValue))
             }
         }
 
