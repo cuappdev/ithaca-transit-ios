@@ -629,7 +629,7 @@ extension HomeViewController: WhatsNewDelegate {
 
     /// Hide card when user is searching for Bus Stops
     func hideCard() {
-        guard whatsNewView != nil else {return}
+        guard whatsNewView != nil else { return }
         UIView.animate(withDuration: 0.35, animations: {
             self.tableView.contentInset = .init(top: -self.whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
             self.whatsNewView.alpha = 0
@@ -643,7 +643,7 @@ extension HomeViewController: WhatsNewDelegate {
 
     /// Present card after user is done searching
     func showCard() {
-        guard whatsNewView != nil else {return}
+        guard whatsNewView != nil else { return }
         UIView.animate(withDuration: 0.35, animations: {
             self.tableView.contentInset = .zero
             self.tableView.contentOffset = .zero
