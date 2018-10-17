@@ -47,18 +47,15 @@ class HomeViewController: UIViewController {
             }
         }
     }
+    var loadingIndicator: LoadingIndicator?
+    var isLoading: Bool { return loadingIndicator != nil }
 
     let reachability = Reachability(hostname: Network.ipAddress)
-    var isBannerShown = false {
+
+    var banner: StatusBarNotificationBanner? {
         didSet {
             setNeedsStatusBarAppearanceUpdate()
         }
-    }
-
-    var banner: StatusBarNotificationBanner?
-
-    func tctSectionHeaderFont() -> UIFont? {
-        return UIFont.systemFont(ofSize: 14)
     }
 
     override func viewDidLoad() {
@@ -71,7 +68,7 @@ class HomeViewController: UIViewController {
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
         navigationController?.navigationBar.barTintColor = .white
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white]
         view.backgroundColor = .tableBackgroundColor
 
         tableView = HomeTableView(frame: .zero, style: .grouped)
@@ -128,7 +125,7 @@ class HomeViewController: UIViewController {
         super.viewDidLayoutSubviews()
 
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(reachabilityChanged(note:)),
+                                               selector: #selector(reachabilityChanged(_:)),
                                                name: .reachabilityChanged,
                                                object: reachability)
         do {
@@ -142,33 +139,35 @@ class HomeViewController: UIViewController {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return isBannerShown ? .lightContent : .default
+        return banner != nil ? .lightContent : .default
     }
 
-    @objc func reachabilityChanged(note: Notification) {
-        if let reachability = note.object as? Reachability {
-            switch reachability.connection {
-            case .none:
-                if !isBannerShown {
-                    banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
-                    banner!.autoDismiss = false
-                    banner!.show(queuePosition: .front, on: navigationController)
-                    isBannerShown = true
-                }
-                self.isNetworkDown = true
-                self.sectionIndexes = [:]
-                self.searchBar.isUserInteractionEnabled = false
-                self.sections = []
-                self.tableView.tableHeaderView = nil
-            case .cellular, .wifi:
-                if isBannerShown {
-                    banner?.dismiss()
-                    banner = nil
-                    isBannerShown = false
-                }
-                sections = createSections()
-                self.searchBar.isUserInteractionEnabled = true
-            }
+    @objc func reachabilityChanged(_ notification: Notification) {
+        guard let reachability = notification.object as? Reachability else {
+            return
+        }
+
+        // Dismiss current banner, if any
+        banner?.dismiss()
+        banner = nil
+
+        // Dismiss current loading indicator, if any
+        loadingIndicator?.removeFromSuperview()
+        loadingIndicator = nil
+
+        switch reachability.connection {
+        case .none:
+            banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
+            banner?.autoDismiss = false
+            banner?.show(queuePosition: .front, on: navigationController)
+            self.isNetworkDown = true
+            self.sectionIndexes = [:]
+            self.searchBar.isUserInteractionEnabled = false
+            self.sections = []
+        case .cellular, .wifi:
+            self.isNetworkDown = false
+            sections = createSections()
+            self.searchBar.isUserInteractionEnabled = true
         }
     }
 
@@ -176,6 +175,14 @@ class HomeViewController: UIViewController {
         super.viewWillDisappear(animated)
         reachability?.stopNotifier()
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+
+        // Remove banner
+        banner?.dismiss()
+        banner = nil
+
+        // Remove activity indicator
+        loadingIndicator?.removeFromSuperview()
+        loadingIndicator = nil
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -315,7 +322,7 @@ extension HomeViewController: UITableViewDataSource {
             }
         }
 
-        cell.textLabel?.font = tctSectionHeaderFont()
+        cell.textLabel?.font = .style(Fonts.System.regular, size: 14)
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
         cell.layoutMargins = .zero
@@ -519,14 +526,65 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
         return tableView.tableHeaderView == nil ? -80 : (-80 - tableView.contentInset.top)
     }
 
-    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        return isNetworkDown ? #imageLiteral(resourceName: "noInternet") : #imageLiteral(resourceName: "emptyPin")
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        // If loading indicator is being shown, don't display image
+        if isLoading {
+            return nil
+        } else {
+            return isNetworkDown ? #imageLiteral(resourceName: "noWifi") : #imageLiteral(resourceName: "noRoutes")
+        }
+
     }
 
-    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
-        return NSAttributedString(string: title, attributes: attrs)
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display description
+        if isLoading {
+            return nil
+        } else {
+            let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
+            return NSAttributedString(string: title, attributes: [.foregroundColor : UIColor.mediumGrayColor])
+        }
+    }
+
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display button
+        if isLoading {
+            return nil
+        } else {
+            let title = "Retry"
+            return NSAttributedString(string: title, attributes: [.foregroundColor : UIColor.tcatBlueColor])
+        }
+    }
+
+    func setUpLoadingIndicator() {
+        loadingIndicator = LoadingIndicator()
+        if let loadingIndicator = loadingIndicator {
+            view.addSubview(loadingIndicator)
+            loadingIndicator.snp.makeConstraints { (make) in
+                make.center.equalToSuperview()
+                make.width.height.equalTo(40)
+            }
+        }
+    }
+
+    func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
+        setUpLoadingIndicator()
+        if isLoading {
+            tableView.reloadData()
+
+            // Have loading indicator time out after one second
+            let delay = 1
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)) {
+                // if the empty state is the "Location Not Found" state, clear the text in the search bar
+                if !self.isNetworkDown {
+                    self.searchBar.text = nil
+                    self.searchBar.placeholder = Constants.Phrases.searchPlaceholder
+                }
+                self.loadingIndicator?.removeFromSuperview()
+                self.loadingIndicator = nil
+                self.tableView.reloadData()
+            }
+        }
     }
 }
 
@@ -593,7 +651,6 @@ extension HomeViewController: WhatsNewDelegate {
         }) { (completed) in
             self.whatsNewView.isHidden = false
         }
-        
     }
 
     func cardPressed() {

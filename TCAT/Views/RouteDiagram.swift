@@ -112,8 +112,8 @@ class RouteDiagram: UIView {
         stopLabel.numberOfLines = 0
         
         let stopNameAttrs: [NSAttributedString.Key : Any] = [
-            NSAttributedString.Key.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)!,
-            NSAttributedString.Key.foregroundColor : UIColor.primaryTextColor
+            .font : UIFont.style(Fonts.SanFrancisco.regular, size: 14.0),
+            .foregroundColor : UIColor.primaryTextColor
         ]
         let stopName = NSMutableAttributedString(string: name, attributes: stopNameAttrs)
 
@@ -128,8 +128,8 @@ class RouteDiagram: UIView {
             }
             
             let travelDistanceAttrs: [NSAttributedString.Key : Any] = [
-                NSAttributedString.Key.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)!,
-                NSAttributedString.Key.foregroundColor : UIColor.mediumGrayColor
+                .font : UIFont.style(Fonts.SanFrancisco.regular, size: 12.0),
+                .foregroundColor : UIColor.mediumGrayColor
             ]
             
             let travelDistance = NSMutableAttributedString(string: addLinebreak ? "\n\(distance.roundedString) away" : " \(distance.roundedString) away", attributes: travelDistanceAttrs)
@@ -138,8 +138,8 @@ class RouteDiagram: UIView {
         
         if stayOnBusForTranfer {
             let stayOnBusAttrs: [NSAttributedString.Key : Any] = [
-                NSAttributedString.Key.font : UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)!,
-                NSAttributedString.Key.foregroundColor : UIColor.mediumGrayColor
+                .font : UIFont.style(Fonts.SanFrancisco.regular, size: 12.0),
+                .foregroundColor : UIColor.mediumGrayColor
             ]
             let stayOnBus = NSMutableAttributedString(string:"\nStay on board", attributes: stayOnBusAttrs)
             stopName.append(stayOnBus)
@@ -153,7 +153,7 @@ class RouteDiagram: UIView {
     
     private func getTestStopLabel(withName name: String) -> UILabel {
         let testStopLabel = UILabel()
-        testStopLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14.0)
+        testStopLabel.font = .style(Fonts.SanFrancisco.regular, size: 14.0)
         testStopLabel.textColor = .primaryTextColor
         testStopLabel.text = name
         testStopLabel.sizeToFit()
@@ -163,7 +163,7 @@ class RouteDiagram: UIView {
     
     private func getTestDistanceLabel(withDistance distance: Double) -> UILabel {
         let testDistanceLabel = UILabel()
-        testDistanceLabel.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 12.0)
+        testDistanceLabel.font = .style(Fonts.SanFrancisco.regular, size: 12.0)
         testDistanceLabel.textColor = .mediumGrayColor
         testDistanceLabel.text = " \(distance.roundedString) away"
         testDistanceLabel.sizeToFit()

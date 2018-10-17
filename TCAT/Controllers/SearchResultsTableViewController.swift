@@ -49,10 +49,6 @@ class SearchResultsTableViewController: UITableViewController {
         }
     }
 
-    func tctSectionHeaderFont() -> UIFont? {
-        return UIFont.systemFont(ofSize: 14)
-    }
-
     convenience init() {
         self.init(style: .grouped)
     }
@@ -281,7 +277,7 @@ class SearchResultsTableViewController: UITableViewController {
             default: break
             }
         }
-        cell.textLabel?.font = tctSectionHeaderFont()
+        cell.textLabel?.font = .style(Fonts.System.regular, size: 14)
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
         cell.layoutMargins = .zero
