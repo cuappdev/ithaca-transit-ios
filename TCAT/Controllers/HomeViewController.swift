@@ -118,7 +118,7 @@ class HomeViewController: UIViewController {
             make.width.equalTo(30)
             make.height.equalTo(38)
         }
-        
+
         if !VersionStore().has(version: WhatsNew.Version.current()) {
             createWhatsNewView()
         }
@@ -566,12 +566,12 @@ extension HomeViewController: WhatsNewDelegate {
         })
         tableView.endUpdates()
     }
-    
+
     func dismissCardTemp() {
         tableView.contentInset = .init(top: -whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
         whatsNewView.isHidden = true
     }
-    
+
     func unHideCard() {
         tableView.contentInset = .zero
         whatsNewView.isHidden = false
