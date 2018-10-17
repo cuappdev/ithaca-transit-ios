@@ -80,10 +80,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
 
-        // Check app version
-        // Commented out for this update
-        //if !VersionStore().has(version: WhatsNew.Version.current()) {showWhatsNew(items: [])}
-
         return true
     }
 
