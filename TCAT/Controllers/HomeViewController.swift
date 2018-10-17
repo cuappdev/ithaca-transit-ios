@@ -15,6 +15,7 @@ import NotificationBannerSwift
 import Crashlytics
 import SafariServices
 import SnapKit
+import WhatsNewKit
 
 class HomeViewController: UIViewController {
 
@@ -30,16 +31,20 @@ class HomeViewController: UIViewController {
     var isNetworkDown = false
     var searchResultsSection: Section!
     var sectionIndexes: [String: Int]! = [:]
-    var tableView: UITableView!
+    var tableView: HomeTableView!
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
+    var whatsNewView: WhatsNewHeaderView!
     var recentLocations: [ItemType] = []
     var favorites: [ItemType] = []
     var isKeyboardVisible = false
     var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
+            if sections.isEmpty {
+                tableView.tableHeaderView = nil
+            }
         }
     }
     var loadingIndicator: LoadingIndicator?
@@ -51,10 +56,6 @@ class HomeViewController: UIViewController {
         didSet {
             setNeedsStatusBarAppearanceUpdate()
         }
-    }
-
-    func tctSectionHeaderFont() -> UIFont? {
-        return .style(Fonts.System.regular, size: 14)
     }
 
     override func viewDidLoad() {
@@ -70,7 +71,7 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white]
         view.backgroundColor = .tableBackgroundColor
 
-        tableView = UITableView(frame: .zero, style: .grouped)
+        tableView = HomeTableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
@@ -89,7 +90,12 @@ class HomeViewController: UIViewController {
 
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
-            make.top.equalTo((navigationController?.navigationBar.bounds.maxY)!)
+
+            if #available(iOS 11.0, *) {
+                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            } else {
+                make.top.equalToSuperview().offset(view.layoutMargins.top)
+            }
         }
 
         searchBar = UISearchBar()
@@ -110,6 +116,9 @@ class HomeViewController: UIViewController {
             make.height.equalTo(38)
         }
 
+        if !VersionStore().has(version: WhatsNew.Version.current()) {
+            createWhatsNewView()
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -180,7 +189,9 @@ class HomeViewController: UIViewController {
         super.viewWillAppear(animated)
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
-        sections = createSections()
+        if !isNetworkDown {
+            sections = createSections()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -213,6 +224,23 @@ class HomeViewController: UIViewController {
         present(navController, animated: true, completion: nil)
     }
 
+    func createWhatsNewView() {
+        whatsNewView = WhatsNewHeaderView(updateName: "App Shortcuts for Favorites",
+                                          description: "Force Touch the app icon to search your favorites even faster.")
+        whatsNewView.whatsNewDelegate = self
+        let containerView = UIView()
+        containerView.backgroundColor = .clear
+        containerView.addSubview(whatsNewView)
+        whatsNewView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview().inset(whatsNewView.containerPadding)
+        }
+
+        tableView.tableHeaderView = containerView
+        containerView.snp.makeConstraints { (make) in
+            make.top.centerX.width.equalToSuperview()
+        }
+    }
+
     /* Keyboard Functions */
     @objc func keyboardWillShow(_ notification: Notification) {
         isKeyboardVisible = true
@@ -220,11 +248,12 @@ class HomeViewController: UIViewController {
 
     @objc func keyboardWillHide(_ notification: Notification) {
         isKeyboardVisible = false
+        searchBarCancelButtonClicked(searchBar)
     }
 
     /* ScrollView Delegate */
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
+        if let searchBar = searchBar, let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
             cancelButton.isEnabled = true
         }
     }
@@ -293,7 +322,7 @@ extension HomeViewController: UITableViewDataSource {
             }
         }
 
-        cell.textLabel?.font = tctSectionHeaderFont()
+        cell.textLabel?.font = .style(Fonts.System.regular, size: 14)
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
         cell.layoutMargins = .zero
@@ -416,6 +445,10 @@ extension HomeViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         navigationItem.rightBarButtonItem = nil
+        if tableView?.tableHeaderView != nil {
+            hideCard()
+        }
+        
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -427,8 +460,9 @@ extension HomeViewController: UISearchBarDelegate {
         let submitBugBarButton = UIBarButtonItem(customView: infoButton)
         navigationItem.setRightBarButton(submitBugBarButton, animated: false)
         sections = createSections()
-        tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
-
+        if tableView?.tableHeaderView != nil {
+            showCard()
+        }
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -489,7 +523,8 @@ extension HomeViewController: CLLocationManagerDelegate {
 // MARK: DZN Empty Data Set Source
 extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
-        return -80
+        // If tableview header is hidden, increase offset to center EmptyDataSet view
+        return tableView.tableHeaderView == nil ? -80 : (-80 - tableView.contentInset.top)
     }
 
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
@@ -556,6 +591,7 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
 // MARK: AddFavorites Delegate
 extension HomeViewController: AddFavoritesDelegate {
+
     func displayFavoritesTVC() {
         if favorites.count < 5 {
             presentFavoritesTVC()
@@ -566,6 +602,77 @@ extension HomeViewController: AddFavoritesDelegate {
             let done = UIAlertAction(title: "Got It!", style: .default)
             alertController.addAction(done)
             present(alertController, animated: true, completion: nil)
+        }
+    }
+}
+
+// MARK: WhatsNew Delegate
+extension HomeViewController: WhatsNewDelegate {
+
+    func okButtonPressed() {
+        userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
+        tableView.beginUpdates()
+        tableView.animating = true
+        UIView.animate(withDuration: 0.35, animations: {
+            if let containerView = self.tableView.tableHeaderView {
+                self.tableView.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
+                containerView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01).translatedBy(x: 0, y: -6000)
+            }
+        }, completion: {(completed) in
+            if completed {
+                self.tableView.animating = false
+                self.tableView.tableHeaderView = nil
+            }
+        })
+        tableView.endUpdates()
+    }
+
+    /// Hide card when user is searching for Bus Stops
+    func hideCard() {
+        guard whatsNewView != nil else { return }
+        UIView.animate(withDuration: 0.35, animations: {
+            self.tableView.contentInset = .init(top: -self.whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
+            self.whatsNewView.alpha = 0
+            for subview in self.whatsNewView.subviews {
+                subview.alpha = 0
+            }
+        }) { (completed) in
+            self.whatsNewView.isHidden = true
+        }
+    }
+
+    /// Present card after user is done searching
+    func showCard() {
+        guard whatsNewView != nil else { return }
+        UIView.animate(withDuration: 0.35, animations: {
+            self.tableView.contentInset = .zero
+            self.tableView.contentOffset = .zero
+            self.whatsNewView.alpha = 1
+            for subview in self.whatsNewView.subviews {
+                subview.alpha = 1
+            }
+        }) { (completed) in
+            self.whatsNewView.isHidden = false
+        }
+    }
+
+    func cardPressed() {
+        print("Card Pressed")
+    }
+}
+
+// MARK: Custom TableView
+class HomeTableView: UITableView {
+    var animating = false
+    override var tableHeaderView: UIView? {
+        didSet {
+            if !animating {
+                if tableHeaderView == nil {
+                    self.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
+                } else {
+                    self.contentInset = .zero
+                }
+            }
         }
     }
 }

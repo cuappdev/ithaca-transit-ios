@@ -8,7 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		004B3E1BCB8013F9C1F4C3A7 /* Pods_TCATTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */; };
+		222BDE16215C1CEE0040DD93 /* WhatsNewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */; };
 		224EB5A5214F2F01008232C2 /* AppShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224EB5A4214F2F01008232C2 /* AppShortcuts.swift */; };
+		226C8D762173AF69009985E3 /* VersionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226C8D752173AF69009985E3 /* VersionStore.swift */; };
 		4036E23543D87A22BF6B0023 /* Pods_TCATUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */; };
 		449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C781D80D0E80019300C /* AppDelegate.swift */; };
 		449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C7C1D80D0E80019300C /* Main.storyboard */; };
@@ -112,7 +114,9 @@
 		00AAC04EC20FD099C317E4DF /* Pods-TCATTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.release.xcconfig"; sourceTree = "<group>"; };
 		0A53C1C936C7282DCAB7292F /* Pods-TCATUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		0DD68D5FD4D1CFE82BA753E7 /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
+		222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WhatsNewHeaderView.swift; path = Views/WhatsNewHeaderView.swift; sourceTree = "<group>"; };
 		224EB5A4214F2F01008232C2 /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppShortcuts.swift; path = Utilities/AppShortcuts.swift; sourceTree = "<group>"; };
+		226C8D752173AF69009985E3 /* VersionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VersionStore.swift; path = Utilities/VersionStore.swift; sourceTree = "<group>"; };
 		449A7C751D80D0E80019300C /* TCAT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCAT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C781D80D0E80019300C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		449A7C7D1D80D0E80019300C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -391,6 +395,7 @@
 			children = (
 				224EB5A4214F2F01008232C2 /* AppShortcuts.swift */,
 				CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */,
+				224EB5A4214F2F01008232C2 /* AppShortcuts.swift */,
 				DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */,
 				D94BD30021599E3200C9214E /* EventPayload.swift */,
 				D183AA011E6CB092006A9A15 /* Extensions.swift */,
@@ -403,6 +408,7 @@
 				BF18AE0F2083B7F6000C3D82 /* StoreReviewHelper.swift */,
 				BF84609D217139A30027FB62 /* Styles.swift */,
 				DD5D233B1E6367A100F8DECE /* Time.swift */,
+				226C8D752173AF69009985E3 /* VersionStore.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -426,6 +432,7 @@
 				502D8F5E1E55161D005280F1 /* SearchBarView.swift */,
 				BFF41EB1204365E800E0696B /* SummaryView.swift */,
 				DD659C8920508E1A00506BAC /* WalkWithDistanceIcon.swift */,
+				222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -640,7 +647,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh",
+				"${SRCROOT}/Pods/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh",
 				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
 				"${PODS_ROOT}/GooglePlaces/Frameworks/GooglePlaces.framework/Resources/GooglePlaces.bundle",
 			);
@@ -651,7 +658,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		2E3D0C0A5BDEC0DF37BFA6ED /* [CP] Check Pods Manifest.lock */ = {
@@ -678,7 +685,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh",
+				"${SRCROOT}/Pods/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
 				"${BUILT_PRODUCTS_DIR}/Fuzzywuzzy_swift/Fuzzywuzzy_swift.framework",
@@ -690,6 +697,7 @@
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/TRON/TRON.framework",
+				"${BUILT_PRODUCTS_DIR}/WhatsNewKit/WhatsNewKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Zip/Zip.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
@@ -706,12 +714,13 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TRON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WhatsNewKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Zip.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		8F523521CC9B937AEFB99FF9 /* [CP] Check Pods Manifest.lock */ = {
@@ -781,6 +790,7 @@
 				DD3D9C341F942CF000B164D4 /* CoordinateVisitor.swift in Sources */,
 				DD3D9C211F94297100B164D4 /* Reachability.swift in Sources */,
 				DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */,
+				222BDE16215C1CEE0040DD93 /* WhatsNewHeaderView.swift in Sources */,
 				DD99E2F61F6DB06A0073E8F7 /* Constants.swift in Sources */,
 				DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */,
 				D183AA021E6CB092006A9A15 /* Extensions.swift in Sources */,
@@ -800,6 +810,7 @@
 				DCB717101FB76EA600BE4D26 /* AllStopsTableViewController.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
 				DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */,
+				226C8D762173AF69009985E3 /* VersionStore.swift in Sources */,
 				BF316CB02096352B005A14EF /* PhraseLabelFooterView.swift in Sources */,
 				BF18AE102083B7F6000C3D82 /* StoreReviewHelper.swift in Sources */,
 				DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */,
