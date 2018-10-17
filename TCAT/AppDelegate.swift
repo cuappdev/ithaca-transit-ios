@@ -16,10 +16,9 @@ import Crashlytics
 import SafariServices
 import WhatsNewKit
 
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    
+
     var window: UIWindow?
     let userDefaults = UserDefaults.standard
     let userDataInits: [(key: String, defaultValue: Any)] = [
@@ -28,69 +27,66 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         (key: Constants.UserDefaults.favorites, defaultValue: [Any]()),
         (key: Constants.UserDefaults.whatsNewDismissed, defaultValue: false)
     ]
-    
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
-        
+
         // Set Up Analytics
         #if !DEBUG
             Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
         #endif
-        
+
         // Set Up Google Services
         FirebaseApp.configure()
         GMSServices.provideAPIKey(Keys.googleMaps.value)
         GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
-        
+
         // Log basic information
         let payload = AppLaunchedPayload()
         Analytics.shared.log(payload)
-        
+
         JSONFileManager.shared.deleteAllJSONs()
-        
+
         // Check app version
         if let version = userDefaults.value(forKey: Constants.UserDefaults.version) as? String {
             if version != Constants.App.version {
                 // User has just updated the app.
             }
         }
-        
+
         for (key, defaultValue) in userDataInits {
             if userDefaults.value(forKey: key) == nil {
                 userDefaults.set(defaultValue, forKey: key)
             }
         }
-        
+
         // Track number of app opens for Store Review prompt
         StoreReviewHelper.incrementAppOpenedCount()
-        
+
         // Debug - Always Show Onboarding
         // userDefaults.set(false, forKey: Constants.UserDefaults.onboardingShown)
-        
+
         getBusStops()
-        
+
         // Initalize first view based on context
         let showOnboarding = !userDefaults.bool(forKey: Constants.UserDefaults.onboardingShown)
         let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : HomeViewController()
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
-        
+
         // Initalize window without storyboard
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
-        
+
         // Check app version
         // Commented out for this update
         //if !VersionStore().has(version: WhatsNew.Version.current()) {showWhatsNew(items: [])}
-        
-        // Set version to be current version
-        VersionStore().set(version: WhatsNew.Version.current())
-        
+
         return true
     }
-    
+
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         handleShortcut(item: shortcutItem)
     }
@@ -99,27 +95,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     }
-    
+
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
-    
+
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here y/Users/mattbarker016ou can undo many of the changes made on entering the background.
     }
-    
+
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
-    
+
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-    
+
     func handleShortcut(item: UIApplicationShortcutItem) {
         let optionsVC = RouteOptionsViewController()
-        if let shortcutData = item.userInfo as? [String : Data] {
+        if let shortcutData = item.userInfo as? [String: Data] {
             guard
                 let place = shortcutData["place"],
                 let destination = NSKeyedUnarchiver.unarchiveObject(with: place) as? Place
@@ -154,7 +150,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("getBusStops error:", error)
         })
     }
-    
+
     func showWhatsNew(items: [WhatsNew.Item]) {
         let whatsNew = WhatsNew(
             title: "WhatsNewKit",
@@ -165,21 +161,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let whatsNewViewController = WhatsNewViewController(
             whatsNew: whatsNew
         )
-        
+
         // Present it 🤩
         UIApplication.shared.keyWindow?.presentInApp(whatsNewViewController)
     }
 }
-    
-    
-    
 
 extension UIWindow {
-    
+
     /// Find the visible view controller in the root navigation controller and present passed in view controlelr.
     func presentInApp(_ viewController: UIViewController) {
         (rootViewController as? UINavigationController)?.visibleViewController?.present(viewController, animated: true)
     }
 
 }
-

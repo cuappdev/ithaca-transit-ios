@@ -241,6 +241,7 @@ class HomeViewController: UIViewController {
 
     @objc func keyboardWillHide(_ notification: Notification) {
         isKeyboardVisible = false
+        searchBarCancelButtonClicked(searchBar)
     }
 
     /* ScrollView Delegate */
@@ -437,6 +438,9 @@ extension HomeViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         navigationItem.rightBarButtonItem = nil
+        if !whatsNewView.isHidden && tableView.tableHeaderView != nil {
+            dismissCardTemp()
+        }
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -448,8 +452,9 @@ extension HomeViewController: UISearchBarDelegate {
         let submitBugBarButton = UIBarButtonItem(customView: infoButton)
         navigationItem.setRightBarButton(submitBugBarButton, animated: false)
         sections = createSections()
-        tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
-
+        if whatsNewView.isHidden && tableView.tableHeaderView != nil {
+            unHideCard()
+        }
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -510,7 +515,7 @@ extension HomeViewController: CLLocationManagerDelegate {
 // MARK: DZN Empty Data Set Source
 extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
-        return -80
+        return tableView.tableHeaderView == nil ? -80 : (-80 + whatsNewView.frame.height + 20)
     }
 
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
@@ -526,7 +531,7 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
 // MARK: AddFavorites Delegate
 extension HomeViewController: AddFavoritesDelegate {
-    
+
     func displayFavoritesTVC() {
         if favorites.count < 5 {
             presentFavoritesTVC()
@@ -543,7 +548,7 @@ extension HomeViewController: AddFavoritesDelegate {
 
 // MARK: WhatsNew Delegate
 extension HomeViewController: WhatsNewDelegate {
-    
+
     func okButtonPressed() {
         userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
         tableView.beginUpdates()
@@ -560,6 +565,17 @@ extension HomeViewController: WhatsNewDelegate {
             }
         })
         tableView.endUpdates()
+    }
+    
+    func dismissCardTemp() {
+        tableView.contentInset = .init(top: -whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
+        whatsNewView.isHidden = true
+    }
+    
+    func unHideCard() {
+        tableView.contentInset = .zero
+        whatsNewView.isHidden = false
+        tableView.contentOffset = .zero
     }
 
     func cardPressed() {
