@@ -68,7 +68,7 @@ class HomeViewController: UIViewController {
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
         navigationController?.navigationBar.barTintColor = .white
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         view.backgroundColor = .tableBackgroundColor
 
         tableView = HomeTableView(frame: .zero, style: .grouped)
@@ -448,7 +448,7 @@ extension HomeViewController: UISearchBarDelegate {
         if tableView?.tableHeaderView != nil {
             hideCard()
         }
-        
+
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -531,30 +531,26 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
         // If loading indicator is being shown, don't display image
         if isLoading {
             return nil
-        } else {
-            return isNetworkDown ? #imageLiteral(resourceName: "noWifi") : #imageLiteral(resourceName: "noRoutes")
         }
-
+        return isNetworkDown ? #imageLiteral(resourceName: "noWifi") : #imageLiteral(resourceName: "noRoutes")
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         // If loading indicator is being shown, don't display description
         if isLoading {
             return nil
-        } else {
-            let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
-            return NSAttributedString(string: title, attributes: [.foregroundColor : UIColor.mediumGrayColor])
         }
+        let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
+        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.mediumGrayColor])
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
         // If loading indicator is being shown, don't display button
         if isLoading {
             return nil
-        } else {
-            let title = "Retry"
-            return NSAttributedString(string: title, attributes: [.foregroundColor : UIColor.tcatBlueColor])
         }
+        let title = "Retry"
+        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.tcatBlueColor])
     }
 
     func setUpLoadingIndicator() {
@@ -636,7 +632,7 @@ extension HomeViewController: WhatsNewDelegate {
             for subview in self.whatsNewView.subviews {
                 subview.alpha = 0
             }
-        }) { (completed) in
+        }) { (_) in
             self.whatsNewView.isHidden = true
         }
     }
@@ -651,7 +647,7 @@ extension HomeViewController: WhatsNewDelegate {
             for subview in self.whatsNewView.subviews {
                 subview.alpha = 1
             }
-        }) { (completed) in
+        }) { (_) in
             self.whatsNewView.isHidden = false
         }
     }
