@@ -35,7 +35,7 @@ class WhatsNewHeaderView: UIView {
 
         createUpdateDescription(description: description)
         createWhatsNewHeader()
-        createUpdateTitle(updateName: updateName)
+        createUpdateTitle(title: updateName)
         createDismissButton()
     }
 
@@ -110,7 +110,7 @@ class WhatsNewHeaderView: UIView {
             {
                 let totalWidthPadding = containerPadding.left + containerPadding.right
                 let widthValue = wholeView.frame.width - totalWidthPadding
-                let heightValue = description.heightWithConstrainedWidth(width: widthValue, font: updateDescription.font)
+                let heightValue = ceil(description.heightWithConstrainedWidth(width: widthValue, font: updateDescription.font))
                 make.height.equalTo(ceil(heightValue))
             }
         }

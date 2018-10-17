@@ -622,6 +622,7 @@ extension HomeViewController: WhatsNewDelegate {
             if completed {
                 self.tableView.animating = false
                 self.tableView.tableHeaderView = nil
+                VersionStore().set(version: WhatsNew.Version.current())
             }
         })
         tableView.endUpdates()

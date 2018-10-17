@@ -21,7 +21,7 @@ class VersionStore: WhatsNewVersionStore {
     }
 
     func set(version: WhatsNew.Version) {
-        userDefaults.set(Constants.App.version, forKey: Constants.UserDefaults.version)
+        userDefaults.set(version.description, forKey: Constants.UserDefaults.version)
     }
 
 }
