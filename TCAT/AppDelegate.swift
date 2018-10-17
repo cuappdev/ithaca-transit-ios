@@ -48,13 +48,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         JSONFileManager.shared.deleteAllJSONs()
 
-        // Check app version
-        if let version = userDefaults.value(forKey: Constants.UserDefaults.version) as? String {
-            if version != Constants.App.version {
-                // User has just updated the app.
-            }
-        }
-
         for (key, defaultValue) in userDataInits {
             if userDefaults.value(forKey: key) == nil {
                 userDefaults.set(defaultValue, forKey: key)

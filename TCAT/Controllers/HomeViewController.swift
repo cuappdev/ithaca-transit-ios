@@ -515,7 +515,8 @@ extension HomeViewController: CLLocationManagerDelegate {
 // MARK: DZN Empty Data Set Source
 extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
-        return tableView.tableHeaderView == nil ? -80 : (-80 + whatsNewView.frame.height + 20)
+        // If tableview header is hidden, increase offset to center EmptyDataSet view
+        return tableView.tableHeaderView == nil ? -80 : (-80 - tableView.contentInset.top)
     }
 
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
@@ -567,15 +568,32 @@ extension HomeViewController: WhatsNewDelegate {
         tableView.endUpdates()
     }
 
-    func dismissCardTemp() {
-        tableView.contentInset = .init(top: -whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
-        whatsNewView.isHidden = true
+    /// Hide card when user is searching for Bus Stops
+    func hideCard() {
+        UIView.animate(withDuration: 0.35, animations: {
+            self.tableView.contentInset = .init(top: -whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
+            self.whatsNewView.alpha = 0
+            for subview in whatsNewView.subviews {
+                subview.alpha = 0
+            }
+        }) { (completed) in
+            self.whatsNewView.isHidden = true
+        }
     }
 
-    func unHideCard() {
-        tableView.contentInset = .zero
-        whatsNewView.isHidden = false
-        tableView.contentOffset = .zero
+    /// Present card after user is done searching
+    func showCard() {
+        UIView.animate(withDuration: 0.35, animations: {
+            self.tableView.contentInset = .zero
+            self.tableView.contentOffset = .zero
+            self.whatsNewView.alpha = 1
+            for subview in whatsNewView.subviews {
+                subview.alpha = 1
+            }
+        }) { (completed) in
+            self.whatsNewView.isHidden = false
+        }
+        
     }
 
     func cardPressed() {
