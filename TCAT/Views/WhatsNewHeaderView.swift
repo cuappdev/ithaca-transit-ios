@@ -35,7 +35,7 @@ class WhatsNewHeaderView: UIView {
 
         createUpdateDescription(description: description)
         createWhatsNewHeader()
-        createUpdateTitle(updateName: updateName)
+        createUpdateTitle(title: updateName)
         createDismissButton()
     }
 
