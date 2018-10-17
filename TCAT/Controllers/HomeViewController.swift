@@ -460,7 +460,7 @@ extension HomeViewController: UISearchBarDelegate {
         let submitBugBarButton = UIBarButtonItem(customView: infoButton)
         navigationItem.setRightBarButton(submitBugBarButton, animated: false)
         sections = createSections()
-        if tableView.tableHeaderView != nil {
+        if tableView?.tableHeaderView != nil {
             showCard()
         }
     }
