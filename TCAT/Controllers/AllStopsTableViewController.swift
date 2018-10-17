@@ -214,20 +214,18 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
         // If loading indicator is being shown, don't display description
         if isLoading {
             return nil
-        } else {
-            let title = "Couldn't Get Stops"
-          return NSAttributedString(string: title, attributes: [.foregroundColor : UIColor.mediumGrayColor])
         }
+        let title = "Couldn't Get Stops"
+        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.mediumGrayColor])
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
         // If loading indicator is being shown, don't display button
         if isLoading {
             return nil
-        } else {
-            let title = "Retry"
-            return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.tcatBlueColor])
         }
+        let title = "Retry"
+        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.tcatBlueColor])
     }
 
     func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
