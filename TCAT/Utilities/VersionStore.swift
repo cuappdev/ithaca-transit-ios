@@ -12,16 +12,16 @@ import WhatsNewKit
 class VersionStore: WhatsNewVersionStore {
     /// Returns true if update has been seen
     func has(version: WhatsNew.Version) -> Bool {
-        var isNotNewVersion = false
         let isVersionPatch = version.patch > 0
-        if let appVersion = userDefaults.string(forKey: Constants.UserDefaults.version) {
-            isNotNewVersion = version == WhatsNew.Version(stringLiteral: appVersion)
-        }
+        let savedAppVersion = userDefaults.string(forKey: Constants.UserDefaults.version) ?? Constants.App.version
+        let isNotNewVersion = (Constants.App.version == savedAppVersion)
+
+        set(version: WhatsNew.Version.current())
         return isVersionPatch || isNotNewVersion
     }
 
     func set(version: WhatsNew.Version) {
-        userDefaults.set(version.description, forKey: Constants.UserDefaults.version)
+        userDefaults.set(Constants.App.version, forKey: Constants.UserDefaults.version)
     }
 
 }

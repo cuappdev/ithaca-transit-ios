@@ -29,6 +29,7 @@ class HomeViewController: UIViewController {
     var locationManager = CLLocationManager()
     var timer: Timer?
     var isNetworkDown = false
+    var firstViewing = true
     var searchResultsSection: Section!
     var sectionIndexes: [String: Int]! = [:]
     var tableView: HomeTableView!
@@ -115,10 +116,18 @@ class HomeViewController: UIViewController {
             make.width.equalTo(30)
             make.height.equalTo(38)
         }
+        
+        firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
 
-        if !VersionStore().has(version: WhatsNew.Version.current()) {
+        let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
+        let hasSeenVersion = VersionStore().has(version: WhatsNew.Version.current())
+        if !firstViewing && (!whatsNewDismissed || !hasSeenVersion) {
             createWhatsNewView()
         }
+        if !hasSeenVersion {
+            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
+        }
+        VersionStore().set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
     }
 
     override func viewDidLayoutSubviews() {
@@ -225,6 +234,7 @@ class HomeViewController: UIViewController {
     }
 
     func createWhatsNewView() {
+        userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
         whatsNewView = WhatsNewHeaderView(updateName: "App Shortcuts for Favorites",
                                           description: "Force Touch the app icon to search your favorites even faster.")
         whatsNewView.whatsNewDelegate = self
@@ -239,6 +249,25 @@ class HomeViewController: UIViewController {
         containerView.snp.makeConstraints { (make) in
             make.top.centerX.width.equalToSuperview()
         }
+    }
+    
+    func okButtonPressed() {
+        userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
+        tableView.beginUpdates()
+        tableView.animating = true
+        UIView.animate(withDuration: 0.35, animations: {
+            if let containerView = self.tableView.tableHeaderView {
+                self.tableView.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
+                containerView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01).translatedBy(x: 0, y: -6000)
+            }
+        }, completion: {(completed) in
+            if completed {
+                self.tableView.animating = false
+                self.tableView.tableHeaderView = nil
+                VersionStore().set(version: WhatsNew.Version.current())
+            }
+        })
+        tableView.endUpdates()
     }
 
     /* Keyboard Functions */
@@ -608,25 +637,6 @@ extension HomeViewController: AddFavoritesDelegate {
 
 // MARK: WhatsNew Delegate
 extension HomeViewController: WhatsNewDelegate {
-
-    func okButtonPressed() {
-        userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
-        tableView.beginUpdates()
-        tableView.animating = true
-        UIView.animate(withDuration: 0.35, animations: {
-            if let containerView = self.tableView.tableHeaderView {
-                self.tableView.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
-                containerView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01).translatedBy(x: 0, y: -6000)
-            }
-        }, completion: {(completed) in
-            if completed {
-                self.tableView.animating = false
-                self.tableView.tableHeaderView = nil
-                VersionStore().set(version: WhatsNew.Version.current())
-            }
-        })
-        tableView.endUpdates()
-    }
 
     /// Hide card when user is searching for Bus Stops
     func hideCard() {
