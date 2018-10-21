@@ -259,7 +259,8 @@ extension String {
 
     func heightWithConstrainedWidth(width: CGFloat, font: UIFont) -> CGFloat {
         let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
-        let boundingBox = self.boundingRect(with: constraintRect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [NSAttributedString.Key.font: font], context: nil)
+        let boundingBox = self.boundingRect(with: constraintRect, options: [.usesLineFragmentOrigin],
+                                            attributes: [.font: font], context: nil)
         return boundingBox.height
     }
     /** Bold a phrase that appears in a string, and return the attributed string. Only shows the last bolded phrase.
