@@ -225,8 +225,8 @@ class HomeViewController: UIViewController {
     }
 
     func createWhatsNewView() {
-        whatsNewView = WhatsNewHeaderView(updateName: "App Shortcuts for Favorites",
-                                          description: "Force Touch the app icon to search your favorites even faster.")
+        whatsNewView = WhatsNewHeaderView(updateName: Constants.Phrases.whatsNewUpdateName,
+                                          description: Constants.Phrases.whatsNewDescription)
         whatsNewView.whatsNewDelegate = self
         let containerView = UIView()
         containerView.backgroundColor = .clear
@@ -316,7 +316,7 @@ extension HomeViewController: UITableViewDataSource {
                 cell.detailTextLabel?.text = cornellDestinations[indexPath.row].stops
             case .seeAllStops:
                 cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
-                cell.textLabel?.text = "See All Stops"
+                cell.textLabel?.text = Constants.Phrases.seeAllStops
                 cell.imageView?.image = #imageLiteral(resourceName: "list")
                 cell.accessoryType = .disclosureIndicator
             }
@@ -349,11 +349,11 @@ extension HomeViewController: UITableViewDelegate {
 
         switch sections[section].type {
         case .cornellDestination:
-            header.setupView(labelText: "Get There Now", displayAddButton: false)
+            header.setupView(labelText: Constants.TableHeaders.getThereNow, displayAddButton: false)
         case .recentSearches:
-            header.setupView(labelText: "Recent Searches", displayAddButton: false)
+            header.setupView(labelText: Constants.TableHeaders.recentSearches, displayAddButton: false)
         case .favorites:
-            header.setupView(labelText: "Favorite Destinations", displayAddButton: true)
+            header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, displayAddButton: true)
             header.addFavoritesDelegate = self
         case .seeAllStops, .searchResults:
             return nil
@@ -480,10 +480,10 @@ extension HomeViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
 
         if status == .denied {
-            let alertTitle = "Location Services Disabled"
-            let alertMessage = "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services."
+            let alertTitle = Constants.AlertTitles.locationDisabled
+            let alertMessage = Constants.AlertMessages.locationDisabled
             let alertController = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
-            let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
+            let settingsAction = UIAlertAction(title: Constants.Actions.settings, style: .default) { (_) in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
 
@@ -491,7 +491,7 @@ extension HomeViewController: CLLocationManagerDelegate {
 
                 userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
 
-                let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+                let cancelAction = UIAlertAction(title: Constants.Actions.cancel, style: .default, handler: nil)
                 alertController.addAction(cancelAction)
 
                 alertController.addAction(settingsAction)
@@ -506,7 +506,7 @@ extension HomeViewController: CLLocationManagerDelegate {
                 return
             }
 
-            let dontRemindAgainAction = UIAlertAction(title: "Don't Remind Me Again", style: .default) { (_) in
+            let dontRemindAgainAction = UIAlertAction(title: Constants.Actions.dontRemind, style: .default) { (_) in
                 self.userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
             }
             alertController.addAction(dontRemindAgainAction)
@@ -540,7 +540,7 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
         if isLoading {
             return nil
         }
-        let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
+        let title = isNetworkDown ? Constants.EmptyStateMessages.noNetworkConnection: Constants.EmptyStateMessages.locationNotFound
         return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.mediumGrayColor])
     }
 
@@ -549,7 +549,7 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
         if isLoading {
             return nil
         }
-        let title = "Retry"
+        let title = Constants.Actions.retry
         return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.tcatBlueColor])
     }
 
@@ -592,10 +592,10 @@ extension HomeViewController: AddFavoritesDelegate {
         if favorites.count < 5 {
             presentFavoritesTVC()
         } else {
-            let title = "Maximum Number of Favorites"
-            let message = "To add more favorites, please swipe left and delete one first."
+            let title = Constants.AlertTitles.maxFavorites
+            let message = Constants.AlertMessages.maxFavorites
             let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            let done = UIAlertAction(title: "Got It!", style: .default)
+            let done = UIAlertAction(title: Constants.Actions.gotIt, style: .default)
             alertController.addAction(done)
             present(alertController, animated: true, completion: nil)
         }

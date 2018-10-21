@@ -161,11 +161,11 @@ class SearchResultsTableViewController: UITableViewController {
 
         switch sections[section].type {
         case .cornellDestination:
-            header.setupView(labelText: "Get There Now", displayAddButton: false)
+            header.setupView(labelText: Constants.TableHeaders.getThereNow, displayAddButton: false)
         case .recentSearches:
-            header.setupView(labelText: "Recent Searches", displayAddButton: false)
+            header.setupView(labelText: Constants.TableHeaders.recentSearches, displayAddButton: false)
         case .favorites:
-            header.setupView(labelText: "Favorite Destinations", displayAddButton: false)
+            header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, displayAddButton: false)
         case .seeAllStops, .searchResults:
             return nil
         default:
@@ -271,7 +271,7 @@ class SearchResultsTableViewController: UITableViewController {
                 cell.detailTextLabel?.text = placeResult.detail
             case .seeAllStops:
                 cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
-                cell.textLabel?.text = "See All Stops"
+                cell.textLabel?.text = Constants.Phrases.seeAllStops
                 cell.imageView?.image = #imageLiteral(resourceName: "list")
                 cell.accessoryType = .disclosureIndicator
             default: break
@@ -297,16 +297,16 @@ extension SearchResultsTableViewController {
     }
 
     func showLocationDeniedAlert() {
-        let alertController = UIAlertController(title: "Location Services Disabled",
-                                                message: "You need to enable Location Services in Settings",
+        let alertController = UIAlertController(title: Constants.AlertTitles.locationDisabled,
+                                                message: Constants.AlertMessages.enableLocation,
                                                 preferredStyle: .alert)
 
-        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
+        let settingsAction = UIAlertAction(title: Constants.Actions.settings, style: .default) { (_) in
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
                                       options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]),
                                       completionHandler: nil)
         }
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: Constants.Actions.cancel, style: .cancel, handler: nil)
         alertController.addAction(settingsAction)
         alertController.addAction(cancelAction)
 

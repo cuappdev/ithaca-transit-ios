@@ -23,7 +23,7 @@ class FavoritesTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = fromOnboarding ? "Add Favorites" : "Add Favorite"
+        title = fromOnboarding ? Constants.Titles.favorites : Constants.Titles.favorite
         let systemItem: UIBarButtonItem.SystemItem = fromOnboarding ? .done : .cancel
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem,
                                                             target: self,
@@ -168,8 +168,8 @@ extension FavoritesTableViewController: DZNEmptyDataSetSource {
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        let title = "Search for a destination"
-        return NSAttributedString(string: title, attributes: [.foregroundColor : UIColor.mediumGrayColor])
+        let title = Constants.Phrases.searchForDestination
+        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.mediumGrayColor])
     }
 }
     // MARK: Search

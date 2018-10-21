@@ -40,7 +40,7 @@ class AllStopsTableViewController: UITableViewController {
 
         sortedKeys = sortedKeysForBusStops()
 
-        title = "All Stops"
+        title = Constants.Titles.allStops
         tableView.sectionIndexColor = .primaryTextColor
         tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
         tableView.cellLayoutMarginsFollowReadableWidth = false
@@ -215,7 +215,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
         if isLoading {
             return nil
         }
-        let title = "Couldn't Get Stops"
+        let title = Constants.EmptyStateMessages.couldntGetStops
         return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.mediumGrayColor])
     }
 
@@ -224,7 +224,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
         if isLoading {
             return nil
         }
-        let title = "Retry"
+        let title = Constants.Actions.retry
         return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.tcatBlueColor])
     }
 
