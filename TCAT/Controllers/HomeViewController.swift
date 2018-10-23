@@ -619,6 +619,11 @@ extension HomeViewController: AddFavoritesDelegate {
 
     func displayFavoritesTVC() {
         if favorites.count < 5 {
+            Network.getAlerts().perform(withSuccess: { (request) in
+                print(request)
+            }) { (error) in
+                print(error)
+            }
             presentFavoritesTVC()
         } else {
             let title = "Maximum Number of Favorites"

@@ -12,18 +12,33 @@ import TRON
 import CoreLocation
 import Alamofire
 
-class Error: JSONDecodable {
-    required init(json: JSON) {}
+struct Error: JSONDecodable, Codable {
+    init(json: JSON) {}
+    
+    var error: String!
+}
+struct AlertRequest: Codable {
+    var success: Bool!
+    var data: [Alert]!
 }
 
-class AllAlerts: JSONDecodable {
-    required init(json: JSON) throws {
-        print(json)
-        if json["success"].boolValue {
-            let data = json["data"].arrayValue
-            print(data)
-        }
-    }
+struct Alert: Codable {
+    var id: Int!
+    var message: String!
+    var fromDate: String!
+    var toDate: String!
+    var fromTime: String!
+    var toTime: String!
+    var priority: Int!
+    var daysOfWeek: String!
+    var routes: [Int]!
+    var sigs: [Int]!
+    var channelMessages: [ChannelMessage]!
+}
+
+struct ChannelMessage: Codable {
+    var ChannelId: Int!
+    var message: String!
 }
 
 class AllBusStops: JSONDecodable {

@@ -66,8 +66,8 @@ class Network {
         return request
     }
     
-    class func getAlerts() -> APIRequest<AllAlerts, Error> {
-        let request: APIRequest<AllAlerts, Error> = tron.swiftyJSON.request("alerts")
+    class func getAlerts() -> APIRequest<AlertRequest, Error> {
+        let request: APIRequest<AlertRequest, Error> = tron.codable.request("alerts")
         request.method = .get
         return request
     }

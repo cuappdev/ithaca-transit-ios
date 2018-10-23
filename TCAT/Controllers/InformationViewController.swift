@@ -28,11 +28,15 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
     var content: [[(name: String, action: Selector)]] = [
     
         [ // Section 0
+            (name: "Service Alerts", action: #selector(showServiceAlerts))
+        ],
+        
+        [ // Section 1
             (name: "Show Onboarding", action: #selector(presentOnboarding)),
             (name: "Send Feedback", action: #selector(sendFeedback)),
         ],
         
-        [ // Section 1
+        [ // Section 2
             (name: "More Apps", action: #selector(showMoreApps)),
             (name: "Visit Our Website", action: #selector(openTeamWebsite)),
         ],
@@ -342,4 +346,8 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         
     }
     
+    @objc func showServiceAlerts() {
+        let serviceAlertsVC = ServiceAlertsViewController()
+        present(serviceAlertsVC, animated: true)
+    }
 }
