@@ -224,7 +224,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
         if isLoading {
             return nil
         }
-        let title = Constants.Actions.retry
+        let title = Constants.Buttons.retry
         return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.tcatBlueColor])
     }
 

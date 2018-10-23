@@ -11,56 +11,74 @@ import UIKit
 /// App-wide constants
 struct Constants {
 
-    /// The actions used for alerts
-    struct Actions {
-        // Alert actions
-        static let settings = "Settings"
-        static let cancel = "Cancel"
-        static let dontRemind = "Don't Remind Me Again"
-        static let gotIt = "Got It!"
-        static let emailSettings = "Email Settings"
-        static let copyEmail = "Copy Address to Clipboard"
-        static let teleportation = "😐😒🙄"
-        static let OK = "OK"
+    /// The phrases used for alerts
+    struct Alerts {
 
-        // Other button actions
-        static let retry = "Retry"
-        static let done = "Done"
-        static let magicSchoolBus = "✨📚🚌"
-        static let dismiss = "Dismiss"
-        static let begin = "BEGIN"
-        static let share = "Share"
-        static let back = "  Back"
-    }
+        struct GeneralActions {
+            static let settings = "Settings"
+            static let cancel = "Cancel"
+            static let dontRemind = "Don't Remind Me Again"
+        }
 
-    /// The messages used for alerts
-    struct AlertMessages {
-        static let locationDisabled = "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services."
-        static let limitedLocation = "Tap Settings to change your location permissions, or continue using a limited version of the app."
-        static let enableLocation = "You need to enable Location Services in Settings"
-        static let maxFavorites = "To add more favorites, please swipe left and delete one first."
-        static let couldntSendEmail = "To send your message with device logs, please add an email account in Settings > Accounts & Passwords > Add Account. You can also contact us at " + Constants.App.contactEmailAddress + " to send feedback."
-        static let saysTheBus = "says the TCAT bus."
-        static let teleportation = "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta)."
-        static let outOfRange = "Try looking for another route with start and end locations closer to Tompkins County."
-    }
+        struct LocationPermissions {
+            static let title =  Constants.Alerts.LocationDisabled.title
+            static let message = "Tap Settings to change your location permissions, or continue using a limited version of the app."
+        }
 
-    /// The titles used for alerts
-    struct AlertTitles {
-        static let locationDisabled = "Location Services Disabled"
-        static let maxFavorites = "Maximum Number of Favorites"
-        static let couldntSendEmail = "Couldn't Send Email"
-        static let beep = "Be-beep be-beep!"
-        static let teleportation = "You're here!"
-        static let outOfRange = "Location Out Of Range"
+        struct LocationDisabled {
+            static let title = "Location Services Disabled"
+            static let message = "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services."
+            static let settings = Constants.Alerts.GeneralActions.settings
+            static let cancel = Constants.Alerts.GeneralActions.cancel
+            static let dontRemind = Constants.Alerts.GeneralActions.dontRemind
+        }
+
+        struct LocationEnable {
+            static let title = Constants.Alerts.LocationDisabled.title
+            static let message = "You need to enable Location Services in Settings"
+            static let settings = Constants.Alerts.GeneralActions.settings
+            static let cancel = Constants.Alerts.GeneralActions.cancel
+        }
+
+        struct MagicBus {
+            static let title = "Be-beep be-beep!"
+            static let message = "says the TCAT bus."
+            static let action = "✨📚🚌"
+        }
+
+        struct EmailFailure {
+            static let title = "Couldn't Send Email"
+            static let message = "To send your message with device logs, please add an email account in Settings > Accounts & Passwords > Add Account. You can also contact us at " + Constants.App.contactEmailAddress + " to send feedback."
+            static let emailSettings = "Email Settings"
+            static let copyEmail = "Copy Address to Clipboard"
+            static let cancel = Constants.Alerts.GeneralActions.cancel
+        }
+
+        struct Teleportation {
+            static let title = "You're here!"
+            static let message = "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta)."
+            static let action = "😐😒🙄"
+        }
+
+        struct OutOfRange {
+            static let title = "Location Out Of Range"
+            static let message = "Try looking for another route with start and end locations closer to Tompkins County."
+            static let action = "OK"
+        }
+
+        struct MaxFavorites {
+            static let title = "Maximum Number of Favorites"
+            static let message = "To add more favorites, please swipe left and delete one first."
+            static let action = "Got It!"
+        }
     }
 
     struct App {
         /// The App Store Identifier used in App Store links
-        static let storeIdentifier: String = "\(1290883721)"
+        static let storeIdentifier = "\(1290883721)"
 
         /// The link of the application in the App Store
-        static let appStoreLink: String = "https://itunes.apple.com/app/id\(storeIdentifier)"
+        static let appStoreLink = "https://itunes.apple.com/app/id\(storeIdentifier)"
 
         /// The app version within the App Store (e.g. "1.4.2") [String value of `CFBundleShortVersionString`]
         static let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
@@ -80,13 +98,22 @@ struct Constants {
         static let noLiveTrackingForRoutes = "No live tracking available for routes"
         static let noLiveTrackingForRoute = "No live tracking available for Route "
         static let cantConnectServer = "Could not connect to server"
-        static let calculationError = "Route calculation error. Please retry."
+        static let routeCalculationError = "Route calculation error. Please retry."
     }
 
     struct BusUserData {
         static let actualCoordinates = "actualCoords"
         static let indicatorCoordinates = "indicatorCoords"
         static let vehicleID = "vehicleID"
+    }
+
+    /// The phrases used for buttons throughout the app
+    struct Buttons {
+        static let back = "Back"
+        static let cancel = "Cancel"
+        static let done = "Done"
+        static let retry = "Retry"
+        static let share = "Share"
     }
 
     /// Cell identifiers
@@ -144,10 +171,14 @@ struct Constants {
         static let liveTrackingMessage = "Know exactly where your bus is and when it will be there."
         static let searchAnywhereMessage = "From Ithaca Mall to Taughannock Falls, search any location and get there fast."
         static let favoritesMessage = "All of your favorite destinations are just one tap away."
-        static let empty = ""
+
+        // Button labels
+        static let begin = "BEGIN"
+        static let dismiss = "Dismiss"
     }
 
-    struct Phrases {
+    /// General phrases used throughout the app
+    struct General {
         static let firstFavorite = "Add Your First Favorite!"
         static let searchPlaceholder = "Where to?"
         static let favoritesPlaceholder = "Search any destination"
@@ -155,17 +186,14 @@ struct Constants {
         static let toSearchBarPlaceholder = "Choose destination..."
         static let datepickerLeaveNow = "Leave Now"
         static let searchForDestination = "Search for a destination"
+        static let currentLocation = "Current Location"
+        static let destination = "your destination"
 
         static let seeAllStops = "See All Stops"
 
         // What's New phrases
         static let whatsNewUpdateName = "App Shortcuts for Favorites"
         static let whatsNewDescription = "Force Touch the app icon to search your favorites even faster."
-    }
-
-    struct Stops {
-        static let currentLocation = "Current Location"
-        static let destination = "your destination"
     }
 
     struct TableHeaders {

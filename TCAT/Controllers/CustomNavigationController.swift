@@ -90,7 +90,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
             .foregroundColor: UIColor.primaryTextColor,
             .baselineOffset: 0.3
         ]
-        let attributedString = NSMutableAttributedString(string: Constants.Actions.back, attributes: attributes)
+        let attributedString = NSMutableAttributedString(string: "  " + Constants.Buttons.back, attributes: attributes)
         backButton.setAttributedTitle(attributedString, for: .normal)
 
         backButton.sizeToFit()

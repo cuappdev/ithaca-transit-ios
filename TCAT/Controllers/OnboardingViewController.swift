@@ -72,13 +72,11 @@ class OnboardingViewController: PresentationController {
 
     /// Change the amount of messages in the view. The number of pages shown will equal the number of messages
     let detailLabelMessages = [
-
         Constants.Onboarding.welcomeMessage,
         Constants.Onboarding.liveTrackingMessage,
         Constants.Onboarding.searchAnywhereMessage,
         Constants.Onboarding.favoritesMessage,
-        Constants.Onboarding.empty
-
+        ""
     ]
 
     //
@@ -87,13 +85,11 @@ class OnboardingViewController: PresentationController {
 
     /// Set the asset type, position, and speed.
     let backgroundImages = [
-
         BackgroundImage(name: "treesnroad", left: -2.7, top: 0.71, speed: -1.3),
         BackgroundImage(name: "tcat", left: -0.60, top: 0.703, speed: 0.4),
         BackgroundImage(name: "hill", left: -1.5, top: 0.55, speed: -0.5),
         BackgroundImage(name: "mountain", left: -1.0, top: 0.41, speed: -0.2),
         BackgroundImage(name: "cloud", left: -2.0, top: 0.10, speed: -0.1)
-
     ]
 
     //
@@ -145,7 +141,7 @@ class OnboardingViewController: PresentationController {
 
     private lazy var dismissButton: UIBarButtonItem = { [unowned self] in
         let dismissButton = UIBarButtonItem(
-            title: Constants.Actions.dismiss,
+            title: Constants.Onboarding.dismiss,
             style: .plain,
             target: self,
             action: #selector(dismissView)
@@ -262,7 +258,7 @@ class OnboardingViewController: PresentationController {
         button.layer.shadowOffset = CGSize(width: 0, height: 4)
         button.layer.shadowColor = UIColor.mediumGrayColor.cgColor
         button.layer.shadowOpacity = 0.5
-        button.setTitle(Constants.Actions.begin, for: .normal)
+        button.setTitle(Constants.Onboarding.begin, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
         button.titleLabel?.font = .style(Fonts.SanFrancisco.medium, size: 22)

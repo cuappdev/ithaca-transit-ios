@@ -213,8 +213,8 @@ class SearchResultsTableViewController: UITableViewController {
                 return
             }
 
-            if busStop.name != Constants.Stops.currentLocation
-                && busStop.name != Constants.Phrases.firstFavorite {
+            if busStop.name != Constants.General.currentLocation
+                && busStop.name != Constants.General.firstFavorite {
                 SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch,
                                                           location: busStop,
                                                           limit: 8)
@@ -261,7 +261,7 @@ class SearchResultsTableViewController: UITableViewController {
         if let itemType = itemType {
             switch itemType {
             case .busStop(let busStop):
-                let identifier = busStop.name == Constants.Stops.currentLocation ?
+                let identifier = busStop.name == Constants.General.currentLocation ?
                     Constants.Cells.currentLocationIdentifier : Constants.Cells.busIdentifier
                 cell = tableView.dequeueReusableCell(withIdentifier: identifier) as? BusStopCell
                 cell.textLabel?.text = busStop.name
@@ -271,7 +271,7 @@ class SearchResultsTableViewController: UITableViewController {
                 cell.detailTextLabel?.text = placeResult.detail
             case .seeAllStops:
                 cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
-                cell.textLabel?.text = Constants.Phrases.seeAllStops
+                cell.textLabel?.text = Constants.General.seeAllStops
                 cell.imageView?.image = #imageLiteral(resourceName: "list")
                 cell.accessoryType = .disclosureIndicator
             default: break
@@ -297,16 +297,16 @@ extension SearchResultsTableViewController {
     }
 
     func showLocationDeniedAlert() {
-        let alertController = UIAlertController(title: Constants.AlertTitles.locationDisabled,
-                                                message: Constants.AlertMessages.enableLocation,
+        let alertController = UIAlertController(title: Constants.Alerts.LocationEnable.title,
+                                                message: Constants.Alerts.LocationEnable.message,
                                                 preferredStyle: .alert)
 
-        let settingsAction = UIAlertAction(title: Constants.Actions.settings, style: .default) { (_) in
+        let settingsAction = UIAlertAction(title: Constants.Alerts.LocationEnable.settings, style: .default) { _ in
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
                                       options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]),
                                       completionHandler: nil)
         }
-        let cancelAction = UIAlertAction(title: Constants.Actions.cancel, style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: Constants.Alerts.LocationEnable.cancel, style: .cancel, handler: nil)
         alertController.addAction(settingsAction)
         alertController.addAction(cancelAction)
 
@@ -371,7 +371,7 @@ extension SearchResultsTableViewController: UnwindAllStopsTVCDelegate {
 extension SearchResultsTableViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let firstLocation = locations.last {
-            let currentLocationBusItem = ItemType.busStop(BusStop(name: Constants.Stops.currentLocation,
+            let currentLocationBusItem = ItemType.busStop(BusStop(name: Constants.General.currentLocation,
                                                                   lat: firstLocation.coordinate.latitude,
                                                                   long: firstLocation.coordinate.longitude))
             currentLocationSection = Section(type: .currentLocation, items: [currentLocationBusItem])
@@ -383,7 +383,7 @@ extension SearchResultsTableViewController: CLLocationManagerDelegate {
         print("SearchResultsTableVC CLLocationManager didFailWithError: \(error)")
         //this means they dont have location services enabled
         if error._code == CLError.denied.rawValue {
-            let currentLocationBusItem = ItemType.busStop(BusStop(name: Constants.Stops.currentLocation,
+            let currentLocationBusItem = ItemType.busStop(BusStop(name: Constants.General.currentLocation,
                                                                   lat: 0.0,
                                                                   long: 0.0))
             currentLocationSection = Section(type: .currentLocation, items: [currentLocationBusItem])

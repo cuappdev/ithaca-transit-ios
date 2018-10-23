@@ -94,7 +94,7 @@ class FavoritesTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         searchBar.isTranslucent = true
-        searchBar.placeholder = Constants.Phrases.favoritesPlaceholder
+        searchBar.placeholder = Constants.General.favoritesPlaceholder
         searchBar.backgroundImage = UIImage()
         searchBar.alpha = 1.0
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
@@ -168,7 +168,7 @@ extension FavoritesTableViewController: DZNEmptyDataSetSource {
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        let title = Constants.Phrases.searchForDestination
+        let title = Constants.General.searchForDestination
         return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.mediumGrayColor])
     }
 }

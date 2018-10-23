@@ -54,7 +54,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         view.addSubview(tableView)
 
         dismissButton.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
-        dismissButton.setTitle(Constants.Actions.done, for: .normal)
+        dismissButton.setTitle(Constants.Buttons.done, for: .normal)
         navigationItem.rightBarButtonItem?.setTitleTextAttributes(
             CustomNavigationController.buttonTitleTextAttributes, for: .normal
         )
@@ -214,10 +214,10 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
 
         } else {
 
-            let title = Constants.AlertTitles.couldntSendEmail
-            let message = Constants.AlertMessages.couldntSendEmail
+            let title = Constants.Alerts.EmailFailure.title
+            let message = Constants.Alerts.EmailFailure.message
             let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: Constants.Actions.emailSettings, style: .default, handler: { (_) in
+            alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.emailSettings, style: .default, handler: { (_) in
                 let path = "App-Prefs:"
                 if let url = URL(string: path), UIApplication.shared.canOpenURL(url) {
                     self.open(path, inApp: false)
@@ -227,12 +227,12 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
                 let payload = FeedbackErrorPayload(description: "Opened Email Settings")
                 Analytics.shared.log(payload)
             }))
-            alertController.addAction(UIAlertAction(title: Constants.Actions.copyEmail, style: .default, handler: { (_) in
+            alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.copyEmail, style: .default, handler: { (_) in
                 UIPasteboard.general.string = Constants.App.contactEmailAddress
                 let payload = FeedbackErrorPayload(description: "Copy Address to Clipboard")
                 Analytics.shared.log(payload)
             }))
-            alertController.addAction(UIAlertAction(title: Constants.Actions.cancel, style: .default, handler: { (_) in
+            alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.cancel, style: .default, handler: { (_) in
                 let payload = FeedbackErrorPayload(description: "Cancelled")
                 Analytics.shared.log(payload)
             }))
@@ -316,7 +316,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
 
             self.tcatImage.frame.origin.x += constant
 
-        }) { (completed) in
+        }) { (_) in
 
             self.tcatImage.frame.origin.x -= 2 * constant
 
@@ -327,10 +327,10 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
 
             }) { (_) in
 
-                let title = Constants.AlertTitles.beep
-                let message = Constants.AlertMessages.saysTheBus
+                let title = Constants.Alerts.MagicBus.title
+                let message = Constants.Alerts.MagicBus.message
                 let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-                alertController.addAction(UIAlertAction(title: Constants.Actions.magicSchoolBus, style: .default, handler: nil))
+                alertController.addAction(UIAlertAction(title: Constants.Alerts.MagicBus.action, style: .default, handler: nil))
                 self.present(alertController, animated: true)
 
             }
