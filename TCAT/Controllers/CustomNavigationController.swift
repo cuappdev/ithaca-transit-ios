@@ -92,7 +92,6 @@ class CustomNavigationController: UINavigationController, UINavigationController
         ]
         let attributedString = NSMutableAttributedString(string: "  " + Constants.Buttons.back, attributes: attributes)
         backButton.setAttributedTitle(attributedString, for: .normal)
-
         backButton.sizeToFit()
 
         // Expand frame to create bigger touch area
@@ -137,8 +136,10 @@ class CustomNavigationController: UINavigationController, UINavigationController
     override func popViewController(animated: Bool) -> UIViewController? {
 
         let viewController = super.popViewController(animated: animated)
-        if viewControllers.last is HomeViewController {
-            viewControllers.last!.navigationItem.leftBarButtonItem = nil
+        if let lastViewController = viewControllers.last {
+            if lastViewController is HomeViewController {
+                lastViewController.navigationItem.leftBarButtonItem = nil
+            }
         }
         return viewController
 
