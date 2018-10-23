@@ -15,6 +15,7 @@ import NotificationBannerSwift
 import Crashlytics
 import SafariServices
 import SnapKit
+import WhatsNewKit
 
 class HomeViewController: UIViewController {
 
@@ -28,32 +29,34 @@ class HomeViewController: UIViewController {
     var locationManager = CLLocationManager()
     var timer: Timer?
     var isNetworkDown = false
+    var firstViewing = true
     var searchResultsSection: Section!
     var sectionIndexes: [String: Int]! = [:]
-    var tableView: UITableView!
+    var tableView: HomeTableView!
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
+    var whatsNewView: WhatsNewHeaderView!
     var recentLocations: [ItemType] = []
     var favorites: [ItemType] = []
     var isKeyboardVisible = false
     var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
+            if sections.isEmpty {
+                tableView.tableHeaderView = nil
+            }
         }
     }
+    var loadingIndicator: LoadingIndicator?
+    var isLoading: Bool { return loadingIndicator != nil }
 
     let reachability = Reachability(hostname: Network.ipAddress)
-    var isBannerShown = false {
+
+    var banner: StatusBarNotificationBanner? {
         didSet {
             setNeedsStatusBarAppearanceUpdate()
         }
-    }
-
-    var banner: StatusBarNotificationBanner?
-
-    func tctSectionHeaderFont() -> UIFont? {
-        return UIFont.style(Fonts.System.regular, size: 14)
     }
 
     override func viewDidLoad() {
@@ -66,10 +69,10 @@ class HomeViewController: UIViewController {
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
         navigationController?.navigationBar.barTintColor = .white
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         view.backgroundColor = .tableBackgroundColor
 
-        tableView = UITableView(frame: .zero, style: .grouped)
+        tableView = HomeTableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
@@ -88,7 +91,12 @@ class HomeViewController: UIViewController {
 
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
-            make.top.equalTo((navigationController?.navigationBar.bounds.maxY)!)
+
+            if #available(iOS 11.0, *) {
+                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            } else {
+                make.top.equalToSuperview().offset(view.layoutMargins.top)
+            }
         }
 
         searchBar = UISearchBar()
@@ -108,14 +116,25 @@ class HomeViewController: UIViewController {
             make.width.equalTo(30)
             make.height.equalTo(38)
         }
+        
+        firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
 
+        let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
+        let hasSeenVersion = VersionStore().has(version: WhatsNew.Version.current())
+        if !firstViewing && (!whatsNewDismissed || !hasSeenVersion) {
+            createWhatsNewView()
+        }
+        if !hasSeenVersion {
+            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
+        }
+        VersionStore().set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(reachabilityChanged(note:)),
+                                               selector: #selector(reachabilityChanged(_:)),
                                                name: .reachabilityChanged,
                                                object: reachability)
         do {
@@ -129,32 +148,35 @@ class HomeViewController: UIViewController {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return isBannerShown ? .lightContent : .default
+        return banner != nil ? .lightContent : .default
     }
 
-    @objc func reachabilityChanged(note: Notification) {
-        if let reachability = note.object as? Reachability {
-            switch reachability.connection {
-            case .none:
-                if !isBannerShown {
-                    banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
-                    banner!.autoDismiss = false
-                    banner!.show(queuePosition: .front, on: navigationController)
-                    isBannerShown = true
-                }
-                self.isNetworkDown = true
-                self.sectionIndexes = [:]
-                self.searchBar.isUserInteractionEnabled = false
-                self.sections = []
-            case .cellular, .wifi:
-                if isBannerShown {
-                    banner?.dismiss()
-                    banner = nil
-                    isBannerShown = false
-                }
-                sections = createSections()
-                self.searchBar.isUserInteractionEnabled = true
-            }
+    @objc func reachabilityChanged(_ notification: Notification) {
+        guard let reachability = notification.object as? Reachability else {
+            return
+        }
+
+        // Dismiss current banner, if any
+        banner?.dismiss()
+        banner = nil
+
+        // Dismiss current loading indicator, if any
+        loadingIndicator?.removeFromSuperview()
+        loadingIndicator = nil
+
+        switch reachability.connection {
+        case .none:
+            banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
+            banner?.autoDismiss = false
+            banner?.show(queuePosition: .front, on: navigationController)
+            self.isNetworkDown = true
+            self.sectionIndexes = [:]
+            self.searchBar.isUserInteractionEnabled = false
+            self.sections = []
+        case .cellular, .wifi:
+            self.isNetworkDown = false
+            sections = createSections()
+            self.searchBar.isUserInteractionEnabled = true
         }
     }
 
@@ -162,13 +184,23 @@ class HomeViewController: UIViewController {
         super.viewWillDisappear(animated)
         reachability?.stopNotifier()
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+
+        // Remove banner
+        banner?.dismiss()
+        banner = nil
+
+        // Remove activity indicator
+        loadingIndicator?.removeFromSuperview()
+        loadingIndicator = nil
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
-        sections = createSections()
+        if !isNetworkDown {
+            sections = createSections()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -201,6 +233,43 @@ class HomeViewController: UIViewController {
         present(navController, animated: true, completion: nil)
     }
 
+    func createWhatsNewView() {
+        userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
+        whatsNewView = WhatsNewHeaderView(updateName: "App Shortcuts for Favorites",
+                                          description: "Force Touch the app icon to search your favorites even faster.")
+        whatsNewView.whatsNewDelegate = self
+        let containerView = UIView()
+        containerView.backgroundColor = .clear
+        containerView.addSubview(whatsNewView)
+        whatsNewView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview().inset(whatsNewView.containerPadding)
+        }
+
+        tableView.tableHeaderView = containerView
+        containerView.snp.makeConstraints { (make) in
+            make.top.centerX.width.equalToSuperview()
+        }
+    }
+    
+    func okButtonPressed() {
+        userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
+        tableView.beginUpdates()
+        tableView.animating = true
+        UIView.animate(withDuration: 0.35, animations: {
+            if let containerView = self.tableView.tableHeaderView {
+                self.tableView.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
+                containerView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01).translatedBy(x: 0, y: -6000)
+            }
+        }, completion: {(completed) in
+            if completed {
+                self.tableView.animating = false
+                self.tableView.tableHeaderView = nil
+                VersionStore().set(version: WhatsNew.Version.current())
+            }
+        })
+        tableView.endUpdates()
+    }
+
     /* Keyboard Functions */
     @objc func keyboardWillShow(_ notification: Notification) {
         isKeyboardVisible = true
@@ -208,11 +277,12 @@ class HomeViewController: UIViewController {
 
     @objc func keyboardWillHide(_ notification: Notification) {
         isKeyboardVisible = false
+        searchBarCancelButtonClicked(searchBar)
     }
 
     /* ScrollView Delegate */
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
+        if let searchBar = searchBar, let cancelButton = searchBar.value(forKey: "_cancelButton") as? UIButton {
             cancelButton.isEnabled = true
         }
     }
@@ -281,7 +351,7 @@ extension HomeViewController: UITableViewDataSource {
             }
         }
 
-        cell.textLabel?.font = tctSectionHeaderFont()
+        cell.textLabel?.font = .style(Fonts.System.regular, size: 14)
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
         cell.layoutMargins = .zero
@@ -404,6 +474,10 @@ extension HomeViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         navigationItem.rightBarButtonItem = nil
+        if tableView?.tableHeaderView != nil {
+            hideCard()
+        }
+
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -415,8 +489,9 @@ extension HomeViewController: UISearchBarDelegate {
         let submitBugBarButton = UIBarButtonItem(customView: infoButton)
         navigationItem.setRightBarButton(submitBugBarButton, animated: false)
         sections = createSections()
-        tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
-
+        if tableView?.tableHeaderView != nil {
+            showCard()
+        }
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -476,23 +551,72 @@ extension HomeViewController: CLLocationManagerDelegate {
 
 // MARK: DZN Empty Data Set Source
 extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
-        return -80
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        // If tableview header is hidden, increase offset to center EmptyDataSet view
+        return tableView.tableHeaderView == nil ? -80 : (-80 - tableView.contentInset.top)
     }
 
-    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        return isNetworkDown ? #imageLiteral(resourceName: "noInternet") : #imageLiteral(resourceName: "emptyPin")
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        // If loading indicator is being shown, don't display image
+        if isLoading {
+            return nil
+        }
+        return isNetworkDown ? #imageLiteral(resourceName: "noWifi") : #imageLiteral(resourceName: "noRoutes")
     }
 
-    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display description
+        if isLoading {
+            return nil
+        }
         let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
-        return NSAttributedString(string: title, attributes: attrs)
+        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.mediumGrayColor])
+    }
+
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display button
+        if isLoading {
+            return nil
+        }
+        let title = "Retry"
+        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.tcatBlueColor])
+    }
+
+    func setUpLoadingIndicator() {
+        loadingIndicator = LoadingIndicator()
+        if let loadingIndicator = loadingIndicator {
+            view.addSubview(loadingIndicator)
+            loadingIndicator.snp.makeConstraints { (make) in
+                make.center.equalToSuperview()
+                make.width.height.equalTo(40)
+            }
+        }
+    }
+
+    func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
+        setUpLoadingIndicator()
+        if isLoading {
+            tableView.reloadData()
+
+            // Have loading indicator time out after one second
+            let delay = 1
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)) {
+                // if the empty state is the "Location Not Found" state, clear the text in the search bar
+                if !self.isNetworkDown {
+                    self.searchBar.text = nil
+                    self.searchBar.placeholder = Constants.Phrases.searchPlaceholder
+                }
+                self.loadingIndicator?.removeFromSuperview()
+                self.loadingIndicator = nil
+                self.tableView.reloadData()
+            }
+        }
     }
 }
 
 // MARK: AddFavorites Delegate
 extension HomeViewController: AddFavoritesDelegate {
+
     func displayFavoritesTVC() {
         if favorites.count < 5 {
             presentFavoritesTVC()
@@ -507,7 +631,60 @@ extension HomeViewController: AddFavoritesDelegate {
     }
 }
 
+// MARK: WhatsNew Delegate
+extension HomeViewController: WhatsNewDelegate {
+
+    /// Hide card when user is searching for Bus Stops
+    func hideCard() {
+        guard whatsNewView != nil else { return }
+        UIView.animate(withDuration: 0.35, animations: {
+            self.tableView.contentInset = .init(top: -self.whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
+            self.whatsNewView.alpha = 0
+            for subview in self.whatsNewView.subviews {
+                subview.alpha = 0
+            }
+        }) { (_) in
+            self.whatsNewView.isHidden = true
+        }
+    }
+
+    /// Present card after user is done searching
+    func showCard() {
+        guard whatsNewView != nil else { return }
+        UIView.animate(withDuration: 0.35, animations: {
+            self.tableView.contentInset = .zero
+            self.tableView.contentOffset = .zero
+            self.whatsNewView.alpha = 1
+            for subview in self.whatsNewView.subviews {
+                subview.alpha = 1
+            }
+        }) { (_) in
+            self.whatsNewView.isHidden = false
+        }
+    }
+
+    func cardPressed() {
+        print("Card Pressed")
+    }
+}
+
+// MARK: Custom TableView
+class HomeTableView: UITableView {
+    var animating = false
+    override var tableHeaderView: UIView? {
+        didSet {
+            if !animating {
+                if tableHeaderView == nil {
+                    self.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
+                } else {
+                    self.contentInset = .zero
+                }
+            }
+        }
+    }
+}
+
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

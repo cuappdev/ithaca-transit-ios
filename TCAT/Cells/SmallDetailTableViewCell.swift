@@ -22,7 +22,7 @@ class SmallDetailTableViewCell: UITableViewCell {
         
         titleLabel = UILabel()
         titleLabel.frame = CGRect(x: cellWidth, y: 0, width: UIScreen.main.bounds.width - cellWidth - 20, height: 20)
-        titleLabel.font = UIFont.style(Fonts.System.regular, size: 14)
+        titleLabel.font = .style(Fonts.System.regular, size: 14)
         titleLabel.textColor = .secondaryTextColor
         titleLabel.text = "Small Cell"
         titleLabel.lineBreakMode = .byWordWrapping
@@ -48,24 +48,22 @@ class SmallDetailTableViewCell: UITableViewCell {
             iconView?.updateTimes(with: direction, isLast: lastStep)
         }
         
-        let titleLabelBoldFont = UIFont.style(Fonts.System.semibold, size: 14)
+        let titleLabelBoldFont: UIFont = .style(Fonts.System.semibold, size: 14)
         
         if direction.type == .arrive {
             // Arrive Direction
-            titleLabel.attributedText = bold(pattern: direction.name,
-                                             in: direction.locationNameDescription,
-                                             from: titleLabel.font,
-                                             to: titleLabelBoldFont)
+            titleLabel.attributedText = direction.name.bold(in: direction.locationNameDescription,
+                                                            from: titleLabel.font,
+                                                            to: titleLabelBoldFont)
         } else {
             // Walk Direction
             var walkString = direction.locationNameDescription
             if direction.travelDistance > 0 {
                 walkString += " (\(direction.travelDistance.roundedString))"
             }
-            titleLabel.attributedText = bold(pattern: direction.name,
-                                             in: walkString,
-                                             from: titleLabel.font,
-                                             to: titleLabelBoldFont)
+            titleLabel.attributedText = direction.name.bold(in: walkString,
+                                                            from: titleLabel.font,
+                                                            to: titleLabelBoldFont)
         }
         
         titleLabel.sizeToFit()

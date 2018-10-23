@@ -37,18 +37,17 @@ enum ItemType {
 /* DZNEmptyDataSet DataSource */
 
 extension SearchResultsTableViewController: DZNEmptyDataSetSource {
-    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
         return -80
     }
 
-    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
         return #imageLiteral(resourceName: "emptyPin")
     }
 
-    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         let locationNotFound = "Location not found"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
-        return NSAttributedString(string: locationNotFound, attributes: attrs)
+        return NSAttributedString(string: locationNotFound, attributes: [.foregroundColor: UIColor.mediumGrayColor])
     }
 }
 

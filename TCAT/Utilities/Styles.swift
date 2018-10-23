@@ -18,10 +18,10 @@ struct Fonts {
     struct SanFrancisco {
         
         // Pro Display (New)
-//        static let regular = "SFProDisplay-Regular"
-//        static let medium = "SFProDisplay-Medium"
-//        static let semibold = "SFProDisplay-Semibold"
-//        static let bold = "SFProDisplay-Bold"
+        static let regularPro = "SFProDisplay-Regular"
+        static let mediumPro = "SFProDisplay-Medium"
+        static let semiboldPro = "SFProDisplay-Semibold"
+        static let boldPro = "SFProDisplay-Bold"
         
         // UI Text (Old)
         static let regular = "SFUIText-Regular"
