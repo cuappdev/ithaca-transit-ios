@@ -74,6 +74,7 @@ class SearchResultsTableViewController: UITableViewController {
         tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.currentLocationIdentifier)
         tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Constants.Cells.searchResultsIdentifier)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
+        tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
         tableView.sectionIndexBackgroundColor = .clear
         tableView.sectionIndexColor = .primaryTextColor

@@ -253,3 +253,21 @@ class SearchTableViewManager {
         }
     }
 }
+
+/// MARK: DZNEmptyDataSet DataSource
+
+// To be eventuallt removed and replaced with recent searches
+extension SearchResultsTableViewController: DZNEmptyDataSetSource {
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        return -80
+    }
+    
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        return #imageLiteral(resourceName: "emptyPin")
+    }
+    
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return NSAttributedString(string: Constants.EmptyStateMessages.locationNotFound,
+                                  attributes: [.foregroundColor: UIColor.mediumGrayColor])
+    }
+}
