@@ -59,8 +59,8 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
     var routeResults: UITableView!
     var refreshControl: UIRefreshControl!
 
-    let navigationBarTitle: String = "Route Options"
-    let routeResultsTitle: String = "Route Results"
+    let navigationBarTitle: String = Constants.Titles.routeOptions
+    let routeResultsTitle: String = Constants.Titles.routeResults
 
     // MARK: Data vars
 
@@ -180,7 +180,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
     }
 
     private func setRouteSelectionView(withDestination destination: Place?) {
-        routeSelection.fromSearchbar.setTitle(Constants.Phrases.fromSearchBarPlaceholder, for: .normal)
+        routeSelection.fromSearchbar.setTitle(Constants.General.fromSearchBarPlaceholder, for: .normal)
         routeSelection.toSearchbar.setTitle(destination?.name ?? "", for: .normal)
     }
 
@@ -237,20 +237,20 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
         case .from:
 
             if let startingDestinationName = searchFrom?.name {
-                if startingDestinationName != Constants.Stops.currentLocation && startingDestinationName != Constants.Phrases.fromSearchBarPlaceholder {
+                if startingDestinationName != Constants.General.currentLocation && startingDestinationName != Constants.General.fromSearchBarPlaceholder {
                     searchBarText = startingDestinationName
                 }
             }
-            placeholder = Constants.Phrases.fromSearchBarPlaceholder
+            placeholder = Constants.General.fromSearchBarPlaceholder
 
         case .to:
 
             if let endingDestinationName = searchTo?.name {
-                if endingDestinationName != Constants.Stops.currentLocation {
+                if endingDestinationName != Constants.General.currentLocation {
                     searchBarText = endingDestinationName
                 }
             }
-            placeholder = Constants.Phrases.toSearchBarPlaceholder
+            placeholder = Constants.General.toSearchBarPlaceholder
 
         }
 
@@ -352,7 +352,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
             let sameLocation = (searchFrom.name == searchTo.name)
             if sameLocation {
-                requestDidFinish(perform: [.showAlert(title: "You're here!", message: "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta).", actionTitle: "😐😒🙄")])
+                requestDidFinish(perform: [.showAlert(title: Constants.Alerts.Teleportation.title, message: Constants.Alerts.Teleportation.message, actionTitle: Constants.Alerts.Teleportation.action)])
                 return
             }
 
@@ -381,14 +381,14 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
         if let coordinateVisitorError = coordinateVisitorError {
 
             self.requestDidFinish(perform: [
-                .showError(bannerInfo: BannerInfo(title: "Could not connect to server", style: .danger),
+                .showError(bannerInfo: BannerInfo(title: Constants.Banner.cantConnectServer, style: .danger),
                            payload: GetRoutesErrorPayload(type: coordinateVisitorError.title, description: coordinateVisitorError.description, url: nil))
                 ])
 
         } else {
 
             self.requestDidFinish(perform: [
-                .showError(bannerInfo: BannerInfo(title: "Could not connect to server", style: .danger),
+                .showError(bannerInfo: BannerInfo(title: Constants.Banner.cantConnectServer, style: .danger),
                            payload: GetRoutesErrorPayload(type: "Nil start and end coordinates and nil coordinateVisitorError", description: "", url: nil))
                 ])
 
@@ -396,9 +396,9 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
     }
 
     func processInvalidCoordinates() {
-        let title = "Location Out Of Range"
-        let message = "Try looking for another route with start and end locations closer to Tompkins County."
-        let actionTitle = "OK"
+        let title = Constants.Alerts.OutOfRange.title
+        let message = Constants.Alerts.OutOfRange.message
+        let actionTitle = Constants.Alerts.OutOfRange.action
 
         self.requestDidFinish(perform: [
             .showAlert(title: title, message: message, actionTitle: actionTitle),
@@ -429,7 +429,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
             self.routes = parsedRoutes
             if let error = error {
                 self.requestDidFinish(perform: [
-                    .showError(bannerInfo: BannerInfo(title: "Route calculation error. Please retry.", style: .warning),
+                    .showError(bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .warning),
                                payload: GetRoutesErrorPayload(type: error.title, description: error.description, url: requestUrl))
                 ])
             } else {
@@ -445,7 +445,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
         routes = []
         timers = [:]
         requestDidFinish(perform: [
-            .showError(bannerInfo: BannerInfo(title: "Could not connect to server", style: .danger),
+            .showError(bannerInfo: BannerInfo(title: Constants.Banner.cantConnectServer, style: .danger),
                        payload: GetRoutesErrorPayload(type: title, description: description, url: requestUrl))
         ])
     }
@@ -684,7 +684,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
         let route = routes[indexPath.row]
         var routeDetailCurrentLocation = currentLocation
-        if searchTo?.name != Constants.Stops.currentLocation && searchFrom?.name != Constants.Stops.currentLocation {
+        if searchTo?.name != Constants.General.currentLocation && searchFrom?.name != Constants.General.currentLocation {
             routeDetailCurrentLocation = nil // If route doesn't involve current location, don't pass along for view.
         }
 
@@ -758,9 +758,9 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
         if error._code == CLError.denied.rawValue {
             locationManager.stopUpdatingLocation()
 
-            let alertController = UIAlertController(title: "Location Services Disabled", message: "Tap Settings to change your location permissions, or continue using a limited version of the app.", preferredStyle: .alert)
+            let alertController = UIAlertController(title: Constants.Alerts.LocationPermissions.title, message: Constants.Alerts.LocationPermissions.message, preferredStyle: .alert)
 
-            let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
+            let settingsAction = UIAlertAction(title: Constants.Alerts.GeneralActions.settings, style: .default) { (_) in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
 
@@ -768,7 +768,7 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
 
                 userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
 
-                let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+                let cancelAction = UIAlertAction(title: Constants.Alerts.GeneralActions.cancel, style: .default, handler: nil)
                 alertController.addAction(cancelAction)
 
                 alertController.addAction(settingsAction)
@@ -783,7 +783,7 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
                 return
             }
 
-            let dontRemindAgainAction = UIAlertAction(title: "Don't Remind Me Again", style: .default) { (_) in
+            let dontRemindAgainAction = UIAlertAction(title: Constants.Alerts.GeneralActions.dontRemind, style: .default) { (_) in
                 userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
             }
             alertController.addAction(dontRemindAgainAction)
@@ -805,20 +805,20 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
         updateSearchBarCurrentLocation(withCoordinate: location.coordinate)
 
         if let busStop = searchTo as? BusStop {
-            if busStop.name == Constants.Stops.currentLocation {
+            if busStop.name == Constants.General.currentLocation {
                 updateCurrentLocation(busStop, withCoordinate: location.coordinate)
             }
         }
 
         if let busStop = searchFrom as? BusStop {
-            if busStop.name == Constants.Stops.currentLocation {
+            if busStop.name == Constants.General.currentLocation {
                 updateCurrentLocation(busStop, withCoordinate: location.coordinate)
             }
         }
 
         // If haven't selected start location, set to current location
         if searchFrom == nil {
-            let currentLocationStop = BusStop(name: Constants.Stops.currentLocation,
+            let currentLocationStop = BusStop(name: Constants.General.currentLocation,
                                               lat: location.coordinate.latitude,
                                               long: location.coordinate.longitude)
             searchFrom = currentLocationStop
@@ -938,7 +938,7 @@ extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDele
         }
 
         let retryButton = UIButton()
-        retryButton.setTitle("Retry", for: .normal)
+        retryButton.setTitle(Constants.Buttons.retry, for: .normal)
         retryButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
         retryButton.titleLabel?.font = .style(Fonts.SanFrancisco.regular, size: 16.0)
         retryButton.addTarget(self, action: #selector(tappedRetryButton), for: .touchUpInside)
@@ -946,7 +946,7 @@ extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDele
         let titleLabel = UILabel()
         titleLabel.font = .style(Fonts.SanFrancisco.regular, size: 18.0)
         titleLabel.textColor = .mediumGrayColor
-        titleLabel.text = showRouteSearchingLoader ? "Looking For Routes..." : "No Routes Found"
+        titleLabel.text = showRouteSearchingLoader ? Constants.EmptyStateMessages.lookingForRoutes : Constants.EmptyStateMessages.noRoutesFound
         titleLabel.sizeToFit()
 
         customView.addSubview(symbolView)

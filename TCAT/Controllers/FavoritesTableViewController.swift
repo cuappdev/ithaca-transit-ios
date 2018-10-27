@@ -23,7 +23,7 @@ class FavoritesTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = fromOnboarding ? "Add Favorites" : "Add Favorite"
+        title = fromOnboarding ? Constants.Titles.favorites : Constants.Titles.favorite
         let systemItem: UIBarButtonItem.SystemItem = fromOnboarding ? .done : .cancel
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem,
                                                             target: self,
@@ -94,7 +94,7 @@ class FavoritesTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         searchBar.isTranslucent = true
-        searchBar.placeholder = Constants.Phrases.favoritesPlaceholder
+        searchBar.placeholder = Constants.General.favoritesPlaceholder
         searchBar.backgroundImage = UIImage()
         searchBar.alpha = 1.0
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
@@ -168,8 +168,8 @@ extension FavoritesTableViewController: DZNEmptyDataSetSource {
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        let title = "Search for a destination"
-        return NSAttributedString(string: title, attributes: [.foregroundColor : UIColor.mediumGrayColor])
+        let title = Constants.General.searchForDestination
+        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.mediumGrayColor])
     }
 }
     // MARK: Search
