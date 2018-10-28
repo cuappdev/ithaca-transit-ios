@@ -100,7 +100,7 @@ class HomeViewController: UIViewController {
         }
 
         searchBar = UISearchBar()
-        searchBar.placeholder = Constants.Phrases.searchPlaceholder
+        searchBar.placeholder = Constants.General.searchPlaceholder
         searchBar.delegate = self
         searchBar.searchBarStyle = .default
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
@@ -116,7 +116,7 @@ class HomeViewController: UIViewController {
             make.width.equalTo(30)
             make.height.equalTo(38)
         }
-        
+
         firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
 
         let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
@@ -218,7 +218,7 @@ class HomeViewController: UIViewController {
         let seeAllStopsSection = Section(type: .seeAllStops, items: [.seeAllStops])
         var favoritesSection = Section(type: .favorites, items: favorites)
         if favoritesSection.items.isEmpty {
-            let addFavorites = BusStop(name: Constants.Phrases.firstFavorite, lat: 0.0, long: 0.0)
+            let addFavorites = BusStop(name: Constants.General.firstFavorite, lat: 0.0, long: 0.0)
             favoritesSection = Section(type: .favorites, items: [.busStop(addFavorites)])
         }
         allSections.append(favoritesSection)
@@ -235,8 +235,8 @@ class HomeViewController: UIViewController {
 
     func createWhatsNewView() {
         userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
-        whatsNewView = WhatsNewHeaderView(updateName: "App Shortcuts for Favorites",
-                                          description: "Force Touch the app icon to search your favorites even faster.")
+        whatsNewView = WhatsNewHeaderView(updateName: Constants.General.whatsNewUpdateName,
+                                          description: Constants.General.whatsNewDescription)
         whatsNewView.whatsNewDelegate = self
         let containerView = UIView()
         containerView.backgroundColor = .clear
@@ -250,7 +250,7 @@ class HomeViewController: UIViewController {
             make.top.centerX.width.equalToSuperview()
         }
     }
-    
+
     func okButtonPressed() {
         userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
         tableView.beginUpdates()
@@ -345,7 +345,7 @@ extension HomeViewController: UITableViewDataSource {
                 cell.detailTextLabel?.text = cornellDestinations[indexPath.row].stops
             case .seeAllStops:
                 cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
-                cell.textLabel?.text = "See All Stops"
+                cell.textLabel?.text = Constants.General.seeAllStops
                 cell.imageView?.image = #imageLiteral(resourceName: "list")
                 cell.accessoryType = .disclosureIndicator
             }
@@ -378,11 +378,11 @@ extension HomeViewController: UITableViewDelegate {
 
         switch sections[section].type {
         case .cornellDestination:
-            header.setupView(labelText: "Get There Now", displayAddButton: false)
+            header.setupView(labelText: Constants.TableHeaders.getThereNow, displayAddButton: false)
         case .recentSearches:
-            header.setupView(labelText: "Recent Searches", displayAddButton: false)
+            header.setupView(labelText: Constants.TableHeaders.recentSearches, displayAddButton: false)
         case .favorites:
-            header.setupView(labelText: "Favorite Destinations", displayAddButton: true)
+            header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, displayAddButton: true)
             header.addFavoritesDelegate = self
         case .seeAllStops, .searchResults:
             return nil
@@ -446,7 +446,7 @@ extension HomeViewController: UITableViewDelegate {
             didSelectAllStops = true
             allStopsTVC.allStops = SearchTableViewManager.shared.getAllStops()
         case .busStop(let busStop):
-            if busStop.name == Constants.Phrases.firstFavorite {
+            if busStop.name == Constants.General.firstFavorite {
                 presentOptionsVC = false
                 presentFavoritesTVC()
             } else {
@@ -481,7 +481,7 @@ extension HomeViewController: UISearchBarDelegate {
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.placeholder = Constants.Phrases.searchPlaceholder
+        searchBar.placeholder = Constants.General.searchPlaceholder
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.endEditing(true)
         searchBar.text = nil
@@ -509,10 +509,10 @@ extension HomeViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
 
         if status == .denied {
-            let alertTitle = "Location Services Disabled"
-            let alertMessage = "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services."
+            let alertTitle = Constants.Alerts.LocationDisabled.title
+            let alertMessage = Constants.Alerts.LocationDisabled.message
             let alertController = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
-            let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
+            let settingsAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.settings, style: .default) { (_) in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
 
@@ -520,7 +520,7 @@ extension HomeViewController: CLLocationManagerDelegate {
 
                 userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
 
-                let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+                let cancelAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default, handler: nil)
                 alertController.addAction(cancelAction)
 
                 alertController.addAction(settingsAction)
@@ -535,7 +535,7 @@ extension HomeViewController: CLLocationManagerDelegate {
                 return
             }
 
-            let dontRemindAgainAction = UIAlertAction(title: "Don't Remind Me Again", style: .default) { (_) in
+            let dontRemindAgainAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default) { _ in
                 self.userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
             }
             alertController.addAction(dontRemindAgainAction)
@@ -558,27 +558,21 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
         // If loading indicator is being shown, don't display image
-        if isLoading {
-            return nil
-        }
+        if isLoading { return nil }
         return isNetworkDown ? #imageLiteral(resourceName: "noWifi") : #imageLiteral(resourceName: "noRoutes")
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         // If loading indicator is being shown, don't display description
-        if isLoading {
-            return nil
-        }
-        let title = isNetworkDown ? "No Network Connection" : "Location Not Found"
+        if isLoading { return nil }
+        let title = isNetworkDown ? Constants.EmptyStateMessages.noNetworkConnection: Constants.EmptyStateMessages.locationNotFound
         return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.mediumGrayColor])
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
         // If loading indicator is being shown, don't display button
-        if isLoading {
-            return nil
-        }
-        let title = "Retry"
+        if isLoading { return nil }
+        let title = Constants.Buttons.retry
         return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.tcatBlueColor])
     }
 
@@ -604,7 +598,7 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
                 // if the empty state is the "Location Not Found" state, clear the text in the search bar
                 if !self.isNetworkDown {
                     self.searchBar.text = nil
-                    self.searchBar.placeholder = Constants.Phrases.searchPlaceholder
+                    self.searchBar.placeholder = Constants.General.searchPlaceholder
                 }
                 self.loadingIndicator?.removeFromSuperview()
                 self.loadingIndicator = nil
@@ -621,10 +615,10 @@ extension HomeViewController: AddFavoritesDelegate {
         if favorites.count < 5 {
             presentFavoritesTVC()
         } else {
-            let title = "Maximum Number of Favorites"
-            let message = "To add more favorites, please swipe left and delete one first."
+            let title = Constants.Alerts.MaxFavorites.title
+            let message = Constants.Alerts.MaxFavorites.message
             let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            let done = UIAlertAction(title: "Got It!", style: .default)
+            let done = UIAlertAction(title: Constants.Alerts.MaxFavorites.action, style: .default)
             alertController.addAction(done)
             present(alertController, animated: true, completion: nil)
         }

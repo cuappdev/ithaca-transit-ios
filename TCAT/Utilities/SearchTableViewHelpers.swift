@@ -34,23 +34,6 @@ enum ItemType {
     case seeAllStops
 }
 
-/* DZNEmptyDataSet DataSource */
-
-extension SearchResultsTableViewController: DZNEmptyDataSetSource {
-    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
-        return -80
-    }
-
-    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
-        return #imageLiteral(resourceName: "emptyPin")
-    }
-
-    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        let locationNotFound = "Location not found"
-        return NSAttributedString(string: locationNotFound, attributes: [.foregroundColor: UIColor.mediumGrayColor])
-    }
-}
-
 class SearchTableViewManager {
     static let shared = SearchTableViewManager()
     private var allStops: [BusStop]?
@@ -268,5 +251,23 @@ class SearchTableViewManager {
             }
             UIApplication.shared.shortcutItems = shortcutItems
         }
+    }
+}
+
+/// MARK: DZNEmptyDataSet DataSource
+
+// To be eventuallt removed and replaced with recent searches
+extension SearchResultsTableViewController: DZNEmptyDataSetSource {
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        return -80
+    }
+    
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        return #imageLiteral(resourceName: "emptyPin")
+    }
+    
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return NSAttributedString(string: Constants.EmptyStateMessages.locationNotFound,
+                                  attributes: [.foregroundColor: UIColor.mediumGrayColor])
     }
 }
