@@ -20,6 +20,21 @@
 	<string>1.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>ithaca-transit</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.cornellappdev.tcat</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>ithaca-transit</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>64</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -32,7 +47,7 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow the app to calculate routes using your current location</string>
+	<string>Allow the app to calculate routes using your current location.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Allow the app to save photos.</string>
 	<key>UIAppFonts</key>

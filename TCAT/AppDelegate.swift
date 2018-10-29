@@ -160,6 +160,58 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         UIApplication.shared.keyWindow?.presentInApp(alertController)
     }
+    
+    /// When app is opened via URL
+    // URL to test on: ithaca-transit://?lat=42.442558&long=-76.485336&stopName=Collegetown
+    func application(_ app: UIApplication, open url: URL, options:
+        [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        
+        let rootVC = HomeViewController()
+        let navigationController = CustomNavigationController(rootViewController: rootVC)
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.window!.rootViewController = navigationController
+        self.window?.makeKeyAndVisible()
+        
+        let optionsVC = RouteOptionsViewController()
+        optionsVC.title = "Route Options" //showing up as white?? or behind the nav bar?
+        
+        let urlComponents = NSURLComponents(url: url, resolvingAgainstBaseURL: false)
+        let items = (urlComponents?.queryItems)! as [NSURLQueryItem]
+        var stop : BusStop
+        
+        if url.scheme == "ithaca-transit" {
+            var latitude: CLLocationDegrees? = nil
+            var longitude: CLLocationDegrees? = nil
+            var stopName: String = ""
+            // get first param from URL
+            if let first = items.first {
+                if let propertyValue = first.value, let lat = Double(propertyValue) {
+                    latitude = lat
+                    print(latitude as Any)
+                }
+            }
+            // get second param from URL
+            if let propertyValue = items[1].value, let long = Double(propertyValue) {
+                longitude = long
+                print(longitude as Any)
+            }
+            
+            // get third param from URL
+            if let propertyValue = items[2].value {
+                stopName = propertyValue
+                print(stopName)
+            }
+            
+            if let latitude = latitude, let longitude = longitude{
+                stop = BusStop(name: stopName, lat: latitude, long: longitude)
+                optionsVC.searchTo = stop
+                navigationController.pushViewController(optionsVC, animated: true)
+                return true
+            }
+        }
+        
+        return false
+    }
 }
 
 extension UIWindow {
