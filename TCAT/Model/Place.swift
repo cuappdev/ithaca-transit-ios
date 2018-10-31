@@ -8,11 +8,15 @@
 
 import UIKit
 
-class Place: NSObject, NSCoding {
+class Place: NSObject, NSCoding, Codable {
 
     var name: String
     
     private let nameKey = "name"
+    
+    private enum CodingKeys: CodingKey {
+        case name
+    }
     
     init(name: String) {
         self.name = name

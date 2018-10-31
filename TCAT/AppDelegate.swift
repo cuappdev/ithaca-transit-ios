@@ -123,9 +123,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     /* Get all bus stops and store in userDefaults */
     func getBusStops() {
-        Network.getAllStops().perform(withSuccess: { stops in
-            let allBusStops = stops.allStops
-            if allBusStops.isEmpty {
+        Network.getAllStops().perform(withSuccess: { AllStopsRequest in
+            let allBusStops = AllStopsRequest.data
+            if (allBusStops.isEmpty) {
                 self.handleGetAllStopsError()
             } else {
                 let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)

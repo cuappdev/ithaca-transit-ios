@@ -41,7 +41,59 @@ struct ChannelMessage: Codable {
     var message: String!
 }
 
-class AllBusStops: JSONDecodable {
+class AllBusStopsRequest: Codable {
+    var success: Bool!
+    var data: [BusStop]
+    
+    private enum Codingkeys: CodingKey {
+        case success
+        case data
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        success = try container.decode(Bool.self, forKey: .success)
+        data = try container.decode([BusStop].self, forKey: .data)
+        parseAllStops()
+    }
+
+    func parseAllStops() {
+        let crossReference = data.reduce(into: [String: [BusStop]]()) {
+            $0[$1.name, default: []].append($1)
+        }
+        
+        var nonDuplicateStops = crossReference.filter {$1.count == 1}.map { (key, value) -> BusStop in
+            return value.first!
+        }
+        
+        let duplicates = crossReference.filter { $1.count > 1 }
+        
+        var middleGroundBusStops: [BusStop] = []
+        for key in duplicates.keys {
+            if let currentBusStops = duplicates[key], let first = currentBusStops.first, let second = currentBusStops.last {
+                let firstStopLocation = CLLocation(latitude: first.lat, longitude: first.long)
+                let secondStopLocation = CLLocation(latitude: second.lat, longitude: second.long)
+                
+                let distanceBetween = firstStopLocation.distance(from: secondStopLocation)
+                let middleCoordinate = firstStopLocation.coordinate.middleLocationWith(location: secondStopLocation.coordinate)
+                if distanceBetween < Constants.Values.maxDistanceBetweenStops {
+                    let middleBusStop = BusStop(name: first.name, lat: middleCoordinate.latitude, long: middleCoordinate.longitude)
+                    middleGroundBusStops.append(middleBusStop)
+                } else {
+                    nonDuplicateStops.append(contentsOf: [first, second])
+                }
+            }
+        }
+        nonDuplicateStops.append(contentsOf: middleGroundBusStops)
+        
+        let sortedStops = nonDuplicateStops.sorted(by: {$0.name.uppercased() < $1.name.uppercased()})
+        data = sortedStops
+    }
+}
+
+
+
+class AllBusStops: JSONDecodable, Codable {
     var allStops : [BusStop] = [BusStop]()
     
     required init(json: JSON) throws {

@@ -239,8 +239,8 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
     }
 
     func retryNetwork(completion: @escaping () -> Void) {
-        Network.getAllStops().perform(withSuccess: { stops in
-            let allBusStops = stops.allStops
+        Network.getAllStops().perform(withSuccess: { AllStopsRequest in
+            let allBusStops = AllStopsRequest.data
             if !allBusStops.isEmpty {
                 // Only updating user defaults if retriving from network is successful
                 let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)

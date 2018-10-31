@@ -60,8 +60,8 @@ class Network {
 
     static let tron = TRON(baseURL: Network.address)
 
-    class func getAllStops() -> APIRequest<AllBusStops, Error> {
-        let request: APIRequest<AllBusStops, Error> = tron.swiftyJSON.request("allStops")
+    class func getAllStops() -> APIRequest<AllBusStopsRequest, Error> {
+        let request: APIRequest<AllBusStopsRequest, Error> = tron.codable.request("allStops")
         request.method = .get
         return request
     }
