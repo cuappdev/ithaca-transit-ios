@@ -198,7 +198,7 @@ struct Constants {
 
     struct TableHeaders {
         static let getThereNow = "Get There Now"
-        static let recentSearches = "Recent Searchers"
+        static let recentSearches = "Recent Searches"
         static let favoriteDestinations = "Favorite Destinations"
     }
 
