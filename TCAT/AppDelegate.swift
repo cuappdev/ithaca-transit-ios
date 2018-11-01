@@ -113,8 +113,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return
             }
             optionsVC.searchTo = destination
-            if let navController = window?.rootViewController as? UINavigationController {
-                navController.pushViewController(optionsVC, animated: true)
+            if let navController = window?.rootViewController as? CustomNavigationController {
+                navController.pushViewController(optionsVC, animated: false)
             }
             let payload = HomeScreenQuickActionUsedPayload(name: destination.name)
             Analytics.shared.log(payload)
