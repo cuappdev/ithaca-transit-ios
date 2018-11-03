@@ -113,8 +113,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return
             }
             optionsVC.searchTo = destination
-            if let navController = window?.rootViewController as? UINavigationController {
-                navController.pushViewController(optionsVC, animated: true)
+            if let navController = window?.rootViewController as? CustomNavigationController {
+                navController.pushViewController(optionsVC, animated: false)
             }
             let payload = HomeScreenQuickActionUsedPayload(name: destination.name)
             Analytics.shared.log(payload)
@@ -162,7 +162,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     /// When app is opened via URL
-    // URL to test on: ithaca-transit://?lat=42.442558&long=-76.485336&stopName=Collegetown
+    // URLs for testing
+    // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown
+    // PlaceResult: ithaca-transit://getRoutes?lat=42.44707979999999&long=-76.4885196&destinationName=Hans%20Bethe%20House
     func application(_ app: UIApplication, open url: URL, options:
         [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         
@@ -172,40 +174,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
         
-        let optionsVC = RouteOptionsViewController()
-        optionsVC.title = "Route Options" //showing up as white?? or behind the nav bar?
-        
         let urlComponents = NSURLComponents(url: url, resolvingAgainstBaseURL: false)
         let items = (urlComponents?.queryItems)! as [NSURLQueryItem]
         var stop : BusStop
         
-        if url.scheme == "ithaca-transit" {
+        // if the URL is from the getRoutes intent
+        if url.absoluteString.contains("getRoutes") {
             var latitude: CLLocationDegrees? = nil
             var longitude: CLLocationDegrees? = nil
-            var stopName: String = ""
-            // get first param from URL
-            if let first = items.first {
-                if let propertyValue = first.value, let lat = Double(propertyValue) {
-                    latitude = lat
-                    print(latitude as Any)
+            var stopName: String? = nil
+            let optionsVC = RouteOptionsViewController()
+            
+            // get parameters from URL
+            for (index, element) in items.enumerated() {
+                switch index {
+                case 0:
+                    if let propertyValue = element.value, let lat = Double(propertyValue) {
+                        latitude = lat
+                    }
+                case 1:
+                    if let propertyValue = element.value, let long = Double(propertyValue) {
+                        longitude = long
+                    }
+                case 2:
+                    if let propertyValue = element.value {
+                        stopName = propertyValue
+                    }
+                default:
+                    return false
                 }
             }
-            // get second param from URL
-            if let propertyValue = items[1].value, let long = Double(propertyValue) {
-                longitude = long
-                print(longitude as Any)
-            }
-            
-            // get third param from URL
-            if let propertyValue = items[2].value {
-                stopName = propertyValue
-                print(stopName)
-            }
-            
-            if let latitude = latitude, let longitude = longitude{
+
+            if let latitude = latitude, let longitude = longitude, let stopName = stopName{
                 stop = BusStop(name: stopName, lat: latitude, long: longitude)
                 optionsVC.searchTo = stop
-                navigationController.pushViewController(optionsVC, animated: true)
+                navigationController.pushViewController(optionsVC, animated: false)
                 return true
             }
         }
