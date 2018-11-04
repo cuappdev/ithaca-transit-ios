@@ -37,7 +37,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     func getTitleLabel() -> UILabel {
         let titleLabel = UILabel()
         titleLabel.frame = CGRect(x: cellWidth, y: 0, width: chevron.frame.minX - cellWidth, height: 20)
-        titleLabel.font = .style(Fonts.System.regular, size: 14)
+        titleLabel.font = .style(Fonts.SanFrancisco.regular, size: 14)
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.textColor = .primaryTextColor
         titleLabel.text = direction != nil && direction.type == .transfer ? "Bus becomes" : "Board"
@@ -48,7 +48,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     func getDetailLabel() -> UILabel {
         let detailLabel = UILabel()
         detailLabel.frame = CGRect(x: cellWidth, y: 0, width: 20, height: 20)
-        detailLabel.font = .style(Fonts.System.regular, size: 14)
+        detailLabel.font = .style(Fonts.SanFrancisco.regular, size: 14)
         detailLabel.textColor = .mediumGrayColor
         detailLabel.text = "Detail Label"
         detailLabel.lineBreakMode = .byWordWrapping
@@ -140,7 +140,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         // Format and place labels
         
         let content = label.text! + direction.locationNameDescription
-        let labelBoldFont: UIFont = .style(Fonts.System.semibold, size: 14)
+        let labelBoldFont: UIFont = .style(Fonts.SanFrancisco.semibold, size: 14)
         let attributedString = direction.name.bold(in: content, from: label.font, to: labelBoldFont)
         label.attributedText = attributedString
         paragraphStyle.lineSpacing = 4
