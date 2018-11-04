@@ -10,6 +10,25 @@ import UIKit
 
 // MARK: - Colors
 
+struct Colors {
+    
+    // Brand
+    static let tcatBlue = UIColor(hex: "079DDC")
+    
+    // Accent
+    static let lateRed = UIColor(hex: "D6304F")
+    static let liveGreen = UIColor(hex: "27AE60")
+    static let warningOrange = UIColor(hex: "E79C20")
+    
+    // Grayscale
+    static let primaryText = UIColor(hex: "212121")
+    static let secondaryText = UIColor(hex: "616161")
+    static let metadataIcon = UIColor(hex: "BDBDBD")
+    static let dividerTextField = UIColor(hex: "EEEEEE")
+    static let backgroundWash = UIColor(hex: "F5F5F5")
+    
+}
+
 // MARK: - Fonts
 
 /// Font identifiers
@@ -17,17 +36,25 @@ struct Fonts {
     
     struct SanFrancisco {
         
-        // Pro Display (New)
-        static let regularPro = "SFProDisplay-Regular"
-        static let mediumPro = "SFProDisplay-Medium"
-        static let semiboldPro = "SFProDisplay-Semibold"
-        static let boldPro = "SFProDisplay-Bold"
+        // General Sizes
+        static let regular = "regular"
+        static let medium = "medium"
+        static let semibold = "semibold"
+        static let bold = "bold"
         
-        // UI Text (Old)
-        static let regular = "SFUIText-Regular"
-        static let medium = "SFUIText-Medium"
-        static let semibold = "SFUIText-Semibold"
-        static let bold = "SFUIText-Bold"
+        struct ProDisplay {
+            static let regular = "SFProDisplay-Regular"
+            static let medium = "SFProDisplay-Medium"
+            static let semibold = "SFProDisplay-Semibold"
+            static let bold = "SFProDisplay-Bold"
+        }
+        
+        struct ProText {
+            static let regular = "SFUIText-Regular"
+            static let medium = "SFUIText-Medium"
+            static let semibold = "SFUIText-Semibold"
+            static let bold = "SFUIText-Bold"
+        }
         
     }
     
@@ -46,6 +73,24 @@ extension UIFont {
     
     /// Generate fonts for app usage
     static func style(_ name: String, size: CGFloat) -> UIFont {
+        var name = name
+        if size >= 14 {
+            switch name {
+            case Fonts.SanFrancisco.regular: name = Fonts.SanFrancisco.ProDisplay.regular
+            case Fonts.SanFrancisco.medium: name = Fonts.SanFrancisco.ProDisplay.medium
+            case Fonts.SanFrancisco.semibold: name = Fonts.SanFrancisco.ProDisplay.semibold
+            case Fonts.SanFrancisco.bold: name = Fonts.SanFrancisco.ProDisplay.bold
+            default: break
+            }
+        } else {
+            switch name {
+            case Fonts.SanFrancisco.regular: name = Fonts.SanFrancisco.ProText.regular
+            case Fonts.SanFrancisco.medium: name = Fonts.SanFrancisco.ProText.medium
+            case Fonts.SanFrancisco.semibold: name = Fonts.SanFrancisco.ProText.semibold
+            case Fonts.SanFrancisco.bold: name = Fonts.SanFrancisco.ProText.bold
+            default: break
+            }
+        }
         return UIFont(name: name, size: size)!
     }
     
