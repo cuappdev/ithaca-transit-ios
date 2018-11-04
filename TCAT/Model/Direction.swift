@@ -11,7 +11,7 @@ import CoreLocation
 import SwiftyJSON
 
 /// An enum for the type of direction
-enum DirectionType: String {
+enum DirectionType: String, Codable {
     
     /// Directions that involving walking
     case walk
@@ -24,7 +24,7 @@ enum DirectionType: String {
 
 }
 
-class Direction: NSObject, NSCopying {
+class Direction: NSObject, NSCopying, Codable {
 
     /// The type of the direction.
     var type: DirectionType
@@ -131,8 +131,6 @@ class Direction: NSObject, NSCopying {
     }
 
     convenience init(from json: JSON) {
-        
-        // print("Direction JSON:", json)
         
         self.init()
         

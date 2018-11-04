@@ -14,10 +14,6 @@ class Place: NSObject, NSCoding, Codable {
     
     private let nameKey = "name"
     
-    private enum CodingKeys: CodingKey {
-        case name
-    }
-    
     init(name: String) {
         self.name = name
     }

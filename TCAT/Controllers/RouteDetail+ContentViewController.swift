@@ -291,77 +291,73 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             print("getBusLocations - Directions are not valid")
             return
         }
-
+                
         Network.getBusLocations(route.directions).perform(withSuccess: { (result) in
-
-            var results: [BusDataType] = []
-
-            if result.busLocations.isEmpty {
+            
+            var results = [BusDataType]()
+            
+            if result.data.isEmpty {
                 // print("No Bus Locations")
                 // Reset banner in case transitioned from Error to Online - No Bus Locations
                 self.hideBanner()
-
+                
                 // Possibly add information about no tracking available.
             }
-
-            for busLocation in result.busLocations {
-
+            
+            for busLocation in result.data {
+                
                 results.append(busLocation.dataType)
-
+                
                 switch busLocation.dataType {
-
+                    
                 case .noData:
                     // print("No Data for", busLocation.routeNumber)
-
+                    
                     if !self.noDataRouteList.contains(busLocation.routeNumber) {
                         self.noDataRouteList.append(busLocation.routeNumber)
                     }
-
+                    
                     var message = ""
                     if self.noDataRouteList.count > 1 {
                         message = "No live tracking available for routes"
                     } else {
                         message = "No live tracking available for Route \(busLocation.routeNumber)"
                     }
-
+                    
                     self.showBanner(message, status: .info)
-
+                    
                 case .invalidData:
                     // print("Invalid Data for", busLocation.routeNumber)
-
+                    
                     if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                     }
-
+                    
                     if self.noDataRouteList.isEmpty {
                         self.hideBanner()
                     }
-
+                    
                     self.showBanner(Constants.Banner.trackingLater, status: .info)
-
+                    
                 case .validData:
                     // print("Valid Data for", busLocation.routeNumber)
-
+                    
                     if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                     }
-
+                    
                     if self.noDataRouteList.isEmpty {
                         self.hideBanner()
                     }
-
+                    
                     self.setBusLocation(busLocation)
-
+                    
                 } // switch end
-
-            } // busLocations for loop end
-
+            }
+            
         }) { (error) in
-
-            print("RouteDetailVC getBusLocations Error:", error.localizedDescription)
-            self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
-
-        } // network completion handler end
+            print(error)
+        }
 
         // Bounce any visible indicators
         bounceIndicators()
@@ -706,7 +702,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     /// Create fake bus for debugging and testing bus indicators
     func createDebugBusIcon() {
-        let bus = BusLocation(dataType: .validData, destination: "", deviation: 0, delay: 0, direction: "", displayStatus: "", gpsStatus: 0, heading: 0, lastStop: "", lastUpdated: Date(), latitude: 42.4491411, longitude: -76.4836815, name: 16, opStatus: "", routeID: "", runID: 0, speed: 0, tripID: "", vehicleID: 0)
+        let bus = BusLocation(dataType: .validData, destination: "", deviation: 0, delay: 0, direction: "", displayStatus: "", gpsStatus: 0, heading: 0, lastStop: "", lastUpdated: Date(), latitude: 42.4491411, longitude: -76.4836815, name: "16", opStatus: "", routeID: 0, runID: 0, speed: 0, tripID: 0, vehicleID: 0)
         let coords = CLLocationCoordinate2D(latitude: 42.4491411, longitude: -76.4836815)
         let marker = GMSMarker(position: coords)
         (bus.iconView as? BusLocationView)?.updateBus(to: coords, with: Double(bus.heading))

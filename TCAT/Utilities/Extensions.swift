@@ -295,7 +295,7 @@ extension String {
     }
 }
 
-extension CLLocationCoordinate2D {
+extension CLLocationCoordinate2D: Codable {
     // MARK: CLLocationCoordinate2D+MidPoint
     func middleLocationWith(location:CLLocationCoordinate2D) -> CLLocationCoordinate2D {
 
@@ -312,6 +312,21 @@ extension CLLocationCoordinate2D {
 
         let center:CLLocationCoordinate2D = CLLocationCoordinate2DMake(lat3 * 180 / .pi, lon3 * 180 / .pi)
         return center
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        try container.encode(longitude)
+        try container.encode(latitude)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        self.init()
+        
+        var container = try decoder.unkeyedContainer()
+        longitude = try container.decode(Double.self)
+        latitude = try container.decode(Double.self)
+        
     }
 }
 

@@ -99,6 +99,7 @@ class Network {
 
     }
 
+    /// TO BE CHANGED
     class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, endPlaceName: String, time: Date, type: SearchType,
                          callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void) {
             let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
@@ -124,7 +125,7 @@ class Network {
         return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(end)&start=\(start)&time=\(time)&destinationName=\(destinationName)"
     }
 
-
+    /// TO BE CHANGED
     class func getGooglePlacesAutocompleteResults(searchText: String) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("places")
         request.method = .post
@@ -135,9 +136,8 @@ class Network {
         return request
     }
 
-    class func getBusLocations(_ directions: [Direction]) -> APIRequest<BusLocationResult, Error> {
-
-        let request: APIRequest<BusLocationResult, Error> = tron.swiftyJSON.request("tracking")
+    class func getBusLocations(_ directions: [Direction]) -> APIRequest<BusLocationRequest, Error> {
+        let request: APIRequest<BusLocationRequest, Error> = tron.codable.request("tracking")
         request.method = .post
         let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
         let dictionary = departDirections.map { (direction) -> [String : Any] in
@@ -156,7 +156,14 @@ class Network {
         request.parameters = [ "data" : dictionary ]
         request.parameterEncoding = JSONEncoding.default
         return request
+    }
 
+    class func newGetDelay(tripId: String, stopId: String) -> APIRequest<BusDelayRequest, Error> {
+        let request: APIRequest<BusDelayRequest, Error> = tron.codable.request("delay")
+        request.method = .get
+        request.parameters = ["stopID" : stopId, "tripID" : tripId]
+        
+        return request
     }
 
     class func getDelay(tripId: String, stopId: String) -> APIRequest<JSON, Error> {

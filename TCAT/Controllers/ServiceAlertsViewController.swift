@@ -49,7 +49,6 @@ class ServiceAlertsViewController: UIViewController {
                 for alert in request.data {
                     self.alerts.append(alert)
                 }
-                
             }
         }) { (error) in
             print(error)

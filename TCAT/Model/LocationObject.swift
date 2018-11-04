@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 
 /// Generic location object for locations with identifiers and names
-class LocationObject: NSObject {
+class LocationObject: NSObject, Codable {
     
     /// The name of the location
     var name: String
