@@ -8,19 +8,18 @@
 
 import UIKit
 
-// MARK: - Colors
-
+/// App colors
 struct Colors {
     
-    // Brand
+    // MARK: - Brand Color
     static let tcatBlue = UIColor(hex: "079DDC")
     
-    // Accent
+    // MARK: - Accent Colors
     static let lateRed = UIColor(hex: "D6304F")
     static let liveGreen = UIColor(hex: "27AE60")
     static let warningOrange = UIColor(hex: "E79C20")
     
-    // Grayscale
+    // MARK: - Grayscale Colors
     static let primaryText = UIColor(hex: "212121")
     static let secondaryText = UIColor(hex: "616161")
     static let metadataIcon = UIColor(hex: "BDBDBD")
@@ -28,8 +27,6 @@ struct Colors {
     static let backgroundWash = UIColor(hex: "F5F5F5")
     
 }
-
-// MARK: - Fonts
 
 /// Font identifiers
 struct Fonts {
@@ -96,5 +93,12 @@ extension UIFont {
     
 }
 
-// MARK: - Spacing
+struct Spacing {
+    
+    static let eight: CGFloat = 8
+    static let twelve: CGFloat = 12
+    static let fourteen: CGFloat = 14
+    static let twentyFour: CGFloat = 24
+    
+}
 
