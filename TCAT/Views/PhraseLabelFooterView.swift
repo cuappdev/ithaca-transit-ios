@@ -24,7 +24,7 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
     override init(reuseIdentifier: String?) {
         print("[PhraseLabelFooterView] init")
         super.init(reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = Colors.white
         addSubview(label)
     }
     

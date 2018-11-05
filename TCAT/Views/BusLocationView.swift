@@ -12,7 +12,7 @@ import CoreLocation
 extension UIView {
     
     func addShadow(shadowOffset: CGSize, shadowRadius: CGFloat) {
-        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowColor = Colors.black.cgColor
         layer.shadowOffset = shadowOffset
         layer.shadowOpacity = 0.33
         layer.shadowRadius = shadowRadius
@@ -61,7 +61,7 @@ class BusLocationView: UIView {
         circle.center.x = center.x
         circle.frame.origin.y = 44 - (circle.frame.width / 2)
         circle.layer.cornerRadius = circle.frame.width / 2
-        circle.backgroundColor = .tcatBlueColor
+        circle.backgroundColor = Colors.tcatBlue
         addSubview(circle)
         circle.isHidden = false
         
@@ -152,7 +152,7 @@ class TriangleView : UIView {
     
     var color: UIColor!
     
-    init(frame: CGRect, color: UIColor = .white) {
+    init(frame: CGRect, color: UIColor = Colors.white) {
         self.color = color
         super.init(frame: frame)
         self.backgroundColor = .clear

@@ -256,13 +256,13 @@ class OnboardingViewController: PresentationController {
         let button = UIButton()
         button.frame = CGRect(x: 0, y: 0, width: 160, height: 60)
         button.layer.shadowOffset = CGSize(width: 0, height: 4)
-        button.layer.shadowColor = UIColor.mediumGrayColor.cgColor
+        button.layer.shadowColor = Colors.metadataIcon.cgColor
         button.layer.shadowOpacity = 0.5
         button.setTitle(Constants.Onboarding.begin, for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(Colors.white, for: .normal)
         button.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
         button.titleLabel?.font = .style(Fonts.SanFrancisco.medium, size: 22)
-        button.backgroundColor = .tcatBlueColor // UIColor(hex: "D65851")
+        button.backgroundColor = Colors.tcatBlue // UIColor(hex: "D65851")
         button.layer.cornerRadius = 4
         let buttonPosition = Position(left: 0.5, top: 0.5)
         let startButton = Content(view: button, position: buttonPosition, centered: true)

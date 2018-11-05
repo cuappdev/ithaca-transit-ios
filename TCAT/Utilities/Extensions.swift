@@ -16,27 +16,6 @@ let increaseTapTargetTag: Int = 1865
 
 extension UIColor {
 
-    @nonobjc static let tcatBlueColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1)
-
-    @nonobjc static let buttonColor = UIColor(red: 0 / 255, green: 118 / 255, blue: 255 / 255, alpha: 1)
-    @nonobjc static let primaryTextColor = UIColor(white: 34 / 255, alpha: 1)
-    @nonobjc static let secondaryTextColor = UIColor(white: 74 / 255, alpha: 1)
-    @nonobjc static let tableHeaderColor = UIColor(white: 100 / 255, alpha: 1)
-
-    @nonobjc static let lineDotColor = UIColor(white: 216 / 255, alpha: 1)
-    @nonobjc static let mediumGrayColor = UIColor(white: 155 / 255, alpha: 1)
-
-    @nonobjc static let tableViewHeaderTextColor = UIColor(white: 71 / 255, alpha: 1)
-    @nonobjc static let tableBackgroundColor = UIColor(white: 242 / 255, alpha: 1)
-    @nonobjc static let summaryBackgroundColor = UIColor(white: 248 / 255, alpha: 1)
-    @nonobjc static let optionsTimeBackgroundColor = UIColor(white: 252 / 255, alpha: 1)
-    @nonobjc static let searchBarCursorColor = UIColor.black
-    @nonobjc static let searchBarPlaceholderTextColor = UIColor(red: 214 / 255, green: 216 / 255, blue: 220 / 255, alpha: 1)
-    @nonobjc static let noInternetTextColor = UIColor(red: 0.0, green: 118 / 255, blue: 255 / 255, alpha: 1)
-
-    @nonobjc static let liveGreenColor = UIColor(red: 39 / 255, green: 174 / 255, blue: 96 / 255, alpha: 1)
-    @nonobjc static let liveRedColor = UIColor(red: 214 / 255, green: 48 / 255, blue: 79 / 255, alpha: 1)
-
     // Use six-character string of a hex color for initialization
     convenience init(hex: String) {
         let hex = Int(hex, radix: 16)!

@@ -91,7 +91,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .tableBackgroundColor
+        self.view.backgroundColor = Colors.backgroundWash
 
         edgesForExtendedLayout = []
 
@@ -168,7 +168,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
     private func setupRouteSelection() {
         // offset for -12 for larger views, get rid of black space
         routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: 150))
-        routeSelection.backgroundColor = .white
+        routeSelection.backgroundColor = Colors.white
         var newRSFrame = routeSelection.frame
         newRSFrame.size.height =  routeSelection.lineWidth + routeSelection.searcbarView.frame.height + routeSelection.lineWidth + routeSelection.datepickerButton.frame.height
         routeSelection.frame = newRSFrame
@@ -520,7 +520,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
     private func setupDatePickerOverlay() {
         datePickerOverlay = UIView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: view.frame.height + 12)) // 12 for sliver that shows up when click datepicker immediately after transition from HomeVC
-        datePickerOverlay.backgroundColor = .black
+        datePickerOverlay.backgroundColor = Colors.black
         datePickerOverlay.alpha = 0
 
         datePickerOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissDatePicker)))
@@ -888,7 +888,7 @@ extension RouteOptionsViewController: UITableViewDelegate {
         routeResults.allowsSelection = true
         routeResults.dataSource = self
         routeResults.separatorStyle = .none
-        routeResults.backgroundColor = .tableBackgroundColor
+        routeResults.backgroundColor = Colors.backgroundWash
         routeResults.alwaysBounceVertical = true //so table view doesn't scroll over top & bottom
         routeResults.showsVerticalScrollIndicator = false
 
@@ -939,13 +939,13 @@ extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDele
 
         let retryButton = UIButton()
         retryButton.setTitle(Constants.Buttons.retry, for: .normal)
-        retryButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
+        retryButton.setTitleColor(Colors.tcatBlue, for: .normal)
         retryButton.titleLabel?.font = .style(Fonts.SanFrancisco.regular, size: 16.0)
         retryButton.addTarget(self, action: #selector(tappedRetryButton), for: .touchUpInside)
 
         let titleLabel = UILabel()
         titleLabel.font = .style(Fonts.SanFrancisco.regular, size: 18.0)
-        titleLabel.textColor = .mediumGrayColor
+        titleLabel.textColor = Colors.metadataIcon
         titleLabel.text = showRouteSearchingLoader ? Constants.EmptyStateMessages.lookingForRoutes : Constants.EmptyStateMessages.noRoutesFound
         titleLabel.sizeToFit()
 

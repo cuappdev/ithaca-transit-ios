@@ -34,9 +34,9 @@ class DetailIconView: UIView {
         
         // Format and place time labels
         scheduledTimeLabel.font = .style(Fonts.SanFrancisco.regular, size: 14)
-        scheduledTimeLabel.textColor = .primaryTextColor
+        scheduledTimeLabel.textColor = Colors.primaryText
         delayedTimeLabel.font = .style(Fonts.SanFrancisco.regular, size: 14)
-        delayedTimeLabel.textColor = .liveRedColor
+        delayedTimeLabel.textColor = Colors.lateRed
         
         updateScheduledTime()
         updateDelayedTime()
@@ -50,33 +50,33 @@ class DetailIconView: UIView {
         
         if direction.type == .walk {
             if lastStep {
-                statusCircle = Circle(size: .large, style: .bordered, color: .lineDotColor)
-                connectorTop.backgroundColor = .lineDotColor
+                statusCircle = Circle(size: .large, style: .bordered, color: Colors.dividerTextField)
+                connectorTop.backgroundColor = Colors.dividerTextField
                 connectorBottom.backgroundColor = .clear
             } else {
-                statusCircle = Circle(size: .small, style: .solid, color: .lineDotColor)
-                connectorTop.backgroundColor = .lineDotColor
-                connectorBottom.backgroundColor = .lineDotColor
+                statusCircle = Circle(size: .small, style: .solid, color: Colors.dividerTextField)
+                connectorTop.backgroundColor = Colors.dividerTextField
+                connectorBottom.backgroundColor = Colors.dividerTextField
                 if firstStep {
                     connectorTop.backgroundColor = .clear
                 }
             }
         } else {
             if lastStep {
-                statusCircle = Circle(size: .large, style: .bordered, color: .tcatBlueColor)
-                connectorTop.backgroundColor = .tcatBlueColor
+                statusCircle = Circle(size: .large, style: .bordered, color: Colors.tcatBlue)
+                connectorTop.backgroundColor = Colors.tcatBlue
                 connectorBottom.backgroundColor = .clear
             } else {
-                statusCircle = Circle(size: .small, style: .solid, color: .tcatBlueColor)
+                statusCircle = Circle(size: .small, style: .solid, color: Colors.tcatBlue)
                 if direction.type == .depart {
-                    connectorTop.backgroundColor = .lineDotColor
-                    connectorBottom.backgroundColor = .tcatBlueColor
+                    connectorTop.backgroundColor = Colors.dividerTextField
+                    connectorBottom.backgroundColor = Colors.tcatBlue
                 } else if direction.type == .transfer {
-                    connectorTop.backgroundColor = .tcatBlueColor
-                    connectorBottom.backgroundColor = .tcatBlueColor
+                    connectorTop.backgroundColor = Colors.tcatBlue
+                    connectorBottom.backgroundColor = Colors.tcatBlue
                 } else { // type == .arrive
-                    connectorTop.backgroundColor = .tcatBlueColor
-                    connectorBottom.backgroundColor = .lineDotColor
+                    connectorTop.backgroundColor = Colors.tcatBlue
+                    connectorBottom.backgroundColor = Colors.dividerTextField
                 }
                 if firstStep {
                     connectorTop.backgroundColor = .clear
@@ -131,16 +131,16 @@ class DetailIconView: UIView {
         scheduledTimeLabel.frame.origin.x = constant
         
         if direction.type == .walk {
-            scheduledTimeLabel.textColor = .primaryTextColor
+            scheduledTimeLabel.textColor = Colors.primaryText
             hideDelayedLabel()
         }
         
         else {
             if let delay = direction.delay, delay < 60 {
-                scheduledTimeLabel.textColor = .liveGreenColor
+                scheduledTimeLabel.textColor = Colors.liveGreen
                 hideDelayedLabel()
             } else {
-                scheduledTimeLabel.textColor = .primaryTextColor
+                scheduledTimeLabel.textColor = Colors.primaryText
                 scheduledTimeLabel.center.y -= timeLabelConstant
             }
         }
@@ -160,7 +160,7 @@ class DetailIconView: UIView {
         
         if let delay = direction.delay, delay >= 60, direction.type != .walk {
             delayedTimeLabel.isHidden = false
-            delayedTimeLabel.textColor = .liveRedColor
+            delayedTimeLabel.textColor = Colors.lateRed
         } else {
             hideDelayedLabel()
         }

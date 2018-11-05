@@ -57,18 +57,18 @@ class SummaryView: UIView {
         // View Initialization
         let height: CGFloat = 80 + tabInsetHeight
         super.init(frame: CGRect(x: 0, y: 0, width: main.width, height: height))
-        backgroundColor = .summaryBackgroundColor
+        backgroundColor = Colors.backgroundWash
         roundCorners(corners: [.topLeft, .topRight], radius: 16)
 
         // Create puller tab
         tab.center.x = center.x
-        tab.backgroundColor = .mediumGrayColor
+        tab.backgroundColor = Colors.metadataIcon
         tab.layer.cornerRadius = tab.frame.height / 2
         addSubview(tab)
         
         // Place and format top summary label
         mainLabel.font = .style(Fonts.SanFrancisco.regular, size: 16)
-        mainLabel.textColor = .primaryTextColor
+        mainLabel.textColor = Colors.primaryText
         mainLabel.numberOfLines = 1
         mainLabel.allowsDefaultTighteningForTruncation = true
         mainLabel.lineBreakMode = .byTruncatingTail
@@ -76,7 +76,7 @@ class SummaryView: UIView {
         
         // Place and format secondary label
         secondaryLabel.font = .style(Fonts.SanFrancisco.regular, size: 12)
-        secondaryLabel.textColor = .mediumGrayColor
+        secondaryLabel.textColor = Colors.metadataIcon
         addSubview(secondaryLabel)
         
         addSubview(liveIndicator)
@@ -88,7 +88,7 @@ class SummaryView: UIView {
 
         setBusIcons()
         
-        var color: UIColor = .primaryTextColor
+        var color: UIColor = Colors.primaryText
         
         // MARK: Main Label and Live Indicator Formatting
         
@@ -106,13 +106,13 @@ class SummaryView: UIView {
             if let delay = departDirection.delay {
                 fragment = " \(space)" // Include space for live indicator
                 if delay >= 60 {
-                    color = .liveRedColor
+                    color = Colors.lateRed
                 } else {
-                    color = .liveGreenColor
+                    color = Colors.liveGreen
                 }
             } else {
                 liveIndicator.setColor(to: .clear)
-                color = .primaryTextColor
+                color = Colors.primaryText
             }
             
             let content = "Depart at \(departDirection.startTimeWithDelayDescription)\(fragment) from \(departDirection.name)"
@@ -214,7 +214,7 @@ class SummaryView: UIView {
             walkIcon.contentMode = .scaleAspectFit
             // Ideally, have a larger higher-res version for this. But we need to release.
             walkIcon.frame.size = CGSize(width: walkIcon.frame.size.width * 2, height: walkIcon.frame.size.height * 2)
-            walkIcon.tintColor = .mediumGrayColor
+            walkIcon.tintColor = Colors.metadataIcon
             walkIcon.center = iconCenter
             addSubview(walkIcon)
             

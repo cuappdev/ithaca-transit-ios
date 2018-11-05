@@ -90,7 +90,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     /** Create and configure detailView, summaryView, tableView */
     func initializeDetailView() {
 
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.white
         
         // Create summaryView
         
@@ -139,7 +139,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         if #available(iOS 11.0, *) {
             let bottom = UIApplication.shared.keyWindow?.rootViewController?.view.safeAreaInsets.bottom ?? 34
             safeAreaCover = UIView(frame: CGRect(x: 0, y: summaryView.frame.height, width: main.width, height: bottom))
-            safeAreaCover!.backgroundColor = .summaryBackgroundColor
+            safeAreaCover!.backgroundColor = Colors.backgroundWash
             safeAreaCover!.alpha = 0
             view.addSubview(safeAreaCover!)
         }
@@ -289,7 +289,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         footerHeight = expandedCell != nil ? 0 : footerHeight
         
         emptyFooterView.frame.size = CGSize(width: view.frame.width, height: footerHeight)
-        emptyFooterView.contentView.backgroundColor = .white
+        emptyFooterView.contentView.backgroundColor = Colors.white
         emptyFooterView.layoutIfNeeded()
         if emptyFooterView.gestureRecognizers?.isEmpty == true {
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))

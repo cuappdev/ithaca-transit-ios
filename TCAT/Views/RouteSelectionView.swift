@@ -72,19 +72,19 @@ class RouteSelectionView: UIView {
     
     private func styleSearchbarView() {
         searcbarView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: 103)
-        searcbarView.backgroundColor = .white
+        searcbarView.backgroundColor = Colors.white
     }
     
     private func styleLabel(_ label: UILabel) {
         fromLabel.frame = CGRect(x: 0, y: 0, width: 40, height: 20)
         label.font = .style(Fonts.SanFrancisco.regular, size: 14.0)
-        label.textColor = .black
+        label.textColor = Colors.primaryText
     }
     
     private func styleSearchbar(_ searchbar: UIButton) {
         searchbar.frame = CGRect(x: 0, y: 0, width: 243, height: searchbarHeight)
-        searchbar.backgroundColor = .tableBackgroundColor
-        searchbar.setTitleColor(.primaryTextColor, for: .normal)
+        searchbar.backgroundColor = Colors.backgroundWash
+        searchbar.setTitleColor(Colors.primaryText, for: .normal)
         searchbar.titleLabel?.font = .style(Fonts.SanFrancisco.regular, size: 14.0)
         searchbar.contentHorizontalAlignment = .left
         searchbar.contentEdgeInsets = UIEdgeInsets.init(top: 0, left: searchbarTextSpaceFromLeft, bottom: 0, right: 0)
@@ -93,9 +93,9 @@ class RouteSelectionView: UIView {
     }
     
     private func styleRouteLine() {
-        solidCircle = Circle(size: .small, style: .solid, color: .mediumGrayColor)
-        line = SolidLine(height: 27.0, color: .mediumGrayColor)
-        borderedCircle = Circle(size: .medium, style: .bordered, color: .mediumGrayColor)
+        solidCircle = Circle(size: .small, style: .solid, color: Colors.metadataIcon)
+        line = SolidLine(height: 27.0, color: Colors.metadataIcon)
+        borderedCircle = Circle(size: .medium, style: .bordered, color: Colors.metadataIcon)
     }
     
     private func styleSwapButton() {
@@ -108,11 +108,11 @@ class RouteSelectionView: UIView {
         
         datepickerButton.contentMode = .scaleAspectFit
         
-        datepickerButton.tintColor = .mediumGrayColor
-        datepickerButton.setTitleColor(.mediumGrayColor, for: .normal)
+        datepickerButton.tintColor = Colors.metadataIcon
+        datepickerButton.setTitleColor(Colors.metadataIcon, for: .normal)
         datepickerButton.titleLabel?.font = .style(Fonts.SanFrancisco.regular, size: 14.0)
         
-        datepickerButton.backgroundColor = .white
+        datepickerButton.backgroundColor = Colors.white
         
         datepickerButton.contentHorizontalAlignment = .left
         datepickerButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: leadingSpace, bottom: 0, right: 0)
@@ -121,7 +121,7 @@ class RouteSelectionView: UIView {
     
     private func styleLine(_ line: UIView) {
         line.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: lineWidth)
-        line.backgroundColor = .lineDotColor
+        line.backgroundColor = Colors.dividerTextField
     }
         
     // MARK: Set data
@@ -133,7 +133,7 @@ class RouteSelectionView: UIView {
     
     private func setSwapButton(withImage image: UIImage) {
         swapButton.setImage(image, for: .normal)
-        swapButton.tintColor = .mediumGrayColor
+        swapButton.tintColor = Colors.metadataIcon
     }
     
     private func setDatpickerButton(withImage image: UIImage) {

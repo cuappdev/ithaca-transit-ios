@@ -40,7 +40,7 @@ class BusStopCell: UITableViewCell {
         imageView?.contentMode = .scaleAspectFit
         imageView?.center.y = bounds.height / 2.0
         imageView?.image = reuseIdentifier == Constants.Cells.currentLocationIdentifier ? #imageLiteral(resourceName: "location") : #imageLiteral(resourceName: "pin")
-        imageView?.tintColor = .tcatBlueColor
+        imageView?.tintColor = Colors.tcatBlue
 
         textLabel?.frame = CGRect(x: labelXPosition, y: 0.0, width: frame.width - labelWidth, height: labelHeight)
         textLabel?.center.y = bounds.height / 2.0

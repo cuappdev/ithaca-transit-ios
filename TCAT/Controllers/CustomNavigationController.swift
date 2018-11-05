@@ -15,7 +15,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
 
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.white
         customizeAppearance()
     }
 
@@ -53,7 +53,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
     /// Attributed string details for the title text of a navigation controller
     let titleTextAttributes: [NSAttributedString.Key: Any] = [
         .font: UIFont.style(Fonts.SanFrancisco.regular, size: 18),
-        .foregroundColor: UIColor.black
+        .foregroundColor: Colors.black
     ]
 
     /// Attributed string details for the back button text of a navigation controller
@@ -63,9 +63,9 @@ class CustomNavigationController: UINavigationController, UINavigationController
 
     func customizeAppearance() {
 
-        navigationBar.backgroundColor = .white
-        navigationBar.barTintColor = .white
-        navigationBar.tintColor = .primaryTextColor
+        navigationBar.backgroundColor = Colors.white
+        navigationBar.barTintColor = Colors.white
+        navigationBar.tintColor = Colors.primaryText
         navigationBar.titleTextAttributes = titleTextAttributes
         navigationItem.backBarButtonItem?.setTitleTextAttributes(
             CustomNavigationController.buttonTitleTextAttributes, for: .normal
@@ -83,11 +83,11 @@ class CustomNavigationController: UINavigationController, UINavigationController
 
         let backButton = UIButton()
         backButton.setImage(#imageLiteral(resourceName: "back"), for: .normal)
-        backButton.tintColor = .primaryTextColor
+        backButton.tintColor = Colors.primaryText
 
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.style(Fonts.SanFrancisco.regular, size: 14.0),
-            .foregroundColor: UIColor.primaryTextColor,
+            .foregroundColor: Colors.primaryText,
             .baselineOffset: 0.3
         ]
         let attributedString = NSMutableAttributedString(string: "  " + Constants.Buttons.back, attributes: attributes)

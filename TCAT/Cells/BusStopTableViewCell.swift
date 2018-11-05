@@ -26,7 +26,7 @@ class BusStopTableViewCell: UITableViewCell {
         titleLabel = UILabel()
         titleLabel.frame = CGRect(x: cellWidth, y: 0, width: UIScreen.main.bounds.width - cellWidth - 20, height: 20)
         titleLabel.font = .style(Fonts.SanFrancisco.regular, size: 14)
-        titleLabel.textColor = .secondaryTextColor
+        titleLabel.textColor = Colors.secondaryText
         titleLabel.text = "Bus Stop Name"
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.numberOfLines = 0
@@ -36,15 +36,15 @@ class BusStopTableViewCell: UITableViewCell {
         
         connectorTop = UIView(frame: CGRect(x: linePosition, y: 0, width: 4, height: cellHeight / 2))
         connectorTop.frame.origin.x -= connectorTop.frame.width / 2
-        connectorTop.backgroundColor = .tcatBlueColor
+        connectorTop.backgroundColor = Colors.tcatBlue
         contentView.addSubview(connectorTop)
         
         connectorBottom = UIView(frame: CGRect(x: linePosition, y: cellHeight / 2, width: 4, height: cellHeight / 2))
         connectorBottom.frame.origin.x -= connectorBottom.frame.width / 2
-        connectorBottom.backgroundColor = .tcatBlueColor
+        connectorBottom.backgroundColor = Colors.tcatBlue
         contentView.addSubview(connectorBottom)
         
-        statusCircle = Circle(size: .small, style: .outline, color: .tcatBlueColor)
+        statusCircle = Circle(size: .small, style: .outline, color: Colors.tcatBlue)
         statusCircle.center = self.center
         statusCircle.center.y = cellHeight / 2
         statusCircle.frame.origin.x = linePosition - (statusCircle.frame.width / 2)

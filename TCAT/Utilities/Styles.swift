@@ -26,6 +26,10 @@ struct Colors {
     static let dividerTextField = UIColor(hex: "EEEEEE")
     static let backgroundWash = UIColor(hex: "F5F5F5")
     
+    // MARK: - Constants
+    static let black = UIColor.black
+    static let white = UIColor.white
+    
 }
 
 /// Font identifiers

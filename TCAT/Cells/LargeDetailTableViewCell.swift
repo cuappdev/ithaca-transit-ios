@@ -30,7 +30,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         chevron.frame.size = CGSize(width: 13.5, height: 8)
         chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
         chevron.image = UIImage(named: "arrow")
-        chevron.tintColor = .mediumGrayColor
+        chevron.tintColor = Colors.metadataIcon
         return chevron
     }
     
@@ -39,7 +39,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         titleLabel.frame = CGRect(x: cellWidth, y: 0, width: chevron.frame.minX - cellWidth, height: 20)
         titleLabel.font = .style(Fonts.SanFrancisco.regular, size: 14)
         titleLabel.lineBreakMode = .byWordWrapping
-        titleLabel.textColor = .primaryTextColor
+        titleLabel.textColor = Colors.primaryText
         titleLabel.text = direction != nil && direction.type == .transfer ? "Bus becomes" : "Board"
         titleLabel.sizeToFit()
         return titleLabel
@@ -49,7 +49,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         let detailLabel = UILabel()
         detailLabel.frame = CGRect(x: cellWidth, y: 0, width: 20, height: 20)
         detailLabel.font = .style(Fonts.SanFrancisco.regular, size: 14)
-        detailLabel.textColor = .mediumGrayColor
+        detailLabel.textColor = Colors.metadataIcon
         detailLabel.text = "Detail Label"
         detailLabel.lineBreakMode = .byWordWrapping
         detailLabel.sizeToFit()

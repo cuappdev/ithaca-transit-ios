@@ -29,7 +29,7 @@ class WhatsNewHeaderView: UIView {
     init(updateName: String, description: String) {
         super.init(frame: .zero)
 
-        backgroundColor = .white
+        backgroundColor = Colors.white
         layer.cornerRadius = 16
         clipsToBounds = true
 
@@ -43,7 +43,7 @@ class WhatsNewHeaderView: UIView {
         whatsNewHeader = UILabel()
         whatsNewHeader.text = "NEW IN ITHACA TRANSIT"
         whatsNewHeader.font = UIFont.style(Fonts.SanFrancisco.semibold, size: 12)
-        whatsNewHeader.textColor = UIColor.tcatBlueColor
+        whatsNewHeader.textColor = Colors.tcatBlue
 
         addSubview(whatsNewHeader)
     }
@@ -60,7 +60,7 @@ class WhatsNewHeaderView: UIView {
         updateDescription = UILabel()
         updateDescription.text = description
         updateDescription.font = UIFont.style(Fonts.SanFrancisco.regular, size: 14)
-        updateDescription.textColor = UIColor.mediumGrayColor
+        updateDescription.textColor = Colors.metadataIcon
         updateDescription.numberOfLines = 0
         updateDescription.textAlignment = .center
 
@@ -72,8 +72,8 @@ class WhatsNewHeaderView: UIView {
         dismissButton.setTitle("OK", for: .normal)
         dismissButton.titleLabel?.font = UIFont.style(Fonts.SanFrancisco.semibold, size: 14)
         dismissButton.addTarget(self, action: #selector(okButtonPressed), for: .touchUpInside)
-        dismissButton.backgroundColor = UIColor.tcatBlueColor
-        dismissButton.setTitleColor(.white, for: .normal)
+        dismissButton.backgroundColor = Colors.tcatBlue
+        dismissButton.setTitleColor(Colors.white, for: .normal)
         dismissButton.layer.cornerRadius = dismissButton.intrinsicContentSize.height/2
         dismissButton.clipsToBounds = true
 

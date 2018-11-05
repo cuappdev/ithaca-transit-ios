@@ -15,20 +15,19 @@ protocol AddFavoritesDelegate {
 
 class HeaderView: UITableViewHeaderFooterView {
     
-
     var addFavoritesDelegate: AddFavoritesDelegate?
 
     var label: UILabel = {
         let label = UILabel()
         label.font = .style(Fonts.SanFrancisco.regular, size: 14)
-        label.textColor = .tableViewHeaderTextColor
+        label.textColor = Colors.secondaryText
         return label
     }()
 
     var addButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Add", for: .normal)
-        button.setTitleColor(.tcatBlueColor, for: .normal)
+        button.setTitleColor(Colors.tcatBlue, for: .normal)
         button.addTarget(self, action: #selector(addNewFavorite), for: .touchUpInside)
         return button
     }()

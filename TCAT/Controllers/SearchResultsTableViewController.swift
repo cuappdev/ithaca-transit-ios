@@ -77,9 +77,9 @@ class SearchResultsTableViewController: UITableViewController {
         tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
         tableView.sectionIndexBackgroundColor = .clear
-        tableView.sectionIndexColor = .primaryTextColor
+        tableView.sectionIndexColor = Colors.primaryText
         tableView.keyboardDismissMode = .onDrag
-        tableView.backgroundColor = .tableBackgroundColor
+        tableView.backgroundColor = Colors.backgroundWash
         tableView.showsVerticalScrollIndicator = false
         tableView.reloadData()
 
@@ -97,14 +97,14 @@ class SearchResultsTableViewController: UITableViewController {
 
         sections = createSections()
         searchBar?.becomeFirstResponder()
-        searchBar?.tintColor = .searchBarCursorColor
+        searchBar?.tintColor = Colors.black
 
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         searchBar?.sizeToFit()
-        searchBar?.tintColor = .primaryTextColor
+        searchBar?.tintColor = Colors.primaryText
     }
 
     override func viewDidAppear(_ animated: Bool) {
