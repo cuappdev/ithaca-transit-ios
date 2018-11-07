@@ -22,7 +22,7 @@ struct Colors {
     // MARK: - Grayscale Colors
     static let primaryText = UIColor(hex: "212121")
     static let secondaryText = UIColor(hex: "616161")
-    static let metadataIcon = UIColor(hex: "BDBDBD")
+    static let metadataIcon = UIColor(hex: "9E9E9E")
     static let dividerTextField = UIColor(hex: "EEEEEE")
     static let backgroundWash = UIColor(hex: "F5F5F5")
     
