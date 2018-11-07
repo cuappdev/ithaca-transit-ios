@@ -9,9 +9,9 @@
 	<key>INIntentDefinitionSystemVersion</key>
 	<string>17G65</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
-	<string>10A255</string>
+	<string>10B61</string>
 	<key>INIntentDefinitionToolsVersion</key>
-	<string>10.0</string>
+	<string>10.1</string>
 	<key>INIntents</key>
 	<array>
 		<dict>
@@ -20,36 +20,73 @@
 			<key>INIntentDescriptionID</key>
 			<string>wweA1z</string>
 			<key>INIntentLastParameterTag</key>
-			<integer>0</integer>
+			<integer>8</integer>
 			<key>INIntentName</key>
-			<string>Intent</string>
+			<string>GetRoutes</string>
 			<key>INIntentParameterCombinations</key>
 			<dict>
-				<key></key>
+				<key>searchTo</key>
 				<dict>
 					<key>INIntentParameterCombinationIsPrimary</key>
-					<true/>
+					<false/>
 					<key>INIntentParameterCombinationSubtitle</key>
 					<string></string>
 					<key>INIntentParameterCombinationSubtitleID</key>
-					<string>8tOhQi</string>
+					<string>KKOS3V</string>
 					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
-					<true/>
+					<false/>
 					<key>INIntentParameterCombinationTitle</key>
-					<string></string>
+					<string>Find bus to ${searchTo}</string>
 					<key>INIntentParameterCombinationTitleID</key>
-					<string>2Vk426</string>
+					<string>DexuVZ</string>
 				</dict>
 			</dict>
 			<key>INIntentParameters</key>
-			<array/>
+			<array>
+				<dict>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>1</integer>
+					<key>INIntentParameterName</key>
+					<string>searchTo</string>
+					<key>INIntentParameterSupportsMultipleValues</key>
+					<false/>
+					<key>INIntentParameterTag</key>
+					<integer>2</integer>
+					<key>INIntentParameterType</key>
+					<string>String</string>
+				</dict>
+				<dict>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>2</integer>
+					<key>INIntentParameterName</key>
+					<string>latitude</string>
+					<key>INIntentParameterSupportsMultipleValues</key>
+					<false/>
+					<key>INIntentParameterTag</key>
+					<integer>7</integer>
+					<key>INIntentParameterType</key>
+					<string>String</string>
+				</dict>
+				<dict>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>3</integer>
+					<key>INIntentParameterName</key>
+					<string>longitude</string>
+					<key>INIntentParameterSupportsMultipleValues</key>
+					<false/>
+					<key>INIntentParameterTag</key>
+					<integer>8</integer>
+					<key>INIntentParameterType</key>
+					<string>String</string>
+				</dict>
+			</array>
 			<key>INIntentResponse</key>
 			<dict>
 				<key>INIntentResponseCodes</key>
 				<array>
 					<dict>
 						<key>INIntentResponseCodeFormatString</key>
-						<string></string>
+						<string>Failed to find routes</string>
 						<key>INIntentResponseCodeFormatStringID</key>
 						<string>JvOfFg</string>
 						<key>INIntentResponseCodeName</key>
@@ -69,12 +106,14 @@
 					</dict>
 				</array>
 				<key>INIntentResponseLastParameterTag</key>
-				<integer>0</integer>
+				<integer>7</integer>
 				<key>INIntentResponseParameters</key>
 				<array/>
 			</dict>
 			<key>INIntentRestrictions</key>
 			<integer>0</integer>
+			<key>INIntentTitle</key>
+			<string>Get Routes </string>
 			<key>INIntentTitleID</key>
 			<string>6mhV59</string>
 			<key>INIntentType</key>
@@ -82,7 +121,7 @@
 			<key>INIntentUserConfirmationRequired</key>
 			<false/>
 			<key>INIntentVerb</key>
-			<string>Do</string>
+			<string>Go</string>
 		</dict>
 	</array>
 </dict>

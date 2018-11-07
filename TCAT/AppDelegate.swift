@@ -185,7 +185,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             var stopName: String? = nil
             let optionsVC = RouteOptionsViewController()
             
-            // get parameters from URL
+            // get parameters from the URL
             for (index, element) in items.enumerated() {
                 switch index {
                 case 0:
@@ -211,6 +211,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 navigationController.pushViewController(optionsVC, animated: false)
                 return true
             }
+        }
+        
+        return false
+    }
+    
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        print(userActivity.activityType) //GetRoutesIntent
+        
+        if #available(iOS 12.1, *) {
+            if let intent = userActivity.interaction?.intent as? GetRoutesIntent {
+                print("true")
+                
+                if let latitude = intent.latitude, let longitude = intent.longitude, let searchTo = intent.searchTo {
+                    print(intent.searchTo!)
+                    if let stopName = searchTo.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
+                        let urlString = "ithaca-transit://getRoutes?lat=" + latitude + "&long=" + longitude + "&stopName=" + stopName
+                        if let url = URL(string: urlString) {
+                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            return true
+                        }
+                    }
+                }
+            }
+        } else {
+            print("false")
+            return false
         }
         
         return false

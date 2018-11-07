@@ -20,10 +20,6 @@
 	<string>1.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>ithaca-transit</string>
-	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -39,6 +35,10 @@
 	<string>64</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>ithaca-transit</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -50,6 +50,11 @@
 	<string>Allow the app to calculate routes using your current location.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Allow the app to save photos.</string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>GetRoutesIntent</string>
+		<string>getRoutes</string>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>SFProDisplay-Bold.otf</string>

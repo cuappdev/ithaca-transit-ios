@@ -30,10 +30,7 @@
 			<array/>
 			<key>IntentsSupported</key>
 			<array>
-				<string>INSearchForMessagesIntent</string>
-				<string>INSendMessageIntent</string>
-				<string>INSetMessageAttributeIntent</string>
-				<string>IntentIntent</string>
+				<string>GetRoutesIntent</string>
 			</array>
 		</dict>
 		<key>NSExtensionPointIdentifier</key>

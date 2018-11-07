@@ -33,6 +33,8 @@
 		7E14AEEE2177E884006A344D /* SiriUI.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7E14AEE32177E884006A344D /* SiriUI.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7E14AEF12177E884006A344D /* Siri.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7E14AEDA2177E884006A344D /* Siri.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7E14AEF92177EA31006A344D /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEF82177EA31006A344D /* Intents.intentdefinition */; };
+		7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
+		7E7E4E7A218E19C600C72376 /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEF82177EA31006A344D /* Intents.intentdefinition */; };
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
 		BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0002211FB37D0A00773109 /* LoadingIndicator.swift */; };
 		BF1209FB1F7759C200A7C930 /* BusLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1209FA1F7759C200A7C930 /* BusLocationView.swift */; };
@@ -657,6 +659,9 @@
 						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 0;
+							};
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
@@ -945,6 +950,7 @@
 				DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */,
 				222BDE16215C1CEE0040DD93 /* WhatsNewHeaderView.swift in Sources */,
 				DD99E2F61F6DB06A0073E8F7 /* Constants.swift in Sources */,
+				7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */,
 				DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */,
 				D183AA021E6CB092006A9A15 /* Extensions.swift in Sources */,
 				503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */,
@@ -977,6 +983,7 @@
 				BFD5B4E41FAADFAE00955C37 /* WalkPath.swift in Sources */,
 				BF1209FB1F7759C200A7C930 /* BusLocationView.swift in Sources */,
 				DD3D9C361F945F2A00B164D4 /* RPCircularProgress.swift in Sources */,
+				7E7E4E7A218E19C600C72376 /* Intents.intentdefinition in Sources */,
 				DD2F98A31E5150990005F6BC /* RouteOptionsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
