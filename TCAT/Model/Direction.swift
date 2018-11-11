@@ -12,7 +12,7 @@ import SwiftyJSON
 
 /// An enum for the type of direction
 enum DirectionType: String, Codable {
-    
+
     /// Directions that involving walking
     case walk
     /// Directions where the user gets on the bus
@@ -47,7 +47,7 @@ class Direction: NSObject, NSCopying, Codable {
         If this is a bus stop, includes stopID as id.
      */
     var startLocation: LocationObject
-    
+
     /** The ending location object associated with the direction
         If this is a bus stop, includes stopID as id.
     */
@@ -55,31 +55,31 @@ class Direction: NSObject, NSCopying, Codable {
 
     /// The starting time (UTC) associated with the direction. Format: `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`
     var startTime: Date
-    
+
     /// The starting time (UTC) associated with the direction Format: `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`
     var endTime: Date
 
     /// The corresponding path of the direction
     var path: [CLLocationCoordinate2D]
-    
+
     /// The total distance of the direction, in meters.
     var travelDistance: Double = 0
 
     /// The number representing the bus route.
     var routeNumber: Int = 0
-    
+
     /// An array of bus stop locations on the bus route, excluding the departure and arrival stop. Empty if `type != .depart`.
     var stops: [LocationObject] = []
-    
+
     /// Whether the user should stay on this direction's bus for an upcoming transfer.
     var stayOnBusForTransfer: Bool = false
-    
+
     /// The unique identifiers for the specific bus related to the direction.
-    var tripIdentifiers: [String]? = nil
-    
+    var tripIdentifiers: [String]?
+
     /// The bus delay for stops[0]
     var delay: Int?
-    
+
     private enum CodingKeys: String, CodingKey {
         case type
         case name
@@ -96,7 +96,7 @@ class Direction: NSObject, NSCopying, Codable {
         case travelDistance = "distance"
     }
     // MARK: Initalizers
-    
+
     required init (from decoder: Decoder) {
         let container = try! decoder.container(keyedBy: CodingKeys.self)
         type = try! container.decode(DirectionType.self, forKey: .type)
@@ -112,7 +112,7 @@ class Direction: NSObject, NSCopying, Codable {
         tripIdentifiers = try! container.decode([String]?.self, forKey: .tripIdentifiers)
         delay = try! container.decode(Int?.self, forKey: .delay)
         travelDistance = try! container.decode(Double.self, forKey: .travelDistance)
-        
+
         super.init()
         if type == .depart || type == .arrive, let start = stops.first, let end = stops.last {
             startLocation = start
@@ -174,9 +174,9 @@ class Direction: NSObject, NSCopying, Codable {
     }
 
     convenience init(from json: JSON) {
-        
+
         self.init()
-        
+
         name = json["name"].stringValue
         type = json["type"].stringValue.lowercased() == "depart" ? .depart : .walk
         startTime = json["startTime"].parseDate()
@@ -190,15 +190,15 @@ class Direction: NSObject, NSCopying, Codable {
         stayOnBusForTransfer = json["stayOnBusForTransfer"].boolValue
         tripIdentifiers = json["tripIdentifiers"].arrayObject as? [String]
         delay = json["delay"].int
-        
+
         // If depart direction, use bus stop locations (with id) for start and end
         if type == .depart || type == .arrive, let start = stops.first, let end = stops.last {
             startLocation = start
             endLocation = end
         }
-        
+
     }
-    
+
     func copy(with zone: NSZone? = nil) -> Any {
         return Swift.type(of: self).init(
             type: type,
@@ -217,7 +217,6 @@ class Direction: NSObject, NSCopying, Codable {
         )
     }
 
-
     // MARK: Descriptions
 
     /// Returns custom description for locationName based on DirectionType
@@ -232,13 +231,13 @@ class Direction: NSObject, NSCopying, Codable {
 
         case .walk:
             return "Walk to \(name)"
-            
+
         case .transfer:
             return "at \(name). Stay on bus."
 
         }
     }
-    
+
     override var debugDescription: String {
         return """
         {
@@ -256,7 +255,7 @@ class Direction: NSObject, NSCopying, Codable {
         }
         """
     }
-    
+
     // MARK: Complex Variables & Functions
 
     /// Returns readable start time (e.g. 7:49 PM)
@@ -268,21 +267,21 @@ class Direction: NSObject, NSCopying, Codable {
     var endTimeDescription: String {
         return timeDescription(endTime)
     }
-    
+
     /// Return the start time with the delay added.
     var startTimeWithDelay: Date {
         return startTime.addingTimeInterval(TimeInterval(delay ?? 0))
     }
-    
+
     /// Return the end time with the delay added.
     var endTimeWithDelay: Date {
         return endTime.addingTimeInterval(TimeInterval(delay ?? 0))
     }
-    
+
     var startTimeWithDelayDescription: String {
         return timeDescription(startTimeWithDelay)
     }
-    
+
     var endTimeWithDelayDescription: String {
         return timeDescription(endTimeWithDelay)
     }
@@ -292,5 +291,5 @@ class Direction: NSObject, NSCopying, Codable {
         formatter.timeStyle = .short
         return formatter.string(from: time)
     }
-    
+
 }

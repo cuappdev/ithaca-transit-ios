@@ -20,11 +20,11 @@ enum NetworkType: String {
 class Network {
 
     // MARK: Global Network Variables
-    
+
     /// Testing local servers for Network
     // Change `networkType` to `.local` to work locally.
     // Change `localIPAddress` to be the proper address
-    
+
     static let networkType: NetworkType = .release
     static let apiVersion = "v1"
 
@@ -35,11 +35,11 @@ class Network {
     /// Test server used for development
     static let debugIPAddress = "34.238.157.63"
     static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
-    
+
     /// Deployed server instance used for release
     static let releaseIPAddress = "transit-backend.cornellappdev.com"
     static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
-    
+
     /// Network IP address being used for specified networkType
     static var ipAddress: String {
         switch networkType {
@@ -65,7 +65,7 @@ class Network {
         request.method = .get
         return request
     }
-    
+
     class func getAlerts() -> APIRequest<AlertRequest, Error> {
         let request: APIRequest<AlertRequest, Error> = tron.codable.request("alerts")
         request.method = .get
@@ -74,27 +74,27 @@ class Network {
 
     class func getCoordinates(start: CoordinateAcceptor, end: CoordinateAcceptor,
                               callback: @escaping (_ startCoord: CLLocationCoordinate2D?, _ endCoord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void ) {
-        
+
         let visitor = CoordinateVisitor()
-        
+
         start.accept(visitor: visitor) { (startCoord, error) in
-            
+
             guard let startCoord = startCoord else {
                 callback(nil, nil, error)
                 return
             }
-            
+
             end.accept(visitor: visitor) { (endCoord, error) in
-                
+
                 guard let endCoord = endCoord else {
                     callback(nil, nil, error)
                     return
                 }
-                
+
                 callback(startCoord, endCoord, nil)
-                
+
             }
-            
+
         }
 
     }
@@ -105,23 +105,23 @@ class Network {
             let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
             request.method = .get
             request.parameters = [
-                "arriveBy"          :   type == .arriveBy,
-                "end"               :   "\(endCoord.latitude),\(endCoord.longitude)",
-                "start"             :   "\(startCoord.latitude),\(startCoord.longitude)",
-                "time"              :   time.timeIntervalSince1970,
-                "destinationName"   :   endPlaceName
+                "arriveBy": type == .arriveBy,
+                "end": "\(endCoord.latitude),\(endCoord.longitude)",
+                "start": "\(startCoord.latitude),\(startCoord.longitude)",
+                "time": time.timeIntervalSince1970,
+                "destinationName": endPlaceName
             ]
 
             callback(request)
     }
-    
+
     class func getRequestUrl(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, destinationName: String, time: Date, type: SearchType) -> String {
         let path = "route"
         let arriveBy = (type == .arriveBy)
         let end = "\(endCoord.latitude),\(endCoord.longitude)"
         let start =  "\(startCoord.latitude),\(startCoord.longitude)"
         let time = time.timeIntervalSince1970
-        
+
         return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(end)&start=\(start)&time=\(time)&destinationName=\(destinationName)"
     }
 
@@ -131,7 +131,7 @@ class Network {
         request.method = .post
             request.parameterEncoding = JSONEncoding.default
         request.parameters = [
-            "query" : searchText
+            "query": searchText
         ]
         return request
     }
@@ -140,28 +140,28 @@ class Network {
         let request: APIRequest<BusLocationRequest, Error> = tron.codable.request("tracking")
         request.method = .post
         let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
-        let dictionary = departDirections.map { (direction) -> [String : Any] in
+        let dictionary = departDirections.map { (direction) -> [String: Any] in
 
             // The id of the location, or bus stop, the bus needs to get to
             let stopID = direction.startLocation.id
-            
+
             let x = [
-                "stopID"                :   stopID,
-                "routeID"               :   String(direction.routeNumber),
-                "tripIdentifiers"       :   direction.tripIdentifiers!
-                ] as [String : Any]
-            
+                "stopID": stopID,
+                "routeID": String(direction.routeNumber),
+                "tripIdentifiers": direction.tripIdentifiers!
+                ] as [String: Any]
+
             print(x)
 
             return [
-                "stopID"                :   stopID,
-                "routeID"               :   String(direction.routeNumber),
-                "tripIdentifiers"       :   direction.tripIdentifiers!
+                "stopID": stopID,
+                "routeID": String(direction.routeNumber),
+                "tripIdentifiers": direction.tripIdentifiers!
             ]
 
         }
 
-        request.parameters = [ "data" : dictionary ]
+        request.parameters = [ "data": dictionary ]
         request.parameterEncoding = JSONEncoding.default
         return request
     }
@@ -169,8 +169,8 @@ class Network {
     class func newGetDelay(tripId: String, stopId: String) -> APIRequest<BusDelayRequest, Error> {
         let request: APIRequest<BusDelayRequest, Error> = tron.codable.request("delay")
         request.method = .get
-        request.parameters = ["stopID" : stopId, "tripID" : tripId]
-        
+        request.parameters = ["stopID": stopId, "tripID": tripId]
+
         return request
     }
 
@@ -178,16 +178,15 @@ class Network {
     class func getDelay(tripId: String, stopId: String) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("delay")
         request.method = .get
-        request.parameters = ["stopID" : stopId, "tripID" : tripId]
+        request.parameters = ["stopID": stopId, "tripID": tripId]
 
         return request
     }
-    
+
     class func getDelayUrl(tripId: String, stopId: String) -> String {
         let path = "delay"
-        
+
         return "\(address)\(path)?stopID=\(stopId)&tripID=\(tripId)"
     }
 
 }
-

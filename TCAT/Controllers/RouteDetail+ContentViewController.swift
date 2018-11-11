@@ -291,73 +291,72 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             print("getBusLocations - Directions are not valid")
             return
         }
-        
-        
+
         Network.getBusLocations(route.directions).perform(withSuccess: { (result) in
-            
+
             var results = [BusDataType]()
-            
+
             if result.data.isEmpty {
                 // print("No Bus Locations")
                 // Reset banner in case transitioned from Error to Online - No Bus Locations
                 self.hideBanner()
-                
+
                 // Possibly add information about no tracking available.
             }
-            
+
             for busLocation in result.data {
-                
+
                 results.append(busLocation.dataType)
-                
+
                 switch busLocation.dataType {
-                    
+
                 case .noData:
                     // print("No Data for", busLocation.routeNumber)
-                    
+
                     if !self.noDataRouteList.contains(busLocation.routeNumber) {
                         self.noDataRouteList.append(busLocation.routeNumber)
                     }
-                    
+
                     var message = ""
                     if self.noDataRouteList.count > 1 {
                         message = "No live tracking available for routes"
                     } else {
                         message = "No live tracking available for Route \(busLocation.routeNumber)"
                     }
-                    
+
                     self.showBanner(message, status: .info)
-                    
+
                 case .invalidData:
                     // print("Invalid Data for", busLocation.routeNumber)
-                    
+
                     if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                     }
-                    
+
                     if self.noDataRouteList.isEmpty {
                         self.hideBanner()
                     }
-                    
+
                     self.showBanner(Constants.Banner.trackingLater, status: .info)
-                    
+
                 case .validData:
                     // print("Valid Data for", busLocation.routeNumber)
-                    
+
                     if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                     }
-                    
+
                     if self.noDataRouteList.isEmpty {
                         self.hideBanner()
                     }
-                    
+
                     self.setBusLocation(busLocation)
-                    
+
                 } // switch end
             }
-            
+
         }) { (error) in
-            
+
             print("RouteDetailVC getBusLocations Error:", error.localizedDescription)
             self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
         }

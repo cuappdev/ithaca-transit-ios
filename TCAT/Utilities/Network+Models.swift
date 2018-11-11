@@ -14,7 +14,7 @@ import Alamofire
 
 struct Error: JSONDecodable, Codable {
     init(json: JSON) {}
-    
+
     var error: String!
 }
 struct AlertRequest: Codable {
@@ -58,12 +58,12 @@ struct BusDelay: Codable {
 class AllBusStopsRequest: Codable {
     var success: Bool!
     var data: [BusStop]
-    
+
     private enum Codingkeys: CodingKey {
         case success
         case data
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decode(Bool.self, forKey: .success)
@@ -75,19 +75,19 @@ class AllBusStopsRequest: Codable {
         let crossReference = data.reduce(into: [String: [BusStop]]()) {
             $0[$1.name, default: []].append($1)
         }
-        
-        var nonDuplicateStops = crossReference.filter {$1.count == 1}.map { (key, value) -> BusStop in
+
+        var nonDuplicateStops = crossReference.filter {$1.count == 1}.map { (_, value) -> BusStop in
             return value.first!
         }
-        
+
         let duplicates = crossReference.filter { $1.count > 1 }
-        
+
         var middleGroundBusStops: [BusStop] = []
         for key in duplicates.keys {
             if let currentBusStops = duplicates[key], let first = currentBusStops.first, let second = currentBusStops.last {
                 let firstStopLocation = CLLocation(latitude: first.lat, longitude: first.long)
                 let secondStopLocation = CLLocation(latitude: second.lat, longitude: second.long)
-                
+
                 let distanceBetween = firstStopLocation.distance(from: secondStopLocation)
                 let middleCoordinate = firstStopLocation.coordinate.middleLocationWith(location: secondStopLocation.coordinate)
                 if distanceBetween < Constants.Values.maxDistanceBetweenStops {
@@ -99,7 +99,7 @@ class AllBusStopsRequest: Codable {
             }
         }
         nonDuplicateStops.append(contentsOf: middleGroundBusStops)
-        
+
         let sortedStops = nonDuplicateStops.sorted(by: {$0.name.uppercased() < $1.name.uppercased()})
         data = sortedStops
     }
