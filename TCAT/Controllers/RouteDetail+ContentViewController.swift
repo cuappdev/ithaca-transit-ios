@@ -291,7 +291,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             print("getBusLocations - Directions are not valid")
             return
         }
-                
+        
+        
         Network.getBusLocations(route.directions).perform(withSuccess: { (result) in
             
             var results = [BusDataType]()
@@ -356,7 +357,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             }
             
         }) { (error) in
-            print(error)
+            
+            print("RouteDetailVC getBusLocations Error:", error.localizedDescription)
+            self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
         }
 
         // Bounce any visible indicators

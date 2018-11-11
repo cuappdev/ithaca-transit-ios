@@ -104,3 +104,8 @@ class AllBusStopsRequest: Codable {
         data = sortedStops
     }
 }
+
+struct RoutesRequest: Codable {
+    var success: Bool
+    var data: [Route]
+}

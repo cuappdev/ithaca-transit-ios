@@ -314,6 +314,11 @@ extension CLLocationCoordinate2D: Codable {
         return center
     }
     
+    private enum CodingKeys: String, CodingKey {
+        case lat
+        case long
+    }
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.unkeyedContainer()
         try container.encode(longitude)
@@ -323,9 +328,9 @@ extension CLLocationCoordinate2D: Codable {
     public init(from decoder: Decoder) throws {
         self.init()
         
-        var container = try decoder.unkeyedContainer()
-        longitude = try container.decode(Double.self)
-        latitude = try container.decode(Double.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        longitude = try container.decode(Double.self, forKey: .long)
+        latitude = try container.decode(Double.self, forKey: .lat)
         
     }
 }
@@ -453,4 +458,16 @@ extension Collection {
         return self.indices.contains(i) ? self[i] : nil
     }
 
+}
+
+class JsonDecoderWithCustomDate: JSONDecoder {
+    override init() {
+        super.init()
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
+        
+        self.dateDecodingStrategy = .formatted(dateFormatter)
+    }
 }

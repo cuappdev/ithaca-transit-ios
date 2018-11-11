@@ -33,6 +33,21 @@ class LocationObject: NSObject, Codable {
         self.longitude = longitude
     }
     
+    private enum CodingKeys: String, CodingKey {
+        case latitude = "lat"
+        case longitude = "long"
+        case name
+        case id = "stopID"
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        latitude = try container.decode(Double.self, forKey: .latitude)
+        longitude = try container.decode(Double.self, forKey: .longitude)
+        do {name = try container.decode(String.self, forKey: .name)} catch {name = ""}
+        do {id = try container.decode(String.self, forKey: .id)} catch {id = ""}
+    }
+    
     /// Blank init to store name
     convenience init(name: String) {
         self.init(name: name, id: "", latitude: 0.0, longitude: 0.0)

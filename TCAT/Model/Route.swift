@@ -44,7 +44,7 @@ struct RouteCalculationError: Swift.Error {
     let description: String
 }
 
-class Route: NSObject, JSONDecodable, Decodable {
+class Route: NSObject, JSONDecodable, Codable {
 
     /// The time a user begins their journey
     var departureTime: Date
@@ -91,13 +91,11 @@ class Route: NSObject, JSONDecodable, Decodable {
         return Time.dateComponents(from: departureTime, to: arrivalTime).minute ?? 0
     }
 
-    private enum CodingKeys: CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case departureTime
         case arrivalTime
         case startCoords
         case endCoords
-        case startName
-        case endName
         case boundingBox
         case numberOfTransfers
         case directions
@@ -105,19 +103,19 @@ class Route: NSObject, JSONDecodable, Decodable {
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.departureTime = try container.decode(Date.self, forKey: .departureTime)
-        self.arrivalTime = try container.decode(Date.self, forKey: .arrivalTime)
-        self.startCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .startCoords)
-        self.endCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .endCoords)
-        self.startName = try container.decode(String.self, forKey: .startName)
-        self.endName = try container.decode(String.self, forKey: .endName)
-        self.boundingBox = try container.decode(Bounds.self, forKey: .boundingBox)
-        self.numberOfTransfers = try container.decode(Int.self, forKey: .numberOfTransfers)
-        self.directions = try container.decode([Direction].self, forKey: .directions)
-        self.rawDirections = try container.decode([Direction].self, forKey: .directions)
-        
-        super.init()
-        
+        departureTime = try container.decode(Date.self, forKey: .departureTime)
+        arrivalTime = try container.decode(Date.self, forKey: .arrivalTime)
+        startCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .startCoords)
+        endCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .endCoords)
+        boundingBox = try container.decode(Bounds.self, forKey: .boundingBox)
+        numberOfTransfers = try container.decode(Int.self, forKey: .numberOfTransfers)
+        directions = try container.decode([Direction].self, forKey: .directions)
+        rawDirections = try container.decode([Direction].self, forKey: .directions)
+        startName = Constants.Stops.currentLocation
+        endName = Constants.Stops.destination
+    }
+    
+    func formatDirections() {
         let first = 0
         for (index, direction) in rawDirections.enumerated() {
             if direction.type == .walk {
@@ -328,7 +326,22 @@ class Route: NSObject, JSONDecodable, Decodable {
     static func parseRoutes(in json: JSON, from: String?, to: String?,
                           _ completion: @escaping (_ routes: [Route], _ error: RouteCalculationError?) -> Void) {
 
-        if json["success"].boolValue {
+        print(json)
+        var routesRequest: RoutesRequest
+
+        let jsonDecoder = JsonDecoderWithCustomDate()
+        do {
+            routesRequest = try jsonDecoder.decode(RoutesRequest.self, from: json.rawData())
+            if routesRequest.success {
+                for route in routesRequest.data {
+                    route.startName = from ?? Constants.Stops.currentLocation
+                    route.endName = to ?? Constants.Stops.destination
+                    route.formatDirections()
+                }
+                print(routesRequest.data)
+                
+            }
+            
             let routes: [Route] = json["data"].arrayValue.map {
                 var augmentedJSON = $0
                 augmentedJSON["startName"].string = from ?? Constants.Stops.currentLocation
@@ -336,10 +349,10 @@ class Route: NSObject, JSONDecodable, Decodable {
                 return try! Route(json: augmentedJSON)
             }
             completion(routes, nil)
-        } else {
+        } catch (let error) {
+            print(error)
             completion([], RouteCalculationError(title: "Route Calculation Failure", description: json["error"].stringValue))
         }
-
     }
 
     // MARK: Process routes

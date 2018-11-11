@@ -36,7 +36,12 @@ class Direction: NSObject, NSCopying, Codable {
      - depart: The name of the bus stop where the bus is departing from
      - arrive: The name of the bus stop where the user gets off the bus
      */
-    var name: String
+    var name: String {
+        didSet {
+            print("Old Value: \(oldValue)")
+            print("New Value \(name)")
+        }
+    }
 
     /** The starting location object associated with the direction
         If this is a bus stop, includes stopID as id.
@@ -75,7 +80,45 @@ class Direction: NSObject, NSCopying, Codable {
     /// The bus delay for stops[0]
     var delay: Int?
     
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case name
+        case startLocation
+        case endLocation
+        case startTime
+        case endTime
+        case path
+        case routeNumber
+        case stops
+        case stayOnBusForTransfer
+        case tripIdentifiers
+        case delay
+        case travelDistance = "distance"
+    }
     // MARK: Initalizers
+    
+    required init (from decoder: Decoder) {
+        let container = try! decoder.container(keyedBy: CodingKeys.self)
+        type = try! container.decode(DirectionType.self, forKey: .type)
+        name = try! container.decode(String.self, forKey: .name)
+        startLocation = try! container.decode(LocationObject.self, forKey: .startLocation)
+        endLocation = try! container.decode(LocationObject.self, forKey: .endLocation)
+        startTime = try! container.decode(Date.self, forKey: .startTime)
+        endTime = try! container.decode(Date.self, forKey: .endTime)
+        path = try! container.decode([CLLocationCoordinate2D].self, forKey: .path)
+        do { routeNumber = try container.decode(Int.self, forKey: .routeNumber) } catch { routeNumber = 0 }
+        stops = try! container.decode([LocationObject].self, forKey: .stops)
+        do { stayOnBusForTransfer = try container.decode(Bool.self, forKey: .stayOnBusForTransfer) } catch { stayOnBusForTransfer = false }
+        tripIdentifiers = try! container.decode([String]?.self, forKey: .tripIdentifiers)
+        delay = try! container.decode(Int?.self, forKey: .delay)
+        travelDistance = try! container.decode(Double.self, forKey: .travelDistance)
+        
+        super.init()
+        if type == .depart || type == .arrive, let start = stops.first, let end = stops.last {
+            startLocation = start
+            endLocation = end
+        }
+    }
 
     required init (
         type: DirectionType,
