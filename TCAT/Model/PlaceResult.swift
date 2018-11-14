@@ -18,7 +18,7 @@ class PlaceResult: Place, CoordinateAcceptor {
 
     private let detailKey = "detail"
     private let placeIDKey = "placeID"
-    
+
     private enum CodingKeys: CodingKey {
         case detail
         case placeID
@@ -30,7 +30,6 @@ class PlaceResult: Place, CoordinateAcceptor {
 
         super.init(name: name)
     }
-
 
     override func isEqual(_ object: Any?) -> Bool {
         if !super.isEqual(object) {
@@ -57,14 +56,14 @@ class PlaceResult: Place, CoordinateAcceptor {
         placeID = (aDecoder.decodeObject(forKey: placeIDKey) as? String) ?? ""
         super.init(coder: aDecoder)
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.detail = try container.decode(String.self, forKey: .detail)
         self.placeID = try container.decode(String.self, forKey: .placeID)
         try super.init(from: decoder)
     }
-    
+
     public override func encode(with aCoder: NSCoder) {
         aCoder.encode(self.detail, forKey: detailKey)
         aCoder.encode(self.placeID, forKey: placeIDKey)
