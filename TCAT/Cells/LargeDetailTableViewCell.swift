@@ -130,8 +130,9 @@ class LargeDetailTableViewCell: UITableViewCell {
         // Using constant always returned from
         //      while label.frame.maxX < busIconView.frame.maxX + 8 {
         // because it will occasionally run infinitely because of format func calls
+        // TODO: Do this better!
         var accum = 0
-        while accum <= (16) {
+        while accum <= (21) {
             accum += 1
             label.text! += " "
             label.sizeToFit()
