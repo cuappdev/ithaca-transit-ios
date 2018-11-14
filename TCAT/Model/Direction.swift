@@ -173,32 +173,6 @@ class Direction: NSObject, NSCopying, Codable {
 
     }
 
-    convenience init(from json: JSON) {
-
-        self.init()
-
-        name = json["name"].stringValue
-        type = json["type"].stringValue.lowercased() == "depart" ? .depart : .walk
-        startTime = json["startTime"].parseDate()
-        endTime = json["endTime"].parseDate()
-        startLocation = json["startLocation"].parseLocationObject()
-        endLocation = json["endLocation"].parseLocationObject()
-        path = json["path"].arrayValue.map { $0.parseCoordinates() }
-        travelDistance = json["distance"].doubleValue
-        routeNumber = json["routeNumber"].int ?? 0
-        stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
-        stayOnBusForTransfer = json["stayOnBusForTransfer"].boolValue
-        tripIdentifiers = json["tripIdentifiers"].arrayObject as? [String]
-        delay = json["delay"].int
-
-        // If depart direction, use bus stop locations (with id) for start and end
-        if type == .depart || type == .arrive, let start = stops.first, let end = stops.last {
-            startLocation = start
-            endLocation = end
-        }
-
-    }
-
     func copy(with zone: NSZone? = nil) -> Any {
         return Swift.type(of: self).init(
             type: type,

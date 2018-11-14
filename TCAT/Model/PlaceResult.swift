@@ -11,7 +11,7 @@ import TRON
 import SwiftyJSON
 import CoreLocation
 
-class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
+class PlaceResult: Place, CoordinateAcceptor {
 
     var detail: String
     var placeID: String
@@ -31,13 +31,6 @@ class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
         super.init(name: name)
     }
 
-    required convenience init(json: JSON) throws {
-        let name = json["structured_formatting"]["main_text"].stringValue
-        let detail = json["structured_formatting"]["secondary_text"].stringValue
-        let placeID = json["place_id"].stringValue
-        
-        self.init(name: name, detail: detail, placeID: placeID)
-    }
 
     override func isEqual(_ object: Any?) -> Bool {
         if !super.isEqual(object) {

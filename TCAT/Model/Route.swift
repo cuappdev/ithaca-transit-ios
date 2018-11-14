@@ -44,7 +44,7 @@ struct RouteCalculationError: Swift.Error {
     let description: String
 }
 
-class Route: NSObject, JSONDecodable, Codable {
+class Route: NSObject, Codable {
 
     /// The time a user begins their journey
     var departureTime: Date
@@ -208,125 +208,10 @@ class Route: NSObject, JSONDecodable, Codable {
         }
     }
 
-    required init(json: JSON) throws {
-
-        // print("Route JSON", json)
-
-        departureTime = json["departureTime"].parseDate()
-        arrivalTime = json["arrivalTime"].parseDate()
-        startCoords = json["startCoords"].parseCoordinates()
-        endCoords = json["endCoords"].parseCoordinates()
-        startName = json["startName"].stringValue
-        endName = json["endName"].stringValue
-        boundingBox = json["boundingBox"].parseBounds()
-        numberOfTransfers = json["numberOfTransfers"].intValue
-        directions = json["directions"].arrayValue.map { Direction(from: $0) }
-        rawDirections = json["directions"].arrayValue.map { Direction(from: $0) }
-
-        super.init()
-
-        // Format raw directions
-
-        let first = 0
-        for (index, direction) in rawDirections.enumerated() {
-            if direction.type == .walk {
-                // Change walking direction name to name of location walking from
-                if index == first {
-                    direction.name = startName
-                } else {
-                    direction.name = rawDirections[index - 1].stops.last?.name ?? rawDirections[index - 1].name
-                }
-            }
-        }
-
-        // Append extra direction for ending location with ending destination name
-        if let direction = rawDirections.last {
-            // Set stayOnBusForTransfer to false b/c ending location can never have transfer
-            if direction.type == .walk || direction.type == .depart {
-                let newDirection = Direction(
-                    type: direction.type == .depart ? .arrive : .walk,
-                    name: endName,
-                    startLocation: direction.startLocation,
-                    endLocation: direction.endLocation,
-                    startTime: direction.startTime,
-                    endTime: direction.endTime,
-                    path: direction.path,
-                    travelDistance: direction.travelDistance,
-                    routeNumber: direction.routeNumber,
-                    stops: direction.stops,
-                    stayOnBusForTransfer: false,
-                    tripIdentifiers: direction.tripIdentifiers,
-                    delay: direction.delay
-                )
-                rawDirections.append(newDirection)
-            }
-        }
-
-        // Change all walking directions, except for first and last direction, to arrive
-        let last = rawDirections.count - 1
-        for (index, direction) in rawDirections.enumerated() {
-            if index != last && index != first && direction.type == .walk {
-                direction.type = .arrive
-                direction.name = rawDirections[index - 1].endLocation.name
-            }
-        }
-
-        calculateTravelDistance(fromRawDirections: rawDirections)
-
-        // Parse and format directions
-
-        // Variable to keep track of additions to direction list (Arrival Directions)
-        var offset = 0
-
-        for (index, direction) in directions.enumerated() {
-
-            if direction.type == .depart {
-
-                let beyondRange = index + 1 > directions.count - 1
-                let isLastDepart = index == directions.count - 1
-
-                if direction.stayOnBusForTransfer {
-                    direction.type = .transfer
-                }
-
-                // If this direction doesn't have a transfer afterwards, or is depart and last
-                if (!beyondRange && !directions[index+1].stayOnBusForTransfer) || isLastDepart {
-
-                    // Create Arrival Direction
-                    let arriveDirection = direction.copy() as! Direction
-                    arriveDirection.type = .arrive
-                    arriveDirection.startTime = arriveDirection.endTime
-                    arriveDirection.startLocation = arriveDirection.endLocation
-                    arriveDirection.stops = []
-                    arriveDirection.name = direction.stops.last?.name ?? "Nil"
-                    directions.insert(arriveDirection, at: index + offset + 1)
-                    offset += 1
-
-                }
-
-                // Remove inital bus stop and departure bus stop
-                if direction.stops.count >= 2 {
-                    direction.stops.removeFirst()
-                    direction.stops.removeLast()
-                }
-            }
-
-            // Change name of last direction to be endName
-            if direction == directions.last {
-                direction.name = endName
-            }
-
-        }
-
-    }
-
-    // MARK: Parse JSON
-
     /// Handle route calculation data request.
     static func parseRoutes(in json: JSON, from: String?, to: String?,
                           _ completion: @escaping (_ routes: [Route], _ error: RouteCalculationError?) -> Void) {
 
-        print(json)
         var routesRequest: RoutesRequest
 
         let jsonDecoder = JsonDecoderWithCustomDate()
@@ -338,20 +223,10 @@ class Route: NSObject, JSONDecodable, Codable {
                     route.endName = to ?? Constants.Stops.destination
                     route.formatDirections()
                 }
-                print(routesRequest.data)
-
             }
-
-            let routes: [Route] = json["data"].arrayValue.map {
-                var augmentedJSON = $0
-                augmentedJSON["startName"].string = from ?? Constants.Stops.currentLocation
-                augmentedJSON["endName"].string = to ?? Constants.Stops.destination
-                return try! Route(json: augmentedJSON)
-            }
-            completion(routes, nil)
+            completion(routesRequest.data, nil)
         } catch (let error) {
-            print(error)
-            completion([], RouteCalculationError(title: "Route Calculation Failure", description: json["error"].stringValue))
+            completion([], RouteCalculationError(title: "Route Calculation Failure", description: error.localizedDescription))
         }
     }
 

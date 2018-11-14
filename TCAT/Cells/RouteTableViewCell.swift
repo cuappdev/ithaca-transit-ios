@@ -338,6 +338,41 @@ class RouteTableViewCell: UITableViewCell {
             let tripId = direction.tripIdentifiers?.first,
             let stopId = direction.stops.first?.id  {
             
+            Network.newGetDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (request) in
+                if request.success {
+                    guard let delay = request.data.delay else {
+                        self.setDepartureTimeAndLiveElements(withRoute: route)
+                        return
+                    }
+                    let isNewDelayValue = (route.getFirstDepartRawDirection()?.delay != delay)
+                    if isNewDelayValue {
+                        JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
+                        JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Network.getDelayUrl(tripId: tripId, stopId: stopId))
+                        // JSONFileManager.shared.saveJSON(json, type: .delayJSON(rowNum: self.rowNum ?? -1))
+                    }
+                    
+                    let departTime = direction.startTime
+                    let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
+                    
+                    let isLateDelay = (Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending)
+                    if isLateDelay {
+                        let delayState = DelayState.late(date: delayedDepartTime)
+                        self.setDepartureTime(withStartTime: Date(), withDelayState: delayState)
+                        self.setLiveElements(withDelayState: delayState)
+                    }
+                    else {
+                        let delayState = DelayState.onTime(date: departTime)
+                        self.setDepartureTime(withStartTime: Date(), withDelayState: delayState)
+                        self.setLiveElements(withDelayState: delayState)
+                    }
+                    
+                    route.getFirstDepartRawDirection()?.delay = delay
+                }
+            }) { (error) in
+                print("\(self.fileName) \(#function) error: \(error.errorDescription ?? "") Request url: \(error.request?.url?.absoluteString ?? "")")
+                self.setDepartureTimeAndLiveElements(withRoute: route)
+            }
+            
             Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
                 
                 if json["success"].boolValue {

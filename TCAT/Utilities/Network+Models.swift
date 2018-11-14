@@ -12,9 +12,7 @@ import TRON
 import CoreLocation
 import Alamofire
 
-struct Error: JSONDecodable, Codable {
-    init(json: JSON) {}
-
+struct Error: Codable {
     var error: String!
 }
 struct AlertRequest: Codable {

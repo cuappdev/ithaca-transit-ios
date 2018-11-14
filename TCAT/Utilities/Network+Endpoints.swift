@@ -145,14 +145,6 @@ class Network {
             // The id of the location, or bus stop, the bus needs to get to
             let stopID = direction.startLocation.id
 
-            let x = [
-                "stopID": stopID,
-                "routeID": String(direction.routeNumber),
-                "tripIdentifiers": direction.tripIdentifiers!
-                ] as [String: Any]
-
-            print(x)
-
             return [
                 "stopID": stopID,
                 "routeID": String(direction.routeNumber),
