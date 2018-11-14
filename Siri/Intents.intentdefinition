@@ -16,16 +16,16 @@
 	<array>
 		<dict>
 			<key>INIntentCategory</key>
-			<string>generic</string>
+			<string>request</string>
 			<key>INIntentDescriptionID</key>
 			<string>wweA1z</string>
 			<key>INIntentLastParameterTag</key>
-			<integer>8</integer>
+			<integer>9</integer>
 			<key>INIntentName</key>
 			<string>GetRoutes</string>
 			<key>INIntentParameterCombinations</key>
 			<dict>
-				<key>searchTo</key>
+				<key>searchTo,latitude,longitude</key>
 				<dict>
 					<key>INIntentParameterCombinationIsPrimary</key>
 					<false/>
@@ -121,7 +121,7 @@
 			<key>INIntentUserConfirmationRequired</key>
 			<false/>
 			<key>INIntentVerb</key>
-			<string>Go</string>
+			<string>Request</string>
 		</dict>
 	</array>
 </dict>

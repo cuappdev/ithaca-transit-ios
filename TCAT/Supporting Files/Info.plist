@@ -50,10 +50,11 @@
 	<string>Allow the app to calculate routes using your current location.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Allow the app to save photos.</string>
+	<key>NSSiriUsageDescription</key>
+	<string>Use Ithaca Transit with Siri to get bus routes.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>GetRoutesIntent</string>
-		<string>getRoutes</string>
 	</array>
 	<key>UIAppFonts</key>
 	<array>

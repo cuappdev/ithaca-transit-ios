@@ -151,7 +151,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Present it 🤩
         UIApplication.shared.keyWindow?.presentInApp(whatsNewViewController)
     }
-        
+
     /// Present an alert indicating bus stops weren't fetched.
     func handleGetAllStopsError() {
         let title = "Couldn't Fetch Bus Stops"
@@ -160,31 +160,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         UIApplication.shared.keyWindow?.presentInApp(alertController)
     }
-    
+
     /// When app is opened via URL
     // URLs for testing
     // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown
     // PlaceResult: ithaca-transit://getRoutes?lat=42.44707979999999&long=-76.4885196&destinationName=Hans%20Bethe%20House
-    func application(_ app: UIApplication, open url: URL, options:
-        [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+
         let rootVC = HomeViewController()
         let navigationController = CustomNavigationController(rootViewController: rootVC)
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
-        
+
         let urlComponents = NSURLComponents(url: url, resolvingAgainstBaseURL: false)
         let items = (urlComponents?.queryItems)! as [NSURLQueryItem]
-        var stop : BusStop
-        
+        var stop: BusStop
+
         // if the URL is from the getRoutes intent
         if url.absoluteString.contains("getRoutes") {
-            var latitude: CLLocationDegrees? = nil
-            var longitude: CLLocationDegrees? = nil
-            var stopName: String? = nil
+            var latitude: CLLocationDegrees?
+            var longitude: CLLocationDegrees?
+            var stopName: String?
             let optionsVC = RouteOptionsViewController()
-            
+
             // get parameters from the URL
             for (index, element) in items.enumerated() {
                 switch index {
@@ -205,40 +204,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
 
-            if let latitude = latitude, let longitude = longitude, let stopName = stopName{
+            if let latitude = latitude, let longitude = longitude, let stopName = stopName {
                 stop = BusStop(name: stopName, lat: latitude, long: longitude)
                 optionsVC.searchTo = stop
                 navigationController.pushViewController(optionsVC, animated: false)
                 return true
             }
         }
-        
+
         return false
     }
-    
+
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        print(userActivity.activityType) //GetRoutesIntent
-        
-        if #available(iOS 12.1, *) {
-            if let intent = userActivity.interaction?.intent as? GetRoutesIntent {
-                print("true")
-                
-                if let latitude = intent.latitude, let longitude = intent.longitude, let searchTo = intent.searchTo {
-                    print(intent.searchTo!)
+
+        if #available(iOS 12.0, *) {
+            if let intent = userActivity.interaction?.intent as? GetRoutesIntent,
+                let latitude = intent.latitude,
+                let longitude = intent.longitude,
+                let searchTo = intent.searchTo {
                     if let stopName = searchTo.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
-                        let urlString = "ithaca-transit://getRoutes?lat=" + latitude + "&long=" + longitude + "&stopName=" + stopName
+                        let urlString = "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(stopName)"
                         if let url = URL(string: urlString) {
                             UIApplication.shared.open(url, options: [:], completionHandler: nil)
                             return true
                         }
                     }
-                }
             }
-        } else {
-            print("false")
-            return false
         }
-        
         return false
     }
 }

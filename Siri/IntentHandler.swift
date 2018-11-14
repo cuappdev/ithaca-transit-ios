@@ -9,10 +9,9 @@
 import Intents
 
 class IntentHandler: INExtension {
-    
+
     override func handler(for intent: INIntent) -> Any {
-        print("entered handler")
-        if #available(iOS 12.1, *) {
+        if #available(iOS 12.0, *) {
             switch intent {
             case is GetRoutesIntent:
                 return GetRoutesIntentHandler()
@@ -25,26 +24,14 @@ class IntentHandler: INExtension {
     }
 }
 
-@available(iOS 12.1, *)
+@available(iOS 12.0, *)
 class GetRoutesIntentHandler: INExtension, GetRoutesIntentHandling {
     func handle(intent: GetRoutesIntent, completion: @escaping (GetRoutesIntentResponse) -> Void) {
-        print("entered intent handler")
-        if let latitude = intent.latitude, let longitude = intent.longitude, let searchTo = intent.searchTo {
-            print(intent.searchTo!)
-            if let stopName = searchTo.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
-                let urlString = "ithaca-transit://getRoutes?lat=" + latitude + "&long=" + longitude + "&stopName=" + stopName
-                let userActivity = NSUserActivity(activityType: "getRoutes")
-                
-                userActivity.userInfo = ["url" : urlString, "intent" : intent]
-                print(userActivity.activityType)
-                
-                let response = GetRoutesIntentResponse(code: .success, userActivity: userActivity)
-                completion(response)
-            }
-        }
-        else {
+        if let _ = intent.latitude, let _ = intent.longitude, let _ = intent.searchTo {
+            let response = GetRoutesIntentResponse(code: .success, userActivity: nil)
+            completion(response)
+        } else {
             completion(GetRoutesIntentResponse(code: .failure, userActivity: nil))
         }
     }
-
 }
