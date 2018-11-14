@@ -336,7 +336,7 @@ class RouteTableViewCell: UITableViewCell {
 
             Network.newGetDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (request) in
                 if request.success {
-                    guard let delay = request.data.delay else {
+                    guard (request.data != nil), let delay = request.data.delay else {
                         self.setDepartureTimeAndLiveElements(withRoute: route)
                         return
                     }
