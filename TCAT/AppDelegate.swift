@@ -23,6 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let userDefaults = UserDefaults.standard
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
         
@@ -39,15 +40,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Log basic information
         let payload = AppLaunchedPayload()
         Analytics.shared.log(payload)
-        
         JSONFileManager.shared.deleteAllJSONs()
         
-        // Check app version
-        if let version = userDefaults.value(forKey: Constants.UserDefaults.version) as? String {
-            if version != Constants.App.version {
-                // User has just updated the app.
-            }
-        }
+        // Set UID for user if it doesn't exist.
+        setupUniqueIdentifier()
         
         // Set version to be current version
         userDefaults.set(Constants.App.version, forKey: Constants.UserDefaults.version)
@@ -66,9 +62,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Track number of app opens for Store Review prompt
         StoreReviewHelper.incrementAppOpenedCount()
         
-        // Debug - Always Show Onboarding
-        // userDefaults.set(false, forKey: Constants.UserDefaults.onboardingShown)
-        
+        // Update local bus stops.
         getBusStops()
         
         // Initalize first view based on context
@@ -109,6 +103,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+    
+    // MARK: Helper Functions
+    
+    /// Creates and sets a unique identifier. If the device identifier changes, updates it.
+    func setupUniqueIdentifier() {
+        if
+            let uid = UIDevice.current.identifierForVendor?.uuidString,
+            uid != userDefaults.string(forKey: Constants.UserDefaults.uid)
+        {
+            userDefaults.set(uid, forKey: Constants.UserDefaults.uid)
+        }
     }
     
     func handleShortcut(item: UIApplicationShortcutItem) {

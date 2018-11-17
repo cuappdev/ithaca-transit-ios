@@ -95,17 +95,23 @@ class Network {
 
     class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, endPlaceName: String, time: Date, type: SearchType,
                          callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void) {
-            let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
-            request.method = .get
-            request.parameters = [
-                "arriveBy"          :   type == .arriveBy,
-                "end"               :   "\(endCoord.latitude),\(endCoord.longitude)",
-                "start"             :   "\(startCoord.latitude),\(startCoord.longitude)",
-                "time"              :   time.timeIntervalSince1970,
-                "destinationName"   :   endPlaceName
-            ]
-
-            callback(request)
+        
+        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
+        request.method = .get
+        request.parameters = [
+            "arriveBy"          :   type == .arriveBy,
+            "end"               :   "\(endCoord.latitude),\(endCoord.longitude)",
+            "start"             :   "\(startCoord.latitude),\(startCoord.longitude)",
+            "time"              :   time.timeIntervalSince1970,
+            "destinationName"   :   endPlaceName
+        ]
+        
+        // Add unique identifier to request
+        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+            request.parameters["uid"] = uid
+        }
+        
+        callback(request)
     }
     
     class func getRequestUrl(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, destinationName: String, time: Date, type: SearchType) -> String {
@@ -122,10 +128,14 @@ class Network {
     class func getGooglePlacesAutocompleteResults(searchText: String) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("places")
         request.method = .post
-            request.parameterEncoding = JSONEncoding.default
-        request.parameters = [
-            "query" : searchText
-        ]
+        request.parameterEncoding = JSONEncoding.default
+        request.parameters = [ "query" : searchText ]
+        
+        // Add unique identifier to request
+        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+            request.parameters["uid"] = uid
+        }
+        
         return request
     }
 
@@ -147,8 +157,14 @@ class Network {
 
         }
 
-        request.parameters = [ "data" : dictionary ]
+        request.parameters = ["data" : dictionary]
         request.parameterEncoding = JSONEncoding.default
+        
+        // Add unique identifier to request
+        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+            request.parameters["uid"] = uid
+        }
+        
         return request
 
     }
@@ -156,14 +172,21 @@ class Network {
     class func getDelay(tripId: String, stopId: String) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("delay")
         request.method = .get
-        request.parameters = ["stopID" : stopId, "tripID" : tripId]
+        request.parameters = [
+            "stopID" : stopId,
+            "tripID" : tripId
+        ]
+
+        // Add unique identifier to request
+        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+            request.parameters["uid"] = uid
+        }
 
         return request
     }
     
     class func getDelayUrl(tripId: String, stopId: String) -> String {
         let path = "delay"
-        
         return "\(address)\(path)?stopID=\(stopId)&tripID=\(tripId)"
     }
 
