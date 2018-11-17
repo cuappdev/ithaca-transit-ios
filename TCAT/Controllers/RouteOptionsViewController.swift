@@ -881,6 +881,7 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         locationManager.stopUpdatingLocation()
         if let routeDetailViewController = createRouteDetailViewController(from: indexPath) {
+            Network.routeSelected(rowIndex: indexPath.row)
             let payload = RouteResultsCellTappedEventPayload()
             Analytics.shared.log(payload)
             navigationController?.pushViewController(routeDetailViewController, animated: true)

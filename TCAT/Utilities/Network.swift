@@ -129,7 +129,21 @@ class Network {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("places")
         request.method = .post
         request.parameterEncoding = JSONEncoding.default
-        request.parameters = [ "query" : searchText ]
+        request.parameters = ["query" : searchText]
+        
+        // Add unique identifier to request
+        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+            request.parameters["uid"] = uid
+        }
+        
+        return request
+    }
+    
+    class func routeSelected(rowIndex: Int) -> APIRequest<JSON, Error> {
+        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routeSelected")
+        request.method = .post
+        request.parameterEncoding = JSONEncoding.default
+        request.parameters = ["rowIndex" : rowIndex]
         
         // Add unique identifier to request
         if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
