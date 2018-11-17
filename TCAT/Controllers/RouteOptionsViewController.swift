@@ -881,7 +881,14 @@ class RouteOptionsViewController: UIViewController, UITableViewDelegate, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         locationManager.stopUpdatingLocation()
         if let routeDetailViewController = createRouteDetailViewController(from: indexPath) {
-            Network.routeSelected(rowIndex: indexPath.row)
+
+            if let name = searchTo?.name, let time = searchTime {
+                let route = routes[indexPath.row]
+                let url = Network.getRequestUrl(startCoord: route.startCoords, endCoord: route.endCoords,
+                                              destinationName: name, time: time, type: self.searchTimeType)
+                Network.routeSelected(url: url, rowIndex: indexPath.row)
+            }
+
             let payload = RouteResultsCellTappedEventPayload()
             Analytics.shared.log(payload)
             navigationController?.pushViewController(routeDetailViewController, animated: true)

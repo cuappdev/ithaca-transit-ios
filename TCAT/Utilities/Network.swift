@@ -140,11 +140,14 @@ class Network {
     }
     
     @discardableResult
-    class func routeSelected(rowIndex: Int) -> APIRequest<JSON, Error> {
+    class func routeSelected(url: String, rowIndex: Int) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routeSelected")
         request.method = .post
         request.parameterEncoding = JSONEncoding.default
-        request.parameters = ["rowIndex" : rowIndex]
+        request.parameters = [
+            "url" : url,
+            "rowIndex" : rowIndex
+        ]
         
         // Add unique identifier to request
         if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
