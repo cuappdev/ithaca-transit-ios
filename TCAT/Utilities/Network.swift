@@ -139,6 +139,7 @@ class Network {
         return request
     }
     
+    @discardableResult
     class func routeSelected(rowIndex: Int) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routeSelected")
         request.method = .post
