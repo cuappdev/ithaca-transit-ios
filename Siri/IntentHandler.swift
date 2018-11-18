@@ -30,10 +30,9 @@ class GetRoutesIntentHandler: INExtension, GetRoutesIntentHandling {
         if (intent.latitude != nil && intent.longitude != nil && intent.searchTo != nil) {
             let response = GetRoutesIntentResponse(code: .success, userActivity: nil)
             completion(response)
-        }
-        else {
+        } else {
             completion(GetRoutesIntentResponse(code: .failure, userActivity: nil))
         }
-        
+
     }
 }

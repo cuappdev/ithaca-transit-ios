@@ -160,13 +160,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         UIApplication.shared.keyWindow?.presentInApp(alertController)
     }
-    
+
     /// Open the app when opened via URL scheme
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
     // URLs for testing
     // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown
     // PlaceResult: ithaca-transit://getRoutes?lat=42.44707979999999&long=-76.4885196&destinationName=Hans%20Bethe%20House
-        
+
         let rootVC = HomeViewController()
         let navigationController = CustomNavigationController(rootViewController: rootVC)
         self.window = UIWindow(frame: UIScreen.main.bounds)
@@ -174,13 +174,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.makeKeyAndVisible()
 
         let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
-    
+
         if url.absoluteString.contains("getRoutes") {
             var latitude: CLLocationDegrees?
             var longitude: CLLocationDegrees?
             var stopName: String?
             let optionsVC = RouteOptionsViewController()
-            
+
             if
                 let lat = items?.filter({$0.name == "lat"}).first?.value,
                 let long = items?.filter({$0.name == "long"}).first?.value,
