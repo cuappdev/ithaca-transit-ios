@@ -14,6 +14,7 @@ import NotificationBannerSwift
 import Crashlytics
 import Pulley
 import TRON
+import Intents
 
 enum SearchBarType: String {
     case from, to
@@ -373,6 +374,19 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                     self.processRequest(request: request, requestUrl: requestUrl, endPlace: searchTo)
                 }
 
+                // Donate GetRoutes intent
+                if #available(iOS 12.0, *) {
+                    let intent = GetRoutesIntent()
+                    intent.searchTo = searchTo.name
+                    intent.latitude = String(endCoord.latitude)
+                    intent.longitude = String(endCoord.longitude)
+                    intent.suggestedInvocationPhrase = "Find bus to \(searchTo.name)"
+                    let interaction = INInteraction(intent: intent, response: nil)
+                    interaction.donate(completion: { (error) in
+                        guard let error = error else { return }
+                        print("Intent Donation Error: \(error.localizedDescription)")
+                    })
+                }
             }
         }
     }
