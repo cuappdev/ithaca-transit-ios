@@ -367,12 +367,11 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                     self.processInvalidCoordinates()
                     return
                 }
-
-                Network.getRoutes(startCoord: startCoord, endCoord: endCoord, endPlaceName: searchFrom.name, time: time, type: self.searchTimeType) { request in
+                
+                Network.getRoutes(startCoord: startCoord, endCoord: endCoord, endPlaceName: searchFrom.name, time: time, type: self.searchTimeType) { (request) in
                     let requestUrl = Network.getRequestUrl(startCoord: startCoord, endCoord: endCoord, destinationName: searchTo.name, time: time, type: self.searchTimeType)
                     self.processRequest(request: request, requestUrl: requestUrl, endPlace: searchTo)
                 }
-
             }
         }
     }
@@ -406,36 +405,29 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                        payload: GetRoutesErrorPayload(type: title, description: message, url: nil))
             ])
     }
-
-    func processRequest(request: APIRequest<JSON, Error>, requestUrl: String, endPlace: Place) {
+    
+    func processRequest(request: APIRequest<RoutesRequest, Error>, requestUrl: String, endPlace: Place) {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestUrl)
-
-        request.perform(withSuccess: { routeJson in
-                            self.processRouteJson(routeJSON: routeJson, requestUrl: requestUrl)
-                        },
-                        failure: { requestError in
-                            self.processRequestError(error: requestError, requestUrl: requestUrl)
-                        }
-        )
-
+        
+        request.performCollectingTimeline{ (response) in
+            do { try print(JSON.init(data: response.data!)) } catch { print("error") }
+            switch response.result {
+            case .success(let routesResponse):
+                if let data = response.data { do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) } catch { print("error") } }
+                for each in routesResponse.data {
+                    each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
+                }
+                self.routes = routesResponse.data
+                self.requestDidFinish(perform: [.hideBanner])
+            case .failure(let networkError):
+                if let error = networkError as? APIError<Error> {
+                    self.processRequestError(error: error, requestUrl: requestUrl)
+                }
+            }
+        }
+        
         let payload = DestinationSearchedEventPayload(destination: endPlace.name, requestUrl: requestUrl)
         Analytics.shared.log(payload)
-    }
-
-    func processRouteJson(routeJSON: JSON, requestUrl: String) {
-        JSONFileManager.shared.saveJSON(routeJSON, type: .routeJSON)
-
-        Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
-            self.routes = parsedRoutes
-            if let error = error {
-                self.requestDidFinish(perform: [
-                    .showError(bannerInfo: BannerInfo(title: "Route calculation error. Please retry.", style: .warning),
-                               payload: GetRoutesErrorPayload(type: error.title, description: error.description, url: requestUrl))
-                ])
-            } else {
-                self.requestDidFinish(perform: [.hideBanner])
-            }
-        })
     }
 
     func processRequestError(error: APIError<Error>, requestUrl: String) {

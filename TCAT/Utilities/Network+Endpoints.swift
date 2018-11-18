@@ -99,20 +99,19 @@ class Network {
 
     }
 
-    /// TO BE CHANGED
     class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, endPlaceName: String, time: Date, type: SearchType,
-                         callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void) {
-            let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
-            request.method = .get
-            request.parameters = [
-                "arriveBy": type == .arriveBy,
-                "end": "\(endCoord.latitude),\(endCoord.longitude)",
-                "start": "\(startCoord.latitude),\(startCoord.longitude)",
-                "time": time.timeIntervalSince1970,
-                "destinationName": endPlaceName
-            ]
+                         callback: @escaping (_ request: APIRequest<RoutesRequest, Error>) -> Void) {
+        let request: APIRequest<RoutesRequest, Error> = tron.codable.request("route")
+        request.method = .get
+        request.parameters = [
+            "arriveBy": type == .arriveBy,
+            "end": "\(endCoord.latitude),\(endCoord.longitude)",
+            "start": "\(startCoord.latitude),\(startCoord.longitude)",
+            "time": time.timeIntervalSince1970,
+            "destinationName": endPlaceName
+        ]
 
-            callback(request)
+        callback(request)
     }
 
     class func getRequestUrl(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, destinationName: String, time: Date, type: SearchType) -> String {

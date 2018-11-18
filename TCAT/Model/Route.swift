@@ -103,8 +103,8 @@ class Route: NSObject, Codable {
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        departureTime = try container.decode(Date.self, forKey: .departureTime)
-        arrivalTime = try container.decode(Date.self, forKey: .arrivalTime)
+        departureTime = Route.parseDate(try container.decode(String.self, forKey: .departureTime))
+        arrivalTime = Route.parseDate(try container.decode(String.self, forKey: .arrivalTime))
         startCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .startCoords)
         endCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .endCoords)
         boundingBox = try container.decode(Bounds.self, forKey: .boundingBox)
@@ -115,7 +115,10 @@ class Route: NSObject, Codable {
         endName = Constants.Stops.destination
     }
 
-    func formatDirections() {
+    func formatDirections(start: String?, end: String?) {
+        startName = start ?? Constants.Stops.currentLocation
+        endName = end ?? Constants.Stops.destination
+        
         let first = 0
         for (index, direction) in rawDirections.enumerated() {
             if direction.type == .walk {
@@ -208,26 +211,10 @@ class Route: NSObject, Codable {
         }
     }
 
-    /// Handle route calculation data request.
-    static func parseRoutes(in json: JSON, from: String?, to: String?,
-                          _ completion: @escaping (_ routes: [Route], _ error: RouteCalculationError?) -> Void) {
-
-        var routesRequest: RoutesRequest
-
-        let jsonDecoder = JsonDecoderWithCustomDate()
-        do {
-            routesRequest = try jsonDecoder.decode(RoutesRequest.self, from: json.rawData())
-            if routesRequest.success {
-                for route in routesRequest.data {
-                    route.startName = from ?? Constants.Stops.currentLocation
-                    route.endName = to ?? Constants.Stops.destination
-                    route.formatDirections()
-                }
-            }
-            completion(routesRequest.data, nil)
-        } catch (let error) {
-            completion([], RouteCalculationError(title: "Route Calculation Failure", description: error.localizedDescription))
-        }
+    class func parseDate(_ dateString: String) -> Date {
+        let dateFormatter = DateFormatter.defaultParser
+        let date = dateFormatter.date(from: dateString) ?? Date.distantPast
+        return Time.truncateSeconds(from: date)
     }
 
     // MARK: Process routes

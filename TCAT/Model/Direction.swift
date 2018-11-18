@@ -103,8 +103,8 @@ class Direction: NSObject, NSCopying, Codable {
         name = try! container.decode(String.self, forKey: .name)
         startLocation = try! container.decode(LocationObject.self, forKey: .startLocation)
         endLocation = try! container.decode(LocationObject.self, forKey: .endLocation)
-        startTime = try! container.decode(Date.self, forKey: .startTime)
-        endTime = try! container.decode(Date.self, forKey: .endTime)
+        startTime = Route.parseDate(try! container.decode(String.self, forKey: .startTime))
+        endTime = Route.parseDate(try! container.decode(String.self, forKey: .endTime))
         path = try! container.decode([CLLocationCoordinate2D].self, forKey: .path)
         do { routeNumber = try container.decode(Int.self, forKey: .routeNumber) } catch { routeNumber = 0 }
         stops = try! container.decode([LocationObject].self, forKey: .stops)
