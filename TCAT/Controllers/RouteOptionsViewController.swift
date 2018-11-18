@@ -367,7 +367,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                     self.processInvalidCoordinates()
                     return
                 }
-                
+
                 Network.getRoutes(startCoord: startCoord, endCoord: endCoord, endPlaceName: searchFrom.name, time: time, type: self.searchTimeType) { (request) in
                     let requestUrl = Network.getRequestUrl(startCoord: startCoord, endCoord: endCoord, destinationName: searchTo.name, time: time, type: self.searchTimeType)
                     self.processRequest(request: request, requestUrl: requestUrl, endPlace: searchTo)
@@ -405,11 +405,11 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                        payload: GetRoutesErrorPayload(type: title, description: message, url: nil))
             ])
     }
-    
+
     func processRequest(request: APIRequest<RoutesRequest, Error>, requestUrl: String, endPlace: Place) {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestUrl)
-        
-        request.performCollectingTimeline{ (response) in
+
+        request.performCollectingTimeline { (response) in
             do { try print(JSON.init(data: response.data!)) } catch { print("error") }
             switch response.result {
             case .success(let routesResponse):
@@ -425,7 +425,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                 }
             }
         }
-        
+
         let payload = DestinationSearchedEventPayload(destination: endPlace.name, requestUrl: requestUrl)
         Analytics.shared.log(payload)
     }

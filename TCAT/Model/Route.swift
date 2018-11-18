@@ -118,7 +118,7 @@ class Route: NSObject, Codable {
     func formatDirections(start: String?, end: String?) {
         startName = start ?? Constants.Stops.currentLocation
         endName = end ?? Constants.Stops.destination
-        
+
         let first = 0
         for (index, direction) in rawDirections.enumerated() {
             if direction.type == .walk {
