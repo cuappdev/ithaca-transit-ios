@@ -160,22 +160,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         UIApplication.shared.keyWindow?.presentInApp(alertController)
     }
-
-    /// When app is opened via URL
+    
+    /// Open the app when opened via URL scheme
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
     // URLs for testing
     // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown
     // PlaceResult: ithaca-transit://getRoutes?lat=42.44707979999999&long=-76.4885196&destinationName=Hans%20Bethe%20House
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-
+        
         let rootVC = HomeViewController()
         let navigationController = CustomNavigationController(rootViewController: rootVC)
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window!.rootViewController = navigationController
+        self.window?.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
 
         let urlComponents = NSURLComponents(url: url, resolvingAgainstBaseURL: false)
-        let items = (urlComponents?.queryItems)! as [NSURLQueryItem]
-        var stop: BusStop
+        var items = [NSURLQueryItem]()
+        if let queryItems = urlComponents?.queryItems {
+            items = queryItems as [NSURLQueryItem]
+        }
 
         // if the URL is from the getRoutes intent
         if url.absoluteString.contains("getRoutes") {
@@ -205,7 +207,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
 
             if let latitude = latitude, let longitude = longitude, let stopName = stopName {
-                stop = BusStop(name: stopName, lat: latitude, long: longitude)
+                let stop = BusStop(name: stopName, lat: latitude, long: longitude)
                 optionsVC.searchTo = stop
                 navigationController.pushViewController(optionsVC, animated: false)
                 return true
@@ -218,18 +220,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
 
         if #available(iOS 12.0, *) {
-            if let intent = userActivity.interaction?.intent as? GetRoutesIntent,
+            if
+                let intent = userActivity.interaction?.intent as? GetRoutesIntent,
                 let latitude = intent.latitude,
                 let longitude = intent.longitude,
-                let searchTo = intent.searchTo {
-                    if let stopName = searchTo.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
-                        let urlString = "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(stopName)"
-                        if let url = URL(string: urlString) {
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                            return true
-                        }
-                    }
-            }
+                let searchTo = intent.searchTo,
+                let stopName = searchTo.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed),
+                let url = URL(string: "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(stopName)") {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    return true
+                }
         }
         return false
     }

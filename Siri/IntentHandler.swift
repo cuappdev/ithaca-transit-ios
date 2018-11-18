@@ -27,11 +27,13 @@ class IntentHandler: INExtension {
 @available(iOS 12.0, *)
 class GetRoutesIntentHandler: INExtension, GetRoutesIntentHandling {
     func handle(intent: GetRoutesIntent, completion: @escaping (GetRoutesIntentResponse) -> Void) {
-        if let _ = intent.latitude, let _ = intent.longitude, let _ = intent.searchTo {
+        if (intent.latitude != nil && intent.longitude != nil && intent.searchTo != nil) {
             let response = GetRoutesIntentResponse(code: .success, userActivity: nil)
             completion(response)
-        } else {
+        }
+        else {
             completion(GetRoutesIntentResponse(code: .failure, userActivity: nil))
         }
+        
     }
 }

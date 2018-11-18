@@ -27,10 +27,6 @@
 		503EC38D1E96B85B00B3D4D4 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC38C1E96B85B00B3D4D4 /* Network.swift */; };
 		50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A19BAD1E4C214000AD6768 /* HomeViewController.swift */; };
 		7E14AEDD2177E884006A344D /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
-		7E14AEE42177E884006A344D /* IntentsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E14AEC02177E846006A344D /* IntentsUI.framework */; };
-		7E14AEE72177E884006A344D /* IntentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEE62177E884006A344D /* IntentViewController.swift */; };
-		7E14AEEA2177E884006A344D /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7E14AEE82177E884006A344D /* MainInterface.storyboard */; };
-		7E14AEEE2177E884006A344D /* SiriUI.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7E14AEE32177E884006A344D /* SiriUI.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7E14AEF12177E884006A344D /* Siri.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7E14AEDA2177E884006A344D /* Siri.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7E14AEF92177EA31006A344D /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEF82177EA31006A344D /* Intents.intentdefinition */; };
 		7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
@@ -117,13 +113,6 @@
 			remoteGlobalIDString = 449A7C741D80D0E80019300C;
 			remoteInfo = TCAT;
 		};
-		7E14AEEC2177E884006A344D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 449A7C6D1D80D0E80019300C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7E14AEE22177E884006A344D;
-			remoteInfo = SiriUI;
-		};
 		7E14AEEF2177E884006A344D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 449A7C6D1D80D0E80019300C /* Project object */;
@@ -140,7 +129,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				7E14AEEE2177E884006A344D /* SiriUI.appex in Embed App Extensions */,
 				7E14AEF12177E884006A344D /* Siri.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
@@ -180,10 +168,6 @@
 		7E14AEDA2177E884006A344D /* Siri.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Siri.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E14AEDC2177E884006A344D /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
 		7E14AEDE2177E884006A344D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7E14AEE32177E884006A344D /* SiriUI.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SiriUI.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		7E14AEE62177E884006A344D /* IntentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentViewController.swift; sourceTree = "<group>"; };
-		7E14AEE92177E884006A344D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
-		7E14AEEB2177E884006A344D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7E14AEF82177EA31006A344D /* Intents.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = Intents.intentdefinition; sourceTree = "<group>"; };
 		81725F2EBEBD3D184BFD0635 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
 		8236DFFA6C5F3AB1E6E1B0E4 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -292,14 +276,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7E14AEE02177E884006A344D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7E14AEE42177E884006A344D /* IntentsUI.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -337,7 +313,6 @@
 				449A7C8C1D80D0E80019300C /* TCATTests */,
 				449A7C971D80D0E80019300C /* TCATUITests */,
 				7E14AEDB2177E884006A344D /* Siri */,
-				7E14AEE52177E884006A344D /* SiriUI */,
 				449A7C761D80D0E80019300C /* Products */,
 				1AAFAC3CC8BC75583BBEA10B /* Pods */,
 				12F774CEB5023E6938BDCF3A /* Frameworks */,
@@ -351,7 +326,6 @@
 				449A7C891D80D0E80019300C /* TCATTests.xctest */,
 				449A7C941D80D0E80019300C /* TCATUITests.xctest */,
 				7E14AEDA2177E884006A344D /* Siri.appex */,
-				7E14AEE32177E884006A344D /* SiriUI.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -412,16 +386,6 @@
 				7E14AEDE2177E884006A344D /* Info.plist */,
 			);
 			path = Siri;
-			sourceTree = "<group>";
-		};
-		7E14AEE52177E884006A344D /* SiriUI */ = {
-			isa = PBXGroup;
-			children = (
-				7E14AEE62177E884006A344D /* IntentViewController.swift */,
-				7E14AEE82177E884006A344D /* MainInterface.storyboard */,
-				7E14AEEB2177E884006A344D /* Info.plist */,
-			);
-			path = SiriUI;
 			sourceTree = "<group>";
 		};
 		BF8460A72172A7A90027FB62 /* Fonts */ = {
@@ -563,7 +527,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				7E14AEED2177E884006A344D /* PBXTargetDependency */,
 				7E14AEF02177E884006A344D /* PBXTargetDependency */,
 			);
 			name = TCAT;
@@ -626,23 +589,6 @@
 			productReference = 7E14AEDA2177E884006A344D /* Siri.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		7E14AEE22177E884006A344D /* SiriUI */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 7E14AEF22177E884006A344D /* Build configuration list for PBXNativeTarget "SiriUI" */;
-			buildPhases = (
-				7E14AEDF2177E884006A344D /* Sources */,
-				7E14AEE02177E884006A344D /* Frameworks */,
-				7E14AEE12177E884006A344D /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = SiriUI;
-			productName = SiriUI;
-			productReference = 7E14AEE32177E884006A344D /* SiriUI.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -685,11 +631,6 @@
 						DevelopmentTeam = ZGMCXU7X3U;
 						ProvisioningStyle = Automatic;
 					};
-					7E14AEE22177E884006A344D = {
-						CreatedOnToolsVersion = 10.0;
-						DevelopmentTeam = ZGMCXU7X3U;
-						ProvisioningStyle = Automatic;
-					};
 				};
 			};
 			buildConfigurationList = 449A7C701D80D0E80019300C /* Build configuration list for PBXProject "TCAT" */;
@@ -709,7 +650,6 @@
 				449A7C881D80D0E80019300C /* TCATTests */,
 				449A7C931D80D0E80019300C /* TCATUITests */,
 				7E14AED92177E884006A344D /* Siri */,
-				7E14AEE22177E884006A344D /* SiriUI */,
 			);
 		};
 /* End PBXProject section */
@@ -753,14 +693,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		7E14AEE12177E884006A344D /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7E14AEEA2177E884006A344D /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1013,14 +945,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7E14AEDF2177E884006A344D /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7E14AEE72177E884006A344D /* IntentViewController.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1033,11 +957,6 @@
 			isa = PBXTargetDependency;
 			target = 449A7C741D80D0E80019300C /* TCAT */;
 			targetProxy = 449A7C951D80D0E80019300C /* PBXContainerItemProxy */;
-		};
-		7E14AEED2177E884006A344D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7E14AEE22177E884006A344D /* SiriUI */;
-			targetProxy = 7E14AEEC2177E884006A344D /* PBXContainerItemProxy */;
 		};
 		7E14AEF02177E884006A344D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1061,14 +980,6 @@
 				449A7C821D80D0E80019300C /* Base */,
 			);
 			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		7E14AEE82177E884006A344D /* MainInterface.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				7E14AEE92177E884006A344D /* Base */,
-			);
-			name = MainInterface.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1310,59 +1221,6 @@
 			};
 			name = Release;
 		};
-		7E14AEF32177E884006A344D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = ZGMCXU7X3U;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = SiriUI/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.SiriUI;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		7E14AEF42177E884006A344D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = ZGMCXU7X3U;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = SiriUI/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.SiriUI;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 		7E14AEF62177E884006A344D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1451,15 +1309,6 @@
 			buildConfigurations = (
 				449A7CA41D80D0E80019300C /* Debug */,
 				449A7CA51D80D0E80019300C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		7E14AEF22177E884006A344D /* Build configuration list for PBXNativeTarget "SiriUI" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				7E14AEF32177E884006A344D /* Debug */,
-				7E14AEF42177E884006A344D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
