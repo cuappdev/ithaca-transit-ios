@@ -103,8 +103,8 @@ class Route: NSObject, Codable {
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        departureTime = Route.parseDate(try container.decode(String.self, forKey: .departureTime))
-        arrivalTime = Route.parseDate(try container.decode(String.self, forKey: .arrivalTime))
+        departureTime = Date.parseDate(try container.decode(String.self, forKey: .departureTime))
+        arrivalTime = Date.parseDate(try container.decode(String.self, forKey: .arrivalTime))
         startCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .startCoords)
         endCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .endCoords)
         boundingBox = try container.decode(Bounds.self, forKey: .boundingBox)
@@ -209,12 +209,6 @@ class Route: NSObject, Codable {
             }
 
         }
-    }
-
-    class func parseDate(_ dateString: String) -> Date {
-        let dateFormatter = DateFormatter.defaultParser
-        let date = dateFormatter.date(from: dateString) ?? Date.distantPast
-        return Time.truncateSeconds(from: date)
     }
 
     // MARK: Process routes

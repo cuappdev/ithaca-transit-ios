@@ -299,6 +299,14 @@ extension DateFormatter {
     }()
 }
 
+extension Date {
+    static func parseDate(_ dateString: String) -> Date {
+        let dateFormatter = DateFormatter.defaultParser
+        let date = dateFormatter.date(from: dateString) ?? Date.distantPast
+        return Time.truncateSeconds(from: date)
+    }
+}
+
 extension Double {
 
     /** Convert distance from meters to proper unit (based on size)
@@ -422,16 +430,4 @@ extension Collection {
         return self.indices.contains(i) ? self[i] : nil
     }
 
-}
-
-class JsonDecoderWithCustomDate: JSONDecoder {
-    override init() {
-        super.init()
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
-
-        self.dateDecodingStrategy = .formatted(dateFormatter)
-    }
 }

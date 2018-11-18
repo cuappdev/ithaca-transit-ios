@@ -157,17 +157,8 @@ class Network {
         return request
     }
 
-    class func newGetDelay(tripId: String, stopId: String) -> APIRequest<BusDelayRequest, Error> {
+    class func getDelay(tripId: String, stopId: String) -> APIRequest<BusDelayRequest, Error> {
         let request: APIRequest<BusDelayRequest, Error> = tron.codable.request("delay")
-        request.method = .get
-        request.parameters = ["stopID": stopId, "tripID": tripId]
-
-        return request
-    }
-
-    /// Test and delete
-    class func getDelay(tripId: String, stopId: String) -> APIRequest<JSON, Error> {
-        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("delay")
         request.method = .get
         request.parameters = ["stopID": stopId, "tripID": tripId]
 

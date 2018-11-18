@@ -119,7 +119,7 @@ class BusLocation: NSObject, Decodable {
             return iconView
         } else {
             let coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-            _iconView = BusLocationView(number: routeID! , bearing: heading, position: coordinates)
+            _iconView = BusLocationView(number: routeNumber , bearing: heading, position: coordinates)
             return _iconView!
         }
         

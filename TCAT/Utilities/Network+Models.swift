@@ -48,11 +48,7 @@ struct BusLocationRequest: Decodable {
 
 struct BusDelayRequest: Codable {
     var success: Bool!
-    var data: BusDelay!
-}
-
-struct BusDelay: Codable {
-    var delay: Int?
+    var data: Int?
 }
 
 class AllBusStopsRequest: Codable {

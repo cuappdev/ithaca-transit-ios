@@ -217,12 +217,12 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
             let stopId = delayDirection.stops.first?.id
         {
             
-            Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (json) in
+            Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (delayRequest) in
                 
-                if json["success"].boolValue {
+                if delayRequest.success {
                     
-                    delayDirection.delay = json["data"]["delay"].int
-                    firstDepartDirection.delay = json["data"]["delay"].int
+                    delayDirection.delay = delayRequest.data
+                    firstDepartDirection.delay = delayRequest.data
                     
                     // Update delay variable of other ensuing directions
                     
