@@ -173,38 +173,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
 
-        let urlComponents = NSURLComponents(url: url, resolvingAgainstBaseURL: false)
-        var items = [NSURLQueryItem]()
-        if let queryItems = urlComponents?.queryItems {
-            items = queryItems as [NSURLQueryItem]
-        }
-
-        // if the URL is from the getRoutes intent
+        let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
+    
         if url.absoluteString.contains("getRoutes") {
             var latitude: CLLocationDegrees?
             var longitude: CLLocationDegrees?
             var stopName: String?
             let optionsVC = RouteOptionsViewController()
-
-            // get parameters from the URL
-            for (index, element) in items.enumerated() {
-                switch index {
-                case 0:
-                    if let propertyValue = element.value, let lat = Double(propertyValue) {
-                        latitude = lat
-                    }
-                case 1:
-                    if let propertyValue = element.value, let long = Double(propertyValue) {
-                        longitude = long
-                    }
-                case 2:
-                    if let propertyValue = element.value {
-                        stopName = propertyValue
-                    }
-                default:
-                    return false
+            
+            if
+                let lat = items?.filter({$0.name == "lat"}).first?.value,
+                let long = items?.filter({$0.name == "long"}).first?.value,
+                let stop = items?.filter({$0.name == "stopName"}).first?.value {
+                    latitude = Double(lat)
+                    longitude = Double(long)
+                    stopName = stop
                 }
-            }
 
             if let latitude = latitude, let longitude = longitude, let stopName = stopName {
                 let stop = BusStop(name: stopName, lat: latitude, long: longitude)
