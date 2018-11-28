@@ -113,8 +113,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return
             }
             optionsVC.searchTo = destination
-            if let navController = window?.rootViewController as? UINavigationController {
-                navController.pushViewController(optionsVC, animated: true)
+            if let navController = window?.rootViewController as? CustomNavigationController {
+                navController.pushViewController(optionsVC, animated: false)
             }
             let payload = HomeScreenQuickActionUsedPayload(name: destination.name)
             Analytics.shared.log(payload)
@@ -151,7 +151,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Present it 🤩
         UIApplication.shared.keyWindow?.presentInApp(whatsNewViewController)
     }
-        
+
     /// Present an alert indicating bus stops weren't fetched.
     func handleGetAllStopsError() {
         let title = "Couldn't Fetch Bus Stops"
@@ -159,6 +159,63 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         UIApplication.shared.keyWindow?.presentInApp(alertController)
+    }
+
+    /// Open the app when opened via URL scheme
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    // URLs for testing
+    // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown
+    // PlaceResult: ithaca-transit://getRoutes?lat=42.44707979999999&long=-76.4885196&destinationName=Hans%20Bethe%20House
+
+        let rootVC = HomeViewController()
+        let navigationController = CustomNavigationController(rootViewController: rootVC)
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.window?.rootViewController = navigationController
+        self.window?.makeKeyAndVisible()
+
+        let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
+
+        if url.absoluteString.contains("getRoutes") {
+            var latitude: CLLocationDegrees?
+            var longitude: CLLocationDegrees?
+            var stopName: String?
+            let optionsVC = RouteOptionsViewController()
+
+            if
+                let lat = items?.filter({$0.name == "lat"}).first?.value,
+                let long = items?.filter({$0.name == "long"}).first?.value,
+                let stop = items?.filter({$0.name == "stopName"}).first?.value {
+                    latitude = Double(lat)
+                    longitude = Double(long)
+                    stopName = stop
+                }
+
+            if let latitude = latitude, let longitude = longitude, let stopName = stopName {
+                let stop = BusStop(name: stopName, lat: latitude, long: longitude)
+                optionsVC.searchTo = stop
+                navigationController.pushViewController(optionsVC, animated: false)
+                return true
+            }
+        }
+
+        return false
+    }
+
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+
+        if #available(iOS 12.0, *) {
+            if
+                let intent = userActivity.interaction?.intent as? GetRoutesIntent,
+                let latitude = intent.latitude,
+                let longitude = intent.longitude,
+                let searchTo = intent.searchTo,
+                let stopName = searchTo.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed),
+                let url = URL(string: "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(stopName)") {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    return true
+                }
+        }
+        return false
     }
 }
 

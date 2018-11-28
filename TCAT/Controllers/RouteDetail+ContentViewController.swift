@@ -319,9 +319,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
                     var message = ""
                     if self.noDataRouteList.count > 1 {
-                        message = "No live tracking available for routes"
+                        message = Constants.Banner.noLiveTrackingForRoutes
                     } else {
-                        message = "No live tracking available for Route \(busLocation.routeNumber)"
+                        message = Constants.Banner.noLiveTrackingForRoute + "\(busLocation.routeNumber)"
                     }
 
                     self.showBanner(message, status: .info)

@@ -209,7 +209,6 @@ class Route: NSObject, Codable {
             }
 
         }
-    }
 
     // MARK: Process routes
 
@@ -285,7 +284,7 @@ class Route: NSObject, Codable {
         var description = "To get from \(startName) to \(endName),"
         var noDepartDirection = true
 
-        if description.contains(Constants.Stops.currentLocation) {
+        if description.contains(Constants.General.currentLocation) {
             description = "To get to \(endName),"
         }
 
