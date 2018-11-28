@@ -36,12 +36,7 @@ class Direction: NSObject, NSCopying, Codable {
      - depart: The name of the bus stop where the bus is departing from
      - arrive: The name of the bus stop where the user gets off the bus
      */
-    var name: String {
-        didSet {
-            print("Old Value: \(oldValue)")
-            print("New Value \(name)")
-        }
-    }
+    var name: String
 
     /** The starting location object associated with the direction
         If this is a bus stop, includes stopID as id.
@@ -106,7 +101,7 @@ class Direction: NSObject, NSCopying, Codable {
         startTime = Date.parseDate(try! container.decode(String.self, forKey: .startTime))
         endTime = Date.parseDate(try! container.decode(String.self, forKey: .endTime))
         path = try! container.decode([CLLocationCoordinate2D].self, forKey: .path)
-        do { routeNumber = try container.decode(Int.self, forKey: .routeNumber) } catch { routeNumber = 0 }
+        do { routeNumber = try container.decode(Int.self, forKey: .routeNumber) } catch { routeNumber = -1 }
         stops = try! container.decode([LocationObject].self, forKey: .stops)
         do { stayOnBusForTransfer = try container.decode(Bool.self, forKey: .stayOnBusForTransfer) } catch { stayOnBusForTransfer = false }
         tripIdentifiers = try! container.decode([String]?.self, forKey: .tripIdentifiers)

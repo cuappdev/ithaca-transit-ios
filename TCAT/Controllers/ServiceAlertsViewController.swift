@@ -29,7 +29,6 @@ class ServiceAlertsViewController: UIViewController {
         tableView.emptyDataSetDelegate = self
         
         tableView.separatorColor = .lineDotColor
-        tableView.keyboardDismissMode = .onDrag
         tableView.tableFooterView = UIView()
         tableView.showsVerticalScrollIndicator = false
         view.addSubview(tableView)

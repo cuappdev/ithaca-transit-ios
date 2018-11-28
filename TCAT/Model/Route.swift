@@ -111,13 +111,13 @@ class Route: NSObject, Codable {
         numberOfTransfers = try container.decode(Int.self, forKey: .numberOfTransfers)
         directions = try container.decode([Direction].self, forKey: .directions)
         rawDirections = try container.decode([Direction].self, forKey: .directions)
-        startName = Constants.Stops.currentLocation
-        endName = Constants.Stops.destination
+        startName = Constants.General.currentLocation
+        endName = Constants.General.destination
     }
 
     func formatDirections(start: String?, end: String?) {
-        startName = start ?? Constants.Stops.currentLocation
-        endName = end ?? Constants.Stops.destination
+        startName = start ?? Constants.General.currentLocation
+        endName = end ?? Constants.General.destination
 
         let first = 0
         for (index, direction) in rawDirections.enumerated() {
@@ -209,6 +209,7 @@ class Route: NSObject, Codable {
             }
 
         }
+    }
 
     // MARK: Process routes
 

@@ -68,34 +68,41 @@ class AllBusStopsRequest: Codable {
     }
 
     func parseAllStops() {
+        
+        // Create dictionary of all pulled stops
         let crossReference = data.reduce(into: [String: [BusStop]]()) {
             $0[$1.name, default: []].append($1)
         }
-
+        
+        // Create an array of all stops that are non duplicates by name
         var nonDuplicateStops = crossReference.filter {$1.count == 1}.map { (_, value) -> BusStop in
             return value.first!
         }
 
+        // Create an array of all stops that are duplicates by name
         let duplicates = crossReference.filter { $1.count > 1 }
 
-        var middleGroundBusStops: [BusStop] = []
+        // Begin filtering stops with same names
         for key in duplicates.keys {
             if let currentBusStops = duplicates[key], let first = currentBusStops.first, let second = currentBusStops.last {
                 let firstStopLocation = CLLocation(latitude: first.lat, longitude: first.long)
                 let secondStopLocation = CLLocation(latitude: second.lat, longitude: second.long)
 
                 let distanceBetween = firstStopLocation.distance(from: secondStopLocation)
-                let middleCoordinate = firstStopLocation.coordinate.middleLocationWith(location: secondStopLocation.coordinate)
+                
                 if distanceBetween < Constants.Values.maxDistanceBetweenStops {
+                    // If stops are too close to each other, combine into a new stop with averaged location and add to list
+                    let middleCoordinate = firstStopLocation.coordinate.middleLocationWith(location: secondStopLocation.coordinate)
                     let middleBusStop = BusStop(name: first.name, lat: middleCoordinate.latitude, long: middleCoordinate.longitude)
-                    middleGroundBusStops.append(middleBusStop)
+                    nonDuplicateStops.append(middleBusStop)
                 } else {
+                    // If not, add directly to the final list to be returned as data
                     nonDuplicateStops.append(contentsOf: [first, second])
                 }
             }
         }
-        nonDuplicateStops.append(contentsOf: middleGroundBusStops)
 
+        // Sort in alphabetical order
         let sortedStops = nonDuplicateStops.sorted(by: {$0.name.uppercased() < $1.name.uppercased()})
         data = sortedStops
     }

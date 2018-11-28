@@ -316,8 +316,8 @@ extension DateFormatter {
 extension Date {
     static func parseDate(_ dateString: String) -> Date {
         let dateFormatter = DateFormatter.defaultParser
-        let date = dateFormatter.date(from: dateString) ?? Date.distantPast
-        return Time.truncateSeconds(from: date)
+        let date = dateFormatter.date(from: dateString)
+        return Time.truncateSeconds(from: date!)
     }
 }
 

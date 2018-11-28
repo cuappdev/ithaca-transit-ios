@@ -425,10 +425,19 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestUrl)
 
         request.performCollectingTimeline { (response) in
-            do { try print(JSON.init(data: response.data!)) } catch { print("error") }
             switch response.result {
             case .success(let routesResponse):
-                if let data = response.data { do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) } catch { print("error") } }
+                
+                // Save to JSONFileManager
+                if let data = response.data {
+                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) }
+                    catch (let error) {
+                        let fileName = "RouteOptionsViewController"
+                        let line = "\(fileName) \(#function): \(error.localizedDescription)"
+                        print(line)
+                    }
+                }
+                
                 for each in routesResponse.data {
                     each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
                 }

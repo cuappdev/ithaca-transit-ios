@@ -39,7 +39,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         [ // Section 2
             (name: "More Apps", action: #selector(showMoreApps)),
             (name: "Visit Our Website", action: #selector(openTeamWebsite)),
-        ],
+        ]]
 
     override func viewDidLoad() {
         super.viewDidLoad()
