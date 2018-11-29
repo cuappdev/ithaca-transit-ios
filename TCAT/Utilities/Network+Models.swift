@@ -18,41 +18,41 @@ struct Error: JSONDecodable, Codable {
     var error: String!
 }
 struct AlertRequest: Codable {
-    var success: Bool!
-    var data: [Alert]!
+    var success: Bool
+    var data: [Alert]
 }
 
 struct Alert: Codable {
-    var id: Int!
-    var message: String!
-    var fromDate: String!
-    var toDate: String!
-    var fromTime: String!
-    var toTime: String!
-    var priority: Int!
-    var daysOfWeek: String!
-    var routes: [Int]!
-    var sigs: [Int]!
-    var channelMessages: [ChannelMessage]!
+    var id: Int
+    var message: String
+    var fromDate: String
+    var toDate: String
+    var fromTime: String
+    var toTime: String
+    var priority: Int
+    var daysOfWeek: String
+    var routes: [Int]
+    var sigs: [Int]
+    var channelMessages: [ChannelMessage]
 }
 
 struct ChannelMessage: Codable {
-    var ChannelId: Int!
-    var message: String!
+    var ChannelId: Int
+    var message: String
 }
 
 struct BusLocationRequest: Decodable {
-    var success: Bool!
-    var data: [BusLocation]!
+    var success: Bool
+    var data: [BusLocation]
 }
 
 struct BusDelayRequest: Codable {
-    var success: Bool!
+    var success: Bool
     var data: Int?
 }
 
 class AllBusStopsRequest: Codable {
-    var success: Bool!
+    var success: Bool
     var data: [BusStop]
 
     private enum Codingkeys: CodingKey {

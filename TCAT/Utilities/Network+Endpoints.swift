@@ -142,7 +142,8 @@ class Network {
         let dictionary = departDirections.map { (direction) -> [String: Any] in
 
             // The id of the location, or bus stop, the bus needs to get to
-            let stopID = direction.startLocation.id
+            
+            let stopID = direction.stops.first?.id ?? "-1"
 
             return [
                 "stopID": stopID,

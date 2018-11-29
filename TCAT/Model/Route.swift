@@ -159,7 +159,7 @@ class Route: NSObject, Codable {
         for (index, direction) in rawDirections.enumerated() {
             if index != last && index != first && direction.type == .walk {
                 direction.type = .arrive
-                direction.name = rawDirections[index - 1].endLocation.name
+                direction.name = rawDirections[index - 1].stops.last?.name ?? "Nil"
             }
         }
 
@@ -296,12 +296,12 @@ class Route: NSObject, Codable {
             noDepartDirection = false
 
             let number = direction.routeNumber
-            let start = direction.startLocation.name
-            let end = direction.endLocation.name
-            var line = "take Route \(number) from \(start) to \(end). "
+            let start = direction.stops.first?.name
+            let end = direction.stops.last?.name
+            var line = "take Route \(number) from \(String(describing: start)) to \(String(describing: end)). "
 
             if direction.type == .transfer {
-                line = "the bus becomes Route \(number). Stay on board, and then get off at \(end)"
+                line = "the bus becomes Route \(number). Stay on board, and then get off at \(String(describing: end))"
             }
 
             if index == 0 {

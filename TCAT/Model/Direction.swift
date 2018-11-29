@@ -41,12 +41,12 @@ class Direction: NSObject, NSCopying, Codable {
     /** The starting location object associated with the direction
         If this is a bus stop, includes stopID as id.
      */
-    var startLocation: LocationObject
+    var startLocation: CLLocationCoordinate2D
 
     /** The ending location object associated with the direction
         If this is a bus stop, includes stopID as id.
     */
-    var endLocation: LocationObject
+    var endLocation: CLLocationCoordinate2D
 
     /// The starting time (UTC) associated with the direction. Format: `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`
     var startTime: Date
@@ -96,8 +96,8 @@ class Direction: NSObject, NSCopying, Codable {
         let container = try! decoder.container(keyedBy: CodingKeys.self)
         type = try! container.decode(DirectionType.self, forKey: .type)
         name = try! container.decode(String.self, forKey: .name)
-        startLocation = try! container.decode(LocationObject.self, forKey: .startLocation)
-        endLocation = try! container.decode(LocationObject.self, forKey: .endLocation)
+        startLocation = try! container.decode(CLLocationCoordinate2D.self, forKey: .startLocation)
+        endLocation = try! container.decode(CLLocationCoordinate2D.self, forKey: .endLocation)
         startTime = Date.parseDate(try! container.decode(String.self, forKey: .startTime))
         endTime = Date.parseDate(try! container.decode(String.self, forKey: .endTime))
         path = try! container.decode([CLLocationCoordinate2D].self, forKey: .path)
@@ -109,17 +109,13 @@ class Direction: NSObject, NSCopying, Codable {
         travelDistance = try! container.decode(Double.self, forKey: .travelDistance)
 
         super.init()
-        if type == .depart || type == .arrive, let start = stops.first, let end = stops.last {
-            startLocation = start
-            endLocation = end
-        }
     }
 
     required init (
         type: DirectionType,
         name: String,
-        startLocation: LocationObject,
-        endLocation: LocationObject,
+        startLocation: CLLocationCoordinate2D,
+        endLocation: CLLocationCoordinate2D,
         startTime: Date,
         endTime: Date,
         path: [CLLocationCoordinate2D],
@@ -147,7 +143,7 @@ class Direction: NSObject, NSCopying, Codable {
 
     convenience init(name: String? = nil) {
 
-        let blankLocation = LocationObject.blank
+        let blankLocation = CLLocationCoordinate2D(latitude: 0, longitude: 0)
         let blankTime = Date()
 
         self.init(
@@ -214,8 +210,8 @@ class Direction: NSObject, NSCopying, Codable {
             name: \(name),
             startTime: \(startTime),
             endTime: \(endTime),
-            startLocation: \(startLocation.name),
-            endLocation: \(endLocation.name),
+            startLocation: \(stops.first?.name ??? "Unknown"),
+            endLocation: \(stops.last?.name ??? "Unknown"),
             distance: \(travelDistance),
             locationNameDescription: \(locationNameDescription),
             numberOfStops: \(stops.count)

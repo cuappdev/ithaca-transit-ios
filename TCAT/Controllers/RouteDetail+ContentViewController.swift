@@ -183,10 +183,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
         // Live Tracking Network Timer
         liveTrackingNetworkTimer?.invalidate()
-        liveTrackingNetworkTimer = Timer.scheduledTimer(timeInterval: liveTrackingNetworkRefreshRate, target: self, selector: #selector(getBusLocations),
-                                            userInfo: nil, repeats: true)
-        liveTrackingNetworkTimer?.fire()
-
+        if directions.contains(where: { $0.type != .walk }) {
+            liveTrackingNetworkTimer = Timer.scheduledTimer(timeInterval: liveTrackingNetworkRefreshRate, target: self, selector: #selector(getBusLocations),
+                                                            userInfo: nil, repeats: true)
+            liveTrackingNetworkTimer?.fire()
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
