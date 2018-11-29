@@ -16,7 +16,7 @@ import SwiftyJSON
 import CoreLocation
 import MapKit
 
-struct Bounds: Codable {
+struct Bounds {
 
     /// The minimum latitude value in all of the path's route.
     var minLat: Double
@@ -44,7 +44,7 @@ struct RouteCalculationError: Swift.Error {
     let description: String
 }
 
-class Route: NSObject, Codable {
+class Route: NSObject, JSONDecodable {
 
     /// The time a user begins their journey
     var departureTime: Date
@@ -91,33 +91,24 @@ class Route: NSObject, Codable {
         return Time.dateComponents(from: departureTime, to: arrivalTime).minute ?? 0
     }
 
-    private enum CodingKeys: String, CodingKey {
-        case departureTime
-        case arrivalTime
-        case startCoords
-        case endCoords
-        case boundingBox
-        case numberOfTransfers
-        case directions
-    }
+    required init(json: JSON) throws {
 
-    required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        departureTime = Date.parseDate(try container.decode(String.self, forKey: .departureTime))
-        arrivalTime = Date.parseDate(try container.decode(String.self, forKey: .arrivalTime))
-        startCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .startCoords)
-        endCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .endCoords)
-        boundingBox = try container.decode(Bounds.self, forKey: .boundingBox)
-        numberOfTransfers = try container.decode(Int.self, forKey: .numberOfTransfers)
-        directions = try container.decode([Direction].self, forKey: .directions)
-        rawDirections = try container.decode([Direction].self, forKey: .directions)
-        startName = Constants.General.currentLocation
-        endName = Constants.General.destination
-    }
+        // print("Route JSON", json)
 
-    func formatDirections(start: String?, end: String?) {
-        startName = start ?? Constants.General.currentLocation
-        endName = end ?? Constants.General.destination
+        departureTime = json["departureTime"].parseDate()
+        arrivalTime = json["arrivalTime"].parseDate()
+        startCoords = json["startCoords"].parseCoordinates()
+        endCoords = json["endCoords"].parseCoordinates()
+        startName = json["startName"].stringValue
+        endName = json["endName"].stringValue
+        boundingBox = json["boundingBox"].parseBounds()
+        numberOfTransfers = json["numberOfTransfers"].intValue
+        directions = json["directions"].arrayValue.map { Direction(from: $0) }
+        rawDirections = json["directions"].arrayValue.map { Direction(from: $0) }
+
+        super.init()
+
+        // Format raw directions
 
         let first = 0
         for (index, direction) in rawDirections.enumerated() {
@@ -209,6 +200,27 @@ class Route: NSObject, Codable {
             }
 
         }
+
+    }
+
+    // MARK: Parse JSON
+
+    /// Handle route calculation data request.
+    static func parseRoutes(in json: JSON, from: String?, to: String?,
+                          _ completion: @escaping (_ routes: [Route], _ error: RouteCalculationError?) -> Void) {
+
+        if json["success"].boolValue {
+            let routes: [Route] = json["data"].arrayValue.map {
+                var augmentedJSON = $0
+                augmentedJSON["startName"].string = from ?? Constants.General.currentLocation
+                augmentedJSON["endName"].string = to ?? Constants.General.destination
+                return try! Route(json: augmentedJSON)
+            }
+            completion(routes, nil)
+        } else {
+            completion([], RouteCalculationError(title: "Route Calculation Failure", description: json["error"].stringValue))
+        }
+
     }
 
     // MARK: Process routes

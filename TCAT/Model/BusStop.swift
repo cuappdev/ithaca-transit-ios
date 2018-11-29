@@ -16,11 +16,6 @@ class BusStop: Place, CoordinateAcceptor {
 
     private let latKey = "latitude"
     private let longKey = "longitude"
-    
-    private enum CodingKeys: CodingKey {
-        case lat
-        case long
-    }
 
     init(name: String, lat: CLLocationDegrees, long: CLLocationDegrees) {
         self.lat = lat
@@ -54,14 +49,7 @@ class BusStop: Place, CoordinateAcceptor {
 
         super.init(coder: aDecoder)
     }
-    
-    required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.lat = try container.decode(CLLocationDegrees.self, forKey: .lat)
-        self.long = try container.decode(CLLocationDegrees.self, forKey: .long)
-        try super.init(from: decoder)
-    }
-    
+
     public override func encode(with aCoder: NSCoder) {
         aCoder.encode(self.lat, forKey: latKey)
         aCoder.encode(self.long, forKey: longKey)

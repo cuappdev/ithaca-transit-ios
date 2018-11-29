@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-enum WaypointType: String, Codable {
+enum WaypointType: String {
     /// The startLocation origin point of the trip
     case origin
     /// The endLocation destination point of the trip
