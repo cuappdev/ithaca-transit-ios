@@ -28,16 +28,18 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
     var content: [[(name: String, action: Selector)]] = [
 
         [ // Section 0
-            (name: Constants.InformationView.onboarding, action: #selector(presentOnboarding)),
-            (name: Constants.InformationView.sendFeedback, action: #selector(sendFeedback))
+            (name: "Service Alerts", action: #selector(showServiceAlerts))
         ],
-
+        
         [ // Section 1
-            (name: Constants.InformationView.moreApps, action: #selector(showMoreApps)),
-            (name: Constants.InformationView.website, action: #selector(openTeamWebsite))
-        ]
-
-    ]
+            (name: "Show Onboarding", action: #selector(presentOnboarding)),
+            (name: "Send Feedback", action: #selector(sendFeedback)),
+        ],
+        
+        [ // Section 2
+            (name: "More Apps", action: #selector(showMoreApps)),
+            (name: "Visit Our Website", action: #selector(openTeamWebsite)),
+        ]]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -341,5 +343,8 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         Analytics.shared.log(payload)
 
     }
-
+    @objc func showServiceAlerts() {
+        let serviceAlertsVC = ServiceAlertsViewController()
+        present(serviceAlertsVC, animated: true)
+    }
 }

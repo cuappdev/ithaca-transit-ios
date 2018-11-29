@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-enum BusDataType: String {
+enum BusDataType: String, Codable {
     /// No data to show
     case noData
     /// Valid data to show
@@ -18,8 +18,8 @@ enum BusDataType: String {
     case invalidData
 }
 
-class BusLocation: NSObject {
-    
+class BusLocation: NSObject, Decodable {
+
     var dataType: BusDataType
     var destination: String
     var deviation: Int
@@ -32,16 +32,42 @@ class BusLocation: NSObject {
     var lastUpdated: Date
     var latitude: Double
     var longitude: Double
-    var name: Int
+    var name: String?
     var opStatus: String
-    var routeID: String
+    var routeID: Int?
     var runID: Int
     var speed: Int
-    var tripID: String
+    var tripID: Int?
     var vehicleID: Int
-    
+
     private var _iconView: UIView?
-    
+
+    private let noDataString = "noData"
+    private let validDataString = "validData"
+    private let invalidDataString = "invalidData"
+
+    private enum CodingKeys: String, CodingKey {
+        case dataType = "case"
+        case destination
+        case deviation
+        case delay
+        case direction
+        case displayStatus
+        case gpsStatus
+        case heading
+        case lastStop
+        case lastUpdated
+        case latitude
+        case longitude
+        case name
+        case opStatus
+        case routeID
+        case runID
+        case speed
+        case tripID
+        case vehicleID
+    }
+
     init(dataType: BusDataType,
          destination: String,
          deviation: Int,
@@ -54,12 +80,12 @@ class BusLocation: NSObject {
          lastUpdated: Date,
          latitude: Double,
          longitude: Double,
-         name: Int,
+         name: String,
          opStatus: String,
-         routeID: String,
+         routeID: Int,
          runID: Int,
          speed: Int,
-         tripID: String,
+         tripID: Int,
          vehicleID: Int
     ) {
         self.dataType = dataType
@@ -82,26 +108,26 @@ class BusLocation: NSObject {
         self.tripID = tripID
         self.vehicleID = vehicleID
     }
-    
+
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(self.routeID, forKey: "routeID")
     }
-    
+
     var iconView: UIView {
-        
+
         if let iconView = _iconView {
             return iconView
         } else {
             let coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-            _iconView = BusLocationView(number: Int(routeID) ?? 0, bearing: heading, position: coordinates)
+            _iconView = BusLocationView(number: routeNumber, bearing: heading, position: coordinates)
             return _iconView!
         }
-        
+
     }
-    
+
     /// The Int type of routeID. Defaults to 0 if can't cast to Int
     var routeNumber: Int {
-        return Int(routeID) ?? 0
+        return routeID ?? 0
     }
-    
+
 }

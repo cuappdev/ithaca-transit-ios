@@ -11,7 +11,7 @@ import TRON
 import SwiftyJSON
 import CoreLocation
 
-class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
+class PlaceResult: Place, CoordinateAcceptor {
 
     var detail: String
     var placeID: String
@@ -19,19 +19,16 @@ class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
     private let detailKey = "detail"
     private let placeIDKey = "placeID"
 
+    private enum CodingKeys: CodingKey {
+        case detail
+        case placeID
+    }
+
     init(name: String, detail: String, placeID: String) {
         self.detail = detail
         self.placeID = placeID
 
         super.init(name: name)
-    }
-
-    required convenience init(json: JSON) throws {
-        let name = json["structured_formatting"]["main_text"].stringValue
-        let detail = json["structured_formatting"]["secondary_text"].stringValue
-        let placeID = json["place_id"].stringValue
-        
-        self.init(name: name, detail: detail, placeID: placeID)
     }
 
     override func isEqual(_ object: Any?) -> Bool {
@@ -58,6 +55,13 @@ class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
         detail = (aDecoder.decodeObject(forKey: detailKey) as? String) ?? ""
         placeID = (aDecoder.decodeObject(forKey: placeIDKey) as? String) ?? ""
         super.init(coder: aDecoder)
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.detail = try container.decode(String.self, forKey: .detail)
+        self.placeID = try container.decode(String.self, forKey: .placeID)
+        try super.init(from: decoder)
     }
 
     public override func encode(with aCoder: NSCoder) {
