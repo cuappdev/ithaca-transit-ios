@@ -20,10 +20,6 @@ enum SearchBarType: String {
     case from, to
 }
 
-enum SearchType: String {
-    case arriveBy, leaveAt, leaveNow
-}
-
 struct BannerInfo {
     let title: String
     let style: BannerStyle

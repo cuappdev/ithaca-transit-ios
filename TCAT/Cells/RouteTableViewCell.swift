@@ -12,12 +12,6 @@ protocol TravelDistanceDelegate: NSObjectProtocol {
     func travelDistanceUpdated(withDistance distance: Double)
 }
 
-enum DelayState {
-    case late(date: Date)
-    case onTime(date: Date)
-    case noDelay(date: Date)
-}
-
 class RouteTableViewCell: UITableViewCell {
 
     // MARK: Data vars

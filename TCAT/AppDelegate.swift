@@ -52,8 +52,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if userDefaults.value(forKey: key) == nil {
                 userDefaults.set(defaultValue, forKey: key)
             }
+            
+            if key == Constants.UserDefaults.favorites {
+                // Init shared user defaults for today extension
+                UserDefaults.init(suiteName: "group.tcat")?.set(userDefaults.value(forKey: key), forKey: "favorites")
+            }
         }
-
+        
         // Track number of app opens for Store Review prompt
         StoreReviewHelper.incrementAppOpenedCount()
 
@@ -175,7 +180,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
 
-        if url.absoluteString.contains("getRoutes") {
+        if url.absoluteString.contains("getRoutes") { // siri URL scheme
             var latitude: CLLocationDegrees?
             var longitude: CLLocationDegrees?
             var stopName: String?
@@ -196,6 +201,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 navigationController.pushViewController(optionsVC, animated: false)
                 return true
             }
+        } else if url.absoluteString.contains("today") { // today extension URL scheme
+            
         }
 
         return false

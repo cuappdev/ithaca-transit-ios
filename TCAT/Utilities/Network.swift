@@ -118,6 +118,19 @@ class Network {
         return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(end)&start=\(start)&time=\(time)&destinationName=\(destinationName)"
     }
 
+    class func getMultiRoutes(startCoord: CLLocationCoordinate2D, time: Date, endCoords : [(CLLocationDegrees, CLLocationDegrees)], endPlaceNames: [String],
+                              callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void) {
+        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("multiroute")
+        request.method = .get
+        request.parameters = [
+            "start"                 :   "\(startCoord.latitude),\(startCoord.longitude)",
+            "time"                  :   time.timeIntervalSince1970,
+            "end"                   :   endCoords,
+            "destinationNames"      : endPlaceNames
+        ]
+        
+        callback(request)
+    }
 
     class func getGooglePlacesAutocompleteResults(searchText: String) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("places")

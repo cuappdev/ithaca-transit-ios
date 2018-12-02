@@ -1,11 +1,11 @@
 # Uncomment this line to define a global platform for your project
 platform :ios, '10.0'
 
+# Comment this line if you're not using Swift and don't want to use dynamic frameworks
+use_frameworks!
+inhibit_all_warnings!
+
 target 'TCAT' do
-    
-    # Comment this line if you're not using Swift and don't want to use dynamic frameworks
-    use_frameworks!
-    inhibit_all_warnings!
     
     # Pods for TCAT
     
@@ -46,5 +46,20 @@ target 'TCAT' do
         inherit! :search_paths
         # Pods for testing
     end
-    
+
 end
+
+target 'Today Extension' do
+    # UI Frameworks	
+    pod 'SnapKit'
+ 
+    # Location
+    pod 'GooglePlaces', '~> 2.6'
+
+    # Networking + Data
+    pod 'TRON', '~> 4.1.2'
+    pod 'SwiftyJSON', '~> 4.0'
+
+    # Analytics
+    pod 'Crashlytics', '~> 3.10'
+end 
