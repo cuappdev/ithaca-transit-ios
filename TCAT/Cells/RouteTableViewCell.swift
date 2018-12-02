@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import SwiftyJSON
+import TRON
 
 protocol TravelDistanceDelegate: NSObjectProtocol {
     func travelDistanceUpdated(withDistance distance: Double)
@@ -334,9 +336,10 @@ class RouteTableViewCell: UITableViewCell {
             let tripId = direction.tripIdentifiers?.first,
             let stopId = direction.stops.first?.id {
 
-            Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (request) in
-                if request.success {
-                    guard (request.data != nil), let delay = request.data else {
+            Network.getDelay(tripId: tripId, stopId: stopId).performCollectingTimeline { (response) in
+                switch response.result {
+                case .success(let delayResponse):
+                    guard (delayResponse.data != nil), let delay = delayResponse.data else {
                         self.setDepartureTimeAndLiveElements(withRoute: route)
                         return
                     }
@@ -344,7 +347,14 @@ class RouteTableViewCell: UITableViewCell {
                     if isNewDelayValue {
                         JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
                         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Network.getDelayUrl(tripId: tripId, stopId: stopId))
-                        // JSONFileManager.shared.saveJSON(json, type: .delayJSON(rowNum: self.rowNum ?? -1))
+                        if let data = response.data {
+                            do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: self.rowNum ?? -1)) }
+                            catch (let error) {
+                                let fileName = "RouteTableViewCell"
+                                let line = "\(fileName) \(#function): \(error.localizedDescription)"
+                                print(line)
+                            }
+                        }
                     }
 
                     let departTime = direction.startTime
@@ -362,10 +372,13 @@ class RouteTableViewCell: UITableViewCell {
                     }
 
                     route.getFirstDepartRawDirection()?.delay = delay
+
+                case .failure(let networkError):
+                    if let error = networkError as? APIError<Error> {
+                        print("\(self.fileName) \(#function) error: \(error.errorDescription ?? "") Request url: \(error.request?.url?.absoluteString ?? "")")
+                        self.setDepartureTimeAndLiveElements(withRoute: route)
+                    }
                 }
-            }) { (error) in
-                print("\(self.fileName) \(#function) error: \(error.errorDescription ?? "") Request url: \(error.request?.url?.absoluteString ?? "")")
-                self.setDepartureTimeAndLiveElements(withRoute: route)
             }
         } else {
             if let route = route {
