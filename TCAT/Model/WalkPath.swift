@@ -20,7 +20,7 @@ class WalkPath: Path {
     init(_ waypoints: [Waypoint]) {
         
         super.init(waypoints: waypoints)
-        self.color = .mediumGrayColor
+        self.color = Colors.metadataIcon
     
         self.untraveledPath = createPathFromWaypoints(waypoints: waypoints)
         self.traveledPath = untraveledPath

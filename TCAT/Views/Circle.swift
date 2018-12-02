@@ -51,7 +51,7 @@ class Circle: UIView {
             
             case .bordered:
                 
-                backgroundColor = .white
+                backgroundColor = Colors.white
                 layer.borderColor = color.cgColor
                 layer.borderWidth = 2.0
                 
@@ -66,7 +66,7 @@ class Circle: UIView {
             
             case .outline:
                 
-                backgroundColor = .white
+                backgroundColor = Colors.white
                 layer.borderColor = color.cgColor
                 layer.borderWidth = 2.0
             

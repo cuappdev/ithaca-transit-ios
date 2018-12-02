@@ -153,7 +153,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
         // Set up Share button
         let shareButton = UIBarButtonItem(image: #imageLiteral(resourceName: "share"), style: .plain, target: self, action: #selector(shareRoute))
-        shareButton.tintColor = .primaryTextColor
+        shareButton.tintColor = Colors.primaryText
         guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
 

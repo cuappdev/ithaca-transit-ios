@@ -38,7 +38,7 @@ class OnboardingViewController: PresentationController {
     /// The position of the header label
     let titleLabelPosition = Position(left: 0.5, top: 0.2)
 
-    let titleLabelFontName = Fonts.SanFrancisco.bold
+    let titleLabelFontName = Fonts.bold
 
     let titleLabelFontSize: CGFloat = 48.0
 
@@ -62,7 +62,7 @@ class OnboardingViewController: PresentationController {
     let detailLabelPosition = Position(left: 0.5, top: 0.35)
 
     /// Change the font type of text label
-    let detailLabelFontName = Fonts.SanFrancisco.medium
+    let detailLabelFontName = Fonts.medium
 
     /// Change the font size of text label
     let detailLabelFontSize: CGFloat = 32.0
@@ -218,7 +218,7 @@ class OnboardingViewController: PresentationController {
         let detailHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
 
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.style(detailLabelFontName, size: detailLabelFontSize * detailHeight),
+            .font: UIFont.getFont(detailLabelFontName, size: detailLabelFontSize * detailHeight),
             .foregroundColor: detailLabelTextColor,
             .paragraphStyle: paragraphStyle
         ]
@@ -239,7 +239,7 @@ class OnboardingViewController: PresentationController {
         let headerHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
 
         let headerAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.style(titleLabelFontName, size: titleLabelFontSize * headerHeight),
+            .font: UIFont.getFont(titleLabelFontName, size: titleLabelFontSize * headerHeight),
             .foregroundColor: titleLabelTextColor,
             .paragraphStyle: headerParagraphStyle
         ]
@@ -256,13 +256,13 @@ class OnboardingViewController: PresentationController {
         let button = UIButton()
         button.frame = CGRect(x: 0, y: 0, width: 160, height: 60)
         button.layer.shadowOffset = CGSize(width: 0, height: 4)
-        button.layer.shadowColor = UIColor.mediumGrayColor.cgColor
+        button.layer.shadowColor = Colors.metadataIcon.cgColor
         button.layer.shadowOpacity = 0.5
         button.setTitle(Constants.Onboarding.begin, for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(Colors.white, for: .normal)
         button.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
-        button.titleLabel?.font = .style(Fonts.SanFrancisco.medium, size: 22)
-        button.backgroundColor = .tcatBlueColor // UIColor(hex: "D65851")
+        button.titleLabel?.font = .getFont(.medium, size: 22)
+        button.backgroundColor = Colors.tcatBlue // UIColor(hex: "D65851")
         button.layer.cornerRadius = 4
         let buttonPosition = Position(left: 0.5, top: 0.5)
         let startButton = Content(view: button, position: buttonPosition, centered: true)

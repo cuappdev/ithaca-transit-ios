@@ -417,7 +417,7 @@ private extension RPCircularProgress {
 
     struct Defaults {
         static let trackTintColor = UIColor(white: 1.0, alpha: 0.3)
-        static let progressTintColor = UIColor.white
+        static let progressTintColor = Colors.white
         static let backgroundColor = UIColor.clear
 
         static let progress: CGFloat = 0

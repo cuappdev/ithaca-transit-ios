@@ -44,8 +44,8 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
 
         title = Constants.Titles.aboutUs
 
-        view.backgroundColor = .tableBackgroundColor
-        navigationController?.navigationBar.tintColor = .primaryTextColor
+        view.backgroundColor = Colors.backgroundWash
+        navigationController?.navigationBar.tintColor = Colors.primaryText
 
         view.addSubview(hiddenLabel)
         view.addSubview(tcatImage)
@@ -61,8 +61,8 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         let backButtonItem = UIBarButtonItem(customView: dismissButton)
         navigationItem.setRightBarButton(backButtonItem, animated: false)
 
-        hiddenLabel.font = .style(Fonts.SanFrancisco.regular, size: 16)
-        hiddenLabel.textColor = .primaryTextColor
+        hiddenLabel.font = .getFont(.regular, size: 16)
+        hiddenLabel.textColor = Colors.primaryText
         hiddenLabel.text = Constants.InformationView.magicSchoolBus
         hiddenLabel.textAlignment = .center
         hiddenLabel.backgroundColor = .clear
@@ -83,8 +83,8 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
             make.trailing.equalToSuperview().offset(-40)
         }
 
-        titleLabel.font = .style(Fonts.SanFrancisco.medium, size: 16)
-        titleLabel.textColor = UIColor.primaryTextColor
+        titleLabel.font = .getFont(.medium, size: 16)
+        titleLabel.textColor = Colors.primaryText
         titleLabel.text = Constants.InformationView.madeBy
         titleLabel.backgroundColor = .clear
         titleLabel.snp.makeConstraints { (make) in
@@ -94,8 +94,8 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
             make.height.equalTo(20)
         }
 
-        descriptionLabel.font = .style(Fonts.SanFrancisco.regular, size: 14)
-        descriptionLabel.textColor = UIColor.primaryTextColor
+        descriptionLabel.font = .getFont(.regular, size: 14)
+        descriptionLabel.textColor = Colors.primaryText
         descriptionLabel.text = Constants.InformationView.appDevDescription
         descriptionLabel.numberOfLines = 0
         descriptionLabel.backgroundColor = .clear
@@ -108,8 +108,8 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Cells.informationCellIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.backgroundColor = .tableBackgroundColor
-        tableView.separatorColor = .lineDotColor
+        tableView.backgroundColor = Colors.backgroundWash
+        tableView.separatorColor = Colors.dividerTextField
         tableView.isScrollEnabled = false
         tableView.showsVerticalScrollIndicator = false
 
@@ -144,9 +144,9 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         // Initalize and format cell
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.informationCellIdentifier, for: indexPath)
         cell.selectionStyle = .none
-        cell.backgroundColor = .white
-        cell.textLabel?.textColor = .primaryTextColor
-        cell.textLabel?.font = .style(Fonts.SanFrancisco.regular, size: 14)
+        cell.backgroundColor = Colors.white
+        cell.textLabel?.textColor = Colors.primaryText
+        cell.textLabel?.font = .getFont(.regular, size: 14)
         cell.textLabel?.textAlignment = .center
 
         // Set cell content
@@ -156,7 +156,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         switch (indexPath.section, indexPath.row) {
 
         case (0, 1): // Send Feedback
-            cell.textLabel?.textColor = .tcatBlueColor
+            cell.textLabel?.textColor = Colors.tcatBlue
         default:
             break
 

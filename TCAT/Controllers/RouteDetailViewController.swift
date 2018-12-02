@@ -23,7 +23,7 @@ class RouteDetailViewController: PulleyViewController {
         drawerCornerRadius = 16
         shadowOpacity = 0.25
         shadowRadius = 4
-        backgroundDimmingColor = .black
+        backgroundDimmingColor = Colors.black
         backgroundDimmingOpacity = 0.5
         animationDuration = 0.5
         animationSpringDamping = 0.8
