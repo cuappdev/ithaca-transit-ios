@@ -41,11 +41,11 @@ class SearchResultsCell: UITableViewCell {
         imageView?.image = #imageLiteral(resourceName: "pin")
         imageView?.tintColor = reuseIdentifier == Constants.Cells.cornellDestinationsIdentifier ? Colors.tcatBlue : Colors.metadataIcon
         textLabel?.frame = CGRect(x: labelXPosition, y: 8.0, width: frame.width - labelWidth, height: labelHeight)
-        textLabel?.font = .style(Fonts.SanFrancisco.regular, size: 13)
+        textLabel?.font = .getFont(.regular, size: 13)
 
         detailTextLabel?.frame = CGRect(x: labelXPosition, y: 0, width: frame.width - labelWidth, height: labelHeight)
         detailTextLabel?.center.y = bounds.height - 15.0
         detailTextLabel?.textColor = Colors.metadataIcon
-        detailTextLabel?.font = .style(Fonts.SanFrancisco.regular, size: 12)
+        detailTextLabel?.font = .getFont(.regular, size: 12)
     }
 }

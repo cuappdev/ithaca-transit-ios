@@ -91,7 +91,7 @@ class BusIcon: UIView {
         label = UILabel(frame: CGRect(x: image.frame.maxX, y: 0, width: frame.width - image.frame.maxX, height: frame.height))
         label.text = "\(number)"
         let fontSize: CGFloat = type == .directionLarge ? 20 : 14
-        label.font = .style(Fonts.SanFrancisco.semibold, size: fontSize)
+        label.font = .getFont(.semibold, size: fontSize)
         label.textColor = Colors.white
         label.textAlignment = .center
         label.center.y = baseView.center.y
@@ -101,7 +101,7 @@ class BusIcon: UIView {
         
         if type == .liveTracking {
             
-            label.font = .style(Fonts.SanFrancisco.semibold, size: 16)
+            label.font = .getFont(.semibold, size: 16)
             label.sizeToFit()
             image.frame.origin.x = 8
             let sizeConstant: CGFloat = 0.87

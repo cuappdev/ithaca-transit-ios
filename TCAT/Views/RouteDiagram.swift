@@ -112,7 +112,7 @@ class RouteDiagram: UIView {
         stopLabel.numberOfLines = 0
         
         let stopNameAttrs: [NSAttributedString.Key : Any] = [
-            .font : UIFont.style(Fonts.SanFrancisco.regular, size: 14.0),
+            .font : UIFont.getFont(.regular, size: 14.0),
             .foregroundColor : Colors.primaryText
         ]
         let stopName = NSMutableAttributedString(string: name, attributes: stopNameAttrs)
@@ -128,7 +128,7 @@ class RouteDiagram: UIView {
             }
             
             let travelDistanceAttrs: [NSAttributedString.Key : Any] = [
-                .font : UIFont.style(Fonts.SanFrancisco.regular, size: 12.0),
+                .font : UIFont.getFont(.regular, size: 12.0),
                 .foregroundColor : Colors.metadataIcon
             ]
             
@@ -138,7 +138,7 @@ class RouteDiagram: UIView {
         
         if stayOnBusForTranfer {
             let stayOnBusAttrs: [NSAttributedString.Key : Any] = [
-                .font : UIFont.style(Fonts.SanFrancisco.regular, size: 12.0),
+                .font : UIFont.getFont(.regular, size: 12.0),
                 .foregroundColor : Colors.metadataIcon
             ]
             let stayOnBus = NSMutableAttributedString(string:"\nStay on board", attributes: stayOnBusAttrs)
@@ -153,7 +153,7 @@ class RouteDiagram: UIView {
     
     private func getTestStopLabel(withName name: String) -> UILabel {
         let testStopLabel = UILabel()
-        testStopLabel.font = .style(Fonts.SanFrancisco.regular, size: 14.0)
+        testStopLabel.font = .getFont(.regular, size: 14.0)
         testStopLabel.textColor = Colors.primaryText
         testStopLabel.text = name
         testStopLabel.sizeToFit()
@@ -163,7 +163,7 @@ class RouteDiagram: UIView {
     
     private func getTestDistanceLabel(withDistance distance: Double) -> UILabel {
         let testDistanceLabel = UILabel()
-        testDistanceLabel.font = .style(Fonts.SanFrancisco.regular, size: 12.0)
+        testDistanceLabel.font = .getFont(.regular, size: 12.0)
         testDistanceLabel.textColor = Colors.metadataIcon
         testDistanceLabel.text = " \(distance.roundedString) away"
         testDistanceLabel.sizeToFit()

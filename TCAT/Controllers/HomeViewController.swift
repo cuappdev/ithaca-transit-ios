@@ -351,7 +351,7 @@ extension HomeViewController: UITableViewDataSource {
             }
         }
 
-        cell.textLabel?.font = .style(Fonts.SanFrancisco.regular, size: 14)
+        cell.textLabel?.font = .getFont(.regular, size: 14)
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
         cell.layoutMargins = .zero

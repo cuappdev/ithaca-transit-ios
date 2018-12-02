@@ -61,7 +61,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         let backButtonItem = UIBarButtonItem(customView: dismissButton)
         navigationItem.setRightBarButton(backButtonItem, animated: false)
 
-        hiddenLabel.font = .style(Fonts.SanFrancisco.regular, size: 16)
+        hiddenLabel.font = .getFont(.regular, size: 16)
         hiddenLabel.textColor = Colors.primaryText
         hiddenLabel.text = Constants.InformationView.magicSchoolBus
         hiddenLabel.textAlignment = .center
@@ -83,7 +83,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
             make.trailing.equalToSuperview().offset(-40)
         }
 
-        titleLabel.font = .style(Fonts.SanFrancisco.medium, size: 16)
+        titleLabel.font = .getFont(.medium, size: 16)
         titleLabel.textColor = Colors.primaryText
         titleLabel.text = Constants.InformationView.madeBy
         titleLabel.backgroundColor = .clear
@@ -94,7 +94,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
             make.height.equalTo(20)
         }
 
-        descriptionLabel.font = .style(Fonts.SanFrancisco.regular, size: 14)
+        descriptionLabel.font = .getFont(.regular, size: 14)
         descriptionLabel.textColor = Colors.primaryText
         descriptionLabel.text = Constants.InformationView.appDevDescription
         descriptionLabel.numberOfLines = 0
@@ -146,7 +146,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         cell.selectionStyle = .none
         cell.backgroundColor = Colors.white
         cell.textLabel?.textColor = Colors.primaryText
-        cell.textLabel?.font = .style(Fonts.SanFrancisco.regular, size: 14)
+        cell.textLabel?.font = .getFont(.regular, size: 14)
         cell.textLabel?.textAlignment = .center
 
         // Set cell content

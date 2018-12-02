@@ -125,7 +125,7 @@ class RouteTableViewCell: UITableViewCell {
         timesStackView.axis = .horizontal
         timesStackView.alignment = .center
         
-        travelTimeLabel.font = .style(Fonts.SanFrancisco.semibold, size: 16)
+        travelTimeLabel.font = .getFont(.semibold, size: 16)
         travelTimeLabel.textColor = Colors.primaryText
         
         styleDepartureStackView()
@@ -135,7 +135,7 @@ class RouteTableViewCell: UITableViewCell {
         departureStackView.axis = .horizontal
         departureStackView.spacing = spaceBtnDepartureElements
         
-        departureTimeLabel.font = .style(Fonts.SanFrancisco.semibold, size: 14)
+        departureTimeLabel.font = .getFont(.semibold, size: 14)
         departureTimeLabel.textColor = Colors.primaryText
         arrowImageView.tintColor = Colors.metadataIcon
     }
@@ -148,11 +148,11 @@ class RouteTableViewCell: UITableViewCell {
         liveStackView.alignment = .lastBaseline
         liveStackView.spacing = spaceBtnLiveElements
         
-        liveLabel.font = .style(Fonts.SanFrancisco.semibold, size: 14)
+        liveLabel.font = .getFont(.semibold, size: 14)
     }
     
     private func styleFunMessage() {
-        funMessage.font = .style(Fonts.SanFrancisco.semibold, size: 12)
+        funMessage.font = .getFont(.semibold, size: 12)
         funMessage.textColor = .lightGray
     }
 

@@ -954,11 +954,11 @@ extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDele
         let retryButton = UIButton()
         retryButton.setTitle(Constants.Buttons.retry, for: .normal)
         retryButton.setTitleColor(Colors.tcatBlue, for: .normal)
-        retryButton.titleLabel?.font = .style(Fonts.SanFrancisco.regular, size: 16.0)
+        retryButton.titleLabel?.font = .getFont(.regular, size: 16.0)
         retryButton.addTarget(self, action: #selector(tappedRetryButton), for: .touchUpInside)
 
         let titleLabel = UILabel()
-        titleLabel.font = .style(Fonts.SanFrancisco.regular, size: 18.0)
+        titleLabel.font = .getFont(.regular, size: 18.0)
         titleLabel.textColor = Colors.metadataIcon
         titleLabel.text = showRouteSearchingLoader ? Constants.EmptyStateMessages.lookingForRoutes : Constants.EmptyStateMessages.noRoutesFound
         titleLabel.sizeToFit()

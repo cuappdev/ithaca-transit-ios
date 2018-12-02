@@ -25,7 +25,7 @@ class BusStopTableViewCell: UITableViewCell {
         
         titleLabel = UILabel()
         titleLabel.frame = CGRect(x: cellWidth, y: 0, width: UIScreen.main.bounds.width - cellWidth - 20, height: 20)
-        titleLabel.font = .style(Fonts.SanFrancisco.regular, size: 14)
+        titleLabel.font = .getFont(.regular, size: 14)
         titleLabel.textColor = Colors.secondaryText
         titleLabel.text = "Bus Stop Name"
         titleLabel.lineBreakMode = .byWordWrapping

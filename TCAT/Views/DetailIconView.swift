@@ -33,9 +33,9 @@ class DetailIconView: UIView {
         super.init(frame: frame)
         
         // Format and place time labels
-        scheduledTimeLabel.font = .style(Fonts.SanFrancisco.regular, size: 14)
+        scheduledTimeLabel.font = .getFont(.regular, size: 14)
         scheduledTimeLabel.textColor = Colors.primaryText
-        delayedTimeLabel.font = .style(Fonts.SanFrancisco.regular, size: 14)
+        delayedTimeLabel.font = .getFont(.regular, size: 14)
         delayedTimeLabel.textColor = Colors.lateRed
         
         updateScheduledTime()

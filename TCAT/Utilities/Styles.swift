@@ -33,15 +33,11 @@ struct Colors {
 }
 
 /// Font identifiers
-struct Fonts {
+enum Fonts {
     
-    struct SanFrancisco {
-        
-        // General Sizes
-        static let regular = "regular"
-        static let medium = "medium"
-        static let semibold = "semibold"
-        static let bold = "bold"
+    case regular, medium, semibold, bold
+    
+    enum SanFrancisco {
         
         struct ProDisplay {
             static let regular = "SFProDisplay-Regular"
@@ -59,40 +55,29 @@ struct Fonts {
         
     }
     
-    struct System {
-        // Placeholder for init function below, not actually used.
-        static let systemFontSize: CGFloat = 14 // Same as UIFont.systemFontSize
-        
-        static let regular = UIFont.systemFont(ofSize: systemFontSize, weight: .regular).fontName
-        static let semibold = UIFont.systemFont(ofSize: systemFontSize, weight: .semibold).fontName
-        static let bold = UIFont.systemFont(ofSize: systemFontSize, weight: .bold).fontName
-    }
-    
 }
 
 extension UIFont {
     
     /// Generate fonts for app usage
-    static func style(_ name: String, size: CGFloat) -> UIFont {
-        var name = name
+    static func getFont(_ name: Fonts, size: CGFloat) -> UIFont {
+        var fontString: String
         if size >= 14 {
             switch name {
-            case Fonts.SanFrancisco.regular: name = Fonts.SanFrancisco.ProDisplay.regular
-            case Fonts.SanFrancisco.medium: name = Fonts.SanFrancisco.ProDisplay.medium
-            case Fonts.SanFrancisco.semibold: name = Fonts.SanFrancisco.ProDisplay.semibold
-            case Fonts.SanFrancisco.bold: name = Fonts.SanFrancisco.ProDisplay.bold
-            default: break
+            case .regular: fontString = Fonts.SanFrancisco.ProDisplay.regular
+            case .medium: fontString = Fonts.SanFrancisco.ProDisplay.medium
+            case .semibold: fontString = Fonts.SanFrancisco.ProDisplay.semibold
+            case .bold: fontString = Fonts.SanFrancisco.ProDisplay.bold
             }
         } else {
             switch name {
-            case Fonts.SanFrancisco.regular: name = Fonts.SanFrancisco.ProText.regular
-            case Fonts.SanFrancisco.medium: name = Fonts.SanFrancisco.ProText.medium
-            case Fonts.SanFrancisco.semibold: name = Fonts.SanFrancisco.ProText.semibold
-            case Fonts.SanFrancisco.bold: name = Fonts.SanFrancisco.ProText.bold
-            default: break
+            case .regular: fontString = Fonts.SanFrancisco.ProText.regular
+            case .medium: fontString = Fonts.SanFrancisco.ProText.medium
+            case .semibold: fontString = Fonts.SanFrancisco.ProText.semibold
+            case .bold: fontString = Fonts.SanFrancisco.ProText.bold
             }
         }
-        return UIFont(name: name, size: size)!
+        return UIFont(name: fontString, size: size)!
     }
     
 }
