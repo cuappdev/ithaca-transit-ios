@@ -185,6 +185,7 @@ struct SiriShortcutUsedPayload: Payload {
     static let eventName: String = "Siri Shortcut used"
     let deviceInfo = DeviceInfo()
     
-    let invocationPhrase: String
+    let didComplete: Bool
+    let intentDescription: String
     let locationName: String
 }

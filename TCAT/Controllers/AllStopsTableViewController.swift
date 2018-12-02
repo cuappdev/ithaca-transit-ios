@@ -21,7 +21,8 @@ class AllStopsTableViewController: UITableViewController {
     var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
     var height: CGFloat?
     var currentChar: Character?
-    var activityIndicator: UIActivityIndicatorView?
+    var loadingIndicator: LoadingIndicator?
+    var isLoading: Bool { return loadingIndicator != nil }
 
     override func viewWillLayoutSubviews() {
         if let y = navigationController?.navigationBar.frame.maxY {
@@ -37,14 +38,9 @@ class AllStopsTableViewController: UITableViewController {
         super.viewDidLoad()
         sectionIndexes = sectionIndexesForBusStop()
 
-        sortedKeys = Array(sectionIndexes.keys).sorted().filter({$0 != "#"})
+        sortedKeys = sortedKeysForBusStops()
 
-        // Adding "#" to keys for bus stops that start with a number
-        if !allStops.isEmpty {
-            sortedKeys.append("#")
-        }
-
-        title = "All Stops"
+        title = Constants.Titles.allStops
         tableView.sectionIndexColor = .primaryTextColor
         tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
         tableView.cellLayoutMarginsFollowReadableWidth = false
@@ -198,47 +194,46 @@ class AllStopsTableViewController: UITableViewController {
 
 // MARK: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate
 extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-
-    func setUpActivityIndicator() {
-        activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
-        if let activityIndicator = activityIndicator {
-            view.addSubview(activityIndicator)
-            activityIndicator.snp.makeConstraints { (make) in
-                make.centerX.equalToSuperview()
-                make.centerY.equalToSuperview()
+    func setUpLoadingIndicator() {
+        loadingIndicator = LoadingIndicator()
+        if let loadingIndicator = loadingIndicator {
+            view.addSubview(loadingIndicator)
+            loadingIndicator.snp.makeConstraints { (make) in
+                make.center.equalToSuperview()
+                make.width.height.equalTo(40)
             }
         }
     }
 
-    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
-        return activityIndicator != nil ? nil : #imageLiteral(resourceName: "emptyPin")
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        // If loading indicator is being shown, don't display image
+        return isLoading ? nil : #imageLiteral(resourceName: "serverDown")
     }
 
-    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        if activityIndicator != nil {
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display description
+        if isLoading {
             return nil
         }
-        let title = "Couldn't Get Stops"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.mediumGrayColor]
-        return NSAttributedString(string: title, attributes: attrs)
+        let title = Constants.EmptyStateMessages.couldntGetStops
+        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.mediumGrayColor])
     }
 
-    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
-        if activityIndicator != nil {
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display button
+        if isLoading {
             return nil
         }
-        let title = "Retry"
-        let attrs = [NSAttributedString.Key.foregroundColor: UIColor.buttonColor]
-        return NSAttributedString(string: title, attributes: attrs)
+        let title = Constants.Buttons.retry
+        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.tcatBlueColor])
     }
 
-    func emptyDataSet(_ scrollView: UIScrollView!, didTap didTapButton: UIButton!) {
-        setUpActivityIndicator()
+    func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
+        setUpLoadingIndicator()
         tableView.reloadData()
-        activityIndicator?.startAnimating()
-        retryNetwork { () -> Void in
-            self.activityIndicator?.stopAnimating()
-            self.activityIndicator = nil
+        retryNetwork {
+            self.loadingIndicator?.removeFromSuperview()
+            self.loadingIndicator = nil
             self.setUpTableOnRetry()
         }
     }

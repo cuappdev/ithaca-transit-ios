@@ -27,14 +27,15 @@ target 'TCAT' do
     pod 'Zip', '~> 1.1'
     
     # UI Frameworks
-    pod 'DZNEmptyDataSet'
-    pod 'NotificationBannerSwift', :git=> 'https://github.com/mattbarker016/NotificationBanner.git'
+    pod 'DZNEmptyDataSet', :git=> 'https://github.com/cuappdev/DZNEmptyDataSet.git'
+    pod 'NotificationBannerSwift', :git=> 'https://github.com/cuappdev/NotificationBanner.git'
     pod 'Pulley', '~> 2.6'
-    pod 'Presentation', :git=> 'https://github.com/mattbarker016/Presentation.git'
+    pod 'Presentation', :git=> 'https://github.com/cuappdev/Presentation.git'
     pod 'SnapKit'
+    pod 'WhatsNewKit', '~> 1.1.2'
     
     # Other
-    pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/AAAstorga/Fuzzywuzzy_swift.git'
+    pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/cuappdev/Fuzzywuzzy_swift.git'
     
     target 'TCATTests' do
         inherit! :search_paths

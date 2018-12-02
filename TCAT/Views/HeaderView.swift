@@ -14,12 +14,13 @@ protocol AddFavoritesDelegate {
 }
 
 class HeaderView: UITableViewHeaderFooterView {
+    
 
     var addFavoritesDelegate: AddFavoritesDelegate?
 
     var label: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: Constants.Fonts.SanFrancisco.Regular, size: 14)
+        label.font = .style(Fonts.SanFrancisco.regular, size: 14)
         label.textColor = .tableViewHeaderTextColor
         return label
     }()
@@ -41,14 +42,14 @@ class HeaderView: UITableViewHeaderFooterView {
         contentView.addSubview(label)
 
         label.snp.makeConstraints { (make) in
-            make.left.equalToSuperview().offset(12)
+            make.leading.equalToSuperview().offset(12)
             make.bottom.equalToSuperview().offset(-6)
         }
         if displayAddButton {
             contentView.addSubview(addButton)
             addButton.snp.makeConstraints { (make) in
                 make.centerY.equalTo(label.snp.centerY)
-                make.right.equalToSuperview().offset(-12)
+                make.trailing.equalToSuperview().offset(-12)
             }
         }
     }

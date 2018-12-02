@@ -17,13 +17,28 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.3</string>
+	<string>1.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.cornellappdev.tcat</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>ithaca-transit</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
-	<string>62</string>
+	<string>65</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>ithaca-transit</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -32,15 +47,25 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow the app to calculate routes using your current location</string>
+	<string>Allow the app to calculate routes using your current location.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Allow the app to save photos.</string>
+	<key>NSSiriUsageDescription</key>
+	<string>Use Ithaca Transit with Siri to get bus routes.</string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>GetRoutesIntent</string>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
-		<string>SFText-Medium.otf</string>
-		<string>SFText-Regular.otf</string>
-		<string>SFText-Semibold.otf</string>
-		<string>SFText-Bold.otf</string>
+		<string>SFProDisplay-Bold.otf</string>
+		<string>SFProDisplay-Medium.otf</string>
+		<string>SFProDisplay-Regular.otf</string>
+		<string>SFProDisplay-Semibold.otf</string>
+		<string>SFUIText-Bold.otf</string>
+		<string>SFUIText-Medium.otf</string>
+		<string>SFUIText-Regular.otf</string>
+		<string>SFUIText-Semibold.otf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
