@@ -19,7 +19,7 @@ class SearchBarView: UIView, UISearchControllerDelegate {
 
         //Search Bar Customization
         UISearchBar.appearance().setImage(UIImage(named: "search"), for: .search, state: .normal)
-        UIBarButtonItem.appearance().setTitleTextAttributes([.foregroundColor: UIColor.black], for: .normal)
+        UIBarButtonItem.appearance().setTitleTextAttributes([.foregroundColor: Colors.black], for: .normal)
 
         resultsViewController = SearchResultsTableViewController()
         searchController = UISearchController(searchResultsController: resultsViewController)
@@ -29,9 +29,9 @@ class SearchBarView: UIView, UISearchControllerDelegate {
         resultsViewController?.searchBar = searchController?.searchBar
 
         let textFieldInsideSearchBar = searchController?.searchBar.value(forKey: "searchField") as? UITextField
-        textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
+        textFieldInsideSearchBar?.backgroundColor = Colors.backgroundWash
         textFieldInsideSearchBar?.attributedPlaceholder = NSAttributedString(string: Constants.General.searchPlaceholder,
-                                                                             attributes: [.foregroundColor: UIColor.searchBarPlaceholderTextColor])
+                                                                             attributes: [.foregroundColor: Colors.dividerTextField])
 
         //searchController?.searchBar.backgroundColor = .clear
         searchController?.searchBar.tintColor = .clear

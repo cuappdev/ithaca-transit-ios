@@ -112,8 +112,8 @@ class RouteDiagram: UIView {
         stopLabel.numberOfLines = 0
         
         let stopNameAttrs: [NSAttributedString.Key : Any] = [
-            .font : UIFont.style(Fonts.SanFrancisco.regular, size: 14.0),
-            .foregroundColor : UIColor.primaryTextColor
+            .font : UIFont.getFont(.regular, size: 14.0),
+            .foregroundColor : Colors.primaryText
         ]
         let stopName = NSMutableAttributedString(string: name, attributes: stopNameAttrs)
 
@@ -128,8 +128,8 @@ class RouteDiagram: UIView {
             }
             
             let travelDistanceAttrs: [NSAttributedString.Key : Any] = [
-                .font : UIFont.style(Fonts.SanFrancisco.regular, size: 12.0),
-                .foregroundColor : UIColor.mediumGrayColor
+                .font : UIFont.getFont(.regular, size: 12.0),
+                .foregroundColor : Colors.metadataIcon
             ]
             
             let travelDistance = NSMutableAttributedString(string: addLinebreak ? "\n\(distance.roundedString) away" : " \(distance.roundedString) away", attributes: travelDistanceAttrs)
@@ -138,8 +138,8 @@ class RouteDiagram: UIView {
         
         if stayOnBusForTranfer {
             let stayOnBusAttrs: [NSAttributedString.Key : Any] = [
-                .font : UIFont.style(Fonts.SanFrancisco.regular, size: 12.0),
-                .foregroundColor : UIColor.mediumGrayColor
+                .font : UIFont.getFont(.regular, size: 12.0),
+                .foregroundColor : Colors.metadataIcon
             ]
             let stayOnBus = NSMutableAttributedString(string:"\nStay on board", attributes: stayOnBusAttrs)
             stopName.append(stayOnBus)
@@ -153,8 +153,8 @@ class RouteDiagram: UIView {
     
     private func getTestStopLabel(withName name: String) -> UILabel {
         let testStopLabel = UILabel()
-        testStopLabel.font = .style(Fonts.SanFrancisco.regular, size: 14.0)
-        testStopLabel.textColor = .primaryTextColor
+        testStopLabel.font = .getFont(.regular, size: 14.0)
+        testStopLabel.textColor = Colors.primaryText
         testStopLabel.text = name
         testStopLabel.sizeToFit()
     
@@ -163,8 +163,8 @@ class RouteDiagram: UIView {
     
     private func getTestDistanceLabel(withDistance distance: Double) -> UILabel {
         let testDistanceLabel = UILabel()
-        testDistanceLabel.font = .style(Fonts.SanFrancisco.regular, size: 12.0)
-        testDistanceLabel.textColor = .mediumGrayColor
+        testDistanceLabel.font = .getFont(.regular, size: 12.0)
+        testDistanceLabel.textColor = Colors.metadataIcon
         testDistanceLabel.text = " \(distance.roundedString) away"
         testDistanceLabel.sizeToFit()
         
@@ -187,11 +187,11 @@ class RouteDiagram: UIView {
             case .walk:
 
                 if index == destinationDot {
-                    let framedGreyCircle = Circle(size: .medium, style: .bordered, color: .mediumGrayColor)
-                    framedGreyCircle.backgroundColor = .white
+                    let framedGreyCircle = Circle(size: .medium, style: .bordered, color: Colors.metadataIcon)
+                    framedGreyCircle.backgroundColor = Colors.white
                     pin = framedGreyCircle
                 } else {
-                    let solidGreyCircle = Circle(size: .small, style: .solid, color: .mediumGrayColor)
+                    let solidGreyCircle = Circle(size: .small, style: .solid, color: Colors.metadataIcon)
                     pin = solidGreyCircle
                 }
 
@@ -200,16 +200,16 @@ class RouteDiagram: UIView {
                 if index == destinationDot {
                     if isWalkingRoute {
                         // walking route destination should always be grey no matter what direction type
-                        let framedGreyCircle = Circle(size: .medium, style: .bordered, color: .mediumGrayColor)
-                        framedGreyCircle.backgroundColor = .white
+                        let framedGreyCircle = Circle(size: .medium, style: .bordered, color: Colors.metadataIcon)
+                        framedGreyCircle.backgroundColor = Colors.white
                         pin = framedGreyCircle
                     } else {
-                        let framedBlueCircle = Circle(size: .medium, style: .bordered, color: .tcatBlueColor)
-                        framedBlueCircle.backgroundColor = .white
+                        let framedBlueCircle = Circle(size: .medium, style: .bordered, color: Colors.tcatBlue)
+                        framedBlueCircle.backgroundColor = Colors.white
                         pin = framedBlueCircle
                     }
                 } else {
-                    let solidBlueCircle = Circle(size: .small, style: .solid, color: .tcatBlueColor)
+                    let solidBlueCircle = Circle(size: .small, style: .solid, color: Colors.tcatBlue)
                     pin = solidBlueCircle
                 }
 
@@ -239,7 +239,7 @@ class RouteDiagram: UIView {
             default:
                 let walkIcon = UIImageView(image: #imageLiteral(resourceName: "walk"))
                 walkIcon.contentMode = .scaleAspectFit
-                walkIcon.tintColor = .mediumGrayColor
+                walkIcon.tintColor = Colors.metadataIcon
                 return walkIcon
 
         }
@@ -255,7 +255,7 @@ class RouteDiagram: UIView {
         let isStopLabelSingleLine = isStopLabelOneLine(stopLabel)
 
         if isWalkingRoute {
-            let greyRouteLine = isStopLabelSingleLine ? SolidLine(color: .mediumGrayColor) : SolidLine(height: RouteLine.extendedHeight, color: .mediumGrayColor)
+            let greyRouteLine = isStopLabelSingleLine ? SolidLine(color: Colors.metadataIcon) : SolidLine(height: RouteLine.extendedHeight, color: Colors.metadataIcon)
 
             return greyRouteLine
         }
@@ -264,12 +264,12 @@ class RouteDiagram: UIView {
         switch directionType {
 
             case .depart:
-                let solidBlueRouteLine = isStopLabelSingleLine ? SolidLine(color: .tcatBlueColor) : SolidLine(height: RouteLine.extendedHeight, color: .tcatBlueColor)
+                let solidBlueRouteLine = isStopLabelSingleLine ? SolidLine(color: Colors.tcatBlue) : SolidLine(height: RouteLine.extendedHeight, color: Colors.tcatBlue)
 
                 return solidBlueRouteLine
 
             default:
-                let dashedGreyRouteLine = isStopLabelSingleLine ? DottedLine(color: .mediumGrayColor) : DottedLine(height: RouteLine.extendedHeight, color: .mediumGrayColor)
+                let dashedGreyRouteLine = isStopLabelSingleLine ? DottedLine(color: Colors.metadataIcon) : DottedLine(height: RouteLine.extendedHeight, color: Colors.metadataIcon)
 
                 return dashedGreyRouteLine
 
@@ -282,7 +282,7 @@ class RouteDiagram: UIView {
         let spaceBtnBusIcons: CGFloat = 15.0
         
         let stayOnBusCoverUpView = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: busIconWidth, height: spaceBtnBusIcons + 6)))
-        stayOnBusCoverUpView.backgroundColor = .tcatBlueColor
+        stayOnBusCoverUpView.backgroundColor = Colors.tcatBlue
         
         return stayOnBusCoverUpView
     }

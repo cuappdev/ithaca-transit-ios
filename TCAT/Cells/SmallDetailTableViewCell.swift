@@ -22,8 +22,8 @@ class SmallDetailTableViewCell: UITableViewCell {
         
         titleLabel = UILabel()
         titleLabel.frame = CGRect(x: cellWidth, y: 0, width: UIScreen.main.bounds.width - cellWidth - 20, height: 20)
-        titleLabel.font = .style(Fonts.System.regular, size: 14)
-        titleLabel.textColor = .secondaryTextColor
+        titleLabel.font = .getFont(.regular, size: 14)
+        titleLabel.textColor = Colors.primaryText
         titleLabel.text = "Small Cell"
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.numberOfLines = 0
@@ -48,7 +48,7 @@ class SmallDetailTableViewCell: UITableViewCell {
             iconView?.updateTimes(with: direction, isLast: lastStep)
         }
         
-        let titleLabelBoldFont: UIFont = .style(Fonts.System.semibold, size: 14)
+        let titleLabelBoldFont: UIFont = .getFont(.semibold, size: 14)
         
         if direction.type == .arrive {
             // Arrive Direction

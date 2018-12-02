@@ -68,9 +68,9 @@ class HomeViewController: UIViewController {
 
         recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
-        navigationController?.navigationBar.barTintColor = .white
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-        view.backgroundColor = .tableBackgroundColor
+        navigationController?.navigationBar.barTintColor = Colors.white
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: Colors.white]
+        view.backgroundColor = Colors.backgroundWash
 
         tableView = HomeTableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
@@ -79,7 +79,7 @@ class HomeViewController: UIViewController {
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
 
-        tableView.separatorColor = .lineDotColor
+        tableView.separatorColor = Colors.dividerTextField
         tableView.keyboardDismissMode = .onDrag
         tableView.tableFooterView = UIView()
         tableView.showsVerticalScrollIndicator = false
@@ -104,7 +104,7 @@ class HomeViewController: UIViewController {
         searchBar.delegate = self
         searchBar.searchBarStyle = .default
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
-        textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
+        textFieldInsideSearchBar?.backgroundColor = Colors.backgroundWash
         navigationItem.titleView = searchBar
 
         let rightBarButton = UIBarButtonItem(customView: infoButton)
@@ -351,7 +351,7 @@ extension HomeViewController: UITableViewDataSource {
             }
         }
 
-        cell.textLabel?.font = .style(Fonts.System.regular, size: 14)
+        cell.textLabel?.font = .getFont(.regular, size: 14)
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
         cell.layoutMargins = .zero
@@ -567,14 +567,14 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
         // If loading indicator is being shown, don't display description
         if isLoading { return nil }
         let title = isNetworkDown ? Constants.EmptyStateMessages.noNetworkConnection: Constants.EmptyStateMessages.locationNotFound
-        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.mediumGrayColor])
+        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.metadataIcon])
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
         // If loading indicator is being shown, don't display button
         if isLoading { return nil }
         let title = Constants.Buttons.retry
-        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.tcatBlueColor])
+        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.tcatBlue])
     }
 
     func setUpLoadingIndicator() {

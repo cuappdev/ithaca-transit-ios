@@ -16,8 +16,8 @@ class LoadingIndicator: RPCircularProgress {
         super.init()
         
         enableIndeterminate()
-        trackTintColor = .mediumGrayColor
-        progressTintColor = .searchBarPlaceholderTextColor
+        trackTintColor = Colors.metadataIcon
+        progressTintColor = Colors.dividerTextField
         thicknessRatio = 0.25
         
     }

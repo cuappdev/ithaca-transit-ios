@@ -52,7 +52,7 @@ class DatePickerView: UIView {
 
         super.init(frame: frame)
 
-        backgroundColor = .white
+        backgroundColor = Colors.white
 
         styleDatepicker()
         styleSegmentedControl(timeTypeSegmentedControl)
@@ -127,22 +127,22 @@ class DatePickerView: UIView {
     }
 
     private func styleSegmentedControl(_ segmentedControl: UISegmentedControl) {
-        segmentedControl.tintColor = .tcatBlueColor
+        segmentedControl.tintColor = Colors.tcatBlue
         segmentedControl.setTitleTextAttributes(
-            [.font: UIFont.style(Fonts.SanFrancisco.regular, size: 13.0)],
+            [.font: UIFont.getFont(.regular, size: 13.0)],
             for: .normal)
     }
 
     private func styleCancelButton() {
         cancelButton.frame = CGRect(x: 0, y: 0, width: 60, height: buttonHeight)
-        cancelButton.titleLabel?.font = .style(Fonts.SanFrancisco.regular, size: 17.0)
-        cancelButton.setTitleColor(.mediumGrayColor, for: .normal)
+        cancelButton.titleLabel?.font = .getFont(.regular, size: 17.0)
+        cancelButton.setTitleColor(Colors.metadataIcon, for: .normal)
     }
 
     private func styleDoneButton() {
         doneButton.frame = CGRect(x: 0, y: 0, width: 55, height: buttonHeight)
-        doneButton.titleLabel?.font = .style(Fonts.SanFrancisco.regular, size: 17.0)
-        doneButton.setTitleColor(.tcatBlueColor, for: .normal)
+        doneButton.titleLabel?.font = .getFont(.regular, size: 17.0)
+        doneButton.setTitleColor(Colors.tcatBlue, for: .normal)
     }
 
     // MARK: Set data

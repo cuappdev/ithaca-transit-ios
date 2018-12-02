@@ -29,7 +29,7 @@ class WhatsNewHeaderView: UIView {
     init(updateName: String, description: String) {
         super.init(frame: .zero)
 
-        backgroundColor = .white
+        backgroundColor = Colors.white
         layer.cornerRadius = 16
         clipsToBounds = true
 
@@ -42,8 +42,8 @@ class WhatsNewHeaderView: UIView {
     func createWhatsNewHeader() {
         whatsNewHeader = UILabel()
         whatsNewHeader.text = "NEW IN ITHACA TRANSIT"
-        whatsNewHeader.font = UIFont.style(Fonts.SanFrancisco.semibold, size: 12)
-        whatsNewHeader.textColor = UIColor.tcatBlueColor
+        whatsNewHeader.font = .getFont(.semibold, size: 12)
+        whatsNewHeader.textColor = Colors.tcatBlue
 
         addSubview(whatsNewHeader)
     }
@@ -51,7 +51,7 @@ class WhatsNewHeaderView: UIView {
     func createUpdateTitle(title: String) {
         updateTitle = UILabel()
         updateTitle.text = title
-        updateTitle.font = UIFont.style(Fonts.SanFrancisco.bold, size: 18)
+        updateTitle.font = .getFont(.bold, size: 18)
 
         addSubview(updateTitle)
     }
@@ -59,8 +59,8 @@ class WhatsNewHeaderView: UIView {
     func createUpdateDescription(description: String) {
         updateDescription = UILabel()
         updateDescription.text = description
-        updateDescription.font = UIFont.style(Fonts.SanFrancisco.regular, size: 14)
-        updateDescription.textColor = UIColor.mediumGrayColor
+        updateDescription.font = .getFont(.regular, size: 14)
+        updateDescription.textColor = Colors.metadataIcon
         updateDescription.numberOfLines = 0
         updateDescription.textAlignment = .center
 
@@ -70,10 +70,10 @@ class WhatsNewHeaderView: UIView {
     func createDismissButton() {
         dismissButton = UIButton()
         dismissButton.setTitle("OK", for: .normal)
-        dismissButton.titleLabel?.font = UIFont.style(Fonts.SanFrancisco.semibold, size: 14)
+        dismissButton.titleLabel?.font = .getFont(.semibold, size: 14)
         dismissButton.addTarget(self, action: #selector(okButtonPressed), for: .touchUpInside)
-        dismissButton.backgroundColor = UIColor.tcatBlueColor
-        dismissButton.setTitleColor(.white, for: .normal)
+        dismissButton.backgroundColor = Colors.tcatBlue
+        dismissButton.setTitleColor(Colors.white, for: .normal)
         dismissButton.layer.cornerRadius = dismissButton.intrinsicContentSize.height/2
         dismissButton.clipsToBounds = true
 

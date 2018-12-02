@@ -100,7 +100,7 @@ class CutoutView : UIView
         
         super.draw(rect)
         let context = UIGraphicsGetCurrentContext()
-        context?.setFillColor(UIColor.white.cgColor)
+        context?.setFillColor(Colors.white.cgColor)
         context?.fill(self.bounds)
         
         for view in (self.superview?.subviews)! {
