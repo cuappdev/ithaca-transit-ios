@@ -95,6 +95,7 @@ class Route: NSObject, JSONDecodable {
 
         // print("Route JSON", json)
 
+        // MARK: #182 • Get Route ID
         departureTime = json["departureTime"].parseDate()
         arrivalTime = json["arrivalTime"].parseDate()
         startCoords = json["startCoords"].parseCoordinates()

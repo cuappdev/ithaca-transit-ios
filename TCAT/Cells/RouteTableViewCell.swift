@@ -125,8 +125,8 @@ class RouteTableViewCell: UITableViewCell {
         timesStackView.axis = .horizontal
         timesStackView.alignment = .center
         
-        travelTimeLabel.font = .style(Fonts.SanFrancisco.semibold, size: 16)
-        travelTimeLabel.textColor = .primaryTextColor
+        travelTimeLabel.font = .getFont(.semibold, size: 16)
+        travelTimeLabel.textColor = Colors.primaryText
         
         styleDepartureStackView()
     }
@@ -135,9 +135,9 @@ class RouteTableViewCell: UITableViewCell {
         departureStackView.axis = .horizontal
         departureStackView.spacing = spaceBtnDepartureElements
         
-        departureTimeLabel.font = .style(Fonts.SanFrancisco.semibold, size: 14)
-        departureTimeLabel.textColor = .primaryTextColor
-        arrowImageView.tintColor = .mediumGrayColor
+        departureTimeLabel.font = .getFont(.semibold, size: 14)
+        departureTimeLabel.textColor = Colors.primaryText
+        arrowImageView.tintColor = Colors.metadataIcon
     }
     
     private func styleLiveStackView() {
@@ -148,24 +148,24 @@ class RouteTableViewCell: UITableViewCell {
         liveStackView.alignment = .lastBaseline
         liveStackView.spacing = spaceBtnLiveElements
         
-        liveLabel.font = .style(Fonts.SanFrancisco.semibold, size: 14)
+        liveLabel.font = .getFont(.semibold, size: 14)
     }
     
     private func styleFunMessage() {
-        funMessage.font = .style(Fonts.SanFrancisco.semibold, size: 12)
+        funMessage.font = .getFont(.semibold, size: 12)
         funMessage.textColor = .lightGray
     }
 
     private func styleTopBorder() {
-        topBorder.backgroundColor = .lineDotColor
+        topBorder.backgroundColor = Colors.dividerTextField
     }
 
     private func styleBottomBorder() {
-        bottomBorder.backgroundColor = .lineDotColor
+        bottomBorder.backgroundColor = Colors.dividerTextField
     }
 
     private func styleCellSeparator() {
-        cellSeparator.backgroundColor = .tableBackgroundColor
+        cellSeparator.backgroundColor = Colors.backgroundWash
     }
     
     // MARK: Add subviews
@@ -390,17 +390,17 @@ class RouteTableViewCell: UITableViewCell {
         switch delayState {
             
         case .late(date: let delayedDepartureTime):
-            liveLabel.textColor = .liveRedColor
+            liveLabel.textColor = Colors.lateRed
             liveLabel.text = "Late - \(Time.timeString(from: delayedDepartureTime))"
-            liveIndicatorView.setColor(to: .liveRedColor)
+            liveIndicatorView.setColor(to: Colors.lateRed)
             if liveStackView.isHidden {
                 showLiveElements()
             }
             
         case .onTime(date: _):
-            liveLabel.textColor = .liveGreenColor
+            liveLabel.textColor = Colors.liveGreen
             liveLabel.text = "On Time"
-            liveIndicatorView.setColor(to:.liveGreenColor)
+            liveIndicatorView.setColor(to:Colors.liveGreen)
             if liveStackView.isHidden {
                 showLiveElements()
             }
@@ -438,23 +438,23 @@ class RouteTableViewCell: UITableViewCell {
             let boardTime = Time.timeString(from: startTime, to: departureTime)
             departureTimeLabel.text = boardTime == "0 min" ? "Board now" : "Board in \(boardTime)"
             
-            departureTimeLabel.textColor = .liveRedColor
+            departureTimeLabel.textColor = Colors.lateRed
             
         case .onTime(date: let departureTime):
             let boardTime = Time.timeString(from: startTime, to: departureTime)
             departureTimeLabel.text = boardTime == "0 min" ? "Board now" : "Board in \(boardTime)"
             
-            departureTimeLabel.textColor = .liveGreenColor
+            departureTimeLabel.textColor = Colors.liveGreen
             
         case .noDelay(date: let departureTime):
             let boardTime = Time.timeString(from: startTime, to: departureTime)
             departureTimeLabel.text = boardTime == "0 min" ? "Board now" : "Board in \(boardTime)"
             
-            departureTimeLabel.textColor = .primaryTextColor
+            departureTimeLabel.textColor = Colors.primaryText
             
         }
         
-        arrowImageView.tintColor = .primaryTextColor
+        arrowImageView.tintColor = Colors.primaryText
     }
     
     private func setTravelTime(withDepartureTime departureTime: Date, withArrivalTime arrivalTime: Date) {
@@ -463,8 +463,8 @@ class RouteTableViewCell: UITableViewCell {
     
     private func setDepartureTimeToWalking() {
         departureTimeLabel.text = "Directions"
-        departureTimeLabel.textColor = .mediumGrayColor
-        arrowImageView.tintColor = .mediumGrayColor
+        departureTimeLabel.textColor = Colors.metadataIcon
+        arrowImageView.tintColor = Colors.metadataIcon
     }
 
 }

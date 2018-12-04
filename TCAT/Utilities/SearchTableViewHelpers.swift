@@ -268,6 +268,6 @@ extension SearchResultsTableViewController: DZNEmptyDataSetSource {
     
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         return NSAttributedString(string: Constants.EmptyStateMessages.locationNotFound,
-                                  attributes: [.foregroundColor: UIColor.mediumGrayColor])
+                                  attributes: [.foregroundColor: Colors.metadataIcon])
     }
 }

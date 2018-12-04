@@ -43,13 +43,13 @@ class Waypoint: NSObject {
         
         switch wpType {
         case .origin:
-            self.iconView = Circle(size: .large, style: .solid, color: isStop ? .tcatBlueColor : .mediumGrayColor)
+            self.iconView = Circle(size: .large, style: .solid, color: isStop ? Colors.tcatBlue : Colors.metadataIcon)
         case .destination:
-            self.iconView = Circle(size: .large, style: .bordered, color: isStop ? .tcatBlueColor : .mediumGrayColor)
+            self.iconView = Circle(size: .large, style: .bordered, color: isStop ? Colors.tcatBlue : Colors.metadataIcon)
         case .bus:
-            self.iconView = Circle(size: .small, style: .solid, color: .tcatBlueColor)
+            self.iconView = Circle(size: .small, style: .solid, color: Colors.tcatBlue)
         case .walk:
-            self.iconView = Circle(size: .small, style: .solid, color: .mediumGrayColor)
+            self.iconView = Circle(size: .small, style: .solid, color: Colors.metadataIcon)
         case .none, .stop, .walking, .bussing:
             self.iconView = UIView()
         }
@@ -60,23 +60,23 @@ class Waypoint: NSObject {
     }
     
     func drawOriginIcon() -> UIView {
-        return drawCircle(radius: largeDiameter / 2, innerColor: .mediumGrayColor, borderColor: .white)
+        return drawCircle(radius: largeDiameter / 2, innerColor: Colors.metadataIcon, borderColor: Colors.white)
     }
     
     func drawDestinationIcon() -> UIView {
-        return drawCircle(radius: largeDiameter / 2, innerColor: .tcatBlueColor, borderColor: .white)
+        return drawCircle(radius: largeDiameter / 2, innerColor: Colors.tcatBlue, borderColor: Colors.white)
     }
     
     func drawStopIcon() -> UIView {
-        return drawCircle(radius: smallDiameter / 2, innerColor: .white)
+        return drawCircle(radius: smallDiameter / 2, innerColor: Colors.white)
     }
 
     func drawBusPointIcon() -> UIView {
-        return drawCircle(radius: smallDiameter / 2, innerColor: .tcatBlueColor)
+        return drawCircle(radius: smallDiameter / 2, innerColor: Colors.tcatBlue)
     }
     
     func drawWalkPointIcon() -> UIView {
-        return drawCircle(radius: smallDiameter / 2, innerColor: .mediumGrayColor)
+        return drawCircle(radius: smallDiameter / 2, innerColor: Colors.metadataIcon)
     }
     
     // Draw waypoint meant to be placed as an iconView on map
@@ -91,7 +91,7 @@ class Waypoint: NSObject {
         
         circleView.layer.cornerRadius = circleView.frame.width / 2.0
         circleView.layer.masksToBounds = false
-        circleView.layer.shadowColor = UIColor.black.cgColor
+        circleView.layer.shadowColor = Colors.black.cgColor
         circleView.layer.shadowOffset = CGSize(width: 0, height: constant)
         circleView.layer.shadowOpacity = 0.25
         circleView.layer.shadowRadius = 1

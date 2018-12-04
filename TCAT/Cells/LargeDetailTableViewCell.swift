@@ -30,16 +30,16 @@ class LargeDetailTableViewCell: UITableViewCell {
         chevron.frame.size = CGSize(width: 13.5, height: 8)
         chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
         chevron.image = UIImage(named: "arrow")
-        chevron.tintColor = .mediumGrayColor
+        chevron.tintColor = Colors.metadataIcon
         return chevron
     }
     
     func getTitleLabel() -> UILabel {
         let titleLabel = UILabel()
         titleLabel.frame = CGRect(x: cellWidth, y: 0, width: chevron.frame.minX - cellWidth, height: 20)
-        titleLabel.font = .style(Fonts.System.regular, size: 14)
+        titleLabel.font = .getFont(.regular, size: 14)
         titleLabel.lineBreakMode = .byWordWrapping
-        titleLabel.textColor = .primaryTextColor
+        titleLabel.textColor = Colors.primaryText
         titleLabel.text = direction != nil && direction.type == .transfer ? "Bus becomes" : "Board"
         titleLabel.sizeToFit()
         return titleLabel
@@ -48,8 +48,8 @@ class LargeDetailTableViewCell: UITableViewCell {
     func getDetailLabel() -> UILabel {
         let detailLabel = UILabel()
         detailLabel.frame = CGRect(x: cellWidth, y: 0, width: 20, height: 20)
-        detailLabel.font = .style(Fonts.System.regular, size: 14)
-        detailLabel.textColor = .mediumGrayColor
+        detailLabel.font = .getFont(.regular, size: 14)
+        detailLabel.textColor = Colors.metadataIcon
         detailLabel.text = "Detail Label"
         detailLabel.lineBreakMode = .byWordWrapping
         detailLabel.sizeToFit()
@@ -130,8 +130,9 @@ class LargeDetailTableViewCell: UITableViewCell {
         // Using constant always returned from
         //      while label.frame.maxX < busIconView.frame.maxX + 8 {
         // because it will occasionally run infinitely because of format func calls
+        // TODO: Do this better!
         var accum = 0
-        while accum <= (16) {
+        while accum <= (21) {
             accum += 1
             label.text! += " "
             label.sizeToFit()
@@ -140,7 +141,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         // Format and place labels
         
         let content = label.text! + direction.locationNameDescription
-        let labelBoldFont: UIFont = .style(Fonts.System.semibold, size: 14)
+        let labelBoldFont: UIFont = .getFont(.semibold, size: 14)
         let attributedString = direction.name.bold(in: content, from: label.font, to: labelBoldFont)
         label.attributedText = attributedString
         paragraphStyle.lineSpacing = 4

@@ -173,9 +173,19 @@ struct ScreenshotTakenPayload: Payload {
     let location: String
 }
 
+/// App Shortcut used with 3D Touch from the Home Screen
 struct HomeScreenQuickActionUsedPayload: Payload {
     static let eventName: String = "Home Screen Quick Action Used"
     let deviceInfo = DeviceInfo()
     
     let name: String
+}
+
+struct SiriShortcutUsedPayload: Payload {
+    static let eventName: String = "Siri Shortcut used"
+    let deviceInfo = DeviceInfo()
+    
+    let didComplete: Bool
+    let intentDescription: String
+    let locationName: String
 }

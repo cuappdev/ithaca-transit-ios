@@ -76,14 +76,14 @@ class BusIcon: UIView {
         self.backgroundColor = .clear
         
         baseView = UIView(frame: self.frame)
-        baseView.backgroundColor = .tcatBlueColor
+        baseView.backgroundColor = Colors.tcatBlue
         baseView.layer.cornerRadius = type.cornerRadius
         addSubview(baseView)
         
         image = UIImageView(image: UIImage(named: "bus"))
         let constant: CGFloat = type == .directionSmall ? 0.75 : 1.0
         image.frame.size = CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
-        image.tintColor = .white
+        image.tintColor = Colors.white
         image.center.y = baseView.center.y
         image.frame.origin.x = type == .directionSmall ? 8 : 12
         addSubview(image)
@@ -91,8 +91,8 @@ class BusIcon: UIView {
         label = UILabel(frame: CGRect(x: image.frame.maxX, y: 0, width: frame.width - image.frame.maxX, height: frame.height))
         label.text = "\(number)"
         let fontSize: CGFloat = type == .directionLarge ? 20 : 14
-        label.font = .style(Fonts.System.semibold, size: fontSize)
-        label.textColor = .white
+        label.font = .getFont(.semibold, size: fontSize)
+        label.textColor = Colors.white
         label.textAlignment = .center
         label.center.y = baseView.center.y
         label.frame.size.width = frame.maxX - image.frame.maxX
@@ -101,7 +101,7 @@ class BusIcon: UIView {
         
         if type == .liveTracking {
             
-            label.font = .style(Fonts.System.semibold, size: 16)
+            label.font = .getFont(.semibold, size: 16)
             label.sizeToFit()
             image.frame.origin.x = 8
             let sizeConstant: CGFloat = 0.87
@@ -109,7 +109,7 @@ class BusIcon: UIView {
             label.center.y = baseView.center.y
             label.frame.origin.x = image.frame.maxX + 4
             
-            liveIndicator = LiveIndicator(size: .large, color: .white)
+            liveIndicator = LiveIndicator(size: .large, color: Colors.white)
             liveIndicator!.frame.origin = CGPoint(x: label.frame.maxX + 5, y: label.frame.origin.y)
             liveIndicator!.center.y = baseView.center.y
             addSubview(liveIndicator!)

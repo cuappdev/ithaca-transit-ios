@@ -41,7 +41,7 @@ class AllStopsTableViewController: UITableViewController {
         sortedKeys = sortedKeysForBusStops()
 
         title = Constants.Titles.allStops
-        tableView.sectionIndexColor = .primaryTextColor
+        tableView.sectionIndexColor = Colors.primaryText
         tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
         tableView.cellLayoutMarginsFollowReadableWidth = false
 
@@ -216,7 +216,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             return nil
         }
         let title = Constants.EmptyStateMessages.couldntGetStops
-        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.mediumGrayColor])
+        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.metadataIcon])
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
@@ -225,7 +225,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             return nil
         }
         let title = Constants.Buttons.retry
-        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.tcatBlueColor])
+        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.tcatBlue])
     }
 
     func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
