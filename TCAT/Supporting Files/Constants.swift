@@ -191,9 +191,9 @@ struct Constants {
 
         static let seeAllStops = "See All Stops"
 
-        // What's New phrases
-        static let whatsNewUpdateName = "App Shortcuts for Favorites"
-        static let whatsNewDescription = "Force Touch the app icon to search your favorites even faster."
+        // What's New for v1.2
+        static let whatsNewUpdateName = "Introducing Siri Shortcuts"
+        static let whatsNewDescription = "Use Siri to access recent searches! Head to Siri & Search in Settings to get started."
     }
 
     struct TableHeaders {
@@ -218,8 +218,8 @@ struct Constants {
         static let appLaunchCount = "appLaunchCount"
         static let onboardingShown = "onboardingShown"
         static let showLocationAuthReminder = "locationAuthReminder"
+        static let uid = "uid"
         static let whatsNewDismissed = "whatsNewDismissed"
-
         static let recentSearch = "recentSearch"
         static let allBusStops = "allBusStops"
         static let favorites = "favorites"
