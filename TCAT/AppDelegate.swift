@@ -29,6 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ]
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
 
@@ -101,7 +102,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
+    
+    // MARK: Helper Functions
+    
+    /// Creates and sets a unique identifier. If the device identifier changes, updates it.
+    func setupUniqueIdentifier() {
+        if
+            let uid = UIDevice.current.identifierForVendor?.uuidString,
+            uid != userDefaults.string(forKey: Constants.UserDefaults.uid)
+        {
+            userDefaults.set(uid, forKey: Constants.UserDefaults.uid)
+        }
+    }
+    
     func handleShortcut(item: UIApplicationShortcutItem) {
         let optionsVC = RouteOptionsViewController()
         if let shortcutData = item.userInfo as? [String: Data] {
@@ -123,9 +136,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     /* Get all bus stops and store in userDefaults */
     func getBusStops() {
-        Network.getAllStops().perform(withSuccess: { allStopsRequest in
-            let allBusStops = allStopsRequest.data
-            if (allBusStops.isEmpty) {
+        Network.getAllStops().perform(withSuccess: { stops in
+            let allBusStops = stops.allStops
+            if allBusStops.isEmpty {
                 self.handleGetAllStopsError()
             } else {
                 let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
@@ -182,9 +195,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let optionsVC = RouteOptionsViewController()
 
             if
-                let lat = items?.filter({$0.name == "lat"}).first?.value,
-                let long = items?.filter({$0.name == "long"}).first?.value,
-                let stop = items?.filter({$0.name == "stopName"}).first?.value {
+                let lat = items?.filter({ $0.name == "lat" }).first?.value,
+                let long = items?.filter({ $0.name == "long" }).first?.value,
+                let stop = items?.filter({ $0.name == "stopName" }).first?.value {
                     latitude = Double(lat)
                     longitude = Double(long)
                     stopName = stop
@@ -210,13 +223,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let longitude = intent.longitude,
                 let searchTo = intent.searchTo,
                 let stopName = searchTo.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed),
-                let url = URL(string: "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(stopName)") {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                    return true
+                let url = URL(string: "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(stopName)")
+            {
+                UIApplication.shared.open(url, options: [:]) { (didComplete) in
+                    let intentDescription = userActivity.interaction?.intent.intentDescription ?? "No Intent Description"
+                    let payload = SiriShortcutUsedPayload(didComplete: didComplete,
+                                                               intentDescription: intentDescription,
+                                                               locationName: stopName)
+                    Analytics.shared.log(payload)
                 }
+                return true
+            }
         }
         return false
     }
+
 }
 
 extension UIWindow {

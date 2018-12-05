@@ -92,7 +92,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .tableBackgroundColor
+        self.view.backgroundColor = Colors.backgroundWash
 
         edgesForExtendedLayout = []
 
@@ -169,7 +169,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
     private func setupRouteSelection() {
         // offset for -12 for larger views, get rid of black space
         routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: 150))
-        routeSelection.backgroundColor = .white
+        routeSelection.backgroundColor = Colors.white
         var newRSFrame = routeSelection.frame
         newRSFrame.size.height =  routeSelection.lineWidth + routeSelection.searcbarView.frame.height + routeSelection.lineWidth + routeSelection.datepickerButton.frame.height
         routeSelection.frame = newRSFrame
@@ -369,7 +369,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                     return
                 }
 
-                Network.getRoutes(startCoord: startCoord, endCoord: endCoord, endPlaceName: searchFrom.name, time: time, type: self.searchTimeType) { (request) in
+                Network.getRoutes(startCoord: startCoord, endCoord: endCoord, endPlaceName: searchFrom.name, time: time, type: self.searchTimeType) { request in
                     let requestUrl = Network.getRequestUrl(startCoord: startCoord, endCoord: endCoord, destinationName: searchTo.name, time: time, type: self.searchTimeType)
                     self.processRequest(request: request, requestUrl: requestUrl, endPlace: searchTo)
                 }
@@ -421,37 +421,35 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
             ])
     }
 
-    func processRequest(request: APIRequest<RoutesRequest, Error>, requestUrl: String, endPlace: Place) {
+    func processRequest(request: APIRequest<JSON, Error>, requestUrl: String, endPlace: Place) {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestUrl)
 
-        request.performCollectingTimeline { (response) in
-            switch response.result {
-            case .success(let routesResponse):
-                
-                // Save to JSONFileManager
-                if let data = response.data {
-                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) }
-                    catch (let error) {
-                        let fileName = "RouteOptionsViewController"
-                        let line = "\(fileName) \(#function): \(error.localizedDescription)"
-                        print(line)
-                    }
-                }
-                
-                for each in routesResponse.data {
-                    each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
-                }
-                self.routes = routesResponse.data
-                self.requestDidFinish(perform: [.hideBanner])
-            case .failure(let networkError):
-                if let error = networkError as? APIError<Error> {
-                    self.processRequestError(error: error, requestUrl: requestUrl)
-                }
-            }
-        }
+        request.perform(withSuccess: { routeJson in
+                            self.processRouteJson(routeJSON: routeJson, requestUrl: requestUrl)
+                        },
+                        failure: { requestError in
+                            self.processRequestError(error: requestError, requestUrl: requestUrl)
+                        }
+        )
 
         let payload = DestinationSearchedEventPayload(destination: endPlace.name, requestUrl: requestUrl)
         Analytics.shared.log(payload)
+    }
+
+    func processRouteJson(routeJSON: JSON, requestUrl: String) {
+        JSONFileManager.shared.saveJSON(routeJSON, type: .routeJSON)
+
+        Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
+            self.routes = parsedRoutes
+            if let error = error {
+                self.requestDidFinish(perform: [
+                    .showError(bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .warning),
+                               payload: GetRoutesErrorPayload(type: error.title, description: error.description, url: requestUrl))
+                ])
+            } else {
+                self.requestDidFinish(perform: [.hideBanner])
+            }
+        })
     }
 
     func processRequestError(error: APIError<Error>, requestUrl: String) {
@@ -536,7 +534,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
     private func setupDatePickerOverlay() {
         datePickerOverlay = UIView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: view.frame.height + 12)) // 12 for sliver that shows up when click datepicker immediately after transition from HomeVC
-        datePickerOverlay.backgroundColor = .black
+        datePickerOverlay.backgroundColor = Colors.black
         datePickerOverlay.alpha = 0
 
         datePickerOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissDatePicker)))
@@ -904,7 +902,7 @@ extension RouteOptionsViewController: UITableViewDelegate {
         routeResults.allowsSelection = true
         routeResults.dataSource = self
         routeResults.separatorStyle = .none
-        routeResults.backgroundColor = .tableBackgroundColor
+        routeResults.backgroundColor = Colors.backgroundWash
         routeResults.alwaysBounceVertical = true //so table view doesn't scroll over top & bottom
         routeResults.showsVerticalScrollIndicator = false
 
@@ -920,6 +918,8 @@ extension RouteOptionsViewController: UITableViewDelegate {
         if let routeDetailViewController = createRouteDetailViewController(from: indexPath) {
             let payload = RouteResultsCellTappedEventPayload()
             Analytics.shared.log(payload)
+            // // MARK: #182 • Place routeSelected Analytics here.
+            // let tripId = routes[indexPath.row].id
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }
@@ -955,13 +955,13 @@ extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDele
 
         let retryButton = UIButton()
         retryButton.setTitle(Constants.Buttons.retry, for: .normal)
-        retryButton.setTitleColor(UIColor.tcatBlueColor, for: .normal)
-        retryButton.titleLabel?.font = .style(Fonts.SanFrancisco.regular, size: 16.0)
+        retryButton.setTitleColor(Colors.tcatBlue, for: .normal)
+        retryButton.titleLabel?.font = .getFont(.regular, size: 16.0)
         retryButton.addTarget(self, action: #selector(tappedRetryButton), for: .touchUpInside)
 
         let titleLabel = UILabel()
-        titleLabel.font = .style(Fonts.SanFrancisco.regular, size: 18.0)
-        titleLabel.textColor = .mediumGrayColor
+        titleLabel.font = .getFont(.regular, size: 18.0)
+        titleLabel.textColor = Colors.metadataIcon
         titleLabel.text = showRouteSearchingLoader ? Constants.EmptyStateMessages.lookingForRoutes : Constants.EmptyStateMessages.noRoutesFound
         titleLabel.sizeToFit()
 

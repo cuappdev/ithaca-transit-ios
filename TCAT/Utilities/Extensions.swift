@@ -16,31 +16,10 @@ let increaseTapTargetTag: Int = 1865
 
 extension UIColor {
 
-    @nonobjc static let tcatBlueColor = UIColor(red: 7 / 255, green: 157 / 255, blue: 220 / 255, alpha: 1)
-
-    @nonobjc static let buttonColor = UIColor(red: 0 / 255, green: 118 / 255, blue: 255 / 255, alpha: 1)
-    @nonobjc static let primaryTextColor = UIColor(white: 34 / 255, alpha: 1)
-    @nonobjc static let secondaryTextColor = UIColor(white: 74 / 255, alpha: 1)
-    @nonobjc static let tableHeaderColor = UIColor(white: 100 / 255, alpha: 1)
-
-    @nonobjc static let lineDotColor = UIColor(white: 216 / 255, alpha: 1)
-    @nonobjc static let mediumGrayColor = UIColor(white: 155 / 255, alpha: 1)
-
-    @nonobjc static let tableViewHeaderTextColor = UIColor(white: 71 / 255, alpha: 1)
-    @nonobjc static let tableBackgroundColor = UIColor(white: 242 / 255, alpha: 1)
-    @nonobjc static let summaryBackgroundColor = UIColor(white: 248 / 255, alpha: 1)
-    @nonobjc static let optionsTimeBackgroundColor = UIColor(white: 252 / 255, alpha: 1)
-    @nonobjc static let searchBarCursorColor = UIColor.black
-    @nonobjc static let searchBarPlaceholderTextColor = UIColor(red: 214 / 255, green: 216 / 255, blue: 220 / 255, alpha: 1)
-    @nonobjc static let noInternetTextColor = UIColor(red: 0.0, green: 118 / 255, blue: 255 / 255, alpha: 1)
-
-    @nonobjc static let liveGreenColor = UIColor(red: 39 / 255, green: 174 / 255, blue: 96 / 255, alpha: 1)
-    @nonobjc static let liveRedColor = UIColor(red: 214 / 255, green: 48 / 255, blue: 79 / 255, alpha: 1)
-
     // Use six-character string of a hex color for initialization
     convenience init(hex: String) {
         let hex = Int(hex, radix: 16)!
-        self.init(red: (hex >> 16) & 0xff, green: (hex >> 8) & 0xff, blue: hex & 0xff)
+        self.init(red:(hex >> 16) & 0xff, green:(hex >> 8) & 0xff, blue:hex & 0xff)
     }
 
     convenience init(red: Int, green: Int, blue: Int) {
@@ -127,7 +106,7 @@ extension UIViewController {
             return false
         } else if presentingViewController != nil {
             return true
-        } else if navigationController?.presentingViewController?.presentedViewController == navigationController {
+        } else if navigationController?.presentingViewController?.presentedViewController == navigationController  {
             return true
         } else if tabBarController?.presentingViewController is UITabBarController {
             return true
@@ -210,6 +189,51 @@ extension UIDevice {
 
 }
 
+extension JSON {
+
+    /// Format date with pattern `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`. Returns current date on error.
+    func parseDate() -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
+        let date = dateFormatter.date(from: self.stringValue) ?? Date.distantPast
+        return Time.truncateSeconds(from: date)
+    }
+
+    /// Create coordinate object from JSON.
+    func parseCoordinates() -> CLLocationCoordinate2D {
+        let latitude = self["lat"].doubleValue
+        let longitude = self["long"].doubleValue
+        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+
+    /// Create Bounds object
+    func parseBounds() -> Bounds {
+        return Bounds(
+            minLat: self["minLat"].doubleValue,
+            minLong: self["minLong"].doubleValue,
+            maxLat: self["maxLat"].doubleValue,
+            maxLong: self["maxLong"].doubleValue
+        )
+    }
+
+    /** Return LocationObject.
+
+        `id` is used when bus stops conform to this object.
+        Would like a way to extend this class for instances when JSON
+        strings are unique to the generic location (e.g. stopID)
+    */
+    func parseLocationObject() -> LocationObject {
+        return LocationObject(
+            name: self["name"].stringValue,
+            id: self["stopID"].stringValue,
+            latitude: self["lat"].doubleValue,
+            longitude: self["long"].doubleValue
+        )
+    }
+
+}
+
 extension String {
 
     /// See function name
@@ -239,7 +263,7 @@ extension String {
         - Parameter boldFont: The font to make the bold string.
      */
     func bold(in containerText: String, from originalFont: UIFont, to boldFont: UIFont) -> NSMutableAttributedString {
-        let attributedString = NSMutableAttributedString(string: containerText, attributes: [.font: originalFont])
+        let attributedString = NSMutableAttributedString(string: containerText, attributes: [.font : originalFont])
         return self.bold(in: attributedString, to: boldFont)
     }
 
@@ -253,8 +277,8 @@ extension String {
 
         do {
             let regex = try NSRegularExpression(pattern: pattern, options: [])
-            let ranges = regex.matches(in: plain_string, options: [], range: NSRange(location: 0, length: plain_string.count)).map { $0.range }
-            for range in ranges { newAttributedString.addAttributes([.font: boldFont], range: range) }
+            let ranges = regex.matches(in: plain_string, options: [], range: NSMakeRange(0, plain_string.count)).map { $0.range }
+            for range in ranges { newAttributedString.addAttributes([.font : boldFont], range: range) }
         } catch {
             print("bold NSRegularExpression failed")
         }
@@ -264,9 +288,9 @@ extension String {
     }
 }
 
-extension CLLocationCoordinate2D: Codable {
+extension CLLocationCoordinate2D {
     // MARK: CLLocationCoordinate2D+MidPoint
-    func middleLocationWith(location: CLLocationCoordinate2D) -> CLLocationCoordinate2D {
+    func middleLocationWith(location:CLLocationCoordinate2D) -> CLLocationCoordinate2D {
 
         let lon1 = longitude * .pi / 180
         let lon2 = location.longitude * .pi / 180
@@ -279,7 +303,7 @@ extension CLLocationCoordinate2D: Codable {
         let lat3 = atan2( sin(lat1) + sin(lat2), sqrt((cos(lat1) + x) * (cos(lat1) + x) + y * y) )
         let lon3 = lon1 + atan2(y, cos(lat1) + x)
 
-        let center: CLLocationCoordinate2D = CLLocationCoordinate2DMake(lat3 * 180 / .pi, lon3 * 180 / .pi)
+        let center:CLLocationCoordinate2D = CLLocationCoordinate2DMake(lat3 * 180 / .pi, lon3 * 180 / .pi)
         return center
     }
 
@@ -368,11 +392,11 @@ extension Array where Element: UIView {
     }
 }
 
-extension Array: JSONDecodable {
+extension Array : JSONDecodable {
     public init(json: JSON) {
         self.init(json.arrayValue.compactMap {
             if let type = Element.self as? JSONDecodable.Type {
-                let element: Element?
+                let element : Element?
                 do {
                     element = try type.init(json: $0) as? Element
                 } catch {
@@ -425,7 +449,7 @@ public func ???<T>(optional: T?, defaultValue: @autoclosure () -> String) -> Str
     }
 }
 
-func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop] {
+func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop]{
     var nonLetterArray = [BusStop]()
     var letterArray = [BusStop]()
     for stop in busStops {

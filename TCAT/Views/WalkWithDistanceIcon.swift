@@ -34,8 +34,8 @@ class WalkWithDistanceIcon: UIView {
     
     init(withDistance distance: Double) {
         travelDistanceLabel = UILabel()
-        travelDistanceLabel.font = .style(Fonts.SanFrancisco.regular, size: 12.0)
-        travelDistanceLabel.textColor = .mediumGrayColor
+        travelDistanceLabel.font = .getFont(.regular, size: 12.0)
+        travelDistanceLabel.textColor = Colors.metadataIcon
         
         if distance > 0  {
             travelDistanceLabel.text = "\(distance.roundedString)"
@@ -44,7 +44,7 @@ class WalkWithDistanceIcon: UIView {
         
         walkIcon = UIImageView(image: #imageLiteral(resourceName: "walk"))
         walkIcon.contentMode = .scaleAspectFit
-        walkIcon.tintColor = .mediumGrayColor
+        walkIcon.tintColor = Colors.metadataIcon
         
         width = travelDistanceLabel.frame.width > 0 ? travelDistanceLabel.frame.width : 34.0
         height = walkIcon.frame.height + walkIconAndDistanceLabelVerticalSpace + travelDistanceLabel.frame.height

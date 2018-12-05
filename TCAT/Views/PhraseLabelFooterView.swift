@@ -13,7 +13,7 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
 
     var label: UILabel {
         let label = UILabel()
-        label.font = .style(Fonts.SanFrancisco.regular, size: 12)
+        label.font = .getFont(.regular, size: 12)
         label.textColor = .lightGray
         label.numberOfLines = 0
         label.textAlignment = .left
@@ -24,7 +24,7 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
     override init(reuseIdentifier: String?) {
         print("[PhraseLabelFooterView] init")
         super.init(reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = Colors.white
         addSubview(label)
     }
     

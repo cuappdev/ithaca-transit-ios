@@ -153,7 +153,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
         // Set up Share button
         let shareButton = UIBarButtonItem(image: #imageLiteral(resourceName: "share"), style: .plain, target: self, action: #selector(shareRoute))
-        shareButton.tintColor = .primaryTextColor
+        shareButton.tintColor = Colors.primaryText
         guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
 
@@ -295,9 +295,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
         Network.getBusLocations(route.directions).perform(withSuccess: { (result) in
 
-            var results = [BusDataType]()
+            var results: [BusDataType] = []
 
-            if result.data.isEmpty {
+            if result.busLocations.isEmpty {
                 // print("No Bus Locations")
                 // Reset banner in case transitioned from Error to Online - No Bus Locations
                 self.hideBanner()
@@ -305,7 +305,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 // Possibly add information about no tracking available.
             }
 
-            for busLocation in result.data {
+            for busLocation in result.busLocations {
 
                 results.append(busLocation.dataType)
 
@@ -354,13 +354,15 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     self.setBusLocation(busLocation)
 
                 } // switch end
-            }
+
+            } // busLocations for loop end
 
         }) { (error) in
 
             print("RouteDetailVC getBusLocations Error:", error.localizedDescription)
             self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
-        }
+
+        } // network completion handler end
 
         // Bounce any visible indicators
         bounceIndicators()
@@ -705,7 +707,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     /// Create fake bus for debugging and testing bus indicators
     func createDebugBusIcon() {
-        let bus = BusLocation(dataType: .validData, destination: "", deviation: 0, delay: 0, direction: "", displayStatus: "", gpsStatus: 0, heading: 0, lastStop: "", lastUpdated: Date(), latitude: 42.4491411, longitude: -76.4836815, name: "16", opStatus: "", routeID: 0, runID: 0, speed: 0, tripID: 0, vehicleID: 0)
+        let bus = BusLocation(dataType: .validData, destination: "", deviation: 0, delay: 0, direction: "", displayStatus: "", gpsStatus: 0, heading: 0, lastStop: "", lastUpdated: Date(), latitude: 42.4491411, longitude: -76.4836815, name: 16, opStatus: "", routeID: "", runID: 0, speed: 0, tripID: "", vehicleID: 0)
         let coords = CLLocationCoordinate2D(latitude: 42.4491411, longitude: -76.4836815)
         let marker = GMSMarker(position: coords)
         (bus.iconView as? BusLocationView)?.updateBus(to: coords, with: Double(bus.heading))

@@ -8,36 +8,51 @@
 
 import UIKit
 
-// MARK: - Colors
-
-// MARK: - Fonts
+/// App colors
+struct Colors {
+    
+    // MARK: - Brand Color
+    static let tcatBlue = UIColor(hex: "079DDC")
+    
+    // MARK: - Accent Colors
+    static let lateRed = UIColor(hex: "D6304F")
+    static let liveGreen = UIColor(hex: "27AE60")
+    static let warningOrange = UIColor(hex: "E79C20")
+    
+    // MARK: - Grayscale Colors
+    static let primaryText = UIColor(hex: "212121")
+    static let secondaryText = UIColor(hex: "616161")
+    static let metadataIcon = UIColor(hex: "9E9E9E")
+    static let dividerTextField = UIColor(hex: "EEEEEE")
+    static let backgroundWash = UIColor(hex: "F5F5F5")
+    
+    // MARK: - Constants
+    static let black = UIColor.black
+    static let white = UIColor.white
+    
+}
 
 /// Font identifiers
-struct Fonts {
+enum Fonts {
     
-    struct SanFrancisco {
-        
-        // Pro Display (New)
-        static let regularPro = "SFProDisplay-Regular"
-        static let mediumPro = "SFProDisplay-Medium"
-        static let semiboldPro = "SFProDisplay-Semibold"
-        static let boldPro = "SFProDisplay-Bold"
-        
-        // UI Text (Old)
-        static let regular = "SFUIText-Regular"
-        static let medium = "SFUIText-Medium"
-        static let semibold = "SFUIText-Semibold"
-        static let bold = "SFUIText-Bold"
-        
-    }
+    case regular, medium, semibold, bold
     
-    struct System {
-        // Placeholder for init function below, not actually used.
-        static let systemFontSize: CGFloat = 14 // Same as UIFont.systemFontSize
+    enum SanFrancisco {
         
-        static let regular = UIFont.systemFont(ofSize: systemFontSize, weight: .regular).fontName
-        static let semibold = UIFont.systemFont(ofSize: systemFontSize, weight: .semibold).fontName
-        static let bold = UIFont.systemFont(ofSize: systemFontSize, weight: .bold).fontName
+        struct ProDisplay {
+            static let regular = "SFProDisplay-Regular"
+            static let medium = "SFProDisplay-Medium"
+            static let semibold = "SFProDisplay-Semibold"
+            static let bold = "SFProDisplay-Bold"
+        }
+        
+        struct ProText {
+            static let regular = "SFUIText-Regular"
+            static let medium = "SFUIText-Medium"
+            static let semibold = "SFUIText-Semibold"
+            static let bold = "SFUIText-Bold"
+        }
+        
     }
     
 }
@@ -45,11 +60,34 @@ struct Fonts {
 extension UIFont {
     
     /// Generate fonts for app usage
-    static func style(_ name: String, size: CGFloat) -> UIFont {
-        return UIFont(name: name, size: size)!
+    static func getFont(_ name: Fonts, size: CGFloat) -> UIFont {
+        var fontString: String
+        if size >= 14 {
+            switch name {
+            case .regular: fontString = Fonts.SanFrancisco.ProDisplay.regular
+            case .medium: fontString = Fonts.SanFrancisco.ProDisplay.medium
+            case .semibold: fontString = Fonts.SanFrancisco.ProDisplay.semibold
+            case .bold: fontString = Fonts.SanFrancisco.ProDisplay.bold
+            }
+        } else {
+            switch name {
+            case .regular: fontString = Fonts.SanFrancisco.ProText.regular
+            case .medium: fontString = Fonts.SanFrancisco.ProText.medium
+            case .semibold: fontString = Fonts.SanFrancisco.ProText.semibold
+            case .bold: fontString = Fonts.SanFrancisco.ProText.bold
+            }
+        }
+        return UIFont(name: fontString, size: size)!
     }
     
 }
 
-// MARK: - Spacing
+struct Spacing {
+    
+    static let eight: CGFloat = 8
+    static let twelve: CGFloat = 12
+    static let fourteen: CGFloat = 14
+    static let twentyFour: CGFloat = 24
+    
+}
 

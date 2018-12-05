@@ -98,8 +98,8 @@ class FavoritesTableViewController: UITableViewController {
         searchBar.backgroundImage = UIImage()
         searchBar.alpha = 1.0
         let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
-        textFieldInsideSearchBar?.backgroundColor = .tableBackgroundColor
-        searchBar.backgroundColor = .white
+        textFieldInsideSearchBar?.backgroundColor = Colors.backgroundWash
+        searchBar.backgroundColor = Colors.white
         searchBar.delegate = self
         return searchBar
     }
@@ -169,7 +169,7 @@ extension FavoritesTableViewController: DZNEmptyDataSetSource {
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         let title = Constants.General.searchForDestination
-        return NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.mediumGrayColor])
+        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.metadataIcon])
     }
 }
     // MARK: Search
