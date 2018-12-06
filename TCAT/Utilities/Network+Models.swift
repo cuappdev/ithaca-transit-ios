@@ -51,7 +51,7 @@ struct BusDelayRequest: Codable {
     var data: Int?
 }
 
-class AllBusStopsRequest: Codable {
+class AllBusStopsRequest: Decodable {
     var success: Bool
     var data: [BusStop]
 
@@ -61,7 +61,7 @@ class AllBusStopsRequest: Codable {
     }
 
     required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: Codingkeys.self)
         success = try container.decode(Bool.self, forKey: .success)
         data = try container.decode([BusStop].self, forKey: .data)
         parseAllStops()

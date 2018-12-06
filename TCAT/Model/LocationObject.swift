@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 
 /// Generic location object for locations with identifiers and names
-class LocationObject: NSObject {
+class LocationObject: NSObject, Codable {
     
     /// The name of the location
     var name: String
@@ -39,6 +39,7 @@ class LocationObject: NSObject {
         case name
         case id = "stopID"
     }
+    
     /// Blank init to store name
     convenience init(name: String) {
         self.init(name: name, id: "", latitude: 0.0, longitude: 0.0)

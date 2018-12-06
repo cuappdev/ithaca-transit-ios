@@ -155,6 +155,7 @@ struct Constants {
         static let madeBy = "Made by Cornell App Development"
         static let appDevDescription = "An Engineering Project Team\nat Cornell University"
         static let magicSchoolBus = "Ride on the Magic School Bus"
+        static let serviceAlerts = "Service Alerts"
     }
 
     /// The phrases used in onboarding

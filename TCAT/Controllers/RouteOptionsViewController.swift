@@ -421,35 +421,37 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
             ])
     }
 
-    func processRequest(request: APIRequest<JSON, Error>, requestUrl: String, endPlace: Place) {
+    func processRequest(request: APIRequest<RoutesRequest, Error>, requestUrl: String, endPlace: Place) {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestUrl)
 
-        request.perform(withSuccess: { routeJson in
-                            self.processRouteJson(routeJSON: routeJson, requestUrl: requestUrl)
-                        },
-                        failure: { requestError in
-                            self.processRequestError(error: requestError, requestUrl: requestUrl)
-                        }
-        )
+        request.performCollectingTimeline { (response) in
+            switch response.result {
+            case .success(let routesResponse):
+                
+                // Save to JSONFileManager
+                if let data = response.data {
+                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) }
+                    catch (let error) {
+                        let fileName = "RouteOptionsViewController"
+                        let line = "\(fileName) \(#function): \(error.localizedDescription)"
+                        print(line)
+                    }
+                }
+                
+                for each in routesResponse.data {
+                    each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
+                }
+                self.routes = routesResponse.data
+                self.requestDidFinish(perform: [.hideBanner])
+            case .failure(let networkError):
+                if let error = networkError as? APIError<Error> {
+                    self.processRequestError(error: error, requestUrl: requestUrl)
+                }
+            }
+        }
 
         let payload = DestinationSearchedEventPayload(destination: endPlace.name, requestUrl: requestUrl)
         Analytics.shared.log(payload)
-    }
-
-    func processRouteJson(routeJSON: JSON, requestUrl: String) {
-        JSONFileManager.shared.saveJSON(routeJSON, type: .routeJSON)
-
-        Route.parseRoutes(in: routeJSON, from: self.searchFrom?.name, to: self.searchTo?.name, { (parsedRoutes, error) in
-            self.routes = parsedRoutes
-            if let error = error {
-                self.requestDidFinish(perform: [
-                    .showError(bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .warning),
-                               payload: GetRoutesErrorPayload(type: error.title, description: error.description, url: requestUrl))
-                ])
-            } else {
-                self.requestDidFinish(perform: [.hideBanner])
-            }
-        })
     }
 
     func processRequestError(error: APIError<Error>, requestUrl: String) {

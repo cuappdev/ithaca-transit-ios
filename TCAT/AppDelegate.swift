@@ -136,8 +136,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     /* Get all bus stops and store in userDefaults */
     func getBusStops() {
-        Network.getAllStops().perform(withSuccess: { stops in
-            let allBusStops = stops.allStops
+        Network.getAllStops().perform(withSuccess: { allBusStopsRequest in
+            let allBusStops = allBusStopsRequest.data
             if allBusStops.isEmpty {
                 self.handleGetAllStopsError()
             } else {

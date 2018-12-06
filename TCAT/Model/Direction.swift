@@ -11,7 +11,7 @@ import CoreLocation
 import SwiftyJSON
 
 /// An enum for the type of direction
-enum DirectionType: String {
+enum DirectionType: String, Codable {
     
     /// Directions that involving walking
     case walk
@@ -24,7 +24,7 @@ enum DirectionType: String {
 
 }
 
-class Direction: NSObject, NSCopying {
+class Direction: NSObject, NSCopying, Codable {
 
     /// The type of the direction.
     var type: DirectionType
@@ -70,13 +70,29 @@ class Direction: NSObject, NSCopying {
     var stayOnBusForTransfer: Bool = false
     
     /// The unique identifiers for the specific bus related to the direction.
-    var tripIdentifiers: [String]? = nil
+    var tripIdentifiers: [String]?
     
     /// The bus delay for stops[0]
     var delay: Int?
     
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case name
+        case startLocation
+        case endLocation
+        case startTime
+        case endTime
+        case path
+        case routeNumber
+        case stops
+        case stayOnBusForTransfer
+        case tripIdentifiers
+        case delay
+        case travelDistance = "distance"
+    }
+    
     // MARK: Initalizers
-
+    
     required init (from decoder: Decoder) {
         let container = try! decoder.container(keyedBy: CodingKeys.self)
         type = try! container.decode(DirectionType.self, forKey: .type)
@@ -92,7 +108,6 @@ class Direction: NSObject, NSCopying {
         tripIdentifiers = try! container.decode([String]?.self, forKey: .tripIdentifiers)
         delay = try! container.decode(Int?.self, forKey: .delay)
         travelDistance = try! container.decode(Double.self, forKey: .travelDistance)
-
         super.init()
     }
 
@@ -147,34 +162,6 @@ class Direction: NSObject, NSCopying {
             delay: nil
         )
 
-    }
-
-    convenience init(from json: JSON) {
-        
-        // print("Direction JSON:", json)
-        
-        self.init()
-        
-        name = json["name"].stringValue
-        type = json["type"].stringValue.lowercased() == "depart" ? .depart : .walk
-        startTime = json["startTime"].parseDate()
-        endTime = json["endTime"].parseDate()
-        startLocation = json["startLocation"].parseLocationObject()
-        endLocation = json["endLocation"].parseLocationObject()
-        path = json["path"].arrayValue.map { $0.parseCoordinates() }
-        travelDistance = json["distance"].doubleValue
-        routeNumber = json["routeNumber"].int ?? 0
-        stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
-        stayOnBusForTransfer = json["stayOnBusForTransfer"].boolValue
-        tripIdentifiers = json["tripIdentifiers"].arrayObject as? [String]
-        delay = json["delay"].int
-        
-        // If depart direction, use bus stop locations (with id) for start and end
-        if type == .depart || type == .arrive, let start = stops.first, let end = stops.last {
-            startLocation = start
-            endLocation = end
-        }
-        
     }
     
     func copy(with zone: NSZone? = nil) -> Any {

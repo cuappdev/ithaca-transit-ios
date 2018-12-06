@@ -11,6 +11,9 @@
 		222BDE16215C1CEE0040DD93 /* WhatsNewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */; };
 		224EB5A5214F2F01008232C2 /* AppShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224EB5A4214F2F01008232C2 /* AppShortcuts.swift */; };
 		226C8D762173AF69009985E3 /* VersionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226C8D752173AF69009985E3 /* VersionStore.swift */; };
+		2292486921B891A30004279C /* Network+Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2292486721B891A30004279C /* Network+Endpoints.swift */; };
+		2292486A21B891A30004279C /* Network+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2292486821B891A30004279C /* Network+Models.swift */; };
+		2292486C21B8ECB90004279C /* ServiceAlertsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2292486B21B8ECB90004279C /* ServiceAlertsViewController.swift */; };
 		4036E23543D87A22BF6B0023 /* Pods_TCATUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */; };
 		449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C781D80D0E80019300C /* AppDelegate.swift */; };
 		449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C7C1D80D0E80019300C /* Main.storyboard */; };
@@ -24,7 +27,6 @@
 		503EC37B1E969ACD00B3D4D4 /* BusStopCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37A1E969ACD00B3D4D4 /* BusStopCell.swift */; };
 		503EC37D1E969ADF00B3D4D4 /* SearchResultsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37C1E969ADF00B3D4D4 /* SearchResultsCell.swift */; };
 		503EC37F1E969B2100B3D4D4 /* SearchResultsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */; };
-		503EC38D1E96B85B00B3D4D4 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC38C1E96B85B00B3D4D4 /* Network.swift */; };
 		50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A19BAD1E4C214000AD6768 /* HomeViewController.swift */; };
 		7E14AEDD2177E884006A344D /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
 		7E14AEF12177E884006A344D /* Siri.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7E14AEDA2177E884006A344D /* Siri.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -143,6 +145,9 @@
 		222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WhatsNewHeaderView.swift; path = Views/WhatsNewHeaderView.swift; sourceTree = "<group>"; };
 		224EB5A4214F2F01008232C2 /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppShortcuts.swift; path = Utilities/AppShortcuts.swift; sourceTree = "<group>"; };
 		226C8D752173AF69009985E3 /* VersionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VersionStore.swift; path = Utilities/VersionStore.swift; sourceTree = "<group>"; };
+		2292486721B891A30004279C /* Network+Endpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Network+Endpoints.swift"; path = "Utilities/Network+Endpoints.swift"; sourceTree = "<group>"; };
+		2292486821B891A30004279C /* Network+Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Network+Models.swift"; path = "Utilities/Network+Models.swift"; sourceTree = "<group>"; };
+		2292486B21B8ECB90004279C /* ServiceAlertsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceAlertsViewController.swift; sourceTree = "<group>"; };
 		449A7C751D80D0E80019300C /* TCAT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCAT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C781D80D0E80019300C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		449A7C7D1D80D0E80019300C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -161,7 +166,6 @@
 		503EC37A1E969ACD00B3D4D4 /* BusStopCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusStopCell.swift; path = Cells/BusStopCell.swift; sourceTree = "<group>"; };
 		503EC37C1E969ADF00B3D4D4 /* SearchResultsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchResultsCell.swift; path = Cells/SearchResultsCell.swift; sourceTree = "<group>"; };
 		503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = SearchResultsTableViewController.swift; path = Controllers/SearchResultsTableViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		503EC38C1E96B85B00B3D4D4 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Network.swift; path = Utilities/Network.swift; sourceTree = "<group>"; };
 		50A19BAD1E4C214000AD6768 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = HomeViewController.swift; path = Controllers/HomeViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		7E14AEB12177E661006A344D /* TCAT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TCAT.entitlements; sourceTree = "<group>"; };
 		7E14AEC02177E846006A344D /* IntentsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IntentsUI.framework; path = System/Library/Frameworks/IntentsUI.framework; sourceTree = SDKROOT; };
@@ -305,6 +309,15 @@
 				97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		2292486621B891790004279C /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				2292486721B891A30004279C /* Network+Endpoints.swift */,
+				2292486821B891A30004279C /* Network+Models.swift */,
+			);
+			name = Network;
 			sourceTree = "<group>";
 		};
 		449A7C6C1D80D0E80019300C = {
@@ -454,7 +467,7 @@
 				D183AA011E6CB092006A9A15 /* Extensions.swift */,
 				DD04B1AC208CC5E4006C1C23 /* JSONFileManager.swift */,
 				DD87F2091E878CB5000C244B /* Loader.swift */,
-				503EC38C1E96B85B00B3D4D4 /* Network.swift */,
+				2292486621B891790004279C /* Network */,
 				BF18AE112083B9B8000C3D82 /* Phrases.swift */,
 				DD3D9C201F94297100B164D4 /* Reachability.swift */,
 				5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */,
@@ -504,6 +517,7 @@
 				BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */,
 				DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */,
 				503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */,
+				2292486B21B8ECB90004279C /* ServiceAlertsViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -859,7 +873,7 @@
 				5006F7BA1EC0F59A005ACAF2 /* SearchTableViewHelpers.swift in Sources */,
 				BFCA712D206AC69000E4CCE5 /* Keys.swift in Sources */,
 				5006F7B81EBFC7DE005ACAF2 /* CornellDestinationCell.swift in Sources */,
-				503EC38D1E96B85B00B3D4D4 /* Network.swift in Sources */,
+				2292486921B891A30004279C /* Network+Endpoints.swift in Sources */,
 				DDB49C9D1E8857FC00A99C35 /* BusPath.swift in Sources */,
 				DD659C8A20508E1B00506BAC /* WalkWithDistanceIcon.swift in Sources */,
 				DD36A7001F66378C00E4789E /* PlaceResult.swift in Sources */,
@@ -879,6 +893,7 @@
 				DD2F989B1E50F99A0005F6BC /* Route.swift in Sources */,
 				DD87F20A1E878CB5000C244B /* Loader.swift in Sources */,
 				DD3D9C341F942CF000B164D4 /* CoordinateVisitor.swift in Sources */,
+				2292486A21B891A30004279C /* Network+Models.swift in Sources */,
 				DD3D9C211F94297100B164D4 /* Reachability.swift in Sources */,
 				DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */,
 				222BDE16215C1CEE0040DD93 /* WhatsNewHeaderView.swift in Sources */,
@@ -915,6 +930,7 @@
 				DDB49C941E8857D000A99C35 /* RouteDetail+ContentViewController.swift in Sources */,
 				BFD5B4E41FAADFAE00955C37 /* WalkPath.swift in Sources */,
 				BF1209FB1F7759C200A7C930 /* BusLocationView.swift in Sources */,
+				2292486C21B8ECB90004279C /* ServiceAlertsViewController.swift in Sources */,
 				DD3D9C361F945F2A00B164D4 /* RPCircularProgress.swift in Sources */,
 				BFC367F321B66E9A00ABD9AC /* Intents.intentdefinition in Sources */,
 				DD2F98A31E5150990005F6BC /* RouteOptionsViewController.swift in Sources */,

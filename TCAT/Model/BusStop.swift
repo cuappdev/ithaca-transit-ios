@@ -22,6 +22,11 @@ class BusStop: Place, CoordinateAcceptor {
         self.long = long
         super.init(name: name)
     }
+    
+    private enum CodingKeys: CodingKey {
+        case lat
+        case long
+    }
 
     override func isEqual(_ object: Any?) -> Bool {
         if !super.isEqual(object) {
@@ -55,6 +60,13 @@ class BusStop: Place, CoordinateAcceptor {
         aCoder.encode(self.long, forKey: longKey)
 
         super.encode(with: aCoder)
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.lat = try container.decode(CLLocationDegrees.self, forKey: .lat)
+        self.long = try container.decode(CLLocationDegrees.self, forKey: .long)
+        try super.init(from: decoder)
     }
 
     // MARK: Visitor pattern
