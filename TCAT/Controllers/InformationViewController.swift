@@ -27,12 +27,17 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
 
     var content: [[(name: String, action: Selector)]] = [
 
-        [ // Section 0
+        
+        [ // Seciton 0
+            (name: Constants.InformationView.serviceAlerts, action: #selector(showServiceAlerts))
+        ],
+        
+        [ // Section 1
             (name: Constants.InformationView.onboarding, action: #selector(presentOnboarding)),
             (name: Constants.InformationView.sendFeedback, action: #selector(sendFeedback))
         ],
 
-        [ // Section 1
+        [ // Section 2
             (name: Constants.InformationView.moreApps, action: #selector(showMoreApps)),
             (name: Constants.InformationView.website, action: #selector(openTeamWebsite))
         ]
@@ -285,6 +290,11 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
     @objc func openTeamWebsite() {
         let homePage = "http://www.cornellappdev.com"
         open(homePage)
+    }
+    
+    @objc func showServiceAlerts() {
+        let serviceAlertsVC = ServiceAlertsViewController()
+        present(serviceAlertsVC, animated: true)
     }
 
     func open(_ url: String, inApp: Bool = true) {

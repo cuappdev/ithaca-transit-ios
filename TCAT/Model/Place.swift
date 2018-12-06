@@ -8,7 +8,7 @@
 
 import UIKit
 
-class Place: NSObject, NSCoding {
+class Place: NSObject, NSCoding, Codable {
 
     var name: String
     

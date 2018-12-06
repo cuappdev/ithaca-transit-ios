@@ -189,51 +189,6 @@ extension UIDevice {
 
 }
 
-extension JSON {
-
-    /// Format date with pattern `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`. Returns current date on error.
-    func parseDate() -> Date {
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
-        let date = dateFormatter.date(from: self.stringValue) ?? Date.distantPast
-        return Time.truncateSeconds(from: date)
-    }
-
-    /// Create coordinate object from JSON.
-    func parseCoordinates() -> CLLocationCoordinate2D {
-        let latitude = self["lat"].doubleValue
-        let longitude = self["long"].doubleValue
-        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-    }
-
-    /// Create Bounds object
-    func parseBounds() -> Bounds {
-        return Bounds(
-            minLat: self["minLat"].doubleValue,
-            minLong: self["minLong"].doubleValue,
-            maxLat: self["maxLat"].doubleValue,
-            maxLong: self["maxLong"].doubleValue
-        )
-    }
-
-    /** Return LocationObject.
-
-        `id` is used when bus stops conform to this object.
-        Would like a way to extend this class for instances when JSON
-        strings are unique to the generic location (e.g. stopID)
-    */
-    func parseLocationObject() -> LocationObject {
-        return LocationObject(
-            name: self["name"].stringValue,
-            id: self["stopID"].stringValue,
-            latitude: self["lat"].doubleValue,
-            longitude: self["long"].doubleValue
-        )
-    }
-
-}
-
 extension String {
 
     /// See function name
@@ -288,7 +243,7 @@ extension String {
     }
 }
 
-extension CLLocationCoordinate2D {
+extension CLLocationCoordinate2D: Codable {
     // MARK: CLLocationCoordinate2D+MidPoint
     func middleLocationWith(location:CLLocationCoordinate2D) -> CLLocationCoordinate2D {
 
@@ -305,6 +260,43 @@ extension CLLocationCoordinate2D {
 
         let center:CLLocationCoordinate2D = CLLocationCoordinate2DMake(lat3 * 180 / .pi, lon3 * 180 / .pi)
         return center
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case lat
+        case long
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        try container.encode(longitude)
+        try container.encode(latitude)
+    }
+
+    public init(from decoder: Decoder) throws {
+        self.init()
+
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        longitude = try container.decode(Double.self, forKey: .long)
+        latitude = try container.decode(Double.self, forKey: .lat)
+
+    }
+}
+
+extension DateFormatter {
+    static let defaultParser: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
+        return dateFormatter
+    }()
+}
+
+extension Date {
+    static func parseDate(_ dateString: String) -> Date {
+        let dateFormatter = DateFormatter.defaultParser
+        let date = dateFormatter.date(from: dateString) ?? Date.distantPast
+        return Time.truncateSeconds(from: date)
     }
 }
 

@@ -16,7 +16,7 @@ import SwiftyJSON
 import CoreLocation
 import MapKit
 
-struct Bounds {
+struct Bounds: Codable {
 
     /// The minimum latitude value in all of the path's route.
     var minLat: Double
@@ -44,7 +44,7 @@ struct RouteCalculationError: Swift.Error {
     let description: String
 }
 
-class Route: NSObject, JSONDecodable {
+class Route: NSObject, Codable {
 
     /// The time a user begins their journey
     var departureTime: Date
@@ -90,139 +90,127 @@ class Route: NSObject, JSONDecodable {
     var totalDuration: Int {
         return Time.dateComponents(from: departureTime, to: arrivalTime).minute ?? 0
     }
-
-    required init(json: JSON) throws {
-
-        // print("Route JSON", json)
-
+    
+    private enum CodingKeys: String, CodingKey {
+        case departureTime
+        case arrivalTime
+        case startCoords
+        case endCoords
+        case boundingBox
+        case numberOfTransfers
+        case directions
+    }
+    
+    required init(from decoder: Decoder) throws {
+        
         // MARK: #182 • Get Route ID
-        departureTime = json["departureTime"].parseDate()
-        arrivalTime = json["arrivalTime"].parseDate()
-        startCoords = json["startCoords"].parseCoordinates()
-        endCoords = json["endCoords"].parseCoordinates()
-        startName = json["startName"].stringValue
-        endName = json["endName"].stringValue
-        boundingBox = json["boundingBox"].parseBounds()
-        numberOfTransfers = json["numberOfTransfers"].intValue
-        directions = json["directions"].arrayValue.map { Direction(from: $0) }
-        rawDirections = json["directions"].arrayValue.map { Direction(from: $0) }
-
-        super.init()
-
-        // Format raw directions
-
-        let first = 0
-        for (index, direction) in rawDirections.enumerated() {
-            if direction.type == .walk {
-                // Change walking direction name to name of location walking from
-                if index == first {
-                    direction.name = startName
-                } else {
-                    direction.name = rawDirections[index - 1].stops.last?.name ?? rawDirections[index - 1].name
-                }
-            }
-        }
-
-        // Append extra direction for ending location with ending destination name
-        if let direction = rawDirections.last {
-            // Set stayOnBusForTransfer to false b/c ending location can never have transfer
-            if direction.type == .walk || direction.type == .depart {
-                let newDirection = Direction(
-                    type: direction.type == .depart ? .arrive : .walk,
-                    name: endName,
-                    startLocation: direction.startLocation,
-                    endLocation: direction.endLocation,
-                    startTime: direction.startTime,
-                    endTime: direction.endTime,
-                    path: direction.path,
-                    travelDistance: direction.travelDistance,
-                    routeNumber: direction.routeNumber,
-                    stops: direction.stops,
-                    stayOnBusForTransfer: false,
-                    tripIdentifiers: direction.tripIdentifiers,
-                    delay: direction.delay
-                )
-                rawDirections.append(newDirection)
-            }
-        }
-
-        // Change all walking directions, except for first and last direction, to arrive
-        let last = rawDirections.count - 1
-        for (index, direction) in rawDirections.enumerated() {
-            if index != last && index != first && direction.type == .walk {
-                direction.type = .arrive
-                direction.name = rawDirections[index - 1].endLocation.name
-            }
-        }
-
-        calculateTravelDistance(fromRawDirections: rawDirections)
-
-        // Parse and format directions
-
-        // Variable to keep track of additions to direction list (Arrival Directions)
-        var offset = 0
-
-        for (index, direction) in directions.enumerated() {
-
-            if direction.type == .depart {
-
-                let beyondRange = index + 1 > directions.count - 1
-                let isLastDepart = index == directions.count - 1
-
-                if direction.stayOnBusForTransfer {
-                    direction.type = .transfer
-                }
-
-                // If this direction doesn't have a transfer afterwards, or is depart and last
-                if (!beyondRange && !directions[index+1].stayOnBusForTransfer) || isLastDepart {
-
-                    // Create Arrival Direction
-                    let arriveDirection = direction.copy() as! Direction
-                    arriveDirection.type = .arrive
-                    arriveDirection.startTime = arriveDirection.endTime
-                    arriveDirection.startLocation = arriveDirection.endLocation
-                    arriveDirection.stops = []
-                    arriveDirection.name = direction.stops.last?.name ?? "Nil"
-                    directions.insert(arriveDirection, at: index + offset + 1)
-                    offset += 1
-
-                }
-
-                // Remove inital bus stop and departure bus stop
-                if direction.stops.count >= 2 {
-                    direction.stops.removeFirst()
-                    direction.stops.removeLast()
-                }
-            }
-
-            // Change name of last direction to be endName
-            if direction == directions.last {
-                direction.name = endName
-            }
-
-        }
-
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        departureTime = Date.parseDate(try container.decode(String.self, forKey: .departureTime))
+        arrivalTime = Date.parseDate(try container.decode(String.self, forKey: .arrivalTime))
+        startCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .startCoords)
+        endCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .endCoords)
+        boundingBox = try container.decode(Bounds.self, forKey: .boundingBox)
+        numberOfTransfers = try container.decode(Int.self, forKey: .numberOfTransfers)
+        directions = try container.decode([Direction].self, forKey: .directions)
+        rawDirections = try container.decode([Direction].self, forKey: .directions)
+        startName = Constants.General.currentLocation
+        endName = Constants.General.destination
     }
 
-    // MARK: Parse JSON
-
-    /// Handle route calculation data request.
-    static func parseRoutes(in json: JSON, from: String?, to: String?,
-                          _ completion: @escaping (_ routes: [Route], _ error: RouteCalculationError?) -> Void) {
-
-        if json["success"].boolValue {
-            let routes: [Route] = json["data"].arrayValue.map {
-                var augmentedJSON = $0
-                augmentedJSON["startName"].string = from ?? Constants.General.currentLocation
-                augmentedJSON["endName"].string = to ?? Constants.General.destination
-                return try! Route(json: augmentedJSON)
+        func formatDirections(start: String?, end: String?) {
+            startName = start ?? Constants.General.currentLocation
+            endName = end ?? Constants.General.destination
+            
+            let first = 0
+            for (index, direction) in rawDirections.enumerated() {
+                if direction.type == .walk {
+                    // Change walking direction name to name of location walking from
+                    if index == first {
+                        direction.name = startName
+                    } else {
+                        direction.name = rawDirections[index - 1].stops.last?.name ?? rawDirections[index - 1].name
+                    }
+                }
             }
-            completion(routes, nil)
-        } else {
-            completion([], RouteCalculationError(title: "Route Calculation Failure", description: json["error"].stringValue))
+            
+            // Append extra direction for ending location with ending destination name
+            if let direction = rawDirections.last {
+                // Set stayOnBusForTransfer to false b/c ending location can never have transfer
+                if direction.type == .walk || direction.type == .depart {
+                    let newDirection = Direction(
+                        type: direction.type == .depart ? .arrive : .walk,
+                        name: endName,
+                        startLocation: direction.startLocation,
+                        endLocation: direction.endLocation,
+                        startTime: direction.startTime,
+                        endTime: direction.endTime,
+                        path: direction.path,
+                        travelDistance: direction.travelDistance,
+                        routeNumber: direction.routeNumber,
+                        stops: direction.stops,
+                        stayOnBusForTransfer: false,
+                        tripIdentifiers: direction.tripIdentifiers,
+                        delay: direction.delay
+                    )
+                    rawDirections.append(newDirection)
+                }
+            }
+            
+            // Change all walking directions, except for first and last direction, to arrive
+            let last = rawDirections.count - 1
+            for (index, direction) in rawDirections.enumerated() {
+                if index != last && index != first && direction.type == .walk {
+                    direction.type = .arrive
+                    direction.name = rawDirections[index - 1].stops.last?.name ?? "Bus Stop"
+                }
+            }
+            
+            calculateTravelDistance(fromRawDirections: rawDirections)
+            
+            // Parse and format directions
+            // Variable to keep track of additions to direction list (Arrival Directions)
+            var offset = 0
+            
+            for (index, direction) in directions.enumerated() {
+                
+                if direction.type == .depart {
+                    
+                    let beyondRange = index + 1 > directions.count - 1
+                    let isLastDepart = index == directions.count - 1
+                    
+                    if direction.stayOnBusForTransfer {
+                        direction.type = .transfer
+                    }
+                    
+                    // If this direction doesn't have a transfer afterwards, or is depart and last
+                    if (!beyondRange && !directions[index+1].stayOnBusForTransfer) || isLastDepart {
+                        
+                        // Create Arrival Direction
+                        let arriveDirection = direction.copy() as! Direction
+                        arriveDirection.type = .arrive
+                        arriveDirection.startTime = arriveDirection.endTime
+                        arriveDirection.startLocation = arriveDirection.endLocation
+                        arriveDirection.stops = []
+                        arriveDirection.name = direction.stops.last?.name ?? "Bus Stop"
+                        directions.insert(arriveDirection, at: index + offset + 1)
+                        offset += 1
+                        
+                    }
+                    
+                    // Remove inital bus stop and departure bus stop
+                    if direction.stops.count >= 2 {
+                        direction.stops.removeFirst()
+                        direction.stops.removeLast()
+                    }
+                }
+                
+                // Change name of last direction to be endName
+                if direction == directions.last {
+                    direction.name = endName
+                }
+                
+            }
         }
-
-    }
 
     // MARK: Process routes
 
@@ -309,8 +297,8 @@ class Route: NSObject, JSONDecodable {
             noDepartDirection = false
 
             let number = direction.routeNumber
-            let start = direction.startLocation.name
-            let end = direction.endLocation.name
+            let start = direction.stops.first?.name ?? "starting location"
+            let end = direction.stops.last?.name ?? "ending location"
             var line = "take Route \(number) from \(start) to \(end). "
 
             if direction.type == .transfer {
