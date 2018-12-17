@@ -201,6 +201,10 @@ struct Constants {
         static let getThereNow = "Get There Now"
         static let recentSearches = "Recent Searches"
         static let favoriteDestinations = "Favorite Destinations"
+        static let highPriority = "High Priority"
+        static let mediumPriority = "Medium Priority"
+        static let lowPriority = "Low Priority"
+        static let noPriority = "Other"
     }
 
     /// The titles of controllers

@@ -145,7 +145,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
             }
         }, failure: { error in
-            print("getBusStops error:", error)
+            print("getBusStops error:", error.localizedDescription)
             self.handleGetAllStopsError()
         })
     }

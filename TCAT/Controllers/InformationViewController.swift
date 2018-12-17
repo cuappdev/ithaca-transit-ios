@@ -294,7 +294,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
     
     @objc func showServiceAlerts() {
         let serviceAlertsVC = ServiceAlertsViewController()
-        present(serviceAlertsVC, animated: true)
+        navigationController?.pushViewController(serviceAlertsVC, animated: true)
     }
 
     func open(_ url: String, inApp: Bool = true) {

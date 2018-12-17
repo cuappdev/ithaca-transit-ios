@@ -36,7 +36,7 @@ class HeaderView: UITableViewHeaderFooterView {
         addFavoritesDelegate?.displayFavoritesTVC()
     }
 
-    func setupView(labelText: String, displayAddButton: Bool) {
+    func setupView(labelText: String, displayAddButton: Bool = false) {
         label.text = labelText
         contentView.addSubview(label)
 
@@ -45,12 +45,15 @@ class HeaderView: UITableViewHeaderFooterView {
             make.bottom.equalToSuperview().offset(-6)
         }
         if displayAddButton {
-            contentView.addSubview(addButton)
-            addButton.snp.makeConstraints { (make) in
-                make.centerY.equalTo(label.snp.centerY)
-                make.trailing.equalToSuperview().offset(-12)
-            }
+            createAddButton()
         }
     }
 
+    func createAddButton() {
+        contentView.addSubview(addButton)
+        addButton.snp.makeConstraints { (make) in
+            make.centerY.equalTo(label.snp.centerY)
+            make.trailing.equalToSuperview().offset(-12)
+        }
+    }
 }
