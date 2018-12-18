@@ -121,6 +121,10 @@ extension ServiceAlertsViewController: UITableViewDelegate {
 
 extension ServiceAlertsViewController: UITableViewDataSource {
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return priorities.count
     }
@@ -141,7 +145,7 @@ extension ServiceAlertsViewController: UITableViewDataSource {
             cell.setData()
         }
         
-        cell.layoutIfNeeded()
+        //cell.layoutIfNeeded()
         
         return cell
     }
