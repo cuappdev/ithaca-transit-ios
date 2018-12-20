@@ -8,45 +8,41 @@
 
 import UIKit
 
-class ServiceAlertTableViewCell: UITableViewCell, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class ServiceAlertTableViewCell: UITableViewCell {
 
     static let identifier: String = "serviceAlertCell"
     private let fileName: String = "serviceAlertTableViewCell"
     var alert: Alert?
     
+    let borderInset = 16
+    
     var timeSpanLabel: UILabel!
     var descriptionLabel: UILabel!
     var affectedRoutesLabel: UILabel!
-    var affectedRoutesStackView: UIStackView!
-    var affectedRoutesCollectionView: UICollectionView?
+    var affectedRoutesStackView: UIStackView?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        timeSpanLabel = UILabel()
-        descriptionLabel = UILabel()
-        affectedRoutesLabel = UILabel()
-        affectedRoutesStackView = UIStackView()
+        setupTimeSpanLabel()
+        setupDescriptionLabel()
     }
     
     func setData() {
-        setupTimeSpanLabel()
-        setupDescriptionLabel()
-        // setupAffectedRoutesStackView()
+        timeSpanLabel.text = formatTimeString()
+        descriptionLabel.text = alert?.message
         if let routes = alert?.routes, !routes.isEmpty {
-            setupAffectedRoutesCollectionView()
+            setupAffectedRoutesStackView()
             setupaffectedRoutesLabel()
         }
-        
-        setupConstraints()
     }
     
     private func setupTimeSpanLabel() {
         
+        timeSpanLabel = UILabel()
         timeSpanLabel.numberOfLines = 0
-        timeSpanLabel.font = .getFont(.semibold, size: 14)
+        timeSpanLabel.font = .getFont(.semibold, size: 18)
         timeSpanLabel.textColor = Colors.primaryText
-        timeSpanLabel.text = formatTimeString()
         
         contentView.addSubview(timeSpanLabel)
     }
@@ -57,59 +53,80 @@ class ServiceAlertTableViewCell: UITableViewCell, UICollectionViewDataSource, UI
     
     private func setupDescriptionLabel() {
         
+        descriptionLabel = UILabel()
         descriptionLabel.numberOfLines = 0
-        descriptionLabel.font = .getFont(.semibold, size: 14)
+        descriptionLabel.font = .getFont(.regular, size: 14)
         descriptionLabel.textColor = Colors.primaryText
-        descriptionLabel.text = alert?.message
+        
         
         contentView.addSubview(descriptionLabel)
     }
     
     private func setupaffectedRoutesLabel() {
-        affectedRoutesLabel.font = .getFont(.semibold, size: 14)
+        
+        affectedRoutesLabel = UILabel()
+        affectedRoutesLabel.font = .getFont(.semibold, size: 18)
         affectedRoutesLabel.textColor = Colors.primaryText
         affectedRoutesLabel.text = "Affected Routes: "
         
         contentView.addSubview(affectedRoutesLabel)
     }
     
-    func setupAffectedRoutesCollectionView() {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        
-        affectedRoutesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        affectedRoutesCollectionView?.delegate = self
-        affectedRoutesCollectionView?.dataSource = self
-        affectedRoutesCollectionView?.allowsSelection = false
-        affectedRoutesCollectionView?.isScrollEnabled = false
-        affectedRoutesCollectionView?.register(ServiceAlertCollectionViewCell.self, forCellWithReuseIdentifier: ServiceAlertCollectionViewCell.identifier)
-        
-        contentView.addSubview(affectedRoutesCollectionView!)
-    }
-    
     func setupAffectedRoutesStackView() {
-        if let routes = alert?.routes {
-            var subviews = [BusIcon]()
-            for route in routes {
-                subviews.append(BusIcon(type: .directionSmall, number: route))
-            }
-            affectedRoutesStackView = UIStackView(arrangedSubviews: subviews)
-        }
         
-        affectedRoutesStackView.axis = .horizontal
-        affectedRoutesStackView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
-        contentView.addSubview(affectedRoutesStackView)
+        if var routes = alert?.routes, !routes.isEmpty {
+            affectedRoutesStackView = UIStackView()
+            for _ in 0..<rowCount() {
+                var subviews = [BusIcon]()
+                for _ in 0..<maxIconsPerRow() {
+                    if !routes.isEmpty {
+                        subviews.append(BusIcon(type: .directionSmall, number: routes.removeFirst()))
+                    }
+                }
+                let rowStackView = UIStackView(arrangedSubviews: subviews)
+                rowStackView.axis = .horizontal
+                rowStackView.spacing = 10
+                rowStackView.alignment = .leading
+                affectedRoutesStackView?.addArrangedSubview(rowStackView)
+            }
+        }
+        guard let stackView = affectedRoutesStackView else { return }
+        stackView.axis = .vertical
+        stackView.alignment = .top
+        stackView.spacing = 10
+        contentView.addSubview(stackView)
     }
     
-    func setupConstraints() {
-        let borderInset = 16
+    func maxIconsPerRow() -> Int {
+        let iconWidth = Int(BusIconType.directionSmall.width)
+        let screenWidth = Int(UIScreen.main.bounds.width)
+        let minSpacing = 10
+        let totalConstraintInset = borderInset * 2
         
-        timeSpanLabel.snp.makeConstraints { (make) in
+        return (screenWidth - totalConstraintInset + minSpacing) / (iconWidth + minSpacing)
+    }
+    
+    func rowCount() -> Int {
+        guard let routes = alert?.routes else { return 0 }
+        
+        if routes.count > maxIconsPerRow() {
+            let addExtra = routes.count % maxIconsPerRow() > 0 ? 1 : 0
+            let rowCount = routes.count / maxIconsPerRow()
+            
+            return rowCount + addExtra
+        } else {
+            return 1
+        }
+    }
+    
+    override func updateConstraints() {
+        
+        timeSpanLabel.snp.remakeConstraints { (make) in
             make.top.leading.trailing.equalToSuperview().inset(borderInset).labeled("timeSpanLabel: Top, Leading, Trailing")
             make.height.equalTo(timeSpanLabel.intrinsicContentSize.height).labeled("timeSpanLabel: Height")
         }
         
-        descriptionLabel.snp.makeConstraints { (make) in
+        descriptionLabel.snp.remakeConstraints { (make) in
             make.top.equalTo(timeSpanLabel.snp.bottom).offset(12).labeled("descriptionLabel: Top")
             make.leading.equalTo(timeSpanLabel).labeled("descriptionLabel: Leading")
             make.trailing.equalToSuperview().inset(borderInset).labeled("descriptionLabel: Trailing")
@@ -124,72 +141,32 @@ class ServiceAlertTableViewCell: UITableViewCell, UICollectionViewDataSource, UI
             }
         }
         
-        if let collectionView = affectedRoutesCollectionView {
-            
-            affectedRoutesLabel.snp.makeConstraints { (make) in
+        if let stackView = affectedRoutesStackView {
+
+            affectedRoutesLabel.snp.remakeConstraints { (make) in
                 make.leading.equalTo(timeSpanLabel).labeled("AffectedRoutesLabel: Leading")
-                make.top.equalTo(descriptionLabel.snp.bottom).offset(32).labeled("affectedRoutesLabel: Top")
+                make.top.equalTo(descriptionLabel.snp.bottom).offset(24).labeled("affectedRoutesLabel: Top")
                 make.width.equalTo(affectedRoutesLabel.intrinsicContentSize.width).labeled("affectedRoutesLabel: Width")
-                make.height.equalTo(30).labeled("affectedRoutesLabel: Height")
+                make.height.equalTo(affectedRoutesLabel.intrinsicContentSize.height).labeled("affectedRoutesLabel: Height")
             }
             
-            collectionView.snp.makeConstraints { (make) in
-                make.top.equalTo(affectedRoutesLabel.snp.bottom).offset(12).labeled("affectedRoutesCollectionView: Top")
-                make.leading.equalTo(timeSpanLabel).labeled("affectedRoutesCollectionView: Leading")
-                make.trailing.bottom.equalToSuperview().inset(borderInset).labeled("affectedRoutesCollectionView: Trailing, Bottom")
+            stackView.snp.remakeConstraints { (make) in
+                make.top.equalTo(affectedRoutesLabel.snp.bottom).offset(8)
+                make.leading.equalTo(timeSpanLabel)
+                make.bottom.trailing.equalToSuperview().inset(borderInset)
+                
             }
         } else {
             descriptionLabel.snp.makeConstraints { (make) in
                 make.bottom.equalToSuperview().inset(borderInset).labeled("descriptionLabel: Bottom")
             }
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 48, height: 24)
-    }
-    
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return (alert?.routes.count)!
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        var cell = affectedRoutesCollectionView?.dequeueReusableCell(withReuseIdentifier: ServiceAlertCollectionViewCell.identifier, for: indexPath) as? ServiceAlertCollectionViewCell
-        
-        if cell == nil {
-            cell = ServiceAlertCollectionViewCell(frame: .zero)
-        }
-        
-        cell?.routeNumber = alert?.routes[indexPath.item]
-        cell?.setIcon()
-        //cell?.layoutSubviews()
-        
-        return cell!
+        super.updateConstraints()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }
-
-private class ServiceAlertCollectionViewCell: UICollectionViewCell {
     
-    static let identifier = "serviceAlertCell"
-    
-    var routeNumber: Int!
 
-    func setIcon() {
-        let icon = BusIcon(type: .directionSmall, number: routeNumber)
-        
-        contentView.addSubview(icon)
-        
-        icon.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-        }
-    }
-}

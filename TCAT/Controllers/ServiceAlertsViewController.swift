@@ -20,8 +20,6 @@ class ServiceAlertsViewController: UIViewController {
         
         title = "Service Alerts"
         
-        createDummyData()
-        
         view.backgroundColor = Colors.backgroundWash
         tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
@@ -29,7 +27,6 @@ class ServiceAlertsViewController: UIViewController {
         tableView.delegate = self
         tableView.register(ServiceAlertTableViewCell.self, forCellReuseIdentifier: ServiceAlertTableViewCell.identifier)
         tableView.allowsSelection = false
-        tableView.contentInset = .zero
         
         tableView.separatorColor = Colors.dividerTextField
         tableView.tableFooterView = UIView()
@@ -39,6 +36,8 @@ class ServiceAlertsViewController: UIViewController {
         view.addSubview(tableView)
         
         updateConstraints()
+        
+        createDummyData()
     }
     
     func updateConstraints() {
@@ -100,6 +99,14 @@ class ServiceAlertsViewController: UIViewController {
         alertData.append(p3Alert)
         
         alerts = sortedAlerts(alertsList: alertData)
+        
+        //tableView.contentInset = .init(top: 18, left: 0, bottom: 0, right: 0)
+        tableView.reloadData(
+        )
+    
+    }
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        print("hi")
     }
 }
 
@@ -138,15 +145,14 @@ extension ServiceAlertsViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ServiceAlertTableViewCell.identifier, for: indexPath) as? ServiceAlertTableViewCell else { return UITableViewCell() }
+        let cell = tableView.dequeueReusableCell(withIdentifier: ServiceAlertTableViewCell.identifier, for: indexPath) as? ServiceAlertTableViewCell
         
         if let alertList = alerts[priorities[indexPath.section]] {
-            cell.alert = alertList[indexPath.row]
-            cell.setData()
+            cell?.alert = alertList[indexPath.row]
+            cell?.setData()
+            cell?.setNeedsUpdateConstraints()
         }
         
-        //cell.layoutIfNeeded()
-        
-        return cell
+        return cell!
     }
 }
