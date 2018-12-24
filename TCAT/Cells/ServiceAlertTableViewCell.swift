@@ -31,7 +31,9 @@ class ServiceAlertTableViewCell: UITableViewCell {
     }
     
     func setData() {
-        timeSpanLabel.text = formatTimeString()
+        if let fromDate = alert?.fromDate, let toDate = alert?.toDate {
+            timeSpanLabel.text = formatTimeString(fromDate, toDate: toDate)
+        }
         descriptionLabel.text = alert?.message
         if let routes = alert?.routes, !routes.isEmpty {
             setupAffectedRoutesStackView()
@@ -51,10 +53,6 @@ class ServiceAlertTableViewCell: UITableViewCell {
         timeSpanLabel.textColor = Colors.primaryText
         
         contentView.addSubview(timeSpanLabel)
-    }
-    
-    private func formatTimeString() -> String{
-        return "Wednesday, 4/4 - Thursday, 4/12"
     }
     
     private func setupDescriptionLabel() {
@@ -109,28 +107,6 @@ class ServiceAlertTableViewCell: UITableViewCell {
         topSeparator?.backgroundColor = Colors.backgroundWash
         
         contentView.addSubview(topSeparator!)
-    }
-    
-    private func maxIconsPerRow() -> Int {
-        let iconWidth = Int(BusIconType.directionSmall.width)
-        let screenWidth = Int(UIScreen.main.bounds.width)
-        let minSpacing = 10
-        let totalConstraintInset = borderInset * 2
-        
-        return (screenWidth - totalConstraintInset + minSpacing) / (iconWidth + minSpacing)
-    }
-    
-    private func rowCount() -> Int {
-        guard let routes = alert?.routes else { return 0 }
-        
-        if routes.count > maxIconsPerRow() {
-            let addExtra = routes.count % maxIconsPerRow() > 0 ? 1 : 0
-            let rowCount = routes.count / maxIconsPerRow()
-            
-            return rowCount + addExtra
-        } else {
-            return 1
-        }
     }
     
     override func updateConstraints() {
@@ -189,6 +165,58 @@ class ServiceAlertTableViewCell: UITableViewCell {
             }
         }
         super.updateConstraints()
+    }
+    
+    private func formatTimeString(_ fromDate: String, toDate: String) -> String {
+        
+        // ISSUE IN PARSING STRING (HITS DEFAULT DATE.DISTANTPAST)
+        
+        let newformatter = DateFormatter()
+        newformatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.sZZZZ"
+        newformatter.locale = Locale(identifier: "en_US_POSIX")
+        
+        let fromDate = newformatter.date(from: fromDate)
+        let toDate = newformatter.date(from: toDate)
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, M/d"
+
+        if let unWrappedFromDate = fromDate, let unWrappedToDate = toDate {
+            let formattedFromDate = formatter.string(from: unWrappedFromDate)
+            let formattedToDate = formatter.string(from: unWrappedToDate)
+            
+            return "\(formattedFromDate) - \(formattedToDate)"
+        }
+        
+        return "Time: Unknown"
+    }
+    
+    private func maxIconsPerRow() -> Int {
+        let iconWidth = Int(BusIconType.directionSmall.width)
+        let screenWidth = Int(UIScreen.main.bounds.width)
+        let minSpacing = 10
+        let totalConstraintInset = borderInset * 2
+        
+        return (screenWidth - totalConstraintInset + minSpacing) / (iconWidth + minSpacing)
+    }
+    
+    private func rowCount() -> Int {
+        guard let routes = alert?.routes else { return 0 }
+        
+        if routes.count > maxIconsPerRow() {
+            let addExtra = routes.count % maxIconsPerRow() > 0 ? 1 : 0
+            let rowCount = routes.count / maxIconsPerRow()
+            
+            return rowCount + addExtra
+        } else {
+            return 1
+        }
+    }
+    
+    private func getDayOfWeek(_ today:Date) -> Int? {
+        let myCalendar = Calendar(identifier: .gregorian)
+        let weekDay = myCalendar.component(.weekday, from: today)
+        return weekDay
     }
     
     override func prepareForReuse() {
