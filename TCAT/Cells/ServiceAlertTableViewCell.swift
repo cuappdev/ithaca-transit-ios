@@ -13,6 +13,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
     static let identifier: String = "serviceAlertCell"
     private let fileName: String = "serviceAlertTableViewCell"
     var alert: Alert?
+    var rowNum: Int!
     
     let borderInset = 16
     
@@ -20,6 +21,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
     var descriptionLabel: UILabel!
     var affectedRoutesLabel: UILabel!
     var affectedRoutesStackView: UIStackView?
+    var topSeparator: UIView?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -34,6 +36,10 @@ class ServiceAlertTableViewCell: UITableViewCell {
         if let routes = alert?.routes, !routes.isEmpty {
             setupAffectedRoutesStackView()
             setupaffectedRoutesLabel()
+        }
+        
+        if rowNum > 0 {
+            setupTopSeparator()
         }
     }
     
@@ -72,7 +78,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
         contentView.addSubview(affectedRoutesLabel)
     }
     
-    func setupAffectedRoutesStackView() {
+    private func setupAffectedRoutesStackView() {
         
         if var routes = alert?.routes, !routes.isEmpty {
             affectedRoutesStackView = UIStackView()
@@ -97,7 +103,15 @@ class ServiceAlertTableViewCell: UITableViewCell {
         contentView.addSubview(stackView)
     }
     
-    func maxIconsPerRow() -> Int {
+    private func setupTopSeparator() {
+        
+        topSeparator = UIView()
+        topSeparator?.backgroundColor = Colors.backgroundWash
+        
+        contentView.addSubview(topSeparator!)
+    }
+    
+    private func maxIconsPerRow() -> Int {
         let iconWidth = Int(BusIconType.directionSmall.width)
         let screenWidth = Int(UIScreen.main.bounds.width)
         let minSpacing = 10
@@ -106,7 +120,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
         return (screenWidth - totalConstraintInset + minSpacing) / (iconWidth + minSpacing)
     }
     
-    func rowCount() -> Int {
+    private func rowCount() -> Int {
         guard let routes = alert?.routes else { return 0 }
         
         if routes.count > maxIconsPerRow() {
@@ -121,9 +135,22 @@ class ServiceAlertTableViewCell: UITableViewCell {
     
     override func updateConstraints() {
         
-        timeSpanLabel.snp.remakeConstraints { (make) in
-            make.top.leading.trailing.equalToSuperview().inset(borderInset).labeled("timeSpanLabel: Top, Leading, Trailing")
-            make.height.equalTo(timeSpanLabel.intrinsicContentSize.height).labeled("timeSpanLabel: Height")
+        if let topSeparator = topSeparator {
+            topSeparator.snp.remakeConstraints { (make) in
+                make.top.leading.trailing.equalToSuperview().labeled("topSeparator: Top, Leading, Trailing")
+                make.height.equalTo(8).labeled("topSeparator: Height")
+            }
+            
+            timeSpanLabel.snp.remakeConstraints { (make) in
+                make.top.equalTo(topSeparator.snp.bottom).offset(borderInset).labeled("timeSpanLabel: Top")
+                make.leading.trailing.equalToSuperview().inset(borderInset).labeled("timeSpanLabel: Leading, Trailing")
+                make.height.equalTo(timeSpanLabel.intrinsicContentSize.height).labeled("timeSpanLabel: Height")
+            }
+        } else {
+            timeSpanLabel.snp.remakeConstraints { (make) in
+                make.top.leading.trailing.equalToSuperview().inset(borderInset).labeled("timeSpanLabel: Top, Leading, Trailing")
+                make.height.equalTo(timeSpanLabel.intrinsicContentSize.height).labeled("timeSpanLabel: Height")
+            }
         }
         
         descriptionLabel.snp.remakeConstraints { (make) in
@@ -137,12 +164,12 @@ class ServiceAlertTableViewCell: UITableViewCell {
                 let heightValue = ceil(text.heightWithConstrainedWidth(width: width, font: descriptionLabel.font))
                 make.height.equalTo(ceil(heightValue)).labeled("descriptionLabel: Height")
             } else {
-                make.height.equalTo(0).labeled("descriptionLabel: Height")
+                make.height.equalTo(descriptionLabel.intrinsicContentSize.height).labeled("descriptionLabel: Height")
             }
         }
         
         if let stackView = affectedRoutesStackView {
-
+            // When both a separator view and stackView are required
             affectedRoutesLabel.snp.remakeConstraints { (make) in
                 make.leading.equalTo(timeSpanLabel).labeled("AffectedRoutesLabel: Leading")
                 make.top.equalTo(descriptionLabel.snp.bottom).offset(24).labeled("affectedRoutesLabel: Top")
@@ -151,11 +178,11 @@ class ServiceAlertTableViewCell: UITableViewCell {
             }
             
             stackView.snp.remakeConstraints { (make) in
-                make.top.equalTo(affectedRoutesLabel.snp.bottom).offset(8)
-                make.leading.equalTo(timeSpanLabel)
-                make.bottom.trailing.equalToSuperview().inset(borderInset)
-                
+                make.top.equalTo(affectedRoutesLabel.snp.bottom).offset(8).labeled("affectedRoutesStackView: Top")
+                make.leading.equalTo(timeSpanLabel).labeled("affectedRoutesStackView: Leading")
+                make.trailing.bottom.equalToSuperview().inset(borderInset).labeled("affectedRoutesStackView: Trailing, Bottom")
             }
+            
         } else {
             descriptionLabel.snp.makeConstraints { (make) in
                 make.bottom.equalToSuperview().inset(borderInset).labeled("descriptionLabel: Bottom")
@@ -164,6 +191,17 @@ class ServiceAlertTableViewCell: UITableViewCell {
         super.updateConstraints()
     }
     
+    override func prepareForReuse() {
+        if let stackView = affectedRoutesStackView {
+            stackView.removeFromSuperview()
+        }
+        affectedRoutesStackView = nil
+        
+        if let routesLabel = affectedRoutesLabel {
+            routesLabel.removeFromSuperview()
+        }
+        affectedRoutesLabel = nil
+    }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

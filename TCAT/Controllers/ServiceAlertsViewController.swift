@@ -12,7 +12,14 @@ class ServiceAlertsViewController: UIViewController {
     
     var tableView: UITableView!
     
-    var alerts = [Int: [Alert]]()
+    var alerts = [Int: [Alert]]() {
+        didSet {
+            if !alerts.isEmpty {
+                tableView.reloadData()
+                tableView.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: false)
+            }
+        }
+    }
     var priorities = [Int]()
     
     override func viewDidLoad() {
@@ -28,8 +35,10 @@ class ServiceAlertsViewController: UIViewController {
         tableView.register(ServiceAlertTableViewCell.self, forCellReuseIdentifier: ServiceAlertTableViewCell.identifier)
         tableView.allowsSelection = false
         
+        // Any idea why I'm needing to do this??
+        tableView.contentInset = .init(top: 18, left: 0, bottom: -18, right: 0)
+        
         tableView.separatorColor = Colors.dividerTextField
-        tableView.tableFooterView = UIView()
         tableView.showsVerticalScrollIndicator = false
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableView.automaticDimension
@@ -56,10 +65,11 @@ class ServiceAlertsViewController: UIViewController {
         Network.getAlerts().perform(withSuccess: { (request) in
             if (request.success) {
                 self.alerts = self.sortedAlerts(alertsList: request.data)
-                self.tableView.reloadData()
             }
         }) { (error) in
-            print(error)
+            let fileName = "ServiceAlertsVieController"
+            let line = "\(fileName) \(#function): \(error)"
+            print(line)
         }
     }
     
@@ -95,18 +105,22 @@ class ServiceAlertsViewController: UIViewController {
         
         let p3Alert = Alert(id: -2, message: "Due to construction the RT 90 will be on a detour. This will move the stop from Robert Purcell Community Center to Jessup and Northcross. This is the only change.", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 3, daysOfWeek: "Every Day", routes: [10, 20, 30, 40, 50, 60, 70, 80, 90], signs: [], channelMessages: [])
         
+        let p3Alert1 = Alert(id: -3, message: "Due to construction the RT 90 will be on a detour. This will move the stop from Robert Purcell Community Center to Jessup and Northcross. This is the only change.", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 3, daysOfWeek: "Every Day", routes: [10, 20, 30, 40, 50, 60, 70, 80, 90], signs: [], channelMessages: [])
+        
+        let p3Alert2 = Alert(id: -4, message: "Due to construction the RT 90 will be on a detour. This will move the stop from Robert Purcell Community Center to Jessup and Northcross. This is the only change.", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 3, daysOfWeek: "Every Day", routes: [10, 20, 30, 40, 50, 60, 70, 80, 90], signs: [], channelMessages: [])
+        
+        let p3Alert3 = Alert(id: -5, message: "Due to construction the RT 90 will be on a detour. This will move the stop from Robert Purcell Community Center to Jessup and Northcross. This is the only change.", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 3, daysOfWeek: "Every Day", routes: [10, 20, 30, 40, 50, 60, 70, 80, 90], signs: [], channelMessages: [])
+        
+        let p3Alert4 = Alert(id: -6, message: "Due to construction the RT 90 will be on a detour. This will move the stop from Robert Purcell Community Center to Jessup and Northcross. This is the only change.", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 3, daysOfWeek: "Every Day", routes: [10, 20, 30, 40, 50, 60, 70, 80, 90], signs: [], channelMessages: [])
+        
+        alertData.append(p3Alert1)
+        alertData.append(p3Alert2)
         alertData.append(p0Alert)
+        alertData.append(p3Alert3)
+        alertData.append(p3Alert4)
         alertData.append(p3Alert)
         
         alerts = sortedAlerts(alertsList: alertData)
-        
-        //tableView.contentInset = .init(top: 18, left: 0, bottom: 0, right: 0)
-        tableView.reloadData(
-        )
-    
-    }
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("hi")
     }
 }
 
@@ -149,6 +163,7 @@ extension ServiceAlertsViewController: UITableViewDataSource {
         
         if let alertList = alerts[priorities[indexPath.section]] {
             cell?.alert = alertList[indexPath.row]
+            cell?.rowNum = indexPath.row
             cell?.setData()
             cell?.setNeedsUpdateConstraints()
         }
