@@ -46,7 +46,7 @@ class ServiceAlertsViewController: UIViewController {
         
         updateConstraints()
         
-        createDummyData()
+        getServiceAlerts()
     }
     
     func updateConstraints() {
@@ -87,35 +87,6 @@ class ServiceAlertsViewController: UIViewController {
         priorities.sort()
         
         return sortedAlerts
-    }
-    
-    func createDummyData() {
-        
-        let fileUrl = Bundle.main.url(forResource: "alertResponse", withExtension: "json")
-        let data = try! Data(contentsOf: fileUrl!, options: [])
-        
-        
-        let jsonDecoder = JSONDecoder()
-        let alertsResponse = try! jsonDecoder.decode(AlertRequest.self, from: data)
-        
-        var alertData = alertsResponse.data
-        
-        var routes = [Int]()
-        for i in 0...100 {
-            routes.append(i)
-        }
-        
-        let p0Alert = Alert(id: -1, message: "Come to our community dinner event on April 3 to give us feedback and meet our drivers!", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 0, daysOfWeek: "Every Day", routes: [], signs: [], channelMessages: [])
-        
-        let p3Alert = Alert(id: -2, message: "Due to construction the RT 90 will be on a detour. This will move the stop from Robert Purcell Community Center to Jessup and Northcross. This is the only change.", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 3, daysOfWeek: "Every Day", routes: [10, 20, 30, 40, 50, 60, 70, 80, 90], signs: [], channelMessages: [])
-        
-        let p3Alert1To100 = Alert(id: -6, message: "Due to construction the RT 90 will be on a detour. This will move the stop from Robert Purcell Community Center to Jessup and Northcross. This is the only change.", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 3, daysOfWeek: "Every Day", routes: routes, signs: [], channelMessages: [])
-        
-        alertData.append(p0Alert)
-        alertData.append(p3Alert1To100)
-        alertData.append(p3Alert)
-        
-        alerts = sortedAlerts(alertsList: alertData)
     }
 }
 
@@ -168,5 +139,37 @@ extension ServiceAlertsViewController: UITableViewDataSource {
         }
         
         return cell!
+    }
+}
+
+// MARK: Testing
+extension ServiceAlertsViewController {
+    func createDummyData() {
+        
+        let fileUrl = Bundle.main.url(forResource: "alertResponse", withExtension: "json")
+        let data = try! Data(contentsOf: fileUrl!, options: [])
+        
+        
+        let jsonDecoder = JSONDecoder()
+        let alertsResponse = try! jsonDecoder.decode(AlertRequest.self, from: data)
+        
+        var alertData = alertsResponse.data
+        
+        var routes = [Int]()
+        for i in 0...100 {
+            routes.append(i)
+        }
+        
+        let p0Alert = Alert(id: -1, message: "Come to our community dinner event on April 3 to give us feedback and meet our drivers!", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 0, daysOfWeek: "Every Day", routes: [], signs: [], channelMessages: [])
+        
+        let p3Alert = Alert(id: -2, message: "Due to construction the RT 90 will be on a detour. This will move the stop from Robert Purcell Community Center to Jessup and Northcross. This is the only change.", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 3, daysOfWeek: "Every Day", routes: [10, 20, 30, 40, 50, 60, 70, 80, 90], signs: [], channelMessages: [])
+        
+        let p3Alert1To100 = Alert(id: -6, message: "Due to construction the RT 90 will be on a detour. This will move the stop from Robert Purcell Community Center to Jessup and Northcross. This is the only change.", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 3, daysOfWeek: "Every Day", routes: routes, signs: [], channelMessages: [])
+        
+        alertData.append(p0Alert)
+        alertData.append(p3Alert1To100)
+        alertData.append(p3Alert)
+        
+        alerts = sortedAlerts(alertsList: alertData)
     }
 }

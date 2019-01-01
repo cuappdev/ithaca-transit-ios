@@ -27,6 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         (key: Constants.UserDefaults.favorites, defaultValue: [Any]()),
         (key: Constants.UserDefaults.whatsNewDismissed, defaultValue: false)
     ]
+    var routesTimer = Timer.scheduledTimer(timeInterval: 60*5, target: self, selector: #selector(storeServicedRoutes), userInfo: nil, repeats: true)
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -62,6 +63,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // userDefaults.set(false, forKey: Constants.UserDefaults.onboardingShown)
 
         getBusStops()
+        
+        // Refresh service Alerts every 5 mins
+        routesTimer.fire()
 
         // Initalize first view based on context
         let showOnboarding = !userDefaults.bool(forKey: Constants.UserDefaults.onboardingShown)
@@ -89,18 +93,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        routesTimer.invalidate()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the inactive state; here y/Users/mattbarker016ou can undo many of the changes made on entering the background.
+        // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+        routesTimer = Timer.scheduledTimer(timeInterval: 60*5, target: self, selector: #selector(storeServicedRoutes), userInfo: nil, repeats: true)
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        routesTimer = Timer.scheduledTimer(timeInterval: 60*5, target: self, selector: #selector(storeServicedRoutes), userInfo: nil, repeats: true)
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        routesTimer.invalidate()
     }
     
     // MARK: Helper Functions
@@ -113,6 +121,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         {
             userDefaults.set(uid, forKey: Constants.UserDefaults.uid)
         }
+    }
+    
+    @objc func storeServicedRoutes() {
+        Network.getAlerts().perform(withSuccess: { (alertRequest) in
+            if alertRequest.success {
+                if let currentRoutes = self.userDefaults.array(forKey: Constants.UserDefaults.servicedRoutes) as? [Int] {
+                    let alertRoutes = self.allRoutesInAlerts(alertRequest.data)
+                    if !alertRoutes.containsSameElements(as: currentRoutes) {
+                        self.userDefaults.set(alertRoutes, forKey: Constants.UserDefaults.servicedRoutes)
+                    }
+                } else {
+                    let alertRoutes = self.allRoutesInAlerts(alertRequest.data)
+                    self.userDefaults.set(alertRoutes, forKey: Constants.UserDefaults.servicedRoutes)
+                }
+            } else { print("storeServicedRoutesError: Network request failed" ) }
+        }) { (error) in
+            print("storeServicedRoutesError: \(error.localizedDescription)")
+        }
+    }
+
+    func allRoutesInAlerts(_ alerts: [Alert]) -> [Int] {
+        var allRoutes = [Int]()
+        for alert in alerts {
+            for route in alert.routes {
+                if !allRoutes.contains(route) {
+                    allRoutes.append(route)
+                }
+            }
+        }
+        return allRoutes
     }
     
     func handleShortcut(item: UIApplicationShortcutItem) {

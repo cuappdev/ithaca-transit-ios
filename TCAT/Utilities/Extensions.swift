@@ -347,6 +347,12 @@ extension Array where Element: UIView {
     }
 }
 
+extension Array where Element: Comparable {
+    func containsSameElements(as other: [Element]) -> Bool {
+        return self.count == other.count && self.sorted() == other.sorted()
+    }
+}
+
 extension Array : JSONDecodable {
     public init(json: JSON) {
         self.init(json.arrayValue.compactMap {
