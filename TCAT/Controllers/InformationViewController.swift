@@ -26,7 +26,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
     var tableView = UITableView(frame: .zero, style: .grouped)
 
     var content: [[(name: String, action: Selector)]] = [
-
+        
         [ // Section 0
             (name: Constants.InformationView.onboarding, action: #selector(presentOnboarding)),
             (name: Constants.InformationView.sendFeedback, action: #selector(sendFeedback))
@@ -285,6 +285,11 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
     @objc func openTeamWebsite() {
         let homePage = "http://www.cornellappdev.com"
         open(homePage)
+    }
+    
+    @objc func showServiceAlerts() {
+        let serviceAlertsVC = ServiceAlertsViewController()
+        present(serviceAlertsVC, animated: true)
     }
 
     func open(_ url: String, inApp: Bool = true) {
