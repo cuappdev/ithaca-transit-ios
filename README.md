@@ -36,7 +36,7 @@ pod install
 
 3. Go to pinned messages in `#transit-ios` in Slack and download `Keys.plist` and `GoogleServiceInfo.plist`. Within the root directory, place these files in `~/TCAT/Supporting Files/`. 
 
-If you aren't an AppDev member, you can plug in your own API keys! View the `Sample Keys.plist` file in the root directory, and refer to instructions [here](https://support.google.com/firebase/answer/7015592?hl=en) on generating a `GoogleServiceInfo.plist`. For the latter step, you will need to create a project within Firebase. Let us know if you have any trouble with this, we're happy to help!
+>If you aren't an AppDev member, you can plug in your own API keys! View the `Sample Keys.plist` file in the root directory, and refer to instructions [here](https://support.google.com/firebase/answer/7015592?hl=en) on generating a `GoogleServiceInfo.plist`. For the latter step, you will need to create a project within Firebase. Let us know if you have any trouble with this, we're happy to help!
 
 4. Open the `.xcworkspace` file.
 5. Change any relevant network settings for testing (see below).
