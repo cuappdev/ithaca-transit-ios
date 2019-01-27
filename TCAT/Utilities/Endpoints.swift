@@ -99,29 +99,38 @@ class Network {
 
     }
 
-    class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, endPlaceName: String, time: Date, type: SearchType,
+    class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D,
+                         startPlaceName: String, endPlaceName: String, time: Date, type: SearchType,
                          callback: @escaping (_ request: APIRequest<RoutesRequest, Error>) -> Void) {
+        
         let request: APIRequest<RoutesRequest, Error> = tron.codable.request("route")
         request.method = .get
         request.parameters = [
-            "arriveBy": type == .arriveBy,
-            "end": "\(endCoord.latitude),\(endCoord.longitude)",
-            "start": "\(startCoord.latitude),\(startCoord.longitude)",
-            "time": time.timeIntervalSince1970,
-            "destinationName": endPlaceName
+            "arriveBy"          :   type == .arriveBy,
+            "end"               :   "\(endCoord.latitude),\(endCoord.longitude)",
+            "start"             :   "\(startCoord.latitude),\(startCoord.longitude)",
+            "time"              :   time.timeIntervalSince1970,
+            "destinationName"   :   endPlaceName,
+            "originName"        :   startPlaceName
         ]
-
+        
+        // Add unique identifier to request
+        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+            request.parameters["uid"] = uid
+        }
+        
         callback(request)
     }
-
-    class func getRequestUrl(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, destinationName: String, time: Date, type: SearchType) -> String {
+    
+    class func getRequestUrl(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D,
+                             originName: String, destinationName: String, time: Date, type: SearchType) -> String {
         let path = "route"
         let arriveBy = (type == .arriveBy)
         let end = "\(endCoord.latitude),\(endCoord.longitude)"
         let start =  "\(startCoord.latitude),\(startCoord.longitude)"
         let time = time.timeIntervalSince1970
-
-        return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(end)&start=\(start)&time=\(time)&destinationName=\(destinationName)"
+        
+        return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(end)&start=\(start)&time=\(time)&destinationName=\(destinationName)&originName=\(originName)"
     }
 
     /// TO BE CHANGED

@@ -7,7 +7,7 @@
 	<key>INIntentDefinitionModelVersion</key>
 	<string>1.0</string>
 	<key>INIntentDefinitionSystemVersion</key>
-	<string>18B75</string>
+	<string>17G65</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
 	<string>10B61</string>
 	<key>INIntentDefinitionToolsVersion</key>
@@ -113,7 +113,7 @@
 			<key>INIntentRestrictions</key>
 			<integer>0</integer>
 			<key>INIntentTitle</key>
-			<string>Get Routes</string>
+			<string>Get Routes </string>
 			<key>INIntentTitleID</key>
 			<string>6mhV59</string>
 			<key>INIntentType</key>
