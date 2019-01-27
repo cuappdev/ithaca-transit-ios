@@ -43,7 +43,7 @@ struct RouteCalculationError: Swift.Error {
     let description: String
 }
 
-class Route: NSObject, JSONDecodable {
+class Route: NSObject {
 
     /// The time a user begins their journey
     var departureTime: Date

@@ -18,10 +18,11 @@ import SnapKit
         
     override func viewDidLoad() {
         super.viewDidLoad()
-    
-        extensionContext?.widgetLargestAvailableDisplayMode = NCWidgetDisplayMode.expanded
         
-        setUpRoutesTableView()
+        print("viewDidLoad")
+    
+        // extensionContext?.widgetLargestAvailableDisplayMode = .expanded
+        
         view.addSubview(routes)
         createConstraints()
         
@@ -38,18 +39,26 @@ import SnapKit
         
         // called to update the widget
         
+        print("widgetPerformUpdate")
+        
+        setUpRoutesTableView()
+        
         completionHandler(NCUpdateResult.newData)
     }
     
     func widgetActiveDisplayModeDidChange(_ activeDisplayMode: NCWidgetDisplayMode, withMaximumSize maxSize: CGSize) {
         
-        let expanded = activeDisplayMode == .expanded
-        preferredContentSize = expanded ? CGSize(width: maxSize.width, height: 110.0) : maxSize
+        guard let maxSize = extensionContext?.widgetMaximumSize(for: activeDisplayMode) else { return }
+        preferredContentSize = maxSize
+
+//        let expanded = activeDisplayMode == .expanded
+//        preferredContentSize = expanded ? maxSize : CGSize(width: extensionContext.size)
     }
     
     func createConstraints() {
-        routes.snp.makeConstraints{ (make) in
-            make.top.bottom.leading.trailing.equalToSuperview()
+        routes.snp.makeConstraints {(make) in
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(110.0*5)
         }
     }
     
@@ -63,7 +72,7 @@ import SnapKit
 
 extension TodayViewController : UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return (extensionContext?.widgetActiveDisplayMode == NCWidgetDisplayMode.compact) ? 1 : 5
+        return (extensionContext?.widgetActiveDisplayMode == .compact) ? 1 : 5
         // need to take into account if 5 will exceed the max size
     }
     
@@ -88,6 +97,7 @@ extension TodayViewController : UITableViewDataSource, UITableViewDelegate {
     private func setUpRoutesTableView() {
         routes.delegate = self
         routes.dataSource = self
+        routes.backgroundColor = UIColor.white
         // routes.register(TodayExtensionCell.self, forCellReuseIdentifier: "todayExtensionCell")
     }
 }

@@ -26,7 +26,7 @@ class TodayExtensionCell: UITableViewCell {
     var departureLabel = UILabel()
     var destinationLabel = UILabel()
     var liveLabel = UILabel()
-    var liveIndicatorView = LiveIndicator(size: .large, color: .liveGreenColor)
+    var liveIndicatorView = LiveIndicator(size: .large, color: Colors.liveGreen)
     var busIcon: BusIcon?
     
     // MARK: Spacing vars
@@ -49,8 +49,9 @@ class TodayExtensionCell: UITableViewCell {
             busIcon = BusIcon(type: .directionSmall, number: 90)
         }
         
-        departureLabel.font = .style(Fonts.SanFrancisco.mediumPro, size: 16)
-        departureLabel.textColor = .primaryTextColor
+        departureLabel.font = .getFont(.medium, size: 16.0)
+        
+        departureLabel.textColor = Colors.primaryText
         departureLabel.text = "Ithaca Commons at Green Street Station"
         if let direction = busDirection {
             departureLabel.text = direction.name
@@ -58,14 +59,14 @@ class TodayExtensionCell: UITableViewCell {
         departureLabel.numberOfLines = 1
         departureLabel.lineBreakMode = NSLineBreakMode.byTruncatingTail
         
-        destinationLabel.font = .style(Fonts.SanFrancisco.regularPro, size: 16)
-        destinationLabel.textColor = .secondaryTextColor
+        destinationLabel.font = .getFont(.regular, size: 16.0)
+        destinationLabel.textColor = Colors.secondaryText
         destinationLabel.numberOfLines = 1
         destinationLabel.text = "11:50 AM to Ithaca Commons at Green Street Station"
         destinationLabel.lineBreakMode = .byTruncatingTail
         
-        liveLabel.font = .style(Fonts.SanFrancisco.mediumPro, size: 16)
-        liveLabel.textColor = .primaryTextColor
+        liveLabel.font = .getFont(.medium, size: 16.0)
+        liveLabel.textColor = Colors.primaryText
         liveLabel.text = "Board in 10 mins"
         
         setUpDestinationLabel()
@@ -168,19 +169,18 @@ class TodayExtensionCell: UITableViewCell {
             let delayState = getDelayState(fromDirection: direction)
             switch delayState {
             case .late(date: let delayedDepartureTime):
-                liveLabel.textColor = .liveRedColor
+                liveLabel.textColor = Colors.lateRed
                 let boardTime = Time.timeString(from: direction.startTime, to: delayedDepartureTime)
                 liveLabel.text = (boardTime == "0 min" ? "Board now" : "Board in \(boardTime)")
-                liveIndicatorView.setColor(to: .liveRedColor)
-                
+                liveIndicatorView.setColor(to: Colors.lateRed)
                 contentView.addSubview(liveLabel)
                 contentView.addSubview(liveIndicatorView)
                 
             case .onTime(date: let departureTime):
-                liveLabel.textColor = .liveGreenColor
+                liveLabel.textColor = Colors.liveGreen
                 let boardTime = Time.timeString(from: direction.startTime, to: departureTime)
                 liveLabel.text = (boardTime == "0 min" ? "Board now" : "Board in \(boardTime)")
-                liveIndicatorView.setColor(to:.liveGreenColor)
+                liveIndicatorView.setColor(to: Colors.liveGreen)
                 
                 contentView.addSubview(liveLabel)
                 contentView.addSubview(liveIndicatorView)
