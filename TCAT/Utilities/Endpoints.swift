@@ -143,6 +143,21 @@ class Network {
         ]
         return request
     }
+    
+    @discardableResult
+    class func routeSelected(routeId: String) -> APIRequest<JSON, Error> {
+        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routeSelected")
+        request.method = .post
+        request.parameterEncoding = JSONEncoding.default
+        request.parameters = ["routeId" : routeId]
+        
+        // Add unique identifier to request
+        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+            request.parameters["uid"] = uid
+        }
+        
+        return request
+    }
 
     class func getBusLocations(_ directions: [Direction]) -> APIRequest<BusLocationRequest, Error> {
         let request: APIRequest<BusLocationRequest, Error> = tron.codable.request("tracking")

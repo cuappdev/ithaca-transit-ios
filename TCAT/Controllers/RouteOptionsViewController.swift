@@ -921,8 +921,8 @@ extension RouteOptionsViewController: UITableViewDelegate {
         if let routeDetailViewController = createRouteDetailViewController(from: indexPath) {
             let payload = RouteResultsCellTappedEventPayload()
             Analytics.shared.log(payload)
-            // // MARK: #182 • Place routeSelected Analytics here.
-            // let tripId = routes[indexPath.row].id
+            let routeId = routes[indexPath.row].routeId
+            Network.routeSelected(routeId: routeId)
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }
