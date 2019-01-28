@@ -51,6 +51,9 @@ class Route: NSObject, Codable {
 
     /// The time a user arrives at their destination.
     var arrivalTime: Date
+    
+    /// A unique identifier for the route
+    var routeId: String
 
     /// The amount of time from now until the departure
     var timeUntilDeparture: DateComponents {
@@ -99,14 +102,14 @@ class Route: NSObject, Codable {
         case boundingBox
         case numberOfTransfers
         case directions
+        case routeId
     }
     
     required init(from decoder: Decoder) throws {
-        
-        // MARK: #182 • Get Route ID
         let container = try decoder.container(keyedBy: CodingKeys.self)
         departureTime = Date.parseDate(try container.decode(String.self, forKey: .departureTime))
         arrivalTime = Date.parseDate(try container.decode(String.self, forKey: .arrivalTime))
+        routeId = try container.decode(String.self, forKey: .routeId)
         startCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .startCoords)
         endCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .endCoords)
         boundingBox = try container.decode(Bounds.self, forKey: .boundingBox)
