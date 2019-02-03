@@ -54,6 +54,7 @@
 		BF8460AD2172B0F80027FB62 /* SFUIText-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF8460A92172B0F70027FB62 /* SFUIText-Medium.otf */; };
 		BF8460AE2172B0F80027FB62 /* SFUIText-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF8460AA2172B0F80027FB62 /* SFUIText-Bold.otf */; };
 		BF8460AF2172B0F80027FB62 /* SFUIText-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF8460AB2172B0F80027FB62 /* SFUIText-Regular.otf */; };
+		BF8AF5F32206BBF60091AB8C /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8AF5F22206BBF60091AB8C /* Utilities.swift */; };
 		BFA53FEE1FD45D7000E770DF /* RouteDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */; };
 		BFB86A07205C614C000794B2 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB86A06205C614C000794B2 /* OnboardingViewController.swift */; };
 		BFC367F321B66E9A00ABD9AC /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = BFC367F621B66E9A00ABD9AC /* Intents.intentdefinition */; };
@@ -198,6 +199,7 @@
 		BF8460A92172B0F70027FB62 /* SFUIText-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFUIText-Medium.otf"; path = "Supporting Files/Fonts/SFUIText-Medium.otf"; sourceTree = "<group>"; };
 		BF8460AA2172B0F80027FB62 /* SFUIText-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFUIText-Bold.otf"; path = "Supporting Files/Fonts/SFUIText-Bold.otf"; sourceTree = "<group>"; };
 		BF8460AB2172B0F80027FB62 /* SFUIText-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFUIText-Regular.otf"; path = "Supporting Files/Fonts/SFUIText-Regular.otf"; sourceTree = "<group>"; };
+		BF8AF5F22206BBF60091AB8C /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utilities.swift; path = Utilities/Utilities.swift; sourceTree = "<group>"; };
 		BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDetailViewController.swift; path = Controllers/RouteDetailViewController.swift; sourceTree = "<group>"; };
 		BFB86A06205C614C000794B2 /* OnboardingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OnboardingViewController.swift; path = Controllers/OnboardingViewController.swift; sourceTree = "<group>"; };
 		BFC367F521B66E9A00ABD9AC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/Intents.intentdefinition; sourceTree = "<group>"; };
@@ -315,6 +317,7 @@
 			isa = PBXGroup;
 			children = (
 				2292486721B891A30004279C /* Endpoints.swift */,
+				BF8AF5F22206BBF60091AB8C /* Utilities.swift */,
 				2292486821B891A30004279C /* Models.swift */,
 				DD3D9C201F94297100B164D4 /* Reachability.swift */,
 			);
@@ -877,6 +880,7 @@
 				DDB49C9D1E8857FC00A99C35 /* BusPath.swift in Sources */,
 				DD659C8A20508E1B00506BAC /* WalkWithDistanceIcon.swift in Sources */,
 				DD36A7001F66378C00E4789E /* PlaceResult.swift in Sources */,
+				BF8AF5F32206BBF60091AB8C /* Utilities.swift in Sources */,
 				BF73F0F31F60B0BD003B479D /* LocationObject.swift in Sources */,
 				BFF41EB2204365E800E0696B /* SummaryView.swift in Sources */,
 				DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */,

@@ -42,28 +42,26 @@ class Network {
 
     /// Network IP address being used for specified networkType
     static var ipAddress: String {
-        #if DEBUG
-        return debugIPAddress
-        #else
+        if isTestFlight() {
+           return debugIPAddress
+        }
         switch networkType {
         case .local: return localIPAddress
         case .debug: return debugIPAddress
         case .release: return releaseIPAddress
         }
-        #endif
     }
 
     /// Network source currently being used
     static var address: String {
-        #if DEBUG
-        return debugSource
-        #else
+        if isTestFlight() {
+            return debugSource
+        }
         switch networkType {
         case .local: return localSource
         case .debug: return debugSource
         case .release: return releaseSource
         }
-        #endif
     }
 
     static let tron = TRON(baseURL: Network.address)
