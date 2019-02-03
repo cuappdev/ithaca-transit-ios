@@ -33,7 +33,7 @@ class Network {
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
 
     /// Test server used for development
-    static let debugIPAddress = "34.238.157.63"
+    static let debugIPAddress = "157.230.66.163"
     static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
 
     /// Deployed server instance used for release
@@ -42,20 +42,28 @@ class Network {
 
     /// Network IP address being used for specified networkType
     static var ipAddress: String {
+        #if DEBUG
+        return debugIPAddress
+        #else
         switch networkType {
         case .local: return localIPAddress
         case .debug: return debugIPAddress
         case .release: return releaseIPAddress
         }
+        #endif
     }
 
     /// Network source currently being used
     static var address: String {
+        #if DEBUG
+        return debugSource
+        #else
         switch networkType {
         case .local: return localSource
         case .debug: return debugSource
         case .release: return releaseSource
         }
+        #endif
     }
 
     static let tron = TRON(baseURL: Network.address)
