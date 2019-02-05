@@ -52,7 +52,6 @@ end
 target 'Today Extension' do
     # UI Frameworks	
     pod 'SnapKit'
-    pod 'DZNEmptyDataSet', :git=> 'https://github.com/cuappdev/DZNEmptyDataSet.git'
  
     # Location
     pod 'GooglePlaces', '~> 2.6'
@@ -64,6 +63,4 @@ target 'Today Extension' do
     # Analytics
     pod 'Crashlytics', '~> 3.10'
 
-    # Other
-    pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/cuappdev/Fuzzywuzzy_swift.git'
 end 
