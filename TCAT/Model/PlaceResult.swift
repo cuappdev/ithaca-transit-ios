@@ -11,7 +11,7 @@ import TRON
 import SwiftyJSON
 import CoreLocation
 
-class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
+@objc(PlaceResult) class PlaceResult: Place, JSONDecodable, CoordinateAcceptor {
 
     var detail: String
     var placeID: String

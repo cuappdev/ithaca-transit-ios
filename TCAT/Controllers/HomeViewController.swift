@@ -460,8 +460,7 @@ extension HomeViewController: UITableViewDelegate {
 
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
-        let testVC = TestTableViewController()
-        let vcToPush = didSelectAllStops ? testVC : optionsVC
+        let vcToPush = didSelectAllStops ? allStopsTVC : optionsVC
         if presentOptionsVC {
             navigationController?.pushViewController(vcToPush, animated: true)
         }

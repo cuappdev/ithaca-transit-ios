@@ -118,6 +118,8 @@ class SearchTableViewManager {
 
     func retrieveRecentPlaces(for key: String) -> [ItemType] {
         if let storedPlaces = userDefaults.value(forKey: key) as? Data {
+            NSKeyedUnarchiver.setClass(PlaceResult.self, forClassName: "TCAT.PlaceResult")
+            NSKeyedUnarchiver.setClass(BusStop.self, forClassName: "TCAT.BusStop")
             if let places = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any] {
                 var itemTypes: [ItemType] = []
                 for place in places {
