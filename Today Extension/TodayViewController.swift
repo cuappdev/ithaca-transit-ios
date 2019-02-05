@@ -14,7 +14,6 @@ import SnapKit
 
     var routes: UITableView = UITableView()
     var favorites: [String] = []
-    // var favorites: [String] = ["Schwartz Performing Arts Center", "Sage Hall", "Ithaca Commons at Green Street Station", "Hans Bethe House"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,7 +39,7 @@ import SnapKit
         // update bus info?
         print("widgetPerformUpdate")
 
-        setUpRoutesTableView()
+        setUpRoutesTableView() // routes.reloadData()?
 
         completionHandler(NCUpdateResult.newData)
     }
@@ -72,11 +71,12 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
         routes.delegate = self
         routes.dataSource = self
         routes.register(TodayExtensionCell.self, forCellReuseIdentifier: "todayExtensionCell")
+        routes.register(NoFavoritesCell.self, forCellReuseIdentifier: "noFavoritesCell")
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // change 5 to number of favorites
-        return (extensionContext?.widgetActiveDisplayMode == .compact) ? 1 : (favorites.count)
+        return (extensionContext?.widgetActiveDisplayMode == .compact) ? 1 : (favorites.isEmpty) ? 1 : favorites.count
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -84,8 +84,14 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "todayExtensionCell", for: indexPath) as! TodayExtensionCell
-        cell.setUpCell(destinationText: favorites[indexPath.row])
+        if (favorites.count != 0) {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "todayExtensionCell", for: indexPath) as! TodayExtensionCell
+            cell.setUpCell(destinationText: favorites[indexPath.row])
+            return cell
+        }
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "noFavoritesCell", for: indexPath) as! NoFavoritesCell
         return cell
     }
+    
 }

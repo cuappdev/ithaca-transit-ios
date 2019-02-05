@@ -126,7 +126,7 @@ class Network {
             "start"                 :   "\(startCoord.latitude),\(startCoord.longitude)",
             "time"                  :   time.timeIntervalSince1970,
             "end"                   :   endCoords,
-            "destinationNames"      : endPlaceNames
+            "destinationNames"      :   endPlaceNames
         ]
         
         callback(request)

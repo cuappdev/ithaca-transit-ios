@@ -39,6 +39,7 @@
 		7E14AEF12177E884006A344D /* Siri.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7E14AEDA2177E884006A344D /* Siri.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7E14AEF92177EA31006A344D /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEF82177EA31006A344D /* Intents.intentdefinition */; };
 		7E2FFF0F2207B687008EA224 /* TodayExtensionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */; };
+		7E47DEDA22093F7300BC944E /* NoFavoritesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E47DED922093F7300BC944E /* NoFavoritesCell.swift */; };
 		7E4B8B2321A9F42A00C96580 /* TodayExtensionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4B8B2221A9F42A00C96580 /* TodayExtensionCell.swift */; };
 		7E75BAD621B3A72B00FB56BB /* TodayExtensionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */; };
 		7E75BAD821B3A76D00FB56BB /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
@@ -220,6 +221,7 @@
 		7E14AEDE2177E884006A344D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7E14AEF82177EA31006A344D /* Intents.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = Intents.intentdefinition; sourceTree = "<group>"; };
 		7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayExtensionHelpers.swift; sourceTree = "<group>"; };
+		7E47DED922093F7300BC944E /* NoFavoritesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFavoritesCell.swift; sourceTree = "<group>"; };
 		7E4B8B2221A9F42A00C96580 /* TodayExtensionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TodayExtensionCell.swift; path = Cells/TodayExtensionCell.swift; sourceTree = "<group>"; };
 		7E574367220910D700E16BE9 /* Siri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Siri.entitlements; sourceTree = "<group>"; };
 		7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodayExtensionCell.swift; sourceTree = "<group>"; };
@@ -474,8 +476,9 @@
 				7EEF18AB21B39CF500343FFD /* Today Extension.entitlements */,
 				7EEF189F21B39C6200343FFD /* TodayViewController.swift */,
 				7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */,
-				7EEF18A421B39C6200343FFD /* Info.plist */,
+				7E47DED922093F7300BC944E /* NoFavoritesCell.swift */,
 				7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */,
+				7EEF18A421B39C6200343FFD /* Info.plist */,
 			);
 			path = "Today Extension";
 			sourceTree = "<group>";
@@ -1150,6 +1153,7 @@
 				7EE04A6A21B45611002F0C52 /* EventPayload.swift in Sources */,
 				7EE04A5421B4516E002F0C52 /* BusIcon.swift in Sources */,
 				7EE04A6921B455E0002F0C52 /* Shared.swift in Sources */,
+				7E47DEDA22093F7300BC944E /* NoFavoritesCell.swift in Sources */,
 				7EE04A5321B4515B002F0C52 /* LocationObject.swift in Sources */,
 				7E2FFF0F2207B687008EA224 /* TodayExtensionHelpers.swift in Sources */,
 				7EE04A6121B4538C002F0C52 /* WalkWithDistanceIcon.swift in Sources */,
