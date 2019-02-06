@@ -33,7 +33,7 @@ class Network {
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
 
     /// Test server used for development
-    static let debugIPAddress = "34.238.157.63"
+    static let debugIPAddress = "157.230.66.192"
     static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
 
     /// Deployed server instance used for release
@@ -42,6 +42,9 @@ class Network {
 
     /// Network IP address being used for specified networkType
     static var ipAddress: String {
+        if isTestFlight() {
+           return debugIPAddress
+        }
         switch networkType {
         case .local: return localIPAddress
         case .debug: return debugIPAddress
@@ -51,6 +54,9 @@ class Network {
 
     /// Network source currently being used
     static var address: String {
+        if isTestFlight() {
+            return debugSource
+        }
         switch networkType {
         case .local: return localSource
         case .debug: return debugSource
@@ -141,6 +147,21 @@ class Network {
         request.parameters = [
             "query": searchText
         ]
+        return request
+    }
+    
+    @discardableResult
+    class func routeSelected(routeId: String) -> APIRequest<JSON, Error> {
+        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routeSelected")
+        request.method = .post
+        request.parameterEncoding = JSONEncoding.default
+        request.parameters = ["routeId" : routeId]
+        
+        // Add unique identifier to request
+        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+            request.parameters["uid"] = uid
+        }
+        
         return request
     }
 
