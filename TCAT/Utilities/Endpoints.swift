@@ -33,7 +33,7 @@ class Network {
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
 
     /// Test server used for development
-    static let debugIPAddress = "157.230.66.163"
+    static let debugIPAddress = "157.230.66.192"
     static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
 
     /// Deployed server instance used for release
