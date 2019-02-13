@@ -25,7 +25,7 @@ class ServiceAlertsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Service Alerts"
+        title = "TCAT Service Alerts"
         
         view.backgroundColor = Colors.backgroundWash
         tableView = UITableView(frame: .zero, style: .grouped)

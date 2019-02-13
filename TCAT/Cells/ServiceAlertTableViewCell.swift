@@ -71,7 +71,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
         affectedRoutesLabel = UILabel()
         affectedRoutesLabel.font = .getFont(.semibold, size: 18)
         affectedRoutesLabel.textColor = Colors.primaryText
-        affectedRoutesLabel.text = "Affected Routes: "
+        affectedRoutesLabel.text = "Affected Routes"
         
         contentView.addSubview(affectedRoutesLabel)
     }
@@ -179,7 +179,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
         let toDate = newformatter.date(from: toDate)
 
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, M/d"
+        formatter.dateFormat = "EEEE M/d"
 
         if let unWrappedFromDate = fromDate, let unWrappedToDate = toDate {
             let formattedFromDate = formatter.string(from: unWrappedFromDate)
