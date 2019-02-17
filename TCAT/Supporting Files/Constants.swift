@@ -223,6 +223,8 @@ struct Constants {
         static let recentSearch = "recentSearch"
         static let allBusStops = "allBusStops"
         static let favorites = "favorites"
+
+        static let group = "group.tcat"
     }
 
     struct Values {

@@ -11,8 +11,6 @@ import SwiftyJSON
 import DZNEmptyDataSet
 import Fuzzywuzzy_swift
 
-let userDefaults = UserDefaults.standard
-
 struct Section {
     let type: SectionType
     var items: [ItemType]
@@ -117,7 +115,14 @@ class SearchTableViewManager {
     }
 
     func retrieveRecentPlaces(for key: String) -> [ItemType] {
-        if let storedPlaces = userDefaults.value(forKey: key) as? Data {
+        var localUserDefaults: UserDefaults?
+        if (key == Constants.UserDefaults.favorites) {
+            localUserDefaults = sharedUserDefaults
+        } else {
+            localUserDefaults = userDefaults
+        }
+
+        if let storedPlaces = localUserDefaults?.value(forKey: key) as? Data {
             NSKeyedUnarchiver.setClass(PlaceResult.self, forClassName: "TCAT.PlaceResult")
             NSKeyedUnarchiver.setClass(BusStop.self, forClassName: "TCAT.BusStop")
             if let places = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any] {
@@ -167,7 +172,7 @@ class SearchTableViewManager {
             }
         }
         let data = NSKeyedArchiver.archivedData(withRootObject: itemsToStore)
-        userDefaults.set(data, forKey: Constants.UserDefaults.favorites)
+        sharedUserDefaults?.set(data, forKey: Constants.UserDefaults.favorites)
         AppShortcuts.shared.updateShortcutItems()
         return newFavoritesList
     }
@@ -193,7 +198,13 @@ class SearchTableViewManager {
         }
         if updatedPlaces.count > limit { updatedPlaces.remove(at: updatedPlaces.count - 1)}
         let data = NSKeyedArchiver.archivedData(withRootObject: updatedPlaces)
-        userDefaults.set(data, forKey: key)
+
+        // Update shared user defaults if data is favorites, app-specific user defaults otherwise
+        if key == Constants.UserDefaults.favorites {
+            sharedUserDefaults?.set(data, forKey: key)
+        } else {
+            userDefaults.set(data, forKey: key)
+        }
         AppShortcuts.shared.updateShortcutItems()
 
         var locationName: String {
@@ -263,11 +274,11 @@ extension SearchResultsTableViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
         return -80
     }
-    
+
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
         return #imageLiteral(resourceName: "emptyPin")
     }
-    
+
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         return NSAttributedString(string: Constants.EmptyStateMessages.locationNotFound,
                                   attributes: [.foregroundColor: Colors.metadataIcon])

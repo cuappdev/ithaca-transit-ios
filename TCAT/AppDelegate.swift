@@ -16,11 +16,13 @@ import Crashlytics
 import SafariServices
 import WhatsNewKit
 
+// This is used for app-specific preferences
+let userDefaults = UserDefaults.standard
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    let userDefaults = UserDefaults.standard
     let userDataInits: [(key: String, defaultValue: Any)] = [
         (key: Constants.UserDefaults.onboardingShown, defaultValue: false),
         (key: Constants.UserDefaults.recentSearch, defaultValue: [Any]()),
@@ -49,16 +51,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         JSONFileManager.shared.deleteAllJSONs()
 
         for (key, defaultValue) in userDataInits {
-            if userDefaults.value(forKey: key) == nil {
+            if key == Constants.UserDefaults.favorites {
+                if sharedUserDefaults?.value(forKey: key) == nil {
+                    sharedUserDefaults?.set(defaultValue, forKey: key)
+                }
+            } else if userDefaults.value(forKey: key) == nil {
                 userDefaults.set(defaultValue, forKey: key)
             }
-            
-            if key == Constants.UserDefaults.favorites {
-                // Init shared user defaults for today extension
-                UserDefaults.init(suiteName: "group.tcat")?.set(userDefaults.value(forKey: key), forKey: "favorites")
-            }
         }
-        
+
         // Track number of app opens for Store Review prompt
         StoreReviewHelper.incrementAppOpenedCount()
 
@@ -134,7 +135,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.handleGetAllStopsError()
             } else {
                 let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
-                self.userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
+                userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
             }
         }, failure: { error in
             print("getBusStops error:", error)
@@ -202,7 +203,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return true
             }
         } else if url.absoluteString.contains("today") { // today extension URL scheme
-            
+
         }
 
         return false

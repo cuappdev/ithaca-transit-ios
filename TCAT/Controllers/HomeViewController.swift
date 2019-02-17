@@ -19,7 +19,6 @@ import WhatsNewKit
 
 class HomeViewController: UIViewController {
 
-    let userDefaults = UserDefaults.standard
     let cornellDestinations = [(name: "North Campus", stops: "RPCC, Balch Hall, Appel, Helen Newman, Jessup Field"),
                                (name: "West Campus", stops: "Baker Flagpole, Baker Flagpole (Slopeside)"),
                                (name: "Central Campus", stops: "Statler Hall, Uris Hall, Goldwin Smith Hall"),
@@ -536,7 +535,7 @@ extension HomeViewController: CLLocationManagerDelegate {
             }
 
             let dontRemindAgainAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default) { _ in
-                self.userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
+                userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
             }
             alertController.addAction(dontRemindAgainAction)
 
