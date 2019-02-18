@@ -26,18 +26,13 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
     var tableView = UITableView(frame: .zero, style: .grouped)
 
     var content: [[(name: String, action: Selector)]] = [
-
         
-        [ // Seciton 0
-            (name: Constants.InformationView.serviceAlerts, action: #selector(showServiceAlerts))
-        ],
-        
-        [ // Section 1
+        [ // Section 0
             (name: Constants.InformationView.onboarding, action: #selector(presentOnboarding)),
             (name: Constants.InformationView.sendFeedback, action: #selector(sendFeedback))
         ],
 
-        [ // Section 2
+        [ // Section 1
             (name: Constants.InformationView.moreApps, action: #selector(showMoreApps)),
             (name: Constants.InformationView.website, action: #selector(openTeamWebsite))
         ]

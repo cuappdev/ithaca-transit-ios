@@ -369,8 +369,9 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                     return
                 }
 
-                Network.getRoutes(startCoord: startCoord, endCoord: endCoord, endPlaceName: searchFrom.name, time: time, type: self.searchTimeType) { request in
-                    let requestUrl = Network.getRequestUrl(startCoord: startCoord, endCoord: endCoord, destinationName: searchTo.name, time: time, type: self.searchTimeType)
+                Network.getRoutes(startCoord: startCoord, endCoord: endCoord, startPlaceName: searchFrom.name, endPlaceName: searchTo.name,
+                                  time: time, type: self.searchTimeType) { request in
+                    let requestUrl = Network.getRequestUrl(startCoord: startCoord, endCoord: endCoord, originName: searchFrom.name, destinationName: searchTo.name, time: time, type: self.searchTimeType)
                     self.processRequest(request: request, requestUrl: requestUrl, endPlace: searchTo)
                 }
 
@@ -920,8 +921,8 @@ extension RouteOptionsViewController: UITableViewDelegate {
         if let routeDetailViewController = createRouteDetailViewController(from: indexPath) {
             let payload = RouteResultsCellTappedEventPayload()
             Analytics.shared.log(payload)
-            // // MARK: #182 • Place routeSelected Analytics here.
-            // let tripId = routes[indexPath.row].id
+            let routeId = routes[indexPath.row].routeId
+            Network.routeSelected(routeId: routeId)
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }
