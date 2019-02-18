@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import DZNEmptyDataSet
+
 class ServiceAlertsViewController: UIViewController {
     
     var tableView: UITableView!
@@ -25,7 +26,7 @@ class ServiceAlertsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "TCAT Service Alerts"
+        title = Constants.Titles.serviceAlerts
         
         view.backgroundColor = Colors.backgroundWash
         tableView = UITableView(frame: .zero, style: .grouped)
@@ -35,7 +36,6 @@ class ServiceAlertsViewController: UIViewController {
         tableView.register(ServiceAlertTableViewCell.self, forCellReuseIdentifier: ServiceAlertTableViewCell.identifier)
         tableView.allowsSelection = false
         
-        // Any idea why I'm needing to do this??
         tableView.contentInset = .init(top: 18, left: 0, bottom: -18, right: 0)
         
         tableView.separatorColor = Colors.dividerTextField
@@ -121,24 +121,22 @@ extension ServiceAlertsViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let alerts = alerts[priorities[section]] {
-            return alerts.count
-        } else {
-            return 0
-        }
+        return alerts[priorities[section]]?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ServiceAlertTableViewCell.identifier, for: indexPath) as? ServiceAlertTableViewCell
+        
+        var cell : ServiceAlertTableViewCell!
+        cell = tableView.dequeueReusableCell(withIdentifier: ServiceAlertTableViewCell.identifier) as? ServiceAlertTableViewCell
         
         if let alertList = alerts[priorities[indexPath.section]] {
-            cell?.alert = alertList[indexPath.row]
-            cell?.rowNum = indexPath.row
-            cell?.setData()
-            cell?.setNeedsUpdateConstraints()
+            cell.alert = alertList[indexPath.row]
+            cell.rowNum = indexPath.row
+            cell.setData()
+            cell.setNeedsUpdateConstraints()
         }
         
-        return cell!
+        return cell
     }
 }
 

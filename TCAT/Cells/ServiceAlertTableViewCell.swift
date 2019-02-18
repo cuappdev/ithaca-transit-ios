@@ -15,7 +15,9 @@ class ServiceAlertTableViewCell: UITableViewCell {
     var alert: Alert?
     var rowNum: Int!
     
+    var maxIconsPerRow: Int!
     let borderInset = 16
+    let busIconSpacing = 10
     
     var timeSpanLabel: UILabel!
     var descriptionLabel: UILabel!
@@ -26,6 +28,8 @@ class ServiceAlertTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        maxIconsPerRow = calculateMaxIconsPerRow()
+        
         setupTimeSpanLabel()
         setupDescriptionLabel()
     }
@@ -34,6 +38,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
         if let fromDate = alert?.fromDate, let toDate = alert?.toDate {
             timeSpanLabel.text = formatTimeString(fromDate, toDate: toDate)
         }
+        
         descriptionLabel.text = alert?.message
         if let routes = alert?.routes, !routes.isEmpty {
             setupAffectedRoutesStackView()
@@ -62,7 +67,6 @@ class ServiceAlertTableViewCell: UITableViewCell {
         descriptionLabel.font = .getFont(.regular, size: 14)
         descriptionLabel.textColor = Colors.primaryText
         
-        
         contentView.addSubview(descriptionLabel)
     }
     
@@ -71,7 +75,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
         affectedRoutesLabel = UILabel()
         affectedRoutesLabel.font = .getFont(.semibold, size: 18)
         affectedRoutesLabel.textColor = Colors.primaryText
-        affectedRoutesLabel.text = "Affected Routes"
+        affectedRoutesLabel.text = Constants.General.affectedRoutes
         
         contentView.addSubview(affectedRoutesLabel)
     }
@@ -82,9 +86,10 @@ class ServiceAlertTableViewCell: UITableViewCell {
             affectedRoutesStackView = UIStackView()
             for _ in 0..<rowCount() {
                 var subviews = [BusIcon]()
-                for _ in 0..<maxIconsPerRow() {
+                for _ in 0..<maxIconsPerRow {
                     if !routes.isEmpty {
-                        subviews.append(BusIcon(type: .directionSmall, number: routes.removeFirst()))
+                        let route = routes.removeFirst()
+                        subviews.append(BusIcon(type: .directionSmall, number: route))
                     }
                 }
                 let rowStackView = UIStackView(arrangedSubviews: subviews)
@@ -94,6 +99,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
                 affectedRoutesStackView?.addArrangedSubview(rowStackView)
             }
         }
+        
         guard let stackView = affectedRoutesStackView else { return }
         stackView.axis = .vertical
         stackView.alignment = .top
@@ -113,63 +119,56 @@ class ServiceAlertTableViewCell: UITableViewCell {
         
         if let topSeparator = topSeparator {
             topSeparator.snp.remakeConstraints { (make) in
-                make.top.leading.trailing.equalToSuperview().labeled("topSeparator: Top, Leading, Trailing")
-                make.height.equalTo(8).labeled("topSeparator: Height")
+                make.top.leading.trailing.equalToSuperview()
+                make.height.equalTo(8)
             }
-            
             timeSpanLabel.snp.remakeConstraints { (make) in
-                make.top.equalTo(topSeparator.snp.bottom).offset(borderInset).labeled("timeSpanLabel: Top")
-                make.leading.trailing.equalToSuperview().inset(borderInset).labeled("timeSpanLabel: Leading, Trailing")
-                make.height.equalTo(timeSpanLabel.intrinsicContentSize.height).labeled("timeSpanLabel: Height")
+                make.top.equalTo(topSeparator.snp.bottom).offset(borderInset)
+                make.leading.trailing.equalToSuperview().inset(borderInset)
+                make.height.equalTo(timeSpanLabel.intrinsicContentSize.height)
             }
         } else {
             timeSpanLabel.snp.remakeConstraints { (make) in
-                make.top.leading.trailing.equalToSuperview().inset(borderInset).labeled("timeSpanLabel: Top, Leading, Trailing")
-                make.height.equalTo(timeSpanLabel.intrinsicContentSize.height).labeled("timeSpanLabel: Height")
+                make.top.leading.trailing.equalToSuperview().inset(borderInset)
+                make.height.equalTo(timeSpanLabel.intrinsicContentSize.height)
             }
         }
         
         descriptionLabel.snp.remakeConstraints { (make) in
-            make.top.equalTo(timeSpanLabel.snp.bottom).offset(12).labeled("descriptionLabel: Top")
-            make.leading.equalTo(timeSpanLabel).labeled("descriptionLabel: Leading")
-            make.trailing.equalToSuperview().inset(borderInset).labeled("descriptionLabel: Trailing")
+            make.top.equalTo(timeSpanLabel.snp.bottom).offset(12)
+            make.leading.equalTo(timeSpanLabel)
+            make.trailing.equalToSuperview().inset(borderInset)
             if let text = descriptionLabel.text {
-                
                 let width = contentView.frame.width - (CGFloat)(2 * borderInset)
-                
                 let heightValue = ceil(text.heightWithConstrainedWidth(width: width, font: descriptionLabel.font))
-                make.height.equalTo(ceil(heightValue)).labeled("descriptionLabel: Height")
+                make.height.equalTo(ceil(heightValue))
             } else {
-                make.height.equalTo(descriptionLabel.intrinsicContentSize.height).labeled("descriptionLabel: Height")
+                make.height.equalTo(descriptionLabel.intrinsicContentSize.height)
             }
         }
         
         if let stackView = affectedRoutesStackView {
             // When both a separator view and stackView are required
             affectedRoutesLabel.snp.remakeConstraints { (make) in
-                make.leading.equalTo(timeSpanLabel).labeled("AffectedRoutesLabel: Leading")
-                make.top.equalTo(descriptionLabel.snp.bottom).offset(24).labeled("affectedRoutesLabel: Top")
-                make.width.equalTo(affectedRoutesLabel.intrinsicContentSize.width).labeled("affectedRoutesLabel: Width")
-                make.height.equalTo(affectedRoutesLabel.intrinsicContentSize.height).labeled("affectedRoutesLabel: Height")
+                make.leading.equalTo(timeSpanLabel)
+                make.top.equalTo(descriptionLabel.snp.bottom).offset(24)
+                make.width.equalTo(affectedRoutesLabel.intrinsicContentSize.width)
+                make.height.equalTo(affectedRoutesLabel.intrinsicContentSize.height)
             }
-            
             stackView.snp.remakeConstraints { (make) in
-                make.top.equalTo(affectedRoutesLabel.snp.bottom).offset(8).labeled("affectedRoutesStackView: Top")
-                make.leading.equalTo(timeSpanLabel).labeled("affectedRoutesStackView: Leading")
-                make.trailing.bottom.equalToSuperview().inset(borderInset).labeled("affectedRoutesStackView: Trailing, Bottom")
+                make.top.equalTo(affectedRoutesLabel.snp.bottom).offset(8)
+                make.leading.equalTo(timeSpanLabel)
+                make.trailing.bottom.equalToSuperview().inset(borderInset)
             }
-            
         } else {
             descriptionLabel.snp.makeConstraints { (make) in
-                make.bottom.equalToSuperview().inset(borderInset).labeled("descriptionLabel: Bottom")
+                make.bottom.equalToSuperview().inset(borderInset)
             }
         }
         super.updateConstraints()
     }
     
     private func formatTimeString(_ fromDate: String, toDate: String) -> String {
-        
-        // ISSUE IN PARSING STRING (HITS DEFAULT DATE.DISTANTPAST)
         
         let newformatter = DateFormatter()
         newformatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.sZZZZ"
@@ -191,21 +190,19 @@ class ServiceAlertTableViewCell: UITableViewCell {
         return "Time: Unknown"
     }
     
-    private func maxIconsPerRow() -> Int {
+    private func calculateMaxIconsPerRow() -> Int {
         let iconWidth = Int(BusIconType.directionSmall.width)
         let screenWidth = Int(UIScreen.main.bounds.width)
-        let minSpacing = 10
         let totalConstraintInset = borderInset * 2
         
-        return (screenWidth - totalConstraintInset + minSpacing) / (iconWidth + minSpacing)
+        return (screenWidth - totalConstraintInset + busIconSpacing) / (iconWidth + busIconSpacing)
     }
     
     private func rowCount() -> Int {
         guard let routes = alert?.routes else { return 0 }
-        
-        if routes.count > maxIconsPerRow() {
-            let addExtra = routes.count % maxIconsPerRow() > 0 ? 1 : 0
-            let rowCount = routes.count / maxIconsPerRow()
+        if routes.count > maxIconsPerRow {
+            let addExtra = routes.count % maxIconsPerRow > 0 ? 1 : 0
+            let rowCount = routes.count / maxIconsPerRow
             
             return rowCount + addExtra
         } else {
@@ -223,11 +220,13 @@ class ServiceAlertTableViewCell: UITableViewCell {
         if let stackView = affectedRoutesStackView {
             stackView.removeFromSuperview()
         }
+        
         affectedRoutesStackView = nil
         
         if let routesLabel = affectedRoutesLabel {
             routesLabel.removeFromSuperview()
         }
+        
         affectedRoutesLabel = nil
     }
     required init?(coder aDecoder: NSCoder) {

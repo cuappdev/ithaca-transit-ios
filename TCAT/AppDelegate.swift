@@ -115,36 +115,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    @objc func storeServicedRoutes() {
-        Network.getAlerts().perform(withSuccess: { (alertRequest) in
-            if alertRequest.success {
-                if let currentRoutes = self.userDefaults.array(forKey: Constants.UserDefaults.servicedRoutes) as? [Int] {
-                    let alertRoutes = self.allRoutesInAlerts(alertRequest.data)
-                    if !alertRoutes.containsSameElements(as: currentRoutes) {
-                        self.userDefaults.set(alertRoutes, forKey: Constants.UserDefaults.servicedRoutes)
-                    }
-                } else {
-                    let alertRoutes = self.allRoutesInAlerts(alertRequest.data)
-                    self.userDefaults.set(alertRoutes, forKey: Constants.UserDefaults.servicedRoutes)
-                }
-            } else { print("storeServicedRoutesError: Network request failed" ) }
-        }) { (error) in
-            print("storeServicedRoutesError: \(error.localizedDescription)")
-        }
-    }
-
-    func allRoutesInAlerts(_ alerts: [Alert]) -> [Int] {
-        var allRoutes = [Int]()
-        for alert in alerts {
-            for route in alert.routes {
-                if !allRoutes.contains(route) {
-                    allRoutes.append(route)
-                }
-            }
-        }
-        return allRoutes
-    }
-    
     func handleShortcut(item: UIApplicationShortcutItem) {
         let optionsVC = RouteOptionsViewController()
         if let shortcutData = item.userInfo as? [String: Data] {

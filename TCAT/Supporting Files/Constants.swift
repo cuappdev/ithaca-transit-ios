@@ -189,7 +189,7 @@ struct Constants {
         static let searchForDestination = "Search for a destination"
         static let currentLocation = "Current Location"
         static let destination = "your destination"
-
+        static let affectedRoutes = "Affected Routes"
         static let seeAllStops = "See All Stops"
 
         // What's New for v1.2
@@ -213,6 +213,7 @@ struct Constants {
         static let favorite = "Add Favorite"
         static let favorites = "Add Favorites"
         static let aboutUs = "About Us"
+        static let serviceAlerts = "TCAT Service Alerts"
         static let routeDetails = "Route Details"
         static let routeOptions = "Route Options"
         static let routeResults = "Route Results"
