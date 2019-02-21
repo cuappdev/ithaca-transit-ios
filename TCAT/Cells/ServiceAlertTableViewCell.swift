@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SnapKit
 
 class ServiceAlertTableViewCell: UITableViewCell {
 
@@ -115,29 +116,14 @@ class ServiceAlertTableViewCell: UITableViewCell {
         contentView.addSubview(topSeparator!)
     }
     
-    override func updateConstraints() {
-        
-        if let topSeparator = topSeparator {
-            topSeparator.snp.remakeConstraints { (make) in
-                make.top.leading.trailing.equalToSuperview()
-                make.height.equalTo(8)
-            }
-            timeSpanLabel.snp.remakeConstraints { (make) in
-                make.top.equalTo(topSeparator.snp.bottom).offset(borderInset)
-                make.leading.trailing.equalToSuperview().inset(borderInset)
-                make.height.equalTo(timeSpanLabel.intrinsicContentSize.height)
-            }
-        } else {
-            timeSpanLabel.snp.remakeConstraints { (make) in
-                make.top.leading.trailing.equalToSuperview().inset(borderInset)
-                make.height.equalTo(timeSpanLabel.intrinsicContentSize.height)
-            }
-        }
-        
+    func descriptionLabelConstraints(topConstraint: UIView) {
         descriptionLabel.snp.remakeConstraints { (make) in
-            make.top.equalTo(timeSpanLabel.snp.bottom).offset(12)
-            make.leading.equalTo(timeSpanLabel)
-            make.trailing.equalToSuperview().inset(borderInset)
+            if topConstraint == contentView {
+                make.top.equalToSuperview().inset(borderInset)
+            } else {
+                make.top.equalTo(topConstraint.snp.bottom).offset(12)
+            }
+            make.leading.trailing.equalToSuperview().inset(borderInset)
             if let text = descriptionLabel.text {
                 let width = contentView.frame.width - (CGFloat)(2 * borderInset)
                 let heightValue = ceil(text.heightWithConstrainedWidth(width: width, font: descriptionLabel.font))
@@ -146,18 +132,59 @@ class ServiceAlertTableViewCell: UITableViewCell {
                 make.height.equalTo(descriptionLabel.intrinsicContentSize.height)
             }
         }
+    }
+    
+    func timeSpanLabelConstraints(topConstraint: UIView) {
+        timeSpanLabel.snp.remakeConstraints { (make) in
+            if topConstraint == contentView {
+                make.top.equalToSuperview().inset(borderInset)
+            } else {
+                make.top.equalTo(topConstraint.snp.bottom).offset(12)
+            }
+            make.leading.trailing.equalToSuperview().inset(borderInset)
+            make.height.equalTo(timeSpanLabel.intrinsicContentSize.height)
+        }
+    }
+    
+    func topSeparatorConstraints() {
+        if let topSeparator = topSeparator {
+            topSeparator.snp.remakeConstraints { (make) in
+                make.top.leading.trailing.equalToSuperview()
+                make.height.equalTo(8)
+            }
+        }
+    }
+    
+    override func updateConstraints() {
+        if let topSeparator = topSeparator, timeSpanLabel.isDescendant(of: contentView) {
+            // Both topSeparator and timeSpanLabel exist
+            topSeparatorConstraints()
+            timeSpanLabelConstraints(topConstraint: topSeparator)
+            descriptionLabelConstraints(topConstraint: timeSpanLabel)
+        } else if timeSpanLabel.isDescendant(of: contentView) {
+            // Only timeSpanLabel, no topSeparator
+            timeSpanLabelConstraints(topConstraint: contentView)
+            descriptionLabelConstraints(topConstraint: timeSpanLabel)
+        } else if let topSeparator = topSeparator {
+            // Only topSeparator, no timeSpanLabel
+            topSeparatorConstraints()
+            descriptionLabelConstraints(topConstraint: topSeparator)
+        } else {
+            // Neither
+            descriptionLabelConstraints(topConstraint: contentView)
+        }
         
         if let stackView = affectedRoutesStackView {
             // When both a separator view and stackView are required
             affectedRoutesLabel.snp.remakeConstraints { (make) in
-                make.leading.equalTo(timeSpanLabel)
+                make.leading.equalTo(descriptionLabel)
                 make.top.equalTo(descriptionLabel.snp.bottom).offset(24)
                 make.width.equalTo(affectedRoutesLabel.intrinsicContentSize.width)
                 make.height.equalTo(affectedRoutesLabel.intrinsicContentSize.height)
             }
             stackView.snp.remakeConstraints { (make) in
                 make.top.equalTo(affectedRoutesLabel.snp.bottom).offset(8)
-                make.leading.equalTo(timeSpanLabel)
+                make.leading.equalTo(descriptionLabel)
                 make.trailing.bottom.equalToSuperview().inset(borderInset)
             }
         } else {
@@ -187,6 +214,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
             return "\(formattedFromDate) - \(formattedToDate)"
         }
         
+        timeSpanLabel.removeFromSuperview()
         return "Time: Unknown"
     }
     
