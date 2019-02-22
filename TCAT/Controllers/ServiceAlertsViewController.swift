@@ -85,8 +85,58 @@ class ServiceAlertsViewController: UIViewController {
             }
         }
         priorities.sort()
+        for key in sortedAlerts.keys {
+            if let newAlerts = sortedAlerts[key] {
+                sortedAlerts[key] = combineAlertsByTimeSpan(alertsList: newAlerts)
+            }
+        }
         
         return sortedAlerts
+    }
+    
+    func combineAlertsByTimeSpan(alertsList: [Alert]) -> [Alert] {
+        var combinedAlerts = [Alert]()
+        var mappedByTimeSpan: [String: Alert] = [:]
+        for alert in alertsList {
+            let timeSpan = formatTimeString(alert.fromDate, toDate: alert.toDate)
+            if var prevAlert = mappedByTimeSpan[timeSpan] {
+                prevAlert.routes.append(contentsOf: alert.routes)
+                prevAlert.message += "\n\n\(alert.message)"
+                mappedByTimeSpan[timeSpan] = prevAlert
+            } else {
+                mappedByTimeSpan[timeSpan] = alert
+            }
+        }
+        for key in mappedByTimeSpan.keys {
+            if var alert = mappedByTimeSpan[key] {
+                alert.routes = Array(Set(alert.routes))
+                combinedAlerts.append(alert)
+            }
+        }
+        
+        return combinedAlerts
+    }
+    
+    private func formatTimeString(_ fromDate: String, toDate: String) -> String {
+        
+        let newformatter = DateFormatter()
+        newformatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.sZZZZ"
+        newformatter.locale = Locale(identifier: "en_US_POSIX")
+        
+        let fromDate = newformatter.date(from: fromDate)
+        let toDate = newformatter.date(from: toDate)
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE M/d"
+        
+        if let unWrappedFromDate = fromDate, let unWrappedToDate = toDate {
+            let formattedFromDate = formatter.string(from: unWrappedFromDate)
+            let formattedToDate = formatter.string(from: unWrappedToDate)
+            
+            return "\(formattedFromDate) - \(formattedToDate)"
+        }
+        
+        return "Time: Unknown"
     }
 }
 
@@ -126,7 +176,7 @@ extension ServiceAlertsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ServiceAlertTableViewCell.identifier) as? ServiceAlertTableViewCell else {return UITableViewCell()}
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ServiceAlertTableViewCell.identifier) as? ServiceAlertTableViewCell else { return UITableViewCell() }
         
         if let alertList = alerts[priorities[indexPath.section]] {
             cell.alert = alertList[indexPath.row]

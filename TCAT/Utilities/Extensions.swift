@@ -241,6 +241,18 @@ extension String {
         return newAttributedString
 
     }
+    
+    /** Return a list of all lone-standing integers in a list */
+    func intsFromString() -> [Int] {
+        var intList = [Int]()
+        let stringArray = self.components(separatedBy: CharacterSet.decimalDigits.inverted)
+        for item in stringArray {
+            if let number = Int(item) {
+                intList.append(number)
+            }
+        }
+        return intList
+    }
 }
 
 extension CLLocationCoordinate2D: Codable {
