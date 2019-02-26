@@ -70,6 +70,9 @@
 		7EE04A6A21B45611002F0C52 /* EventPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94BD30021599E3200C9214E /* EventPayload.swift */; };
 		7EE04A6D21B461D7002F0C52 /* Extensions+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE04A6C21B461D7002F0C52 /* Extensions+Shared.swift */; };
 		7EE04A6F21B461D7002F0C52 /* Extensions+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE04A6C21B461D7002F0C52 /* Extensions+Shared.swift */; };
+		7EEC17FE2214D47A00EEF6C1 /* Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D94BD2FC2159993D00C9214E /* Keys.plist */; };
+		7EEC17FF2214D48800EEF6C1 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCA712C206AC69000E4CCE5 /* Keys.swift */; };
+		7EEC18002214D49400EEF6C1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D94BD2FE2159994400C9214E /* GoogleService-Info.plist */; };
 		7EEF189D21B39C6200343FFD /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EEF189C21B39C6200343FFD /* NotificationCenter.framework */; };
 		7EEF18A021B39C6200343FFD /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEF189F21B39C6200343FFD /* TodayViewController.swift */; };
 		7EEF18A721B39C6200343FFD /* Today Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7EEF189B21B39C6200343FFD /* Today Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -840,6 +843,8 @@
 				7E0C97BA220364FC0068439D /* SFUIText-Regular.otf in Resources */,
 				7E0C97B8220364A20068439D /* SFProDisplay-Bold.otf in Resources */,
 				7E0C97B7220364A00068439D /* SFProDisplay-Medium.otf in Resources */,
+				7EEC17FE2214D47A00EEF6C1 /* Keys.plist in Resources */,
+				7EEC18002214D49400EEF6C1 /* GoogleService-Info.plist in Resources */,
 				7E0C97BC220365FC0068439D /* Assets.xcassets in Resources */,
 				7E0C97B9220364FA0068439D /* SFUIText-Medium.otf in Resources */,
 			);
@@ -927,12 +932,14 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Today Extension/Pods-Today Extension-resources.sh",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
 				"${PODS_ROOT}/GooglePlaces/Frameworks/GooglePlaces.framework/Resources/GooglePlaces.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GooglePlaces.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1170,6 +1177,7 @@
 				7EE04A6421B453E3002F0C52 /* BusLocation.swift in Sources */,
 				7EE04A5E21B45357002F0C52 /* RouteDiagram.swift in Sources */,
 				7EE04A5B21B452D4002F0C52 /* Constants.swift in Sources */,
+				7EEC17FF2214D48800EEF6C1 /* Keys.swift in Sources */,
 				7EE04A5821B45278002F0C52 /* Place.swift in Sources */,
 				7EE04A5121B45132002F0C52 /* LiveIndicator.swift in Sources */,
 			);

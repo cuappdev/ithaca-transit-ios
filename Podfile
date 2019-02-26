@@ -54,6 +54,7 @@ target 'Today Extension' do
     pod 'SnapKit'
  
     # Location
+    pod 'GoogleMaps', '~> 2.6'
     pod 'GooglePlaces', '~> 2.6'
 
     # Networking + Data

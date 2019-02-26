@@ -61,7 +61,6 @@ class TodayExtensionCell: UITableViewCell {
         destinationLabel.font = .getFont(.regular, size: 16.0)
         destinationLabel.textColor = Colors.secondaryText
         destinationLabel.numberOfLines = 1
-//        destinationLabel.text = "11:50 AM to Ithaca Commons at Green Street Station"
         destinationLabel.lineBreakMode = .byTruncatingTail
 
         liveLabel.font = .getFont(.medium, size: 16.0)

@@ -118,7 +118,7 @@ class Network {
         return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(end)&start=\(start)&time=\(time)&destinationName=\(destinationName)"
     }
 
-    class func getMultiRoutes(startCoord: CLLocationCoordinate2D, time: Date, endCoords : [(CLLocationDegrees, CLLocationDegrees)], endPlaceNames: [String],
+    class func getMultiRoutes(startCoord: CLLocationCoordinate2D, time: Date, endCoords : [String], endPlaceNames: [String],
                               callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void) {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("multiroute")
         request.method = .get
