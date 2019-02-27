@@ -404,9 +404,9 @@ public func ???<T>(optional: T?, defaultValue: @autoclosure () -> String) -> Str
     }
 }
 
-func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop]{
-    var nonLetterArray = [BusStop]()
-    var letterArray = [BusStop]()
+func sortFilteredBusStops(busStops: [Place], letter: Character) -> [Place] {
+    var nonLetterArray = [Place]()
+    var letterArray = [Place]()
     for stop in busStops {
         if stop.name.first! == letter {
             letterArray.append(stop)
@@ -418,9 +418,7 @@ func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop]{
 }
 
 extension Collection {
-
     subscript(optional i: Index) -> Iterator.Element? {
         return self.indices.contains(i) ? self[i] : nil
     }
-
 }
