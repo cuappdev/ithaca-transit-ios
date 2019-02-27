@@ -1,5 +1,5 @@
 //
-//  SearchResultsCell.swift
+//  PlaceTableViewCell.swift
 //  TCAT
 //
 //  Created by Austin Astorga on 3/22/17.
