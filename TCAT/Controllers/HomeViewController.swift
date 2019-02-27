@@ -20,11 +20,6 @@ import WhatsNewKit
 class HomeViewController: UIViewController {
 
     let userDefaults = UserDefaults.standard
-    let cornellDestinations = [(name: "North Campus", stops: "RPCC, Balch Hall, Appel, Helen Newman, Jessup Field"),
-                               (name: "West Campus", stops: "Baker Flagpole, Baker Flagpole (Slopeside)"),
-                               (name: "Central Campus", stops: "Statler Hall, Uris Hall, Goldwin Smith Hall"),
-                               (name: "Collegetown", stops: "Collegetown Crossing, Schwartz Center"),
-                               (name: "Ithaca Commons", stops: "Albany @ Salvation Army, State Street, Lot 32")]
 
     var locationManager = CLLocationManager()
     var timer: Timer?
@@ -37,8 +32,8 @@ class HomeViewController: UIViewController {
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
     var whatsNewView: WhatsNewHeaderView!
-    var recentLocations: [ItemType] = []
-    var favorites: [ItemType] = []
+    var recentLocations: [Place] = []
+    var favorites: [Place] = []
     var isKeyboardVisible = false
     var sections: [Section] = [] {
         didSet {
@@ -61,13 +56,15 @@ class HomeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Fetch Places
+        recentLocations = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
+        favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
 
         // Add Notification Observers
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 
-        recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
-        favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
         navigationController?.navigationBar.barTintColor = Colors.white
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: Colors.white]
         view.backgroundColor = Colors.backgroundWash
@@ -83,9 +80,7 @@ class HomeViewController: UIViewController {
         tableView.keyboardDismissMode = .onDrag
         tableView.tableFooterView = UIView()
         tableView.showsVerticalScrollIndicator = false
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
-        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Constants.Cells.searchResultsIdentifier)
-        tableView.register(CornellDestinationCell.self, forCellReuseIdentifier: Constants.Cells.cornellDestinationsIdentifier)
+        tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
         view.addSubview(tableView)
 
@@ -196,8 +191,8 @@ class HomeViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
-        favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
+        recentLocations = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
+        favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
         if !isNetworkDown {
             sections = createSections()
         }
@@ -215,16 +210,16 @@ class HomeViewController: UIViewController {
     func createSections() -> [Section] {
         var allSections: [Section] = []
         let recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
-        let seeAllStopsSection = Section(type: .seeAllStops, items: [.seeAllStops])
+        let seeAllStopsSection = Section(type: .seeAllStops, items: [])
         var favoritesSection = Section(type: .favorites, items: favorites)
         if favoritesSection.items.isEmpty {
-            let addFavorites = BusStop(name: Constants.General.firstFavorite, lat: 0.0, long: 0.0)
-            favoritesSection = Section(type: .favorites, items: [.busStop(addFavorites)])
+            let addFavorites = Place(name: Constants.General.firstFavorite)
+            favoritesSection = Section(type: .favorites, items: [addFavorites])
         }
         allSections.append(favoritesSection)
         allSections.append(recentSearchesSection)
         allSections.append(seeAllStopsSection)
-        return allSections.filter { !$0.items.isEmpty }
+        return allSections.filter { !$0.items.isEmpty || $0.type == .seeAllStops }
     }
 
     @objc func presentFavoritesTVC(sender: UIButton? = nil) {
@@ -291,8 +286,8 @@ class HomeViewController: UIViewController {
     @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if !searchText.isEmpty {
-            Network.getGooglePlacesAutocompleteResults(searchText: searchText).perform(withSuccess: { responseJson in
-                self.searchResultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
+            Network.getSearchResults(searchText: searchText).perform(withSuccess: { response in
+                self.searchResultsSection = Section(type: .searchResults, items: response.data)
                 self.tableView.contentOffset = .zero
                 self.sections = [self.searchResultsSection]
             })
@@ -320,35 +315,21 @@ extension HomeViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var itemType: ItemType?
         var cell: UITableViewCell!
-        switch sections[indexPath.section].type {
-        case .cornellDestination:
-            itemType = .cornellDestination
-        case .recentSearches, .seeAllStops, .searchResults, .favorites:
-            itemType = sections[indexPath.section].items[indexPath.row]
-        default: break
-        }
 
-        if let itemType = itemType {
-            switch itemType {
-            case .busStop(let busStop):
-                cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busIdentifier) as? BusStopCell
-                cell.textLabel?.text = busStop.name
-            case .placeResult(let placeResult):
-                cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.searchResultsIdentifier) as? SearchResultsCell
-                cell.textLabel?.text = placeResult.name
-                cell.detailTextLabel?.text = placeResult.detail
-            case .cornellDestination:
-                cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.cornellDestinationsIdentifier) as? CornellDestinationCell
-                cell.textLabel?.text = cornellDestinations[indexPath.row].name
-                cell.detailTextLabel?.text = cornellDestinations[indexPath.row].stops
-            case .seeAllStops:
-                cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
-                cell.textLabel?.text = Constants.General.seeAllStops
-                cell.imageView?.image = #imageLiteral(resourceName: "list")
-                cell.accessoryType = .disclosureIndicator
-            }
+        if sections[indexPath.section].type == .seeAllStops {
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
+            cell.textLabel?.text = Constants.General.seeAllStops
+            cell.imageView?.image = #imageLiteral(resourceName: "list")
+            cell.accessoryType = .disclosureIndicator
+        }
+        
+        else {
+            let place = sections[indexPath.section].items[indexPath.row]
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
+            (cell as? PlaceTableViewCell)?.place = place
+            cell.textLabel?.text = place.name
+            cell.detailTextLabel?.text = place.getDescription()
         }
 
         cell.textLabel?.font = .getFont(.regular, size: 14)
@@ -362,10 +343,10 @@ extension HomeViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch sections[section].type {
-        case .cornellDestination: return cornellDestinations.count
+        case .seeAllStops: return 1
         case .recentSearches: return recentLocations.count
         case .favorites: return favorites.isEmpty ? 1 : favorites.count
-        case .seeAllStops, .searchResults: return sections[section].items.count
+        case .searchResults: return sections[section].items.count
         default: return 0
         }
     }
@@ -377,8 +358,6 @@ extension HomeViewController: UITableViewDelegate {
         let header = HeaderView()
 
         switch sections[section].type {
-        case .cornellDestination:
-            header.setupView(labelText: Constants.TableHeaders.getThereNow, displayAddButton: false)
         case .recentSearches:
             header.setupView(labelText: Constants.TableHeaders.recentSearches, displayAddButton: false)
         case .favorites:
@@ -413,55 +392,40 @@ extension HomeViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let itemTypeToDelete = sections[indexPath.section].items[indexPath.row]
-            switch itemTypeToDelete {
-            case .busStop(let busStop):
-                favorites = SearchTableViewManager.shared.deleteFavorite(favorite: busStop, allFavorites: favorites)
-            case .placeResult(let placeResult):
-                favorites = SearchTableViewManager.shared.deleteFavorite(favorite: placeResult, allFavorites: favorites)
-            default: break
-            }
+            let place = sections[indexPath.section].items[indexPath.row]
+            favorites = SearchTableViewManager.shared.deleteFavorite(favorite: place, allFavorites: favorites)
             sections = createSections()
         }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var itemType: ItemType
-        let optionsVC = RouteOptionsViewController()
-        let allStopsTVC = AllStopsTableViewController()
+        
+        let routeOptionsViewController = RouteOptionsViewController()
+        let allStopsTableViewConroller = AllStopsTableViewController()
         var didSelectAllStops = false
-        var presentOptionsVC = true
-
-        switch sections[indexPath.section].type {
-        case .cornellDestination:
-            itemType = .cornellDestination
-        case .recentSearches, .searchResults, .seeAllStops, .favorites:
-            itemType = sections[indexPath.section].items[indexPath.row]
-        default: itemType = ItemType.cornellDestination
-        }
-        switch itemType {
-        case .cornellDestination:
-            print("User Selected Cornell Destination")
-        case .seeAllStops:
+        var shouldPushViewController = true
+        
+        if sections[indexPath.section].type == .seeAllStops {
             didSelectAllStops = true
-            allStopsTVC.allStops = SearchTableViewManager.shared.getAllStops()
-        case .busStop(let busStop):
-            if busStop.name == Constants.General.firstFavorite {
-                presentOptionsVC = false
+            allStopsTableViewConroller.allStops = SearchTableViewManager.shared.getAllStops()
+        }
+        
+        else {
+            let place = sections[indexPath.section].items[indexPath.row]
+            if place.name == Constants.General.firstFavorite {
+                shouldPushViewController = false
                 presentFavoritesTVC()
             } else {
-                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: busStop, limit: 8)
-                optionsVC.searchTo = busStop
+                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
+                routeOptionsViewController.searchTo = place
             }
-        case .placeResult(let placeResult):
-            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: placeResult, limit: 8)
-            optionsVC.searchTo = placeResult
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
-        let vcToPush = didSelectAllStops ? allStopsTVC : optionsVC
-        if presentOptionsVC {
+        
+        let vcToPush = didSelectAllStops ? allStopsTableViewConroller : routeOptionsViewController
+        if shouldPushViewController {
             navigationController?.pushViewController(vcToPush, animated: true)
         }
 

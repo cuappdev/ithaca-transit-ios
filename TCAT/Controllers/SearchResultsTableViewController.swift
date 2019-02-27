@@ -14,7 +14,7 @@ import DZNEmptyDataSet
 import Crashlytics
 
 protocol DestinationDelegate {
-    func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?)
+    func didSelectPlace(place: Place)
 }
 
 protocol SearchBarCancelDelegate {
@@ -26,7 +26,7 @@ class SearchResultsTableViewController: UITableViewController {
     let userDefaults = UserDefaults.standard
     let locationManager = CLLocationManager()
 
-    var currentLocation: BusStop?
+    var currentLocation: Place?
     var destinationDelegate: DestinationDelegate?
     var searchBarCancelDelegate: SearchBarCancelDelegate?
     var timer: Timer?
@@ -36,13 +36,14 @@ class SearchResultsTableViewController: UITableViewController {
     var searchResultsSection: Section!
     var currentLocationSection: Section!
     var favoritesSection: Section!
-    var recentLocations: [ItemType] = []
-    var favorites: [ItemType] = []
+    var recentLocations: [Place] = []
+    var favorites: [Place] = []
     var initialTableViewIndexMinY: CGFloat!
     var isKeyboardVisible = false
     var shouldShowCurrentLocation = true
     var returningFromAllStopsTVC = false
-    var returningFromAllStopsBusStop: BusStop?
+    var returningFromAllStopsBusStop: Place?
+    
     var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
@@ -55,6 +56,7 @@ class SearchResultsTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         // Subscribe to Keyboard Notifications
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyboardWillShow),
@@ -65,14 +67,8 @@ class SearchResultsTableViewController: UITableViewController {
                                                name: UIResponder.keyboardWillHideNotification,
                                                object: nil)
 
-        //Fetch RecentLocation and Favorites
-        recentLocations = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.recentSearch)
-        favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
-
         // Set Up TableView
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.currentLocationIdentifier)
-        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Constants.Cells.searchResultsIdentifier)
+        tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
         tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
@@ -85,14 +81,18 @@ class SearchResultsTableViewController: UITableViewController {
 
         // Set Up LocationManager
         locationManager.delegate = self
+        
+        // Fetch RecentLocation and Favorites
+        recentLocations = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
+        favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
 
         // Set Up Sections For TableView
-        seeAllStopsSection = Section(type: .seeAllStops, items: [.seeAllStops])
+        seeAllStopsSection = Section(type: .seeAllStops, items: [])
         recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
         favoritesSection = Section(type: .favorites, items: favorites)
         searchResultsSection = Section(type: .searchResults, items: [])
         if let currentLocation = currentLocation {
-            currentLocationSection = Section(type: .currentLocation, items: [.busStop(currentLocation)])
+            currentLocationSection = Section(type: .currentLocation, items: [currentLocation])
         }
 
         sections = createSections()
@@ -145,8 +145,6 @@ class SearchResultsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch sections[section].type {
-        case .cornellDestination:
-            return 0
         case .recentSearches:
             return recentLocations.count
         case .favorites:
@@ -160,8 +158,6 @@ class SearchResultsTableViewController: UITableViewController {
         let header = HeaderView()
 
         switch sections[section].type {
-        case .cornellDestination:
-            header.setupView(labelText: Constants.TableHeaders.getThereNow, displayAddButton: false)
         case .recentSearches:
             header.setupView(labelText: Constants.TableHeaders.recentSearches, displayAddButton: false)
         case .favorites:
@@ -191,53 +187,29 @@ class SearchResultsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var itemType: ItemType
+
         var didSelectAllStops = false
         let allStopsTVC = AllStopsTableViewController()
-
-        switch sections[indexPath.section].type {
-        case .cornellDestination:
-            itemType = .cornellDestination
-        case .recentSearches, .searchResults, .seeAllStops, .currentLocation, .favorites:
-            itemType = sections[indexPath.section].items[indexPath.row]
-        }
-
-        switch itemType {
-        case .seeAllStops:
+        
+        if sections[indexPath.section].type == .seeAllStops {
             didSelectAllStops = true
             allStopsTVC.allStops = SearchTableViewManager.shared.getAllStops()
             allStopsTVC.unwindAllStopsTVCDelegate = self
-        case .busStop(let busStop):
-            if busStop.lat == 0.0 && busStop.long == 0.0 {
+        }
+        
+        else {
+            let place = sections[indexPath.section].items[indexPath.row]
+            if place.latitude == 0.0 && place.longitude == 0.0 {
                 showLocationDeniedAlert()
                 return
             }
-
-            if busStop.name != Constants.General.currentLocation
-                && busStop.name != Constants.General.firstFavorite {
-                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch,
-                                                          location: busStop,
-                                                          limit: 8)
-            }
-
-            let payload = BusStopTappedPayload(name: busStop.name)
-            Analytics.shared.log(payload)
-
-            destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
-        case .placeResult(let placeResult):
-            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch,
-                                                      location: placeResult,
-                                                      limit: 8)
-
-            let payload = GooglePlaceTappedPayload(name: placeResult.name)
-            Analytics.shared.log(payload)
-
-            destinationDelegate?.didSelectDestination(busStop: nil, placeResult: placeResult)
-        default: break
+            destinationDelegate?.didSelectPlace(place: place)
         }
+        
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar?.endEditing(true)
+        
         if didSelectAllStops {
             if let parentIsSearch = self.parent?.isKind(of: UISearchController.self), parentIsSearch {
                 let navController = self.parent?.presentingViewController?.navigationController
@@ -248,35 +220,29 @@ class SearchResultsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var itemType: ItemType?
+        
         var cell: UITableViewCell!
-
-        switch sections[indexPath.section].type {
-        case .cornellDestination:
-            itemType = .cornellDestination
-        default:
-            itemType = sections[indexPath.section].items[indexPath.row]
+        
+        if sections[indexPath.section].type == .seeAllStops {
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
+            cell.textLabel?.text = Constants.General.seeAllStops
+            cell.imageView?.image = #imageLiteral(resourceName: "list")
+            cell.accessoryType = .disclosureIndicator
         }
+            
+        else {
+            let place = sections[indexPath.section].items[indexPath.row]
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
+            (cell as? PlaceTableViewCell)?.place = place
+            cell.textLabel?.text = place.name
 
-        if let itemType = itemType {
-            switch itemType {
-            case .busStop(let busStop):
-                let identifier = busStop.name == Constants.General.currentLocation ?
-                    Constants.Cells.currentLocationIdentifier : Constants.Cells.busIdentifier
-                cell = tableView.dequeueReusableCell(withIdentifier: identifier) as? BusStopCell
-                cell.textLabel?.text = busStop.name
-            case .placeResult(let placeResult):
-                cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.searchResultsIdentifier) as? SearchResultsCell
-                cell.textLabel?.text = placeResult.name
-                cell.detailTextLabel?.text = placeResult.detail
-            case .seeAllStops:
-                cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
-                cell.textLabel?.text = Constants.General.seeAllStops
-                cell.imageView?.image = #imageLiteral(resourceName: "list")
-                cell.accessoryType = .disclosureIndicator
-            default: break
+            if sections[indexPath.section].type == .currentLocation {
+                cell.imageView?.image = UIImage(named: "location")
+            } else {
+                cell.detailTextLabel?.text = place.getDescription()
             }
         }
+        
         cell.textLabel?.font = .getFont(.regular, size: 14)
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
@@ -322,10 +288,9 @@ extension SearchResultsTableViewController: UISearchBarDelegate, UISearchResults
     @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if !searchText.isEmpty {
-            Network.getGooglePlacesAutocompleteResults(searchText: searchText).perform(withSuccess: { responseJson in
-                self.searchResultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
+            Network.getSearchResults(searchText: searchText).perform(withSuccess: { response in
+                self.searchResultsSection = Section(type: .searchResults, items: response.data)
                 self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
-                // self.tableViewIndexController.setHidden(true, animated: false)
                 if !self.sections.isEmpty {
                     self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
                 }
@@ -361,8 +326,8 @@ extension SearchResultsTableViewController: UISearchBarDelegate, UISearchResults
 }
 
 extension SearchResultsTableViewController: UnwindAllStopsTVCDelegate {
-    func dismissSearchResultsVC(busStop: BusStop) {
-        returningFromAllStopsBusStop = busStop
+    func dismissSearchResultsVC(place: Place) {
+        returningFromAllStopsBusStop = place
         returningFromAllStopsTVC = true
     }
 }
@@ -370,23 +335,21 @@ extension SearchResultsTableViewController: UnwindAllStopsTVCDelegate {
 // MARK: - Location Manager Delegates
 extension SearchResultsTableViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let firstLocation = locations.last {
-            let currentLocationBusItem = ItemType.busStop(BusStop(name: Constants.General.currentLocation,
-                                                                  lat: firstLocation.coordinate.latitude,
-                                                                  long: firstLocation.coordinate.longitude))
-            currentLocationSection = Section(type: .currentLocation, items: [currentLocationBusItem])
+        if let location = locations.last {
+            let currentLocationPlace = Place(name: Constants.General.currentLocation,
+                                             latitude: location.coordinate.latitude,
+                                             longitude: location.coordinate.longitude)
+            currentLocationSection = Section(type: .currentLocation, items: [currentLocationPlace])
             sections = createSections()
         }
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         print("SearchResultsTableVC CLLocationManager didFailWithError: \(error)")
-        //this means they dont have location services enabled
+        // This means they dont have location services enabled. We catch this.
         if error._code == CLError.denied.rawValue {
-            let currentLocationBusItem = ItemType.busStop(BusStop(name: Constants.General.currentLocation,
-                                                                  lat: 0.0,
-                                                                  long: 0.0))
-            currentLocationSection = Section(type: .currentLocation, items: [currentLocationBusItem])
+            let currentLocationPlace = Place(name: Constants.General.currentLocation, latitude: 0.0, longitude: 0.0)
+            currentLocationSection = Section(type: .currentLocation, items: [currentLocationPlace])
             sections = createSections()
         }
     }
@@ -395,8 +358,8 @@ extension SearchResultsTableViewController: CLLocationManagerDelegate {
 // MARK: Navigation Controller Delegate
 extension SearchResultsTableViewController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        if returningFromAllStopsTVC, let busStop = returningFromAllStopsBusStop {
-            destinationDelegate?.didSelectDestination(busStop: busStop, placeResult: nil)
+        if returningFromAllStopsTVC, let place = returningFromAllStopsBusStop {
+            destinationDelegate?.didSelectPlace(place: place)
         }
     }
 }

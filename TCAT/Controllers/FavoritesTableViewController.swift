@@ -32,10 +32,9 @@ class FavoritesTableViewController: UITableViewController {
             CustomNavigationController.buttonTitleTextAttributes, for: .normal
         )
 
-        resultsSection = Section(type: .searchResults, items: [ItemType]())
+        resultsSection = Section(type: .searchResults, items: [Place]())
 
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
-        tableView.register(SearchResultsCell.self, forCellReuseIdentifier: Constants.Cells.searchResultsIdentifier)
+        tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.emptyDataSetSource = self
         //tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
@@ -114,50 +113,49 @@ class FavoritesTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell!
-
-        let item = resultsSection.items[indexPath.row]
-
-        switch item {
-        case .busStop(let busStop):
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busIdentifier, for: indexPath) as? BusStopCell
-            cell.textLabel?.text = busStop.name
-        case .placeResult(let placeResult):
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.searchResultsIdentifier, for: indexPath) as? SearchResultsCell
-            cell.textLabel?.text = placeResult.name
-            cell.detailTextLabel?.text = placeResult.detail
-        default:
-            return UITableViewCell()
-        }
-
+        let place = resultsSection.items[indexPath.row]
+        cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as? PlaceTableViewCell
+        (cell as? PlaceTableViewCell)?.place = place
+        cell.textLabel?.text = place.name
+        cell.detailTextLabel?.text = place.getDescription()
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
         cell.layoutMargins = .zero
         cell.layoutSubviews()
         return cell
-
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-
-        switch resultsSection.items[indexPath.row] {
-        case .busStop(let busStop):
-            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites,
-                                                      location: busStop,
-                                                      limit: 5,
-                                                      bottom: true)
-        case .placeResult(let placeResult):
-            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites,
-                                                      location: placeResult,
-                                                      limit: 5,
-                                                      bottom: true)
-        default:
-            break
+        let place = resultsSection.items[indexPath.row]
+        
+        if place.type == .busStop {
+            handlePlaceSelection(place: place)
+        } else {
+            // Fetch coordinates and store
+            CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
+                if error != nil {
+                    // TODO: Handle error properly
+                    print("Unable to get coordinates to save favorite.")
+                } else {
+                    place.latitude = latitude
+                    place.longitude = longitude
+                    self.handlePlaceSelection(place: place)
+                }
+            }
         }
+        
+
+    }
+    
+    func handlePlaceSelection(place: Place) {
+        SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
         dismissVC()
     }
+    
 }
-    // MARK: Empty Data Set
+
+// MARK: Empty Data Set
 extension FavoritesTableViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
         return -80
@@ -172,7 +170,8 @@ extension FavoritesTableViewController: DZNEmptyDataSetSource {
         return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.metadataIcon])
     }
 }
-    // MARK: Search
+
+// MARK: Search
 extension FavoritesTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         timer?.invalidate()
@@ -187,12 +186,20 @@ extension FavoritesTableViewController: UISearchBarDelegate {
     @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if !searchText.isEmpty {
-            Network.getGooglePlacesAutocompleteResults(searchText: searchText).perform(withSuccess: { responseJson in
-                self.resultsSection = SearchTableViewManager.shared.parseGoogleJSON(searchText: searchText, json: responseJson)
-                self.tableView.contentOffset = .zero
-            })
+            Network.getSearchResults(searchText: searchText).perform(withSuccess: { (searchRequest) in
+                if searchRequest.success {
+                    self.resultsSection = Section(type: .searchResults, items: searchRequest.data)
+                    self.tableView.contentOffset = .zero
+                } else {
+                    print("[FavoritesTableViewController] success:", searchRequest.success)
+                    self.resultsSection = Section(type: .searchResults, items: [Place]())
+                }
+            }) { (error) in
+                print("[FavoritesTableViewController] getSearchResults Error:", error.errorDescription ?? "")
+                self.resultsSection = Section(type: .searchResults, items: [Place]())
+            }
         } else {
-            resultsSection = Section(type: .searchResults, items: [ItemType]())
+            resultsSection = Section(type: .searchResults, items: [Place]())
         }
     }
 

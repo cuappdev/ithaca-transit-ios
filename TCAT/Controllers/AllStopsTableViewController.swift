@@ -10,13 +10,13 @@ import UIKit
 import DZNEmptyDataSet
 
 protocol UnwindAllStopsTVCDelegate {
-    func dismissSearchResultsVC(busStop: BusStop)
+    func dismissSearchResultsVC(place: Place)
 }
 
 class AllStopsTableViewController: UITableViewController {
 
-    var allStops: [BusStop]!
-    var sectionIndexes: [String: [BusStop]]!
+    var allStops: [Place]!
+    var sectionIndexes: [String: [Place]]!
     var sortedKeys: [String]!
     var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
     var height: CGFloat?
@@ -42,7 +42,7 @@ class AllStopsTableViewController: UITableViewController {
 
         title = Constants.Titles.allStops
         tableView.sectionIndexColor = Colors.primaryText
-        tableView.register(BusStopCell.self, forCellReuseIdentifier: Constants.Cells.busIdentifier)
+        tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.cellLayoutMarginsFollowReadableWidth = false
 
         if #available(iOS 11.0, *) {
@@ -61,14 +61,14 @@ class AllStopsTableViewController: UITableViewController {
 
     }
 
-    func sectionIndexesForBusStop() -> [String: [BusStop]] {
+    func sectionIndexesForBusStop() -> [String: [Place]] {
 
-        var sectionIndexDictionary: [String: [BusStop]] = [:]
-        var currBusStopArray: [BusStop] = []
+        var sectionIndexDictionary: [String: [Place]] = [:]
+        var currBusStopArray: [Place] = []
 
         currentChar = allStops.first?.name.capitalized.first
 
-        var numberBusStops: [BusStop] = {
+        var numberBusStops: [Place] = {
             guard let firstStop = allStops.first else { return [] }
             return [firstStop]
         }()
@@ -161,26 +161,28 @@ class AllStopsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busIdentifier, for: indexPath) as! BusStopCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as! PlaceTableViewCell
         let section = sectionIndexes[sortedKeys[indexPath.section]]
+        cell.place = section?[indexPath.row]
         cell.textLabel?.text = section?[indexPath.row].name
+        cell.detailTextLabel?.text = section?[indexPath.row].getDescription()
         return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let section = sectionIndexes[sortedKeys[indexPath.section]]
         let optionsVC = RouteOptionsViewController()
-        guard let busStopSelected = section?[indexPath.row] else {
+        guard let placeSelected = section?[indexPath.row] else {
             print("Could not find bus stop")
             return
         }
-        SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, location: busStopSelected, limit: 8)
-        optionsVC.searchTo = busStopSelected
+        SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: placeSelected)
+        optionsVC.searchTo = placeSelected
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)
 
         if let unwindDelegate = unwindAllStopsTVCDelegate {
-            unwindDelegate.dismissSearchResultsVC(busStop: busStopSelected)
+            unwindDelegate.dismissSearchResultsVC(place: placeSelected)
             navigationController?.popViewController(animated: true)
         } else {
             navigationController?.pushViewController(optionsVC, animated: true)
@@ -243,8 +245,12 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             let allBusStops = allStopsRequest.data
             if !allBusStops.isEmpty {
                 // Only updating user defaults if retriving from network is successful
-                let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
-                userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
+                do {
+                    let encodedObject = try JSONEncoder().encode(allBusStops)
+                    userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
+                } catch let error {
+                    print(error)
+                }
             }
             completion()
         }, failure: { error in
