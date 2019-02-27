@@ -211,8 +211,8 @@ class Direction: NSObject, NSCopying, Codable {
             name: \(name),
             startTime: \(startTime),
             endTime: \(endTime),
-            startLocation: \(stops.first?.name ??? "Unknown"),
-            endLocation: \(stops.last?.name ??? "Unknown"),
+            startLocation: \(stops.first?.name ?? "Unknown"),
+            endLocation: \(stops.last?.name ?? "Unknown"),
             distance: \(travelDistance),
             locationNameDescription: \(locationNameDescription),
             numberOfStops: \(stops.count)

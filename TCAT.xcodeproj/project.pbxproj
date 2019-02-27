@@ -96,6 +96,8 @@
 		7EEF189D21B39C6200343FFD /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EEF189C21B39C6200343FFD /* NotificationCenter.framework */; };
 		7EEF18A021B39C6200343FFD /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEF189F21B39C6200343FFD /* TodayViewController.swift */; };
 		7EEF18A721B39C6200343FFD /* Today Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7EEF189B21B39C6200343FFD /* Today Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7EF680E322263CF70093CACD /* Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2292486721B891A30004279C /* Endpoints.swift */; };
+		7EF680E422263D2F0093CACD /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8AF5F22206BBF60091AB8C /* Utilities.swift */; };
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
 		BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0002211FB37D0A00773109 /* LoadingIndicator.swift */; };
 		BF18AE102083B7F6000C3D82 /* StoreReviewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18AE0F2083B7F6000C3D82 /* StoreReviewHelper.swift */; };
@@ -1170,6 +1172,8 @@
 				7EE04A5721B45250002F0C52 /* BusStop.swift in Sources */,
 				7EE04A5021B4503C002F0C52 /* Route.swift in Sources */,
 				7EE04A5921B45286002F0C52 /* CoordinateVisitor.swift in Sources */,
+				7EF680E422263D2F0093CACD /* Utilities.swift in Sources */,
+				7EF680E322263CF70093CACD /* Endpoints.swift in Sources */,
 				7EE04A5A21B452BB002F0C52 /* PlaceResult.swift in Sources */,
 				7EE04A6A21B45611002F0C52 /* EventPayload.swift in Sources */,
 				7EE04A5421B4516E002F0C52 /* BusIcon.swift in Sources */,

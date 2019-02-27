@@ -12,6 +12,9 @@ import SnapKit
 import CoreLocation
 import GoogleMaps
 import GooglePlaces
+import TRON
+import Alamofire
+import SwiftyJSON
 
  @objc(TodayViewController) class TodayViewController: UIViewController, NCWidgetProviding {
 
@@ -52,14 +55,40 @@ import GooglePlaces
                 print("favorite destination @: \(coord)")
             }
 
-            // call multiroute
-
             self.setUpRoutesTableView()
             self.view.addSubview(self.routesTable)
             self.createConstraints()
+            // call multiroute
+            self.searchForRoutes()
+
         }
     }
 
+    func searchForRoutes() {
+        if let currentLocation = currentLocation {
+            Network.getMultiRoutes(startCoord: currentLocation, time: Date(), endCoords : coordinates, endPlaceNames: favorites) { (request) in
+                self.processRequest(request: request)
+            }
+        } else {
+            // could not determine current location
+        }
+    }
+    
+    func processRequest(request: APIRequest<RoutesRequest, Error>) {
+        request.performCollectingTimeline { (response) in
+            switch response.result {
+            case .success(let routesResponse):
+//                for each in routesResponse.data {
+//                    each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
+//                }
+                self.routes = routesResponse.data
+                self.routesTable.reloadData()
+            case .failure(let networkError):
+                print("Network Error")
+            }
+        }
+    }
+    
     func widgetPerformUpdate(completionHandler: (@escaping (NCUpdateResult) -> Void)) {
         // Perform any setup necessary in order to update the view. (called to update the widget)
 
@@ -69,21 +98,6 @@ import GooglePlaces
 
         // update bus info?
         print("widgetPerformUpdate")
-
-//        Network.getRoutes(startCoord: startCoord, endCoord: endCoord, endPlaceName: searchFrom.name, time: time, type: self.searchTimeType) { request in
-//            let requestUrl = Network.getRequestUrl(startCoord: startCoord, endCoord: endCoord, destinationName: searchTo.name, time: time, type: self.searchTimeType)
-//            self.processRequest(request: request, requestUrl: requestUrl, endPlace: searchTo)
-//        }
-
-//        if let currentLocation = currentLocation {
-//            routes = Network.getMultiRoutes(startCoord: currentLocation, time: Date(), endCoords: coordinates, endPlaceNames: favorites) { request in
-//
-//            }
-//        } else {
-//            // could not determine current location
-//        }
-
-        // routesTable.reloadData()?
 
         completionHandler(NCUpdateResult.newData)
     }
@@ -131,7 +145,7 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if (favorites.count != 0) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "todayExtensionCell", for: indexPath) as! TodayExtensionCell
-            cell.setUpCell(destinationText: favorites[indexPath.row])
+            cell.setUpCell(route: routes[indexPath.row])
             return cell
         }
 

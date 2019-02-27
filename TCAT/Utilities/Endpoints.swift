@@ -54,9 +54,9 @@ class Network {
 
     /// Network source currently being used
     static var address: String {
-        if isTestFlight() {
-            return debugSource
-        }
+//        if isTestFlight() {
+//            return debugSource
+//        }
         switch networkType {
         case .local: return localSource
         case .debug: return debugSource
@@ -120,10 +120,10 @@ class Network {
             "originName"        :   startPlaceName
         ]
         
-        // Add unique identifier to request
-        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
-            request.parameters["uid"] = uid
-        }
+//        // Add unique identifier to request
+//        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+//            request.parameters["uid"] = uid
+//        }
         
         callback(request)
     }
@@ -140,8 +140,8 @@ class Network {
     }
     
     class func getMultiRoutes(startCoord: CLLocationCoordinate2D, time: Date, endCoords : [String], endPlaceNames: [String],
-                              callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void) {
-        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("multiroute")
+                              callback: @escaping (_ request: APIRequest<RoutesRequest, Error>) -> Void) {
+        let request: APIRequest<RoutesRequest, Error> = tron.codable.request("multiroute")
         request.method = .get
         request.parameters = [
             "start"                 :   "\(startCoord.latitude),\(startCoord.longitude)",
@@ -171,10 +171,10 @@ class Network {
         request.parameterEncoding = JSONEncoding.default
         request.parameters = ["routeId" : routeId]
         
-        // Add unique identifier to request
-        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
-            request.parameters["uid"] = uid
-        }
+//        // Add unique identifier to request
+//        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+//            request.parameters["uid"] = uid
+//        }
         
         return request
     }

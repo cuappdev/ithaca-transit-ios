@@ -23,10 +23,10 @@ class TodayExtensionCell: UITableViewCell {
 
     // MARK: View vars
 
-    var departureLabel = UILabel()
-    var destinationLabel = UILabel()
-    var liveLabel = UILabel()
-    var liveIndicatorView = LiveIndicator(size: .large, color: Colors.liveGreen)
+    var departureLabel: UILabel
+    var destinationLabel: UILabel
+    var liveLabel: UILabel
+    var liveIndicatorView: LiveIndicator
     var busIcon: BusIcon?
 
     // MARK: Spacing vars
@@ -36,6 +36,11 @@ class TodayExtensionCell: UITableViewCell {
     let rightMargin: CGFloat = 16
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        departureLabel = UILabel()
+        destinationLabel = UILabel()
+        liveLabel = UILabel()
+        liveIndicatorView = LiveIndicator(size: .small, color: .clear)
+        
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         if
@@ -49,23 +54,23 @@ class TodayExtensionCell: UITableViewCell {
             busIcon = BusIcon(type: .directionSmall, number: 90)
         }
 
-        departureLabel.font = .getFont(.medium, size: 16.0)
-        departureLabel.textColor = Colors.primaryText
-        departureLabel.text = "Ithaca Commons at Green Street Station"
-        if let direction = busDirection {
-            departureLabel.text = direction.name
-        }
-        departureLabel.numberOfLines = 1
-        departureLabel.lineBreakMode = NSLineBreakMode.byTruncatingTail
+//        departureLabel.font = .getFont(.medium, size: 16.0)
+//        departureLabel.textColor = Colors.primaryText
+//        departureLabel.text = "Ithaca Commons at Green Street Station"
+//        if let direction = busDirection {
+//            departureLabel.text = direction.name
+//        }
+//        departureLabel.numberOfLines = 1
+//        departureLabel.lineBreakMode = NSLineBreakMode.byTruncatingTail
 
-        destinationLabel.font = .getFont(.regular, size: 16.0)
-        destinationLabel.textColor = Colors.secondaryText
-        destinationLabel.numberOfLines = 1
-        destinationLabel.lineBreakMode = .byTruncatingTail
+//        destinationLabel.font = .getFont(.regular, size: 16.0)
+//        destinationLabel.textColor = Colors.secondaryText
+//        destinationLabel.numberOfLines = 1
+//        destinationLabel.lineBreakMode = .byTruncatingTail
 
-        liveLabel.font = .getFont(.medium, size: 16.0)
-        liveLabel.textColor = Colors.primaryText
-        liveLabel.text = "Board in 10 mins"
+//        liveLabel.font = .getFont(.medium, size: 16.0)
+//        liveLabel.textColor = Colors.primaryText
+//        liveLabel.text = "Board in 10 mins"
 
         contentView.addSubview(departureLabel)
         contentView.addSubview(destinationLabel)
@@ -119,17 +124,38 @@ class TodayExtensionCell: UITableViewCell {
         }
     }
 
-    func setUpData(route: Route, rowNum: Int) {
-        self.route = route
-        self.rowNum = rowNum
-    }
+//    func setUpData(route: Route, rowNum: Int) {
+//        self.route = route
+//        self.rowNum = rowNum
+//    }
 
-    func setUpCell(destinationText: String) {
-        destinationLabel.text = "11:50 AM to \(destinationText)"
+//    func setUpCell(destinationText: String) {
+//        destinationLabel.text = "11:50 AM to \(destinationText)"
+//        setUpDestinationLabel()
+//        setUpLiveElements()
+//    }
+
+    func setUpCell(route: Route) {
+        self.route = route
+        setUpDepartureLabel()
         setUpDestinationLabel()
         setUpLiveElements()
     }
-
+    
+    func setUpDepartureLabel() {
+        departureLabel.font = .getFont(.medium, size: 16.0)
+        departureLabel.textColor = Colors.primaryText
+        departureLabel.font = .getFont(.medium, size: 16.0)
+        departureLabel.textColor = Colors.primaryText
+        if let direction = busDirection {
+            departureLabel.text = direction.name
+        } else {
+            departureLabel.text = "CATCH IF LET"
+        }
+        departureLabel.numberOfLines = 1
+        departureLabel.lineBreakMode = NSLineBreakMode.byTruncatingTail
+    }
+    
     private func getDelayState(fromDirection direction: Direction) -> DelayState {
         let departTime = direction.startTime
         if let delay = direction.delay {
@@ -146,6 +172,11 @@ class TodayExtensionCell: UITableViewCell {
     }
 
     func setUpDestinationLabel() {
+        destinationLabel.font = .getFont(.regular, size: 16.0)
+        destinationLabel.textColor = Colors.secondaryText
+        destinationLabel.numberOfLines = 1
+        destinationLabel.lineBreakMode = .byTruncatingTail
+        
         if let route = route, let direction = busDirection {
             let delayState = getDelayState(fromDirection: direction)
 
@@ -157,11 +188,14 @@ class TodayExtensionCell: UITableViewCell {
                 destinationLabel.text = "\(departureTime) to \(route.endName)"
             }
         } else {
-           // there was no route or direction
+            destinationLabel.text = "CATCH IF LET"
         }
     }
 
     func setUpLiveElements() {
+        liveLabel.font = .getFont(.medium, size: 16.0)
+        liveLabel.textColor = Colors.primaryText
+        
         if let direction = busDirection {
             let delayState = getDelayState(fromDirection: direction)
             switch delayState {
