@@ -21,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     let userDefaults = UserDefaults.standard
+    let encoder = JSONEncoder()
     let userDataInits: [(key: String, defaultValue: Any)] = [
         (key: Constants.UserDefaults.onboardingShown, defaultValue: false),
         (key: Constants.UserDefaults.recentSearch, defaultValue: [Any]()),
@@ -30,6 +31,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
+        // Set Up Google Services
+        FirebaseApp.configure()
+        GMSServices.provideAPIKey(Keys.googleMaps.value)
+        GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
+        
+        migrationToNewPlacesModel()
+        
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
 
@@ -37,11 +45,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #if !DEBUG
             Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
         #endif
-
-        // Set Up Google Services
-        FirebaseApp.configure()
-        GMSServices.provideAPIKey(Keys.googleMaps.value)
-        GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
 
         // Log basic information
         let payload = AppLaunchedPayload()
@@ -105,6 +108,106 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // MARK: Helper Functions
     
+    /// Convert BusStop and PlaceResult models to new unified Place model.
+    func migrationToNewPlacesModel() {
+        
+        // Potentially check version to make sure this only fires once.
+        
+        //
+        // allStops
+        //
+        
+        // should overwrite existing values
+        // getBusStops()
+        
+        //
+        // favorites
+        //
+        
+        let favoritesKey = Constants.UserDefaults.favorites
+        
+        if let storedPlaces = userDefaults.value(forKey: favoritesKey) as? Data {
+            // This will only fire on legacy models
+            if let favorites = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any] {
+                convertDataToPlaces(data: favorites) { (places) in
+                    do {
+                        let encodedObject = try self.encoder.encode(places)
+                        self.userDefaults.set(encodedObject, forKey: favoritesKey)
+                    } catch let error {
+                        print(error)
+                    }
+                }
+            }
+        }
+        
+        // Update shortcuts
+        // Done in main AppDelegate.swift function
+        
+        //
+        // recentSearches
+        //
+        
+        let recentSearchesKey = Constants.UserDefaults.recentSearch
+        
+        if let storedPlaces = userDefaults.value(forKey: recentSearchesKey) as? Data {
+            //  This will only fire on legacy models
+            if let recents = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any] {
+                convertDataToPlaces(data: recents) { (places) in
+                    do {
+                        let encodedObject = try self.encoder.encode(places)
+                        self.userDefaults.set(encodedObject, forKey: recentSearchesKey)
+                    } catch let error {
+                        print(error)
+                    }
+                }
+            }
+        }
+        
+        // Should show a loading function until everything in here finishes. "Updating database"
+
+    }
+    
+    func convertDataToPlaces(data: [Any], completion: @escaping (_ places: [Place]) -> Void) {
+        var places = [Place]()
+        for item in data {
+            
+            var place: Place!
+            
+            // Unwrap `Any` to `BusStop` or `PlaceResult`
+            if let busStop = item as? BusStop {
+                place = Place(name: busStop.name, latitude: busStop.lat, longitude: busStop.long)
+            }
+            if let placeResult = item as? PlaceResult {
+                place = Place(name: placeResult.name, placeDescription: placeResult.detail, placeIdentifier: placeResult.placeID)
+            }
+            
+            
+            
+            if place.type == .googlePlace {
+                CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
+                    if error != nil {
+                        // TODO: Handle error properly
+                        print("Unable to get coordinates to save favorite.")
+                    } else {
+                        place.latitude = latitude
+                        place.longitude = longitude
+                        places.append(place)
+                    }
+                    if places.count == data.count {
+                        completion(places)
+                    }
+                }
+            } else {
+                places.append(place)
+                if places.count == data.count {
+                    completion(places)
+                }
+            }
+            
+        } // end for loop
+        
+    }
+    
     /// Creates and sets a unique identifier. If the device identifier changes, updates it.
     func setupUniqueIdentifier() {
         if
@@ -120,7 +223,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let shortcutData = item.userInfo as? [String: Data] {
             guard
                 let place = shortcutData["place"],
-                let destination = NSKeyedUnarchiver.unarchiveObject(with: place) as? Place
+                let destination = try? decoder.decode(Place.self, from: place)
             else {
                 print("[AppDelegate] Unable to access shortcutData['place']")
                 return
@@ -141,8 +244,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if allBusStops.isEmpty {
                 self.handleGetAllStopsError()
             } else {
-                let data = NSKeyedArchiver.archivedData(withRootObject: allBusStops)
-                self.userDefaults.set(data, forKey: Constants.UserDefaults.allBusStops)
+                let encodedObject = try? JSONEncoder().encode(allBusStops)
+                self.userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
             }
         }, failure: { error in
             print("getBusStops error:", error)
@@ -176,9 +279,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     /// Open the app when opened via URL scheme
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-    // URLs for testing
-    // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown
-    // PlaceResult: ithaca-transit://getRoutes?lat=42.44707979999999&long=-76.4885196&destinationName=Hans%20Bethe%20House
+    
+        // URLs for testing
+        // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown
+        // PlaceResult: ithaca-transit://getRoutes?lat=42.44707979999999&long=-76.4885196&destinationName=Hans%20Bethe%20House
 
         let rootVC = HomeViewController()
         let navigationController = CustomNavigationController(rootViewController: rootVC)
@@ -204,8 +308,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
 
             if let latitude = latitude, let longitude = longitude, let stopName = stopName {
-                let stop = BusStop(name: stopName, lat: latitude, long: longitude)
-                optionsVC.searchTo = stop
+                let place = Place(name: stopName, latitude: latitude, longitude: longitude)
+                optionsVC.searchTo = place
                 navigationController.pushViewController(optionsVC, animated: false)
                 return true
             }
@@ -214,7 +318,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return false
     }
 
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity,
+                     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
 
         if #available(iOS 12.0, *) {
             if
