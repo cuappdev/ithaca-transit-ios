@@ -108,8 +108,10 @@ class WhatsNewHeaderView: UIView {
                 let wholeView = tableView.superview,
                 let description = updateDescription.text
             {
-                let totalWidthPadding = containerPadding.left + containerPadding.right
-                let widthValue = wholeView.frame.width - totalWidthPadding
+                // Take total width and subtract various insets used in layout
+                let headerViewCardPadding = containerPadding.left + containerPadding.right
+                let widthValue = wholeView.frame.width - headerViewCardPadding - (value * 2)
+                
                 let heightValue = ceil(description.heightWithConstrainedWidth(width: widthValue, font: updateDescription.font))
                 make.height.equalTo(ceil(heightValue))
             }

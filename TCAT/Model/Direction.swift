@@ -11,7 +11,7 @@ import CoreLocation
 import SwiftyJSON
 
 /// An enum for the type of direction
-enum DirectionType: String {
+enum DirectionType: String, Codable {
     
     /// Directions that involving walking
     case walk
@@ -24,7 +24,7 @@ enum DirectionType: String {
 
 }
 
-class Direction: NSObject, NSCopying {
+class Direction: NSObject, NSCopying, Codable {
 
     /// The type of the direction.
     var type: DirectionType
@@ -41,12 +41,12 @@ class Direction: NSObject, NSCopying {
     /** The starting location object associated with the direction
         If this is a bus stop, includes stopID as id.
      */
-    var startLocation: LocationObject
+    var startLocation: CLLocationCoordinate2D
     
     /** The ending location object associated with the direction
         If this is a bus stop, includes stopID as id.
     */
-    var endLocation: LocationObject
+    var endLocation: CLLocationCoordinate2D
 
     /// The starting time (UTC) associated with the direction. Format: `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`
     var startTime: Date
@@ -70,18 +70,52 @@ class Direction: NSObject, NSCopying {
     var stayOnBusForTransfer: Bool = false
     
     /// The unique identifiers for the specific bus related to the direction.
-    var tripIdentifiers: [String]? = nil
+    var tripIdentifiers: [String]?
     
     /// The bus delay for stops[0]
     var delay: Int?
     
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case name
+        case startLocation
+        case endLocation
+        case startTime
+        case endTime
+        case path
+        case routeNumber
+        case stops
+        case stayOnBusForTransfer
+        case tripIdentifiers
+        case delay
+        case travelDistance = "distance"
+    }
+    
     // MARK: Initalizers
+    
+    required init (from decoder: Decoder) {
+        let container = try! decoder.container(keyedBy: CodingKeys.self)
+        type = try! container.decode(DirectionType.self, forKey: .type)
+        name = try! container.decode(String.self, forKey: .name)
+        startLocation = try! container.decode(CLLocationCoordinate2D.self, forKey: .startLocation)
+        endLocation = try! container.decode(CLLocationCoordinate2D.self, forKey: .endLocation)
+        startTime = Date.parseDate(try! container.decode(String.self, forKey: .startTime))
+        endTime = Date.parseDate(try! container.decode(String.self, forKey: .endTime))
+        path = try! container.decode([CLLocationCoordinate2D].self, forKey: .path)
+        do { routeNumber = try container.decode(Int.self, forKey: .routeNumber) } catch { routeNumber = -1 }
+        stops = try! container.decode([LocationObject].self, forKey: .stops)
+        do { stayOnBusForTransfer = try container.decode(Bool.self, forKey: .stayOnBusForTransfer) } catch { stayOnBusForTransfer = false }
+        tripIdentifiers = try? container.decode([String].self, forKey: .tripIdentifiers)
+        delay = try? container.decode(Int.self, forKey: .delay)
+        travelDistance = try! container.decode(Double.self, forKey: .travelDistance)
+        super.init()
+    }
 
     required init (
         type: DirectionType,
         name: String,
-        startLocation: LocationObject,
-        endLocation: LocationObject,
+        startLocation: CLLocationCoordinate2D,
+        endLocation: CLLocationCoordinate2D,
         startTime: Date,
         endTime: Date,
         path: [CLLocationCoordinate2D],
@@ -109,7 +143,7 @@ class Direction: NSObject, NSCopying {
 
     convenience init(name: String? = nil) {
 
-        let blankLocation = LocationObject.blank
+        let blankLocation = CLLocationCoordinate2D(latitude: 0, longitude: 0)
         let blankTime = Date()
 
         self.init(
@@ -128,34 +162,6 @@ class Direction: NSObject, NSCopying {
             delay: nil
         )
 
-    }
-
-    convenience init(from json: JSON) {
-        
-        // print("Direction JSON:", json)
-        
-        self.init()
-        
-        name = json["name"].stringValue
-        type = json["type"].stringValue.lowercased() == "depart" ? .depart : .walk
-        startTime = json["startTime"].parseDate()
-        endTime = json["endTime"].parseDate()
-        startLocation = json["startLocation"].parseLocationObject()
-        endLocation = json["endLocation"].parseLocationObject()
-        path = json["path"].arrayValue.map { $0.parseCoordinates() }
-        travelDistance = json["distance"].doubleValue
-        routeNumber = json["routeNumber"].int ?? 0
-        stops = json["stops"].arrayValue.map { $0.parseLocationObject() }
-        stayOnBusForTransfer = json["stayOnBusForTransfer"].boolValue
-        tripIdentifiers = json["tripIdentifiers"].arrayObject as? [String]
-        delay = json["delay"].int
-        
-        // If depart direction, use bus stop locations (with id) for start and end
-        if type == .depart || type == .arrive, let start = stops.first, let end = stops.last {
-            startLocation = start
-            endLocation = end
-        }
-        
     }
     
     func copy(with zone: NSZone? = nil) -> Any {
@@ -205,8 +211,8 @@ class Direction: NSObject, NSCopying {
             name: \(name),
             startTime: \(startTime),
             endTime: \(endTime),
-            startLocation: \(startLocation.name),
-            endLocation: \(endLocation.name),
+            startLocation: \(stops.first?.name ??? "Unknown"),
+            endLocation: \(stops.last?.name ??? "Unknown"),
             distance: \(travelDistance),
             locationNameDescription: \(locationNameDescription),
             numberOfStops: \(stops.count)

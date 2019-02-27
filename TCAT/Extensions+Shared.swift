@@ -15,7 +15,7 @@ extension UIColor {
     // Use six-character string of a hex color for initialization
     convenience init(hex: String) {
         let hex = Int(hex, radix: 16)!
-        self.init(red:(hex >> 16) & 0xff, green:(hex >> 8) & 0xff, blue:hex & 0xff)
+        self.init(red: (hex >> 16) & 0xff, green: (hex >> 8) & 0xff, blue: hex & 0xff)
     }
 
     convenience init(red: Int, green: Int, blue: Int) {
@@ -25,7 +25,7 @@ extension UIColor {
 }
 
 extension Double {
-    
+
     /** Convert distance from meters to proper unit (based on size)
      
      - Huge Distances: 16 mi
@@ -34,42 +34,42 @@ extension Double {
      
      */
     var roundedString: String {
-        
+
         let numberOfMetersInMile = 1609.34
         var distanceInMiles = self / numberOfMetersInMile
-        
+
         switch distanceInMiles {
-            
+
         case let x where x >= 10:
             return "\(Int(distanceInMiles)) mi"
-            
+
         case let x where x < 0.1:
             var distanceInFeet = distanceInMiles * 5280
             var temporaryValue = distanceInFeet.roundTo(places: 0) / 10.0
             distanceInFeet = temporaryValue.roundTo(places: 0) * 10.0
             return "\(Int(distanceInFeet)) ft"
-            
+
         default:
             return "\(distanceInMiles.roundTo(places: 1)) mi"
-            
+
         }
-        
+
     }
-    
+
     /// Rounds the double to decimal places value
     mutating func roundTo(places: Int) -> Double {
         let divisor = pow(10.0, Double(places))
         return Darwin.round(self * divisor) / divisor
     }
-    
+
 }
 
 extension UIDevice {
-    
+
     // https://stackoverflow.com/questions/26028918/how-to-determine-the-current-iphone-device-model
-    
+
     var modelName: String {
-        
+
         var systemInfo = utsname()
         uname(&systemInfo)
         let machineMirror = Mirror(reflecting: systemInfo.machine)
@@ -77,16 +77,16 @@ extension UIDevice {
             guard let value = element.value as? Int8, value != 0 else { return identifier }
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
-        
+
         let isSimulator = identifier == "i386" || identifier == "x86_64"
         if isSimulator {
             identifier = ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"] ?? "iOS"
         }
-        
+
         let parsedModelName: String = {
-            
+
             switch identifier {
-                
+
             case "iPod5,1":                                 return "iPod Touch 5"
             case "iPod7,1":                                 return "iPod Touch 6"
             case "iPhone3,1", "iPhone3,2", "iPhone3,3":     return "iPhone 4"
@@ -126,18 +126,18 @@ extension UIDevice {
             case "AppleTV6,2":                              return "Apple TV 4K"
             case "AudioAccessory1,1":                       return "HomePod"
             default:                                        return identifier
-                
+
             }
         }()
-        
+
         return isSimulator ? "Simulator: \(parsedModelName)" : parsedModelName
-        
+
     }
-    
+
 }
 
 extension JSON {
-    
+
     /// Format date with pattern `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`. Returns current date on error.
     func parseDate() -> Date {
         let dateFormatter = DateFormatter()
@@ -146,14 +146,14 @@ extension JSON {
         let date = dateFormatter.date(from: self.stringValue) ?? Date.distantPast
         return Time.truncateSeconds(from: date)
     }
-    
+
     /// Create coordinate object from JSON.
     func parseCoordinates() -> CLLocationCoordinate2D {
         let latitude = self["lat"].doubleValue
         let longitude = self["long"].doubleValue
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
-    
+
     /// Create Bounds object
     func parseBounds() -> Bounds {
         return Bounds(
@@ -163,7 +163,7 @@ extension JSON {
             maxLong: self["maxLong"].doubleValue
         )
     }
-    
+
     /** Return LocationObject.
      
      `id` is used when bus stops conform to this object.
@@ -178,13 +178,13 @@ extension JSON {
             longitude: self["long"].doubleValue
         )
     }
-    
+
 }
 
-extension CLLocationCoordinate2D {
+extension CLLocationCoordinate2D: Codable {
     // MARK: CLLocationCoordinate2D+MidPoint
-    func middleLocationWith(location:CLLocationCoordinate2D) -> CLLocationCoordinate2D {
-        
+    func middleLocationWith(location: CLLocationCoordinate2D) -> CLLocationCoordinate2D {
+
         let lon1 = longitude * .pi / 180
         let lon2 = location.longitude * .pi / 180
         let lat1 = latitude * .pi / 180
@@ -192,11 +192,48 @@ extension CLLocationCoordinate2D {
         let dLon = lon2 - lon1
         let x = cos(lat2) * cos(dLon)
         let y = cos(lat2) * sin(dLon)
-        
+
         let lat3 = atan2( sin(lat1) + sin(lat2), sqrt((cos(lat1) + x) * (cos(lat1) + x) + y * y) )
         let lon3 = lon1 + atan2(y, cos(lat1) + x)
-        
-        let center:CLLocationCoordinate2D = CLLocationCoordinate2DMake(lat3 * 180 / .pi, lon3 * 180 / .pi)
+
+        let center: CLLocationCoordinate2D = CLLocationCoordinate2DMake(lat3 * 180 / .pi, lon3 * 180 / .pi)
         return center
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case lat
+        case long
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        try container.encode(longitude)
+        try container.encode(latitude)
+    }
+
+    public init(from decoder: Decoder) throws {
+        self.init()
+
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        longitude = try container.decode(Double.self, forKey: .long)
+        latitude = try container.decode(Double.self, forKey: .lat)
+
+    }
+}
+
+extension DateFormatter {
+    static let defaultParser: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
+        return dateFormatter
+    }()
+}
+
+extension Date {
+    static func parseDate(_ dateString: String) -> Date {
+        let dateFormatter = DateFormatter.defaultParser
+        let date = dateFormatter.date(from: dateString) ?? Date.distantPast
+        return Time.truncateSeconds(from: date)
     }
 }

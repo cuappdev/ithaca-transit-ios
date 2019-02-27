@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 
 /// Generic location object for locations with identifiers and names
-class LocationObject: NSObject {
+class LocationObject: NSObject, Codable {
     
     /// The name of the location
     var name: String
@@ -33,6 +33,13 @@ class LocationObject: NSObject {
         self.longitude = longitude
     }
     
+    private enum CodingKeys: String, CodingKey {
+        case latitude = "lat"
+        case longitude = "long"
+        case name
+        case id = "stopID"
+    }
+    
     /// Blank init to store name
     convenience init(name: String) {
         self.init(name: name, id: "", latitude: 0.0, longitude: 0.0)
@@ -47,10 +54,5 @@ class LocationObject: NSObject {
     var coordinates: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
     }
-    
-    static var blank: LocationObject {
-        return LocationObject(name: "", id: "", latitude: 0, longitude: 0)
-    }
-    
 }
 

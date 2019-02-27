@@ -60,7 +60,8 @@ target 'Today Extension' do
     # Networking + Data
     pod 'TRON', '~> 4.1.2'
     pod 'SwiftyJSON', '~> 4.0'
-
+    pod 'Alamofire', '~> 4.7'
+ 
     # Analytics
     pod 'Crashlytics', '~> 3.10'
 
