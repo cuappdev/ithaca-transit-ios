@@ -329,7 +329,7 @@ extension HomeViewController: UITableViewDataSource {
             cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
             (cell as? PlaceTableViewCell)?.place = place
             cell.textLabel?.text = place.name
-            cell.detailTextLabel?.text = place.getDescription()
+            cell.detailTextLabel?.text = place.description
         }
 
         cell.textLabel?.font = .getFont(.regular, size: 14)

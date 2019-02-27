@@ -59,14 +59,7 @@ class Place: NSObject, Codable {
     // MARK: Functions
     
     override var description: String {
-        return """
-        name: \(name),
-        type: \(type),
-        description: \(String(describing: placeDescription)),
-        identifier: \(String(describing: placeIdentifier))
-        latitude: \(String(describing: latitude)),
-        longitiude: \(String(describing: longitude))
-        """
+        return (type == .googlePlace) ? (placeDescription ?? "") : ("Bus Stop")
     }
     
     override func isEqual(_ object: Any?) -> Bool {
@@ -77,10 +70,6 @@ class Place: NSObject, Codable {
             return identifier == placeIdentifier
         }
         return object.name == name
-    }
-    
-    func getDescription() -> String {
-        return (type == .googlePlace) ? (placeDescription ?? "") : ("Bus Stop")
     }
     
 }

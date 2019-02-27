@@ -239,7 +239,7 @@ class SearchResultsTableViewController: UITableViewController {
             if sections[indexPath.section].type == .currentLocation {
                 cell.imageView?.image = UIImage(named: "location")
             } else {
-                cell.detailTextLabel?.text = place.getDescription()
+                cell.detailTextLabel?.text = place.description
             }
         }
         

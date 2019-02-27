@@ -181,8 +181,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 place = Place(name: placeResult.name, placeDescription: placeResult.detail, placeIdentifier: placeResult.placeID)
             }
             
-            
-            
             if place.type == .googlePlace {
                 CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
                     if error != nil {

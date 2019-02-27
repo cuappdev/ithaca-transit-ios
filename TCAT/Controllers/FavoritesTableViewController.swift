@@ -117,7 +117,7 @@ class FavoritesTableViewController: UITableViewController {
         cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as? PlaceTableViewCell
         (cell as? PlaceTableViewCell)?.place = place
         cell.textLabel?.text = place.name
-        cell.detailTextLabel?.text = place.getDescription()
+        cell.detailTextLabel?.text = place.description
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
         cell.layoutMargins = .zero
