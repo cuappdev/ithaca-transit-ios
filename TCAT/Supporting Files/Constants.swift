@@ -14,10 +14,17 @@ struct Constants {
     /// The phrases used for alerts
     struct Alerts {
 
+        
         struct GeneralActions {
             static let settings = "Settings"
             static let cancel = "Cancel"
             static let dontRemind = "Don't Remind Me Again"
+        }
+        
+        struct AlertsRequestFailure {
+            static let title = "Request Failed"
+            static let message = "We failed to retrieve alerts. Pull to retry"
+            static let action = "OK!"
         }
 
         struct LocationPermissions {

@@ -16,9 +16,15 @@ class ServiceAlertTableViewCell: UITableViewCell {
     var alert: Alert?
     var rowNum: Int!
     
-    var maxIconsPerRow: Int!
     let borderInset = 16
     let busIconSpacing = 10
+    var maxIconsPerRow: Int {
+        let iconWidth = Int(BusIconType.directionSmall.width)
+        let screenWidth = Int(UIScreen.main.bounds.width)
+        let totalConstraintInset = borderInset * 2
+        
+        return (screenWidth - totalConstraintInset + busIconSpacing) / (iconWidth + busIconSpacing)
+    }
     
     var timeSpanLabel: UILabel!
     var descriptionLabel: UILabel!
@@ -28,8 +34,6 @@ class ServiceAlertTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        maxIconsPerRow = calculateMaxIconsPerRow()
         
         setupTimeSpanLabel()
         setupDescriptionLabel()
@@ -216,14 +220,6 @@ class ServiceAlertTableViewCell: UITableViewCell {
         
         timeSpanLabel.removeFromSuperview()
         return "Time: Unknown"
-    }
-    
-    private func calculateMaxIconsPerRow() -> Int {
-        let iconWidth = Int(BusIconType.directionSmall.width)
-        let screenWidth = Int(UIScreen.main.bounds.width)
-        let totalConstraintInset = borderInset * 2
-        
-        return (screenWidth - totalConstraintInset + busIconSpacing) / (iconWidth + busIconSpacing)
     }
     
     private func rowCount() -> Int {
