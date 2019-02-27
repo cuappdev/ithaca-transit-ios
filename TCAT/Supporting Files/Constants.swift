@@ -119,8 +119,8 @@ struct Constants {
     /// Cell identifiers
     struct Cells {
         static let busIdentifier = "BusStop"
+        static let placeIdentifier = "PlaceTableViewCell"
         static let searchResultsIdentifier = "SearchResults"
-        static let cornellDestinationsIdentifier = "CornellDestinations"
         static let seeAllStopsIdentifier = "SeeAllStops"
         static let currentLocationIdentifier = "CurrentLocation"
         static let smallDetailCellIdentifier = "SmallCell"
@@ -198,7 +198,6 @@ struct Constants {
     }
 
     struct TableHeaders {
-        static let getThereNow = "Get There Now"
         static let recentSearches = "Recent Searches"
         static let favoriteDestinations = "Favorite Destinations"
     }
