@@ -67,9 +67,11 @@ class ServiceAlertsViewController: UIViewController {
                 self.alerts = self.sortedAlerts(alertsList: request.data)
             }
         }) { (error) in
-            let fileName = "ServiceAlertsVieController"
-            let line = "\(fileName) \(#function): \(error)"
-            print(line)
+            let title = "Couldn't Fetch Service Alerts"
+            let message = "Please check your network settings and try again later."
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+            self.present(alertController, animated: true)
         }
     }
     
