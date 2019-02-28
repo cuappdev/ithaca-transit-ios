@@ -55,9 +55,9 @@ import SwiftyJSON
                 print("favorite destination @: \(coord)")
             }
 
-            self.setUpRoutesTableView()
-            self.view.addSubview(self.routesTable)
-            self.createConstraints()
+//            self.setUpRoutesTableView()
+//            self.view.addSubview(self.routesTable)
+//            self.createConstraints()
             // call multiroute
             self.searchForRoutes()
 
@@ -84,9 +84,20 @@ import SwiftyJSON
                 self.routes = routesResponse.data
                 self.routesTable.reloadData()
             case .failure(let networkError):
-                print("Network Error")
+                if let error = networkError as? APIError<Error> {
+                    self.processRequestError(error: error)
+                }
             }
         }
+    }
+    
+    func processRequestError(error: APIError<Error>) {
+        let title = "Network Failure: \((error.error as NSError?)?.domain ?? "No Domain")"
+        let description = (error.localizedDescription) + ", " + ((error.error as NSError?)?.description ?? "n/a")
+        
+        routes = []
+        print(title)
+        print(description)
     }
     
     func widgetPerformUpdate(completionHandler: (@escaping (NCUpdateResult) -> Void)) {
