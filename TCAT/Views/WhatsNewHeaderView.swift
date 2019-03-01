@@ -124,11 +124,7 @@ class WhatsNewHeaderView: UIView {
             dismissButtonToUpdateDesc = make.top.equalTo(updateDescription.snp.bottom).offset(12).constraint
             make.centerX.equalToSuperview()
             make.width.equalTo(90)
-            make.height.equalTo(dismissButton.intrinsicContentSize.height)
-        }
-        
-        snp.makeConstraints { (make) in
-            dismissButtonToBottom = make.bottom.equalTo(dismissButton.snp.bottom).offset(16).constraint
+            dismissButtonToBottom = make.bottom.equalToSuperview().inset(16).constraint
         }
     }
     
@@ -154,7 +150,7 @@ class WhatsNewHeaderView: UIView {
             
             let dismissButtonSpace = dismissButtonToUpdateDescVal + dismissButtonHeight
             
-            let bottomOffset = dismissButtonToBottom.layoutConstraints[0].constant
+            let bottomOffset = -dismissButtonToBottom.layoutConstraints[0].constant
             
             return ceil(titleSpace + updateNameSpace + updateDescSpace + dismissButtonSpace + bottomOffset)
         } else {

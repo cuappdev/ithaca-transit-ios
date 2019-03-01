@@ -637,7 +637,6 @@ extension HomeViewController: WhatsNewDelegate {
                 subview.alpha = 0
             }
         }) { (_) in
-            
             self.whatsNewView.isHidden = true
         }
     }
