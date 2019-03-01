@@ -57,6 +57,8 @@ extension UIView {
         UIGraphicsEndImageContext()
         return img
     }
+    
+    static let zero = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: CGFloat.leastNormalMagnitude))
 
 }
 

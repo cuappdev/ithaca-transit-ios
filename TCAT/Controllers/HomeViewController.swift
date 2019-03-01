@@ -32,7 +32,7 @@ class HomeViewController: UIViewController {
     var firstViewing = true
     var searchResultsSection: Section!
     var sectionIndexes: [String: Int]! = [:]
-    var tableView: HomeTableView!
+    var tableView: UITableView!
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
@@ -45,7 +45,7 @@ class HomeViewController: UIViewController {
         didSet {
             tableView.reloadData()
             if sections.isEmpty {
-                tableView.tableHeaderView = nil
+                tableView.tableHeaderView = .zero
             }
         }
     }
@@ -73,7 +73,7 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: Colors.white]
         view.backgroundColor = Colors.backgroundWash
 
-        tableView = HomeTableView(frame: .zero, style: .grouped)
+        tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
@@ -120,16 +120,15 @@ class HomeViewController: UIViewController {
 
         firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
 
-//        let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
-//        let hasSeenVersion = VersionStore().has(version: WhatsNew.Version.current())
-//        if !firstViewing && (!whatsNewDismissed || !hasSeenVersion) {
-//            createWhatsNewView()
-//        }
-//        if !hasSeenVersion {
-//            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
-//        }
-//        VersionStore().set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
-        createWhatsNewView()
+        let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
+        let hasSeenVersion = VersionStore().has(version: WhatsNew.Version.current())
+        if !firstViewing && (!whatsNewDismissed || !hasSeenVersion) {
+            createWhatsNewView()
+        }
+        if !hasSeenVersion {
+            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
+        }
+        VersionStore().set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
     }
 
     override func viewDidLayoutSubviews() {
@@ -253,24 +252,17 @@ class HomeViewController: UIViewController {
     func okButtonPressed() {
         userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
         tableView.beginUpdates()
-        tableView.animating = true
         UIView.animate(withDuration: 0.35, animations: {
-//            if let containerView = self.tableView.tableHeaderView {
-////                self.tableView.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
-//                containerView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-//            }
-            if let containerView = self.tableView.tableHeaderView, let whatsNewView = containerView.subviews[0] as? WhatsNewHeaderView {
-                self.tableView.contentInset = .init(top: -self.whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
-                whatsNewView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01).translatedBy(x: 0, y: 7000)
-            }
+            self.tableView.contentInset = .init(top: -self.whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
+            self.whatsNewView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01).translatedBy(x: 0, y: 7000)
             self.whatsNewView.alpha = 0
             for subview in self.whatsNewView.subviews {
                 subview.alpha = 0
             }
         }, completion: {(completed) in
             if completed {
-                self.tableView.animating = false
-                self.tableView.tableHeaderView = nil
+                self.tableView.contentInset = .zero
+                self.tableView.tableHeaderView = .zero
                 VersionStore().set(version: WhatsNew.Version.current())
             }
         })
@@ -481,7 +473,7 @@ extension HomeViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         navigationItem.rightBarButtonItem = nil
-        if tableView?.tableHeaderView != nil {
+        if tableView?.tableHeaderView != .zero {
             hideCard()
         }
 
@@ -496,7 +488,7 @@ extension HomeViewController: UISearchBarDelegate {
         let submitBugBarButton = UIBarButtonItem(customView: infoButton)
         navigationItem.setRightBarButton(submitBugBarButton, animated: false)
         sections = createSections()
-        if tableView?.tableHeaderView != nil {
+        if tableView?.tableHeaderView != .zero {
             showCard()
         }
     }
@@ -645,6 +637,7 @@ extension HomeViewController: WhatsNewDelegate {
                 subview.alpha = 0
             }
         }) { (_) in
+            
             self.whatsNewView.isHidden = true
         }
     }
@@ -661,22 +654,6 @@ extension HomeViewController: WhatsNewDelegate {
             }
         }) { (_) in
             self.whatsNewView.isHidden = false
-        }
-    }
-}
-
-// MARK: Custom TableView
-class HomeTableView: UITableView {
-    var animating = false
-    override var tableHeaderView: UIView? {
-        didSet {
-            if !animating {
-                if tableHeaderView == nil {
-                    self.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
-                } else {
-                    self.contentInset = .zero
-                }
-            }
         }
     }
 }

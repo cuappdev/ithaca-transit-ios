@@ -107,7 +107,6 @@ class WhatsNewHeaderView: UIView {
         updateDescription.snp.makeConstraints { (make) in
             let value = CGFloat(32)
             updateDescToUpdateName = make.top.equalTo(updateTitle.snp.bottom).offset(6).constraint
-//            make.centerX.equalToSuperview()
             make.leading.trailing.equalToSuperview().inset(value)
             if let description = updateDescription.text
             {
