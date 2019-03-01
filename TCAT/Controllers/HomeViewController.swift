@@ -37,6 +37,7 @@ class HomeViewController: UIViewController {
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
     var whatsNewView: WhatsNewHeaderView!
+    var whatsNewContainerView: UIView!
     var recentLocations: [ItemType] = []
     var favorites: [ItemType] = []
     var isKeyboardVisible = false
@@ -95,7 +96,7 @@ class HomeViewController: UIViewController {
             if #available(iOS 11.0, *) {
                 make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             } else {
-                make.top.equalToSuperview().offset(topLayoutGuide.snp.bottom)
+                make.top.equalToSuperview().offset(view.layoutMargins.top)
             }
         }
 
@@ -128,6 +129,7 @@ class HomeViewController: UIViewController {
 //            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
 //        }
 //        VersionStore().set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
+        createWhatsNewView()
     }
 
     override func viewDidLayoutSubviews() {
@@ -238,13 +240,14 @@ class HomeViewController: UIViewController {
         whatsNewView = WhatsNewHeaderView(updateName: Constants.General.whatsNewUpdateName,
                                           description: Constants.General.whatsNewDescription)
         whatsNewView.whatsNewDelegate = self
-        tableView.tableHeaderView = whatsNewView
+        whatsNewContainerView = UIView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: whatsNewView.calculateCardHeight() + whatsNewView.containerPadding.top + whatsNewView.containerPadding.bottom))
+        whatsNewContainerView.addSubview(whatsNewView)
         whatsNewView.snp.makeConstraints { (make) in
             let widthPadding = whatsNewView.containerPadding.left + whatsNewView.containerPadding.right
             make.width.equalToSuperview().offset(-widthPadding)
-            make.top.leading.trailing.equalToSuperview().inset(whatsNewView.containerPadding.top)
-            
+            make.top.leading.bottom.equalToSuperview().inset(whatsNewView.containerPadding)
         }
+        tableView.tableHeaderView = whatsNewContainerView
     }
 
     func okButtonPressed() {
@@ -252,9 +255,17 @@ class HomeViewController: UIViewController {
         tableView.beginUpdates()
         tableView.animating = true
         UIView.animate(withDuration: 0.35, animations: {
-            if let containerView = self.tableView.tableHeaderView {
-                self.tableView.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
-                containerView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01).translatedBy(x: 0, y: -6000)
+//            if let containerView = self.tableView.tableHeaderView {
+////                self.tableView.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
+//                containerView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+//            }
+            if let containerView = self.tableView.tableHeaderView, let whatsNewView = containerView.subviews[0] as? WhatsNewHeaderView {
+                self.tableView.contentInset = .init(top: -self.whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
+                whatsNewView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01).translatedBy(x: 0, y: 7000)
+            }
+            self.whatsNewView.alpha = 0
+            for subview in self.whatsNewView.subviews {
+                subview.alpha = 0
             }
         }, completion: {(completed) in
             if completed {
@@ -609,8 +620,7 @@ extension HomeViewController: AddFavoritesDelegate {
 
     func displayFavoritesTVC() {
         if favorites.count < 5 {
-            tableView.tableHeaderView = nil
-//            presentFavoritesTVC()
+            presentFavoritesTVC()
         } else {
             let title = Constants.Alerts.MaxFavorites.title
             let message = Constants.Alerts.MaxFavorites.message
@@ -662,7 +672,7 @@ class HomeTableView: UITableView {
         didSet {
             if !animating {
                 if tableHeaderView == nil {
-                    self.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
+                    self.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
                 } else {
                     self.contentInset = .zero
                 }

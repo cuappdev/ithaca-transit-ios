@@ -23,6 +23,13 @@ class WhatsNewHeaderView: UIView {
     var whatsNewHeader: UILabel!
     var backgroundView: UIView!
     
+    private var titleToTop: Constraint?
+    private var updateNameToTitle: Constraint?
+    private var updateDescToUpdateName: Constraint?
+    private var dismissButtonToUpdateDesc: Constraint?
+    private var dismissButtonToBottom: Constraint?
+    private var updateDescriptionHeight: CGFloat = 0
+    
     let containerPadding = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
 
     init(updateName: String, description: String) {
@@ -77,20 +84,21 @@ class WhatsNewHeaderView: UIView {
         dismissButton.clipsToBounds = true
 
         addSubview(dismissButton)
+        
+        setupConstraints()
     }
 
-    override func updateConstraints() {
-        super.updateConstraints()
+    func setupConstraints() {
 
         whatsNewHeader.snp.makeConstraints { (make) in
-            make.top.equalToSuperview().offset(16)
+            titleToTop = make.top.equalToSuperview().offset(16).constraint
             make.centerX.equalToSuperview()
             make.height.equalTo(whatsNewHeader.intrinsicContentSize.height)
             make.width.equalTo(whatsNewHeader.intrinsicContentSize.width)
         }
 
         updateTitle.snp.makeConstraints { (make) in
-            make.top.equalTo(whatsNewHeader.snp.bottom).offset(8)
+            updateNameToTitle = make.top.equalTo(whatsNewHeader.snp.bottom).offset(8).constraint
             make.centerX.equalToSuperview()
             make.height.equalTo(updateTitle.intrinsicContentSize.height)
             make.width.equalTo(updateTitle.intrinsicContentSize.width)
@@ -98,33 +106,60 @@ class WhatsNewHeaderView: UIView {
 
         updateDescription.snp.makeConstraints { (make) in
             let value = CGFloat(32)
-            make.top.equalTo(updateTitle.snp.bottom).offset(6)
-            make.centerX.equalToSuperview()
+            updateDescToUpdateName = make.top.equalTo(updateTitle.snp.bottom).offset(6).constraint
+//            make.centerX.equalToSuperview()
             make.leading.trailing.equalToSuperview().inset(value)
-            if
-                let containerView = superview,
-                let tableView = containerView.superview,
-                let wholeView = tableView.superview,
-                let description = updateDescription.text
+            if let description = updateDescription.text
             {
                 // Take total width and subtract various insets used in layout
                 let headerViewCardPadding = containerPadding.left + containerPadding.right
-                let widthValue = wholeView.frame.width - headerViewCardPadding - (value * 2)
+                let widthValue = UIScreen.main.bounds.width - headerViewCardPadding - (value * 2)
                 
                 let heightValue = ceil(description.heightWithConstrainedWidth(width: widthValue, font: updateDescription.font))
+                updateDescriptionHeight = ceil(heightValue)
                 make.height.equalTo(ceil(heightValue))
             }
         }
 
         dismissButton.snp.makeConstraints { (make) in
-            make.top.equalTo(updateDescription.snp.bottom).offset(12)
+            dismissButtonToUpdateDesc = make.top.equalTo(updateDescription.snp.bottom).offset(12).constraint
             make.centerX.equalToSuperview()
             make.width.equalTo(90)
             make.height.equalTo(dismissButton.intrinsicContentSize.height)
         }
-
+        
         snp.makeConstraints { (make) in
-            make.bottom.equalTo(dismissButton.snp.bottom).offset(16)
+            dismissButtonToBottom = make.bottom.equalTo(dismissButton.snp.bottom).offset(16).constraint
+        }
+    }
+    
+    func calculateCardHeight() -> CGFloat {
+        if let titleToTop = titleToTop, let updateNameToTitle = updateNameToTitle, let updateDescToUpdateName = updateDescToUpdateName, let dismissButtonToUpdateDesc = dismissButtonToUpdateDesc, let dismissButtonToBottom = dismissButtonToBottom {
+            
+            let titleToTopVal = titleToTop.layoutConstraints[0].constant
+            let titleHeight = whatsNewHeader.intrinsicContentSize.height
+            
+            let titleSpace = titleToTopVal + titleHeight
+            
+            let updateNameToTitleVal = updateNameToTitle.layoutConstraints[0].constant
+            let updateNameHeight = updateTitle.intrinsicContentSize.height
+            
+            let updateNameSpace = updateNameToTitleVal + updateNameHeight
+            
+            let updateDescToUpdateNameVal = updateDescToUpdateName.layoutConstraints[0].constant
+            
+            let updateDescSpace = updateDescToUpdateNameVal + updateDescriptionHeight
+            
+            let dismissButtonToUpdateDescVal = dismissButtonToUpdateDesc.layoutConstraints[0].constant
+            let dismissButtonHeight = dismissButton.intrinsicContentSize.height
+            
+            let dismissButtonSpace = dismissButtonToUpdateDescVal + dismissButtonHeight
+            
+            let bottomOffset = dismissButtonToBottom.layoutConstraints[0].constant
+            
+            return ceil(titleSpace + updateNameSpace + updateDescSpace + dismissButtonSpace + bottomOffset)
+        } else {
+            return 0
         }
     }
 
