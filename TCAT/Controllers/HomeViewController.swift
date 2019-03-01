@@ -95,7 +95,7 @@ class HomeViewController: UIViewController {
             if #available(iOS 11.0, *) {
                 make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             } else {
-                make.top.equalToSuperview().offset(view.layoutMargins.top)
+                make.top.equalToSuperview().offset(topLayoutGuide.snp.bottom)
             }
         }
 
@@ -119,15 +119,15 @@ class HomeViewController: UIViewController {
 
         firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
 
-        let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
-        let hasSeenVersion = VersionStore().has(version: WhatsNew.Version.current())
-        if !firstViewing && (!whatsNewDismissed || !hasSeenVersion) {
-            createWhatsNewView()
-        }
-        if !hasSeenVersion {
-            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
-        }
-        VersionStore().set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
+//        let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
+//        let hasSeenVersion = VersionStore().has(version: WhatsNew.Version.current())
+//        if !firstViewing && (!whatsNewDismissed || !hasSeenVersion) {
+//            createWhatsNewView()
+//        }
+//        if !hasSeenVersion {
+//            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
+//        }
+//        VersionStore().set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
     }
 
     override func viewDidLayoutSubviews() {
@@ -238,16 +238,12 @@ class HomeViewController: UIViewController {
         whatsNewView = WhatsNewHeaderView(updateName: Constants.General.whatsNewUpdateName,
                                           description: Constants.General.whatsNewDescription)
         whatsNewView.whatsNewDelegate = self
-        let containerView = UIView()
-        containerView.backgroundColor = .clear
-        containerView.addSubview(whatsNewView)
+        tableView.tableHeaderView = whatsNewView
         whatsNewView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview().inset(whatsNewView.containerPadding)
-        }
-
-        tableView.tableHeaderView = containerView
-        containerView.snp.makeConstraints { (make) in
-            make.top.centerX.width.equalToSuperview()
+            let widthPadding = whatsNewView.containerPadding.left + whatsNewView.containerPadding.right
+            make.width.equalToSuperview().offset(-widthPadding)
+            make.top.leading.trailing.equalToSuperview().inset(whatsNewView.containerPadding.top)
+            
         }
     }
 
@@ -613,7 +609,8 @@ extension HomeViewController: AddFavoritesDelegate {
 
     func displayFavoritesTVC() {
         if favorites.count < 5 {
-            presentFavoritesTVC()
+            tableView.tableHeaderView = nil
+//            presentFavoritesTVC()
         } else {
             let title = Constants.Alerts.MaxFavorites.title
             let message = Constants.Alerts.MaxFavorites.message
@@ -656,10 +653,6 @@ extension HomeViewController: WhatsNewDelegate {
             self.whatsNewView.isHidden = false
         }
     }
-
-    func cardPressed() {
-        print("Card Pressed")
-    }
 }
 
 // MARK: Custom TableView
@@ -669,7 +662,7 @@ class HomeTableView: UITableView {
         didSet {
             if !animating {
                 if tableHeaderView == nil {
-                    self.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
+                    self.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
                 } else {
                     self.contentInset = .zero
                 }

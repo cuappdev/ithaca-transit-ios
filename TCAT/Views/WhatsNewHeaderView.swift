@@ -11,7 +11,6 @@ import SnapKit
 
 protocol WhatsNewDelegate {
     func okButtonPressed()
-    func cardPressed()
 }
 
 class WhatsNewHeaderView: UIView {
@@ -24,7 +23,7 @@ class WhatsNewHeaderView: UIView {
     var whatsNewHeader: UILabel!
     var backgroundView: UIView!
     
-    let containerPadding = UIEdgeInsets(top: 16, left: 16, bottom: -32, right: 16)
+    let containerPadding = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
 
     init(updateName: String, description: String) {
         super.init(frame: .zero)
@@ -131,10 +130,6 @@ class WhatsNewHeaderView: UIView {
 
     @objc func okButtonPressed() {
         whatsNewDelegate?.okButtonPressed()
-    }
-
-    @objc func cardTapped() {
-        whatsNewDelegate?.cardPressed()
     }
 
     required init?(coder aDecoder: NSCoder) {
