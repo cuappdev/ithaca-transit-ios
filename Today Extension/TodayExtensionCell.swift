@@ -100,7 +100,6 @@ class TodayExtensionCell: UITableViewCell {
         if let route = route {
             self.route = route
             if let departDirection = (route.directions.filter { $0.type == .depart }).first {
-                // destinationHasBus = true
                 busDirection = departDirection
                 busIcon = BusIcon(type: .directionSmall, number: departDirection.routeNumber)
                 contentView.addSubview(busIcon!)

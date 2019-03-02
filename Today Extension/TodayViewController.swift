@@ -23,6 +23,8 @@ import SwiftyJSON
     var coordinates: [String] = []
     var routes: [Route?] = []
 
+    var fetchedRoutes: Bool = false
+
     let group = DispatchGroup()
     var locationManager: CLLocationManager!
     var currentLocation: CLLocationCoordinate2D?
@@ -78,6 +80,7 @@ import SwiftyJSON
             switch response.result {
             case .success(let routesResponse):
                 self.routes = routesResponse.data
+                self.fetchedRoutes = true
                 self.routesTable.reloadData()
             case .failure(let networkError):
                 if let error = networkError as? APIError<Error> {
@@ -145,14 +148,12 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let isCompact = extensionContext?.widgetActiveDisplayMode == .compact
 
-        if (isCompact || favorites.isEmpty) {
-            return 1
-        } else if (routes.isEmpty) {
+        if (isCompact || favorites.isEmpty || routes.isEmpty) {
             return 1
         } else {
             return favorites.count
         }
-//        return (extensionContext?.widgetActiveDisplayMode == .compact) ? 1 : (favorites.isEmpty) ? 1 : favorites.count
+
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -161,9 +162,15 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if (favorites.count != 0) {
-            if (routes.isEmpty) { // no routes retrieved -- currently jumps here when still fetching routes!!
+            if (routes.isEmpty) {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "noRoutesCell", for: indexPath) as! NoRoutesCell
-                return cell
+                if (fetchedRoutes) { // no routes retrieved
+                    cell.noRoutesLabel.text = "Unable to Load Routes"
+                    return cell
+                } else { // still fetching routes
+                    cell.noRoutesLabel.text = ""
+                    return cell
+                }
             }
 
             let cell = tableView.dequeueReusableCell(withIdentifier: "todayExtensionCell", for: indexPath) as! TodayExtensionCell
