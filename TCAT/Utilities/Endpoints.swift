@@ -120,10 +120,10 @@ class Network {
             "originName": startPlaceName
         ]
 
-//        // Add unique identifier to request
-//        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
-//            request.parameters["uid"] = uid
-//        }
+        // Add unique identifier to request
+        if let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid) {
+            request.parameters["uid"] = uid
+        }
 
         callback(request)
     }
@@ -171,10 +171,10 @@ class Network {
         request.parameterEncoding = JSONEncoding.default
         request.parameters = ["routeId": routeId]
 
-//        // Add unique identifier to request
-//        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
-//            request.parameters["uid"] = uid
-//        }
+        // Add unique identifier to request
+        if let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid) {
+            request.parameters["uid"] = uid
+        }
 
         return request
     }

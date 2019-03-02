@@ -115,9 +115,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func setupUniqueIdentifier() {
         if
             let uid = UIDevice.current.identifierForVendor?.uuidString,
-            uid != userDefaults.string(forKey: Constants.UserDefaults.uid)
+            uid != sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid)
         {
-            userDefaults.set(uid, forKey: Constants.UserDefaults.uid)
+            sharedUserDefaults?.set(uid, forKey: Constants.UserDefaults.uid)
         }
     }
     

@@ -12,10 +12,10 @@ class TodayExtensionCell: UITableViewCell {
 
     // MARK: Data vars
 
-    var destinationHasBus: Bool?
     var route: Route?
     var busDirection: Direction?
     var showLiveElements: Bool = true
+    var destinationName: String = ""
 
     // MARK: Log vars
 
@@ -42,35 +42,6 @@ class TodayExtensionCell: UITableViewCell {
         liveIndicatorView = LiveIndicator(size: .small, color: .clear)
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-//        if
-//            let route = route,
-//            let departDirection = (route.directions.filter { $0.type == .depart }).first {
-//                destinationHasBus = true
-//                busDirection = departDirection
-//                busIcon = BusIcon(type: .directionSmall, number: departDirection.routeNumber)
-//        } else { // THERE IS NO BUS TO THIS DESTINATION! -- how to handle this case?
-//            destinationHasBus = false
-//            busIcon = BusIcon(type: .directionSmall, number: 90)
-//        }
-
-//        departureLabel.font = .getFont(.medium, size: 16.0)
-//        departureLabel.textColor = Colors.primaryText
-//        departureLabel.text = "Ithaca Commons at Green Street Station"
-//        if let direction = busDirection {
-//            departureLabel.text = direction.name
-//        }
-//        departureLabel.numberOfLines = 1
-//        departureLabel.lineBreakMode = NSLineBreakMode.byTruncatingTail
-
-//        destinationLabel.font = .getFont(.regular, size: 16.0)
-//        destinationLabel.textColor = Colors.secondaryText
-//        destinationLabel.numberOfLines = 1
-//        destinationLabel.lineBreakMode = .byTruncatingTail
-
-//        liveLabel.font = .getFont(.medium, size: 16.0)
-//        liveLabel.textColor = Colors.primaryText
-//        liveLabel.text = "Board in 10 mins"
 
         contentView.addSubview(departureLabel)
         contentView.addSubview(destinationLabel)
@@ -124,30 +95,23 @@ class TodayExtensionCell: UITableViewCell {
         }
     }
 
-//    func setUpData(route: Route, rowNum: Int) {
-//        self.route = route
-//        self.rowNum = rowNum
-//    }
-
-//    func setUpCell(destinationText: String) {
-//        destinationLabel.text = "11:50 AM to \(destinationText)"
-//        setUpDestinationLabel()
-//        setUpLiveElements()
-//    }
-
-    func setUpCell(route: Route?) {
+    func setUpCell(route: Route?, destination: String) {
+        destinationName = destination
         if let route = route {
             self.route = route
             if let departDirection = (route.directions.filter { $0.type == .depart }).first {
-                destinationHasBus = true
+                // destinationHasBus = true
                 busDirection = departDirection
                 busIcon = BusIcon(type: .directionSmall, number: departDirection.routeNumber)
                 contentView.addSubview(busIcon!)
+
+                setUpDepartureLabel()
+                setUpDestinationLabel()
+                setUpLiveElements()
+            } else { // there is no bus to this destination (i.e. only walking)
+                setUpNoRoute()
             }
-            setUpDepartureLabel()
-            setUpDestinationLabel()
-            setUpLiveElements()
-        } else {
+        } else { // no route at all
             setUpNoRoute()
         }
     }
@@ -157,7 +121,7 @@ class TodayExtensionCell: UITableViewCell {
         let noRouteLabel = UILabel()
         noRouteLabel.font = .getFont(.regular, size: 14.0)
         noRouteLabel.textColor = Colors.primaryText
-        noRouteLabel.text = "No routes available to favorite destination."
+        noRouteLabel.text = "No routes available to \(destinationName)."
 
         contentView.addSubview(noRouteLabel)
 
@@ -169,6 +133,8 @@ class TodayExtensionCell: UITableViewCell {
     }
 
     func setUpDepartureLabel() {
+        departureLabel.numberOfLines = 1
+        departureLabel.lineBreakMode = NSLineBreakMode.byTruncatingTail
         departureLabel.font = .getFont(.medium, size: 16.0)
         departureLabel.textColor = Colors.primaryText
         departureLabel.font = .getFont(.medium, size: 16.0)
@@ -176,10 +142,8 @@ class TodayExtensionCell: UITableViewCell {
         if let direction = busDirection {
             departureLabel.text = direction.name
         } else {
-            departureLabel.text = "CATCH IF LET"
+            setUpNoRoute()
         }
-        departureLabel.numberOfLines = 1
-        departureLabel.lineBreakMode = NSLineBreakMode.byTruncatingTail
     }
 
     private func getDelayState(fromDirection direction: Direction) -> DelayState {
@@ -215,7 +179,7 @@ class TodayExtensionCell: UITableViewCell {
                 destinationLabel.text = Time.timeString(from: departureTime) + " to \(route.endName)"
             }
         } else {
-            destinationLabel.text = "CATCH IF LET" // need to handle case where there is only a walking route 
+            setUpNoRoute()
         }
     }
 
@@ -228,7 +192,7 @@ class TodayExtensionCell: UITableViewCell {
             switch delayState {
             case .late(date: let delayedDepartureTime):
                 liveLabel.textColor = Colors.lateRed
-                let boardTime = Time.timeString(from: direction.startTime, to: delayedDepartureTime)
+                let boardTime = Time.timeString(from: Date(), to: delayedDepartureTime)
                 liveLabel.text = (boardTime == "0 min" ? "Board now" : "Board in \(boardTime)")
                 liveIndicatorView.setColor(to: Colors.lateRed)
                 contentView.addSubview(liveLabel)
@@ -236,7 +200,7 @@ class TodayExtensionCell: UITableViewCell {
 
             case .onTime(date: let departureTime):
                 liveLabel.textColor = Colors.liveGreen
-                let boardTime = Time.timeString(from: direction.startTime, to: departureTime)
+                let boardTime = Time.timeString(from: Date(), to: departureTime)
                 liveLabel.text = (boardTime == "0 min" ? "Board now" : "Board in \(boardTime)")
                 liveIndicatorView.setColor(to: Colors.liveGreen)
 

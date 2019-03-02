@@ -56,10 +56,6 @@ import SwiftyJSON
                 print("favorite destination @: \(coord)")
             }
 
-//            self.setUpRoutesTableView()
-//            self.view.addSubview(self.routesTable)
-//            self.createConstraints()
-            // call multiroute
             self.searchForRoutes()
         }
 
@@ -81,9 +77,6 @@ import SwiftyJSON
         request.performCollectingTimeline { (response) in
             switch response.result {
             case .success(let routesResponse):
-//                for each in routesResponse.data {
-//                    each?.formatDirections(start: Constants.General.currentLocation, end: self.searchTo?.name)
-//                }
                 self.routes = routesResponse.data
                 self.routesTable.reloadData()
             case .failure(let networkError):
@@ -168,14 +161,14 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if (favorites.count != 0) {
-            if (routes.isEmpty) { // no routes retrieved
+            if (routes.isEmpty) { // no routes retrieved -- currently jumps here when still fetching routes!!
                 let cell = tableView.dequeueReusableCell(withIdentifier: "noRoutesCell", for: indexPath) as! NoRoutesCell
                 return cell
             }
 
             let cell = tableView.dequeueReusableCell(withIdentifier: "todayExtensionCell", for: indexPath) as! TodayExtensionCell
             routes[indexPath.row]?.formatDirections(start: Constants.General.currentLocation, end: favorites[indexPath.row])
-            cell.setUpCell(route: routes[indexPath.row])
+            cell.setUpCell(route: routes[indexPath.row], destination: favorites[indexPath.row])
             return cell
         }
 
