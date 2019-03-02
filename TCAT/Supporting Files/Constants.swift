@@ -143,6 +143,7 @@ struct Constants {
         static let locationNotFound = "Location Not Found"
         static let noNetworkConnection = "No Network Connection"
         static let noRoutesFound = "No Routes Found"
+        static let noActiveAlerts = "No Active Alerts. Check Back Later!"
 
         // Other empty state messages
         static let lookingForRoutes = "Looking For Routes..."

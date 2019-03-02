@@ -12,11 +12,15 @@ import DZNEmptyDataSet
 class ServiceAlertsViewController: UIViewController {
     
     var tableView: UITableView!
+    var loadingIndicator: LoadingIndicator?
+    var isLoading: Bool { return loadingIndicator != nil }
+    var networkError: Bool = false
     
     var alerts = [Int: [Alert]]() {
         didSet {
+            removeLoadingIndicator()
+            tableView.reloadData()
             if !alerts.isEmpty {
-                tableView.reloadData()
                 tableView.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: false)
             }
         }
@@ -33,6 +37,8 @@ class ServiceAlertsViewController: UIViewController {
         tableView.backgroundColor = view.backgroundColor
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
         tableView.register(ServiceAlertTableViewCell.self, forCellReuseIdentifier: ServiceAlertTableViewCell.identifier)
         tableView.allowsSelection = false
         
@@ -61,17 +67,35 @@ class ServiceAlertsViewController: UIViewController {
         }
     }
     
+    func setUpLoadingIndicator() {
+        loadingIndicator = LoadingIndicator()
+        if let loadingIndicator = loadingIndicator {
+            view.addSubview(loadingIndicator)
+            loadingIndicator.snp.makeConstraints { (make) in
+                make.center.equalToSuperview()
+                make.width.height.equalTo(40)
+            }
+        }
+    }
+    
+    func removeLoadingIndicator() {
+        if isLoading {
+            loadingIndicator?.removeFromSuperview()
+            loadingIndicator = nil
+        }
+    }
+    
     func getServiceAlerts() {
         Network.getAlerts().perform(withSuccess: { (request) in
             if (request.success) {
+                self.removeLoadingIndicator()
+                self.networkError = false
                 self.alerts = self.sortedAlerts(alertsList: request.data)
             }
         }) { (error) in
-            let title = "Couldn't Fetch Service Alerts"
-            let message = "Please check your network settings and try again later."
-            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            self.present(alertController, animated: true)
+            self.removeLoadingIndicator()
+            self.networkError = true
+            self.alerts = [:]
         }
     }
     
@@ -188,6 +212,38 @@ extension ServiceAlertsViewController: UITableViewDataSource {
         }
         
         return cell
+    }
+}
+
+extension ServiceAlertsViewController: DZNEmptyDataSetSource {
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display description
+        if isLoading { return nil }
+        let title = networkError ? Constants.EmptyStateMessages.noNetworkConnection : Constants.EmptyStateMessages.noActiveAlerts
+        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.metadataIcon])
+    }
+    
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display button
+        if isLoading || !networkError { return nil }
+        let title = Constants.Buttons.retry
+        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.tcatBlue])
+    }
+    
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        return networkError ? -80 : -60
+    }
+}
+
+extension ServiceAlertsViewController: DZNEmptyDataSetDelegate {
+    func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
+        setUpLoadingIndicator()
+        tableView.reloadData()
+        
+        let delay = 1
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)) {
+            self.getServiceAlerts()
+        }
     }
 }
 
