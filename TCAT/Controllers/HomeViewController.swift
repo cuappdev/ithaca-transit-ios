@@ -117,18 +117,7 @@ class HomeViewController: UIViewController {
             make.width.equalTo(30)
             make.height.equalTo(38)
         }
-
-        firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
-
-        let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
-        let hasSeenVersion = VersionStore().has(version: WhatsNew.Version.current())
-        if !firstViewing && (!whatsNewDismissed || !hasSeenVersion) {
-            createWhatsNewView()
-        }
-        if !hasSeenVersion {
-            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
-        }
-        VersionStore().set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
+        showWhatsNewCardIfNeeded()
     }
 
     override func viewDidLayoutSubviews() {
@@ -176,6 +165,7 @@ class HomeViewController: UIViewController {
             self.sections = []
         case .cellular, .wifi:
             self.isNetworkDown = false
+            self.showWhatsNewCardIfNeeded()
             sections = createSections()
             self.searchBar.isUserInteractionEnabled = true
         }
@@ -267,6 +257,20 @@ class HomeViewController: UIViewController {
             }
         })
         tableView.endUpdates()
+    }
+    
+    func showWhatsNewCardIfNeeded() {
+        firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
+        
+        let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
+        let hasSeenVersion = VersionStore().has(version: WhatsNew.Version.current())
+        if !firstViewing && (!whatsNewDismissed || !hasSeenVersion) {
+            createWhatsNewView()
+        }
+        if !hasSeenVersion {
+            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
+        }
+        VersionStore().set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
     }
 
     /* Keyboard Functions */
