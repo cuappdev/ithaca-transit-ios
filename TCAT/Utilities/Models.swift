@@ -68,12 +68,12 @@ class AllBusStopsRequest: Decodable {
     }
 
     func parseAllStops() {
-        
+
         // Create dictionary of all pulled stops
         let crossReference = data.reduce(into: [String: [BusStop]]()) {
             $0[$1.name, default: []].append($1)
         }
-        
+
         // Create an array of all stops that are non duplicates by name
         var nonDuplicateStops = crossReference.filter {$1.count == 1}.map { (_, value) -> BusStop in
             return value.first!
@@ -89,7 +89,7 @@ class AllBusStopsRequest: Decodable {
                 let secondStopLocation = CLLocation(latitude: second.lat, longitude: second.long)
 
                 let distanceBetween = firstStopLocation.distance(from: secondStopLocation)
-                
+
                 if distanceBetween < Constants.Values.maxDistanceBetweenStops {
                     // If stops are too close to each other, combine into a new stop with averaged location and add to list
                     let middleCoordinate = firstStopLocation.coordinate.middleLocationWith(location: secondStopLocation.coordinate)
@@ -111,4 +111,9 @@ class AllBusStopsRequest: Decodable {
 struct RoutesRequest: Codable {
     var success: Bool
     var data: [Route]
+}
+
+struct MultiRoutesRequest: Codable {
+    var success: Bool
+    var data: [Route?]
 }

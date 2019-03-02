@@ -31,28 +31,28 @@ class TodayExtensionCell: UITableViewCell {
 
     // MARK: Spacing vars
 
-    let leftMargin: CGFloat =  12
-    let verticalMargin: CGFloat = 20 // top & bottom margin
-    let rightMargin: CGFloat = 16
+    let leftMargin: CGFloat =  12.0
+    let verticalMargin: CGFloat = 20.0 // top & bottom margin
+    let rightMargin: CGFloat = 16.0
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         departureLabel = UILabel()
         destinationLabel = UILabel()
         liveLabel = UILabel()
         liveIndicatorView = LiveIndicator(size: .small, color: .clear)
-        
+
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        if
-            let route = route,
-            let departDirection = (route.directions.filter { $0.type == .depart }).first {
-                destinationHasBus = true
-                busDirection = departDirection
-                busIcon = BusIcon(type: .directionSmall, number: departDirection.routeNumber)
-        } else { // THERE IS NO BUS TO THIS DESTINATION! -- how to handle this case?
-            destinationHasBus = false
-            busIcon = BusIcon(type: .directionSmall, number: 90)
-        }
+//        if
+//            let route = route,
+//            let departDirection = (route.directions.filter { $0.type == .depart }).first {
+//                destinationHasBus = true
+//                busDirection = departDirection
+//                busIcon = BusIcon(type: .directionSmall, number: departDirection.routeNumber)
+//        } else { // THERE IS NO BUS TO THIS DESTINATION! -- how to handle this case?
+//            destinationHasBus = false
+//            busIcon = BusIcon(type: .directionSmall, number: 90)
+//        }
 
 //        departureLabel.font = .getFont(.medium, size: 16.0)
 //        departureLabel.textColor = Colors.primaryText
@@ -135,13 +135,39 @@ class TodayExtensionCell: UITableViewCell {
 //        setUpLiveElements()
 //    }
 
-    func setUpCell(route: Route) {
-        self.route = route
-        setUpDepartureLabel()
-        setUpDestinationLabel()
-        setUpLiveElements()
+    func setUpCell(route: Route?) {
+        if let route = route {
+            self.route = route
+            if let departDirection = (route.directions.filter { $0.type == .depart }).first {
+                destinationHasBus = true
+                busDirection = departDirection
+                busIcon = BusIcon(type: .directionSmall, number: departDirection.routeNumber)
+                contentView.addSubview(busIcon!)
+            }
+            setUpDepartureLabel()
+            setUpDestinationLabel()
+            setUpLiveElements()
+        } else {
+            setUpNoRoute()
+        }
     }
-    
+
+    func setUpNoRoute() {
+        showLiveElements = false
+        let noRouteLabel = UILabel()
+        noRouteLabel.font = .getFont(.regular, size: 14.0)
+        noRouteLabel.textColor = Colors.primaryText
+        noRouteLabel.text = "No routes available to favorite destination."
+
+        contentView.addSubview(noRouteLabel)
+
+        noRouteLabel.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.width.equalTo(noRouteLabel.intrinsicContentSize.width)
+        }
+    }
+
     func setUpDepartureLabel() {
         departureLabel.font = .getFont(.medium, size: 16.0)
         departureLabel.textColor = Colors.primaryText
@@ -155,7 +181,7 @@ class TodayExtensionCell: UITableViewCell {
         departureLabel.numberOfLines = 1
         departureLabel.lineBreakMode = NSLineBreakMode.byTruncatingTail
     }
-    
+
     private func getDelayState(fromDirection direction: Direction) -> DelayState {
         let departTime = direction.startTime
         if let delay = direction.delay {
@@ -176,26 +202,27 @@ class TodayExtensionCell: UITableViewCell {
         destinationLabel.textColor = Colors.secondaryText
         destinationLabel.numberOfLines = 1
         destinationLabel.lineBreakMode = .byTruncatingTail
-        
+
         if let route = route, let direction = busDirection {
             let delayState = getDelayState(fromDirection: direction)
 
             switch delayState {
             case .late(date: let delayedDepartureTime):
-                destinationLabel.text = "\(delayedDepartureTime) to \(route.endName)"
+
+                destinationLabel.text = Time.timeString(from: delayedDepartureTime) + " to \(route.endName)"
 
             case .onTime(date: let departureTime), .noDelay(date: let departureTime):
-                destinationLabel.text = "\(departureTime) to \(route.endName)"
+                destinationLabel.text = Time.timeString(from: departureTime) + " to \(route.endName)"
             }
         } else {
-            destinationLabel.text = "CATCH IF LET"
+            destinationLabel.text = "CATCH IF LET" // need to handle case where there is only a walking route 
         }
     }
 
     func setUpLiveElements() {
         liveLabel.font = .getFont(.medium, size: 16.0)
         liveLabel.textColor = Colors.primaryText
-        
+
         if let direction = busDirection {
             let delayState = getDelayState(fromDirection: direction)
             switch delayState {

@@ -25,7 +25,7 @@ class Network {
     // Change `networkType` to `.local` to work locally.
     // Change `localIPAddress` to be the proper address
 
-    static let networkType: NetworkType = .release
+    static let networkType: NetworkType = .debug
     static let apiVersion = "v1"
 
     /// Used for local backend testing
@@ -33,7 +33,7 @@ class Network {
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
 
     /// Test server used for development
-    static let debugIPAddress = "157.230.66.192"
+    static let debugIPAddress = "transit-dev.cornellappdev.com"
     static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
 
     /// Deployed server instance used for release
@@ -108,26 +108,26 @@ class Network {
     class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D,
                          startPlaceName: String, endPlaceName: String, time: Date, type: SearchType,
                          callback: @escaping (_ request: APIRequest<RoutesRequest, Error>) -> Void) {
-        
+
         let request: APIRequest<RoutesRequest, Error> = tron.codable.request("route")
         request.method = .get
         request.parameters = [
-            "arriveBy"          :   type == .arriveBy,
-            "end"               :   "\(endCoord.latitude),\(endCoord.longitude)",
-            "start"             :   "\(startCoord.latitude),\(startCoord.longitude)",
-            "time"              :   time.timeIntervalSince1970,
-            "destinationName"   :   endPlaceName,
-            "originName"        :   startPlaceName
+            "arriveBy": type == .arriveBy,
+            "end": "\(endCoord.latitude),\(endCoord.longitude)",
+            "start": "\(startCoord.latitude),\(startCoord.longitude)",
+            "time": time.timeIntervalSince1970,
+            "destinationName": endPlaceName,
+            "originName": startPlaceName
         ]
-        
+
 //        // Add unique identifier to request
 //        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
 //            request.parameters["uid"] = uid
 //        }
-        
+
         callback(request)
     }
-    
+
     class func getRequestUrl(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D,
                              originName: String, destinationName: String, time: Date, type: SearchType) -> String {
         let path = "route"
@@ -135,21 +135,21 @@ class Network {
         let end = "\(endCoord.latitude),\(endCoord.longitude)"
         let start =  "\(startCoord.latitude),\(startCoord.longitude)"
         let time = time.timeIntervalSince1970
-        
+
         return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(end)&start=\(start)&time=\(time)&destinationName=\(destinationName)&originName=\(originName)"
     }
-    
-    class func getMultiRoutes(startCoord: CLLocationCoordinate2D, time: Date, endCoords : [String], endPlaceNames: [String],
-                              callback: @escaping (_ request: APIRequest<RoutesRequest, Error>) -> Void) {
-        let request: APIRequest<RoutesRequest, Error> = tron.codable.request("multiroute")
+
+    class func getMultiRoutes(startCoord: CLLocationCoordinate2D, time: Date, endCoords: [String], endPlaceNames: [String],
+                              callback: @escaping (_ request: APIRequest<MultiRoutesRequest, Error>) -> Void) {
+        let request: APIRequest<MultiRoutesRequest, Error> = tron.codable.request("multiroute")
         request.method = .get
         request.parameters = [
-            "start"                 :   "\(startCoord.latitude),\(startCoord.longitude)",
-            "time"                  :   time.timeIntervalSince1970,
-            "end"                   :   endCoords,
-            "destinationNames"      :   endPlaceNames
+            "start": "\(startCoord.latitude),\(startCoord.longitude)",
+            "time": time.timeIntervalSince1970,
+            "end": endCoords,
+            "destinationNames": endPlaceNames
         ]
-        
+
         callback(request)
     }
 
@@ -163,19 +163,19 @@ class Network {
         ]
         return request
     }
-    
+
     @discardableResult
     class func routeSelected(routeId: String) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routeSelected")
         request.method = .post
         request.parameterEncoding = JSONEncoding.default
-        request.parameters = ["routeId" : routeId]
-        
+        request.parameters = ["routeId": routeId]
+
 //        // Add unique identifier to request
 //        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
 //            request.parameters["uid"] = uid
 //        }
-        
+
         return request
     }
 
@@ -186,7 +186,7 @@ class Network {
         let dictionary = departDirections.map { (direction) -> [String: Any] in
 
             // The id of the location, or bus stop, the bus needs to get to
-            
+
             let stopID = direction.stops.first?.id ?? "-1"
 
             return [

@@ -21,7 +21,7 @@ import SwiftyJSON
     var routesTable: UITableView = UITableView()
     var favorites: [String] = []
     var coordinates: [String] = []
-    var routes: [Route] = []
+    var routes: [Route?] = []
 
     let group = DispatchGroup()
     var locationManager: CLLocationManager!
@@ -33,6 +33,7 @@ import SwiftyJSON
         extensionContext?.widgetLargestAvailableDisplayMode = .expanded
 
         setUpLocation()
+        setUpRoutesTableView()
 
         GMSServices.provideAPIKey(Keys.googleMaps.value)
         GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
@@ -60,26 +61,28 @@ import SwiftyJSON
 //            self.createConstraints()
             // call multiroute
             self.searchForRoutes()
-
         }
+
+        view.addSubview(routesTable)
+        createConstraints()
     }
 
     func searchForRoutes() {
         if let currentLocation = currentLocation {
-            Network.getMultiRoutes(startCoord: currentLocation, time: Date(), endCoords : coordinates, endPlaceNames: favorites) { (request) in
+            Network.getMultiRoutes(startCoord: currentLocation, time: Date(), endCoords: coordinates, endPlaceNames: favorites) { (request) in
                 self.processRequest(request: request)
             }
         } else {
             // could not determine current location
         }
     }
-    
-    func processRequest(request: APIRequest<RoutesRequest, Error>) {
+
+    func processRequest(request: APIRequest<MultiRoutesRequest, Error>) {
         request.performCollectingTimeline { (response) in
             switch response.result {
             case .success(let routesResponse):
 //                for each in routesResponse.data {
-//                    each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
+//                    each?.formatDirections(start: Constants.General.currentLocation, end: self.searchTo?.name)
 //                }
                 self.routes = routesResponse.data
                 self.routesTable.reloadData()
@@ -90,16 +93,16 @@ import SwiftyJSON
             }
         }
     }
-    
+
     func processRequestError(error: APIError<Error>) {
         let title = "Network Failure: \((error.error as NSError?)?.domain ?? "No Domain")"
         let description = (error.localizedDescription) + ", " + ((error.error as NSError?)?.description ?? "n/a")
-        
+
         routes = []
         print(title)
         print(description)
     }
-    
+
     func widgetPerformUpdate(completionHandler: (@escaping (NCUpdateResult) -> Void)) {
         // Perform any setup necessary in order to update the view. (called to update the widget)
 
@@ -143,10 +146,20 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
         routesTable.allowsSelection = false
         routesTable.register(TodayExtensionCell.self, forCellReuseIdentifier: "todayExtensionCell")
         routesTable.register(NoFavoritesCell.self, forCellReuseIdentifier: "noFavoritesCell")
+        routesTable.register(NoRoutesCell.self, forCellReuseIdentifier: "noRoutesCell")
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return (extensionContext?.widgetActiveDisplayMode == .compact) ? 1 : (favorites.isEmpty) ? 1 : favorites.count
+        let isCompact = extensionContext?.widgetActiveDisplayMode == .compact
+
+        if (isCompact || favorites.isEmpty) {
+            return 1
+        } else if (routes.isEmpty) {
+            return 1
+        } else {
+            return favorites.count
+        }
+//        return (extensionContext?.widgetActiveDisplayMode == .compact) ? 1 : (favorites.isEmpty) ? 1 : favorites.count
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -155,11 +168,18 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if (favorites.count != 0) {
+            if (routes.isEmpty) { // no routes retrieved
+                let cell = tableView.dequeueReusableCell(withIdentifier: "noRoutesCell", for: indexPath) as! NoRoutesCell
+                return cell
+            }
+
             let cell = tableView.dequeueReusableCell(withIdentifier: "todayExtensionCell", for: indexPath) as! TodayExtensionCell
+            routes[indexPath.row]?.formatDirections(start: Constants.General.currentLocation, end: favorites[indexPath.row])
             cell.setUpCell(route: routes[indexPath.row])
             return cell
         }
 
+        // else: favorites = 0
         let cell = tableView.dequeueReusableCell(withIdentifier: "noFavoritesCell", for: indexPath) as! NoFavoritesCell
         return cell
     }

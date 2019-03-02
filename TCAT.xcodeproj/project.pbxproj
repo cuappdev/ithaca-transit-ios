@@ -44,6 +44,7 @@
 		7E47DEDA22093F7300BC944E /* NoFavoritesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E47DED922093F7300BC944E /* NoFavoritesCell.swift */; };
 		7E75BAD621B3A72B00FB56BB /* TodayExtensionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */; };
 		7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
+		7E950008222A396400636169 /* NoRoutesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E950007222A396400636169 /* NoRoutesTableViewCell.swift */; };
 		7EBD9D862226301B008BF900 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F51F6DB06A0073E8F7 /* Constants.swift */; };
 		7EBD9D8722263089008BF900 /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
 		7EBD9D882226308F008BF900 /* BusStop.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36A6FD1F66378B00E4789E /* BusStop.swift */; };
@@ -232,6 +233,7 @@
 		7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayExtensionHelpers.swift; sourceTree = "<group>"; };
 		7E47DED922093F7300BC944E /* NoFavoritesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFavoritesCell.swift; sourceTree = "<group>"; };
 		7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodayExtensionCell.swift; sourceTree = "<group>"; };
+		7E950007222A396400636169 /* NoRoutesTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NoRoutesTableViewCell.swift; path = ../../NoRoutesTableViewCell.swift; sourceTree = "<group>"; };
 		7EE04A6721B454F4002F0C52 /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Shared.swift; path = Utilities/Shared.swift; sourceTree = "<group>"; };
 		7EE04A6C21B461D7002F0C52 /* Extensions+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extensions+Shared.swift"; sourceTree = "<group>"; };
 		7EEF189B21B39C6200343FFD /* Today Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Today Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -498,6 +500,7 @@
 				7EEF189F21B39C6200343FFD /* TodayViewController.swift */,
 				7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */,
 				7E47DED922093F7300BC944E /* NoFavoritesCell.swift */,
+				7E950007222A396400636169 /* NoRoutesTableViewCell.swift */,
 				7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */,
 				7EEF18A421B39C6200343FFD /* Info.plist */,
 			);
@@ -1194,6 +1197,7 @@
 				7E75BAD621B3A72B00FB56BB /* TodayExtensionCell.swift in Sources */,
 				7EE04A6321B453C5002F0C52 /* (null) in Sources */,
 				7EE04A5221B45143002F0C52 /* Direction.swift in Sources */,
+				7E950008222A396400636169 /* NoRoutesTableViewCell.swift in Sources */,
 				7EE04A6421B453E3002F0C52 /* BusLocation.swift in Sources */,
 				7EE04A5E21B45357002F0C52 /* RouteDiagram.swift in Sources */,
 				7EE04A5B21B452D4002F0C52 /* Constants.swift in Sources */,
