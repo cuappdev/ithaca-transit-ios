@@ -107,10 +107,12 @@ class TodayExtensionCell: UITableViewCell {
                 setUpDepartureLabel()
                 setUpDestinationLabel()
                 setUpLiveElements()
-            } else { // there is no bus to this destination (i.e. only walking)
+            }
+            else { // there is no bus to this destination (i.e. only walking)
                 setUpNoRoute()
             }
-        } else { // no route at all
+        }
+        else { // no route at all
             setUpNoRoute()
         }
     }
@@ -140,8 +142,6 @@ class TodayExtensionCell: UITableViewCell {
         departureLabel.textColor = Colors.primaryText
         if let direction = busDirection {
             departureLabel.text = direction.name
-        } else {
-            setUpNoRoute()
         }
     }
 
@@ -177,8 +177,6 @@ class TodayExtensionCell: UITableViewCell {
             case .onTime(date: let departureTime), .noDelay(date: let departureTime):
                 destinationLabel.text = Time.timeString(from: departureTime) + " to \(route.endName)"
             }
-        } else {
-            setUpNoRoute()
         }
     }
 
