@@ -226,8 +226,12 @@ class HomeViewController: UIViewController {
 
     func createWhatsNewView() {
         userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
-        whatsNewView = WhatsNewHeaderView(updateName: Constants.General.whatsNewUpdateName,
-                                          description: Constants.General.whatsNewDescription)
+        whatsNewView = WhatsNewHeaderView(updateName: Constants.WhatsNew.whatsNewUpdateName,
+                                          description: Constants.WhatsNew.whatsNewDescription,
+                                          descHasHyperLink: Constants.WhatsNew.descHasHyperLink,
+                                          hyperLinkText: Constants.WhatsNew.whatsNewHyperLinkText,
+                                          appLink: Constants.WhatsNew.whatsNewAppLink,
+                                          webLink: Constants.WhatsNew.whatsNewWebLink)
         whatsNewView.whatsNewDelegate = self
         whatsNewContainerView = UIView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: whatsNewView.calculateCardHeight() + whatsNewView.containerPadding.top + whatsNewView.containerPadding.bottom))
         whatsNewContainerView.addSubview(whatsNewView)
