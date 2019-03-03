@@ -165,7 +165,7 @@ class AllStopsTableViewController: UITableViewController {
         let section = sectionIndexes[sortedKeys[indexPath.section]]
         cell.place = section?[indexPath.row]
         cell.textLabel?.text = section?[indexPath.row].name
-        cell.detailTextLabel?.text = section?[indexPath.row].getDescription()
+        cell.detailTextLabel?.text = section?[indexPath.row].description
         return cell
     }
 

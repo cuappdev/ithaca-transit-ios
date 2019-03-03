@@ -63,10 +63,11 @@ class SearchTableViewManager {
     }
 
     func retrievePlaces(for key: String) -> [Place] {
-        if let storedPlaces = userDefaults.value(forKey: key) as? Data {
-            if let places =  try? decoder.decode([Place].self, from: storedPlaces) {
-                return places
-            }
+        if
+            let storedPlaces = userDefaults.value(forKey: key) as? Data,
+            let places = try? decoder.decode([Place].self, from: storedPlaces)
+        {
+            return places
         }
         return [Place]()
     }
@@ -106,7 +107,7 @@ class SearchTableViewManager {
     
         places = bottom ? places + [place] : [place] + places
         
-        if places.count > limit { places.remove(at: places.count - 1)}
+        if places.count > limit { places.remove(at: places.count - 1) }
         
         do {
             let data = try encoder.encode(places)

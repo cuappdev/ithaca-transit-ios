@@ -322,9 +322,7 @@ extension HomeViewController: UITableViewDataSource {
             cell.textLabel?.text = Constants.General.seeAllStops
             cell.imageView?.image = #imageLiteral(resourceName: "list")
             cell.accessoryType = .disclosureIndicator
-        }
-        
-        else {
+        } else {
             let place = sections[indexPath.section].items[indexPath.row]
             cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
             (cell as? PlaceTableViewCell)?.place = place

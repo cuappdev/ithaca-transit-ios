@@ -126,16 +126,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let favoritesKey = Constants.UserDefaults.favorites
         
-        if let storedPlaces = userDefaults.value(forKey: favoritesKey) as? Data {
+        if
+            let storedPlaces = userDefaults.value(forKey: favoritesKey) as? Data,
+            let favorites = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any]
+        {
             // This will only fire on legacy models
-            if let favorites = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any] {
-                convertDataToPlaces(data: favorites) { (places) in
-                    do {
-                        let encodedObject = try self.encoder.encode(places)
-                        self.userDefaults.set(encodedObject, forKey: favoritesKey)
-                    } catch let error {
-                        print(error)
-                    }
+            convertDataToPlaces(data: favorites) { (places) in
+                do {
+                    let encodedObject = try self.encoder.encode(places)
+                    self.userDefaults.set(encodedObject, forKey: favoritesKey)
+                } catch let error {
+                    print(error)
                 }
             }
         }
@@ -149,16 +150,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let recentSearchesKey = Constants.UserDefaults.recentSearch
         
-        if let storedPlaces = userDefaults.value(forKey: recentSearchesKey) as? Data {
-            //  This will only fire on legacy models
-            if let recents = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any] {
-                convertDataToPlaces(data: recents) { (places) in
-                    do {
-                        let encodedObject = try self.encoder.encode(places)
-                        self.userDefaults.set(encodedObject, forKey: recentSearchesKey)
-                    } catch let error {
-                        print(error)
-                    }
+        //  This will only fire on legacy models
+        if
+            let storedPlaces = userDefaults.value(forKey: recentSearchesKey) as? Data,
+            let recents = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any]
+        {
+            convertDataToPlaces(data: recents) { (places) in
+                do {
+                    let encodedObject = try self.encoder.encode(places)
+                    self.userDefaults.set(encodedObject, forKey: recentSearchesKey)
+                } catch let error {
+                    print(error)
                 }
             }
         }
