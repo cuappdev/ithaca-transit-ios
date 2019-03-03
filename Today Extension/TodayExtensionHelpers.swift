@@ -65,7 +65,6 @@ class TodayExtensionManager {
                 }
 
                 group.notify(queue: .main) {
-                    print ("Finished retriving all coordinates")
                     callback(coordinates)
                 }
             } else {

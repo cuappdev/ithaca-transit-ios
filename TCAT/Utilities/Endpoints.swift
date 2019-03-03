@@ -34,17 +34,19 @@ class Network {
 
     /// Test server used for development
     static let debugIPAddress = "transit-dev.cornellappdev.com"
-    static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
+    static let debugSource = "https://\(debugIPAddress)/api/\(apiVersion)/"
 
     /// Deployed server instance used for release
     static let releaseIPAddress = "transit-backend.cornellappdev.com"
-    static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
+    static let releaseSource = "https://\(releaseIPAddress)/api/\(apiVersion)/"
 
     /// Network IP address being used for specified networkType
     static var ipAddress: String {
+        #if RELEASE
         if isTestFlight() {
            return debugIPAddress
         }
+        #endif
         switch networkType {
         case .local: return localIPAddress
         case .debug: return debugIPAddress
@@ -54,9 +56,11 @@ class Network {
 
     /// Network source currently being used
     static var address: String {
-//        if isTestFlight() {
-//            return debugSource
-//        }
+        #if RELEASE
+        if isTestFlight() {
+            return debugSource
+        }
+        #endif
         switch networkType {
         case .local: return localSource
         case .debug: return debugSource

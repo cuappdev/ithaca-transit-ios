@@ -23,7 +23,7 @@ import SwiftyJSON
     var coordinates: [String] = []
     var routes: [Route?] = []
 
-    var fetchedRoutes: Bool = false
+    var didFetchRoutes: Bool = false
 
     let group = DispatchGroup()
     var locationManager: CLLocationManager!
@@ -31,6 +31,7 @@ import SwiftyJSON
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("viewDidLoad")
 
         extensionContext?.widgetLargestAvailableDisplayMode = .expanded
 
@@ -41,23 +42,17 @@ import SwiftyJSON
         GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
 
         favorites = TodayExtensionManager.shared.retrieveFavoritesNames(for: Constants.UserDefaults.favorites)
-        print("favorites retrieved: \(favorites.count)")
-        for fav in favorites {
-            print("favorite destination is: \(fav)")
-        }
+        print("retrieved favorites")
 
         group.enter()
         TodayExtensionManager.shared.retrieveFavoritesCoordinates(for: Constants.UserDefaults.favorites) { (coordsDict) in
             self.coordinates = TodayExtensionManager.shared.orderCoordinates(favorites: self.favorites, dictionary: coordsDict)
             self.group.leave()
+            print("retrieved coordinates")
         }
 
         group.notify(queue: .main) {
-            print("# of coordinates retrieved: \(self.coordinates.count)")
-            for coord in self.coordinates {
-                print("favorite destination @: \(coord)")
-            }
-
+            print("searching for routes")
             self.searchForRoutes()
         }
 
@@ -68,10 +63,11 @@ import SwiftyJSON
     func searchForRoutes() {
         if let currentLocation = currentLocation {
             Network.getMultiRoutes(startCoord: currentLocation, time: Date(), endCoords: coordinates, endPlaceNames: favorites) { (request) in
+                print("fetching new routes...")
                 self.processRequest(request: request)
             }
         } else {
-            // could not determine current location
+            print("if let currentLocation failed")
         }
     }
 
@@ -80,8 +76,9 @@ import SwiftyJSON
             switch response.result {
             case .success(let routesResponse):
                 self.routes = routesResponse.data
-                self.fetchedRoutes = true
+                self.didFetchRoutes = true
                 self.routesTable.reloadData()
+                print("reloaded table view")
             case .failure(let networkError):
                 if let error = networkError as? APIError<Error> {
                     self.processRequestError(error: error)
@@ -106,10 +103,9 @@ import SwiftyJSON
         // If there's no update required, use NCUpdateResult.NoData
         // If there's an update, use NCUpdateResult.NewData
 
-        // update bus info?
         print("widgetPerformUpdate")
-
-        completionHandler(NCUpdateResult.newData)
+        
+//        completionHandler
     }
 
     /// Called in response to the user tapping the “Show More” or “Show Less” buttons
@@ -139,7 +135,7 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     private func setUpRoutesTableView() {
         routesTable.delegate = self
         routesTable.dataSource = self
-        routesTable.allowsSelection = false
+        // routesTable.allowsSelection = false
         routesTable.register(TodayExtensionCell.self, forCellReuseIdentifier: "todayExtensionCell")
         routesTable.register(NoFavoritesCell.self, forCellReuseIdentifier: "noFavoritesCell")
         routesTable.register(NoRoutesCell.self, forCellReuseIdentifier: "noRoutesCell")
@@ -164,7 +160,7 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
         if (favorites.count != 0) {
             if (routes.isEmpty) {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "noRoutesCell", for: indexPath) as! NoRoutesCell
-                if (fetchedRoutes) { // no routes retrieved
+                if (didFetchRoutes) { // no routes retrieved
                     cell.noRoutesLabel.text = "Unable to Load Routes"
                     return cell
                 } else { // still fetching routes
@@ -185,8 +181,20 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // launch app via URL scheme --> route detail view
-        // how to pass route as a parameter?
+        // launch app via URL scheme --> route OPTIONS view (to be changed to route detail view later on
+        
+        let latLong = coordinates[indexPath.row].components(separatedBy: ",")
+        let latitude = latLong[0]
+        let longitude = latLong[1]
+        let destination = favorites[indexPath.row]
+        
+        let stringURL = "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(destination)"
+        if
+            let url = stringURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+            let convertedURL = URL(string: url) {
+            extensionContext?.open(convertedURL, completionHandler: nil)
+        }
+        
     }
 
 }
@@ -203,4 +211,10 @@ extension TodayViewController: CLLocationManagerDelegate {
             currentLocation = location.coordinate
         }
     }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            currentLocation = location.coordinate
+        }
+    } 
 }
