@@ -22,9 +22,9 @@ struct Constants {
         }
         
         struct AlertsRequestFailure {
-            static let title = "Request Failed"
-            static let message = "We failed to retrieve alerts. Pull to retry"
-            static let action = "OK!"
+            static let title = "Couldn't Fetch Service Alerts"
+            static let message = "There was an error fetching service alerts. Please retry again."
+            static let action = "OK"
         }
 
         struct LocationPermissions {
@@ -143,7 +143,7 @@ struct Constants {
         static let locationNotFound = "Location Not Found"
         static let noNetworkConnection = "No Network Connection"
         static let noRoutesFound = "No Routes Found"
-        static let noActiveAlerts = "No Active Alerts. Check Back Later!"
+        static let noActiveAlerts = "No Active Service Alerts"
 
         // Other empty state messages
         static let lookingForRoutes = "Looking For Routes..."
