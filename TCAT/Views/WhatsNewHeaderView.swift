@@ -130,8 +130,7 @@ class WhatsNewHeaderView: UIView {
             let value = CGFloat(32)
             updateDescToUpdateName = make.top.equalTo(updateTitle.snp.bottom).offset(6).constraint
             make.leading.trailing.equalToSuperview().inset(value)
-            if let description = updateDescription.text
-            {
+            if let description = updateDescription.text {
                 // Take total width and subtract various insets used in layout
                 let headerViewCardPadding = containerPadding.left + containerPadding.right
                 let widthValue = UIScreen.main.bounds.width - headerViewCardPadding - (value * 2)
@@ -168,7 +167,12 @@ class WhatsNewHeaderView: UIView {
     }
     
     func calculateCardHeight() -> CGFloat {
-        if let titleToTop = titleToTop, let updateNameToTitle = updateNameToTitle, let updateDescToUpdateName = updateDescToUpdateName, let updateDescriptionHeight = updateDescriptionHeight, let dismissButtonToUpdateDesc = dismissButtonToUpdateDesc, let dismissButtonToBottom = dismissButtonToBottom {
+        if let titleToTop = titleToTop,
+            let updateNameToTitle = updateNameToTitle,
+            let updateDescToUpdateName = updateDescToUpdateName,
+            let updateDescriptionHeight = updateDescriptionHeight,
+            let dismissButtonToUpdateDesc = dismissButtonToUpdateDesc,
+            let dismissButtonToBottom = dismissButtonToBottom {
             
             let titleToTopVal = titleToTop.layoutConstraints[0].constant
             let titleHeight = whatsNewHeader.intrinsicContentSize.height
