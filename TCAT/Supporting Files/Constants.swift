@@ -267,12 +267,16 @@ struct Constants {
     struct WhatsNew {
         static let whatsNewHeaderTitle = "NEW IN ITHACA TRANSIT"
         
-        // What's New for twitter update
-        static let whatsNewUpdateName = "Ithaca Transit on Twitter!"
-        static let whatsNewDescription = "Check out our new twitter account @\(App.twitterHandle)! \nWe will post any updates on bus statuses in addition to any promos!"
-        static let descHasHyperLink = true  // Setting to false practically diregards the rest of these fields
-        static let whatsNewHyperLinkText = App.twitterHandle
-        static let whatsNewAppLink = "twitter://user?screen_name=\(App.twitterHandle)"
-        static let whatsNewWebLink = "https://twitter.com/\(App.twitterHandle)"
+        // What's New for v1.2
+        static let whatsNewUpdateName = "Introducing Siri Shortcuts"
+        static let whatsNewDescription = "Use Siri to access recent searches! Head to Siri & Search in Settings to get started."
+        
+//        What's New for twitter update
+//        static let whatsNewUpdateName = "Ithaca Transit on Twitter!"
+//        static let whatsNewDescription = "Check out our new twitter account @\(App.twitterHandle)! \nWe will post any updates on bus statuses in addition to any promos!"
+//        static let descHasHyperLink = true  // Setting to false practically diregards the rest of these fields
+//        static let whatsNewHyperLinkText = App.twitterHandle
+//        static let whatsNewAppLink = "twitter://user?screen_name=\(App.twitterHandle)"
+//        static let whatsNewWebLink = "https://twitter.com/\(App.twitterHandle)"
     }
 }

@@ -37,7 +37,8 @@ class WhatsNewHeaderView: UIView {
     
     let containerPadding = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
 
-    init(updateName: String, description: String,
+    init(updateName: String,
+         description: String,
          descHasHyperLink: Bool = false,
          hyperLinkText: String? = nil,
          appLink: String? = nil,
@@ -89,7 +90,7 @@ class WhatsNewHeaderView: UIView {
         if descHasHyperLink {
             addHyperLink(description: desc)
         } else {
-            updateDescription.text = description
+            updateDescription.text = desc
         }
 
         addSubview(updateDescription)
