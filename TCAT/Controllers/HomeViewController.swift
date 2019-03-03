@@ -115,14 +115,14 @@ class HomeViewController: UIViewController {
         firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
 
         let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
-        let hasSeenVersion = VersionStore().has(version: WhatsNew.Version.current())
+        let hasSeenVersion = VersionStore.shared.has(version: WhatsNew.Version.current())
         if !firstViewing && (!whatsNewDismissed || !hasSeenVersion) {
             createWhatsNewView()
         }
         if !hasSeenVersion {
             userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
         }
-        VersionStore().set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
+        VersionStore.shared.set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
     }
 
     override func viewDidLayoutSubviews() {
@@ -259,7 +259,7 @@ class HomeViewController: UIViewController {
             if completed {
                 self.tableView.animating = false
                 self.tableView.tableHeaderView = nil
-                VersionStore().set(version: WhatsNew.Version.current())
+                VersionStore.shared.set(version: WhatsNew.Version.current())
             }
         })
         tableView.endUpdates()

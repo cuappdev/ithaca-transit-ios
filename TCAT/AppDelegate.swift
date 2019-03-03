@@ -36,7 +36,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GMSServices.provideAPIKey(Keys.googleMaps.value)
         GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
         
-        migrationToNewPlacesModel()
+        // v1.3 Data Migration
+        
+        print("Begin Data Migration")
+        if VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1) {
+            migrationToNewPlacesModel { (success, errorDescription) in
+                print("success: \(success), error: \(errorDescription)")
+                let payload = DataMigrationOnePointThreePayload(success: success, errorDescription: errorDescription)
+                Analytics.shared.log(payload)
+            }
+        }
         
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
@@ -109,98 +118,102 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: Helper Functions
     
     /// Convert BusStop and PlaceResult models to new unified Place model.
-    func migrationToNewPlacesModel() {
+    func migrationToNewPlacesModel(completion: @escaping (_ success: Bool, _ errorDescription: String?) -> Void) {
         
-        // Potentially check version to make sure this only fires once.
+        // "See All Stops" and App Shortcuts data is handled automatically
+    
+        let dispatchGroup = DispatchGroup()
         
-        //
-        // allStops
-        //
+        var success = true
+        var description: String?
         
-        // should overwrite existing values
-        // getBusStops()
-        
-        //
-        // favorites
-        //
-        
+        // Favorites Data
         let favoritesKey = Constants.UserDefaults.favorites
         
         if
             let storedPlaces = userDefaults.value(forKey: favoritesKey) as? Data,
             let favorites = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any]
         {
-            // This will only fire on legacy models
-            convertDataToPlaces(data: favorites) { (places) in
-                do {
-                    let encodedObject = try self.encoder.encode(places)
+            // This will only fire on legacy verisions and models
+            dispatchGroup.enter()
+            convertDataToPlaces(data: favorites) { (places, error) in
+                if let encodedObject = try? self.encoder.encode(places), error == nil {
                     self.userDefaults.set(encodedObject, forKey: favoritesKey)
-                } catch let error {
-                    print(error)
+                } else {
+                    success = false
+                    description = "Favorites Conversion Failed: \(error ?? "Encoder")"
+                    print("[AppDelegate] dataMigration favorites", error ?? "Encoder")
                 }
+                dispatchGroup.leave()
             }
         }
         
-        // Update shortcuts
-        // Done in main AppDelegate.swift function
-        
-        //
-        // recentSearches
-        //
-        
+        // Recent Searches Data
         let recentSearchesKey = Constants.UserDefaults.recentSearch
         
-        //  This will only fire on legacy models
         if
             let storedPlaces = userDefaults.value(forKey: recentSearchesKey) as? Data,
             let recents = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any]
         {
-            convertDataToPlaces(data: recents) { (places) in
-                do {
-                    let encodedObject = try self.encoder.encode(places)
+            //  This will only fire on legacy versions and models
+            dispatchGroup.enter()
+            convertDataToPlaces(data: recents) { (places, error) in
+                if let encodedObject = try? self.encoder.encode(places), error == nil {
                     self.userDefaults.set(encodedObject, forKey: recentSearchesKey)
-                } catch let error {
-                    print(error)
+                } else {
+                    success = false
+                    description = "Recent Searches Conversion Failed: \(error ?? "Encoder")"
+                    print("[AppDelegate] dataMigration recentSearches", error ?? "Encoder")
                 }
+                dispatchGroup.leave()
             }
         }
         
-        // Should show a loading function until everything in here finishes. "Updating database"
+        // Could show loading UI / "Updating databse" while this happens
+        dispatchGroup.notify(queue: .main) {
+            completion(success, description)
+        }
 
     }
     
-    func convertDataToPlaces(data: [Any], completion: @escaping (_ places: [Place]) -> Void) {
+    func convertDataToPlaces(data: [Any], completion: @escaping (_ places: [Place], _ error: String?) -> Void) {
         var places = [Place]()
+        
         for item in data {
             
-            var place: Place!
+            var optionalPlace: Place?
             
             // Unwrap `Any` to `BusStop` or `PlaceResult`
             if let busStop = item as? BusStop {
-                place = Place(name: busStop.name, latitude: busStop.lat, longitude: busStop.long)
+                optionalPlace = Place(name: busStop.name, latitude: busStop.lat, longitude: busStop.long)
             }
+            
             if let placeResult = item as? PlaceResult {
-                place = Place(name: placeResult.name, placeDescription: placeResult.detail, placeIdentifier: placeResult.placeID)
+                optionalPlace = Place(name: placeResult.name, placeDescription: placeResult.detail, placeIdentifier: placeResult.placeID)
+            }
+            
+            guard let place = optionalPlace else {
+                completion(places, "Unable to retrieve busStop or placeResult data.")
+                return
             }
             
             if place.type == .googlePlace {
                 CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
                     if error != nil {
-                        // TODO: Handle error properly
-                        print("Unable to get coordinates to save favorite.")
+                        completion(places, "\(place.name): Unable to get Google Place coordinates")
                     } else {
                         place.latitude = latitude
                         place.longitude = longitude
                         places.append(place)
                     }
                     if places.count == data.count {
-                        completion(places)
+                        completion(places, nil)
                     }
                 }
             } else {
                 places.append(place)
                 if places.count == data.count {
-                    completion(places)
+                    completion(places, nil)
                 }
             }
             
