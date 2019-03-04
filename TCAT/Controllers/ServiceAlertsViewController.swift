@@ -250,6 +250,13 @@ extension ServiceAlertsViewController: DZNEmptyDataSetDelegate {
 
 // MARK: Testing
 extension ServiceAlertsViewController {
+    /*
+     When testing:
+        1) Comment out getServiceAlerts at the bottom of viewDidLoad()
+        2) Add the line `createDummyData()` below it
+        3) Create any custom alerts below to test your specific case
+        4) Make sure to append them to alertData before the last line of the function
+     */
     func createDummyData() {
         
         let fileUrl = Bundle.main.url(forResource: "alertResponse", withExtension: "json")
