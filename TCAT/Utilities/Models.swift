@@ -18,8 +18,8 @@ struct Error: JSONDecodable, Codable {
     var error: String!
 }
 struct AlertRequest: Codable {
-    var success: Bool
-    var data: [Alert]
+    let success: Bool
+    let data: [Alert]
 }
 
 struct Alert: Codable {
@@ -32,8 +32,24 @@ struct Alert: Codable {
     var priority: Int
     var daysOfWeek: String
     var routes: [Int]
-    var sigs: [Int]
+    var signs: [Int]
     var channelMessages: [ChannelMessage]
+    
+    init(id: Int, message: String, fromDate: String, toDate: String, fromTime: String, toTime: String, priority: Int, daysOfWeek: String, routes: [Int], signs: [Int], channelMessages: [ChannelMessage]) {
+        
+        self.id = id
+        self.message = message
+        self.fromDate = fromDate
+        self.toDate = toDate
+        self.fromTime = fromTime
+        self.toTime = toTime
+        self.priority = priority
+        self.daysOfWeek = daysOfWeek
+        self.routes = routes
+        self.signs = signs
+        self.channelMessages = channelMessages
+        
+    }
 }
 
 struct ChannelMessage: Codable {
@@ -51,31 +67,42 @@ struct BusDelayRequest: Codable {
     var data: Int?
 }
 
-class AllBusStopsRequest: Decodable {
+struct SearchRequest: Codable {
     var success: Bool
-    var data: [BusStop]
+    var data: [Place]
+}
 
-    private enum Codingkeys: CodingKey {
+struct RoutesRequest: Codable {
+    var success: Bool
+    var data: [Route]
+}
+
+class AllBusStopsRequest: Codable {
+    var success: Bool
+    var data: [Place]
+
+    private enum CodingKeys: CodingKey {
         case success
         case data
     }
 
     required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: Codingkeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decode(Bool.self, forKey: .success)
-        data = try container.decode([BusStop].self, forKey: .data)
+        data = try container.decode([Place].self, forKey: .data)
         parseAllStops()
     }
 
+    // TO BE MOVED TO BACKEND
     func parseAllStops() {
         
         // Create dictionary of all pulled stops
-        let crossReference = data.reduce(into: [String: [BusStop]]()) {
+        let crossReference = data.reduce(into: [String: [Place]]()) {
             $0[$1.name, default: []].append($1)
         }
         
         // Create an array of all stops that are non duplicates by name
-        var nonDuplicateStops = crossReference.filter {$1.count == 1}.map { (_, value) -> BusStop in
+        var nonDuplicateStops = crossReference.filter {$1.count == 1}.map { (_, value) -> Place in
             return value.first!
         }
 
@@ -84,16 +111,26 @@ class AllBusStopsRequest: Decodable {
 
         // Begin filtering stops with same names
         for key in duplicates.keys {
-            if let currentBusStops = duplicates[key], let first = currentBusStops.first, let second = currentBusStops.last {
-                let firstStopLocation = CLLocation(latitude: first.lat, longitude: first.long)
-                let secondStopLocation = CLLocation(latitude: second.lat, longitude: second.long)
+            if
+                let currentBusStops = duplicates[key],
+                let first = currentBusStops.first,
+                let second = currentBusStops.last
+            {
+                guard
+                    let firstLat = first.latitude, let firstLong = first.longitude,
+                    let secondLat = second.latitude, let secondLong = second.longitude
+                    else {
+                    continue
+                }
+                let firstStopLocation = CLLocation(latitude: firstLat, longitude: firstLong)
+                let secondStopLocation = CLLocation(latitude: secondLat, longitude: secondLong)
 
                 let distanceBetween = firstStopLocation.distance(from: secondStopLocation)
                 
                 if distanceBetween < Constants.Values.maxDistanceBetweenStops {
                     // If stops are too close to each other, combine into a new stop with averaged location and add to list
                     let middleCoordinate = firstStopLocation.coordinate.middleLocationWith(location: secondStopLocation.coordinate)
-                    let middleBusStop = BusStop(name: first.name, lat: middleCoordinate.latitude, long: middleCoordinate.longitude)
+                    let middleBusStop = Place(name: first.name, latitude: middleCoordinate.latitude, longitude: middleCoordinate.longitude)
                     nonDuplicateStops.append(middleBusStop)
                 } else {
                     // If not, add directly to the final list to be returned as data
@@ -106,9 +143,4 @@ class AllBusStopsRequest: Decodable {
         let sortedStops = nonDuplicateStops.sorted(by: {$0.name.uppercased() < $1.name.uppercased()})
         data = sortedStops
     }
-}
-
-struct RoutesRequest: Codable {
-    var success: Bool
-    var data: [Route]
 }

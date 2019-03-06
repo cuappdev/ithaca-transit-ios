@@ -266,34 +266,53 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
         searchBarView.searchController?.dismiss(animated: true, completion: nil)
     }
 
-    func didSelectDestination(busStop: BusStop?, placeResult: PlaceResult?) {
-
-        switch searchType {
-
-        case .from:
-
-            if let result = busStop {
-                searchFrom = result
-                routeSelection.fromSearchbar.setTitle(result.name, for: .normal)
-            } else if let result = placeResult {
-                searchFrom = result
-                routeSelection.fromSearchbar.setTitle(result.name, for: .normal)
-            }
-
-        case .to:
-
-            if let result = busStop {
-                searchTo = result
-                routeSelection.toSearchbar.setTitle(result.name, for: .normal)
-            } else if let result = placeResult {
-                searchTo = result
-                routeSelection.toSearchbar.setTitle(result.name, for: .normal)
+    /// Place has been selected, process if needed.
+    func didSelectPlace(place: Place) {
+        if place.type == .busStop {
+            handlePlaceSelection(place: place)
+        } else {
+            // Fetch coordinates and store
+            CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
+                if error != nil {
+                    self.requestDidFinish(perform: [
+                        .showError(bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .danger),
+                                   payload: GetRoutesErrorPayload(type: "Nil Place Coordinates",
+                                                                  description: "Place(s) don't have coordinates. (didSelectPlace)", url: nil))
+                        ])
+                } else {
+                    place.latitude = latitude
+                    place.longitude = longitude
+                    self.handlePlaceSelection(place: place)
+                }
             }
         }
-
+    }
+    
+    /// Place has all information needed. Called from `didSelectPlace(place:)`
+    func handlePlaceSelection(place: Place) {
+        
+        switch searchType {
+        case .from:
+            searchFrom = place
+            routeSelection.fromSearchbar.setTitle(place.name, for: .normal)
+        case .to:
+            searchTo = place
+            routeSelection.toSearchbar.setTitle(place.name, for: .normal)
+        }
+        
         hideSearchBar()
         dismissSearchBar()
         searchForRoutes()
+        
+        if place.name != Constants.General.currentLocation && place.name != Constants.General.firstFavorite {
+            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
+        }
+        
+        let payload: Payload = place.type == .busStop ?
+            BusStopTappedPayload(name: place.name) :
+            GooglePlaceTappedPayload(name: place.name)
+        Analytics.shared.log(payload)
+        
     }
 
     func didCancel() {
@@ -332,11 +351,11 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
     func searchForRoutes() {
 
-        if let searchFrom = searchFrom,
-           let searchTo = searchTo,
-           let time = searchTime,
-           let startPlace = searchFrom as? CoordinateAcceptor,
-           let endPlace = searchTo as? CoordinateAcceptor {
+        if
+            let searchFrom = searchFrom,
+            let searchTo = searchTo,
+            let time = searchTime
+        {
 
             showRouteSearchingLoader = true
             self.hideRefreshControl()
@@ -350,80 +369,68 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
             mediumTapticGenerator.prepare()
 
             JSONFileManager.shared.logSearchParameters(timestamp: Date(), startPlace: searchFrom, endPlace: searchTo, searchTime: time, searchTimeType: searchTimeType)
+            
+            // MARK: Search For Routes Errors
 
-            let sameLocation = (searchFrom.name == searchTo.name)
-            if sameLocation {
-                requestDidFinish(perform: [.showAlert(title: Constants.Alerts.Teleportation.title, message: Constants.Alerts.Teleportation.message, actionTitle: Constants.Alerts.Teleportation.action)])
+            if searchFrom.name == searchTo.name {
+                // The same location is passed in for start and end locations
+                requestDidFinish(perform: [.showAlert(title: Constants.Alerts.Teleportation.title,
+                                                      message: Constants.Alerts.Teleportation.message,
+                                                      actionTitle: Constants.Alerts.Teleportation.action)])
                 return
             }
-
-            Network.getCoordinates(start: startPlace, end: endPlace) { (startCoord, endCoord, coordinateVisitorError) in
-
-                guard let startCoord = startCoord, let endCoord = endCoord else {
-                    self.processNoCoordinates(coordinateVisitorError: coordinateVisitorError)
-                    return
-                }
-
-                if !self.validCoordinates(startCoord: startCoord, endCoord: endCoord) {
-                    self.processInvalidCoordinates()
-                    return
-                }
-
-                Network.getRoutes(startCoord: startCoord, endCoord: endCoord, startPlaceName: searchFrom.name, endPlaceName: searchTo.name,
-                                  time: time, type: self.searchTimeType) { request in
-                    let requestUrl = Network.getRequestUrl(startCoord: startCoord, endCoord: endCoord, originName: searchFrom.name, destinationName: searchTo.name, time: time, type: self.searchTimeType)
-                    self.processRequest(request: request, requestUrl: requestUrl, endPlace: searchTo)
-                }
-
-                // Donate GetRoutes intent
-                if #available(iOS 12.0, *) {
-                    let intent = GetRoutesIntent()
-                    intent.searchTo = searchTo.name
-                    intent.latitude = String(endCoord.latitude)
-                    intent.longitude = String(endCoord.longitude)
-                    intent.suggestedInvocationPhrase = "Find bus to \(searchTo.name)"
-                    let interaction = INInteraction(intent: intent, response: nil)
-                    interaction.donate(completion: { (error) in
-                        guard let error = error else { return }
-                        print("Intent Donation Error: \(error.localizedDescription)")
-                    })
-                }
+            
+            guard let areValidCoordinates = self.checkPlaceCoordinates(startPlace: searchFrom, endPlace: searchTo) else {
+                // Place(s) don't have coordinates assigned
+                self.requestDidFinish(perform: [
+                    .showError(bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .danger),
+                               payload: GetRoutesErrorPayload(type: "Nil Place Coordinates",
+                                                              description: "Place(s) don't have coordinates. (areValidCoordinates)", url: nil))
+                    ])
+                return
             }
-        }
+            
+            if !areValidCoordinates {
+                // Coordinates are out of range.
+                let title = Constants.Alerts.OutOfRange.title
+                let message = Constants.Alerts.OutOfRange.message
+                let actionTitle = Constants.Alerts.OutOfRange.action
+                
+                self.requestDidFinish(perform: [
+                    .showAlert(title: title, message: message, actionTitle: actionTitle),
+                    .showError(bannerInfo: BannerInfo(title: title, style: .warning),
+                               payload: GetRoutesErrorPayload(type: title, description: message, url: nil))
+                    ])
+                return
+            }
+            
+            // MARK: Search for Routes Data Request
+            
+            Network.getRoutes(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType) { request in
+                let requestURL = Network.getRequestURL(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType)
+                self.processRequest(request: request, requestURL: requestURL, endPlace: searchTo)
+            }
+            
+            // Donate GetRoutes intent
+            if #available(iOS 12.0, *) {
+                let intent = GetRoutesIntent()
+                intent.searchTo = searchTo.name
+                intent.latitude = String(describing: searchTo.latitude)
+                intent.longitude = String(describing: searchTo.longitude)
+                intent.suggestedInvocationPhrase = "Find bus to \(searchTo.name)"
+                let interaction = INInteraction(intent: intent, response: nil)
+                interaction.donate(completion: { (error) in
+                    guard let error = error else { return }
+                    print("Intent Donation Error: \(error.localizedDescription)")
+                })
+            } // iOS 12.0
+            
+        } // end if let
+        
     }
 
-    func processNoCoordinates(coordinateVisitorError: CoordinateVisitorError?) {
-        if let coordinateVisitorError = coordinateVisitorError {
-
-            self.requestDidFinish(perform: [
-                .showError(bannerInfo: BannerInfo(title: Constants.Banner.cantConnectServer, style: .danger),
-                           payload: GetRoutesErrorPayload(type: coordinateVisitorError.title, description: coordinateVisitorError.description, url: nil))
-                ])
-
-        } else {
-
-            self.requestDidFinish(perform: [
-                .showError(bannerInfo: BannerInfo(title: Constants.Banner.cantConnectServer, style: .danger),
-                           payload: GetRoutesErrorPayload(type: "Nil start and end coordinates and nil coordinateVisitorError", description: "", url: nil))
-                ])
-
-        }
-    }
-
-    func processInvalidCoordinates() {
-        let title = Constants.Alerts.OutOfRange.title
-        let message = Constants.Alerts.OutOfRange.message
-        let actionTitle = Constants.Alerts.OutOfRange.action
-
-        self.requestDidFinish(perform: [
-            .showAlert(title: title, message: message, actionTitle: actionTitle),
-            .showError(bannerInfo: BannerInfo(title: title, style: .warning),
-                       payload: GetRoutesErrorPayload(type: title, description: message, url: nil))
-            ])
-    }
-
-    func processRequest(request: APIRequest<RoutesRequest, Error>, requestUrl: String, endPlace: Place) {
-        JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestUrl)
+    func processRequest(request: APIRequest<RoutesRequest, Error>, requestURL: String, endPlace: Place) {
+        JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
 
         request.performCollectingTimeline { (response) in
             switch response.result {
@@ -446,16 +453,16 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                 self.requestDidFinish(perform: [.hideBanner])
             case .failure(let networkError):
                 if let error = networkError as? APIError<Error> {
-                    self.processRequestError(error: error, requestUrl: requestUrl)
+                    self.processRequestError(error: error, requestURL: requestURL)
                 }
             }
         }
 
-        let payload = DestinationSearchedEventPayload(destination: endPlace.name, requestUrl: requestUrl)
+        let payload = DestinationSearchedEventPayload(destination: endPlace.name, requestUrl: requestURL)
         Analytics.shared.log(payload)
     }
 
-    func processRequestError(error: APIError<Error>, requestUrl: String) {
+    func processRequestError(error: APIError<Error>, requestURL: String) {
         let title = "Network Failure: \((error.error as NSError?)?.domain ?? "No Domain")"
         let description = (error.localizedDescription) + ", " + ((error.error as NSError?)?.description ?? "n/a")
 
@@ -463,13 +470,24 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
         timers = [:]
         requestDidFinish(perform: [
             .showError(bannerInfo: BannerInfo(title: Constants.Banner.cantConnectServer, style: .danger),
-                       payload: GetRoutesErrorPayload(type: title, description: description, url: requestUrl))
+                       payload: GetRoutesErrorPayload(type: title, description: description, url: requestURL))
         ])
     }
 
-    func validCoordinates(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D) -> Bool {
-        let latitudeValues = [startCoord.latitude, endCoord.latitude]
-        let longitudeValues  = [startCoord.longitude, endCoord.longitude]
+    /// Returns whether coordinates are valid, checking country extremes. Returns nil if places don't have coordinates.
+    func checkPlaceCoordinates(startPlace: Place, endPlace: Place) -> Bool? {
+        
+        guard
+            let startCoordLatitude = startPlace.latitude,
+            let startCoordLongitude = startPlace.longitude,
+            let endCoordLatitude = endPlace.latitude,
+            let endCoordLongitude = endPlace.longitude
+            else {
+                return nil
+        }
+        
+        let latitudeValues = [startCoordLatitude, endCoordLatitude]
+        let longitudeValues  = [startCoordLongitude, endCoordLongitude]
 
         let validLatitudes = latitudeValues.reduce(true) { (result, latitude) -> Bool in
             return result && latitude <= Constants.Values.RouteBorders.northBorder &&
@@ -682,7 +700,6 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                 searchTime = now
                 routeSelection.setDatepicker(withDate: now, withSearchTimeType: searchTimeType)
             }
-
             searchForRoutes()
         }
     }
@@ -818,41 +835,30 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
         }
 
         currentLocation = location.coordinate
+        
+        searchBarView.resultsViewController?.currentLocation?.latitude = currentLocation?.latitude
+        searchBarView.resultsViewController?.currentLocation?.longitude = currentLocation?.longitude
 
-        updateSearchBarCurrentLocation(withCoordinate: location.coordinate)
-
-        if let busStop = searchTo as? BusStop {
-            if busStop.name == Constants.General.currentLocation {
-                updateCurrentLocation(busStop, withCoordinate: location.coordinate)
-            }
+        if searchFrom?.name == Constants.General.currentLocation {
+            searchFrom?.latitude = currentLocation?.latitude
+            searchFrom?.longitude = currentLocation?.longitude
         }
 
-        if let busStop = searchFrom as? BusStop {
-            if busStop.name == Constants.General.currentLocation {
-                updateCurrentLocation(busStop, withCoordinate: location.coordinate)
-            }
+        if searchTo?.name == Constants.General.currentLocation {
+            searchTo?.latitude = currentLocation?.latitude
+            searchTo?.longitude = currentLocation?.longitude
         }
-
+        
         // If haven't selected start location, set to current location
         if searchFrom == nil {
-            let currentLocationStop = BusStop(name: Constants.General.currentLocation,
-                                              lat: location.coordinate.latitude,
-                                              long: location.coordinate.longitude)
-            searchFrom = currentLocationStop
-            searchBarView.resultsViewController?.currentLocation = currentLocationStop
-            routeSelection.fromSearchbar.setTitle(currentLocationStop.name, for: .normal)
+            let currentLocation = Place(name: Constants.General.currentLocation,
+                                            latitude: location.coordinate.latitude,
+                                            longitude: location.coordinate.longitude)
+            searchFrom = currentLocation
+            searchBarView.resultsViewController?.currentLocation = currentLocation
+            routeSelection.fromSearchbar.setTitle(currentLocation.name, for: .normal)
             searchForRoutes()
         }
-    }
-
-    private func updateCurrentLocation(_ currentLocationStop: BusStop, withCoordinate coordinate: CLLocationCoordinate2D ) {
-        currentLocationStop.lat = coordinate.latitude
-        currentLocationStop.long = coordinate.longitude
-    }
-
-    private func updateSearchBarCurrentLocation(withCoordinate coordinate: CLLocationCoordinate2D) {
-        searchBarView.resultsViewController?.currentLocation?.lat = coordinate.latitude
-        searchBarView.resultsViewController?.currentLocation?.long = coordinate.longitude
     }
 
 }

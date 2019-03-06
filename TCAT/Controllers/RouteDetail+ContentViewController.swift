@@ -233,6 +233,12 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     func showBanner(_ message: String, status: BannerStyle) {
         hideBanner()
         self.banner = StatusBarNotificationBanner(title: message, style: status)
+        
+        // Change default colors for specific banners
+        if status == .info {
+            self.banner?.backgroundColor = Colors.dividerTextField
+        }
+        
         self.banner?.autoDismiss = false
         self.banner?.dismissOnTap = true
         self.banner?.show(queuePosition: .front, on: navigationController)
@@ -325,8 +331,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                         message = Constants.Banner.noLiveTrackingForRoute + "\(busLocation.routeNumber)"
                     }
 
-                    self.showBanner(message, status: .info)
-
+                    // If banner doesn't exist or isn't displaying
+                    if !(self.banner?.isDisplaying ?? false) {
+                        self.showBanner(message, status: .info)
+                    }
+                    
                 case .invalidData:
                     // print("Invalid Data for", busLocation.routeNumber)
 
@@ -360,7 +369,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         }) { (error) in
 
             print("RouteDetailVC getBusLocations Error:", error.localizedDescription)
-            self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
+            if let banner = self.banner, !banner.isDisplaying {
+                self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
+            }
 
         } // network completion handler end
 
