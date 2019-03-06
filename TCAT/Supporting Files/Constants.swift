@@ -195,6 +195,7 @@ struct Constants {
     /// General phrases used throughout the app
     struct General {
         static let firstFavorite = "Add Your First Favorite!"
+        static let tapHere = "Tap Here"
         static let searchPlaceholder = "Where to?"
         static let favoritesPlaceholder = "Search any destination"
         static let fromSearchBarPlaceholder = "Choose starting point..."

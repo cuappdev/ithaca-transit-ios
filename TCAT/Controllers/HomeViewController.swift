@@ -338,8 +338,15 @@ extension HomeViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell!
-
-        if sections[indexPath.section].type == .seeAllStops {
+        
+        if sections[indexPath.section].type == .favorites &&
+            sections[indexPath.section].items.first?.name == Constants.General.firstFavorite
+        {
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
+            cell.textLabel?.text = Constants.General.firstFavorite
+            cell.detailTextLabel?.text = Constants.General.tapHere
+            (cell as? PlaceTableViewCell)?.iconColor = Colors.tcatBlue
+        } else if sections[indexPath.section].type == .seeAllStops {
             cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
             cell.textLabel?.text = Constants.General.seeAllStops
             cell.imageView?.image = #imageLiteral(resourceName: "list")
