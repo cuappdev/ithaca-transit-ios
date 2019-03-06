@@ -64,7 +64,7 @@ class WhatsNewHeaderView: UIView {
 
     func createWhatsNewHeader() {
         whatsNewHeader = UILabel()
-        whatsNewHeader.text = Constants.WhatsNew.whatsNewHeaderTitle
+        whatsNewHeader.text = Constants.WhatsNew.whatsNewHeaderTitle.uppercased()
         whatsNewHeader.font = .getFont(.semibold, size: 12)
         whatsNewHeader.textColor = Colors.tcatBlue
 

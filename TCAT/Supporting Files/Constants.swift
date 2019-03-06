@@ -265,7 +265,8 @@ struct Constants {
     }
     
     struct WhatsNew {
-        static let whatsNewHeaderTitle = "NEW IN ITHACA TRANSIT"
+        // Will be entirely uppercased in UI (str.uppercased())
+        static let whatsNewHeaderTitle = "New in Ithaca Transit"
         
         // What's New for v1.2
 //        static let whatsNewUpdateName = "Introducing Siri Shortcuts"
