@@ -24,7 +24,7 @@ class WhatsNewHeaderView: UIView {
     var descriptionLabel: UILabel!
     
     var buttonContainerView: UIView!
-    var primaryButton: UIButton!
+    var primaryButton: UIButton?
     var secondaryButton: UIButton?
     
     private var titleToTop: Constraint?
@@ -90,7 +90,7 @@ class WhatsNewHeaderView: UIView {
 
     func createPrimaryActionButton() {
         guard let title = card.primaryActionTitle else { return }
-        primaryButton = UIButton()
+        let primaryButton = UIButton()
         primaryButton.setTitle(title, for: .normal)
         primaryButton.titleLabel?.font = .getFont(.semibold, size: 14)
         primaryButton.addTarget(self, action: #selector(primaryButtonTapped), for: .touchUpInside)
@@ -100,6 +100,7 @@ class WhatsNewHeaderView: UIView {
         primaryButton.clipsToBounds = true
 
         buttonContainerView.addSubview(primaryButton)
+        self.primaryButton = primaryButton
     }
     
     func createSecondaryActionButton() {
@@ -166,15 +167,22 @@ class WhatsNewHeaderView: UIView {
         let buttonWidthPadding: CGFloat = (secondaryButton != nil) ? 16 : 0
         let buttonWidth: CGFloat = 80
         
-        primaryButton.snp.makeConstraints { (make) in
+        primaryButton?.snp.makeConstraints { (make) in
             make.centerY.top.bottom.right.equalToSuperview()
             make.width.equalTo(buttonWidth)
+            if secondaryButton == nil {
+                make.left.equalToSuperview()
+            }
         }
         
         secondaryButton?.snp.makeConstraints { (make) in
             make.centerY.top.bottom.left.equalToSuperview()
             make.width.equalTo(buttonWidth)
-            make.right.equalTo(primaryButton.snp.left).offset(-buttonWidthPadding)
+            if let primaryButton = primaryButton {
+                make.right.equalTo(primaryButton.snp.left).offset(-buttonWidthPadding)
+            } else {
+                make.right.equalToSuperview()
+            }
         }
 
     }
@@ -207,7 +215,7 @@ class WhatsNewHeaderView: UIView {
         let updateDescSpace = updateDescToUpdateNameVal + updateDescHeight
         
         let dismissButtonToUpdateDescVal = dismissButtonToUpdateDesc.layoutConstraints[0].constant
-        let buttonHeight = primaryButton.intrinsicContentSize.height
+        let buttonHeight = primaryButton?.intrinsicContentSize.height ?? secondaryButton?.intrinsicContentSize.height ?? 0
         
         let dismissButtonSpace = dismissButtonToUpdateDescVal + buttonHeight
         

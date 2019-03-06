@@ -24,7 +24,7 @@ struct WhatsNewCard {
         secondaryActionWebLink: nil
     )
     
-    // MARK: Variables
+    // MARK: Main Descriptions
     
     /// This is the small blue label above the main title. Will be entirely uppercased in UI.
     var label: String
@@ -35,6 +35,11 @@ struct WhatsNewCard {
     /// A succinct description of the update feature.
     var description: String
     
+    
+    // MARK: Primary Button - Blue, Bolded
+    
+    // IMPORTANT: At least ONE action title *must* be set to create a button. It can be either for primary or secondary.
+    
     /// The title of the primary button. If doesn't exist, make nil to hide button.
     var primaryActionTitle: String?
     
@@ -43,6 +48,9 @@ struct WhatsNewCard {
     
     /// If a button uses a web link, enter the HTTPS URL. Otherwise, nil.
     var primaryActionWebLink: String?
+    
+    
+    // MARK: Secondary Button - Gray, Regular
     
     /// The title of the secondary button. If doesn't exist, make nil to hide button.
     var secondaryActionTitle: String?
