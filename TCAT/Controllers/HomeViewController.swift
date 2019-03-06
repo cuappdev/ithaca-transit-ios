@@ -297,6 +297,33 @@ class HomeViewController: UIViewController {
         let navigationVC = CustomNavigationController(rootViewController: informationViewController)
         present(navigationVC, animated: true)
     }
+    
+    var loadingView = UIView()
+    
+    /// Show a temporary loading screen
+    func showLoadingScreen() {
+        
+        loadingView.backgroundColor = Colors.backgroundWash
+        view.addSubview(loadingView)
+        
+        loadingView.snp.makeConstraints { (make) in
+            make.top.bottom.leading.trailing.equalToSuperview()
+        }
+        
+        let indicator = LoadingIndicator()
+        loadingView.addSubview(indicator)
+        indicator.snp.makeConstraints { (make) in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(40)
+        }
+        
+    }
+    
+    func removeLoadingScreen() {
+        loadingView.removeFromSuperview()
+        viewWillAppear(false)
+    }
+    
 }
 
 // MARK: TableView DataSource

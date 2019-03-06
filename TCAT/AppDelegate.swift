@@ -71,12 +71,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             CustomNavigationController(rootViewController: rootVC)
         
         // v1.2.2 Data Migration
-        print("Begin Data Migration")
-        if VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1) {
+        if
+            VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1),
+            let homeViewController = rootVC as? HomeViewController
+        {
+            print("Begin Data Migration")
+            homeViewController.showLoadingScreen()
             migrationToNewPlacesModel { (success, errorDescription) in
-                if let homeViewController = rootVC as? HomeViewController {
-                    homeViewController.viewWillAppear(false)
-                }
+                homeViewController.removeLoadingScreen()
                 print("Data Migration Complete - Success: \(success), Error: \(errorDescription ?? "n/a")")
                 let payload = DataMigrationOnePointThreePayload(success: success, errorDescription: errorDescription)
                 Analytics.shared.log(payload)
