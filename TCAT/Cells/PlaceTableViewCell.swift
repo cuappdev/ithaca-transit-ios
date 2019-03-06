@@ -10,7 +10,7 @@ import UIKit
 
 class PlaceTableViewCell: UITableViewCell {
     
-    var place: Place?
+    var iconColor: UIColor = Colors.metadataIcon
     
     let labelWidthPadding: CGFloat = 45.0
     let labelXPosition: CGFloat = 40.0
@@ -41,8 +41,8 @@ class PlaceTableViewCell: UITableViewCell {
         imageView?.frame = CGRect(x: 10, y: 5, width: imageWidth, height: imageHeight)
         imageView?.contentMode = .scaleAspectFit
         imageView?.center.y = bounds.height / 2.0
-        imageView?.image = reuseIdentifier == Constants.Cells.currentLocationIdentifier ? #imageLiteral(resourceName: "location") : #imageLiteral(resourceName: "pin")
-        imageView?.tintColor = place?.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
+        imageView?.image = #imageLiteral(resourceName: "pin")
+        imageView?.tintColor = iconColor
         
         textLabel?.frame.origin.x = labelXPosition
         textLabel?.frame.size.width = frame.width - labelWidthPadding

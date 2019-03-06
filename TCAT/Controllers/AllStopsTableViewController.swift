@@ -161,11 +161,12 @@ class AllStopsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as! PlaceTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
         let section = sectionIndexes[sortedKeys[indexPath.section]]
-        cell.place = section?[indexPath.row]
         cell.textLabel?.text = section?[indexPath.row].name
         cell.detailTextLabel?.text = section?[indexPath.row].description
+        cell.iconColor = Colors.tcatBlue
+        cell.layoutSubviews()
         return cell
     }
 

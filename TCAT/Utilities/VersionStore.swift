@@ -28,9 +28,6 @@ class VersionStore: WhatsNewVersionStore {
     func has(version: WhatsNew.Version) -> Bool {
         let isVersionPatch = version.patch > 0
         let isNotNewVersion = (currentAppVersion == savedAppVersion)
-
-        // TODO: Confirm this still works!
-        // set(version: WhatsNew.Version.current())
         return isVersionPatch || isNotNewVersion
     }
 

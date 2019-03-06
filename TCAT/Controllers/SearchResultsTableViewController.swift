@@ -68,8 +68,9 @@ class SearchResultsTableViewController: UITableViewController {
                                                object: nil)
 
         // Set Up TableView
-        tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Cells.currentLocationIdentifier)
+        tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
         tableView.sectionIndexBackgroundColor = .clear
@@ -223,7 +224,13 @@ class SearchResultsTableViewController: UITableViewController {
         
         var cell: UITableViewCell!
         
-        if sections[indexPath.section].type == .seeAllStops {
+        if sections[indexPath.section].type == .currentLocation {
+            cell = tableView.dequeueReusableCell(withIdentifier:  Constants.Cells.currentLocationIdentifier)
+            cell.textLabel?.text = Constants.General.currentLocation
+            cell.imageView?.image = #imageLiteral(resourceName: "location")
+        }
+        
+        else if sections[indexPath.section].type == .seeAllStops {
             cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
             cell.textLabel?.text = Constants.General.seeAllStops
             cell.imageView?.image = #imageLiteral(resourceName: "list")
@@ -233,14 +240,9 @@ class SearchResultsTableViewController: UITableViewController {
         else {
             let place = sections[indexPath.section].items[indexPath.row]
             cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-            (cell as? PlaceTableViewCell)?.place = place
             cell.textLabel?.text = place.name
-
-            if sections[indexPath.section].type == .currentLocation {
-                cell.imageView?.image = UIImage(named: "location")
-            } else {
-                cell.detailTextLabel?.text = place.description
-            }
+            cell.detailTextLabel?.text = place.description
+            (cell as? PlaceTableViewCell)?.iconColor = place.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
         }
         
         cell.textLabel?.font = .getFont(.regular, size: 14)

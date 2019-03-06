@@ -325,9 +325,9 @@ extension HomeViewController: UITableViewDataSource {
         } else {
             let place = sections[indexPath.section].items[indexPath.row]
             cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-            (cell as? PlaceTableViewCell)?.place = place
             cell.textLabel?.text = place.name
             cell.detailTextLabel?.text = place.description
+            (cell as? PlaceTableViewCell)?.iconColor = place.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
         }
 
         cell.textLabel?.font = .getFont(.regular, size: 14)

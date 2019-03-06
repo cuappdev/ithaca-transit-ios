@@ -36,12 +36,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GMSServices.provideAPIKey(Keys.googleMaps.value)
         GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
         
-        // v1.3 Data Migration
+        // v1.2.2 Data Migration
         
         print("Begin Data Migration")
         if VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1) {
             migrationToNewPlacesModel { (success, errorDescription) in
-                print("success: \(success), error: \(errorDescription)")
+                print("Data Migration Complete - Success: \(success), Error: \(errorDescription ?? "n/a")")
                 let payload = DataMigrationOnePointThreePayload(success: success, errorDescription: errorDescription)
                 Analytics.shared.log(payload)
             }

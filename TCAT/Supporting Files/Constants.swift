@@ -71,6 +71,12 @@ struct Constants {
             static let message = "To add more favorites, please swipe left and delete one first."
             static let action = "Got It!"
         }
+        
+        struct GooglePlacesFailure {
+            static let title = "Couldn't Fetch Place Information"
+            static let message = "We ran into an issue fetching the coordinates of the selected location. Please try again later."
+            static let action = "OK"
+        }
     }
 
     struct App {
@@ -192,7 +198,7 @@ struct Constants {
 
         static let seeAllStops = "See All Stops"
 
-        // What's New for v1.2
+        // What's New Card for minor app updates
         static let whatsNewUpdateName = "Introducing Siri Shortcuts"
         static let whatsNewDescription = "Use Siri to access recent searches! Head to Siri & Search in Settings to get started."
     }

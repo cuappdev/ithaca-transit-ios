@@ -191,7 +191,7 @@ struct SiriShortcutUsedPayload: Payload {
 }
 
 struct DataMigrationOnePointThreePayload: Payload {
-    static let eventName: String = "v1.3 Data Migration"
+    static let eventName: String = "v1.2.2 Data Migration"
     let deviceInfo = DeviceInfo()
     
     let success: Bool

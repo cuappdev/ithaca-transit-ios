@@ -115,7 +115,6 @@ class FavoritesTableViewController: UITableViewController {
         var cell: UITableViewCell!
         let place = resultsSection.items[indexPath.row]
         cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as? PlaceTableViewCell
-        (cell as? PlaceTableViewCell)?.place = place
         cell.textLabel?.text = place.name
         cell.detailTextLabel?.text = place.description
         cell.preservesSuperviewLayoutMargins = false
@@ -135,8 +134,13 @@ class FavoritesTableViewController: UITableViewController {
             // Fetch coordinates and store
             CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
                 if error != nil {
-                    // TODO: Handle error properly
                     print("Unable to get coordinates to save favorite.")
+                    let title = Constants.Alerts.GooglePlacesFailure.title
+                    let message = Constants.Alerts.GooglePlacesFailure.message
+                    let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                    let done = UIAlertAction(title: Constants.Alerts.GooglePlacesFailure.action, style: .default)
+                    alertController.addAction(done)
+                    self.present(alertController, animated: true, completion: nil)
                 } else {
                     place.latitude = latitude
                     place.longitude = longitude
