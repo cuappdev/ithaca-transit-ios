@@ -33,8 +33,6 @@ class HomeViewController: UIViewController {
     let infoButton = UIButton(type: .infoLight)
     var whatsNewView: WhatsNewHeaderView!
     var whatsNewContainerView: UIView!
-    var recentLocations: [ItemType] = []
-    var favorites: [ItemType] = []
     var recentLocations: [Place] = []
     var favorites: [Place] = []
     var isKeyboardVisible = false
@@ -247,7 +245,6 @@ class HomeViewController: UIViewController {
                 self.tableView.contentInset = .zero
                 self.tableView.tableHeaderView = .zero
                 VersionStore.shared.set(version: WhatsNew.Version.current())
-                VersionStore().set(version: WhatsNew.Version.current())
             }
         })
         tableView.endUpdates()
@@ -257,14 +254,14 @@ class HomeViewController: UIViewController {
         firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
         
         let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
-        let hasSeenVersion = VersionStore().has(version: WhatsNew.Version.current())
+        let hasSeenVersion = VersionStore.shared.has(version: WhatsNew.Version.current())
         if !firstViewing && (!whatsNewDismissed || !hasSeenVersion) {
             createWhatsNewView()
         }
         if !hasSeenVersion {
             userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
         }
-        VersionStore().set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
+        VersionStore.shared.set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
     }
 
     /* Keyboard Functions */
