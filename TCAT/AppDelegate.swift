@@ -36,17 +36,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GMSServices.provideAPIKey(Keys.googleMaps.value)
         GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
         
-        // v1.2.2 Data Migration
-        
-        print("Begin Data Migration")
-        if VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1) {
-            migrationToNewPlacesModel { (success, errorDescription) in
-                print("Data Migration Complete - Success: \(success), Error: \(errorDescription ?? "n/a")")
-                let payload = DataMigrationOnePointThreePayload(success: success, errorDescription: errorDescription)
-                Analytics.shared.log(payload)
-            }
-        }
-        
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
 
@@ -80,6 +69,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : HomeViewController()
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
+        
+        // v1.2.2 Data Migration
+        print("Begin Data Migration")
+        if VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1) {
+            migrationToNewPlacesModel { (success, errorDescription) in
+                if let homeViewController = rootVC as? HomeViewController {
+                    homeViewController.viewWillAppear(false)
+                }
+                print("Data Migration Complete - Success: \(success), Error: \(errorDescription ?? "n/a")")
+                let payload = DataMigrationOnePointThreePayload(success: success, errorDescription: errorDescription)
+                Analytics.shared.log(payload)
+            }
+        }
 
         // Initalize window without storyboard
         self.window = UIWindow(frame: UIScreen.main.bounds)
