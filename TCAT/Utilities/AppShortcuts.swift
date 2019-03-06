@@ -13,24 +13,25 @@ class AppShortcuts {
     static let shared = AppShortcuts()
 
     func updateShortcutItems() {
-        let favorites = SearchTableViewManager.shared.retrieveRecentPlaces(for: Constants.UserDefaults.favorites)
-        var shortcutItems = [UIApplicationShortcutItem]()
-        for itemType in favorites {
-            switch itemType {
-            case .busStop(let bustStop):
-                shortcutItems.append(shortcutItem(for: bustStop))
-            case .placeResult(let placeResult):
-                shortcutItems.append(shortcutItem(for: placeResult))
-            default: break
+        let favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
+        let shortcutItems: [UIApplicationShortcutItem] = favorites.compactMap { (place) -> UIApplicationShortcutItem? in
+            do {
+                let data = try encoder.encode(place)
+                let placeInfo: [String: Data] = ["place": data]
+                return UIApplicationShortcutItem(
+                    type: place.name,
+                    localizedTitle: place.name,
+                    localizedSubtitle: nil,
+                    icon: UIApplicationShortcutIcon(type: .favorite),
+                    userInfo: placeInfo as [String : NSSecureCoding]
+                )
+            } catch let error {
+                print(error)
+                return nil
             }
         }
+        
         UIApplication.shared.shortcutItems = shortcutItems
     }
 
-    func shortcutItem(for place: Place) -> UIApplicationShortcutItem {
-        let data = NSKeyedArchiver.archivedData(withRootObject: place)
-        let placeInfo: [String: Data] = ["place": data]
-        let shortcutItem = UIApplicationShortcutItem(type: place.name, localizedTitle: place.name, localizedSubtitle: nil, icon: UIApplicationShortcutIcon(type: .favorite), userInfo: placeInfo as [String : NSSecureCoding])
-        return shortcutItem
-    }
 }

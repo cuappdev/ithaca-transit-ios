@@ -12,14 +12,15 @@ import DZNEmptyDataSet
 import Fuzzywuzzy_swift
 
 let userDefaults = UserDefaults.standard
+let encoder = JSONEncoder()
+let decoder = JSONDecoder()
 
 struct Section {
     let type: SectionType
-    var items: [ItemType]
+    var items: [Place]
 }
 
 enum SectionType {
-    case cornellDestination
     case recentSearches
     case seeAllStops
     case searchResults
@@ -27,19 +28,14 @@ enum SectionType {
     case favorites
 }
 
-enum ItemType {
-    case busStop(BusStop)
-    case placeResult(PlaceResult)
-    case cornellDestination
-    case seeAllStops
-}
-
 class SearchTableViewManager {
+    
     static let shared = SearchTableViewManager()
-    private var allStops: [BusStop]?
+    private var allStops: [Place]?
 
     private init() {}
-    func getAllStops() -> [BusStop] {
+    
+    func getAllStops() -> [Place] {
         if let stops = allStops {
             // Check if not empty so that an empty array isn't returned
             if !stops.isEmpty {
@@ -51,172 +47,80 @@ class SearchTableViewManager {
         return stops
     }
 
-    private func getAllBusStops() -> [BusStop] {
+    private func getAllBusStops() -> [Place] {
         if let allBusStops = userDefaults.value(forKey: Constants.UserDefaults.allBusStops) as? Data,
-            var busStopArray = NSKeyedUnarchiver.unarchiveObject(with: allBusStops) as? [BusStop] {
+            var busStopArray = try? decoder.decode([Place].self, from: allBusStops) {
             // Check if empty so that an empty array isn't returned
             if !busStopArray.isEmpty {
-                /// Creating "fake" bus stop to remove Google Places central Collegetown location choice
-                let collegetownStop = BusStop(name: "Collegetown", lat: 42.442558, long: -76.485336)
+                // TODO: Move to backend
+                // Creating "fake" bus stop to remove Google Places central Collegetown location choice
+                let collegetownStop = Place(name: "Collegetown", latitude: 42.442558, longitude: -76.485336)
                 busStopArray.append(collegetownStop)
                 return busStopArray
             }
         }
-        return [BusStop]()
+        return [Place]()
     }
 
-    func parseGoogleJSON(searchText: String, json: JSON) -> Section {
-        var itemTypes: [ItemType] = []
-
-        let busStopsWithLevenshtein: [(BusStop, Int)] = getAllStops().map {
-            ($0, String.fuzzPartialRatio(str1: $0.name.lowercased(), str2: searchText.lowercased()))
+    func retrievePlaces(for key: String) -> [Place] {
+        if
+            let storedPlaces = userDefaults.value(forKey: key) as? Data,
+            let places = try? decoder.decode([Place].self, from: storedPlaces)
+        {
+            return places
         }
-        var filteredBusStops = busStopsWithLevenshtein.filter { $0.1 > Constants.Values.fuzzySearchMinimumValue }
-        filteredBusStops.sort(by: { $0.1 > $1.1 })
-
-        filteredBusStops.sort { (stopOne, stopTwo) in
-
-            // Note: Return True if first element in tuple should be first
-            let oneMatches = stopOne.0.name.first == searchText.first
-            let twoMatches = stopTwo.0.name.first == searchText.first
-
-            // If both start with same phrase, return alphabetical order
-            if oneMatches && twoMatches {
-                return stopOne.1 > stopTwo.1
-            }
-            // If oneMatches, return true. Otherwise, two must match, so return false
-            else if oneMatches || twoMatches {
-                return oneMatches
-            }
-            // Otherwise, return alphabetical order
-            else {
-                return stopOne.1 > stopTwo.1
-            }
-
-        }
-
-        itemTypes = filteredBusStops.map { ItemType.busStop($0.0) }
-
-        var googleResults: [ItemType] = []
-        if json["success"].boolValue, let autocompleteResults = json["data"].array {
-            for result in autocompleteResults {
-                let name = result["name"].stringValue
-                let detail = result["address"].stringValue
-                let placeID = result["place_id"].stringValue
-                let placeResult = PlaceResult(name: name, detail: detail, placeID: placeID)
-                let isPlaceABusStop = filteredBusStops.contains(where: { (stop) -> Bool in
-                    placeResult.name.contains(stop.0.name)
-                })
-                if !isPlaceABusStop {
-                    googleResults.append(ItemType.placeResult(placeResult))
-                }
-            }
-        }
-
-        return Section(type: .searchResults, items: googleResults + itemTypes)
-    }
-
-    func retrieveRecentPlaces(for key: String) -> [ItemType] {
-        if let storedPlaces = userDefaults.value(forKey: key) as? Data {
-            if let places = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any] {
-                var itemTypes: [ItemType] = []
-                for place in places {
-                    if let busStop = place as? BusStop {
-                        itemTypes.append(.busStop(busStop))
-                    }
-                    if let searchResult = place as? PlaceResult {
-                        itemTypes.append(.placeResult(searchResult))
-                    }
-
-                }
-                return itemTypes
-            }
-        }
-        return [ItemType]()
+        return [Place]()
     }
 
     //returns the rest so we don't have to re-unarchive it
-    func deleteFavorite(favorite: Any, allFavorites: [ItemType]) -> [ItemType] {
-        var newFavoritesList: [ItemType] = []
+    func deleteFavorite(favorite: Place, allFavorites: [Place]) -> [Place] {
+        var newFavoritesList: [Place] = []
         for item in allFavorites {
-            switch item {
-            case .busStop(let busStop):
-                if let fav = favorite as? BusStop, areObjectsEqual(type: BusStop.self, a: busStop, b: fav) {
-                    continue
-                } else {
-                    newFavoritesList.append(item)
-                }
-            case .placeResult(let placeResult):
-                if let fav = favorite as? PlaceResult, areObjectsEqual(type: PlaceResult.self, a: placeResult, b: fav) {
-                    continue
-                } else {
-                    newFavoritesList.append(item)
-                }
-            default: break
+            if favorite.isEqual(item) {
+                continue
+            } else {
+                newFavoritesList.append(item)
             }
         }
-        let itemsToStore = newFavoritesList.map { (item) -> Any in
-            switch item {
-            case .busStop(let busStop):
-                return busStop
-            case .placeResult(let placeResult):
-                return placeResult
-            default: return ""
-            }
+        
+        do {
+            let data = try encoder.encode(newFavoritesList)
+            userDefaults.set(data, forKey: Constants.UserDefaults.favorites)
+            AppShortcuts.shared.updateShortcutItems()
+        } catch let error {
+            print(error)
         }
-        let data = NSKeyedArchiver.archivedData(withRootObject: itemsToStore)
-        userDefaults.set(data, forKey: Constants.UserDefaults.favorites)
-        AppShortcuts.shared.updateShortcutItems()
+
         return newFavoritesList
     }
 
-    func insertPlace(for key: String, location: Any, limit: Int, bottom: Bool = false) {
-        let placeItemTypes = retrieveRecentPlaces(for: key)
-        let convertedPlaces = placeItemTypes.map { item -> Any in
-            switch item {
-            case .busStop(let busStop): return busStop
-            case .placeResult(let placeResult): return placeResult
-            default: return "this shouldn't ever fire"
-            }
+    /// Possible Keys: Constants.UserDefaults (.recentSearch | .favorites)
+    func insertPlace(for key: String, place: Place, bottom: Bool = false) {
+        
+        // Could replace with an enum
+        let limit = key == Constants.UserDefaults.favorites ? 5 : 8
+        
+        // Ensure duplicates aren't added
+        var places = retrievePlaces(for: key).filter { (savedPlace) -> Bool in
+            return !savedPlace.isEqual(place)
         }
-        let filteredPlaces = location is BusStop ?
-            convertedPlaces.filter({ !areObjectsEqual(type: BusStop.self, a: location, b: $0)}) :
-            convertedPlaces.filter({ !areObjectsEqual(type: PlaceResult.self, a: location, b: $0)})
-
-        var updatedPlaces: [Any]!
-        if bottom {
-            updatedPlaces = filteredPlaces + [location]
-        } else {
-            updatedPlaces = [location] + filteredPlaces
-        }
-        if updatedPlaces.count > limit { updatedPlaces.remove(at: updatedPlaces.count - 1)}
-        let data = NSKeyedArchiver.archivedData(withRootObject: updatedPlaces)
-        userDefaults.set(data, forKey: key)
-        AppShortcuts.shared.updateShortcutItems()
-
-        var locationName: String {
-            if let busStop = location as? BusStop {
-                return busStop.name
-            }
-            if let place = location as? PlaceResult {
-                return place.name
-            }
-            return ""
+    
+        places = bottom ? places + [place] : [place] + places
+        
+        if places.count > limit { places.remove(at: places.count - 1) }
+        
+        do {
+            let data = try encoder.encode(places)
+            userDefaults.set(data, forKey: key)
+            AppShortcuts.shared.updateShortcutItems()
+        } catch let error {
+            print(error)
         }
 
         if key == Constants.UserDefaults.favorites {
-            let payload = FavoriteAddedPayload(name: locationName)
+            let payload = FavoriteAddedPayload(name: place.name)
             Analytics.shared.log(payload)
         }
-
-    }
-
-    func prepareAllBusStopItems(allBusStops: [BusStop]) -> [ItemType] {
-        var itemArray: [ItemType] = []
-        for bus in allBusStops {
-            itemArray.append(.busStop(BusStop(name: bus.name, lat: bus.lat, long: bus.long)))
-        }
-        return itemArray
     }
 
     func sectionIndexesForBusStop() -> [String: Int] {
@@ -236,22 +140,6 @@ class SearchTableViewManager {
         return sectionIndexDictionary
     }
 
-    func updateShortcutItems(favorites: [Any]) {
-        var shortcutItems = [UIApplicationShortcutItem]()
-        if let favorites = favorites as? [Place] {
-            for item in favorites {
-                let data = NSKeyedArchiver.archivedData(withRootObject: item)
-                let placeInfo: [AnyHashable: Any] = ["place": data]
-                let shortcutItem = UIApplicationShortcutItem(type: item.name,
-                                                             localizedTitle: item.name,
-                                                             localizedSubtitle: nil,
-                                                             icon: UIApplicationShortcutIcon(type: .location),
-                                                             userInfo: placeInfo as? [String: NSSecureCoding])
-                shortcutItems.append(shortcutItem)
-            }
-            UIApplication.shared.shortcutItems = shortcutItems
-        }
-    }
 }
 
 /// MARK: DZNEmptyDataSet DataSource

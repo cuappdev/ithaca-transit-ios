@@ -25,7 +25,7 @@ class Network {
     // Change `networkType` to `.local` to work locally.
     // Change `localIPAddress` to be the proper address
 
-    static let networkType: NetworkType = .release
+    static let networkType: NetworkType = .debug
     static let apiVersion = "v1"
 
     /// Used for local backend testing
@@ -33,18 +33,20 @@ class Network {
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
 
     /// Test server used for development
-    static let debugIPAddress = "157.230.66.192"
-    static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
+    static let debugIPAddress = "transit-dev.cornellappdev.com"
+    static let debugSource = "https://\(debugIPAddress)/api/\(apiVersion)/"
 
     /// Deployed server instance used for release
     static let releaseIPAddress = "transit-backend.cornellappdev.com"
-    static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
+    static let releaseSource = "https://\(releaseIPAddress)/api/\(apiVersion)/"
 
     /// Network IP address being used for specified networkType
     static var ipAddress: String {
+        #if RELEASE
         if isTestFlight() {
            return debugIPAddress
         }
+        #endif
         switch networkType {
         case .local: return localIPAddress
         case .debug: return debugIPAddress
@@ -54,9 +56,11 @@ class Network {
 
     /// Network source currently being used
     static var address: String {
+        #if RELEASE
         if isTestFlight() {
             return debugSource
         }
+        #endif
         switch networkType {
         case .local: return localSource
         case .debug: return debugSource
@@ -78,46 +82,31 @@ class Network {
         return request
     }
 
-    class func getCoordinates(start: CoordinateAcceptor, end: CoordinateAcceptor,
-                              callback: @escaping (_ startCoord: CLLocationCoordinate2D?, _ endCoord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void ) {
-
-        let visitor = CoordinateVisitor()
-
-        start.accept(visitor: visitor) { (startCoord, error) in
-
-            guard let startCoord = startCoord else {
-                callback(nil, nil, error)
-                return
-            }
-
-            end.accept(visitor: visitor) { (endCoord, error) in
-
-                guard let endCoord = endCoord else {
-                    callback(nil, nil, error)
-                    return
-                }
-
-                callback(startCoord, endCoord, nil)
-
-            }
-
-        }
-
-    }
-
-    class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D,
-                         startPlaceName: String, endPlaceName: String, time: Date, type: SearchType,
+    class func getRoutes(start: Place, end: Place, time: Date, type: SearchType,
                          callback: @escaping (_ request: APIRequest<RoutesRequest, Error>) -> Void) {
+        
         
         let request: APIRequest<RoutesRequest, Error> = tron.codable.request("route")
         request.method = .get
+        
+        guard
+            let startLat = start.latitude,
+            let startLong = start.longitude,
+            let endLat = end.latitude,
+            let endLong = end.longitude
+            else {
+                print("[Network] getRoutes() No Valid Coordinates")
+                callback(request)
+                return
+        }
+        
         request.parameters = [
             "arriveBy"          :   type == .arriveBy,
-            "end"               :   "\(endCoord.latitude),\(endCoord.longitude)",
-            "start"             :   "\(startCoord.latitude),\(startCoord.longitude)",
+            "end"               :   "\(endLat),\(endLong)",
+            "start"             :   "\(startLat),\(startLong)",
             "time"              :   time.timeIntervalSince1970,
-            "destinationName"   :   endPlaceName,
-            "originName"        :   startPlaceName
+            "destinationName"   :   end.name,
+            "originName"        :   start.name
         ]
         
         // Add unique identifier to request
@@ -128,22 +117,20 @@ class Network {
         callback(request)
     }
     
-    class func getRequestUrl(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D,
-                             originName: String, destinationName: String, time: Date, type: SearchType) -> String {
+    class func getRequestURL(start: Place, end: Place, time: Date, type: SearchType) -> String {
         let path = "route"
         let arriveBy = (type == .arriveBy)
-        let end = "\(endCoord.latitude),\(endCoord.longitude)"
-        let start =  "\(startCoord.latitude),\(startCoord.longitude)"
+        let endStr = "\(String(describing: end.latitude)),\(String(describing: end.longitude))"
+        let startStr =  "\(String(describing: start.latitude)),\(String(describing: start.longitude))"
         let time = time.timeIntervalSince1970
         
-        return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(end)&start=\(start)&time=\(time)&destinationName=\(destinationName)&originName=\(originName)"
+        return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(endStr)&start=\(startStr)&time=\(time)&destinationName=\(end.name)&originName=\(start.name)"
     }
-
-    /// TO BE CHANGED
-    class func getGooglePlacesAutocompleteResults(searchText: String) -> APIRequest<JSON, Error> {
-        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("places")
+    
+    class func getSearchResults(searchText: String) -> APIRequest<SearchRequest, Error> {
+        let request: APIRequest<SearchRequest, Error> = tron.codable.request("search")
         request.method = .post
-            request.parameterEncoding = JSONEncoding.default
+        request.parameterEncoding = JSONEncoding.default
         request.parameters = [
             "query": searchText
         ]

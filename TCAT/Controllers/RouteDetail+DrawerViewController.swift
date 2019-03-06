@@ -111,7 +111,6 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         tableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.largeDetailCellIdentifier)
         tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: Constants.Cells.busStopCellIdentifier)
         tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.emptyFooterView)
-        // tableView.register(PhraseLabelFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.phraseLabelFooterView)
         tableView.dataSource = self
         tableView.delegate = self
         
