@@ -167,13 +167,11 @@ class WhatsNewHeaderView: UIView {
         let buttonWidth: CGFloat = 80
         
         primaryButton.snp.makeConstraints { (make) in
-            // make.centerX.equalToSuperview().offset(buttonWidthPadding / 2).priority(.low)
             make.centerY.top.bottom.right.equalToSuperview()
             make.width.equalTo(buttonWidth)
         }
         
         secondaryButton?.snp.makeConstraints { (make) in
-            // make.centerX.equalToSuperview().offset(-buttonWidthPadding / 2).priority(.low)
             make.centerY.top.bottom.left.equalToSuperview()
             make.width.equalTo(buttonWidth)
             make.right.equalTo(primaryButton.snp.left).offset(-buttonWidthPadding)
@@ -223,6 +221,8 @@ class WhatsNewHeaderView: UIView {
             open(link, optionalAppLink: card.primaryActionAppLink) {
                 self.whatsNewDelegate?.dismissView()
             }
+        } else {
+            self.whatsNewDelegate?.dismissView()
         }
     }
     
@@ -231,6 +231,8 @@ class WhatsNewHeaderView: UIView {
             open(link, optionalAppLink: card.secondaryActionAppLink) {
                 self.whatsNewDelegate?.dismissView()
             }
+        } else {
+            self.whatsNewDelegate?.dismissView()
         }
     }
     
