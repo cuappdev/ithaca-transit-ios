@@ -14,7 +14,6 @@
 		228F353921C71D2800556E6F /* alertResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 228F353821C71D2800556E6F /* alertResponse.json */; };
 		2292486C21B8ECB90004279C /* ServiceAlertsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2292486B21B8ECB90004279C /* ServiceAlertsViewController.swift */; };
 		2292486E21BB82180004279C /* ServiceAlertTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2292486D21BB82180004279C /* ServiceAlertTableViewCell.swift */; };
-		22948BFC221B75C5003FC43F /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22948BFA221B75C5003FC43F /* Network.swift */; };
 		22948BFD221B75C5003FC43F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22948BFB221B75C5003FC43F /* Models.swift */; };
 		4036E23543D87A22BF6B0023 /* Pods_TCATUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */; };
 		449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C781D80D0E80019300C /* AppDelegate.swift */; };
@@ -37,6 +36,7 @@
 		BF164D5F221DFCDE0069953E /* LegacyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF164D5E221DFCDE0069953E /* LegacyModels.swift */; };
 		BF18AE102083B7F6000C3D82 /* StoreReviewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18AE0F2083B7F6000C3D82 /* StoreReviewHelper.swift */; };
 		BF18AE122083B9B8000C3D82 /* Phrases.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18AE112083B9B8000C3D82 /* Phrases.swift */; };
+		BF250D7F222FB12400E7F271 /* Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF250D7E222FB12300E7F271 /* Endpoints.swift */; };
 		BF316CB02096352B005A14EF /* PhraseLabelFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF316CAF2096352B005A14EF /* PhraseLabelFooterView.swift */; };
 		BF456E0320489990005C611D /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
 		BF5C52A4207B96F0003C93B9 /* LiveIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */; };
@@ -148,7 +148,6 @@
 		228F353821C71D2800556E6F /* alertResponse.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = alertResponse.json; sourceTree = "<group>"; };
 		2292486B21B8ECB90004279C /* ServiceAlertsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlertsViewController.swift; path = Controllers/ServiceAlertsViewController.swift; sourceTree = "<group>"; };
 		2292486D21BB82180004279C /* ServiceAlertTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlertTableViewCell.swift; path = Cells/ServiceAlertTableViewCell.swift; sourceTree = "<group>"; };
-		22948BFA221B75C5003FC43F /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Network.swift; path = Utilities/Network.swift; sourceTree = "<group>"; };
 		22948BFB221B75C5003FC43F /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Models.swift; path = Utilities/Models.swift; sourceTree = "<group>"; };
 		449A7C751D80D0E80019300C /* TCAT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCAT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C781D80D0E80019300C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -180,6 +179,7 @@
 		BF164D5E221DFCDE0069953E /* LegacyModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LegacyModels.swift; path = Model/LegacyModels.swift; sourceTree = "<group>"; };
 		BF18AE0F2083B7F6000C3D82 /* StoreReviewHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StoreReviewHelper.swift; path = Utilities/StoreReviewHelper.swift; sourceTree = "<group>"; };
 		BF18AE112083B9B8000C3D82 /* Phrases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Phrases.swift; path = Utilities/Phrases.swift; sourceTree = "<group>"; };
+		BF250D7E222FB12300E7F271 /* Endpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Endpoints.swift; path = Utilities/Endpoints.swift; sourceTree = "<group>"; };
 		BF316CAF2096352B005A14EF /* PhraseLabelFooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PhraseLabelFooterView.swift; path = Views/PhraseLabelFooterView.swift; sourceTree = "<group>"; };
 		BF456E0220489990005C611D /* BusLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocation.swift; path = Model/BusLocation.swift; sourceTree = "<group>"; };
 		BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LiveIndicator.swift; path = Views/LiveIndicator.swift; sourceTree = "<group>"; };
@@ -322,8 +322,8 @@
 		2292486621B891790004279C /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				BF250D7E222FB12300E7F271 /* Endpoints.swift */,
 				22948BFB221B75C5003FC43F /* Models.swift */,
-				22948BFA221B75C5003FC43F /* Network.swift */,
 				BF8AF5F22206BBF60091AB8C /* Utilities.swift */,
 				DD3D9C201F94297100B164D4 /* Reachability.swift */,
 			);
@@ -881,7 +881,6 @@
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				5006F7BA1EC0F59A005ACAF2 /* SearchTableViewHelpers.swift in Sources */,
 				BFCA712D206AC69000E4CCE5 /* Keys.swift in Sources */,
-				2292486921B891A30004279C /* Endpoints.swift in Sources */,
 				DDB49C9D1E8857FC00A99C35 /* BusPath.swift in Sources */,
 				DD659C8A20508E1B00506BAC /* WalkWithDistanceIcon.swift in Sources */,
 				BF8AF5F32206BBF60091AB8C /* Utilities.swift in Sources */,
@@ -904,6 +903,7 @@
 				DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */,
 				222BDE16215C1CEE0040DD93 /* WhatsNewHeaderView.swift in Sources */,
 				DD99E2F61F6DB06A0073E8F7 /* Constants.swift in Sources */,
+				BF250D7F222FB12400E7F271 /* Endpoints.swift in Sources */,
 				7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */,
 				DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */,
 				D183AA021E6CB092006A9A15 /* Extensions.swift in Sources */,
@@ -912,7 +912,6 @@
 				D94BD30121599E3200C9214E /* EventPayload.swift in Sources */,
 				DDE3BC231F5863D50014D2BB /* Place.swift in Sources */,
 				BF6095271FD7091B0013E538 /* CustomNavigationController.swift in Sources */,
-				22948BFC221B75C5003FC43F /* Network.swift in Sources */,
 				BF5CBAD11FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift in Sources */,
 				DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */,
 				BF5C52A4207B96F0003C93B9 /* LiveIndicator.swift in Sources */,
