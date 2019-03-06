@@ -14,10 +14,17 @@ struct Constants {
     /// The phrases used for alerts
     struct Alerts {
 
+        
         struct GeneralActions {
             static let settings = "Settings"
             static let cancel = "Cancel"
             static let dontRemind = "Don't Remind Me Again"
+        }
+        
+        struct AlertsRequestFailure {
+            static let title = "Couldn't Fetch Service Alerts"
+            static let message = "There was an error fetching service alerts. Please retry again."
+            static let action = "OK"
         }
 
         struct LocationPermissions {
@@ -142,6 +149,7 @@ struct Constants {
         static let locationNotFound = "Location Not Found"
         static let noNetworkConnection = "No Network Connection"
         static let noRoutesFound = "No Routes Found"
+        static let noActiveAlerts = "No Active Service Alerts"
 
         // Other empty state messages
         static let lookingForRoutes = "Looking For Routes..."
@@ -195,7 +203,7 @@ struct Constants {
         static let searchForDestination = "Search for a destination"
         static let currentLocation = "Current Location"
         static let destination = "your destination"
-
+        static let affectedRoutes = "Affected Routes"
         static let seeAllStops = "See All Stops"
 
         // What's New Card for minor app updates
@@ -206,6 +214,10 @@ struct Constants {
     struct TableHeaders {
         static let recentSearches = "Recent Searches"
         static let favoriteDestinations = "Favorite Destinations"
+        static let highPriority = "High Priority"
+        static let mediumPriority = "Medium Priority"
+        static let lowPriority = "Low Priority"
+        static let noPriority = "Other"
     }
 
     /// The titles of controllers
@@ -214,6 +226,7 @@ struct Constants {
         static let favorite = "Add Favorite"
         static let favorites = "Add Favorites"
         static let aboutUs = "About Us"
+        static let serviceAlerts = "TCAT Service Alerts"
         static let routeDetails = "Route Details"
         static let routeOptions = "Route Options"
         static let routeResults = "Route Results"
@@ -229,6 +242,7 @@ struct Constants {
         static let recentSearch = "recentSearch"
         static let allBusStops = "allBusStops"
         static let favorites = "favorites"
+        static let servicedRoutes = "servicedRoutes"
     }
 
     struct Values {

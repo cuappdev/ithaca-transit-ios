@@ -241,6 +241,18 @@ extension String {
         return newAttributedString
 
     }
+    
+    /** Return a list of all lone-standing integers in a list */
+    func intsFromString() -> [Int] {
+        var intList = [Int]()
+        let stringArray = self.components(separatedBy: CharacterSet.decimalDigits.inverted)
+        for item in stringArray {
+            if let number = Int(item) {
+                intList.append(number)
+            }
+        }
+        return intList
+    }
 }
 
 extension CLLocationCoordinate2D: Codable {
@@ -295,7 +307,7 @@ extension DateFormatter {
 extension Date {
     static func parseDate(_ dateString: String) -> Date {
         let dateFormatter = DateFormatter.defaultParser
-        let date = dateFormatter.date(from: dateString) ?? Date.distantPast
+        let date = dateFormatter.date(from: dateString) ?? Date()
         return Time.truncateSeconds(from: date)
     }
 }
@@ -344,6 +356,12 @@ extension Array where Element: UIView {
     /// Remove each view from its superview.
     func removeViewsFromSuperview() {
         self.forEach { $0.removeFromSuperview() }
+    }
+}
+
+extension Array where Element: Comparable {
+    func containsSameElements(as other: [Element]) -> Bool {
+        return self.count == other.count && self.sorted() == other.sorted()
     }
 }
 

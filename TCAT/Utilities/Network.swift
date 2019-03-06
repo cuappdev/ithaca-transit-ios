@@ -60,12 +60,18 @@ class Network {
 
     static let tron = TRON(baseURL: Network.address)
 
-    class func getAllStops() -> APIRequest<AllBusStops, Error> {
-        let request: APIRequest<AllBusStops, Error> = tron.swiftyJSON.request("allStops")
+    class func getAllStops() -> APIRequest<AllBusStopsRequest, Error> {
+        let request: APIRequest<AllBusStopsRequest, Error> = tron.codable.request("allStops")
         request.method = .get
         return request
     }
-
+    
+    class func getAlerts() -> APIRequest<AlertRequest, Error> {
+        let request: APIRequest<AlertRequest, Error> = tron.codable.request("alerts")
+        request.method = .get
+        return request
+    }
+    
     class func getCoordinates(start: CoordinateAcceptor, end: CoordinateAcceptor,
                               callback: @escaping (_ startCoord: CLLocationCoordinate2D?, _ endCoord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void ) {
         
@@ -94,9 +100,8 @@ class Network {
     }
 
     class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, startPlaceName: String, endPlaceName: String, time: Date, type: SearchType,
-                         callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void) {
-        
-        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
+                         callback: @escaping (_ request: APIRequest<RoutesRequest, Error>) -> Void) {
+        let request: APIRequest<RoutesRequest, Error> = tron.codable.request("route")
         request.method = .get
         request.parameters = [
             "arriveBy"          :   type == .arriveBy,
@@ -144,14 +149,11 @@ class Network {
     // MARK: #182 • To be updated with Route string identifier
     
     @discardableResult
-    class func routeSelected(url: String, rowIndex: Int) -> APIRequest<JSON, Error> {
+    class func routeSelected(routeId: String) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routeSelected")
         request.method = .post
         request.parameterEncoding = JSONEncoding.default
-        request.parameters = [
-            "tripId" : url,
-            "rowIndex" : rowIndex
-        ]
+        request.parameters = ["routeId" : routeId]
         
         // Add unique identifier to request
         if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
@@ -161,15 +163,14 @@ class Network {
         return request
     }
 
-    class func getBusLocations(_ directions: [Direction]) -> APIRequest<BusLocationResult, Error> {
-
-        let request: APIRequest<BusLocationResult, Error> = tron.swiftyJSON.request("tracking")
+    class func getBusLocations(_ directions: [Direction]) -> APIRequest<BusLocationRequest, Error> {
+        let request: APIRequest<BusLocationRequest, Error> = tron.codable.request("tracking")
         request.method = .post
         let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
         let dictionary = departDirections.map { (direction) -> [String : Any] in
 
             // The id of the location, or bus stop, the bus needs to get to
-            let stopID = direction.startLocation.id
+            let stopID = direction.stops.first?.id ?? "-1"
 
             return [
                 "stopID"                :   stopID,
@@ -188,11 +189,10 @@ class Network {
         }
         
         return request
-
     }
 
-    class func getDelay(tripId: String, stopId: String) -> APIRequest<JSON, Error> {
-        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("delay")
+    class func getDelay(tripId: String, stopId: String) -> APIRequest<BusDelayRequest, Error> {
+        let request: APIRequest<BusDelayRequest, Error> = tron.codable.request("delay")
         request.method = .get
         request.parameters = [
             "stopID" : stopId,
@@ -211,119 +211,4 @@ class Network {
         let path = "delay"
         return "\(address)\(path)?stopID=\(stopId)&tripID=\(tripId)"
     }
-
-}
-
-class Error: JSONDecodable {
-    required init(json: JSON) {}
-}
-
-class AllBusStops: JSONDecodable {
-    var allStops : [BusStop] = [BusStop]()
-
-    required init(json: JSON) throws {
-        if json["success"].boolValue {
-            let data = json["data"].arrayValue
-            allStops = parseAllStops(json: data)
-        }
-    }
-
-    func parseAllStops(json: [JSON]) -> [BusStop] {
-        var allStopsArray = [BusStop]()
-        for stop in json {
-            let busStop = BusStop(
-                name: stop["name"].stringValue,
-                lat: stop["lat"].doubleValue,
-                long: stop["long"].doubleValue
-            )
-            allStopsArray.append(busStop)
-        }
-
-        /* These next few lines take duplicate stops and find the middle coordinate between
-         * them and will use that as the condensed bus stop if they are less than 0.1 miles apart
-         * else just use both stops because they are far apart
-         */
-        let crossReference = allStopsArray.reduce(into: [String: [BusStop]]()) {
-            $0[$1.name, default: []].append($1)
-        }
-
-        var nonDuplicateStops = crossReference.filter {$1.count == 1}.map { (key, value) -> BusStop in
-            return value.first!
-        }
-
-        let duplicates = crossReference.filter { $1.count > 1 }
-
-        var middleGroundBusStops: [BusStop] = []
-        for key in duplicates.keys {
-            if let currentBusStops = duplicates[key], let first = currentBusStops.first, let second = currentBusStops.last {
-                let firstStopLocation = CLLocation(latitude: first.lat, longitude: first.long)
-                let secondStopLocation = CLLocation(latitude: second.lat, longitude: second.long)
-
-                let distanceBetween = firstStopLocation.distance(from: secondStopLocation)
-                let middleCoordinate = firstStopLocation.coordinate.middleLocationWith(location: secondStopLocation.coordinate)
-                if distanceBetween < Constants.Values.maxDistanceBetweenStops {
-                    let middleBusStop = BusStop(name: first.name, lat: middleCoordinate.latitude, long: middleCoordinate.longitude)
-                    middleGroundBusStops.append(middleBusStop)
-                } else {
-                    nonDuplicateStops.append(contentsOf: [first, second])
-                }
-            }
-        }
-        nonDuplicateStops.append(contentsOf: middleGroundBusStops)
-
-        let sortedStops = nonDuplicateStops.sorted(by: {$0.name.uppercased() < $1.name.uppercased()})
-        return sortedStops
-    }
-}
-
-class BusLocationResult: JSONDecodable {
-
-    var busLocations: [BusLocation] = []
-
-    required init(json: JSON) throws {
-        if json["success"].boolValue {
-            self.busLocations = json["data"].arrayValue.map {
-                parseBusLocation(json: $0)
-            }
-        } else {
-            print("BusLocation Init Failure")
-        }
-    }
-
-    func parseBusLocation(json: JSON) -> BusLocation {
-
-        let dataType: BusDataType = {
-            switch json["case"].stringValue {
-            case "noData" : return .noData
-            case "validData" : return .validData
-            default : return .invalidData
-            }
-        }()
-
-        let busLocation = BusLocation(
-            dataType: dataType,
-            destination: json["destination"].stringValue,
-            deviation: json["deviation"].intValue,
-            delay: json["delay"].intValue,
-            direction: json["direction"].stringValue,
-            displayStatus: json["displayStatus"].stringValue,
-            gpsStatus: json["gpsStatus"].intValue,
-            heading: json["heading"].intValue,
-            lastStop: json["lastStop"].stringValue,
-            lastUpdated: Date(timeIntervalSince1970: json["lastUpdated"].doubleValue),
-            latitude: json["latitude"].doubleValue,
-            longitude: json["longitude"].doubleValue,
-            name: json["name"].intValue,
-            opStatus: json["opStatus"].stringValue,
-            routeID: json["routeID"].stringValue,
-            runID: json["runID"].intValue,
-            speed: json["speed"].intValue,
-            tripID: json["tripID"].stringValue,
-            vehicleID: json["vehicleID"].intValue
-        )
-
-        return busLocation
-
-    }
-
 }
