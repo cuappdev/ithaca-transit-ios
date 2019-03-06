@@ -159,7 +159,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         // Set custom formatting based on cell
         switch (indexPath.section, indexPath.row) {
 
-        case (0, 1): // Send Feedback
+        case (1, 1): // Send Feedback
             cell.textLabel?.textColor = Colors.tcatBlue
         default:
             break

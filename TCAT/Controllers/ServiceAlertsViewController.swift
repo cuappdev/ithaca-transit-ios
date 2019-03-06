@@ -52,7 +52,8 @@ class ServiceAlertsViewController: UIViewController {
         
         updateConstraints()
         
-        getServiceAlerts()
+        // getServiceAlerts()
+        createDummyData()
     }
     
     func updateConstraints() {
