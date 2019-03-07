@@ -137,7 +137,7 @@ open class RPCircularProgress: UIView {
         }
     }
 
-    open override class var layerClass : AnyClass {
+    open override class var layerClass: AnyClass {
         return ProgressLayer.self
     }
 
@@ -153,7 +153,7 @@ open class RPCircularProgress: UIView {
 
         setupDefaults()
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
@@ -422,7 +422,7 @@ private extension RPCircularProgress {
 
         static let progress: CGFloat = 0
         static let thicknessRatio: CGFloat = 0.3
-        static let roundedCorners = true
+        static let roundedCorners = false
         static let clockwiseProgress = true
         static let indeterminateDuration: CFTimeInterval = 1.0
         static let indeterminateProgress: CGFloat = 0.3
@@ -454,4 +454,3 @@ extension RPCircularProgress: CAAnimationDelegate {
     }
 
 }
-

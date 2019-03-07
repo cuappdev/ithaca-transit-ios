@@ -32,8 +32,10 @@ import SwiftyJSON
     override func viewDidLoad() {
         super.viewDidLoad()
         print("viewDidLoad")
+        print("did fetch routes is: \(didFetchRoutes)")
+        print("routes count: \(routes.count)")
 
-        extensionContext?.widgetLargestAvailableDisplayMode = .expanded
+        extensionContext?.widgetLargestAvailableDisplayMode = .compact
 
         setUpLocation()
         setUpRoutesTableView()
@@ -77,6 +79,7 @@ import SwiftyJSON
             case .success(let routesResponse):
                 self.routes = routesResponse.data
                 self.didFetchRoutes = true
+                self.extensionContext?.widgetLargestAvailableDisplayMode = .expanded
                 self.routesTable.reloadData()
                 print("reloaded table view")
             case .failure(let networkError):
@@ -104,7 +107,7 @@ import SwiftyJSON
         // If there's an update, use NCUpdateResult.NewData
 
         print("widgetPerformUpdate")
-        
+
 //        completionHandler
     }
 
@@ -135,16 +138,16 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     private func setUpRoutesTableView() {
         routesTable.delegate = self
         routesTable.dataSource = self
-        // routesTable.allowsSelection = false
         routesTable.register(TodayExtensionCell.self, forCellReuseIdentifier: "todayExtensionCell")
         routesTable.register(NoFavoritesCell.self, forCellReuseIdentifier: "noFavoritesCell")
         routesTable.register(NoRoutesCell.self, forCellReuseIdentifier: "noRoutesCell")
+        routesTable.register(LoadingTableViewCell.self, forCellReuseIdentifier: "loadingCell")
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let isCompact = extensionContext?.widgetActiveDisplayMode == .compact
 
-        if (isCompact || favorites.isEmpty || routes.isEmpty) {
+        if (isCompact || favorites.isEmpty || routes.isEmpty || !didFetchRoutes) {
             return 1
         } else {
             return favorites.count
@@ -159,19 +162,19 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if (favorites.count != 0) {
             if (routes.isEmpty) {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "noRoutesCell", for: indexPath) as! NoRoutesCell
                 if (didFetchRoutes) { // no routes retrieved
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "noRoutesCell", for: indexPath) as! NoRoutesCell
                     cell.noRoutesLabel.text = "Unable to Load Routes"
                     return cell
                 } else { // still fetching routes
-                    cell.noRoutesLabel.text = ""
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "loadingCell", for: indexPath) as! LoadingTableViewCell
                     return cell
                 }
             }
-
             let cell = tableView.dequeueReusableCell(withIdentifier: "todayExtensionCell", for: indexPath) as! TodayExtensionCell
             routes[indexPath.row]?.formatDirections(start: Constants.General.currentLocation, end: favorites[indexPath.row])
             cell.setUpCell(route: routes[indexPath.row], destination: favorites[indexPath.row])
+            cell.selectionStyle = .none
             return cell
         }
 
@@ -182,19 +185,19 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // launch app via URL scheme --> route OPTIONS view (to be changed to route detail view later on
-        
+
         let latLong = coordinates[indexPath.row].components(separatedBy: ",")
         let latitude = latLong[0]
         let longitude = latLong[1]
         let destination = favorites[indexPath.row]
-        
+
         let stringURL = "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(destination)"
         if
             let url = stringURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
             let convertedURL = URL(string: url) {
             extensionContext?.open(convertedURL, completionHandler: nil)
         }
-        
+
     }
 
 }
@@ -211,10 +214,10 @@ extension TodayViewController: CLLocationManagerDelegate {
             currentLocation = location.coordinate
         }
     }
-    
+
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.first {
             currentLocation = location.coordinate
         }
-    } 
+    }
 }

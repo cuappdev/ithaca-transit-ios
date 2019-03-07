@@ -41,6 +41,7 @@
 		7E14AEDD2177E884006A344D /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
 		7E14AEF12177E884006A344D /* Siri.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7E14AEDA2177E884006A344D /* Siri.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7E2FFF0F2207B687008EA224 /* TodayExtensionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */; };
+		7E3C5B4122308D83000EFA10 /* LoadingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3C5B4022308D83000EFA10 /* LoadingTableViewCell.swift */; };
 		7E47DEDA22093F7300BC944E /* NoFavoritesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E47DED922093F7300BC944E /* NoFavoritesCell.swift */; };
 		7E75BAD621B3A72B00FB56BB /* TodayExtensionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */; };
 		7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
@@ -68,6 +69,8 @@
 		7EBD9D9D2226311A008BF900 /* RouteDiagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */; };
 		7EBD9D9E22263120008BF900 /* WalkWithDistanceIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD659C8920508E1A00506BAC /* WalkWithDistanceIcon.swift */; };
 		7EBD9DA122263508008BF900 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2292486821B891A30004279C /* Models.swift */; };
+		7EC15850222C827C00BA9DA8 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0002211FB37D0A00773109 /* LoadingIndicator.swift */; };
+		7EC15851222C82B900BA9DA8 /* RPCircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */; };
 		7EE04A5021B4503C002F0C52 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
 		7EE04A5121B45132002F0C52 /* LiveIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */; };
 		7EE04A5221B45143002F0C52 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36A7011F6637C900E4789E /* Direction.swift */; };
@@ -231,6 +234,7 @@
 		7E14AEDC2177E884006A344D /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
 		7E14AEDE2177E884006A344D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayExtensionHelpers.swift; sourceTree = "<group>"; };
+		7E3C5B4022308D83000EFA10 /* LoadingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingTableViewCell.swift; sourceTree = "<group>"; };
 		7E47DED922093F7300BC944E /* NoFavoritesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFavoritesCell.swift; sourceTree = "<group>"; };
 		7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodayExtensionCell.swift; sourceTree = "<group>"; };
 		7E950007222A396400636169 /* NoRoutesTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NoRoutesTableViewCell.swift; path = ../../NoRoutesTableViewCell.swift; sourceTree = "<group>"; };
@@ -503,6 +507,7 @@
 				7E950007222A396400636169 /* NoRoutesTableViewCell.swift */,
 				7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */,
 				7EEF18A421B39C6200343FFD /* Info.plist */,
+				7E3C5B4022308D83000EFA10 /* LoadingTableViewCell.swift */,
 			);
 			path = "Today Extension";
 			sourceTree = "<group>";
@@ -1173,6 +1178,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7EC15850222C827C00BA9DA8 /* LoadingIndicator.swift in Sources */,
 				7EE04A6F21B461D7002F0C52 /* Extensions+Shared.swift in Sources */,
 				7EE04A5721B45250002F0C52 /* BusStop.swift in Sources */,
 				7EE04A5021B4503C002F0C52 /* Route.swift in Sources */,
@@ -1182,6 +1188,7 @@
 				7EE04A5A21B452BB002F0C52 /* PlaceResult.swift in Sources */,
 				7EE04A6A21B45611002F0C52 /* EventPayload.swift in Sources */,
 				7EE04A5421B4516E002F0C52 /* BusIcon.swift in Sources */,
+				7E3C5B4122308D83000EFA10 /* LoadingTableViewCell.swift in Sources */,
 				7EE04A6921B455E0002F0C52 /* Shared.swift in Sources */,
 				7E47DEDA22093F7300BC944E /* NoFavoritesCell.swift in Sources */,
 				7EE04A5321B4515B002F0C52 /* LocationObject.swift in Sources */,
@@ -1193,6 +1200,7 @@
 				7EE04A5C21B452EB002F0C52 /* Analytics.swift in Sources */,
 				7EEF18A021B39C6200343FFD /* TodayViewController.swift in Sources */,
 				7EE04A6521B453F0002F0C52 /* BusLocationView.swift in Sources */,
+				7EC15851222C82B900BA9DA8 /* RPCircularProgress.swift in Sources */,
 				7EE04A5F21B45363002F0C52 /* Circle.swift in Sources */,
 				7E75BAD621B3A72B00FB56BB /* TodayExtensionCell.swift in Sources */,
 				7EE04A6321B453C5002F0C52 /* (null) in Sources */,
