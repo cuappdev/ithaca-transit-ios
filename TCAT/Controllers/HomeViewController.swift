@@ -80,7 +80,8 @@ class HomeViewController: UIViewController {
         tableView.tableFooterView = UIView()
         tableView.showsVerticalScrollIndicator = false
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
+        tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.addFavoriteIdentifier)
+        tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
         view.addSubview(tableView)
 
         tableView.snp.makeConstraints { (make) in
@@ -200,7 +201,11 @@ class HomeViewController: UIViewController {
         let seeAllStopsSection = Section(type: .seeAllStops, items: [])
         var favoritesSection = Section(type: .favorites, items: favorites)
         if favoritesSection.items.isEmpty {
-            let addFavorites = Place(name: Constants.General.firstFavorite)
+            let addFavorites = Place(
+                name: Constants.General.firstFavorite,
+                placeDescription: Constants.General.tapHere,
+                placeIdentifier: "dummy_data"
+            )
             favoritesSection = Section(type: .favorites, items: [addFavorites])
         }
         allSections.append(favoritesSection)
@@ -320,32 +325,26 @@ extension HomeViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         var cell: UITableViewCell!
         
         if sections[indexPath.section].type == .favorites &&
             sections[indexPath.section].items.first?.name == Constants.General.firstFavorite
         {
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-            cell.textLabel?.text = Constants.General.firstFavorite
-            cell.detailTextLabel?.text = Constants.General.tapHere
-            (cell as? PlaceTableViewCell)?.iconColor = Colors.tcatBlue
-        } else if sections[indexPath.section].type == .seeAllStops {
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
-            cell.textLabel?.text = Constants.General.seeAllStops
-            cell.imageView?.image = #imageLiteral(resourceName: "list")
-            cell.accessoryType = .disclosureIndicator
-        } else {
-            let place = sections[indexPath.section].items[indexPath.row]
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-            cell.textLabel?.text = place.name
-            cell.detailTextLabel?.text = place.description
-            (cell as? PlaceTableViewCell)?.iconColor = place.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.addFavoriteIdentifier) as? PlaceTableViewCell
+        }
+        
+        else if sections[indexPath.section].type == .seeAllStops {
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as? GeneralTableViewCell
+        }
+        
+        else {
+            guard let placeCell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
+                else { return cell }
+            placeCell.place = sections[indexPath.section].items[indexPath.row]
+            cell = placeCell
         }
 
-        cell.textLabel?.font = .getFont(.regular, size: 14)
-        cell.preservesSuperviewLayoutMargins = false
-        cell.separatorInset = .zero
-        cell.layoutMargins = .zero
         cell.layoutSubviews()
 
         return cell
