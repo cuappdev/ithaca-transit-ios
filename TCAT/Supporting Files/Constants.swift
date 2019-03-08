@@ -110,8 +110,8 @@ struct Constants {
         static let noInternetConnection = "No internet connection"
         static let trackingLater = "Tracking available near departure time"
         static let cannotConnectLive = "Cannot connect to live tracking"
-        static let noLiveTrackingForRoutes = "No live tracking available for routes"
-        static let noLiveTrackingForRoute = "No live tracking available for Route "
+        static let noLiveTrackingForRoutes = "No live tracking available for routes."
+        static let noLiveTrackingForRoute = "No live tracking available for Route"
         static let cantConnectServer = "Could not connect to server"
         static let routeCalculationError = "Route calculation error. Please retry."
     }
@@ -133,14 +133,16 @@ struct Constants {
 
     /// Cell identifiers
     struct Cells {
-        static let busIdentifier = "BusStop"
         static let placeIdentifier = "PlaceTableViewCell"
-        static let searchResultsIdentifier = "SearchResults"
+        
+        static let addFavoriteIdentifier = "AddFavorite"
         static let seeAllStopsIdentifier = "SeeAllStops"
+        
         static let currentLocationIdentifier = "CurrentLocation"
         static let smallDetailCellIdentifier = "SmallCell"
         static let largeDetailCellIdentifier = "LargeCell"
-        static let busStopCellIdentifier = "BusStopCell"
+        static let busStopDetailCellIdentifier = "BusStopCell"
+        
         static let informationCellIdentifier = "InformationCell"
     }
 
