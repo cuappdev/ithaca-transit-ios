@@ -190,3 +190,10 @@ struct DataMigrationOnePointThreePayload: Payload {
     let success: Bool
     let errorDescription: String?
 }
+
+struct ServiceAlertsPayload: Payload {
+    static let eventName: String = "Service Alerts Opened"
+    let deviceInfo = DeviceInfo()
+    
+    let didTapWhatsNew: Bool
+}

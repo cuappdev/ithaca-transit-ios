@@ -53,6 +53,10 @@ class ServiceAlertsViewController: UIViewController {
         updateConstraints()
         
         getServiceAlerts()
+        
+        // Uncomment when not on What's New card anymore.
+//        let payload = ServiceAlertsPayload()
+//        Analytics.shared.log(payload)
     }
     
     func updateConstraints() {

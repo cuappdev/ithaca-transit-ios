@@ -21,6 +21,8 @@ struct WhatsNewCard {
             let informationViewController = InformationViewController()
             let navigationVC = CustomNavigationController(rootViewController: informationViewController)
             homeViewController.present(navigationVC, animated: true, completion: {
+                let payload = ServiceAlertsPayload(didTapWhatsNew: true)
+                Analytics.shared.log(payload)
                 informationViewController.showServiceAlerts()
             })
         },
