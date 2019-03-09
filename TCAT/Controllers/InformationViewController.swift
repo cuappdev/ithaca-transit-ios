@@ -27,12 +27,16 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
 
     var content: [[(name: String, action: Selector)]] = [
         
-        [ // Section 0
+        [ // Seciton 0
+            (name: Constants.InformationView.serviceAlerts, action: #selector(showServiceAlerts))
+        ],
+        
+        [ // Section 1
             (name: Constants.InformationView.onboarding, action: #selector(presentOnboarding)),
             (name: Constants.InformationView.sendFeedback, action: #selector(sendFeedback))
         ],
 
-        [ // Section 1
+        [ // Section 2
             (name: Constants.InformationView.moreApps, action: #selector(showMoreApps)),
             (name: Constants.InformationView.website, action: #selector(openTeamWebsite))
         ]
@@ -155,7 +159,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         // Set custom formatting based on cell
         switch (indexPath.section, indexPath.row) {
 
-        case (0, 1): // Send Feedback
+        case (1, 1): // Send Feedback
             cell.textLabel?.textColor = Colors.tcatBlue
         default:
             break
@@ -289,7 +293,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
     
     @objc func showServiceAlerts() {
         let serviceAlertsVC = ServiceAlertsViewController()
-        present(serviceAlertsVC, animated: true)
+        navigationController?.pushViewController(serviceAlertsVC, animated: true)
     }
 
     func open(_ url: String, inApp: Bool = true) {

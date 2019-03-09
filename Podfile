@@ -52,10 +52,6 @@ end
 target 'Today Extension' do
     # UI Frameworks	
     pod 'SnapKit'
- 
-    # Location
-    pod 'GoogleMaps', '~> 2.6'
-    pod 'GooglePlaces', '~> 2.6'
 
     # Networking + Data
     pod 'TRON', '~> 4.1.2'

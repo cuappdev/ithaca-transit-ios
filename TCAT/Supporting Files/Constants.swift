@@ -14,10 +14,17 @@ struct Constants {
     /// The phrases used for alerts
     struct Alerts {
 
+        
         struct GeneralActions {
             static let settings = "Settings"
             static let cancel = "Cancel"
             static let dontRemind = "Don't Remind Me Again"
+        }
+        
+        struct AlertsRequestFailure {
+            static let title = "Couldn't Fetch Service Alerts"
+            static let message = "There was an error fetching service alerts. Please retry again."
+            static let action = "OK"
         }
 
         struct LocationPermissions {
@@ -71,6 +78,12 @@ struct Constants {
             static let message = "To add more favorites, please swipe left and delete one first."
             static let action = "Got It!"
         }
+        
+        struct GooglePlacesFailure {
+            static let title = "Couldn't Fetch Place Information"
+            static let message = "We ran into an issue fetching the coordinates of the selected location. Please try again later."
+            static let action = "OK"
+        }
     }
 
     struct App {
@@ -119,8 +132,8 @@ struct Constants {
     /// Cell identifiers
     struct Cells {
         static let busIdentifier = "BusStop"
+        static let placeIdentifier = "PlaceTableViewCell"
         static let searchResultsIdentifier = "SearchResults"
-        static let cornellDestinationsIdentifier = "CornellDestinations"
         static let seeAllStopsIdentifier = "SeeAllStops"
         static let currentLocationIdentifier = "CurrentLocation"
         static let smallDetailCellIdentifier = "SmallCell"
@@ -136,6 +149,7 @@ struct Constants {
         static let locationNotFound = "Location Not Found"
         static let noNetworkConnection = "No Network Connection"
         static let noRoutesFound = "No Routes Found"
+        static let noActiveAlerts = "No Active Service Alerts"
 
         // Other empty state messages
         static let lookingForRoutes = "Looking For Routes..."
@@ -181,6 +195,7 @@ struct Constants {
     /// General phrases used throughout the app
     struct General {
         static let firstFavorite = "Add Your First Favorite!"
+        static let tapHere = "Tap Here"
         static let searchPlaceholder = "Where to?"
         static let favoritesPlaceholder = "Search any destination"
         static let fromSearchBarPlaceholder = "Choose starting point..."
@@ -189,18 +204,21 @@ struct Constants {
         static let searchForDestination = "Search for a destination"
         static let currentLocation = "Current Location"
         static let destination = "your destination"
-
+        static let affectedRoutes = "Affected Routes"
         static let seeAllStops = "See All Stops"
 
-        // What's New for v1.2
+        // What's New Card for minor app updates
         static let whatsNewUpdateName = "Introducing Siri Shortcuts"
         static let whatsNewDescription = "Use Siri to access recent searches! Head to Siri & Search in Settings to get started."
     }
 
     struct TableHeaders {
-        static let getThereNow = "Get There Now"
         static let recentSearches = "Recent Searches"
         static let favoriteDestinations = "Favorite Destinations"
+        static let highPriority = "High Priority"
+        static let mediumPriority = "Medium Priority"
+        static let lowPriority = "Low Priority"
+        static let noPriority = "Other"
     }
 
     /// The titles of controllers
@@ -209,6 +227,7 @@ struct Constants {
         static let favorite = "Add Favorite"
         static let favorites = "Add Favorites"
         static let aboutUs = "About Us"
+        static let serviceAlerts = "TCAT Service Alerts"
         static let routeDetails = "Route Details"
         static let routeOptions = "Route Options"
         static let routeResults = "Route Results"
@@ -224,6 +243,7 @@ struct Constants {
         static let recentSearch = "recentSearch"
         static let allBusStops = "allBusStops"
         static let favorites = "favorites"
+        static let servicedRoutes = "servicedRoutes"
 
         static let group = "group.tcat"
     }

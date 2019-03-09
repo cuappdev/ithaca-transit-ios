@@ -24,7 +24,7 @@ class TodayExtensionCell: UITableViewCell {
     // MARK: View vars
 
     var departureLabel: UILabel
-    var destinationLabel: UILabel
+    var destinationLabel: UILabel // To ...
     var liveLabel: UILabel
     var liveIndicatorView: LiveIndicator
     var busIcon: BusIcon?
@@ -140,8 +140,8 @@ class TodayExtensionCell: UITableViewCell {
         departureLabel.textColor = Colors.primaryText
         departureLabel.font = .getFont(.medium, size: 16.0)
         departureLabel.textColor = Colors.primaryText
-        if let direction = busDirection {
-            departureLabel.text = direction.name
+        if let route = route {
+            departureLabel.text = "To \(route.endName)"
         }
     }
 
@@ -166,16 +166,16 @@ class TodayExtensionCell: UITableViewCell {
         destinationLabel.numberOfLines = 1
         destinationLabel.lineBreakMode = .byTruncatingTail
 
-        if let route = route, let direction = busDirection {
+        if let direction = busDirection {
             let delayState = getDelayState(fromDirection: direction)
 
             switch delayState {
             case .late(date: let delayedDepartureTime):
 
-                destinationLabel.text = Time.timeString(from: delayedDepartureTime) + " to \(route.endName)"
+                destinationLabel.text = Time.timeString(from: delayedDepartureTime) + " at \(direction.name)"
 
             case .onTime(date: let departureTime), .noDelay(date: let departureTime):
-                destinationLabel.text = Time.timeString(from: departureTime) + " to \(route.endName)"
+                destinationLabel.text = Time.timeString(from: departureTime) + " at \(direction.name)"
             }
         }
     }

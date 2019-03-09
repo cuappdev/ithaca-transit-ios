@@ -10,8 +10,6 @@ import UIKit
 import NotificationCenter
 import SnapKit
 import CoreLocation
-import GoogleMaps
-import GooglePlaces
 import TRON
 import Alamofire
 import SwiftyJSON
@@ -39,32 +37,20 @@ import SwiftyJSON
 
         setUpLocation()
         setUpRoutesTableView()
-
-        GMSServices.provideAPIKey(Keys.googleMaps.value)
-        GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
-
-        favorites = TodayExtensionManager.shared.retrieveFavoritesNames(for: Constants.UserDefaults.favorites)
-        print("retrieved favorites")
-
-        group.enter()
-        TodayExtensionManager.shared.retrieveFavoritesCoordinates(for: Constants.UserDefaults.favorites) { (coordsDict) in
-            self.coordinates = TodayExtensionManager.shared.orderCoordinates(favorites: self.favorites, dictionary: coordsDict)
-            self.group.leave()
-            print("retrieved coordinates")
-        }
-
-        group.notify(queue: .main) {
-            print("searching for routes")
-            self.searchForRoutes()
-        }
-
         view.addSubview(routesTable)
         createConstraints()
+
+        favorites = TodayExtensionManager.shared.retrieveFavoritesNames()
+        print("retrieved \(favorites.count) favorite(s)")
+        coordinates = TodayExtensionManager.shared.retrieveFavoritesCoordinates()
+        print("retrieved \(coordinates.count) coordinate(s)")
+
+        searchForRoutes()
     }
 
     func searchForRoutes() {
-        if let currentLocation = currentLocation {
-            Network.getMultiRoutes(startCoord: currentLocation, time: Date(), endCoords: coordinates, endPlaceNames: favorites) { (request) in
+        if let start = currentLocation {
+            Network.getMultiRoutes(startCoord: start, time: Date(), endCoords: coordinates, endPlaceNames: favorites) { (request) in
                 print("fetching new routes...")
                 self.processRequest(request: request)
             }
@@ -107,6 +93,10 @@ import SwiftyJSON
         // If there's an update, use NCUpdateResult.NewData
 
         print("widgetPerformUpdate")
+        
+        //if let start = currentLocation {
+            searchForRoutes()
+        //}
 
 //        completionHandler
     }
@@ -203,11 +193,13 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
 }
 
 extension TodayViewController: CLLocationManagerDelegate {
+    
     private func setUpLocation() {
         locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         locationManager.distanceFilter = 10
+        locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
 
         if let location = locationManager.location {
@@ -216,8 +208,12 @@ extension TodayViewController: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.first {
-            currentLocation = location.coordinate
+        guard let location = manager.location else {
+            return
         }
+        
+        currentLocation = location.coordinate
+        print("didUpdateLocation")
+        searchForRoutes()
     }
 }

@@ -155,12 +155,30 @@ extension String {
         return newAttributedString
 
     }
+    
+    /** Return a list of all lone-standing integers in a list */
+    func intsFromString() -> [Int] {
+        var intList = [Int]()
+        let stringArray = self.components(separatedBy: CharacterSet.decimalDigits.inverted)
+        for item in stringArray {
+            if let number = Int(item) {
+                intList.append(number)
+            }
+        }
+        return intList
+    }
 }
 
 extension Array where Element: UIView {
     /// Remove each view from its superview.
     func removeViewsFromSuperview() {
         self.forEach { $0.removeFromSuperview() }
+    }
+}
+
+extension Array where Element: Comparable {
+    func containsSameElements(as other: [Element]) -> Bool {
+        return self.count == other.count && self.sorted() == other.sorted()
     }
 }
 
@@ -221,9 +239,9 @@ public func ???<T>(optional: T?, defaultValue: @autoclosure () -> String) -> Str
     }
 }
 
-func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop]{
-    var nonLetterArray = [BusStop]()
-    var letterArray = [BusStop]()
+func sortFilteredBusStops(busStops: [Place], letter: Character) -> [Place] {
+    var nonLetterArray = [Place]()
+    var letterArray = [Place]()
     for stop in busStops {
         if stop.name.first! == letter {
             letterArray.append(stop)
@@ -235,9 +253,7 @@ func sortFilteredBusStops(busStops: [BusStop], letter: Character) -> [BusStop]{
 }
 
 extension Collection {
-
     subscript(optional i: Index) -> Iterator.Element? {
         return self.indices.contains(i) ? self[i] : nil
     }
-
 }

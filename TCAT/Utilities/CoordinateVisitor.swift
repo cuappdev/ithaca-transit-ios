@@ -7,12 +7,7 @@
 //
 
 import UIKit
-import CoreLocation
 import GooglePlaces
-
-protocol CoordinateAcceptor {
-    func accept(visitor: CoordinateVisitor, callback: @escaping (_ coord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void)
-}
 
 struct CoordinateVisitorError: Swift.Error {
     let title: String
@@ -21,30 +16,35 @@ struct CoordinateVisitorError: Swift.Error {
 
 class CoordinateVisitor: NSObject {
     
-    private let placesClient = GMSPlacesClient.shared()
+    static private let placesClient = GMSPlacesClient.shared()
     
-    func getCoordinate(from place: PlaceResult, callback: @escaping (_ coord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void) {
+    static func getCoordinates(for place: Place, callback: @escaping (_ latitude: Double?, _ longitude: Double?, _ error: CoordinateVisitorError?) -> Void) {
         
-        placesClient.lookUpPlaceID(place.placeID) { (result, error) in
+        let identifier = place.placeIdentifier ?? ""
+        
+        placesClient.lookUpPlaceID(identifier) { (result, error) in
             
             if let error = error {
-                callback(nil, CoordinateVisitorError(title: "Google Places Lookup", description: "PlaceVisitor visit(place:) lookup place id query error: \(error.localizedDescription)"))
+                let coordVisitError = CoordinateVisitorError(
+                    title: "Google Places Lookup",
+                    description: "PlaceVisitor visit(place:) lookup place id query error: \(error.localizedDescription)"
+                )
+                callback(nil, nil, coordVisitError)
                 return
             }
             
             guard let result = result else {
-                callback(nil, CoordinateVisitorError(title: "PlaceResult is nil", description: "Network visit(place:) result is nil for \(place.name) with id \(place.placeID)"))
+                let coordVisitError = CoordinateVisitorError(
+                    title: "PlaceResult is nil",
+                    description: "Network visit(place:) result is nil for \(place.name) with id \(identifier)"
+                )
+                callback(nil, nil, coordVisitError)
                 return
             }
             
-            callback(result.coordinate, nil)
+            callback(result.coordinate.latitude, result.coordinate.longitude, nil)
         }
         
     }
     
-    func getCoordinate(from busStop: BusStop, callback: @escaping (_ coord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void) {
-        
-        callback(CLLocationCoordinate2D(latitude: busStop.lat, longitude: busStop.long), nil)
-        
-    }
 }

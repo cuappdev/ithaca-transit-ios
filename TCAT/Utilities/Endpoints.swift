@@ -82,46 +82,30 @@ class Network {
         return request
     }
 
-    class func getCoordinates(start: CoordinateAcceptor, end: CoordinateAcceptor,
-                              callback: @escaping (_ startCoord: CLLocationCoordinate2D?, _ endCoord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void ) {
-
-        let visitor = CoordinateVisitor()
-
-        start.accept(visitor: visitor) { (startCoord, error) in
-
-            guard let startCoord = startCoord else {
-                callback(nil, nil, error)
-                return
-            }
-
-            end.accept(visitor: visitor) { (endCoord, error) in
-
-                guard let endCoord = endCoord else {
-                    callback(nil, nil, error)
-                    return
-                }
-
-                callback(startCoord, endCoord, nil)
-
-            }
-
-        }
-
-    }
-
-    class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D,
-                         startPlaceName: String, endPlaceName: String, time: Date, type: SearchType,
+    class func getRoutes(start: Place, end: Place, time: Date, type: SearchType,
                          callback: @escaping (_ request: APIRequest<RoutesRequest, Error>) -> Void) {
-
+        
         let request: APIRequest<RoutesRequest, Error> = tron.codable.request("route")
         request.method = .get
+        
+        guard
+            let startLat = start.latitude,
+            let startLong = start.longitude,
+            let endLat = end.latitude,
+            let endLong = end.longitude
+            else {
+                print("[Network] getRoutes() No Valid Coordinates")
+                callback(request)
+                return
+        }
+        
         request.parameters = [
-            "arriveBy": type == .arriveBy,
-            "end": "\(endCoord.latitude),\(endCoord.longitude)",
-            "start": "\(startCoord.latitude),\(startCoord.longitude)",
-            "time": time.timeIntervalSince1970,
-            "destinationName": endPlaceName,
-            "originName": startPlaceName
+            "arriveBy"          :   type == .arriveBy,
+            "end"               :   "\(endLat),\(endLong)",
+            "start"             :   "\(startLat),\(startLong)",
+            "time"              :   time.timeIntervalSince1970,
+            "destinationName"   :   end.name,
+            "originName"        :   start.name
         ]
 
         // Add unique identifier to request
@@ -131,16 +115,15 @@ class Network {
 
         callback(request)
     }
-
-    class func getRequestUrl(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D,
-                             originName: String, destinationName: String, time: Date, type: SearchType) -> String {
+    
+    class func getRequestURL(start: Place, end: Place, time: Date, type: SearchType) -> String {
         let path = "route"
         let arriveBy = (type == .arriveBy)
-        let end = "\(endCoord.latitude),\(endCoord.longitude)"
-        let start =  "\(startCoord.latitude),\(startCoord.longitude)"
+        let endStr = "\(String(describing: end.latitude)),\(String(describing: end.longitude))"
+        let startStr =  "\(String(describing: start.latitude)),\(String(describing: start.longitude))"
         let time = time.timeIntervalSince1970
-
-        return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(end)&start=\(start)&time=\(time)&destinationName=\(destinationName)&originName=\(originName)"
+        
+        return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(endStr)&start=\(startStr)&time=\(time)&destinationName=\(end.name)&originName=\(start.name)"
     }
 
     class func getMultiRoutes(startCoord: CLLocationCoordinate2D, time: Date, endCoords: [String], endPlaceNames: [String],
@@ -157,11 +140,10 @@ class Network {
         callback(request)
     }
 
-    /// TO BE CHANGED
-    class func getGooglePlacesAutocompleteResults(searchText: String) -> APIRequest<JSON, Error> {
-        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("places")
+    class func getSearchResults(searchText: String) -> APIRequest<SearchRequest, Error> {
+        let request: APIRequest<SearchRequest, Error> = tron.codable.request("search")
         request.method = .post
-            request.parameterEncoding = JSONEncoding.default
+        request.parameterEncoding = JSONEncoding.default
         request.parameters = [
             "query": searchText
         ]
@@ -173,13 +155,13 @@ class Network {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routeSelected")
         request.method = .post
         request.parameterEncoding = JSONEncoding.default
-        request.parameters = ["routeId": routeId]
-
+        request.parameters = ["routeId" : routeId]
+        
         // Add unique identifier to request
         if let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid) {
             request.parameters["uid"] = uid
         }
-
+        
         return request
     }
 
