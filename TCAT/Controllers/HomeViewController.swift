@@ -22,6 +22,7 @@ class HomeViewController: UIViewController {
     let userDefaults = UserDefaults.standard
 
     var locationManager = CLLocationManager()
+    var currentLocation: CLLocation?
     var timer: Timer?
     var isNetworkDown = false
     var firstViewing = true
@@ -410,6 +411,7 @@ extension HomeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let routeOptionsViewController = RouteOptionsViewController()
+        routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
         let allStopsTableViewConroller = AllStopsTableViewController()
         var didSelectAllStops = false
         var shouldPushViewController = true
@@ -425,8 +427,9 @@ extension HomeViewController: UITableViewDelegate {
                 shouldPushViewController = false
                 presentFavoritesTVC()
             } else {
-                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
                 routeOptionsViewController.searchTo = place
+                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
+                routeOptionsViewController.didSelectPlace(place: place)
             }
         }
 
@@ -479,6 +482,7 @@ extension HomeViewController: UISearchBarDelegate {
 
 // MARK: Location Delegate
 extension HomeViewController: CLLocationManagerDelegate {
+    
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
 
         if status == .denied {
@@ -490,17 +494,12 @@ extension HomeViewController: CLLocationManagerDelegate {
             }
 
             guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
-
                 userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
-
                 let cancelAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default, handler: nil)
                 alertController.addAction(cancelAction)
-
                 alertController.addAction(settingsAction)
                 alertController.preferredAction = settingsAction
-
                 present(alertController, animated: true)
-
                 return
             }
 
@@ -520,6 +519,12 @@ extension HomeViewController: CLLocationManagerDelegate {
 
         }
     }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        currentLocation = location
+    }
+    
 }
 
 // MARK: DZN Empty Data Set Source
@@ -604,6 +609,10 @@ extension HomeViewController: AddFavoritesDelegate {
 
 // MARK: WhatsNew Delegate
 extension HomeViewController: WhatsNewDelegate {
+    
+    func getCurrentHomeViewController() -> HomeViewController {
+        return self
+    }
     
     func dismissView() {
         userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)

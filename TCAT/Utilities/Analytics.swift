@@ -81,20 +81,13 @@ struct FavoriteAddedPayload: Payload {
     let name: String
 }
 
-/// Log when a user specfically used a bus stop
-struct BusStopTappedPayload: Payload {
-    static let eventName: String = "Bus Stop Selected"
-    let deviceInfo = DeviceInfo()
-    
-    let name: String
-}
-
 /// Log when a user selects a Google Place
-struct GooglePlaceTappedPayload: Payload {
-    static let eventName: String = "Google Place Selected"
+struct PlaceSelectedPayload: Payload {
+    static let eventName: String = "Place Selected"
     let deviceInfo = DeviceInfo()
     
     let name: String
+    let type: PlaceType
 }
 
 /// Log front end route calculation

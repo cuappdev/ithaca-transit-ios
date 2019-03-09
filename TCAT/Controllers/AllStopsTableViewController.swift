@@ -171,17 +171,17 @@ class AllStopsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let section = sectionIndexes[sortedKeys[indexPath.section]]
         let optionsVC = RouteOptionsViewController()
-        guard let placeSelected = section?[indexPath.row] else {
+        guard let place = section?[indexPath.row] else {
             print("Could not find bus stop")
             return
         }
-        SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: placeSelected)
-        optionsVC.searchTo = placeSelected
+        optionsVC.didSelectPlace(place: place)
+        
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)
 
         if let unwindDelegate = unwindAllStopsTVCDelegate {
-            unwindDelegate.dismissSearchResultsVC(place: placeSelected)
+            unwindDelegate.dismissSearchResultsVC(place: place)
             navigationController?.popViewController(animated: true)
         } else {
             navigationController?.pushViewController(optionsVC, animated: true)

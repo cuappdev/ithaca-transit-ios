@@ -40,10 +40,10 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
     // MARK: Search bar vars
 
-    var searchBarView: SearchBarView!
+    var searchBarView: SearchBarView?
     var locationManager: CLLocationManager!
     var currentLocation: CLLocationCoordinate2D?
-    var searchType: SearchBarType = .from
+    var searchType: SearchBarType = .to
     var searchTimeType: SearchType = .leaveNow
     var searchFrom: Place?
     var searchTo: Place?
@@ -86,7 +86,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
     // MARK: Print vars
 
-    private let fileName: String = "RouteOptionsVc"
+    private let fileName: String = "RouteOptionsVC"
 
     // MARK: View Lifecycle
 
@@ -207,9 +207,9 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
     private func setupSearchBar() {
         searchBarView = SearchBarView()
-        searchBarView.resultsViewController?.destinationDelegate = self
-        searchBarView.resultsViewController?.searchBarCancelDelegate = self
-        searchBarView.searchController?.searchBar.sizeToFit()
+        searchBarView?.resultsViewController?.destinationDelegate = self
+        searchBarView?.resultsViewController?.searchBarCancelDelegate = self
+        searchBarView?.searchController?.searchBar.sizeToFit()
         self.definesPresentationContext = true
         hideSearchBar()
     }
@@ -223,7 +223,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
     @objc func searchingFrom(sender: UIButton? = nil) {
         searchType = .from
-        searchBarView.resultsViewController?.shouldShowCurrentLocation = true
+        searchBarView?.resultsViewController?.shouldShowCurrentLocation = true
         presentSearchBar()
         let payload = RouteOptionsSettingsPayload(description: "Searching From Tapped")
         Analytics.shared.log(payload)
@@ -237,82 +237,37 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
         case .from:
 
-            if let startingDestinationName = searchFrom?.name {
-                if startingDestinationName != Constants.General.currentLocation && startingDestinationName != Constants.General.fromSearchBarPlaceholder {
-                    searchBarText = startingDestinationName
-                }
+            if
+                let startingDestinationName = searchFrom?.name,
+                startingDestinationName != Constants.General.currentLocation &&
+                startingDestinationName != Constants.General.fromSearchBarPlaceholder
+            {
+                searchBarText = startingDestinationName
             }
             placeholder = Constants.General.fromSearchBarPlaceholder
 
         case .to:
 
-            if let endingDestinationName = searchTo?.name {
-                if endingDestinationName != Constants.General.currentLocation {
-                    searchBarText = endingDestinationName
-                }
+            if
+                let endingDestinationName = searchTo?.name,
+                endingDestinationName != Constants.General.currentLocation
+            {
+                searchBarText = endingDestinationName
             }
             placeholder = Constants.General.toSearchBarPlaceholder
 
         }
 
-        let textFieldInsideSearchBar = searchBarView.searchController?.searchBar.value(forKey: "searchField") as? UITextField
-        textFieldInsideSearchBar?.attributedPlaceholder = NSAttributedString(string: placeholder) // make placeholder invisible
-        textFieldInsideSearchBar?.text = searchBarText
+        if let textFieldInsideSearchBar = searchBarView?.searchController?.searchBar.value(forKey: "searchField") as? UITextField {
+            textFieldInsideSearchBar.attributedPlaceholder = NSAttributedString(string: placeholder) // make placeholder invisible
+            textFieldInsideSearchBar.text = searchBarText
+        }
 
         showSearchBar()
     }
 
     private func dismissSearchBar() {
-        searchBarView.searchController?.dismiss(animated: true, completion: nil)
-    }
-
-    /// Place has been selected, process if needed.
-    func didSelectPlace(place: Place) {
-        if place.type == .busStop {
-            handlePlaceSelection(place: place)
-        } else {
-            // Fetch coordinates and store
-            CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
-                if error != nil {
-                    self.requestDidFinish(perform: [
-                        .showError(bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .danger),
-                                   payload: GetRoutesErrorPayload(type: "Nil Place Coordinates",
-                                                                  description: "Place(s) don't have coordinates. (didSelectPlace)", url: nil))
-                        ])
-                } else {
-                    place.latitude = latitude
-                    place.longitude = longitude
-                    self.handlePlaceSelection(place: place)
-                }
-            }
-        }
-    }
-    
-    /// Place has all information needed. Called from `didSelectPlace(place:)`
-    func handlePlaceSelection(place: Place) {
-        
-        switch searchType {
-        case .from:
-            searchFrom = place
-            routeSelection.fromSearchbar.setTitle(place.name, for: .normal)
-        case .to:
-            searchTo = place
-            routeSelection.toSearchbar.setTitle(place.name, for: .normal)
-        }
-        
-        hideSearchBar()
-        dismissSearchBar()
-        searchForRoutes()
-        
-        if place.name != Constants.General.currentLocation && place.name != Constants.General.firstFavorite {
-            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
-        }
-        
-        let payload: Payload = place.type == .busStop ?
-            BusStopTappedPayload(name: place.name) :
-            GooglePlaceTappedPayload(name: place.name)
-        Analytics.shared.log(payload)
-        
+        searchBarView?.searchController?.dismiss(animated: true, completion: nil)
     }
 
     func didCancel() {
@@ -332,38 +287,109 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
             navigationItem.setLeftBarButton(backButton, animated: false)
         }
         navigationItem.hidesBackButton = false
-        searchBarView.searchController?.isActive = false
+        searchBarView?.searchController?.isActive = false
     }
 
     private func showSearchBar() {
         if #available(iOS 11.0, *) {
-            navigationItem.searchController = searchBarView.searchController
+            navigationItem.searchController = searchBarView?.searchController
         } else {
-            navigationItem.titleView = searchBarView.searchController?.searchBar
+            navigationItem.titleView = searchBarView?.searchController?.searchBar
         }
         backButton = navigationItem.leftBarButtonItem
         navigationItem.setLeftBarButton(nil, animated: false)
         navigationItem.hidesBackButton = true
-        searchBarView.searchController?.isActive = true
+        searchBarView?.searchController?.isActive = true
     }
 
     // MARK: Process Data
+    
+    func didSelectPlace(place: Place) {
+        
+        switch searchType {
+        case .from:
+            searchFrom = place
+        case .to:
+            searchTo = place
+        }
+        
+        if place.name != Constants.General.currentLocation && place.name != Constants.General.firstFavorite {
+            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
+        }
+
+        hideSearchBar()
+        dismissSearchBar()
+        searchForRoutes()
+        
+        let payload: Payload = PlaceSelectedPayload(name: place.name, type: place.type)
+        Analytics.shared.log(payload)
+    }
+    
+    /// Fetch coordinates, store in place, return updated place
+    func fetchCoordinates(place: Place, completion: @escaping (_ place: Place?) -> ()) {
+        if place.latitude == nil || place.longitude == nil {
+            CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
+                if error != nil {
+                    self.requestDidFinish(perform: [
+                        .showError(bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .danger),
+                                   payload: GetRoutesErrorPayload(type: "Nil Place Coordinates",
+                                                                  description: "Place(s) don't have coordinates. (didSelectPlace)",
+                                                                  url: nil))
+                        ])
+                    completion(nil)
+                } else {
+                    place.latitude = latitude
+                    place.longitude = longitude
+                    completion(place)
+                }
+            }
+        }
+    }
+    
+    func resetAndShowCurrentlyLoading() {
+        showRouteSearchingLoader = true
+        self.hideRefreshControl()
+        
+        routes = []
+        timers = [:]
+        routeResults.contentOffset = .zero
+        routeResults.reloadData()
+    }
 
     func searchForRoutes() {
-
+        
         if
             let searchFrom = searchFrom,
             let searchTo = searchTo,
             let time = searchTime
         {
 
-            showRouteSearchingLoader = true
-            self.hideRefreshControl()
-
-            routes = []
-            timers = [:]
-            routeResults.contentOffset = .zero
-            routeResults.reloadData()
+            resetAndShowCurrentlyLoading()
+            
+            switch searchType {
+            case .from:
+                routeSelection.fromSearchbar.setTitle(searchFrom.name, for: .normal)
+            case .to:
+                routeSelection.toSearchbar.setTitle(searchTo.name, for: .normal)
+            }
+            
+            // If don't have coordinates, fetch and restart process
+            if searchFrom.latitude == nil || searchFrom.longitude == nil {
+                fetchCoordinates(place: searchFrom) { (optionalPlace) in
+                    guard let place = optionalPlace else { return }
+                    self.searchFrom = place
+                    self.searchForRoutes()
+                }
+                return
+            }
+            if searchTo.latitude == nil || searchTo.longitude == nil {
+                fetchCoordinates(place: searchTo) { (optionalPlace) in
+                    guard let place = optionalPlace else { return }
+                    self.searchTo = place
+                    self.searchForRoutes()
+                }
+                return
+            }
 
             // Prepare feedback on Network request
             mediumTapticGenerator.prepare()
@@ -423,9 +449,9 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                     guard let error = error else { return }
                     print("Intent Donation Error: \(error.localizedDescription)")
                 })
-            } // iOS 12.0
+            }
             
-        } // end if let
+        }
         
     }
 
@@ -777,6 +803,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
 // MARK: Location Manager Delegate
 extension RouteOptionsViewController: CLLocationManagerDelegate {
+    
     private func setupLocationManager() {
         locationManager = CLLocationManager()
         locationManager.delegate = self
@@ -830,32 +857,32 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = manager.location else {
-            return
-        }
-
-        currentLocation = location.coordinate
+        didReceiveCurrentLocation(manager.location)
+    }
+    
+    func didReceiveCurrentLocation(_ location: CLLocation?) {
+        currentLocation = location?.coordinate
         
-        searchBarView.resultsViewController?.currentLocation?.latitude = currentLocation?.latitude
-        searchBarView.resultsViewController?.currentLocation?.longitude = currentLocation?.longitude
-
+        searchBarView?.resultsViewController?.currentLocation?.latitude = currentLocation?.latitude
+        searchBarView?.resultsViewController?.currentLocation?.longitude = currentLocation?.longitude
+        
         if searchFrom?.name == Constants.General.currentLocation {
             searchFrom?.latitude = currentLocation?.latitude
             searchFrom?.longitude = currentLocation?.longitude
         }
-
+        
         if searchTo?.name == Constants.General.currentLocation {
             searchTo?.latitude = currentLocation?.latitude
             searchTo?.longitude = currentLocation?.longitude
         }
         
         // If haven't selected start location, set to current location
-        if searchFrom == nil {
+        if let coordinates = currentLocation, searchFrom == nil {
             let currentLocation = Place(name: Constants.General.currentLocation,
-                                            latitude: location.coordinate.latitude,
-                                            longitude: location.coordinate.longitude)
+                                        latitude: coordinates.latitude,
+                                        longitude: coordinates.longitude)
             searchFrom = currentLocation
-            searchBarView.resultsViewController?.currentLocation = currentLocation
+            searchBarView?.resultsViewController?.currentLocation = currentLocation
             routeSelection.fromSearchbar.setTitle(currentLocation.name, for: .normal)
             searchForRoutes()
         }
