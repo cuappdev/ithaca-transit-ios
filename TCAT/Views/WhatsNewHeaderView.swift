@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 
 protocol WhatsNewDelegate {
+    func getCurrentHomeViewController() -> HomeViewController
     func dismissView()
 }
 
@@ -24,6 +25,7 @@ class WhatsNewHeaderView: UIView {
     var descriptionLabel: UILabel!
     
     var buttonContainerView: UIView!
+    var dismissButton: UIButton!
     var primaryButton: UIButton?
     var secondaryButton: UIButton?
     
@@ -45,6 +47,7 @@ class WhatsNewHeaderView: UIView {
         clipsToBounds = true
         
         createWhatsNewHeader()
+        createDismissButton()
         createUpdateTitle(title: card.title)
         createUpdateDescription(desc: card.description)
         createButtonContainerView()
@@ -61,6 +64,15 @@ class WhatsNewHeaderView: UIView {
         smallHeaderLabel.textColor = Colors.tcatBlue
 
         addSubview(smallHeaderLabel)
+    }
+    
+    func createDismissButton() {
+        dismissButton = LargeTapTargetButton(extendBy: 32)
+        dismissButton.setImage(UIImage(named: "x"), for: .normal)
+        dismissButton.tintColor = Colors.metadataIcon
+        dismissButton.addTarget(self, action: #selector(dismissButtonPressed), for: .touchUpInside)
+        
+        addSubview(dismissButton)
     }
 
     func createUpdateTitle(title: String) {
@@ -162,6 +174,12 @@ class WhatsNewHeaderView: UIView {
             buttonToBottom = make.bottom.equalToSuperview().inset(buttonToBottomPadding).constraint
             make.centerX.equalToSuperview()
         }
+        
+        dismissButton.snp.makeConstraints { (make) in
+            make.top.equalToSuperview().offset(titleToTopPadding)
+            make.right.equalToSuperview().inset(titleToTopPadding)
+            make.width.height.equalTo(14)
+        }
 
         // Padding for space between buttons
         let buttonWidthPadding: CGFloat = (secondaryButton != nil) ? 16 : 0
@@ -193,8 +211,8 @@ class WhatsNewHeaderView: UIView {
             let updateNameToTitle = updateNameToTitle,
             let updateDescToUpdateName = updateDescToUpdateName,
             let updateDescriptionHeight = updateDescriptionHeight,
-            let dismissButtonToUpdateDesc = buttonToUpdateDesc,
-            let dismissButtonToBottom = buttonToBottom
+            let actionButtonToUpdateDesc = buttonToUpdateDesc,
+            let actionButtonToBottom = buttonToBottom
             else {
                 return 0
         }
@@ -214,34 +232,34 @@ class WhatsNewHeaderView: UIView {
         
         let updateDescSpace = updateDescToUpdateNameVal + updateDescHeight
         
-        let dismissButtonToUpdateDescVal = dismissButtonToUpdateDesc.layoutConstraints[0].constant
+        let actionButtonToUpdateDescVal = actionButtonToUpdateDesc.layoutConstraints[0].constant
         let buttonHeight = primaryButton?.intrinsicContentSize.height ?? secondaryButton?.intrinsicContentSize.height ?? 0
         
-        let dismissButtonSpace = dismissButtonToUpdateDescVal + buttonHeight
+        let actionButtonSpace = actionButtonToUpdateDescVal + buttonHeight
         
-        let bottomOffset = -dismissButtonToBottom.layoutConstraints[0].constant
+        let bottomOffset = -actionButtonToBottom.layoutConstraints[0].constant
         
-        return ceil(titleSpace + updateNameSpace + updateDescSpace + dismissButtonSpace + bottomOffset)
+        return ceil(titleSpace + updateNameSpace + updateDescSpace + actionButtonSpace + bottomOffset)
     }
     
     @objc func primaryButtonTapped() {
-        if let link = card.primaryActionWebLink {
-            open(link, optionalAppLink: card.primaryActionAppLink) {
-                self.whatsNewDelegate?.dismissView()
-            }
-        } else {
-            self.whatsNewDelegate?.dismissView()
+        if
+            let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
+            let primaryAction = card.primaryActionHandler
+        {
+            primaryAction(homeViewController)
         }
+        self.whatsNewDelegate?.dismissView()
     }
     
     @objc func secondaryButtonTapped() {
-        if let link = card.secondaryActionWebLink {
-            open(link, optionalAppLink: card.secondaryActionAppLink) {
-                self.whatsNewDelegate?.dismissView()
-            }
-        } else {
-            self.whatsNewDelegate?.dismissView()
+        if
+            let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
+            let secondaryAction = card.secondaryActionHandler
+        {
+            secondaryAction(homeViewController)
         }
+        self.whatsNewDelegate?.dismissView()
     }
     
     func open(_ link: String, optionalAppLink: String?, linkOpened: @escaping (() -> Void)) {

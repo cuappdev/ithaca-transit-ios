@@ -14,15 +14,29 @@ struct WhatsNewCard {
     
     static let current = WhatsNewCard(
         label: "New in Ithaca Transit",
-        title: "@IthacaTransit on Twitter",
-        description: "Follow our new Twitter account for schedule changes, app statuses, and promotions!",
+        title: "Integrated Service Alerts",
+        description: "View all active service alerts provided by TCAT. All route calculations incorporate this data.",
         primaryActionTitle: "View",
-        primaryActionAppLink: "twitter://user?screen_name=IthacaTransit",
-        primaryActionWebLink: "https://twitter.com/IthacaTransit",
-        secondaryActionTitle: "Dismiss",
-        secondaryActionAppLink: nil,
-        secondaryActionWebLink: nil
+        primaryActionHandler: { (homeViewController) in
+            let informationViewController = InformationViewController()
+            let navigationVC = CustomNavigationController(rootViewController: informationViewController)
+            homeViewController.present(navigationVC, animated: true, completion: {
+                informationViewController.showServiceAlerts()
+            })
+        },
+        secondaryActionTitle: nil,
+        secondaryActionHandler: nil
     )
+    
+    // MARK: Upcoming Updates
+    
+    // Twitter Update
+    
+    // var title = "@IthacaTransit on Twitter"
+    // var description = "Follow our new Twitter account for schedule changes, app statuses, and promotions!",
+    
+    // var appLink = "twitter://user?screen_name=IthacaTransit"
+    // var webLink = "https://twitter.com/IthacaTransit"
     
     // MARK: Main Descriptions
     
@@ -43,11 +57,8 @@ struct WhatsNewCard {
     /// The title of the primary button. If doesn't exist, make nil to hide button.
     var primaryActionTitle: String?
     
-    /// If a button uses a web link, enter the app-specific URL. Otherwise, nil.
-    var primaryActionAppLink: String?
-    
-    /// If a button uses a web link, enter the HTTPS URL. Otherwise, nil.
-    var primaryActionWebLink: String?
+    /// The function to perform in the app when an action is selected.
+    var primaryActionHandler: ((_: HomeViewController) -> ())?
     
     
     // MARK: Secondary Button - Gray, Regular
@@ -55,10 +66,42 @@ struct WhatsNewCard {
     /// The title of the secondary button. If doesn't exist, make nil to hide button.
     var secondaryActionTitle: String?
     
-    /// If a button uses a web link, enter the app-specific URL. Otherwise, nil.
-    var secondaryActionAppLink: String?
+    /// The function to perform in the app when an action is selected.
+    var secondaryActionHandler: ((_: HomeViewController) -> ())?
     
-    /// If a button uses a web link, enter the app-specific URL. Otherwise, nil.
-    var secondaryActionWebLink: String?
+    
+    // MARK: Functions
+    
+    /// Open a website or app link if an action is selected.
+    func actionLinkHandler(webLink: String?, appLink: String?, completion: @escaping () -> Void) {
+        if let link = webLink {
+            open(link, optionalAppLink: appLink) {
+                completion()
+            }
+        } else {
+            completion()
+        }
+    }
+    
+    /// Helpfer function to open web or app links.
+    private func open(_ link: String, optionalAppLink: String?, linkOpened: @escaping () -> Void) {
+        if
+            let appLink = optionalAppLink,
+            let appURL = URL(string: appLink),
+            UIApplication.shared.canOpenURL(appURL)
+        {
+            // Open link in an installed app.
+            UIApplication.shared.open(appURL, options: [:]) { _ in
+                linkOpened()
+            }
+        }
+            
+        else if let webURL = URL(string: link) {
+            // Open link in Safari.
+            UIApplication.shared.open(webURL, options: [:]) { _ in
+                linkOpened()
+            }
+        }
+    }
     
 }
