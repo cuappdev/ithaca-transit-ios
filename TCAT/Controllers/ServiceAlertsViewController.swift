@@ -26,8 +26,8 @@ class ServiceAlertsViewController: UIViewController {
                 containerView.addSubview(tableHeaderView)
                 tableHeaderView.snp.makeConstraints { (make) in
                     make.top.centerX.equalToSuperview()
-                    make.width.equalTo(180)
-                    make.bottom.equalToSuperview().inset(20)
+                    make.width.equalTo(140)
+                    make.bottom.equalToSuperview().inset(25)
                 }
                 tableView.tableHeaderView = containerView
             }
