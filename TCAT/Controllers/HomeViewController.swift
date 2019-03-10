@@ -614,7 +614,7 @@ extension HomeViewController: WhatsNewDelegate {
         return self
     }
     
-    func dismissView() {
+    func dismissView(card: WhatsNewCard) {
         userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
         tableView.beginUpdates()
         UIView.animate(withDuration: 0.35, animations: {
@@ -632,7 +632,7 @@ extension HomeViewController: WhatsNewDelegate {
             }
         })
         tableView.endUpdates()
-        let payload = WhatsNewCardDismissedPayload()
+        let payload = WhatsNewCardDismissedPayload(actionDescription: card.title)
         Analytics.shared.log(payload)
     }
 

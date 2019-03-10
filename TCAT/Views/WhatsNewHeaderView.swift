@@ -11,7 +11,7 @@ import SnapKit
 
 protocol WhatsNewDelegate {
     func getCurrentHomeViewController() -> HomeViewController
-    func dismissView()
+    func dismissView(card: WhatsNewCard)
 }
 
 class WhatsNewHeaderView: UIView {
@@ -245,27 +245,25 @@ class WhatsNewHeaderView: UIView {
     @objc func primaryButtonTapped() {
         if
             let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
-            let title = card.primaryActionTitle,
             let primaryAction = card.primaryActionHandler
         {
             primaryAction(homeViewController)
             let payload = PrimaryActionTappedPayload(actionDescription: card.title)
             Analytics.shared.log(payload)
         }
-        self.whatsNewDelegate?.dismissView()
+        self.whatsNewDelegate?.dismissView(card: card)
     }
     
     @objc func secondaryButtonTapped() {
         if
             let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
-            let title = card.secondaryActionTitle,
             let secondaryAction = card.secondaryActionHandler
         {
             secondaryAction(homeViewController)
             let payload = SecondaryActionTappedPayload(actionDescription: card.title)
             Analytics.shared.log(payload)
         }
-        self.whatsNewDelegate?.dismissView()
+        self.whatsNewDelegate?.dismissView(card: card)
     }
     
     func open(_ link: String, optionalAppLink: String?, linkOpened: @escaping (() -> Void)) {
@@ -289,7 +287,7 @@ class WhatsNewHeaderView: UIView {
     }
 
     @objc func dismissButtonPressed() {
-        whatsNewDelegate?.dismissView()
+        whatsNewDelegate?.dismissView(card: card)
     }
 
     required init?(coder aDecoder: NSCoder) {
