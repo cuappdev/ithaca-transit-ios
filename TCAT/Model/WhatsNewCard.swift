@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct WhatsNewCard {
+struct WhatsNewCard: Codable {
     
     // MARK: Current What's New Card Data
     
@@ -72,6 +72,13 @@ struct WhatsNewCard {
     var secondaryActionHandler: ((_: HomeViewController) -> ())?
     
     
+    /// Codable support
+    enum CodingKeys: String, CodingKey {
+        case label
+        case title
+        case description
+    }
+    
     // MARK: Functions
     
     /// Open a website or app link if an action is selected.
@@ -106,4 +113,7 @@ struct WhatsNewCard {
         }
     }
     
+    func isEqual(to compared: WhatsNewCard) -> Bool {
+        return compared.title == self.title && compared.description == self.description
+    }
 }

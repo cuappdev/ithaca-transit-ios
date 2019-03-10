@@ -26,13 +26,23 @@ class VersionStore: WhatsNewVersionStore {
     
     /// Returns true if update has been seen
     func has(version: WhatsNew.Version) -> Bool {
-        let isVersionPatch = version.patch > 0
-        let isNotNewVersion = (currentAppVersion == savedAppVersion)
-        return isVersionPatch || isNotNewVersion
+        if let whatsNewData = userDefaults.data(forKey: Constants.UserDefaults.whatsNewVersion),
+            let storedWhatsNew = try? JSONDecoder().decode(WhatsNewCard.self, from: whatsNewData) {
+            let isNotNewVersion = WhatsNewCard.current.isEqual(to: storedWhatsNew)
+            return isNotNewVersion
+        } else {
+            print("[VersionStore] Decoding Error")
+        }
+        return false
     }
 
     func set(version: WhatsNew.Version) {
-        userDefaults.set(Constants.App.version, forKey: Constants.UserDefaults.version)
+        if let encodedData = try? JSONEncoder().encode(WhatsNewCard.current) {
+            userDefaults.set(encodedData, forKey: Constants.UserDefaults.whatsNewVersion)
+        } else {
+            print("[VersionStore] Encoding Error")
+        }
+        
     }
 
 }
