@@ -197,3 +197,24 @@ struct ServiceAlertsPayload: Payload {
     
     let didTapWhatsNew: Bool
 }
+
+struct PrimaryActionTappedPayload: Payload {
+    static let eventName: String = "Primary Action Tapped"
+    let deviceInfo = DeviceInfo()
+    
+    let actionDescription: String
+}
+
+struct SecondaryActionTappedPayload: Payload {
+    static let eventName: String = "Secondary Action Tapped"
+    let deviceInfo = DeviceInfo()
+    
+    let actionDescription: String
+}
+
+struct WhatsNewCardDismissedPayload: Payload {
+    static let eventName: String = "Card Dismissed"
+    let deviceInfo = DeviceInfo()
+    
+    let actionDescription: String
+}

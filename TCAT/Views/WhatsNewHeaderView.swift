@@ -245,9 +245,12 @@ class WhatsNewHeaderView: UIView {
     @objc func primaryButtonTapped() {
         if
             let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
+            let title = card.primaryActionTitle,
             let primaryAction = card.primaryActionHandler
         {
             primaryAction(homeViewController)
+            let payload = PrimaryActionTappedPayload(actionDescription: card.title)
+            Analytics.shared.log(payload)
         }
         self.whatsNewDelegate?.dismissView()
     }
@@ -255,9 +258,12 @@ class WhatsNewHeaderView: UIView {
     @objc func secondaryButtonTapped() {
         if
             let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
+            let title = card.secondaryActionTitle,
             let secondaryAction = card.secondaryActionHandler
         {
             secondaryAction(homeViewController)
+            let payload = SecondaryActionTappedPayload(actionDescription: card.title)
+            Analytics.shared.log(payload)
         }
         self.whatsNewDelegate?.dismissView()
     }

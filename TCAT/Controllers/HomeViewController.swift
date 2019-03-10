@@ -632,6 +632,8 @@ extension HomeViewController: WhatsNewDelegate {
             }
         })
         tableView.endUpdates()
+        let payload = WhatsNewCardDismissedPayload()
+        Analytics.shared.log(payload)
     }
 
     /// Hide card when user is searching for Bus Stops
