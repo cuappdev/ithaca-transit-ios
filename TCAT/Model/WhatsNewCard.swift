@@ -10,9 +10,9 @@ import UIKit
 
 struct WhatsNewCard: Codable {
     
-    // MARK: Current What's New Card Data
+    // MARK: What's New Card Data
     
-    static let current = WhatsNewCard(
+    static let newFeature = WhatsNewCard(
         label: "New in Ithaca Transit",
         title: "Integrated Service Alerts",
         description: "View all active service alerts provided by TCAT. All route calculations incorporate this data.",
@@ -29,6 +29,47 @@ struct WhatsNewCard: Codable {
         secondaryActionTitle: nil,
         secondaryActionHandler: nil
     )
+    
+    static let promotion = WhatsNewCard(
+        label: "Cornell App Development ",
+        title: "Support Transit on Giving Day 3.14",
+        description: "Support Ithaca Transit by donating to Cornell AppDev. Funding will help improve routes, maintain live tracking, and more!",
+        primaryActionTitle: "Give",
+        primaryActionHandler: { (homeViewController) in
+            actionLinkHandler(webLink: "https://givingday.cornell.edu/campaigns/cu-app-development", appLink: nil, completion: nil)
+         },
+        secondaryActionTitle: nil,
+        secondaryActionHandler: nil
+    )
+    
+    /// Giving Day: Is today Thursday, 3/14 in Ithaca?
+    static func isPromotionActive() -> Bool {
+        let now = Date()
+        
+        var sharedComponent = DateComponents()
+        sharedComponent.year = 2019
+        sharedComponent.month = 3
+        sharedComponent.day = 10
+        sharedComponent.timeZone = TimeZone(abbreviation: "EST")
+        
+        var startDateComponent = sharedComponent
+        startDateComponent.hour = 0
+        startDateComponent.minute = 0
+        startDateComponent.second = 0
+        guard let startDate = Calendar.current.date(from: startDateComponent) else {
+            return false
+        }
+        
+        var endDateComponent = sharedComponent
+        endDateComponent.hour = 23
+        endDateComponent.minute = 59
+        endDateComponent.second = 59
+        guard let endDate = Calendar.current.date(from: endDateComponent) else {
+            return false
+        }
+        
+        return startDate < now && now < endDate
+    }
     
     // MARK: Upcoming Updates
     
@@ -82,18 +123,18 @@ struct WhatsNewCard: Codable {
     // MARK: Functions
     
     /// Open a website or app link if an action is selected.
-    func actionLinkHandler(webLink: String?, appLink: String?, completion: @escaping () -> Void) {
+    static func actionLinkHandler(webLink: String?, appLink: String?, completion: (() -> Void)?) {
         if let link = webLink {
             open(link, optionalAppLink: appLink) {
-                completion()
+                completion?()
             }
         } else {
-            completion()
+            completion?()
         }
     }
     
     /// Helpfer function to open web or app links.
-    private func open(_ link: String, optionalAppLink: String?, linkOpened: @escaping () -> Void) {
+    private static func open(_ link: String, optionalAppLink: String?, linkOpened: @escaping () -> Void) {
         if
             let appLink = optionalAppLink,
             let appURL = URL(string: appLink),

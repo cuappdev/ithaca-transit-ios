@@ -244,7 +244,7 @@ struct Constants {
         static let allBusStops = "allBusStops"
         static let favorites = "favorites"
         static let servicedRoutes = "servicedRoutes"
-        static let whatsNewVersion = "whatsNewVersion"
+        static let whatsNewCardVersion = "whatsNewVersion"
     }
 
     struct Values {

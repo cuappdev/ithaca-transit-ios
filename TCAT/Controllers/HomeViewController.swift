@@ -113,6 +113,9 @@ class HomeViewController: UIViewController {
         }
 
         showWhatsNewCardIfNeeded()
+        
+        // Set Version
+        VersionStore.shared.set(version: WhatsNew.Version.current())
     }
 
     override func viewDidLayoutSubviews() {
@@ -221,9 +224,10 @@ class HomeViewController: UIViewController {
         present(navController, animated: true, completion: nil)
     }
 
-    func createWhatsNewView() {
+    func createWhatsNewView(from card: WhatsNewCard) {
+        
         userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
-        whatsNewView = WhatsNewHeaderView(card: WhatsNewCard.current)
+        whatsNewView = WhatsNewHeaderView(card: card)
         whatsNewView.whatsNewDelegate = self
         whatsNewContainerView = UIView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: whatsNewView.calculateCardHeight() + whatsNewView.containerPadding.top + whatsNewView.containerPadding.bottom))
         whatsNewContainerView.addSubview(whatsNewView)
@@ -236,17 +240,22 @@ class HomeViewController: UIViewController {
     }
     
     func showWhatsNewCardIfNeeded() {
-        firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
         
+        let showPromotionalCard = WhatsNewCard.isPromotionActive()
+        
+        firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
         let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
-        let hasSeenVersion = VersionStore.shared.has(version: WhatsNew.Version.current())
-        if !firstViewing && (!whatsNewDismissed || !hasSeenVersion) {
-            createWhatsNewView()
+
+        // Not the first time loading the app AND there's a new card to show OR the card hasn't been dismissed.
+        let showTypicalFeatureCard = !firstViewing && (VersionStore.shared.isNewCardAvailable() || !whatsNewDismissed)
+        
+        if showPromotionalCard {
+            createWhatsNewView(from: WhatsNewCard.promotion)
         }
-        if !hasSeenVersion {
-            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
+        if showTypicalFeatureCard {
+            createWhatsNewView(from: WhatsNewCard.newFeature)
         }
-        VersionStore.shared.set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
+        
     }
 
     /* Keyboard Functions */
@@ -615,7 +624,12 @@ extension HomeViewController: WhatsNewDelegate {
     }
     
     func dismissView(card: WhatsNewCard) {
+        
         userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
+        
+        // This will save the card shown and prevent it from being shown again unless changed
+        VersionStore.shared.storeShownCard(card: card)
+        
         tableView.beginUpdates()
         UIView.animate(withDuration: 0.35, animations: {
             self.tableView.contentInset = .init(top: -self.whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
@@ -628,10 +642,10 @@ extension HomeViewController: WhatsNewDelegate {
             if completed {
                 self.tableView.contentInset = .zero
                 self.tableView.tableHeaderView = .zero
-                VersionStore.shared.set(version: WhatsNew.Version.current())
             }
         })
         tableView.endUpdates()
+        
         let payload = WhatsNewCardDismissedPayload(actionDescription: card.title)
         Analytics.shared.log(payload)
     }
