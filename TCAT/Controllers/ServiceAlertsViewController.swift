@@ -21,7 +21,15 @@ class ServiceAlertsViewController: UIViewController {
             removeLoadingIndicator()
             tableView.reloadData()
             if !alerts.isEmpty {
-                tableView.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: false)
+                let tableHeaderView = UIImageView(image: UIImage(named: "TCAT-transparent"))
+                let containerView = UIView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 100))
+                containerView.addSubview(tableHeaderView)
+                tableHeaderView.snp.makeConstraints { (make) in
+                    make.top.centerX.equalToSuperview()
+                    make.width.equalTo(180)
+                    make.bottom.equalToSuperview().inset(20)
+                }
+                tableView.tableHeaderView = containerView
             }
         }
     }
