@@ -112,29 +112,27 @@ class FavoritesTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell: UITableViewCell!
-        let place = resultsSection.items[indexPath.row]
-        cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as? PlaceTableViewCell
-        cell.textLabel?.text = place.name
-        cell.detailTextLabel?.text = place.description
-        cell.preservesSuperviewLayoutMargins = false
-        cell.separatorInset = .zero
-        cell.layoutMargins = .zero
+        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as! PlaceTableViewCell
+        cell.place = resultsSection.items[indexPath.row]
         cell.layoutSubviews()
         return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath)
+        cell?.accessoryView = UIActivityIndicatorView()
         tableView.deselectRow(at: indexPath, animated: true)
         let place = resultsSection.items[indexPath.row]
         
         if place.type == .busStop {
-            handlePlaceSelection(place: place)
+            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
+            dismissVC()
         } else {
             // Fetch coordinates and store
             CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
                 if error != nil {
                     print("Unable to get coordinates to save favorite.")
+                    cell?.accessoryView = nil
                     let title = Constants.Alerts.GooglePlacesFailure.title
                     let message = Constants.Alerts.GooglePlacesFailure.message
                     let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -144,17 +142,13 @@ class FavoritesTableViewController: UITableViewController {
                 } else {
                     place.latitude = latitude
                     place.longitude = longitude
-                    self.handlePlaceSelection(place: place)
+                    SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
+                    self.dismissVC()
                 }
             }
         }
         
 
-    }
-    
-    func handlePlaceSelection(place: Place) {
-        SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
-        dismissVC()
     }
     
 }

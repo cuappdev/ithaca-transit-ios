@@ -70,7 +70,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
         
-        // v1.2.2 Data Migration
+        // v1.3 Data Migration
         if
             VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1),
             let homeViewController = rootVC as? HomeViewController

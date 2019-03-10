@@ -14,7 +14,6 @@ struct Constants {
     /// The phrases used for alerts
     struct Alerts {
 
-        
         struct GeneralActions {
             static let settings = "Settings"
             static let cancel = "Cancel"
@@ -111,8 +110,8 @@ struct Constants {
         static let noInternetConnection = "No internet connection"
         static let trackingLater = "Tracking available near departure time"
         static let cannotConnectLive = "Cannot connect to live tracking"
-        static let noLiveTrackingForRoutes = "No live tracking available for routes"
-        static let noLiveTrackingForRoute = "No live tracking available for Route "
+        static let noLiveTrackingForRoutes = "No live tracking available for routes."
+        static let noLiveTrackingForRoute = "No live tracking available for Route"
         static let cantConnectServer = "Could not connect to server"
         static let routeCalculationError = "Route calculation error. Please retry."
     }
@@ -134,14 +133,16 @@ struct Constants {
 
     /// Cell identifiers
     struct Cells {
-        static let busIdentifier = "BusStop"
         static let placeIdentifier = "PlaceTableViewCell"
-        static let searchResultsIdentifier = "SearchResults"
+        
+        static let addFavoriteIdentifier = "AddFavorite"
         static let seeAllStopsIdentifier = "SeeAllStops"
+        
         static let currentLocationIdentifier = "CurrentLocation"
         static let smallDetailCellIdentifier = "SmallCell"
         static let largeDetailCellIdentifier = "LargeCell"
-        static let busStopCellIdentifier = "BusStopCell"
+        static let busStopDetailCellIdentifier = "BusStopCell"
+        
         static let informationCellIdentifier = "InformationCell"
     }
 
@@ -283,20 +284,4 @@ struct Constants {
         }
     }
     
-    struct WhatsNew {
-        // Will be entirely uppercased in UI (str.uppercased())
-        static let whatsNewHeaderTitle = "New in Ithaca Transit"
-        
-        // What's New for v1.2
-//        static let whatsNewUpdateName = "Introducing Siri Shortcuts"
-//        static let whatsNewDescription = "Use Siri to access recent searches! Head to Siri & Search in Settings to get started."
-        
-        // What's New for twitter update
-        static let whatsNewUpdateName = "@IthacaTransit on Twitter"
-        static let whatsNewDescription = "Follow our new Twitter account @\(App.twitterHandle) for schedule changes, app statuses, and promotions!"
-        static let descHasHyperLink = true  // Setting to false practically diregards the rest of these fields
-        static let whatsNewHyperLinkText = App.twitterHandle
-        static let whatsNewAppLink = "twitter://user?screen_name=\(App.twitterHandle)"
-        static let whatsNewWebLink = "https://twitter.com/\(App.twitterHandle)"
-    }
 }

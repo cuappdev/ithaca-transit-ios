@@ -442,3 +442,26 @@ extension Collection {
         return self.indices.contains(i) ? self[i] : nil
     }
 }
+
+class LargeTapTargetButton: UIButton {
+    
+    var tapTargetValue: CGFloat
+    
+    required init(extendBy: CGFloat) {
+        tapTargetValue = extendBy
+        
+        super.init(frame: .zero)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        let relativeFrame = self.bounds
+        let hitTestEdgeInsets = UIEdgeInsets(top: -tapTargetValue, left: -tapTargetValue, bottom: -tapTargetValue, right: -tapTargetValue)
+        let hitFrame = relativeFrame.inset(by: hitTestEdgeInsets)
+        return hitFrame.contains(point)
+    }
+    
+}

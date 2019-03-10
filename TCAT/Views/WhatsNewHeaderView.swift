@@ -10,261 +10,284 @@ import UIKit
 import SnapKit
 
 protocol WhatsNewDelegate {
-    func okButtonPressed()
+    func getCurrentHomeViewController() -> HomeViewController
+    func dismissView()
 }
 
 class WhatsNewHeaderView: UIView {
 
     var whatsNewDelegate: WhatsNewDelegate?
+    var card: WhatsNewCard
     
-    var updateTitle: UILabel!
+    // e.g. "New In Ithaca Transit" blue label
+    var smallHeaderLabel: UILabel!
+    var titleLabel: UILabel!
+    var descriptionLabel: UILabel!
+    
+    var buttonContainerView: UIView!
     var dismissButton: UIButton!
-    var updateDescription: UILabel!
-    var whatsNewHeader: UILabel!
-    var backgroundView: UIView!
-    
-    var descHasHyperLink: Bool = false
-    var hyperLinkText: String? = nil
-    var appLink: String? = nil
-    var webLink: String? = nil
+    var primaryButton: UIButton?
+    var secondaryButton: UIButton?
     
     private var titleToTop: Constraint?
     private var updateNameToTitle: Constraint?
     private var updateDescToUpdateName: Constraint?
-    private var dismissButtonToUpdateDesc: Constraint?
-    private var dismissButtonToBottom: Constraint?
+    private var buttonToUpdateDesc: Constraint?
+    private var buttonToBottom: Constraint?
     private var updateDescriptionHeight: Constraint?
     
     let containerPadding = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
-
-    init(updateName: String,
-         description: String,
-         descHasHyperLink: Bool = false,
-         hyperLinkText: String? = nil,
-         appLink: String? = nil,
-         webLink: String? = nil) {
+    
+    init(card: WhatsNewCard) {
+        self.card = card
+        
         super.init(frame: .zero)
-
         backgroundColor = Colors.white
         layer.cornerRadius = 16
         clipsToBounds = true
         
-        if descHasHyperLink {
-            self.descHasHyperLink = descHasHyperLink
-            self.hyperLinkText = hyperLinkText
-            self.webLink = webLink
-            self.appLink = appLink
-        }
-
-        createUpdateDescription(desc: description)
         createWhatsNewHeader()
-        createUpdateTitle(title: updateName)
         createDismissButton()
-    }
-
-    func createWhatsNewHeader() {
-        whatsNewHeader = UILabel()
-        whatsNewHeader.text = Constants.WhatsNew.whatsNewHeaderTitle.uppercased()
-        whatsNewHeader.font = .getFont(.semibold, size: 12)
-        whatsNewHeader.textColor = Colors.tcatBlue
-
-        addSubview(whatsNewHeader)
-    }
-
-    func createUpdateTitle(title: String) {
-        updateTitle = UILabel()
-        updateTitle.text = title
-        updateTitle.font = .getFont(.bold, size: 18)
-
-        addSubview(updateTitle)
-    }
-
-    func createUpdateDescription(desc: String) {
-        updateDescription = UILabel()
-        updateDescription.font = .getFont(.regular, size: 14)
-        updateDescription.textColor = Colors.metadataIcon
-        updateDescription.numberOfLines = 0
-        updateDescription.textAlignment = .center
-        updateDescription.isUserInteractionEnabled = true
-        
-        if descHasHyperLink {
-            addHyperLink(description: desc)
-        } else {
-            updateDescription.text = desc
-        }
-
-        addSubview(updateDescription)
-    }
-
-    func createDismissButton() {
-        dismissButton = UIButton()
-        dismissButton.setTitle("OK", for: .normal)
-        dismissButton.titleLabel?.font = .getFont(.semibold, size: 14)
-        dismissButton.addTarget(self, action: #selector(okButtonPressed), for: .touchUpInside)
-        dismissButton.backgroundColor = Colors.tcatBlue
-        dismissButton.setTitleColor(Colors.white, for: .normal)
-        dismissButton.layer.cornerRadius = dismissButton.intrinsicContentSize.height/2
-        dismissButton.clipsToBounds = true
-
-        addSubview(dismissButton)
+        createUpdateTitle(title: card.title)
+        createUpdateDescription(desc: card.description)
+        createButtonContainerView()
+        createPrimaryActionButton()
+        createSecondaryActionButton()
         
         setupConstraints()
     }
 
+    func createWhatsNewHeader() {
+        smallHeaderLabel = UILabel()
+        smallHeaderLabel.text = card.label.uppercased()
+        smallHeaderLabel.font = .getFont(.semibold, size: 12)
+        smallHeaderLabel.textColor = Colors.tcatBlue
+
+        addSubview(smallHeaderLabel)
+    }
+    
+    func createDismissButton() {
+        dismissButton = LargeTapTargetButton(extendBy: 32)
+        dismissButton.setImage(UIImage(named: "x"), for: .normal)
+        dismissButton.tintColor = Colors.metadataIcon
+        dismissButton.addTarget(self, action: #selector(dismissButtonPressed), for: .touchUpInside)
+        
+        addSubview(dismissButton)
+    }
+
+    func createUpdateTitle(title: String) {
+        titleLabel = UILabel()
+        titleLabel.text = card.title
+        titleLabel.font = .getFont(.bold, size: 18)
+
+        addSubview(titleLabel)
+    }
+
+    func createUpdateDescription(desc: String) {
+        descriptionLabel = UILabel()
+        descriptionLabel.text = card.description
+        descriptionLabel.font = .getFont(.regular, size: 14)
+        descriptionLabel.textColor = Colors.metadataIcon
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.textAlignment = .center
+        descriptionLabel.isUserInteractionEnabled = true
+        
+        addSubview(descriptionLabel)
+    }
+    
+    func createButtonContainerView() {
+        buttonContainerView = UIView()
+        addSubview(buttonContainerView)
+    }
+
+    func createPrimaryActionButton() {
+        guard let title = card.primaryActionTitle else { return }
+        let primaryButton = UIButton()
+        primaryButton.setTitle(title, for: .normal)
+        primaryButton.titleLabel?.font = .getFont(.semibold, size: 14)
+        primaryButton.addTarget(self, action: #selector(primaryButtonTapped), for: .touchUpInside)
+        primaryButton.backgroundColor = Colors.tcatBlue
+        primaryButton.setTitleColor(Colors.white, for: .normal)
+        primaryButton.layer.cornerRadius = primaryButton.intrinsicContentSize.height / 2
+        primaryButton.clipsToBounds = true
+
+        buttonContainerView.addSubview(primaryButton)
+        self.primaryButton = primaryButton
+    }
+    
+    func createSecondaryActionButton() {
+        guard let title = card.secondaryActionTitle else { return }
+        let secondaryButton = UIButton()
+        secondaryButton.setTitle(title, for: .normal)
+        secondaryButton.titleLabel?.font = .getFont(.medium, size: 14)
+        secondaryButton.addTarget(self, action: #selector(secondaryButtonTapped), for: .touchUpInside)
+        secondaryButton.backgroundColor = Colors.metadataIcon
+        secondaryButton.setTitleColor(Colors.white, for: .normal)
+        secondaryButton.layer.cornerRadius = secondaryButton.intrinsicContentSize.height / 2
+        secondaryButton.clipsToBounds = true
+        
+        buttonContainerView.addSubview(secondaryButton)
+        
+        self.secondaryButton = secondaryButton
+    }
+
     func setupConstraints() {
+        
+        let titleToTopPadding: CGFloat = 16
 
-        whatsNewHeader.snp.makeConstraints { (make) in
-            titleToTop = make.top.equalToSuperview().offset(16).constraint
+        smallHeaderLabel.snp.makeConstraints { (make) in
+            titleToTop = make.top.equalToSuperview().offset(titleToTopPadding).constraint
             make.centerX.equalToSuperview()
-            make.height.equalTo(whatsNewHeader.intrinsicContentSize.height)
-            make.width.equalTo(whatsNewHeader.intrinsicContentSize.width)
+            make.height.equalTo(smallHeaderLabel.intrinsicContentSize.height)
+            make.width.equalTo(smallHeaderLabel.intrinsicContentSize.width)
         }
+        
+        let labelToTitlePadding: CGFloat = 8
 
-        updateTitle.snp.makeConstraints { (make) in
-            updateNameToTitle = make.top.equalTo(whatsNewHeader.snp.bottom).offset(8).constraint
+        titleLabel.snp.makeConstraints { (make) in
+            updateNameToTitle = make.top.equalTo(smallHeaderLabel.snp.bottom).offset(labelToTitlePadding).constraint
             make.centerX.equalToSuperview()
-            make.height.equalTo(updateTitle.intrinsicContentSize.height)
-            make.width.equalTo(updateTitle.intrinsicContentSize.width)
+            make.height.equalTo(titleLabel.intrinsicContentSize.height)
+            make.width.equalTo(titleLabel.intrinsicContentSize.width)
         }
+        
+        let titletoDescriptionPadding: CGFloat = 6
+        let descriptionInset: CGFloat = 32
 
-        updateDescription.snp.makeConstraints { (make) in
-            let value = CGFloat(32)
-            updateDescToUpdateName = make.top.equalTo(updateTitle.snp.bottom).offset(6).constraint
-            make.leading.trailing.equalToSuperview().inset(value)
-            if let description = updateDescription.text {
+        descriptionLabel.snp.makeConstraints { (make) in
+            updateDescToUpdateName = make.top.equalTo(titleLabel.snp.bottom).offset(titletoDescriptionPadding).constraint
+            make.leading.trailing.equalToSuperview().inset(descriptionInset)
+            if let description = descriptionLabel.text {
                 // Take total width and subtract various insets used in layout
                 let headerViewCardPadding = containerPadding.left + containerPadding.right
-                let widthValue = UIScreen.main.bounds.width - headerViewCardPadding - (value * 2)
-                
-                let heightValue = ceil(description.heightWithConstrainedWidth(width: widthValue, font: updateDescription.font))
+                let widthValue = UIScreen.main.bounds.width - headerViewCardPadding - (descriptionInset * 2)
+                let heightValue = ceil(description.heightWithConstrainedWidth(width: widthValue, font: descriptionLabel.font))
                 updateDescriptionHeight = make.height.equalTo(ceil(heightValue)).constraint
             }
         }
-
-        dismissButton.snp.makeConstraints { (make) in
-            dismissButtonToUpdateDesc = make.top.equalTo(updateDescription.snp.bottom).offset(12).constraint
+        
+        let descriptionToButtonPadding: CGFloat = 12
+        let buttonToBottomPadding: CGFloat = 16
+        
+        buttonContainerView.snp.makeConstraints { (make) in
+            buttonToUpdateDesc = make.top.equalTo(descriptionLabel.snp.bottom).offset(descriptionToButtonPadding).constraint
+            buttonToBottom = make.bottom.equalToSuperview().inset(buttonToBottomPadding).constraint
             make.centerX.equalToSuperview()
-            make.width.equalTo(90)
-            dismissButtonToBottom = make.bottom.equalToSuperview().inset(16).constraint
         }
-    }
-    
-    func addHyperLink(description: String) {
-        if let hyperLinkText = hyperLinkText {
-            let attributedString = NSMutableAttributedString(string: description)
-            
-            // Highlight the hyperlink in tcatBlue
-            var range1 = (description as NSString).range(of: hyperLinkText)
-            range1.location -= 1
-            range1.length += 1 // These two lines are to take into account the "@"
-            attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: Colors.tcatBlue, range: range1)
-            updateDescription.attributedText = attributedString
-            
-            // Make it tappable
-            let linkTappedRecognizer = UITapGestureRecognizer()
-            linkTappedRecognizer.addTarget(self, action: #selector(labelTapped))
-            updateDescription.addGestureRecognizer(linkTappedRecognizer)
+        
+        dismissButton.snp.makeConstraints { (make) in
+            make.top.equalToSuperview().offset(titleToTopPadding)
+            make.right.equalToSuperview().inset(titleToTopPadding)
+            make.width.height.equalTo(14)
         }
+
+        // Padding for space between buttons
+        let buttonWidthPadding: CGFloat = (secondaryButton != nil) ? 16 : 0
+        let buttonWidth: CGFloat = 80
+        
+        primaryButton?.snp.makeConstraints { (make) in
+            make.centerY.top.bottom.right.equalToSuperview()
+            make.width.equalTo(buttonWidth)
+            if secondaryButton == nil {
+                make.left.equalToSuperview()
+            }
+        }
+        
+        secondaryButton?.snp.makeConstraints { (make) in
+            make.centerY.top.bottom.left.equalToSuperview()
+            make.width.equalTo(buttonWidth)
+            if let primaryButton = primaryButton {
+                make.right.equalTo(primaryButton.snp.left).offset(-buttonWidthPadding)
+            } else {
+                make.right.equalToSuperview()
+            }
+        }
+
     }
     
     func calculateCardHeight() -> CGFloat {
-        if let titleToTop = titleToTop,
+        guard
+            let titleToTop = titleToTop,
             let updateNameToTitle = updateNameToTitle,
             let updateDescToUpdateName = updateDescToUpdateName,
             let updateDescriptionHeight = updateDescriptionHeight,
-            let dismissButtonToUpdateDesc = dismissButtonToUpdateDesc,
-            let dismissButtonToBottom = dismissButtonToBottom {
-            
-            let titleToTopVal = titleToTop.layoutConstraints[0].constant
-            let titleHeight = whatsNewHeader.intrinsicContentSize.height
-            
-            let titleSpace = titleToTopVal + titleHeight
-            
-            let updateNameToTitleVal = updateNameToTitle.layoutConstraints[0].constant
-            let updateNameHeight = updateTitle.intrinsicContentSize.height
-            
-            let updateNameSpace = updateNameToTitleVal + updateNameHeight
-            
-            let updateDescToUpdateNameVal = updateDescToUpdateName.layoutConstraints[0].constant
-            let updateDescHeight = updateDescriptionHeight.layoutConstraints[0].constant
-            
-            let updateDescSpace = updateDescToUpdateNameVal + updateDescHeight
-            
-            let dismissButtonToUpdateDescVal = dismissButtonToUpdateDesc.layoutConstraints[0].constant
-            let dismissButtonHeight = dismissButton.intrinsicContentSize.height
-            
-            let dismissButtonSpace = dismissButtonToUpdateDescVal + dismissButtonHeight
-            
-            let bottomOffset = -dismissButtonToBottom.layoutConstraints[0].constant
-            
-            return ceil(titleSpace + updateNameSpace + updateDescSpace + dismissButtonSpace + bottomOffset)
-        } else {
-            return 0
+            let actionButtonToUpdateDesc = buttonToUpdateDesc,
+            let actionButtonToBottom = buttonToBottom
+            else {
+                return 0
         }
+            
+        let titleToTopVal = titleToTop.layoutConstraints[0].constant
+        let titleHeight = smallHeaderLabel.intrinsicContentSize.height
+        
+        let titleSpace = titleToTopVal + titleHeight
+        
+        let updateNameToTitleVal = updateNameToTitle.layoutConstraints[0].constant
+        let updateNameHeight = titleLabel.intrinsicContentSize.height
+        
+        let updateNameSpace = updateNameToTitleVal + updateNameHeight
+        
+        let updateDescToUpdateNameVal = updateDescToUpdateName.layoutConstraints[0].constant
+        let updateDescHeight = updateDescriptionHeight.layoutConstraints[0].constant
+        
+        let updateDescSpace = updateDescToUpdateNameVal + updateDescHeight
+        
+        let actionButtonToUpdateDescVal = actionButtonToUpdateDesc.layoutConstraints[0].constant
+        let buttonHeight = primaryButton?.intrinsicContentSize.height ?? secondaryButton?.intrinsicContentSize.height ?? 0
+        
+        let actionButtonSpace = actionButtonToUpdateDescVal + buttonHeight
+        
+        let bottomOffset = -actionButtonToBottom.layoutConstraints[0].constant
+        
+        return ceil(titleSpace + updateNameSpace + updateDescSpace + actionButtonSpace + bottomOffset)
     }
-
-    @objc func labelTapped(gesture: UITapGestureRecognizer) {
-        if let hyperLinkText = hyperLinkText, let text = updateDescription.text, let range = text.range(of: hyperLinkText) {
-            let linkRange = text.nsRange(from: range)
-            if gesture.didTapAttributedTextInLabel(label: updateDescription, inRange: linkRange) {
-                // Open the corresponding app if possible
-                if let appLink = appLink, let appURL = URL(string: appLink), UIApplication.shared.canOpenURL(appURL) {
-                    if #available(iOS 10.0, *) {
-                        UIApplication.shared.open(appURL as URL, options: [:], completionHandler: nil)
-                    } else {
-                        UIApplication.shared.openURL(appURL as URL)
-                    }
-                } else if let webLink = webLink, let webURL = URL(string: webLink) {
-                    //redirect to safari because the user doesn't have specified app
-                    if #available(iOS 10.0, *) {
-                        UIApplication.shared.open(webURL as URL, options: [:], completionHandler: nil)
-                    } else {
-                        UIApplication.shared.openURL(webURL as URL)
-                    }
-                }
+    
+    @objc func primaryButtonTapped() {
+        if
+            let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
+            let primaryAction = card.primaryActionHandler
+        {
+            primaryAction(homeViewController)
+        }
+        self.whatsNewDelegate?.dismissView()
+    }
+    
+    @objc func secondaryButtonTapped() {
+        if
+            let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
+            let secondaryAction = card.secondaryActionHandler
+        {
+            secondaryAction(homeViewController)
+        }
+        self.whatsNewDelegate?.dismissView()
+    }
+    
+    func open(_ link: String, optionalAppLink: String?, linkOpened: @escaping (() -> Void)) {
+        if
+            let appLink = optionalAppLink,
+            let appURL = URL(string: appLink),
+            UIApplication.shared.canOpenURL(appURL)
+        {
+            // Open link in an installed app.
+            UIApplication.shared.open(appURL, options: [:]) { _ in
+                linkOpened()
+            }
+        }
+        
+        else if let webURL = URL(string: link) {
+            // Open link in Safari.
+            UIApplication.shared.open(webURL, options: [:]) { _ in
+                linkOpened()
             }
         }
     }
 
-    @objc func okButtonPressed() {
-        whatsNewDelegate?.okButtonPressed()
+    @objc func dismissButtonPressed() {
+        whatsNewDelegate?.dismissView()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-}
-
-private extension UITapGestureRecognizer {
-    // Helper function to see if a tap was in the specified range within a UILabel
-    func didTapAttributedTextInLabel(label: UILabel, inRange targetRange: NSRange) -> Bool {
-        // Create instances of NSLayoutManager, NSTextContainer and NSTextStorage
-        let layoutManager = NSLayoutManager()
-        let textContainer = NSTextContainer(size: CGSize.zero)
-        let textStorage = NSTextStorage(attributedString: label.attributedText!)
-        
-        // Configure layoutManager and textStorage
-        layoutManager.addTextContainer(textContainer)
-        textStorage.addLayoutManager(layoutManager)
-        
-        // Configure textContainer
-        textContainer.lineFragmentPadding = 0.0
-        textContainer.lineBreakMode = label.lineBreakMode
-        textContainer.maximumNumberOfLines = label.numberOfLines
-        let labelSize = label.bounds.size
-        textContainer.size = labelSize
-        
-        // Find the tapped character location and compare it to the specified range
-        let locationOfTouchInLabel = self.location(in: label)
-        let textBoundingBox = layoutManager.usedRect(for: textContainer)
-        let textContainerOffset = CGPoint.init(x: (labelSize.width - textBoundingBox.size.width) * 0.5 - textBoundingBox.origin.x,
-                                               y: (labelSize.height - textBoundingBox.size.height) * 0.5 - textBoundingBox.origin.y)
-        
-        let locationOfTouchInTextContainer = CGPoint.init(x: locationOfTouchInLabel.x - textContainerOffset.x,
-                                                          y: locationOfTouchInLabel.y - textContainerOffset.y);
-        let indexOfCharacter = layoutManager.characterIndex(for: locationOfTouchInTextContainer, in: textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
-        
-        return NSLocationInRange(indexOfCharacter, targetRange)
-    }
 }

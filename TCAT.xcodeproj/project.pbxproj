@@ -38,6 +38,7 @@
 		BF18AE122083B9B8000C3D82 /* Phrases.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18AE112083B9B8000C3D82 /* Phrases.swift */; };
 		BF250D7F222FB12400E7F271 /* Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF250D7E222FB12300E7F271 /* Endpoints.swift */; };
 		BF316CB02096352B005A14EF /* PhraseLabelFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF316CAF2096352B005A14EF /* PhraseLabelFooterView.swift */; };
+		BF40D7652230385B000ED7D8 /* WhatsNewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF40D7642230385B000ED7D8 /* WhatsNewCard.swift */; };
 		BF456E0320489990005C611D /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
 		BF5C52A4207B96F0003C93B9 /* LiveIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */; };
 		BF5CBAD11FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */; };
@@ -62,6 +63,7 @@
 		BFC367F421B66E9A00ABD9AC /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = BFC367F621B66E9A00ABD9AC /* Intents.intentdefinition */; };
 		BFCA712D206AC69000E4CCE5 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCA712C206AC69000E4CCE5 /* Keys.swift */; };
 		BFD5B4E41FAADFAE00955C37 /* WalkPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */; };
+		BFEDB85B2232F22100052D49 /* GeneralTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEDB85A2232F22100052D49 /* GeneralTableViewCell.swift */; };
 		BFF41EB2204365E800E0696B /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF41EB1204365E800E0696B /* SummaryView.swift */; };
 		CC27BD091FF6C91C00DAA7D5 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */; };
 		D183AA021E6CB092006A9A15 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* Extensions.swift */; };
@@ -181,6 +183,7 @@
 		BF18AE112083B9B8000C3D82 /* Phrases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Phrases.swift; path = Utilities/Phrases.swift; sourceTree = "<group>"; };
 		BF250D7E222FB12300E7F271 /* Endpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Endpoints.swift; path = Utilities/Endpoints.swift; sourceTree = "<group>"; };
 		BF316CAF2096352B005A14EF /* PhraseLabelFooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PhraseLabelFooterView.swift; path = Views/PhraseLabelFooterView.swift; sourceTree = "<group>"; };
+		BF40D7642230385B000ED7D8 /* WhatsNewCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WhatsNewCard.swift; path = Model/WhatsNewCard.swift; sourceTree = "<group>"; };
 		BF456E0220489990005C611D /* BusLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocation.swift; path = Model/BusLocation.swift; sourceTree = "<group>"; };
 		BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LiveIndicator.swift; path = Views/LiveIndicator.swift; sourceTree = "<group>"; };
 		BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "RouteDetail+DrawerViewController.swift"; path = "Controllers/RouteDetail+DrawerViewController.swift"; sourceTree = "<group>"; };
@@ -205,6 +208,7 @@
 		BFC367F521B66E9A00ABD9AC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/Intents.intentdefinition; sourceTree = "<group>"; };
 		BFCA712C206AC69000E4CCE5 /* Keys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Keys.swift; path = "Supporting Files/Keys.swift"; sourceTree = "<group>"; };
 		BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WalkPath.swift; path = Model/WalkPath.swift; sourceTree = "<group>"; };
+		BFEDB85A2232F22100052D49 /* GeneralTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GeneralTableViewCell.swift; path = Cells/GeneralTableViewCell.swift; sourceTree = "<group>"; };
 		BFF41EB1204365E800E0696B /* SummaryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SummaryView.swift; path = Views/SummaryView.swift; sourceTree = "<group>"; };
 		C3AF9B9F85F235C20ED105CF /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Analytics.swift; path = Utilities/Analytics.swift; sourceTree = "<group>"; };
@@ -442,6 +446,7 @@
 			isa = PBXGroup;
 			children = (
 				DDB49C971E8857E000A99C35 /* BusStopTableViewCell.swift */,
+				BFEDB85A2232F22100052D49 /* GeneralTableViewCell.swift */,
 				DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */,
 				DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */,
 				2292486D21BB82180004279C /* ServiceAlertTableViewCell.swift */,
@@ -463,6 +468,7 @@
 				DD2F989A1E50F99A0005F6BC /* Route.swift */,
 				BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */,
 				DDB49C9C1E8857FC00A99C35 /* Waypoint.swift */,
+				BF40D7642230385B000ED7D8 /* WhatsNewCard.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -881,6 +887,7 @@
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				5006F7BA1EC0F59A005ACAF2 /* SearchTableViewHelpers.swift in Sources */,
 				BFCA712D206AC69000E4CCE5 /* Keys.swift in Sources */,
+				BF40D7652230385B000ED7D8 /* WhatsNewCard.swift in Sources */,
 				DDB49C9D1E8857FC00A99C35 /* BusPath.swift in Sources */,
 				DD659C8A20508E1B00506BAC /* WalkWithDistanceIcon.swift in Sources */,
 				BF8AF5F32206BBF60091AB8C /* Utilities.swift in Sources */,
@@ -889,6 +896,7 @@
 				DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */,
 				224EB5A5214F2F01008232C2 /* AppShortcuts.swift in Sources */,
 				BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */,
+				BFEDB85B2232F22100052D49 /* GeneralTableViewCell.swift in Sources */,
 				DDA134451EC6A8CB00460B18 /* RouteLine.swift in Sources */,
 				BFA53FEE1FD45D7000E770DF /* RouteDetailViewController.swift in Sources */,
 				DD16B8E71E7046390089B7B2 /* BusIcon.swift in Sources */,
