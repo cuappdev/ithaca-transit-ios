@@ -224,10 +224,9 @@ class HomeViewController: UIViewController {
         present(navController, animated: true, completion: nil)
     }
 
-    func createWhatsNewView(from card: WhatsNewCard) {
-        
+    func createWhatsNewView(from card: WhatsNewCard, hasPromotion: Bool) {
         userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
-        whatsNewView = WhatsNewHeaderView(card: card)
+        whatsNewView = WhatsNewHeaderView(card: card, isPromotion: hasPromotion)
         whatsNewView.whatsNewDelegate = self
         whatsNewContainerView = UIView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: whatsNewView.calculateCardHeight() + whatsNewView.containerPadding.top + whatsNewView.containerPadding.bottom))
         whatsNewContainerView.addSubview(whatsNewView)
@@ -250,10 +249,10 @@ class HomeViewController: UIViewController {
         let showTypicalFeatureCard = !firstViewing && (VersionStore.shared.isNewCardAvailable() || !whatsNewDismissed)
         
         if showPromotionalCard {
-            createWhatsNewView(from: WhatsNewCard.promotion)
+            createWhatsNewView(from: WhatsNewCard.promotion, hasPromotion: true)
         }
-        if showTypicalFeatureCard {
-            createWhatsNewView(from: WhatsNewCard.newFeature)
+        else if showTypicalFeatureCard {
+            createWhatsNewView(from: WhatsNewCard.newFeature, hasPromotion: false)
         }
         
     }

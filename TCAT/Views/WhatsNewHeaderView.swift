@@ -19,6 +19,9 @@ class WhatsNewHeaderView: UIView {
     var whatsNewDelegate: WhatsNewDelegate?
     var card: WhatsNewCard
     
+    /// Whether a promotion is being used for the card
+    var isPromotion: Bool
+    
     // e.g. "New In Ithaca Transit" blue label
     var smallHeaderLabel: UILabel!
     var titleLabel: UILabel!
@@ -38,8 +41,9 @@ class WhatsNewHeaderView: UIView {
     
     let containerPadding = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
     
-    init(card: WhatsNewCard) {
+    init(card: WhatsNewCard, isPromotion: Bool = false) {
         self.card = card
+        self.isPromotion = isPromotion
         
         super.init(frame: .zero)
         backgroundColor = Colors.white
@@ -251,7 +255,9 @@ class WhatsNewHeaderView: UIView {
             let payload = PrimaryActionTappedPayload(actionDescription: card.title)
             Analytics.shared.log(payload)
         }
-        self.whatsNewDelegate?.dismissView(card: card)
+        if !isPromotion {
+            self.whatsNewDelegate?.dismissView(card: card)
+        }
     }
     
     @objc func secondaryButtonTapped() {
@@ -263,7 +269,9 @@ class WhatsNewHeaderView: UIView {
             let payload = SecondaryActionTappedPayload(actionDescription: card.title)
             Analytics.shared.log(payload)
         }
-        self.whatsNewDelegate?.dismissView(card: card)
+        if !isPromotion {
+            self.whatsNewDelegate?.dismissView(card: card)
+        }
     }
     
     func open(_ link: String, optionalAppLink: String?, linkOpened: @escaping (() -> Void)) {
