@@ -46,17 +46,7 @@ class PlaceTableViewCell: UITableViewCell {
         
         textLabel?.text = place?.name
         detailTextLabel?.text = place?.description
-        
-        switch reuseIdentifier {
-        case Constants.Cells.placeIdentifier:
-            iconColor = place?.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
-        case Constants.Cells.addFavoriteIdentifier:
-            textLabel?.text = Constants.General.firstFavorite
-            detailTextLabel?.text = Constants.General.tapHere
-            iconColor = Colors.tcatBlue
-        default:
-            break
-        }
+        iconColor = place?.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
         
         imageView?.frame = CGRect(x: 10, y: 5, width: imageWidth, height: imageHeight)
         imageView?.contentMode = .scaleAspectFit

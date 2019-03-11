@@ -81,7 +81,7 @@ class HomeViewController: UIViewController {
         tableView.tableFooterView = UIView()
         tableView.showsVerticalScrollIndicator = false
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
-        tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.addFavoriteIdentifier)
+        // tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.addFavoriteIdentifier)
         tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
         view.addSubview(tableView)
 
@@ -160,7 +160,6 @@ class HomeViewController: UIViewController {
             self.sections = []
         case .cellular, .wifi:
             self.isNetworkDown = false
-            self.showWhatsNewCardIfNeeded()
             sections = createSections()
             self.searchBar.isUserInteractionEnabled = true
         }
@@ -210,6 +209,7 @@ class HomeViewController: UIViewController {
                 placeDescription: Constants.General.tapHere,
                 placeIdentifier: "dummy_data"
             )
+            addFavorites.type = .busStop // Special exception to make pin blue for favorite!
             favoritesSection = Section(type: .favorites, items: [addFavorites])
         }
         allSections.append(favoritesSection)
@@ -241,11 +241,11 @@ class HomeViewController: UIViewController {
     func showWhatsNewCardIfNeeded() {
         
         let promotionCardDismissed = userDefaults.bool(forKey: Constants.UserDefaults.promotionDismissed)
+        let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
         
         let showPromotionalCard = WhatsNewCard.isPromotionActive() && !promotionCardDismissed
         
         firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
-        let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
 
         // Not the first time loading the app AND there's a new card to show OR the card hasn't been dismissed.
         let showTypicalFeatureCard = !firstViewing && (VersionStore.shared.isNewCardAvailable() || !whatsNewDismissed)
@@ -255,6 +255,10 @@ class HomeViewController: UIViewController {
         }
         else if showTypicalFeatureCard {
             createWhatsNewView(from: WhatsNewCard.newFeature, hasPromotion: false)
+        }
+        
+        if !WhatsNewCard.isPromotionActive() {
+            userDefaults.set(false, forKey: Constants.UserDefaults.promotionDismissed)
         }
         
     }
@@ -339,16 +343,11 @@ extension HomeViewController: UITableViewDataSource {
         
         var cell: UITableViewCell!
         
-        if sections[indexPath.section].type == .favorites &&
-            sections[indexPath.section].items.first?.name == Constants.General.firstFavorite
-        {
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.addFavoriteIdentifier) as? PlaceTableViewCell
-        }
-        
-        else if sections[indexPath.section].type == .seeAllStops {
+        if sections[indexPath.section].type == .seeAllStops {
             cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as? GeneralTableViewCell
         }
         
+        // Favorites (including Add First Favorite!), Recent Searches
         else {
             guard let placeCell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
                 else { return cell }
@@ -630,10 +629,9 @@ extension HomeViewController: WhatsNewDelegate {
             userDefaults.set(true, forKey: Constants.UserDefaults.promotionDismissed)
         } else if card.isEqual(to: WhatsNewCard.newFeature) {
             userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
+            // This will save the card shown and prevent it from being shown again unless changed
+            VersionStore.shared.storeShownCard(card: card)
         }
-        
-        // This will save the card shown and prevent it from being shown again unless changed
-        VersionStore.shared.storeShownCard(card: card)
         
         tableView.beginUpdates()
         UIView.animate(withDuration: 0.35, animations: {

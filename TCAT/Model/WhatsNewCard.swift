@@ -33,7 +33,7 @@ struct WhatsNewCard: Codable {
     static let promotion = WhatsNewCard(
         label: "Cornell App Development",
         title: "Support Transit on Giving Day",
-        description: "Donate to Cornell AppDev to help Transit improve routes, maintain live tracking, and more! Donations accepted until 11:59 PM today!",
+        description: "Donate to Cornell AppDev to help Transit improve routes, maintain live tracking, and more! Donations are accepted until 11:59 PM today.",
         primaryActionTitle: "Give",
         primaryActionHandler: { (homeViewController) in
             actionLinkHandler(webLink: "https://givingday.cornell.edu/campaigns/cu-app-development", appLink: nil, completion: nil)

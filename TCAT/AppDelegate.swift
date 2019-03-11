@@ -26,7 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         (key: Constants.UserDefaults.onboardingShown, defaultValue: false),
         (key: Constants.UserDefaults.recentSearch, defaultValue: [Any]()),
         (key: Constants.UserDefaults.favorites, defaultValue: [Any]()),
-        (key: Constants.UserDefaults.whatsNewDismissed, defaultValue: false)
+        (key: Constants.UserDefaults.whatsNewDismissed, defaultValue: false),
+        (key: Constants.UserDefaults.promotionDismissed, defaultValue: false)
     ]
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
