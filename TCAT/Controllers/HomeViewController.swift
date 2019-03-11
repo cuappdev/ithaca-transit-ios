@@ -225,7 +225,6 @@ class HomeViewController: UIViewController {
     }
 
     func createWhatsNewView(from card: WhatsNewCard, hasPromotion: Bool) {
-        userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
         whatsNewView = WhatsNewHeaderView(card: card, isPromotion: hasPromotion)
         whatsNewView.whatsNewDelegate = self
         whatsNewContainerView = UIView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: whatsNewView.calculateCardHeight() + whatsNewView.containerPadding.top + whatsNewView.containerPadding.bottom))
