@@ -68,8 +68,8 @@ class SearchResultsTableViewController: UITableViewController {
                                                object: nil)
 
         // Set Up TableView
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Cells.currentLocationIdentifier)
+        tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
+        tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.currentLocationIdentifier)
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
@@ -225,34 +225,25 @@ class SearchResultsTableViewController: UITableViewController {
         var cell: UITableViewCell!
         
         if sections[indexPath.section].type == .currentLocation {
-            cell = tableView.dequeueReusableCell(withIdentifier:  Constants.Cells.currentLocationIdentifier)
-            cell.textLabel?.text = Constants.General.currentLocation
-            cell.imageView?.image = #imageLiteral(resourceName: "location")
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.currentLocationIdentifier) as? GeneralTableViewCell
         }
         
         else if sections[indexPath.section].type == .seeAllStops {
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
-            cell.textLabel?.text = Constants.General.seeAllStops
-            cell.imageView?.image = #imageLiteral(resourceName: "list")
-            cell.accessoryType = .disclosureIndicator
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as? GeneralTableViewCell
         }
             
         else {
-            let place = sections[indexPath.section].items[indexPath.row]
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-            cell.textLabel?.text = place.name
-            cell.detailTextLabel?.text = place.description
-            (cell as? PlaceTableViewCell)?.iconColor = place.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
+            guard let placeCell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
+                else { return cell }
+            placeCell.place = sections[indexPath.section].items[indexPath.row]
+            cell = placeCell
         }
         
-        cell.textLabel?.font = .getFont(.regular, size: 14)
-        cell.preservesSuperviewLayoutMargins = false
-        cell.separatorInset = .zero
-        cell.layoutMargins = .zero
         cell.layoutSubviews()
 
         return cell
     }
+    
 }
 
 // MARK: ScrollView Delegate

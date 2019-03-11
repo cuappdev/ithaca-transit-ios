@@ -109,7 +109,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(SmallDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.smallDetailCellIdentifier)
         tableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.largeDetailCellIdentifier)
-        tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: Constants.Cells.busStopCellIdentifier)
+        tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: Constants.Cells.busStopDetailCellIdentifier)
         tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.emptyFooterView)
         tableView.dataSource = self
         tableView.delegate = self
@@ -273,6 +273,8 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         
+        // Empty Footer
+        
         let emptyFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.emptyFooterView) ??
             UITableViewHeaderFooterView(reuseIdentifier: Constants.Footers.emptyFooterView)
         
@@ -289,10 +291,34 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         emptyFooterView.frame.size = CGSize(width: view.frame.width, height: footerHeight)
         emptyFooterView.contentView.backgroundColor = Colors.white
         emptyFooterView.layoutIfNeeded()
-        if emptyFooterView.gestureRecognizers?.isEmpty == true {
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
-            tapGesture.delegate = self
-            emptyFooterView.addGestureRecognizer(tapGesture)
+        
+        // Create Footer for No Data from Live Tracking Footer, if needed
+        
+        guard
+            let drawer = self.parent as? RouteDetailViewController,
+            let contentViewController = drawer.primaryContentViewController as? RouteDetailContentViewController
+            else {
+                return emptyFooterView
+        }
+        
+        var message: String?
+        
+        if !contentViewController.noDataRouteList.isEmpty {
+            if contentViewController.noDataRouteList.count > 1 {
+                message = Constants.Banner.noLiveTrackingForRoutes
+            } else {
+                let routeNumber = contentViewController.noDataRouteList.first!
+                message = Constants.Banner.noLiveTrackingForRoute + " " + "\(routeNumber)."
+            }
+        } else {
+            message = nil
+        }
+        
+        if let message = message {
+            let phraseLabelFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.phraseLabelFooterView)
+                as? PhraseLabelFooterView ?? PhraseLabelFooterView(reuseIdentifier: Constants.Footers.phraseLabelFooterView)
+            phraseLabelFooterView.setView(with: message)
+            return phraseLabelFooterView
         }
         
         return emptyFooterView
@@ -316,7 +342,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         }
 
         if isBusStopCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopCellIdentifier) as! BusStopTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as! BusStopTableViewCell
             cell.setCell(direction.name)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
             return format(cell)

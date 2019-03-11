@@ -22,16 +22,18 @@ class HomeViewController: UIViewController {
     let userDefaults = UserDefaults.standard
 
     var locationManager = CLLocationManager()
+    var currentLocation: CLLocation?
     var timer: Timer?
     var isNetworkDown = false
     var firstViewing = true
     var searchResultsSection: Section!
     var sectionIndexes: [String: Int]! = [:]
-    var tableView: HomeTableView!
+    var tableView: UITableView!
     var initialTableViewIndexMidY: CGFloat!
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
     var whatsNewView: WhatsNewHeaderView!
+    var whatsNewContainerView: UIView!
     var recentLocations: [Place] = []
     var favorites: [Place] = []
     var isKeyboardVisible = false
@@ -39,7 +41,7 @@ class HomeViewController: UIViewController {
         didSet {
             tableView.reloadData()
             if sections.isEmpty {
-                tableView.tableHeaderView = nil
+                tableView.tableHeaderView = .zero
             }
         }
     }
@@ -67,7 +69,7 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: Colors.white]
         view.backgroundColor = Colors.backgroundWash
 
-        tableView = HomeTableView(frame: .zero, style: .grouped)
+        tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
@@ -79,7 +81,8 @@ class HomeViewController: UIViewController {
         tableView.tableFooterView = UIView()
         tableView.showsVerticalScrollIndicator = false
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
+        // tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.addFavoriteIdentifier)
+        tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
         view.addSubview(tableView)
 
         tableView.snp.makeConstraints { (make) in
@@ -109,17 +112,10 @@ class HomeViewController: UIViewController {
             make.height.equalTo(38)
         }
 
-        firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
-
-        let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
-        let hasSeenVersion = VersionStore.shared.has(version: WhatsNew.Version.current())
-        if !firstViewing && (!whatsNewDismissed || !hasSeenVersion) {
-            createWhatsNewView()
-        }
-        if !hasSeenVersion {
-            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
-        }
-        VersionStore.shared.set(version: WhatsNew.Version(stringLiteral: Constants.App.version))
+        showWhatsNewCardIfNeeded()
+        
+        // Set Version
+        VersionStore.shared.set(version: WhatsNew.Version.current())
     }
 
     override func viewDidLayoutSubviews() {
@@ -208,7 +204,12 @@ class HomeViewController: UIViewController {
         let seeAllStopsSection = Section(type: .seeAllStops, items: [])
         var favoritesSection = Section(type: .favorites, items: favorites)
         if favoritesSection.items.isEmpty {
-            let addFavorites = Place(name: Constants.General.firstFavorite)
+            let addFavorites = Place(
+                name: Constants.General.firstFavorite,
+                placeDescription: Constants.General.tapHere,
+                placeIdentifier: "dummy_data"
+            )
+            addFavorites.type = .busStop // Special exception to make pin blue for favorite!
             favoritesSection = Section(type: .favorites, items: [addFavorites])
         }
         allSections.append(favoritesSection)
@@ -223,41 +224,42 @@ class HomeViewController: UIViewController {
         present(navController, animated: true, completion: nil)
     }
 
-    func createWhatsNewView() {
-        userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
-        whatsNewView = WhatsNewHeaderView(updateName: Constants.General.whatsNewUpdateName,
-                                          description: Constants.General.whatsNewDescription)
+    func createWhatsNewView(from card: WhatsNewCard, hasPromotion: Bool) {
+        whatsNewView = WhatsNewHeaderView(card: card, isPromotion: hasPromotion)
         whatsNewView.whatsNewDelegate = self
-        let containerView = UIView()
-        containerView.backgroundColor = .clear
-        containerView.addSubview(whatsNewView)
+        whatsNewContainerView = UIView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: whatsNewView.calculateCardHeight() + whatsNewView.containerPadding.top + whatsNewView.containerPadding.bottom))
+        whatsNewContainerView.addSubview(whatsNewView)
         whatsNewView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview().inset(whatsNewView.containerPadding)
+            let widthPadding = whatsNewView.containerPadding.left + whatsNewView.containerPadding.right
+            make.width.equalToSuperview().offset(-widthPadding)
+            make.top.leading.bottom.equalToSuperview().inset(whatsNewView.containerPadding)
         }
-
-        tableView.tableHeaderView = containerView
-        containerView.snp.makeConstraints { (make) in
-            make.top.centerX.width.equalToSuperview()
-        }
+        tableView.tableHeaderView = whatsNewContainerView
     }
+    
+    func showWhatsNewCardIfNeeded() {
+        
+        let promotionCardDismissed = userDefaults.bool(forKey: Constants.UserDefaults.promotionDismissed)
+        let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
+        
+        let showPromotionalCard = WhatsNewCard.isPromotionActive() && !promotionCardDismissed
+        
+        firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
 
-    func okButtonPressed() {
-        userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
-        tableView.beginUpdates()
-        tableView.animating = true
-        UIView.animate(withDuration: 0.35, animations: {
-            if let containerView = self.tableView.tableHeaderView {
-                self.tableView.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
-                containerView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01).translatedBy(x: 0, y: -6000)
-            }
-        }, completion: {(completed) in
-            if completed {
-                self.tableView.animating = false
-                self.tableView.tableHeaderView = nil
-                VersionStore.shared.set(version: WhatsNew.Version.current())
-            }
-        })
-        tableView.endUpdates()
+        // Not the first time loading the app AND there's a new card to show OR the card hasn't been dismissed.
+        let showTypicalFeatureCard = !firstViewing && (VersionStore.shared.isNewCardAvailable() || !whatsNewDismissed)
+        
+        if showPromotionalCard {
+            createWhatsNewView(from: WhatsNewCard.promotion, hasPromotion: true)
+        }
+        else if showTypicalFeatureCard {
+            createWhatsNewView(from: WhatsNewCard.newFeature, hasPromotion: false)
+        }
+        
+        if !WhatsNewCard.isPromotionActive() {
+            userDefaults.set(false, forKey: Constants.UserDefaults.promotionDismissed)
+        }
+        
     }
 
     /* Keyboard Functions */
@@ -337,32 +339,21 @@ extension HomeViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         var cell: UITableViewCell!
         
-        if sections[indexPath.section].type == .favorites &&
-            sections[indexPath.section].items.first?.name == Constants.General.firstFavorite
-        {
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-            cell.textLabel?.text = Constants.General.firstFavorite
-            cell.detailTextLabel?.text = Constants.General.tapHere
-            (cell as? PlaceTableViewCell)?.iconColor = Colors.tcatBlue
-        } else if sections[indexPath.section].type == .seeAllStops {
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier)
-            cell.textLabel?.text = Constants.General.seeAllStops
-            cell.imageView?.image = #imageLiteral(resourceName: "list")
-            cell.accessoryType = .disclosureIndicator
-        } else {
-            let place = sections[indexPath.section].items[indexPath.row]
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-            cell.textLabel?.text = place.name
-            cell.detailTextLabel?.text = place.description
-            (cell as? PlaceTableViewCell)?.iconColor = place.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
+        if sections[indexPath.section].type == .seeAllStops {
+            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as? GeneralTableViewCell
+        }
+        
+        // Favorites (including Add First Favorite!), Recent Searches
+        else {
+            guard let placeCell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
+                else { return cell }
+            placeCell.place = sections[indexPath.section].items[indexPath.row]
+            cell = placeCell
         }
 
-        cell.textLabel?.font = .getFont(.regular, size: 14)
-        cell.preservesSuperviewLayoutMargins = false
-        cell.separatorInset = .zero
-        cell.layoutMargins = .zero
         cell.layoutSubviews()
 
         return cell
@@ -428,6 +419,7 @@ extension HomeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let routeOptionsViewController = RouteOptionsViewController()
+        routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
         let allStopsTableViewConroller = AllStopsTableViewController()
         var didSelectAllStops = false
         var shouldPushViewController = true
@@ -443,8 +435,9 @@ extension HomeViewController: UITableViewDelegate {
                 shouldPushViewController = false
                 presentFavoritesTVC()
             } else {
-                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
                 routeOptionsViewController.searchTo = place
+                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
+                routeOptionsViewController.didSelectPlace(place: place)
             }
         }
 
@@ -465,7 +458,7 @@ extension HomeViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         navigationItem.rightBarButtonItem = nil
-        if tableView?.tableHeaderView != nil {
+        if tableView?.tableHeaderView != .zero {
             hideCard()
         }
 
@@ -480,7 +473,7 @@ extension HomeViewController: UISearchBarDelegate {
         let submitBugBarButton = UIBarButtonItem(customView: infoButton)
         navigationItem.setRightBarButton(submitBugBarButton, animated: false)
         sections = createSections()
-        if tableView?.tableHeaderView != nil {
+        if tableView?.tableHeaderView != .zero {
             showCard()
         }
     }
@@ -497,6 +490,7 @@ extension HomeViewController: UISearchBarDelegate {
 
 // MARK: Location Delegate
 extension HomeViewController: CLLocationManagerDelegate {
+    
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
 
         if status == .denied {
@@ -508,17 +502,12 @@ extension HomeViewController: CLLocationManagerDelegate {
             }
 
             guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
-
                 userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
-
                 let cancelAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default, handler: nil)
                 alertController.addAction(cancelAction)
-
                 alertController.addAction(settingsAction)
                 alertController.preferredAction = settingsAction
-
                 present(alertController, animated: true)
-
                 return
             }
 
@@ -538,6 +527,12 @@ extension HomeViewController: CLLocationManagerDelegate {
 
         }
     }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        currentLocation = location
+    }
+    
 }
 
 // MARK: DZN Empty Data Set Source
@@ -622,6 +617,40 @@ extension HomeViewController: AddFavoritesDelegate {
 
 // MARK: WhatsNew Delegate
 extension HomeViewController: WhatsNewDelegate {
+    
+    func getCurrentHomeViewController() -> HomeViewController {
+        return self
+    }
+    
+    func dismissView(card: WhatsNewCard) {
+        
+        if card.isEqual(to: WhatsNewCard.promotion) {
+            userDefaults.set(true, forKey: Constants.UserDefaults.promotionDismissed)
+        } else if card.isEqual(to: WhatsNewCard.newFeature) {
+            userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
+            // This will save the card shown and prevent it from being shown again unless changed
+            VersionStore.shared.storeShownCard(card: card)
+        }
+        
+        tableView.beginUpdates()
+        UIView.animate(withDuration: 0.35, animations: {
+            self.tableView.contentInset = .init(top: -self.whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
+            self.whatsNewView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01).translatedBy(x: 0, y: 7000)
+            self.whatsNewView.alpha = 0
+            for subview in self.whatsNewView.subviews {
+                subview.alpha = 0
+            }
+        }, completion: {(completed) in
+            if completed {
+                self.tableView.contentInset = .zero
+                self.tableView.tableHeaderView = .zero
+            }
+        })
+        tableView.endUpdates()
+        
+        let payload = WhatsNewCardDismissedPayload(actionDescription: card.title)
+        Analytics.shared.log(payload)
+    }
 
     /// Hide card when user is searching for Bus Stops
     func hideCard() {
@@ -651,26 +680,7 @@ extension HomeViewController: WhatsNewDelegate {
             self.whatsNewView.isHidden = false
         }
     }
-
-    func cardPressed() {
-        print("Card Pressed")
-    }
-}
-
-// MARK: Custom TableView
-class HomeTableView: UITableView {
-    var animating = false
-    override var tableHeaderView: UIView? {
-        didSet {
-            if !animating {
-                if tableHeaderView == nil {
-                    self.contentInset = .init(top: -36, left: 0, bottom: 0, right: 0)
-                } else {
-                    self.contentInset = .zero
-                }
-            }
-        }
-    }
+    
 }
 
 // Helper function inserted by Swift 4.2 migrator.

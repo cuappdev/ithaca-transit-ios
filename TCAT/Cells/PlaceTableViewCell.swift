@@ -10,7 +10,9 @@ import UIKit
 
 class PlaceTableViewCell: UITableViewCell {
     
-    var iconColor: UIColor = Colors.metadataIcon
+    var place: Place?
+    
+    private var iconColor: UIColor = Colors.metadataIcon
     
     let labelWidthPadding: CGFloat = 45.0
     let labelXPosition: CGFloat = 40.0
@@ -38,15 +40,23 @@ class PlaceTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
+        preservesSuperviewLayoutMargins = false
+        separatorInset = .zero
+        layoutMargins = .zero
+        
+        textLabel?.text = place?.name
+        detailTextLabel?.text = place?.description
+        iconColor = place?.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
+        
         imageView?.frame = CGRect(x: 10, y: 5, width: imageWidth, height: imageHeight)
         imageView?.contentMode = .scaleAspectFit
         imageView?.center.y = bounds.height / 2.0
-        imageView?.image = #imageLiteral(resourceName: "pin")
+        imageView?.image = place?.type == .busStop ? UIImage(named: "bus-pin") : UIImage(named: "pin")
         imageView?.tintColor = iconColor
         
         textLabel?.frame.origin.x = labelXPosition
         textLabel?.frame.size.width = frame.width - labelWidthPadding
-        textLabel?.font = .getFont(.regular, size: 13)
+        textLabel?.font = .getFont(.regular, size: 14) // has been size: 14 elsewhere
 
         detailTextLabel?.frame.origin.x = labelXPosition
         detailTextLabel?.frame.size.width = frame.width - labelWidthPadding

@@ -14,7 +14,6 @@ struct Constants {
     /// The phrases used for alerts
     struct Alerts {
 
-        
         struct GeneralActions {
             static let settings = "Settings"
             static let cancel = "Cancel"
@@ -98,6 +97,9 @@ struct Constants {
 
         /// Developer email address to direct contact inquiries and emails toward
         static let contactEmailAddress = "ithacatransit@cornellappdev.com"
+        
+        // Twitter screen name
+        static let twitterHandle = "IthacaTransit"
 
         /// Link to Google Forms for Feedback
         // static let feedbackLink = "https://goo.gl/forms/jYejUtVccVQ3UHH12"
@@ -108,8 +110,8 @@ struct Constants {
         static let noInternetConnection = "No internet connection"
         static let trackingLater = "Tracking available near departure time"
         static let cannotConnectLive = "Cannot connect to live tracking"
-        static let noLiveTrackingForRoutes = "No live tracking available for routes"
-        static let noLiveTrackingForRoute = "No live tracking available for Route "
+        static let noLiveTrackingForRoutes = "No live tracking available for routes."
+        static let noLiveTrackingForRoute = "No live tracking available for Route"
         static let cantConnectServer = "Could not connect to server"
         static let routeCalculationError = "Route calculation error. Please retry."
     }
@@ -131,14 +133,16 @@ struct Constants {
 
     /// Cell identifiers
     struct Cells {
-        static let busIdentifier = "BusStop"
         static let placeIdentifier = "PlaceTableViewCell"
-        static let searchResultsIdentifier = "SearchResults"
+        
+        static let addFavoriteIdentifier = "AddFavorite"
         static let seeAllStopsIdentifier = "SeeAllStops"
+        
         static let currentLocationIdentifier = "CurrentLocation"
         static let smallDetailCellIdentifier = "SmallCell"
         static let largeDetailCellIdentifier = "LargeCell"
-        static let busStopCellIdentifier = "BusStopCell"
+        static let busStopDetailCellIdentifier = "BusStopCell"
+        
         static let informationCellIdentifier = "InformationCell"
     }
 
@@ -206,10 +210,6 @@ struct Constants {
         static let destination = "your destination"
         static let affectedRoutes = "Affected Routes"
         static let seeAllStops = "See All Stops"
-
-        // What's New Card for minor app updates
-        static let whatsNewUpdateName = "Introducing Siri Shortcuts"
-        static let whatsNewDescription = "Use Siri to access recent searches! Head to Siri & Search in Settings to get started."
     }
 
     struct TableHeaders {
@@ -244,6 +244,8 @@ struct Constants {
         static let allBusStops = "allBusStops"
         static let favorites = "favorites"
         static let servicedRoutes = "servicedRoutes"
+        static let whatsNewCardVersion = "whatsNewVersion"
+        static let promotionDismissed = "promotionDismissed"
     }
 
     struct Values {
@@ -283,4 +285,5 @@ struct Constants {
             static let westBorder: Double = -76.67690943302259 - (1 / 51.2738554594)
         }
     }
+    
 }

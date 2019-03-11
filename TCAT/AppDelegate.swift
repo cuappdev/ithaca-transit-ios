@@ -25,8 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let userDataInits: [(key: String, defaultValue: Any)] = [
         (key: Constants.UserDefaults.onboardingShown, defaultValue: false),
         (key: Constants.UserDefaults.recentSearch, defaultValue: [Any]()),
-        (key: Constants.UserDefaults.favorites, defaultValue: [Any]()),
-        (key: Constants.UserDefaults.whatsNewDismissed, defaultValue: false)
+        (key: Constants.UserDefaults.favorites, defaultValue: [Any]())
     ]
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -70,7 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
         
-        // v1.2.2 Data Migration
+        // v1.3 Data Migration
         if
             VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1),
             let homeViewController = rootVC as? HomeViewController
