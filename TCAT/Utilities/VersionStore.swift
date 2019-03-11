@@ -35,8 +35,7 @@ class VersionStore: WhatsNewVersionStore {
             else {
                 return false
         }
-        let isNotNewVersion = WhatsNewCard.newFeature.isEqual(to: storedWhatsNew)
-        return !isNotNewVersion
+        return !WhatsNewCard.newFeature.isEqual(to: storedWhatsNew)
     }
     
     func storeShownCard(card: WhatsNewCard) {
