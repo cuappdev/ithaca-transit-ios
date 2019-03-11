@@ -49,7 +49,7 @@ struct WhatsNewCard: Codable {
         var sharedComponent = DateComponents()
         sharedComponent.year = 2019
         sharedComponent.month = 3
-        sharedComponent.day = 10
+        sharedComponent.day = 11
         sharedComponent.timeZone = TimeZone(abbreviation: "EST")
         
         var startDateComponent = sharedComponent

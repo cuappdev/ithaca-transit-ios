@@ -240,7 +240,9 @@ class HomeViewController: UIViewController {
     
     func showWhatsNewCardIfNeeded() {
         
-        let showPromotionalCard = WhatsNewCard.isPromotionActive()
+        let promotionCardDismissed = userDefaults.bool(forKey: Constants.UserDefaults.promotionDismissed)
+        
+        let showPromotionalCard = WhatsNewCard.isPromotionActive() && !promotionCardDismissed
         
         firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
         let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
@@ -624,7 +626,11 @@ extension HomeViewController: WhatsNewDelegate {
     
     func dismissView(card: WhatsNewCard) {
         
-        userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
+        if card.isEqual(to: WhatsNewCard.promotion) {
+            userDefaults.set(true, forKey: Constants.UserDefaults.promotionDismissed)
+        } else if card.isEqual(to: WhatsNewCard.newFeature) {
+            userDefaults.set(true, forKey: Constants.UserDefaults.whatsNewDismissed)
+        }
         
         // This will save the card shown and prevent it from being shown again unless changed
         VersionStore.shared.storeShownCard(card: card)
