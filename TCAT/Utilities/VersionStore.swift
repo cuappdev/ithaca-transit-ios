@@ -39,6 +39,7 @@ class VersionStore: WhatsNewVersionStore {
     }
     
     func storeShownCard(card: WhatsNewCard) {
+        guard !card.isEqual(to: WhatsNewCard.promotion) else { return }
         if let encodedData = try? JSONEncoder().encode(card) {
             userDefaults.set(encodedData, forKey: Constants.UserDefaults.whatsNewCardVersion)
         } else {
