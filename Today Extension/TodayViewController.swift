@@ -49,13 +49,13 @@ import SwiftyJSON
     }
 
     func searchForRoutes() {
-        if let start = currentLocation {
-            Network.getMultiRoutes(startCoord: start, time: Date(), endCoords: coordinates, endPlaceNames: favorites) { (request) in
-                print("fetching new routes...")
-                self.processRequest(request: request)
+        if favorites.count > 0 {
+            if let start = currentLocation {
+                Network.getMultiRoutes(startCoord: start, time: Date(), endCoords: coordinates, endPlaceNames: favorites) { (request) in
+                    print("fetching new routes...")
+                    self.processRequest(request: request)
+                }
             }
-        } else {
-            print("if let currentLocation failed")
         }
     }
 
@@ -117,12 +117,6 @@ import SwiftyJSON
         }
     }
 
-//    override func viewDidLayoutSubviews() {
-//        super.viewDidLayoutSubviews()
-//        routesTable.reloadData()
-//        createConstraints()
-//    } WAS CAUSING ERROR DUE TO ROUTESTABLE NOT BEING ADDED TO SUPERVIEW YET
-
     func rearrangeRoutes() {
         var nonNilRoutes = [Route?]()
         var nonNilFavorites = [String]()
@@ -182,9 +176,11 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
                 if (didFetchRoutes) { // no routes retrieved
                     let cell = tableView.dequeueReusableCell(withIdentifier: "noRoutesCell", for: indexPath) as! NoRoutesCell
                     cell.noRoutesLabel.text = "Unable to Load Routes"
+                    cell.selectionStyle = .none
                     return cell
                 } else { // still fetching routes
                     let cell = tableView.dequeueReusableCell(withIdentifier: "loadingCell", for: indexPath) as! LoadingTableViewCell
+                    cell.selectionStyle = .none
                     return cell
                 }
             }
@@ -197,22 +193,26 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
 
         // else: favorites = 0
         let cell = tableView.dequeueReusableCell(withIdentifier: "noFavoritesCell", for: indexPath) as! NoFavoritesCell
+        cell.selectionStyle = .none
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // launch app via URL scheme --> route OPTIONS view (to be changed to route detail view later on
 
-        let latLong = coordinates[indexPath.row].components(separatedBy: ",")
-        let latitude = latLong[0]
-        let longitude = latLong[1]
-        let destination = favorites[indexPath.row]
+        if routes.count != 0 {
+            let latLong = coordinates[indexPath.row].components(separatedBy: ",")
+            let latitude = latLong[0]
+            let longitude = latLong[1]
+            let destination = favorites[indexPath.row]
 
-        let stringURL = "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(destination)"
-        if
-            let url = stringURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-            let convertedURL = URL(string: url) {
-            extensionContext?.open(convertedURL, completionHandler: nil)
+            let stringURL = "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(destination)"
+
+            if
+                let url = stringURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+                let convertedURL = URL(string: url) {
+                extensionContext?.open(convertedURL, completionHandler: nil)
+            }
         }
 
     }
