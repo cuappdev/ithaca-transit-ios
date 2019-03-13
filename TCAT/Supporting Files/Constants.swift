@@ -232,6 +232,13 @@ struct Constants {
         static let routeOptions = "Route Options"
         static let routeResults = "Route Results"
     }
+    
+    struct TodayExtension {
+        // cell identifiers
+        static let errorCellIdentifier = "errorCell"
+        static let loadingCellIdentifier = "loadingCell"
+        static let contentCellIdentifier = "todayExtensionCell"
+    }
 
     struct UserDefaults {
         static let group = "group.tcat"
