@@ -34,9 +34,9 @@ struct Alert: Codable {
     var routes: [Int]
     var signs: [Int]
     var channelMessages: [ChannelMessage]
-    
+
     init(id: Int, message: String, fromDate: String, toDate: String, fromTime: String, toTime: String, priority: Int, daysOfWeek: String, routes: [Int], signs: [Int], channelMessages: [ChannelMessage]) {
-        
+
         self.id = id
         self.message = message
         self.fromDate = fromDate
@@ -48,7 +48,7 @@ struct Alert: Codable {
         self.routes = routes
         self.signs = signs
         self.channelMessages = channelMessages
-        
+
     }
 }
 
@@ -75,6 +75,11 @@ struct SearchRequest: Codable {
 struct RoutesRequest: Codable {
     var success: Bool
     var data: [Route]
+}
+
+struct MultiRoutesRequest: Codable {
+    var success: Bool
+    var data: [Route?]
 }
 
 class AllBusStopsRequest: Codable {
@@ -143,9 +148,4 @@ class AllBusStopsRequest: Codable {
         let sortedStops = nonDuplicateStops.sorted(by: {$0.name.uppercased() < $1.name.uppercased()})
         data = sortedStops
     }
-}
-
-struct MultiRoutesRequest: Codable {
-    var success: Bool
-    var data: [Route?]
 }

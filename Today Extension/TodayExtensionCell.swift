@@ -23,8 +23,8 @@ class TodayExtensionCell: UITableViewCell {
 
     // MARK: View vars
 
-    var departureLabel: UILabel
-    var destinationLabel: UILabel // To ...
+    var departureLabel: UILabel // ex: 10:00 AM at Collegetown Crossing
+    var destinationLabel: UILabel // ex: To Baker Flagpole
     var liveLabel: UILabel
     var liveIndicatorView: LiveIndicator
     var busIcon: BusIcon?
@@ -107,12 +107,10 @@ class TodayExtensionCell: UITableViewCell {
                 setUpDepartureLabel()
                 setUpDestinationLabel()
                 setUpLiveElements()
-            }
-            else { // there is no bus to this destination (i.e. only walking)
+            } else { // there is no bus to this destination (i.e. only walking)
                 setUpNoRoute()
             }
-        }
-        else { // no route at all
+        } else { // no route at all
             setUpNoRoute()
         }
     }

@@ -64,6 +64,7 @@ import SwiftyJSON
             switch response.result {
             case .success(let routesResponse):
                 self.routes = routesResponse.data
+                self.rearrangeRoutes()
                 self.didFetchRoutes = true
                 self.extensionContext?.widgetLargestAvailableDisplayMode = .expanded
                 self.routesTable.reloadData()
@@ -93,12 +94,12 @@ import SwiftyJSON
         // If there's an update, use NCUpdateResult.NewData
 
         print("widgetPerformUpdate")
-        
+
         //if let start = currentLocation {
-            searchForRoutes()
+            //searchForRoutes()
         //}
 
-//        completionHandler
+//        completionHandler(NCUpdate.NewData)
     }
 
     /// Called in response to the user tapping the “Show More” or “Show Less” buttons
@@ -122,6 +123,32 @@ import SwiftyJSON
 //        createConstraints()
 //    } WAS CAUSING ERROR DUE TO ROUTESTABLE NOT BEING ADDED TO SUPERVIEW YET
 
+    func rearrangeRoutes() {
+        var nonNilRoutes = [Route?]()
+        var nonNilFavorites = [String]()
+        var nonNilCoordinates = [String]()
+
+        var nilRoutes = [Route?]()
+        var nilFavorites = [String]()
+        var nilCoordinates = [String]()
+
+        for i in 0..<routes.count {
+
+            if (routes[i]?.directions.filter { $0.type == .depart })?.first != nil {
+                nonNilRoutes.append(routes[i])
+                nonNilFavorites.append(favorites[i])
+                nonNilCoordinates.append(coordinates[i])
+            } else {
+                nilRoutes.append(routes[i])
+                nilFavorites.append(favorites[i])
+                nilCoordinates.append(coordinates[i])
+            }
+        }
+
+        favorites = nonNilFavorites + nilFavorites
+        coordinates = nonNilCoordinates + nilCoordinates
+        routes = nonNilRoutes + nilRoutes
+    }
 }
 
 extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
@@ -193,7 +220,7 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
 }
 
 extension TodayViewController: CLLocationManagerDelegate {
-    
+
     private func setUpLocation() {
         locationManager = CLLocationManager()
         locationManager.delegate = self
@@ -201,19 +228,17 @@ extension TodayViewController: CLLocationManagerDelegate {
         locationManager.distanceFilter = 10
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
-
-        if let location = locationManager.location {
-            currentLocation = location.coordinate
-        }
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = manager.location else {
             return
         }
-        
-        currentLocation = location.coordinate
-        print("didUpdateLocation")
-        searchForRoutes()
+
+        if currentLocation == nil {
+            currentLocation = location.coordinate
+            print("didUpdateLocation")
+            searchForRoutes()
+        }
     }
 }
