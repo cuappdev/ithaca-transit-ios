@@ -59,7 +59,8 @@ enum PlaceType: String, Codable {
     // MARK: Functions
     
     override var description: String {
-        return (type == .googlePlace) ? (placeDescription ?? "") : ("Bus Stop")
+        let exception = name == Constants.General.firstFavorite
+        return (type == .googlePlace || exception) ? (placeDescription ?? "") : ("Bus Stop")
     }
     
     override func isEqual(_ object: Any?) -> Bool {

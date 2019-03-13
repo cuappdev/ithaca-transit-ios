@@ -11,42 +11,38 @@ import SnapKit
 
 class PhraseLabelFooterView: UITableViewHeaderFooterView {
 
-    var label: UILabel {
-        let label = UILabel()
-        label.font = .getFont(.regular, size: 12)
-        label.textColor = .lightGray
-        label.numberOfLines = 0
-        label.textAlignment = .left
-        label.lineBreakMode = .byWordWrapping
-        return label
-    }
-    
+    var label: UILabel!
+
     override init(reuseIdentifier: String?) {
-        print("[PhraseLabelFooterView] init")
         super.init(reuseIdentifier: reuseIdentifier)
+        
         contentView.backgroundColor = Colors.white
-        addSubview(label)
+        contentView.frame.size = CGSize(width: UIScreen.main.bounds.size.width, height: RouteDetailCellSize.largeHeight)
+        
+        setupLabel()
+        setupConstraints()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    override func updateConstraints() {
-        print("[PhraseLabelFooterView] updateConstraints")
-        label.snp.makeConstraints { (make) in
-            let constant: CGFloat = 8
-            make.leading.equalToSuperview().offset(RouteDetailCellSize.regularWidth)
-            make.trailing.equalToSuperview().offset(-constant)
-        }
+    func setupLabel() {
+        label = UILabel()
+        label.font = .getFont(.regular, size: 12)
+        label.textColor = Colors.metadataIcon
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.lineBreakMode = .byWordWrapping
+        
+        addSubview(label)
     }
     
-    override func layoutSubviews() {
-        print("[PhraseLabelFooterView] layoutSubviews")
+    func setupConstraints() {
+        let topPadding: CGFloat = 20
         label.snp.makeConstraints { (make) in
-            let constant: CGFloat = 8
-            make.leading.equalToSuperview().offset(RouteDetailCellSize.regularWidth)
-            make.trailing.equalToSuperview().offset(-constant)
+            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalToSuperview().offset(topPadding)
         }
     }
     

@@ -1,0 +1,28 @@
+{
+  "images" : [
+    {
+      "idiom" : "universal",
+      "filename" : "x-new.png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "x-new@2x.png",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "x-new@3x.png",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  },
+  "properties" : {
+    "template-rendering-intent" : "template",
+    "preserves-vector-representation" : true,
+    "auto-scaling" : "auto"
+  }
+}

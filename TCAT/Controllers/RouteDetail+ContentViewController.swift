@@ -323,18 +323,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     if !self.noDataRouteList.contains(busLocation.routeNumber) {
                         self.noDataRouteList.append(busLocation.routeNumber)
                     }
-
-                    var message = ""
-                    if self.noDataRouteList.count > 1 {
-                        message = Constants.Banner.noLiveTrackingForRoutes
-                    } else {
-                        message = Constants.Banner.noLiveTrackingForRoute + "\(busLocation.routeNumber)"
-                    }
-
-                    // If banner doesn't exist or isn't displaying
-                    if !(self.banner?.isDisplaying ?? false) {
-                        self.showBanner(message, status: .info)
-                    }
                     
                 case .invalidData:
                     // print("Invalid Data for", busLocation.routeNumber)
