@@ -239,6 +239,10 @@ class HomeViewController: UIViewController {
     
     func showWhatsNewCardIfNeeded() {
         
+        if VersionStore.shared.isNewCardAvailable() {
+            userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
+        }
+
         let promotionCardDismissed = userDefaults.bool(forKey: Constants.UserDefaults.promotionDismissed)
         let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
         

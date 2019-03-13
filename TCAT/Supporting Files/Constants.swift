@@ -239,6 +239,8 @@ struct Constants {
         static let onboardingShown = "onboardingShown"
         static let showLocationAuthReminder = "locationAuthReminder"
         static let uid = "uid"
+        
+        /// True if the current card has been dismissed by user
         static let whatsNewDismissed = "whatsNewDismissed"
         static let recentSearch = "recentSearch"
         static let allBusStops = "allBusStops"
