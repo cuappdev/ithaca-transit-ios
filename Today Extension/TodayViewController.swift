@@ -171,7 +171,7 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
             if (routes.isEmpty) {
                 if (didFetchRoutes) { // no routes retrieved
                     let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TodayExtension.errorCellIdentifier, for: indexPath) as! TodayExtensionErrorCell
-                    cell.mainLabel.text = "Unable to Load Routes"
+                    cell.mainLabel.text = Constants.TodayExtension.unableToLoad
                     cell.selectionStyle = .none
                     return cell
                 } else { // still fetching routes
@@ -189,8 +189,8 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
 
         // else: favorites = 0
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TodayExtension.errorCellIdentifier, for: indexPath) as! TodayExtensionErrorCell
-        cell.boldLabel.text = "Add a favorite "
-        cell.mainLabel.text = "to show favorite trips here."
+        cell.boldLabel.text = Constants.TodayExtension.addFavorite
+        cell.mainLabel.text = Constants.TodayExtension.showTrips
         cell.selectionStyle = .none
         return cell
     }

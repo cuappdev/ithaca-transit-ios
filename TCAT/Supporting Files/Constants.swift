@@ -238,6 +238,11 @@ struct Constants {
         static let errorCellIdentifier = "errorCell"
         static let loadingCellIdentifier = "loadingCell"
         static let contentCellIdentifier = "todayExtensionCell"
+        
+        // cell strings
+        static let addFavorite = "Add a favorite "
+        static let showTrips = "to show favorite trips here."
+        static let unableToLoad = "Unable to Load Routes"
     }
 
     struct UserDefaults {
