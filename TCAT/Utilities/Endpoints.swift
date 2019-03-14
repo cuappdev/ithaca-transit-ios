@@ -25,7 +25,7 @@ class Network {
     // Change `networkType` to `.local` to work locally.
     // Change `localIPAddress` to be the proper address
 
-    static let networkType: NetworkType = .release
+    static let networkType: NetworkType = .debug
     static let apiVersion = "v1"
 
     /// Used for local backend testing
