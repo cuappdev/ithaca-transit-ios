@@ -129,6 +129,7 @@ class TodayExtensionCell: UITableViewCell {
 
         noRouteLabel.snp.makeConstraints { (make) in
             make.centerY.equalToSuperview()
+            make.centerX.equalToSuperview()
             make.leading.equalToSuperview().inset(40.0)
             make.trailing.equalToSuperview().inset(40.0)
         }
