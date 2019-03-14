@@ -46,14 +46,14 @@ import SwiftyJSON
     }
 
     func searchForRoutes() {
-        if favorites.count > 0 {
-            if let start = currentLocation {
+        if
+            favorites.count > 0,
+            let start = currentLocation {
                 Network.getMultiRoutes(startCoord: start, time: Date(), endCoords: coordinates, endPlaceNames: favorites) { (request) in
                     print("fetching new routes...")
                     self.processRequest(request: request)
                 }
             }
-        }
     }
 
     func processRequest(request: APIRequest<MultiRoutesRequest, Error>) {
@@ -92,10 +92,6 @@ import SwiftyJSON
 
         print("widgetPerformUpdate")
 
-        //if let start = currentLocation {
-            //searchForRoutes()
-        //}
-
 //        completionHandler(NCUpdate.NewData)
     }
 
@@ -114,6 +110,7 @@ import SwiftyJSON
         }
     }
 
+    /// Re-orders routes so that walking-only routes are at the end of the list of routes. Modifies the list of favorites and coordinates coorespondingly.
     func rearrangeRoutes() {
         var nonNilRoutes = [Route?]()
         var nonNilFavorites = [String]()
@@ -155,6 +152,7 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
         let isCompact = extensionContext?.widgetActiveDisplayMode == .compact
 
         if (isCompact || favorites.isEmpty || routes.isEmpty || !didFetchRoutes) {
+            // if: in compact mode, no favorites added, failed to load routes, or in loading state
             return 1
         } else {
             return favorites.count
@@ -169,7 +167,7 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if (favorites.count != 0) {
             if (routes.isEmpty) {
-                if (didFetchRoutes) { // no routes retrieved
+                if (didFetchRoutes) { // tried to get routes, but none retrieved
                     let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TodayExtension.errorCellIdentifier, for: indexPath) as! TodayExtensionErrorCell
                     cell.mainLabel.text = Constants.TodayExtension.unableToLoad
                     cell.selectionStyle = .none
@@ -180,7 +178,7 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
                     return cell
                 }
             }
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TodayExtension.contentCellIdentifier , for: indexPath) as! TodayExtensionCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TodayExtension.contentCellIdentifier, for: indexPath) as! TodayExtensionCell
             routes[indexPath.row]?.formatDirections(start: Constants.General.currentLocation, end: favorites[indexPath.row])
             cell.setUpCell(route: routes[indexPath.row], destination: favorites[indexPath.row])
             cell.selectionStyle = .none
@@ -196,10 +194,9 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // launch app via URL scheme --> route OPTIONS view (to be changed to route detail view later on
 
-        var stringURL : String
-        
+        var stringURL: String
+
         if favorites.count == 0 {
             stringURL = "ithaca-transit://"
         } else {
@@ -210,7 +207,7 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
 
             stringURL = "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(destination)"
         }
-        
+
         if
             let url = stringURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
             let convertedURL = URL(string: url) {

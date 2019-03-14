@@ -9,7 +9,7 @@
 import Foundation
 
 class TodayExtensionManager {
-    
+
     static let shared = TodayExtensionManager()
     let decoder = JSONDecoder()
 
@@ -23,11 +23,11 @@ class TodayExtensionManager {
                 favorites.append(place.name)
             }
             return favorites
+        } else {
+            return [String]()
         }
-        print("Failed to retreive favorites from User Defaults")
-        return [String]()
     }
-    
+
     func retrieveFavoritesCoordinates() -> [String] {
         if
             let storedPlaces = sharedUserDefaults?.value(forKey: Constants.UserDefaults.favorites) as? Data,
@@ -42,8 +42,8 @@ class TodayExtensionManager {
                 }
             }
             return coordinates
+        } else {
+            return [String]()
         }
-        print("Failed to retreive favorites' coordinates from User Defaults")
-        return [String]()
     }
 }

@@ -120,14 +120,17 @@ class TodayExtensionCell: UITableViewCell {
         let noRouteLabel = UILabel()
         noRouteLabel.font = .getFont(.regular, size: 14.0)
         noRouteLabel.textColor = Colors.primaryText
+        noRouteLabel.numberOfLines = 0
+        noRouteLabel.lineBreakMode = .byWordWrapping
+        noRouteLabel.textAlignment = .center
         noRouteLabel.text = "No routes available to \(destinationName)."
 
         contentView.addSubview(noRouteLabel)
 
         noRouteLabel.snp.makeConstraints { (make) in
-            make.centerX.equalToSuperview()
             make.centerY.equalToSuperview()
-            make.width.equalTo(noRouteLabel.intrinsicContentSize.width)
+            make.leading.equalToSuperview().inset(40.0)
+            make.trailing.equalToSuperview().inset(40.0)
         }
     }
 
