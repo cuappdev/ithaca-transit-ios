@@ -142,8 +142,11 @@
 
 /* Begin PBXFileReference section */
 		00AAC04EC20FD099C317E4DF /* Pods-TCATTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.release.xcconfig"; sourceTree = "<group>"; };
+		01D683546F6138946B5716F7 /* Pods-TCAT.production debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.production debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.production debug.xcconfig"; sourceTree = "<group>"; };
 		0A53C1C936C7282DCAB7292F /* Pods-TCATUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		0B876A60459C58F40DB03448 /* Pods-TCATUITests.production debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.production debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.production debug.xcconfig"; sourceTree = "<group>"; };
 		0DD68D5FD4D1CFE82BA753E7 /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
+		1519BE18A22AF6EC445086E9 /* Pods-TCAT.staging debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.staging debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.staging debug.xcconfig"; sourceTree = "<group>"; };
 		222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WhatsNewHeaderView.swift; path = Views/WhatsNewHeaderView.swift; sourceTree = "<group>"; };
 		224EB5A4214F2F01008232C2 /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppShortcuts.swift; path = Utilities/AppShortcuts.swift; sourceTree = "<group>"; };
 		226C8D752173AF69009985E3 /* VersionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VersionStore.swift; path = Utilities/VersionStore.swift; sourceTree = "<group>"; };
@@ -151,6 +154,8 @@
 		2292486B21B8ECB90004279C /* ServiceAlertsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlertsViewController.swift; path = Controllers/ServiceAlertsViewController.swift; sourceTree = "<group>"; };
 		2292486D21BB82180004279C /* ServiceAlertTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlertTableViewCell.swift; path = Cells/ServiceAlertTableViewCell.swift; sourceTree = "<group>"; };
 		22948BFB221B75C5003FC43F /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Models.swift; path = Utilities/Models.swift; sourceTree = "<group>"; };
+		3A99F42D1BCFE97AE52632BE /* Pods-TCAT.production release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.production release.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.production release.xcconfig"; sourceTree = "<group>"; };
+		4359217A9637DAFB5CA9CBA5 /* Pods-TCATUITests.staging debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.staging debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.staging debug.xcconfig"; sourceTree = "<group>"; };
 		449A7C751D80D0E80019300C /* TCAT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCAT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C781D80D0E80019300C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		449A7C7D1D80D0E80019300C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -163,11 +168,13 @@
 		449A7C941D80D0E80019300C /* TCATUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TCATUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C981D80D0E80019300C /* TCATUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCATUITests.swift; sourceTree = "<group>"; };
 		449A7C9A1D80D0E80019300C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		47F2CFF5E28FB3ED22CEDADB /* Pods-TCATUITests.production release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.production release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.production release.xcconfig"; sourceTree = "<group>"; };
 		5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = SearchTableViewHelpers.swift; path = Utilities/SearchTableViewHelpers.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		502D8F5E1E55161D005280F1 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchBarView.swift; path = Views/SearchBarView.swift; sourceTree = "<group>"; };
 		503EC37C1E969ADF00B3D4D4 /* PlaceTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceTableViewCell.swift; path = Cells/PlaceTableViewCell.swift; sourceTree = "<group>"; };
 		503EC37E1E969B2100B3D4D4 /* SearchResultsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = SearchResultsTableViewController.swift; path = Controllers/SearchResultsTableViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		50A19BAD1E4C214000AD6768 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = HomeViewController.swift; path = Controllers/HomeViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		7CA3500AC22B635BE18DF62D /* Pods-TCATTests.production release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.production release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.production release.xcconfig"; sourceTree = "<group>"; };
 		7E14AEB12177E661006A344D /* TCAT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TCAT.entitlements; sourceTree = "<group>"; };
 		7E14AEC02177E846006A344D /* IntentsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IntentsUI.framework; path = System/Library/Frameworks/IntentsUI.framework; sourceTree = SDKROOT; };
 		7E14AEDA2177E884006A344D /* Siri.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Siri.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -175,6 +182,7 @@
 		7E14AEDE2177E884006A344D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		81725F2EBEBD3D184BFD0635 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
 		8236DFFA6C5F3AB1E6E1B0E4 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
+		93C93989CE0EF3AD8D85751C /* Pods-TCATTests.staging debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.staging debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.staging debug.xcconfig"; sourceTree = "<group>"; };
 		97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
 		BF0002211FB37D0A00773109 /* LoadingIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoadingIndicator.swift; path = Views/LoadingIndicator.swift; sourceTree = "<group>"; };
 		BF1209FA1F7759C200A7C930 /* BusLocationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocationView.swift; path = Views/BusLocationView.swift; sourceTree = "<group>"; };
@@ -248,6 +256,7 @@
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E337970C1FC1606D00BCB28F /* InformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InformationViewController.swift; path = Controllers/InformationViewController.swift; sourceTree = "<group>"; };
 		E69224A160B2B078827D28A1 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA40093CB0BA46D5F5F8CE97 /* Pods-TCATTests.production debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.production debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.production debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -311,6 +320,15 @@
 				00AAC04EC20FD099C317E4DF /* Pods-TCATTests.release.xcconfig */,
 				0A53C1C936C7282DCAB7292F /* Pods-TCATUITests.debug.xcconfig */,
 				97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */,
+				01D683546F6138946B5716F7 /* Pods-TCAT.production debug.xcconfig */,
+				1519BE18A22AF6EC445086E9 /* Pods-TCAT.staging debug.xcconfig */,
+				3A99F42D1BCFE97AE52632BE /* Pods-TCAT.production release.xcconfig */,
+				FA40093CB0BA46D5F5F8CE97 /* Pods-TCATTests.production debug.xcconfig */,
+				93C93989CE0EF3AD8D85751C /* Pods-TCATTests.staging debug.xcconfig */,
+				7CA3500AC22B635BE18DF62D /* Pods-TCATTests.production release.xcconfig */,
+				0B876A60459C58F40DB03448 /* Pods-TCATUITests.production debug.xcconfig */,
+				4359217A9637DAFB5CA9CBA5 /* Pods-TCATUITests.staging debug.xcconfig */,
+				47F2CFF5E28FB3ED22CEDADB /* Pods-TCATUITests.production release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1091,7 +1109,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		449A7C9B1D80D0E80019300C /* Debug */ = {
+		449A7C9B1D80D0E80019300C /* Production Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1147,9 +1165,9 @@
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Debug;
+			name = "Production Debug";
 		};
-		449A7C9C1D80D0E80019300C /* Release */ = {
+		449A7C9C1D80D0E80019300C /* Production Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1199,11 +1217,11 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
-			name = Release;
+			name = "Production Release";
 		};
-		449A7C9E1D80D0E80019300C /* Debug */ = {
+		449A7C9E1D80D0E80019300C /* Production Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0DD68D5FD4D1CFE82BA753E7 /* Pods-TCAT.debug.xcconfig */;
+			baseConfigurationReference = 01D683546F6138946B5716F7 /* Pods-TCAT.production debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1227,15 +1245,16 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SERVER_URL = "transit-backend.cornellappdev.com";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = Debug;
+			name = "Production Debug";
 		};
-		449A7C9F1D80D0E80019300C /* Release */ = {
+		449A7C9F1D80D0E80019300C /* Production Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 81725F2EBEBD3D184BFD0635 /* Pods-TCAT.release.xcconfig */;
+			baseConfigurationReference = 3A99F42D1BCFE97AE52632BE /* Pods-TCAT.production release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1257,15 +1276,16 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SERVER_URL = "transit-backend.cornellappdev.com";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = Release;
+			name = "Production Release";
 		};
-		449A7CA11D80D0E80019300C /* Debug */ = {
+		449A7CA11D80D0E80019300C /* Production Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8236DFFA6C5F3AB1E6E1B0E4 /* Pods-TCATTests.debug.xcconfig */;
+			baseConfigurationReference = FA40093CB0BA46D5F5F8CE97 /* Pods-TCATTests.production debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CURRENT_PROJECT_VERSION = 47;
@@ -1277,11 +1297,11 @@
 				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TCAT.app/TCAT";
 			};
-			name = Debug;
+			name = "Production Debug";
 		};
-		449A7CA21D80D0E80019300C /* Release */ = {
+		449A7CA21D80D0E80019300C /* Production Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 00AAC04EC20FD099C317E4DF /* Pods-TCATTests.release.xcconfig */;
+			baseConfigurationReference = 7CA3500AC22B635BE18DF62D /* Pods-TCATTests.production release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CURRENT_PROJECT_VERSION = 47;
@@ -1293,11 +1313,11 @@
 				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TCAT.app/TCAT";
 			};
-			name = Release;
+			name = "Production Release";
 		};
-		449A7CA41D80D0E80019300C /* Debug */ = {
+		449A7CA41D80D0E80019300C /* Production Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0A53C1C936C7282DCAB7292F /* Pods-TCATUITests.debug.xcconfig */;
+			baseConfigurationReference = 0B876A60459C58F40DB03448 /* Pods-TCATUITests.production debug.xcconfig */;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 47;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1309,11 +1329,11 @@
 				SWIFT_VERSION = 4.2;
 				TEST_TARGET_NAME = TCAT;
 			};
-			name = Debug;
+			name = "Production Debug";
 		};
-		449A7CA51D80D0E80019300C /* Release */ = {
+		449A7CA51D80D0E80019300C /* Production Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */;
+			baseConfigurationReference = 47F2CFF5E28FB3ED22CEDADB /* Pods-TCATUITests.production release.xcconfig */;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 47;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1325,9 +1345,9 @@
 				SWIFT_VERSION = 4.2;
 				TEST_TARGET_NAME = TCAT;
 			};
-			name = Release;
+			name = "Production Release";
 		};
-		7E14AEF62177E884006A344D /* Debug */ = {
+		7E14AEF62177E884006A344D /* Production Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1353,9 +1373,9 @@
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Debug;
+			name = "Production Debug";
 		};
-		7E14AEF72177E884006A344D /* Release */ = {
+		7E14AEF72177E884006A344D /* Production Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1378,7 +1398,158 @@
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Release;
+			name = "Production Release";
+		};
+		BFF7E5EE223BFDF0001C6032 /* Staging Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 47;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Staging Debug";
+		};
+		BFF7E5EF223BFDF0001C6032 /* Staging Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1519BE18A22AF6EC445086E9 /* Pods-TCAT.staging debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TCAT/TCAT.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 47;
+				DEVELOPMENT_TEAM = ZGMCXU7X3U;
+				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/GoogleMaps/Base/Frameworks",
+					"$(PROJECT_DIR)/Pods/GoogleMaps/Maps/Frameworks",
+				);
+				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DDEBUG";
+				"OTHER_SWIFT_FLAGS[arch=*]" = "$(inherited) \"-D\" \"COCOAPODS\"";
+				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SERVER_URL = "transit-testflight.cornellappdev.com";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 1;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Staging Debug";
+		};
+		BFF7E5F0223BFDF0001C6032 /* Staging Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 93C93989CE0EF3AD8D85751C /* Pods-TCATTests.staging debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CURRENT_PROJECT_VERSION = 47;
+				INFOPLIST_FILE = TCATTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCATTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TCAT.app/TCAT";
+			};
+			name = "Staging Debug";
+		};
+		BFF7E5F1223BFDF0001C6032 /* Staging Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4359217A9637DAFB5CA9CBA5 /* Pods-TCATUITests.staging debug.xcconfig */;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 47;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				INFOPLIST_FILE = TCATUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCATUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TEST_TARGET_NAME = TCAT;
+			};
+			name = "Staging Debug";
+		};
+		BFF7E5F2223BFDF0001C6032 /* Staging Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZGMCXU7X3U;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = Siri/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.Siri;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Staging Debug";
 		};
 /* End XCBuildConfiguration section */
 
@@ -1386,47 +1557,52 @@
 		449A7C701D80D0E80019300C /* Build configuration list for PBXProject "TCAT" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				449A7C9B1D80D0E80019300C /* Debug */,
-				449A7C9C1D80D0E80019300C /* Release */,
+				449A7C9B1D80D0E80019300C /* Production Debug */,
+				BFF7E5EE223BFDF0001C6032 /* Staging Debug */,
+				449A7C9C1D80D0E80019300C /* Production Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Production Debug";
 		};
 		449A7C9D1D80D0E80019300C /* Build configuration list for PBXNativeTarget "TCAT" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				449A7C9E1D80D0E80019300C /* Debug */,
-				449A7C9F1D80D0E80019300C /* Release */,
+				449A7C9E1D80D0E80019300C /* Production Debug */,
+				BFF7E5EF223BFDF0001C6032 /* Staging Debug */,
+				449A7C9F1D80D0E80019300C /* Production Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Production Debug";
 		};
 		449A7CA01D80D0E80019300C /* Build configuration list for PBXNativeTarget "TCATTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				449A7CA11D80D0E80019300C /* Debug */,
-				449A7CA21D80D0E80019300C /* Release */,
+				449A7CA11D80D0E80019300C /* Production Debug */,
+				BFF7E5F0223BFDF0001C6032 /* Staging Debug */,
+				449A7CA21D80D0E80019300C /* Production Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Production Debug";
 		};
 		449A7CA31D80D0E80019300C /* Build configuration list for PBXNativeTarget "TCATUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				449A7CA41D80D0E80019300C /* Debug */,
-				449A7CA51D80D0E80019300C /* Release */,
+				449A7CA41D80D0E80019300C /* Production Debug */,
+				BFF7E5F1223BFDF0001C6032 /* Staging Debug */,
+				449A7CA51D80D0E80019300C /* Production Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Production Debug";
 		};
 		7E14AEF52177E884006A344D /* Build configuration list for PBXNativeTarget "Siri" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7E14AEF62177E884006A344D /* Debug */,
-				7E14AEF72177E884006A344D /* Release */,
+				7E14AEF62177E884006A344D /* Production Debug */,
+				BFF7E5F2223BFDF0001C6032 /* Staging Debug */,
+				7E14AEF72177E884006A344D /* Production Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Production Debug";
 		};
 /* End XCConfigurationList section */
 	};

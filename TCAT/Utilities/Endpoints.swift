@@ -18,54 +18,30 @@ enum NetworkType: String {
 }
 
 class Network {
+    
+    //
+    // Schemes
+    //
+    
+    // Production - Uses main production server for Network requests.
+    // Staging - Uses development server for Network requests, but will profile and archive to production.
 
     // MARK: Global Network Variables
 
-    /// Testing local servers for Network
-    // Change `networkType` to `.local` to work locally.
-    // Change `localIPAddress` to be the proper address
-
-    static let networkType: NetworkType = .debug
     static let apiVersion = "v1"
-
-    /// Used for local backend testing
-    static let localIPAddress = "10.132.0.68"
-    static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
-
-    /// Test server used for development
-    static let debugIPAddress = "transit-testflight.cornellappdev.com"
-    static let debugSource = "https://\(debugIPAddress)/api/\(apiVersion)/"
-
-    /// Deployed server instance used for release
-    static let releaseIPAddress = "transit-backend.cornellappdev.com"
-    static let releaseSource = "https://\(releaseIPAddress)/api/\(apiVersion)/"
-
-    /// Network IP address being used for specified networkType
+    
     static var ipAddress: String {
-        #if RELEASE
-        if isTestFlight() {
-           return debugIPAddress
+        // For local testing, use "http://\(localIPAddress):3000/api/\(apiVersion)/"
+        guard let baseURL = Bundle.main.object(forInfoDictionaryKey: "SERVER_URL") as? String else {
+            fatalError("Could not find SERVER_URL in Info.plist!")
         }
-        #endif
-        switch networkType {
-        case .local: return localIPAddress
-        case .debug: return debugIPAddress
-        case .release: return releaseIPAddress
-        }
+        print("[Network] Using", baseURL)
+        return baseURL
     }
 
-    /// Network source currently being used
+    /// Network address being used within app, defined by schemes and build configurations.
     static var address: String {
-        #if RELEASE
-        if isTestFlight() {
-            return debugSource
-        }
-        #endif
-        switch networkType {
-        case .local: return localSource
-        case .debug: return debugSource
-        case .release: return releaseSource
-        }
+        return "https://\(ipAddress)/api/\(apiVersion)"
     }
 
     static let tron = TRON(baseURL: Network.address)
