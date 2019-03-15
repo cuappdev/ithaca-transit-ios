@@ -35,12 +35,12 @@ class Network {
         guard let baseURL = Bundle.main.object(forInfoDictionaryKey: "SERVER_URL") as? String else {
             fatalError("Could not find SERVER_URL in Info.plist!")
         }
-        print("[Network] Using", baseURL)
         return baseURL
     }
 
     /// Network address being used within app, defined by schemes and build configurations.
     static var address: String {
+        print("[Network] Using", ipAddress)
         return "https://\(ipAddress)/api/\(apiVersion)"
     }
 
