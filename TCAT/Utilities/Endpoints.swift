@@ -25,7 +25,7 @@ class Network {
     // Change `networkType` to `.local` to work locally.
     // Change `localIPAddress` to be the proper address
 
-    static let networkType: NetworkType = .release
+    static let networkType: NetworkType = .debug
     static let apiVersion = "v1"
 
     /// Used for local backend testing
@@ -33,7 +33,7 @@ class Network {
     static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
 
     /// Test server used for development
-    static let debugIPAddress = "transit-dev.cornellappdev.com"
+    static let debugIPAddress = "transit-testflight.cornellappdev.com"
     static let debugSource = "https://\(debugIPAddress)/api/\(apiVersion)/"
 
     /// Deployed server instance used for release
