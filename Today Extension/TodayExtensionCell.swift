@@ -120,9 +120,8 @@ class TodayExtensionCell: UITableViewCell {
         let noRouteLabel = UILabel()
         noRouteLabel.font = .getFont(.regular, size: 14.0)
         noRouteLabel.textColor = Colors.primaryText
-        noRouteLabel.numberOfLines = 0
-        noRouteLabel.lineBreakMode = .byWordWrapping
         noRouteLabel.textAlignment = .center
+        noRouteLabel.lineBreakMode = NSLineBreakMode.byTruncatingTail
         noRouteLabel.text = "No routes available to \(destinationName)."
 
         contentView.addSubview(noRouteLabel)
@@ -130,13 +129,12 @@ class TodayExtensionCell: UITableViewCell {
         noRouteLabel.snp.makeConstraints { (make) in
             make.centerY.equalToSuperview()
             make.centerX.equalToSuperview()
-            make.leading.equalToSuperview().inset(40.0)
-            make.trailing.equalToSuperview().inset(40.0)
+            make.leading.equalToSuperview().inset(12.0)
+            make.trailing.equalToSuperview().inset(12.0)
         }
     }
 
     func setUpDepartureLabel() {
-        departureLabel.numberOfLines = 1
         departureLabel.lineBreakMode = NSLineBreakMode.byTruncatingTail
         departureLabel.font = .getFont(.medium, size: 16.0)
         departureLabel.textColor = Colors.primaryText
@@ -165,7 +163,6 @@ class TodayExtensionCell: UITableViewCell {
     func setUpDestinationLabel() {
         destinationLabel.font = .getFont(.regular, size: 16.0)
         destinationLabel.textColor = Colors.secondaryText
-        destinationLabel.numberOfLines = 1
         destinationLabel.lineBreakMode = .byTruncatingTail
 
         if let direction = busDirection {

@@ -336,8 +336,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 navigationController.pushViewController(optionsVC, animated: false)
                 return true
             }
-        } else if url.absoluteString.contains("today") { // today extension URL scheme
-
         }
 
         return false
