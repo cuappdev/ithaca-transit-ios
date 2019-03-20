@@ -23,10 +23,10 @@ class TodayExtensionCell: UITableViewCell {
 
     // MARK: View vars
 
-    var departureLabel: UILabel // ex: 10:00 AM at Collegetown Crossing
-    var destinationLabel: UILabel // ex: To Baker Flagpole
-    var liveLabel: UILabel
-    var liveIndicatorView: LiveIndicator
+    var departureLabel = UILabel() // ex: 10:00 AM at Collegetown Crossing
+    var destinationLabel = UILabel() // ex: To Baker Flagpole
+    var liveLabel = UILabel()
+    var liveIndicatorView = LiveIndicator(size: .small, color: .clear)
     var busIcon: BusIcon?
 
     // MARK: Spacing vars
@@ -34,12 +34,11 @@ class TodayExtensionCell: UITableViewCell {
     let leftMargin: CGFloat =  12.0
     let verticalMargin: CGFloat = 20.0 // top & bottom margin
     let rightMargin: CGFloat = 16.0
+    let leadingMargin: CGFloat = 74.0
+    let verticalOffset: CGFloat = 2.0
+    let horizontalOffset: CGFloat = 8.0
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        departureLabel = UILabel()
-        destinationLabel = UILabel()
-        liveLabel = UILabel()
-        liveIndicatorView = LiveIndicator(size: .small, color: .clear)
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
@@ -47,9 +46,6 @@ class TodayExtensionCell: UITableViewCell {
         contentView.addSubview(destinationLabel)
         contentView.addSubview(liveLabel)
         contentView.addSubview(liveIndicatorView)
-        if let busIcon = busIcon {
-            contentView.addSubview(busIcon)
-        }
     }
 
     override func layoutSubviews() {
@@ -57,7 +53,7 @@ class TodayExtensionCell: UITableViewCell {
 
         departureLabel.snp.makeConstraints { (make) in
             make.top.equalTo(verticalMargin)
-            make.leading.equalTo(74.0)
+            make.leading.equalTo(leadingMargin)
             make.trailing.lessThanOrEqualToSuperview().inset(rightMargin)
             make.height.equalTo(departureLabel.intrinsicContentSize.height)
         }
@@ -72,7 +68,7 @@ class TodayExtensionCell: UITableViewCell {
         }
 
         destinationLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(departureLabel.snp.bottom).offset(2)
+            make.top.equalTo(departureLabel.snp.bottom).offset(verticalOffset)
             make.leading.equalTo(departureLabel)
             make.trailing.lessThanOrEqualToSuperview().inset(rightMargin)
             make.height.equalTo(destinationLabel.intrinsicContentSize.height)
@@ -88,7 +84,7 @@ class TodayExtensionCell: UITableViewCell {
 
             liveIndicatorView.snp.makeConstraints { (make) in
                 make.centerY.equalTo(liveLabel.snp.centerY)
-                make.leading.equalTo(liveLabel.snp.trailing).offset(8)
+                make.leading.equalTo(liveLabel.snp.trailing).offset(horizontalOffset)
                 make.trailing.lessThanOrEqualTo(rightMargin)
                 make.width.equalTo(liveIndicatorView.intrinsicContentSize.width)
             }
@@ -121,21 +117,20 @@ class TodayExtensionCell: UITableViewCell {
         noRouteLabel.font = .getFont(.regular, size: 14.0)
         noRouteLabel.textColor = Colors.primaryText
         noRouteLabel.textAlignment = .center
-        noRouteLabel.lineBreakMode = NSLineBreakMode.byTruncatingTail
-        noRouteLabel.text = "No routes available to \(destinationName)."
+        noRouteLabel.lineBreakMode = .byTruncatingTail
+        noRouteLabel.text = Constants.TodayExtension.noRoutesAvailable + "\(destinationName)."
 
         contentView.addSubview(noRouteLabel)
 
         noRouteLabel.snp.makeConstraints { (make) in
             make.centerY.equalToSuperview()
             make.centerX.equalToSuperview()
-            make.leading.equalToSuperview().inset(12.0)
-            make.trailing.equalToSuperview().inset(12.0)
+            make.leading.trailing.equalToSuperview().inset(12.0)
         }
     }
 
     func setUpDepartureLabel() {
-        departureLabel.lineBreakMode = NSLineBreakMode.byTruncatingTail
+        departureLabel.lineBreakMode = .byTruncatingTail
         departureLabel.font = .getFont(.medium, size: 16.0)
         departureLabel.textColor = Colors.primaryText
         departureLabel.font = .getFont(.medium, size: 16.0)

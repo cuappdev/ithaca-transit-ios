@@ -16,7 +16,8 @@ class LoadingTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        contentView.addSubview(loadingIndicator)    }
+        contentView.addSubview(loadingIndicator)
+    }
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -26,8 +27,7 @@ class LoadingTableViewCell: UITableViewCell {
             make.bottom.equalToSuperview().inset(verticalMargin)
             make.width.equalTo(40.0)
 
-            make.centerY.equalToSuperview()
-            make.centerX.equalToSuperview()
+            make.center.equalToSuperview()
         }
     }
 

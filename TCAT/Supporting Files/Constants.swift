@@ -243,6 +243,7 @@ struct Constants {
         static let addFavorite = "Add a favorite "
         static let showTrips = "to show favorite trips here."
         static let unableToLoad = "Unable to Load Routes"
+        static let noRoutesAvailable = "No routes available to "
     }
 
     struct UserDefaults {

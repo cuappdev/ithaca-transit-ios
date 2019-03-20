@@ -23,7 +23,6 @@ let userDefaults = UserDefaults.standard
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-//    let userDefaults = UserDefaults.standard
     let encoder = JSONEncoder()
     let userDataInits: [(key: String, defaultValue: Any)] = [
         (key: Constants.UserDefaults.onboardingShown, defaultValue: false),
