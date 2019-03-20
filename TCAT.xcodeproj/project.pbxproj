@@ -47,7 +47,6 @@
 		7E3C5B4122308D83000EFA10 /* LoadingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3C5B4022308D83000EFA10 /* LoadingTableViewCell.swift */; };
 		7E75BAD621B3A72B00FB56BB /* TodayExtensionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */; };
 		7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
-		7E950008222A396400636169 /* TodayExtensionErrorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E950007222A396400636169 /* TodayExtensionErrorCell.swift */; };
 		7EBD9D8722263089008BF900 /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
 		7EBD9D882226308F008BF900 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		7EBD9D8A22263094008BF900 /* LocationObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF73F0F21F60B0BD003B479D /* LocationObject.swift */; };
@@ -102,6 +101,7 @@
 		7EF304692227502E006B327E /* Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D94BD2FC2159993D00C9214E /* Keys.plist */; };
 		7EF680E322263CF70093CACD /* (null) in Sources */ = {isa = PBXBuildFile; };
 		7EF680E422263D2F0093CACD /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8AF5F22206BBF60091AB8C /* Utilities.swift */; };
+		7EFDB7F72243009A006D5126 /* TodayExtensionErrorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFDB7F62243009A006D5126 /* TodayExtensionErrorCell.swift */; };
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
 		BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0002211FB37D0A00773109 /* LoadingIndicator.swift */; };
 		BF164D5F221DFCDE0069953E /* LegacyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF164D5E221DFCDE0069953E /* LegacyModels.swift */; };
@@ -238,7 +238,6 @@
 		7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayExtensionHelpers.swift; sourceTree = "<group>"; };
 		7E3C5B4022308D83000EFA10 /* LoadingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingTableViewCell.swift; sourceTree = "<group>"; };
 		7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodayExtensionCell.swift; sourceTree = "<group>"; };
-		7E950007222A396400636169 /* TodayExtensionErrorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TodayExtensionErrorCell.swift; path = ../../TodayExtensionErrorCell.swift; sourceTree = "<group>"; };
 		7EE04A6721B454F4002F0C52 /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Shared.swift; path = Utilities/Shared.swift; sourceTree = "<group>"; };
 		7EE04A6C21B461D7002F0C52 /* Extensions+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extensions+Shared.swift"; sourceTree = "<group>"; };
 		7EEF189B21B39C6200343FFD /* Today Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Today Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -246,6 +245,7 @@
 		7EEF189F21B39C6200343FFD /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
 		7EEF18A421B39C6200343FFD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7EEF18AB21B39CF500343FFD /* Today Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Today Extension.entitlements"; sourceTree = "<group>"; };
+		7EFDB7F62243009A006D5126 /* TodayExtensionErrorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodayExtensionErrorCell.swift; sourceTree = "<group>"; };
 		81725F2EBEBD3D184BFD0635 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
 		8236DFFA6C5F3AB1E6E1B0E4 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
 		97F81CAA39621F2304CFA763 /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -512,10 +512,10 @@
 		7EEF189E21B39C6200343FFD /* Today Extension */ = {
 			isa = PBXGroup;
 			children = (
+				7EFDB7F62243009A006D5126 /* TodayExtensionErrorCell.swift */,
 				7EEF18AB21B39CF500343FFD /* Today Extension.entitlements */,
 				7EEF189F21B39C6200343FFD /* TodayViewController.swift */,
 				7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */,
-				7E950007222A396400636169 /* TodayExtensionErrorCell.swift */,
 				7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */,
 				7EEF18A421B39C6200343FFD /* Info.plist */,
 				7E3C5B4022308D83000EFA10 /* LoadingTableViewCell.swift */,
@@ -1218,6 +1218,7 @@
 				7EE04A6A21B45611002F0C52 /* EventPayload.swift in Sources */,
 				7EE04A5421B4516E002F0C52 /* BusIcon.swift in Sources */,
 				7E3C5B4122308D83000EFA10 /* LoadingTableViewCell.swift in Sources */,
+				7EFDB7F72243009A006D5126 /* TodayExtensionErrorCell.swift in Sources */,
 				7EE04A6921B455E0002F0C52 /* Shared.swift in Sources */,
 				7EE04A5321B4515B002F0C52 /* LocationObject.swift in Sources */,
 				7E2FFF0F2207B687008EA224 /* TodayExtensionHelpers.swift in Sources */,
@@ -1232,7 +1233,6 @@
 				7EE04A5F21B45363002F0C52 /* Circle.swift in Sources */,
 				7E75BAD621B3A72B00FB56BB /* TodayExtensionCell.swift in Sources */,
 				7EE04A6321B453C5002F0C52 /* (null) in Sources */,
-				7E950008222A396400636169 /* TodayExtensionErrorCell.swift in Sources */,
 				7EE04A6421B453E3002F0C52 /* BusLocation.swift in Sources */,
 				7EE04A5E21B45357002F0C52 /* RouteDiagram.swift in Sources */,
 				7E155FD62231DA8400FE7A9B /* BusLocationView.swift in Sources */,
