@@ -38,9 +38,7 @@ import SwiftyJSON
         createConstraints()
 
         favorites = TodayExtensionManager.shared.retrieveFavoritesNames()
-        print("retrieved \(favorites.count) favorite(s)")
         coordinates = TodayExtensionManager.shared.retrieveFavoritesCoordinates()
-        print("retrieved \(coordinates.count) coordinate(s)")
 
         searchForRoutes()
     }
@@ -50,7 +48,6 @@ import SwiftyJSON
             favorites.count > 0,
             let start = currentLocation {
                 Network.getMultiRoutes(startCoord: start, time: Date(), endCoords: coordinates, endPlaceNames: favorites) { (request) in
-                    print("fetching new routes...")
                     self.processRequest(request: request)
                 }
             }
@@ -65,7 +62,6 @@ import SwiftyJSON
                 self.didFetchRoutes = true
                 self.extensionContext?.widgetLargestAvailableDisplayMode = .expanded
                 self.routesTable.reloadData()
-                print("reloaded table view")
             case .failure(let networkError):
                 if let error = networkError as? APIError<Error> {
                     self.processRequestError(error: error)
@@ -79,20 +75,8 @@ import SwiftyJSON
         let description = (error.localizedDescription) + ", " + ((error.error as NSError?)?.description ?? "n/a")
 
         routes = []
-        print(title)
-        print(description)
-    }
-
-    func widgetPerformUpdate(completionHandler: (@escaping (NCUpdateResult) -> Void)) {
-        // Perform any setup necessary in order to update the view. (called to update the widget)
-
-        // If an error is encountered, use NCUpdateResult.Failed
-        // If there's no update required, use NCUpdateResult.NoData
-        // If there's an update, use NCUpdateResult.NewData
-
-        print("widgetPerformUpdate")
-
-//        completionHandler(NCUpdate.NewData)
+        print("Error Title: \(title)")
+        print("Error Description: \(description)")
     }
 
     /// Called in response to the user tapping the “Show More” or “Show Less” buttons
