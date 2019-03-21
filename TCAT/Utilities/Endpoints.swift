@@ -10,7 +10,6 @@ import Foundation
 import SwiftyJSON
 import TRON
 import CoreLocation
-import GooglePlaces
 import Alamofire
 
 enum NetworkType: String {
