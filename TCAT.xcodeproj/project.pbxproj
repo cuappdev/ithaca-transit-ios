@@ -511,12 +511,12 @@
 		7EEF189E21B39C6200343FFD /* Today Extension */ = {
 			isa = PBXGroup;
 			children = (
-				7EFDB7F62243009A006D5126 /* TodayExtensionErrorCell.swift */,
 				7EEF18AB21B39CF500343FFD /* Today Extension.entitlements */,
+				7EEF18A421B39C6200343FFD /* Info.plist */,
+				7EFDB7F62243009A006D5126 /* TodayExtensionErrorCell.swift */,
 				7EEF189F21B39C6200343FFD /* TodayViewController.swift */,
 				7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */,
 				7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */,
-				7EEF18A421B39C6200343FFD /* Info.plist */,
 				7E3C5B4022308D83000EFA10 /* LoadingTableViewCell.swift */,
 			);
 			path = "Today Extension";

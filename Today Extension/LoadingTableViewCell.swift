@@ -26,7 +26,6 @@ class LoadingTableViewCell: UITableViewCell {
             make.top.equalTo(verticalMargin)
             make.bottom.equalToSuperview().inset(verticalMargin)
             make.width.equalTo(40.0)
-
             make.center.equalToSuperview()
         }
     }

@@ -22,10 +22,12 @@ import SwiftyJSON
     var routes: [Route?] = []
     
     var didFetchRoutes: Bool = false
+    var numberOfFavorites: Int = 0
     
-    let group = DispatchGroup()
     var locationManager: CLLocationManager!
     var currentLocation: CLLocationCoordinate2D?
+    
+    let cellHeight: CGFloat = 110.0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,14 +41,13 @@ import SwiftyJSON
         
         favorites = TodayExtensionManager.shared.retrieveFavoritesNames()
         coordinates = TodayExtensionManager.shared.retrieveFavoritesCoordinates()
+        numberOfFavorites = favorites.count
         
         searchForRoutes()
     }
     
     func searchForRoutes() {
-        if
-            favorites.count > 0,
-            let start = currentLocation {
+        if numberOfFavorites > 0, let start = currentLocation {
             Network.getMultiRoutes(startCoord: start, time: Date(), endCoords: coordinates, endPlaceNames: favorites) { (request) in
                 self.processRequest(request: request)
             }
@@ -82,7 +83,7 @@ import SwiftyJSON
     /// Called in response to the user tapping the “Show More” or “Show Less” buttons
     func widgetActiveDisplayModeDidChange(_ activeDisplayMode: NCWidgetDisplayMode, withMaximumSize maxSize: CGSize) {
         let expanded = activeDisplayMode == .expanded
-        preferredContentSize = expanded ? CGSize(width: maxSize.width, height: 110.0 * CGFloat(favorites.count)) : maxSize
+        preferredContentSize = expanded ? CGSize(width: maxSize.width, height: cellHeight * CGFloat(numberOfFavorites)) : maxSize
         
         routesTable.reloadData()
     }
@@ -90,7 +91,7 @@ import SwiftyJSON
     func createConstraints() {
         routesTable.snp.makeConstraints {(make) in
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(110.0*5)
+            make.height.equalTo(cellHeight*5)
         }
     }
     
@@ -139,18 +140,18 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
             // if: in compact mode, no favorites added, failed to load routes, or in loading state
             return 1
         } else {
-            return favorites.count
+            return numberOfFavorites
         }
         
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 110.0
+        return cellHeight
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if (favorites.count != 0) {
-            if (routes.isEmpty) {
+        if (numberOfFavorites != 0) { // if number of favorites = 0
+            if (routes.isEmpty) { // no routes yet
                 if (didFetchRoutes) { // tried to get routes, but none retrieved
                     let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TodayExtension.errorCellIdentifier, for: indexPath) as! TodayExtensionErrorCell
                     cell.mainLabel.text = Constants.TodayExtension.unableToLoad
@@ -162,6 +163,7 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
                     return cell
                 }
             }
+            // have routes!! 
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TodayExtension.contentCellIdentifier, for: indexPath) as! TodayExtensionCell
             routes[indexPath.row]?.formatDirections(start: Constants.General.currentLocation, end: favorites[indexPath.row])
             cell.setUpCell(route: routes[indexPath.row], destination: favorites[indexPath.row])
@@ -179,17 +181,15 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        var stringURL: String
+        var stringURL: String = "ithaca-transit://"
         
-        if favorites.count == 0 {
-            stringURL = "ithaca-transit://"
-        } else {
+        if numberOfFavorites != 0 {
             let latLong = coordinates[indexPath.row].components(separatedBy: ",")
             let latitude = latLong[0]
             let longitude = latLong[1]
             let destination = favorites[indexPath.row]
             
-            stringURL = "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(destination)"
+            stringURL += "getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(destination)"
         }
         
         if
