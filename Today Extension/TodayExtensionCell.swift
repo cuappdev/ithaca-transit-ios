@@ -165,7 +165,6 @@ class TodayExtensionCell: UITableViewCell {
 
             switch delayState {
             case .late(date: let delayedDepartureTime):
-
                 destinationLabel.text = Time.timeString(from: delayedDepartureTime) + " at \(direction.name)"
 
             case .onTime(date: let departureTime), .noDelay(date: let departureTime):
