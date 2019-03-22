@@ -37,6 +37,7 @@
 		BF18AE102083B7F6000C3D82 /* StoreReviewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18AE0F2083B7F6000C3D82 /* StoreReviewHelper.swift */; };
 		BF18AE122083B9B8000C3D82 /* Phrases.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18AE112083B9B8000C3D82 /* Phrases.swift */; };
 		BF250D7F222FB12400E7F271 /* Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF250D7E222FB12300E7F271 /* Endpoints.swift */; };
+		BF2DA891224539DE006E527D /* RouteDiagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2DA890224539DD006E527D /* RouteDiagram.swift */; };
 		BF316CB02096352B005A14EF /* PhraseLabelFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF316CAF2096352B005A14EF /* PhraseLabelFooterView.swift */; };
 		BF40D7652230385B000ED7D8 /* WhatsNewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF40D7642230385B000ED7D8 /* WhatsNewCard.swift */; };
 		BF456E0320489990005C611D /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
@@ -97,7 +98,6 @@
 		DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */; };
 		DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */; };
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
-		DDE0A9311F096A3E005CD01C /* RouteDiagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */; };
 		DDE3BC231F5863D50014D2BB /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE3BC221F5863D50014D2BB /* Place.swift */; };
 		E337970D1FC1606D00BCB28F /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E337970C1FC1606D00BCB28F /* InformationViewController.swift */; };
 /* End PBXBuildFile section */
@@ -153,7 +153,7 @@
 		228F353821C71D2800556E6F /* alertResponse.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = alertResponse.json; sourceTree = "<group>"; };
 		2292486B21B8ECB90004279C /* ServiceAlertsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlertsViewController.swift; path = Controllers/ServiceAlertsViewController.swift; sourceTree = "<group>"; };
 		2292486D21BB82180004279C /* ServiceAlertTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlertTableViewCell.swift; path = Cells/ServiceAlertTableViewCell.swift; sourceTree = "<group>"; };
-		22948BFB221B75C5003FC43F /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Models.swift; path = Utilities/Models.swift; sourceTree = "<group>"; };
+		22948BFB221B75C5003FC43F /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		2E06CE36ED8BFA4742F46E8B /* Pods-TCAT.staging release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.staging release.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.staging release.xcconfig"; sourceTree = "<group>"; };
 		3A99F42D1BCFE97AE52632BE /* Pods-TCAT.production release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.production release.xcconfig"; path = "Pods/Target Support Files/Pods-TCAT/Pods-TCAT.production release.xcconfig"; sourceTree = "<group>"; };
 		4359217A9637DAFB5CA9CBA5 /* Pods-TCATUITests.staging debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.staging debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.staging debug.xcconfig"; sourceTree = "<group>"; };
@@ -177,7 +177,7 @@
 		50A19BAD1E4C214000AD6768 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = HomeViewController.swift; path = Controllers/HomeViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		5CC002D37584478B0610FD34 /* Pods-TCATUITests.staging release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.staging release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATUITests/Pods-TCATUITests.staging release.xcconfig"; sourceTree = "<group>"; };
 		7CA3500AC22B635BE18DF62D /* Pods-TCATTests.production release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.production release.xcconfig"; path = "Pods/Target Support Files/Pods-TCATTests/Pods-TCATTests.production release.xcconfig"; sourceTree = "<group>"; };
-		7E14AEB12177E661006A344D /* TCAT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TCAT.entitlements; sourceTree = "<group>"; };
+		7E14AEB12177E661006A344D /* TCAT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = TCAT.entitlements; path = "Supporting Files/TCAT.entitlements"; sourceTree = "<group>"; };
 		7E14AEC02177E846006A344D /* IntentsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IntentsUI.framework; path = System/Library/Frameworks/IntentsUI.framework; sourceTree = SDKROOT; };
 		7E14AEDA2177E884006A344D /* Siri.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Siri.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E14AEDC2177E884006A344D /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
@@ -192,7 +192,8 @@
 		BF164D5E221DFCDE0069953E /* LegacyModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LegacyModels.swift; path = Model/LegacyModels.swift; sourceTree = "<group>"; };
 		BF18AE0F2083B7F6000C3D82 /* StoreReviewHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StoreReviewHelper.swift; path = Utilities/StoreReviewHelper.swift; sourceTree = "<group>"; };
 		BF18AE112083B9B8000C3D82 /* Phrases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Phrases.swift; path = Utilities/Phrases.swift; sourceTree = "<group>"; };
-		BF250D7E222FB12300E7F271 /* Endpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Endpoints.swift; path = Utilities/Endpoints.swift; sourceTree = "<group>"; };
+		BF250D7E222FB12300E7F271 /* Endpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endpoints.swift; sourceTree = "<group>"; };
+		BF2DA890224539DD006E527D /* RouteDiagram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDiagram.swift; path = Views/RouteDiagram.swift; sourceTree = "<group>"; };
 		BF316CAF2096352B005A14EF /* PhraseLabelFooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PhraseLabelFooterView.swift; path = Views/PhraseLabelFooterView.swift; sourceTree = "<group>"; };
 		BF40D7642230385B000ED7D8 /* WhatsNewCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WhatsNewCard.swift; path = Model/WhatsNewCard.swift; sourceTree = "<group>"; };
 		BF456E0220489990005C611D /* BusLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocation.swift; path = Model/BusLocation.swift; sourceTree = "<group>"; };
@@ -213,7 +214,7 @@
 		BF8460A92172B0F70027FB62 /* SFUIText-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFUIText-Medium.otf"; path = "Supporting Files/Fonts/SFUIText-Medium.otf"; sourceTree = "<group>"; };
 		BF8460AA2172B0F80027FB62 /* SFUIText-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFUIText-Bold.otf"; path = "Supporting Files/Fonts/SFUIText-Bold.otf"; sourceTree = "<group>"; };
 		BF8460AB2172B0F80027FB62 /* SFUIText-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SFUIText-Regular.otf"; path = "Supporting Files/Fonts/SFUIText-Regular.otf"; sourceTree = "<group>"; };
-		BF8AF5F22206BBF60091AB8C /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utilities.swift; path = Utilities/Utilities.swift; sourceTree = "<group>"; };
+		BF8AF5F22206BBF60091AB8C /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDetailViewController.swift; path = Controllers/RouteDetailViewController.swift; sourceTree = "<group>"; };
 		BFB86A06205C614C000794B2 /* OnboardingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OnboardingViewController.swift; path = Controllers/OnboardingViewController.swift; sourceTree = "<group>"; };
 		BFC367F521B66E9A00ABD9AC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/Intents.intentdefinition; sourceTree = "<group>"; };
@@ -235,7 +236,7 @@
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
 		DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteOptionsViewController.swift; path = Controllers/RouteOptionsViewController.swift; sourceTree = "<group>"; };
 		DD36A7011F6637C900E4789E /* Direction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Direction.swift; path = Model/Direction.swift; sourceTree = "<group>"; };
-		DD3D9C201F94297100B164D4 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Reachability.swift; path = Utilities/Reachability.swift; sourceTree = "<group>"; };
+		DD3D9C201F94297100B164D4 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		DD3D9C331F942CF000B164D4 /* CoordinateVisitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoordinateVisitor.swift; path = Utilities/CoordinateVisitor.swift; sourceTree = "<group>"; };
 		DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RPCircularProgress.swift; path = Views/RPCircularProgress.swift; sourceTree = "<group>"; };
 		DD5D233B1E6367A100F8DECE /* Time.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Time.swift; path = Utilities/Time.swift; sourceTree = "<group>"; };
@@ -254,7 +255,6 @@
 		DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DatePickerView.swift; path = Views/DatePickerView.swift; sourceTree = "<group>"; };
 		DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteSelectionView.swift; path = Views/RouteSelectionView.swift; sourceTree = "<group>"; };
 		DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteTableViewCell.swift; path = Cells/RouteTableViewCell.swift; sourceTree = "<group>"; };
-		DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDiagram.swift; path = Views/RouteDiagram.swift; sourceTree = "<group>"; };
 		DDE3BC221F5863D50014D2BB /* Place.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Place.swift; path = Model/Place.swift; sourceTree = "<group>"; };
 		E08977D7DB800C37CAF625E1 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E337970C1FC1606D00BCB28F /* InformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InformationViewController.swift; path = Controllers/InformationViewController.swift; sourceTree = "<group>"; };
@@ -339,12 +339,13 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		228F353721C71CD700556E6F /* JSON Responses */ = {
+		228F353721C71CD700556E6F /* Example Data */ = {
 			isa = PBXGroup;
 			children = (
 				228F353821C71D2800556E6F /* alertResponse.json */,
 			);
-			path = "JSON Responses";
+			name = "Example Data";
+			path = "Model/Example Data";
 			sourceTree = "<group>";
 		};
 		2292486621B891790004279C /* Network */ = {
@@ -352,10 +353,10 @@
 			children = (
 				BF250D7E222FB12300E7F271 /* Endpoints.swift */,
 				22948BFB221B75C5003FC43F /* Models.swift */,
-				BF8AF5F22206BBF60091AB8C /* Utilities.swift */,
 				DD3D9C201F94297100B164D4 /* Reachability.swift */,
+				BF8AF5F22206BBF60091AB8C /* Utilities.swift */,
 			);
-			name = Network;
+			path = Network;
 			sourceTree = "<group>";
 		};
 		449A7C6C1D80D0E80019300C = {
@@ -385,13 +386,11 @@
 		449A7C771D80D0E80019300C /* TCAT */ = {
 			isa = PBXGroup;
 			children = (
-				7E14AEB12177E661006A344D /* TCAT.entitlements */,
 				449A7C781D80D0E80019300C /* AppDelegate.swift */,
 				449A7C7F1D80D0E80019300C /* Assets.xcassets */,
 				DD2F988E1E50D8660005F6BC /* Base.lproj */,
 				DD2F988F1E50D89C0005F6BC /* Cells */,
 				DD47EA501E50D77D009C68EB /* Controllers */,
-				228F353721C71CD700556E6F /* JSON Responses */,
 				DD2F98911E50D8C90005F6BC /* Model */,
 				2292486621B891790004279C /* Network */,
 				50A19BA81E4BC5BC00AD6768 /* Supporting Files */,
@@ -422,12 +421,13 @@
 		50A19BA81E4BC5BC00AD6768 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				BF8460A72172A7A90027FB62 /* Fonts */,
 				DD99E2F51F6DB06A0073E8F7 /* Constants.swift */,
 				BFCA712C206AC69000E4CCE5 /* Keys.swift */,
 				D94BD2FE2159994400C9214E /* GoogleService-Info.plist */,
 				449A7C841D80D0E80019300C /* Info.plist */,
 				D94BD2FC2159993D00C9214E /* Keys.plist */,
-				BF8460A72172A7A90027FB62 /* Fonts */,
+				7E14AEB12177E661006A344D /* TCAT.entitlements */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -483,6 +483,7 @@
 		DD2F98911E50D8C90005F6BC /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				228F353721C71CD700556E6F /* Example Data */,
 				BF456E0220489990005C611D /* BusLocation.swift */,
 				DDB49C9B1E8857FC00A99C35 /* BusPath.swift */,
 				DD36A7011F6637C900E4789E /* Direction.swift */,
@@ -526,11 +527,11 @@
 				DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */,
 				DDB49CA11E88584B00A99C35 /* DetailIconView.swift */,
 				DC2E96451FC21B29009955C6 /* HeaderView.swift */,
-				BF316CAF2096352B005A14EF /* PhraseLabelFooterView.swift */,
-				BF0002211FB37D0A00773109 /* LoadingIndicator.swift */,
 				BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */,
+				BF0002211FB37D0A00773109 /* LoadingIndicator.swift */,
+				BF316CAF2096352B005A14EF /* PhraseLabelFooterView.swift */,
+				BF2DA890224539DD006E527D /* RouteDiagram.swift */,
 				DDA134441EC6A8CB00460B18 /* RouteLine.swift */,
-				DDE0A9301F096A3E005CD01C /* RouteDiagram.swift */,
 				DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */,
 				DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */,
 				502D8F5E1E55161D005280F1 /* SearchBarView.swift */,
@@ -897,7 +898,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/TCAT/Supporting Files/fabric-config.sh\"\n\n";
+			shellScript = "FABRIC_API_KEY=$(/usr/libexec/PlistBuddy -c \"Print :fabric-api-key\" \"${PROJECT_DIR}/TCAT/Supporting Files/Keys.plist\")\n\nFABRIC_BUILD_SECRET=$(/usr/libexec/PlistBuddy -c \"Print :fabric-build-secret\" \"${PROJECT_DIR}/TCAT/Supporting Files/Keys.plist\")\n\n\"${PODS_ROOT}/Fabric/run\" $FABRIC_API_KEY $FABRIC_BUILD_SECRET\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -919,6 +920,7 @@
 				BFF41EB2204365E800E0696B /* SummaryView.swift in Sources */,
 				DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */,
 				224EB5A5214F2F01008232C2 /* AppShortcuts.swift in Sources */,
+				BF2DA891224539DE006E527D /* RouteDiagram.swift in Sources */,
 				BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */,
 				BFEDB85B2232F22100052D49 /* GeneralTableViewCell.swift in Sources */,
 				DDA134451EC6A8CB00460B18 /* RouteLine.swift in Sources */,
@@ -950,7 +952,6 @@
 				DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */,
 				DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */,
 				DD5D233C1E6367A100F8DECE /* Time.swift in Sources */,
-				DDE0A9311F096A3E005CD01C /* RouteDiagram.swift in Sources */,
 				DCB717101FB76EA600BE4D26 /* AllStopsTableViewController.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
 				DDB49C981E8857E000A99C35 /* LargeDetailTableViewCell.swift in Sources */,
@@ -1167,7 +1168,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = TCAT/TCAT.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "TCAT/Supporting Files/TCAT.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -1200,7 +1201,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = TCAT/TCAT.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "TCAT/Supporting Files/TCAT.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -1400,7 +1401,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = TCAT/TCAT.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "TCAT/Supporting Files/TCAT.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -1546,7 +1547,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = TCAT/TCAT.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "TCAT/Supporting Files/TCAT.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
