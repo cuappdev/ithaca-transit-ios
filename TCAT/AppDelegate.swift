@@ -52,12 +52,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         JSONFileManager.shared.deleteAllJSONs()
 
         for (key, defaultValue) in userDataInits {
-            if key == Constants.UserDefaults.favorites {
-                if sharedUserDefaults?.value(forKey: key) == nil {
+            if userDefaults.value(forKey: key) == nil {
+                if key == Constants.UserDefaults.favorites {
                     sharedUserDefaults?.set(defaultValue, forKey: key)
+                } else {
+                    userDefaults.set(defaultValue, forKey: key)
                 }
-            } else if userDefaults.value(forKey: key) == nil {
-                userDefaults.set(defaultValue, forKey: key)
+            }
+            else if key == Constants.UserDefaults.favorites && sharedUserDefaults?.value(forKey: key) == nil{
+                sharedUserDefaults?.set(userDefaults.value(forKey: key), forKey: key)
             }
         }
 
