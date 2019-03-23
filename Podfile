@@ -5,8 +5,7 @@ platform :ios, '10.0'
 use_frameworks!
 inhibit_all_warnings!
 
-target 'TCAT' do
-    
+target 'TCAT' do    
     # Pods for TCAT
     
     # Location
@@ -46,10 +45,11 @@ target 'TCAT' do
         inherit! :search_paths
         # Pods for testing
     end
-
 end
 
 target 'Today Extension' do
+    # Pods for Today Extension
+
     # UI Frameworks	
     pod 'SnapKit'
 
@@ -59,5 +59,4 @@ target 'Today Extension' do
  
     # Analytics
     pod 'Crashlytics', '~> 3.10'
-
 end 

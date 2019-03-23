@@ -51,7 +51,7 @@ class TodayExtensionCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        departureLabel.snp.makeConstraints { (make) in
+        departureLabel.snp.makeConstraints { make in
             make.top.equalTo(verticalMargin)
             make.leading.equalTo(leadingMargin)
             make.trailing.lessThanOrEqualToSuperview().inset(rightMargin)
@@ -59,7 +59,7 @@ class TodayExtensionCell: UITableViewCell {
         }
 
         if let busIcon = busIcon {
-            busIcon.snp.makeConstraints { (make) in
+            busIcon.snp.makeConstraints { make in
                 make.top.equalTo(verticalMargin)
                 make.leading.equalTo(leftMargin)
                 make.height.equalTo(busIcon.intrinsicContentSize.height)
@@ -67,7 +67,7 @@ class TodayExtensionCell: UITableViewCell {
             }
         }
 
-        destinationLabel.snp.makeConstraints { (make) in
+        destinationLabel.snp.makeConstraints { make in
             make.top.equalTo(departureLabel.snp.bottom).offset(verticalOffset)
             make.leading.equalTo(departureLabel)
             make.trailing.lessThanOrEqualToSuperview().inset(rightMargin)
@@ -75,14 +75,14 @@ class TodayExtensionCell: UITableViewCell {
         }
 
         if showLiveElements {
-            liveLabel.snp.makeConstraints { (make) in
+            liveLabel.snp.makeConstraints { make in
                 make.bottom.equalToSuperview().inset(verticalMargin)
                 make.leading.equalTo(departureLabel)
                 make.height.equalTo(liveLabel.intrinsicContentSize.height)
                 make.width.equalTo(liveLabel.intrinsicContentSize.width)
             }
 
-            liveIndicatorView.snp.makeConstraints { (make) in
+            liveIndicatorView.snp.makeConstraints { make in
                 make.centerY.equalTo(liveLabel.snp.centerY)
                 make.leading.equalTo(liveLabel.snp.trailing).offset(horizontalOffset)
                 make.trailing.lessThanOrEqualTo(rightMargin)
@@ -122,7 +122,7 @@ class TodayExtensionCell: UITableViewCell {
 
         contentView.addSubview(noRouteLabel)
 
-        noRouteLabel.snp.makeConstraints { (make) in
+        noRouteLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.centerX.equalToSuperview()
             make.leading.trailing.equalToSuperview().inset(12.0)
@@ -166,7 +166,6 @@ class TodayExtensionCell: UITableViewCell {
             switch delayState {
             case .late(date: let delayedDepartureTime):
                 destinationLabel.text = Time.timeString(from: delayedDepartureTime) + " at \(direction.name)"
-
             case .onTime(date: let departureTime), .noDelay(date: let departureTime):
                 destinationLabel.text = Time.timeString(from: departureTime) + " at \(direction.name)"
             }
@@ -187,16 +186,13 @@ class TodayExtensionCell: UITableViewCell {
                 liveIndicatorView.setColor(to: Colors.lateRed)
                 contentView.addSubview(liveLabel)
                 contentView.addSubview(liveIndicatorView)
-
             case .onTime(date: let departureTime):
                 liveLabel.textColor = Colors.liveGreen
                 let boardTime = Time.timeString(from: Date(), to: departureTime)
                 liveLabel.text = (boardTime == "0 min" ? "Board now" : "Board in \(boardTime)")
                 liveIndicatorView.setColor(to: Colors.liveGreen)
-
                 contentView.addSubview(liveLabel)
                 contentView.addSubview(liveIndicatorView)
-
             case .noDelay(date: _):
                 showLiveElements = false
             }

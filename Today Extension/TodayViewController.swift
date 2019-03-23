@@ -89,7 +89,7 @@ import SwiftyJSON
     }
 
     func createConstraints() {
-        routesTable.snp.makeConstraints {(make) in
+        routesTable.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(cellHeight*5)
         }

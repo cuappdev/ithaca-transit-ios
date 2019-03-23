@@ -22,7 +22,7 @@ class LoadingTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        loadingIndicator.snp.makeConstraints { (make) in
+        loadingIndicator.snp.makeConstraints { make in
             make.top.equalTo(verticalMargin)
             make.bottom.equalToSuperview().inset(verticalMargin)
             make.width.equalTo(40.0)
