@@ -10,8 +10,8 @@ import Foundation
 
 class TodayExtensionManager {
 
-    static let shared = TodayExtensionManager()
     let decoder = JSONDecoder()
+    static let shared = TodayExtensionManager()
 
     func retrieveFavoritesNames() -> [String] {
         if

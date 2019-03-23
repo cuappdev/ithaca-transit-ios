@@ -12,10 +12,10 @@ class TodayExtensionCell: UITableViewCell {
 
     // MARK: Data vars
 
-    var route: Route?
     var busDirection: Direction?
-    var showLiveElements: Bool = true
     var destinationName: String = ""
+    var route: Route?
+    var showLiveElements: Bool = true
 
     // MARK: Log vars
 
@@ -23,20 +23,20 @@ class TodayExtensionCell: UITableViewCell {
 
     // MARK: View vars
 
+    var busIcon: BusIcon?
     var departureLabel = UILabel() // ex: 10:00 AM at Collegetown Crossing
     var destinationLabel = UILabel() // ex: To Baker Flagpole
     var liveLabel = UILabel()
     var liveIndicatorView = LiveIndicator(size: .small, color: .clear)
-    var busIcon: BusIcon?
 
     // MARK: Spacing vars
 
-    let leftMargin: CGFloat =  12.0
-    let verticalMargin: CGFloat = 20.0 // top & bottom margin
-    let rightMargin: CGFloat = 16.0
-    let leadingMargin: CGFloat = 74.0
-    let verticalOffset: CGFloat = 2.0
     let horizontalOffset: CGFloat = 8.0
+    let leadingMargin: CGFloat = 74.0
+    let leftMargin: CGFloat =  12.0
+    let rightMargin: CGFloat = 16.0
+    let verticalMargin: CGFloat = 20.0 // top & bottom margin
+    let verticalOffset: CGFloat = 2.0
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 
@@ -91,7 +91,7 @@ class TodayExtensionCell: UITableViewCell {
         }
     }
 
-    func setUpCell(route: Route?, destination: String) {
+    func configure(route: Route?, destination: String) {
         destinationName = destination
         if let route = route {
             self.route = route

@@ -165,7 +165,7 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
             // have routes!! 
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TodayExtension.contentCellIdentifier, for: indexPath) as! TodayExtensionCell
             routes[indexPath.row]?.formatDirections(start: Constants.General.currentLocation, end: favorites[indexPath.row])
-            cell.setUpCell(route: routes[indexPath.row], destination: favorites[indexPath.row])
+            cell.configure(route: routes[indexPath.row], destination: favorites[indexPath.row])
             cell.selectionStyle = .none
             return cell
         }
