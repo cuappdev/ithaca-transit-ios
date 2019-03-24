@@ -65,7 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Initalize first view based on context
         let showOnboarding = !userDefaults.bool(forKey: Constants.UserDefaults.onboardingShown)
-        let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : HomeViewController()
+        let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : HomeMapViewController()
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
         

@@ -81,7 +81,6 @@ class HomeViewController: UIViewController {
         tableView.tableFooterView = UIView()
         tableView.showsVerticalScrollIndicator = false
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
-        // tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.addFavoriteIdentifier)
         tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
         view.addSubview(tableView)
 
