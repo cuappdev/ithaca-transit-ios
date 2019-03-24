@@ -65,7 +65,12 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
     // MARK: Data vars
 
-    var routes: [Route] = []
+    var routes: [[Route]] = []
+    
+    /// Returns routes from each section in order
+    var allRoutes: [Route] {
+        return routes.flatMap { $0 }
+    }
     var timers: [Int: Timer] = [:]
 
     // MARK: Reachability vars
@@ -455,10 +460,19 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
         
     }
 
-    func processRequest(request: APIRequest<RoutesRequest, Error>, requestURL: String, endPlace: Place) {
+    func processRequest(request: APIRequest<RouteSectionsObject, Error>, requestURL: String, endPlace: Place) {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
 
         request.performCollectingTimeline { (response) in
+        
+            do {
+                if let jsonResult = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
+                    print(jsonResult)
+                }
+            } catch let error {
+                print(error.localizedDescription)
+            }
+            
             switch response.result {
             case .success(let routesResponse):
                 
@@ -472,10 +486,21 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
                     }
                 }
                 
-                for each in routesResponse.data {
+                for route in routesResponse.fromStop {
+                    route.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
+                }
+                self.routes.append(routesResponse.fromStop)
+                
+                for each in routesResponse.boardingSoon {
                     each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
                 }
-                self.routes = routesResponse.data
+                self.routes.append(routesResponse.boardingSoon)
+                
+                for each in routesResponse.walking {
+                    each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
+                }
+                self.routes.append(routesResponse.walking)
+                
                 self.requestDidFinish(perform: [.hideBanner])
             case .failure(let networkError):
                 if let error = networkError as? APIError<Error> {
@@ -742,7 +767,7 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
 
     func createRouteDetailViewController(from indexPath: IndexPath) -> RouteDetailViewController? {
 
-        let route = routes[indexPath.row]
+        let route = routes[indexPath.section][indexPath.row]
         var routeDetailCurrentLocation = currentLocation
         if searchTo?.name != Constants.General.currentLocation && searchFrom?.name != Constants.General.currentLocation {
             routeDetailCurrentLocation = nil // If route doesn't involve current location, don't pass along for view.
@@ -767,7 +792,8 @@ class RouteOptionsViewController: UIViewController, DestinationDelegate, SearchB
         if sender.state == .began {
             let point = sender.location(in: routeResults)
             if let indexPath = routeResults.indexPathForRow(at: point), let cell = routeResults.cellForRow(at: indexPath) {
-                presentShareSheet(from: view, for: routes[indexPath.row], with: cell.getImage())
+                let route = routes[indexPath.section][indexPath.row]
+                presentShareSheet(from: view, for: route, with: cell.getImage())
             }
         }
     }
@@ -893,11 +919,28 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
 // MARK: TableView DataSource
 extension RouteOptionsViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return routes.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return routes.count
+        return routes[section].count
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if routes.count == 3 {
+            switch section {
+            case 0: return Constants.TableHeaders.fromStop
+            case 1: return Constants.TableHeaders.boardingSoon
+            case 2: return Constants.TableHeaders.walking
+            default: return nil
+            }
+        } else {
+            switch section {
+            case 0: return Constants.TableHeaders.boardingSoon
+            case 1: return Constants.TableHeaders.walking
+            default: return nil
+            }
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -908,7 +951,7 @@ extension RouteOptionsViewController: UITableViewDataSource {
             cell = RouteTableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
         }
 
-        cell?.setData(route: routes[indexPath.row], rowNum: indexPath.row)
+        cell?.setData(route: routes[indexPath.section][indexPath.row], rowNum: indexPath.row)
 
         // Activate timers
         let timerDoesNotExist = (timers[indexPath.row] == nil)
@@ -954,7 +997,7 @@ extension RouteOptionsViewController: UITableViewDelegate {
         if let routeDetailViewController = createRouteDetailViewController(from: indexPath) {
             let payload = RouteResultsCellTappedEventPayload()
             Analytics.shared.log(payload)
-            let routeId = routes[indexPath.row].routeId
+            let routeId = routes[indexPath.section][indexPath.row].routeId
             Network.routeSelected(routeId: routeId)
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }

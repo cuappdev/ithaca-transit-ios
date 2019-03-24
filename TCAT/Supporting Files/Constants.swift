@@ -215,6 +215,9 @@ struct Constants {
     struct TableHeaders {
         static let recentSearches = "Recent Searches"
         static let favoriteDestinations = "Favorite Destinations"
+        static let fromStop = "From Stop"
+        static let boardingSoon = "Boarding Soon"
+        static let walking = "Walking"
         static let highPriority = "High Priority"
         static let mediumPriority = "Medium Priority"
         static let lowPriority = "Low Priority"

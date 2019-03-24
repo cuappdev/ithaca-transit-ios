@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftyJSON
 import DZNEmptyDataSet
 import Fuzzywuzzy_swift
 

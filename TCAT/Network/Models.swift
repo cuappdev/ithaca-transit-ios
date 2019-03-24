@@ -74,7 +74,13 @@ struct SearchRequest: Codable {
 
 struct RoutesRequest: Codable {
     var success: Bool
-    var data: [Route]
+    var data: RouteSectionsObject
+}
+
+struct RouteSectionsObject: Codable {
+    var fromStop: [Route]
+    var boardingSoon: [Route]
+    var walking: [Route]
 }
 
 class AllBusStopsRequest: Codable {
