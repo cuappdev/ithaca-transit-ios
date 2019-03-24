@@ -63,16 +63,12 @@ class SearchTableViewManager {
 
     func retrievePlaces(for key: String) -> [Place] {
         if (key == Constants.UserDefaults.favorites) {
-            if
-                let storedPlaces = sharedUserDefaults?.value(forKey: key) as? Data,
-                let favorites = try? decoder.decode([Place].self, from: storedPlaces)
-            {
+            if let storedPlaces = sharedUserDefaults?.value(forKey: key) as? Data,
+                let favorites = try? decoder.decode([Place].self, from: storedPlaces) {
                 return favorites
             }
             
-        }
-        
-        else if
+        } else if
             let storedPlaces = userDefaults.value(forKey: key) as? Data,
             let places = try? decoder.decode([Place].self, from: storedPlaces)
         {

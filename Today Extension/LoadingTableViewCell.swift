@@ -17,11 +17,7 @@ class LoadingTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         contentView.addSubview(loadingIndicator)
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
+        
         loadingIndicator.snp.makeConstraints { make in
             make.top.equalTo(verticalMargin)
             make.bottom.equalToSuperview().inset(verticalMargin)

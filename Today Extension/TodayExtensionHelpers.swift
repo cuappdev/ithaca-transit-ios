@@ -14,36 +14,28 @@ class TodayExtensionManager {
     static let shared = TodayExtensionManager()
 
     func retrieveFavoritesNames() -> [String] {
-        if
-            let storedPlaces = sharedUserDefaults?.value(forKey: Constants.UserDefaults.favorites) as? Data,
+        if let storedPlaces = sharedUserDefaults?.value(forKey: Constants.UserDefaults.favorites) as? Data,
             let places = try? decoder.decode([Place].self, from: storedPlaces)
         {
-            var favorites: [String] = []
-            for place in places {
-                favorites.append(place.name)
-            }
-            return favorites
+            return places.map({ $0.name })
+
         } else {
-            return [String]()
+            return []
         }
     }
 
     func retrieveFavoritesCoordinates() -> [String] {
-        if
-            let storedPlaces = sharedUserDefaults?.value(forKey: Constants.UserDefaults.favorites) as? Data,
+        if let storedPlaces = sharedUserDefaults?.value(forKey: Constants.UserDefaults.favorites) as? Data,
             let places = try? decoder.decode([Place].self, from: storedPlaces)
         {
-            var coordinates: [String] = []
-            for place in places {
-                if
-                    let lat = place.latitude,
-                    let long = place.longitude {
-                    coordinates.append("\(lat),\(long)")
+            return places.compactMap({
+                if let lat = $0.latitude, let long = $0.longitude {
+                    return "\(lat),\(long)"
                 }
-            }
-            return coordinates
+                return nil
+            })
         } else {
-            return [String]()
+            return []
         }
     }
 }
