@@ -32,7 +32,11 @@ import SwiftyJSON
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        extensionContext?.widgetLargestAvailableDisplayMode = .compact
+        if #available(iOSApplicationExtension 10.0, *) {
+            extensionContext?.widgetLargestAvailableDisplayMode = .compact
+        } else {
+            // Fallback on earlier versions
+        }
 
         setUpLocation()
         setUpRoutesTableView()
@@ -61,7 +65,11 @@ import SwiftyJSON
                 self.routes = routesResponse.data
                 self.rearrangeRoutes()
                 self.didFetchRoutes = true
-                self.extensionContext?.widgetLargestAvailableDisplayMode = .expanded
+                if #available(iOSApplicationExtension 10.0, *) {
+                    self.extensionContext?.widgetLargestAvailableDisplayMode = .expanded
+                } else {
+                    // Fallback on earlier versions
+                }
                 self.routesTable.reloadData()
             case .failure(let networkError):
                 if let error = networkError as? APIError<Error> {
@@ -81,6 +89,7 @@ import SwiftyJSON
     }
 
     /// Called in response to the user tapping the “Show More” or “Show Less” buttons
+    @available(iOSApplicationExtension 10.0, *)
     func widgetActiveDisplayModeDidChange(_ activeDisplayMode: NCWidgetDisplayMode, withMaximumSize maxSize: CGSize) {
         let expanded = activeDisplayMode == .expanded
         preferredContentSize = expanded ? CGSize(width: maxSize.width, height: cellHeight * CGFloat(numberOfFavorites)) : maxSize
@@ -133,13 +142,17 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let isCompact = extensionContext?.widgetActiveDisplayMode == .compact
-
-        if (isCompact || favorites.isEmpty || routes.isEmpty || !didFetchRoutes) {
-            // if: in compact mode, no favorites added, failed to load routes, or in loading state
-            return 1
+        if #available(iOSApplicationExtension 10.0, *) {
+            let isCompact = extensionContext?.widgetActiveDisplayMode == .compact
+            if (isCompact || favorites.isEmpty || routes.isEmpty || !didFetchRoutes) {
+                // if: in compact mode, no favorites added, failed to load routes, or in loading state
+                return 1
+            } else {
+                return numberOfFavorites
+            }
         } else {
-            return numberOfFavorites
+            // Fallback on earlier versions
+            return 0
         }
 
     }
