@@ -59,12 +59,12 @@ class Network {
     }
 
     class func getRoutes(start: Place, end: Place, time: Date, type: SearchType,
-                         callback: @escaping (_ request: APIRequest<RouteSectionsObject, Error>) -> Void) {
+                         callback: @escaping (_ request: APIRequest<RoutesRequest, Error>) -> Void) {
         
         
-        let request: APIRequest<RouteSectionsObject, Error> = tron.codable.request("route")
-        request.parameterEncoding = JSONEncoding.default
+        let request: APIRequest<RoutesRequest, Error> = tron.codable.request("route")
         request.method = .post
+        request.parameterEncoding = JSONEncoding.default
         
         guard
             let startLat = start.latitude,
