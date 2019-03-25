@@ -45,6 +45,7 @@
 		7E155FD92231DAAF00FE7A9B /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36A7011F6637C900E4789E /* Direction.swift */; };
 		7E2FFF0F2207B687008EA224 /* TodayExtensionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */; };
 		7E3C5B4122308D83000EFA10 /* LoadingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3C5B4022308D83000EFA10 /* LoadingTableViewCell.swift */; };
+		7E5FE3BC224922C000EF24D4 /* Extensions+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE04A6C21B461D7002F0C52 /* Extensions+Shared.swift */; };
 		7E75BAD621B3A72B00FB56BB /* TodayExtensionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */; };
 		7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
 		7EBD9D8722263089008BF900 /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
@@ -85,7 +86,6 @@
 		7EE04A6421B453E3002F0C52 /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
 		7EE04A6921B455E0002F0C52 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE04A6721B454F4002F0C52 /* Shared.swift */; };
 		7EE04A6A21B45611002F0C52 /* EventPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94BD30021599E3200C9214E /* EventPayload.swift */; };
-		7EE04A6F21B461D7002F0C52 /* Extensions+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE04A6C21B461D7002F0C52 /* Extensions+Shared.swift */; };
 		7EEB14242231A34200134C8B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F51F6DB06A0073E8F7 /* Constants.swift */; };
 		7EEB14252231A35800134C8B /* Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF250D7E222FB12300E7F271 /* Endpoints.swift */; };
 		7EEB14262231A37E00134C8B /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22948BFB221B75C5003FC43F /* Models.swift */; };
@@ -1205,7 +1205,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				7EC15850222C827C00BA9DA8 /* LoadingIndicator.swift in Sources */,
-				7EE04A6F21B461D7002F0C52 /* Extensions+Shared.swift in Sources */,
 				7EE04A5721B45250002F0C52 /* (null) in Sources */,
 				7EE04A5021B4503C002F0C52 /* Route.swift in Sources */,
 				7EF680E422263D2F0093CACD /* Utilities.swift in Sources */,
@@ -1230,6 +1229,7 @@
 				7E75BAD621B3A72B00FB56BB /* TodayExtensionCell.swift in Sources */,
 				7EE04A6321B453C5002F0C52 /* (null) in Sources */,
 				7EE04A6421B453E3002F0C52 /* BusLocation.swift in Sources */,
+				7E5FE3BC224922C000EF24D4 /* Extensions+Shared.swift in Sources */,
 				7EE04A5E21B45357002F0C52 /* (null) in Sources */,
 				7E155FD62231DA8400FE7A9B /* BusLocationView.swift in Sources */,
 				7EE04A5B21B452D4002F0C52 /* Constants.swift in Sources */,

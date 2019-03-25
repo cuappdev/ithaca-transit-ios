@@ -31,8 +31,6 @@ import SwiftyJSON
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        print("VIEWDIDLOAD")
 
         if #available(iOSApplicationExtension 10.0, *) {
             extensionContext?.widgetLargestAvailableDisplayMode = .compact
@@ -138,6 +136,7 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     private func setUpRoutesTableView() {
         routesTable.delegate = self
         routesTable.dataSource = self
+        routesTable.separatorStyle = .none
         routesTable.register(TodayExtensionCell.self, forCellReuseIdentifier: Constants.TodayExtension.contentCellIdentifier)
         routesTable.register(TodayExtensionErrorCell.self, forCellReuseIdentifier: Constants.TodayExtension.errorCellIdentifier)
         routesTable.register(LoadingTableViewCell.self, forCellReuseIdentifier: Constants.TodayExtension.loadingCellIdentifier)
