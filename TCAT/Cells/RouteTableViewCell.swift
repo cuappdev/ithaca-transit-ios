@@ -34,6 +34,8 @@ class RouteTableViewCell: UITableViewCell {
     var rowNum: Int?
 
     // MARK: View vars
+    
+    let containerView = UIView()
 
     var timesStackView: UIStackView
     var travelTimeLabel: UILabel
@@ -49,7 +51,6 @@ class RouteTableViewCell: UITableViewCell {
     
     var verticalStackView: UIStackView
     var routeDiagram: RouteDiagram
-    var cellSeparator: UIView
 
     // MARK: Spacing vars
     
@@ -58,8 +59,10 @@ class RouteTableViewCell: UITableViewCell {
     let bottomMargin: CGFloat = 16
     let rightMargin: CGFloat = 12
     
-    let cellBorderHeight: CGFloat = 0.75
-    let cellSeparatorHeight: CGFloat = 6.0
+    let cellMargin: CGFloat = 12
+    
+    let cornerRadius: CGFloat = 16
+    let cellSeparatorHeight: CGFloat = 12
     
     let spaceBtnDepartureElements: CGFloat = 4
     let arrowImageViewHeight: CGFloat = 11.5
@@ -84,18 +87,15 @@ class RouteTableViewCell: UITableViewCell {
         liveStackView = UIStackView(arrangedSubviews: [liveLabel, liveIndicatorView, stretchyFillerView])
         
         routeDiagram = RouteDiagram()
-        cellSeparator = UIView()
         verticalStackView = UIStackView(arrangedSubviews: [timesStackView, liveStackView, routeDiagram])
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
+        styleCellBackground()
         styleVerticalStackView()
-        styleCellSeparator()
         
+        contentView.addSubview(containerView)
         contentView.addSubview(verticalStackView)
-        contentView.addSubview(cellSeparator)
-        
-        contentView.layer.cornerRadius = 8
         
         activateConstraints()
     }
@@ -104,7 +104,23 @@ class RouteTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let padding = UIEdgeInsets(top: 0, left: 0, bottom: cellMargin, right: 0)
+        bounds = bounds.inset(by: padding)
+    }
+    
     // MARK: Style
+    
+    private func styleCellBackground() {
+        layer.backgroundColor = UIColor.clear.cgColor
+        contentView.backgroundColor = .clear
+        backgroundColor = .clear
+        
+        containerView.backgroundColor = Colors.white
+        containerView.layer.cornerRadius = cornerRadius
+        containerView.layer.masksToBounds = true
+    }
 
     private func styleVerticalStackView() {
         verticalStackView.axis = .vertical
@@ -113,7 +129,6 @@ class RouteTableViewCell: UITableViewCell {
 
         styleTimesStackView()
         styleLiveStackView()
-        // styleFunMessage()
     }
     
     private func styleTimesStackView() {
@@ -145,10 +160,6 @@ class RouteTableViewCell: UITableViewCell {
         
         liveLabel.font = .getFont(.semibold, size: 14)
     }
-
-    private func styleCellSeparator() {
-        cellSeparator.backgroundColor = Colors.backgroundWash
-    }
     
     // MARK: Add subviews
     
@@ -167,16 +178,17 @@ class RouteTableViewCell: UITableViewCell {
         setDebugIdentifiers()
         
         NSLayoutConstraint.activate([
-            verticalStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            verticalStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            verticalStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: cellMargin),
+            containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -cellMargin),
+            containerView.topAnchor.constraint(equalTo: topAnchor),
+            containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
         
         NSLayoutConstraint.activate([
-            cellSeparator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            cellSeparator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            cellSeparator.heightAnchor.constraint(equalToConstant: cellSeparatorHeight),
-            cellSeparator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            verticalStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            verticalStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            verticalStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            verticalStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
         
         NSLayoutConstraint.activate([
@@ -184,13 +196,14 @@ class RouteTableViewCell: UITableViewCell {
             arrowImageView.widthAnchor.constraint(equalToConstant: arrowImageViewWidth),
             arrowImageView.centerYAnchor.constraint(equalTo: departureTimeLabel.centerYAnchor)
         ])
+
     }
     
     private func setTranslatesAutoresizingMaskIntoConstraints() {
         let subviews = [timesStackView, travelTimeLabel,
                         departureStackView, departureTimeLabel, arrowImageView,
                         liveStackView, liveLabel, liveIndicatorView, stretchyFillerView,
-                        verticalStackView, routeDiagram, cellSeparator]
+                        verticalStackView, routeDiagram, containerView]
         
         subviews.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
     }
@@ -211,7 +224,6 @@ class RouteTableViewCell: UITableViewCell {
         
         verticalStackView.accessibilityIdentifier = "verticalStackView"
         routeDiagram.accessibilityIdentifier = "routeDiagram"
-        cellSeparator.accessibilityIdentifier = "cellSeparator"
     }
     
     // MARK: Get Data
@@ -276,8 +288,6 @@ class RouteTableViewCell: UITableViewCell {
         setDepartureTimeAndLiveElements(withRoute: route)
         
         routeDiagram.setData(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
-        
-        // setFunMessage()
     }
     
     private func setDepartureTimeAndLiveElements(withRoute route: Route) {

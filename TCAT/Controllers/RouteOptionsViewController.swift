@@ -973,7 +973,7 @@ extension RouteOptionsViewController: UITableViewDelegate {
             let payload = RouteResultsCellTappedEventPayload()
             Analytics.shared.log(payload)
             let routeId = routes[indexPath.section][indexPath.row].routeId
-            Network.routeSelected(routeId: routeId)
+            Network.routeSelected(routeId: routeId).perform()
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }
