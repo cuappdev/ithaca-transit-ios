@@ -44,6 +44,10 @@ struct RouteCalculationError: Swift.Error {
     let description: String
 }
 
+class RouteTest: NSObject, Codable {
+    var routeId: String
+}
+
 class Route: NSObject, Codable {
 
     /// The time a user begins their journey

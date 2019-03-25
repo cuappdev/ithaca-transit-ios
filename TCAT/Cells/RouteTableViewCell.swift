@@ -26,6 +26,7 @@ class RouteTableViewCell: UITableViewCell {
     
     static let identifier: String = "routeCell"
     private let fileName: String = "RouteTableViewCell"
+    
     var route: Route?
         
     // MARK: Log vars
@@ -47,10 +48,7 @@ class RouteTableViewCell: UITableViewCell {
     var stretchyFillerView: UIView
     
     var verticalStackView: UIStackView
-    var topBorder: UIView
     var routeDiagram: RouteDiagram
-    var funMessage: UILabel
-    var bottomBorder: UIView
     var cellSeparator: UIView
 
     // MARK: Spacing vars
@@ -85,24 +83,19 @@ class RouteTableViewCell: UITableViewCell {
         stretchyFillerView = UIView()
         liveStackView = UIStackView(arrangedSubviews: [liveLabel, liveIndicatorView, stretchyFillerView])
         
-        topBorder = UIView()
         routeDiagram = RouteDiagram()
-        funMessage = UILabel()
-        bottomBorder = UIView()
         cellSeparator = UIView()
         verticalStackView = UIStackView(arrangedSubviews: [timesStackView, liveStackView, routeDiagram])
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        styleTopBorder()
         styleVerticalStackView()
-        styleBottomBorder()
         styleCellSeparator()
         
-        contentView.addSubview(topBorder)
         contentView.addSubview(verticalStackView)
-        contentView.addSubview(bottomBorder)
         contentView.addSubview(cellSeparator)
+        
+        contentView.layer.cornerRadius = 8
         
         activateConstraints()
     }
@@ -152,19 +145,6 @@ class RouteTableViewCell: UITableViewCell {
         
         liveLabel.font = .getFont(.semibold, size: 14)
     }
-    
-    private func styleFunMessage() {
-        funMessage.font = .getFont(.semibold, size: 12)
-        funMessage.textColor = .lightGray
-    }
-
-    private func styleTopBorder() {
-        topBorder.backgroundColor = Colors.dividerTextField
-    }
-
-    private func styleBottomBorder() {
-        bottomBorder.backgroundColor = Colors.dividerTextField
-    }
 
     private func styleCellSeparator() {
         cellSeparator.backgroundColor = Colors.backgroundWash
@@ -187,24 +167,9 @@ class RouteTableViewCell: UITableViewCell {
         setDebugIdentifiers()
         
         NSLayoutConstraint.activate([
-            topBorder.topAnchor.constraint(equalTo: contentView.topAnchor),
-            topBorder.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            topBorder.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            topBorder.heightAnchor.constraint(equalToConstant: cellBorderHeight),
-            topBorder.bottomAnchor.constraint(equalTo: verticalStackView.topAnchor)
-        ])
-        
-        NSLayoutConstraint.activate([
             verticalStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             verticalStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            verticalStackView.bottomAnchor.constraint(equalTo: bottomBorder.topAnchor)
-        ])
-        
-        NSLayoutConstraint.activate([
-            bottomBorder.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            bottomBorder.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            bottomBorder.heightAnchor.constraint(equalToConstant: cellBorderHeight),
-            bottomBorder.bottomAnchor.constraint(equalTo: cellSeparator.topAnchor)
+            verticalStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
         
         NSLayoutConstraint.activate([
@@ -225,7 +190,7 @@ class RouteTableViewCell: UITableViewCell {
         let subviews = [timesStackView, travelTimeLabel,
                         departureStackView, departureTimeLabel, arrowImageView,
                         liveStackView, liveLabel, liveIndicatorView, stretchyFillerView,
-                        verticalStackView, topBorder, routeDiagram, funMessage, bottomBorder, cellSeparator]
+                        verticalStackView, routeDiagram, cellSeparator]
         
         subviews.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
     }
@@ -245,9 +210,7 @@ class RouteTableViewCell: UITableViewCell {
         stretchyFillerView.accessibilityIdentifier = "stretchyFillerView"
         
         verticalStackView.accessibilityIdentifier = "verticalStackView"
-        topBorder.accessibilityIdentifier = "topBorder"
         routeDiagram.accessibilityIdentifier = "routeDiagram"
-        bottomBorder.accessibilityIdentifier = "bottomBorder"
         cellSeparator.accessibilityIdentifier = "cellSeparator"
     }
     
@@ -328,10 +291,6 @@ class RouteTableViewCell: UITableViewCell {
         let delayState = getDelayState(fromRoute: route)
         setDepartureTime(withStartTime: Date(), withDelayState: delayState)
         setLiveElements(withDelayState: delayState)
-    }
-    
-    private func setFunMessage() {
-        funMessage.text = "Howdy! Here's a fun message! :)"
     }
     
     @objc func updateLiveElementsWithDelay() {
