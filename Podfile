@@ -50,9 +50,16 @@ end
 
 # Pods for Today Extension
 target 'Today Extension' do
-  pod 'Alamofire', '~> 4.7'
-  pod 'Crashlytics', '~> 3.10'
-  pod 'SnapKit'
-  pod 'SwiftyJSON', '~> 4.0'
-  pod 'TRON', '~> 4.1.2'
+    # Pods for Today Extension
+
+    # UI Frameworks	
+    pod 'SnapKit'
+
+    # Networking + Data
+    pod 'TRON', '~> 4.1.2'
+    pod 'Alamofire', '~> 4.7'
+    pod 'SwiftyJSON', '~> 4.0'
+ 
+    # Analytics
+    pod 'Crashlytics', '~> 3.10'
 end 
