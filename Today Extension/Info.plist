@@ -45,5 +45,7 @@
 		<string>SFUIText-Regular.otf</string>
 		<string>SFUIText-Semibold.otf</string>
 	</array>
+	<key>SERVER_URL</key>
+	<string>$(SERVER_URL)</string>
 </dict>
 </plist>

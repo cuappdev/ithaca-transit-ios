@@ -31,6 +31,8 @@ import SwiftyJSON
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        print("VIEWDIDLOAD")
 
         if #available(iOSApplicationExtension 10.0, *) {
             extensionContext?.widgetLargestAvailableDisplayMode = .compact
