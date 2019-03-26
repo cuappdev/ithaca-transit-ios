@@ -42,16 +42,14 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
     let searchBarHeight = 54
     var searchBarSeperator: UIView!
     
+    override func loadView() {
+        let customView = RoundShadowedView()
+        customView.addRoundedCornersAndShadow(radius: 10)
+        view = customView
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.backgroundColor = .white
-        view.layer.cornerRadius = 18
-        
-        view.layer.shadowColor = Colors.secondaryText.cgColor
-        view.layer.shadowOffset = CGSize(width: 1, height: 2)
-        view.layer.shadowOpacity = 0.25
-        view.layer.shadowRadius = 2
         
         setupTableView()
         setupSearchBar()
@@ -59,11 +57,10 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
         
         setupConstraints()
     }
-    
+
     func setupTableView() {
         tableView = UITableView(frame: .zero, style: .grouped)
-//        tableView.backgroundColor = view.backgroundColor
-        tableView.backgroundColor = Colors.backgroundWash
+        tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
         tableView.emptyDataSetSource = self
@@ -136,7 +133,7 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
     }
     
     func calculateCardHeight() -> CGFloat {
-        return tableView.contentSize.height + CGFloat(searchBarHeight) - 18
+        return tableView.contentSize.height + CGFloat(searchBarHeight)
     }
     
     @objc func presentFavoritesTVC(sender: UIButton? = nil) {
@@ -200,12 +197,6 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         switch sections[section].type {
         case .recentSearches:
             header.setupView(labelText: Constants.TableHeaders.recentSearches, displayAddButton: false)
-        case .favorites:
-            header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, displayAddButton: true)
-            header.addFavoritesDelegate = self
-        case .searchResults:
-            return nil
-        case .seeAllStops:
             containerView = UIView()
             
             let seperatorView = UIView()
@@ -214,7 +205,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
             containerView?.addSubview(header)
             
             seperatorView.snp.makeConstraints { (make) in
-                make.leading.trailing.equalToSuperview().inset(50)
+                make.leading.trailing.equalToSuperview().inset(20)
                 make.height.equalTo(1)
                 make.top.equalToSuperview()
             }
@@ -223,6 +214,11 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
                 make.leading.trailing.bottom.equalToSuperview()
                 make.top.equalTo(seperatorView.snp.bottom)
             }
+        case .favorites:
+            header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, displayAddButton: true)
+            header.addFavoritesDelegate = self
+        case .searchResults:
+            return nil
         default: break
         }
         
@@ -236,7 +232,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch sections[section].type {
         case .favorites, .recentSearches: return 42
-        case .seeAllStops: return 1
+        case .seeAllStops: return 0
         default: return 24
         }
     }
@@ -324,6 +320,40 @@ extension HomeOptionsCardViewController: AddFavoritesDelegate {
             let done = UIAlertAction(title: Constants.Alerts.MaxFavorites.action, style: .default)
             alertController.addAction(done)
             present(alertController, animated: true, completion: nil)
+        }
+    }
+}
+
+private class RoundShadowedView: UIView {
+    
+    var containerView: UIView!
+    
+    func addRoundedCornersAndShadow(radius: CGFloat) {
+        backgroundColor = .clear
+        
+        layer.shadowColor = Colors.secondaryText.cgColor
+        layer.shadowOffset = CGSize(width: 0, height: radius/4)
+        layer.shadowOpacity = 0.4
+        layer.shadowRadius = radius/4
+        
+        containerView = UIView()
+        containerView.backgroundColor = .white
+        
+        containerView.layer.cornerRadius = radius
+        containerView.layer.masksToBounds = true
+        
+        addSubview(containerView)
+        
+        containerView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    override func addSubview(_ view: UIView) {
+        if view.isEqual(containerView) {
+            super.addSubview(view)
+        } else {
+            containerView.addSubview(view)
         }
     }
 }
