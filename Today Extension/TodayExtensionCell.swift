@@ -24,71 +24,65 @@ class TodayExtensionCell: UITableViewCell {
     // MARK: View vars
 
     var busIcon: BusIcon?
-    var departureLabel = UILabel() // ex: 10:00 AM at Collegetown Crossing
-    var destinationLabel = UILabel() // ex: To Baker Flagpole
+    var departureLabel = UILabel() // ex: To Baker Flagpole
+    var destinationLabel = UILabel() // ex: 10:00 AM at Collegetown Crossing
     var liveLabel = UILabel()
     var liveIndicatorView = LiveIndicator(size: .small, color: .clear)
 
     // MARK: Spacing vars
 
-    let horizontalOffset: CGFloat = 8.0
-    let leadingMargin: CGFloat = 74.0
     let leftMargin: CGFloat =  12.0
     let rightMargin: CGFloat = 16.0
     let verticalMargin: CGFloat = 20.0 // top & bottom margin
-    let verticalOffset: CGFloat = 2.0
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         contentView.addSubview(departureLabel)
-        contentView.addSubview(destinationLabel)
-        contentView.addSubview(liveLabel)
-        contentView.addSubview(liveIndicatorView)
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
         departureLabel.snp.makeConstraints { make in
-            make.top.equalTo(verticalMargin)
-            make.leading.equalTo(leadingMargin)
+            let leading: CGFloat = 74.0
+            let bottom: CGFloat = 71.0
+            
+            make.top.equalToSuperview().inset(verticalMargin)
+            make.bottom.equalToSuperview().inset(bottom)
+            make.leading.equalToSuperview().inset(leading)
             make.trailing.lessThanOrEqualToSuperview().inset(rightMargin)
-            make.height.equalTo(departureLabel.intrinsicContentSize.height)
         }
-
-        if let busIcon = busIcon {
-            busIcon.snp.makeConstraints { make in
-                make.top.equalTo(verticalMargin)
-                make.leading.equalTo(leftMargin)
-                make.height.equalTo(busIcon.intrinsicContentSize.height)
-                make.width.equalTo(busIcon.intrinsicContentSize.width)
-            }
-        }
-
+        
+        contentView.addSubview(destinationLabel)
         destinationLabel.snp.makeConstraints { make in
-            make.top.equalTo(departureLabel.snp.bottom).offset(verticalOffset)
+            let offset: CGFloat = 2.0
+            let bottom: CGFloat = 50.0
+            
+            make.top.equalTo(departureLabel.snp.bottom).offset(offset)
+            make.bottom.equalToSuperview().inset(bottom)
             make.leading.equalTo(departureLabel)
             make.trailing.lessThanOrEqualToSuperview().inset(rightMargin)
-            make.height.equalTo(destinationLabel.intrinsicContentSize.height)
         }
 
+        contentView.addSubview(liveLabel)
+        contentView.addSubview(liveIndicatorView)
         if showLiveElements {
             liveLabel.snp.makeConstraints { make in
+                let offset: CGFloat = 9.0
+                
+                make.top.equalTo(destinationLabel.snp.bottom).offset(offset)
                 make.bottom.equalToSuperview().inset(verticalMargin)
                 make.leading.equalTo(departureLabel)
-                make.height.equalTo(liveLabel.intrinsicContentSize.height)
-                make.width.equalTo(liveLabel.intrinsicContentSize.width)
-            }
-
-            liveIndicatorView.snp.makeConstraints { make in
-                make.centerY.equalTo(liveLabel.snp.centerY)
-                make.leading.equalTo(liveLabel.snp.trailing).offset(horizontalOffset)
                 make.trailing.lessThanOrEqualTo(rightMargin)
-                make.width.equalTo(liveIndicatorView.intrinsicContentSize.width)
+            }
+            
+            liveIndicatorView.snp.makeConstraints { make in
+                let offset: CGFloat = 8.0
+                
+                make.centerY.equalTo(liveLabel.snp.centerY)
+                make.leading.equalTo(liveLabel.snp.trailing).offset(offset)
+                make.trailing.lessThanOrEqualTo(rightMargin)
+                make.height.equalTo(liveIndicatorView.intrinsicContentSize.height)
             }
         }
+        
     }
 
     func configure(route: Route?, destination: String) {
@@ -99,10 +93,21 @@ class TodayExtensionCell: UITableViewCell {
                 busDirection = departDirection
                 busIcon = BusIcon(type: .directionSmall, number: departDirection.routeNumber)
                 contentView.addSubview(busIcon!)
-
+                
+                if let busIcon = busIcon {
+                    let bottom: CGFloat = 66.0
+                    busIcon.snp.makeConstraints { make in
+                        make.top.equalToSuperview().inset(verticalMargin)
+                        make.bottom.equalToSuperview().inset(bottom)
+                        make.leading.equalToSuperview().inset(leftMargin)
+                        make.width.equalTo(busIcon.intrinsicContentSize.width)
+                    }
+                }
+                
                 setUpDepartureLabel()
                 setUpDestinationLabel()
                 setUpLiveElements()
+                
             } else { // there is no bus to this destination (i.e. only walking)
                 setUpNoRoute()
             }
@@ -184,15 +189,11 @@ class TodayExtensionCell: UITableViewCell {
                 let boardTime = Time.timeString(from: Date(), to: delayedDepartureTime)
                 liveLabel.text = (boardTime == "0 min" ? "Board now" : "Board in \(boardTime)")
                 liveIndicatorView.setColor(to: Colors.lateRed)
-                contentView.addSubview(liveLabel)
-                contentView.addSubview(liveIndicatorView)
             case .onTime(date: let departureTime):
                 liveLabel.textColor = Colors.liveGreen
                 let boardTime = Time.timeString(from: Date(), to: departureTime)
                 liveLabel.text = (boardTime == "0 min" ? "Board now" : "Board in \(boardTime)")
                 liveIndicatorView.setColor(to: Colors.liveGreen)
-                contentView.addSubview(liveLabel)
-                contentView.addSubview(liveIndicatorView)
             case .noDelay(date: _):
                 showLiveElements = false
             }

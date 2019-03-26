@@ -11,7 +11,6 @@ import UIKit
 class LoadingTableViewCell: UITableViewCell {
 
     let loadingIndicator = LoadingIndicator()
-    let verticalMargin: CGFloat = 20.0 // top & bottom margin
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -19,9 +18,12 @@ class LoadingTableViewCell: UITableViewCell {
         contentView.addSubview(loadingIndicator)
         
         loadingIndicator.snp.makeConstraints { make in
-            make.top.equalTo(verticalMargin)
+            let width: CGFloat = 40.0
+            let verticalMargin: CGFloat = 20.0 // top & bottom margin
+            
+            make.top.equalToSuperview().inset(verticalMargin)
             make.bottom.equalToSuperview().inset(verticalMargin)
-            make.width.equalTo(40.0)
+            make.width.equalTo(width)
             make.center.equalToSuperview()
         }
     }

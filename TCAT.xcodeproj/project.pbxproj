@@ -49,7 +49,6 @@
 		7E75BAD621B3A72B00FB56BB /* TodayExtensionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */; };
 		7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
 		7EBD9D8722263089008BF900 /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
-		7EBD9D882226308F008BF900 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		7EBD9D8A22263094008BF900 /* LocationObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF73F0F21F60B0BD003B479D /* LocationObject.swift */; };
 		7EBD9D8B22263096008BF900 /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE3BC221F5863D50014D2BB /* Place.swift */; };
 		7EBD9D8D2226309A008BF900 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
@@ -62,9 +61,7 @@
 		7EBD9D9A22263107008BF900 /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBCD5E61E989E5800014641 /* Circle.swift */; };
 		7EBD9D9B22263114008BF900 /* LiveIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */; };
 		7EBD9D9C22263118008BF900 /* RouteLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA134441EC6A8CB00460B18 /* RouteLine.swift */; };
-		7EBD9D9D2226311A008BF900 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		7EBD9D9E22263120008BF900 /* WalkWithDistanceIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD659C8920508E1A00506BAC /* WalkWithDistanceIcon.swift */; };
-		7EBD9DA122263508008BF900 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		7EC15850222C827C00BA9DA8 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0002211FB37D0A00773109 /* LoadingIndicator.swift */; };
 		7EC15851222C82B900BA9DA8 /* RPCircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */; };
 		7EE04A5021B4503C002F0C52 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
@@ -72,17 +69,13 @@
 		7EE04A5321B4515B002F0C52 /* LocationObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF73F0F21F60B0BD003B479D /* LocationObject.swift */; };
 		7EE04A5421B4516E002F0C52 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
 		7EE04A5521B45192002F0C52 /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF84609D217139A30027FB62 /* Styles.swift */; };
-		7EE04A5721B45250002F0C52 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		7EE04A5821B45278002F0C52 /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE3BC221F5863D50014D2BB /* Place.swift */; };
-		7EE04A5A21B452BB002F0C52 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		7EE04A5B21B452D4002F0C52 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F51F6DB06A0073E8F7 /* Constants.swift */; };
 		7EE04A5C21B452EB002F0C52 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */; };
-		7EE04A5E21B45357002F0C52 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		7EE04A5F21B45363002F0C52 /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBCD5E61E989E5800014641 /* Circle.swift */; };
 		7EE04A6021B45378002F0C52 /* RouteLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA134441EC6A8CB00460B18 /* RouteLine.swift */; };
 		7EE04A6121B4538C002F0C52 /* WalkWithDistanceIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD659C8920508E1A00506BAC /* WalkWithDistanceIcon.swift */; };
 		7EE04A6221B453B1002F0C52 /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5D233B1E6367A100F8DECE /* Time.swift */; };
-		7EE04A6321B453C5002F0C52 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		7EE04A6421B453E3002F0C52 /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
 		7EE04A6921B455E0002F0C52 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE04A6721B454F4002F0C52 /* Shared.swift */; };
 		7EE04A6A21B45611002F0C52 /* EventPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94BD30021599E3200C9214E /* EventPayload.swift */; };
@@ -98,7 +91,6 @@
 		7EEF18A021B39C6200343FFD /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEF189F21B39C6200343FFD /* TodayViewController.swift */; };
 		7EEF18A721B39C6200343FFD /* Today Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7EEF189B21B39C6200343FFD /* Today Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7EF304692227502E006B327E /* Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D94BD2FC2159993D00C9214E /* Keys.plist */; };
-		7EF680E322263CF70093CACD /* (null) in Sources */ = {isa = PBXBuildFile; };
 		7EF680E422263D2F0093CACD /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8AF5F22206BBF60091AB8C /* Utilities.swift */; };
 		7EFDB7F72243009A006D5126 /* TodayExtensionErrorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFDB7F62243009A006D5126 /* TodayExtensionErrorCell.swift */; };
 		9CAD63CB367551D7A8B32C6E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E69224A160B2B078827D28A1 /* Pods_TCAT.framework */; };
@@ -1114,7 +1106,6 @@
 				224EB5A5214F2F01008232C2 /* AppShortcuts.swift in Sources */,
 				BF2DA891224539DE006E527D /* RouteDiagram.swift in Sources */,
 				BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */,
-				7EBD9D9D2226311A008BF900 /* (null) in Sources */,
 				7EBD9D8D2226309A008BF900 /* Route.swift in Sources */,
 				BFEDB85B2232F22100052D49 /* GeneralTableViewCell.swift in Sources */,
 				BFA53FEE1FD45D7000E770DF /* RouteDetailViewController.swift in Sources */,
@@ -1156,7 +1147,6 @@
 				226C8D762173AF69009985E3 /* VersionStore.swift in Sources */,
 				BF316CB02096352B005A14EF /* PhraseLabelFooterView.swift in Sources */,
 				BF18AE102083B7F6000C3D82 /* StoreReviewHelper.swift in Sources */,
-				7EBD9D882226308F008BF900 /* (null) in Sources */,
 				DDB49C9E1E8857FC00A99C35 /* Waypoint.swift in Sources */,
 				BFB86A07205C614C000794B2 /* OnboardingViewController.swift in Sources */,
 				7EBD9D95222630EF008BF900 /* Styles.swift in Sources */,
@@ -1205,11 +1195,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				7EC15850222C827C00BA9DA8 /* LoadingIndicator.swift in Sources */,
-				7EE04A5721B45250002F0C52 /* (null) in Sources */,
 				7EE04A5021B4503C002F0C52 /* Route.swift in Sources */,
 				7EF680E422263D2F0093CACD /* Utilities.swift in Sources */,
-				7EF680E322263CF70093CACD /* (null) in Sources */,
-				7EE04A5A21B452BB002F0C52 /* (null) in Sources */,
 				7EE04A6A21B45611002F0C52 /* EventPayload.swift in Sources */,
 				7EE04A5421B4516E002F0C52 /* BusIcon.swift in Sources */,
 				7E3C5B4122308D83000EFA10 /* LoadingTableViewCell.swift in Sources */,
@@ -1227,14 +1214,11 @@
 				7EC15851222C82B900BA9DA8 /* RPCircularProgress.swift in Sources */,
 				7EE04A5F21B45363002F0C52 /* Circle.swift in Sources */,
 				7E75BAD621B3A72B00FB56BB /* TodayExtensionCell.swift in Sources */,
-				7EE04A6321B453C5002F0C52 /* (null) in Sources */,
 				7EE04A6421B453E3002F0C52 /* BusLocation.swift in Sources */,
 				7E5FE3BC224922C000EF24D4 /* Extensions+Shared.swift in Sources */,
-				7EE04A5E21B45357002F0C52 /* (null) in Sources */,
 				7E155FD62231DA8400FE7A9B /* BusLocationView.swift in Sources */,
 				7EE04A5B21B452D4002F0C52 /* Constants.swift in Sources */,
 				7EEC17FF2214D48800EEF6C1 /* Keys.swift in Sources */,
-				7EBD9DA122263508008BF900 /* (null) in Sources */,
 				7EE04A5821B45278002F0C52 /* Place.swift in Sources */,
 				7E155FD92231DAAF00FE7A9B /* Direction.swift in Sources */,
 				7EEB14252231A35800134C8B /* Endpoints.swift in Sources */,

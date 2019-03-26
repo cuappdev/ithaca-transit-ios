@@ -29,9 +29,10 @@ class TodayExtensionErrorCell: UITableViewCell {
         super.layoutSubviews()
 
         boldLabel.snp.makeConstraints { make in
+            let leading: CGFloat = 60.0
+
             make.centerY.equalToSuperview()
-            make.left.equalTo(60.0)
-            make.width.equalTo(boldLabel.intrinsicContentSize.width)
+            make.leading.equalToSuperview().inset(leading)
         }
 
         mainLabel.snp.makeConstraints { make in
