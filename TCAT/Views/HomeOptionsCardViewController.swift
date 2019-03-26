@@ -11,7 +11,13 @@ import CoreLocation
 import DZNEmptyDataSet
 import SnapKit
 
+protocol HomeOptionsCardDelegate {
+    func updateSize()
+}
+
 class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate, UISearchBarDelegate {
+    
+    var delegate: HomeOptionsCardDelegate?
     
     var locationManager = CLLocationManager()
     var currentLocation: CLLocation?
@@ -65,6 +71,7 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
         tableView.dataSource = self
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
+        tableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
         
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
@@ -142,6 +149,12 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
         present(navController, animated: true, completion: nil)
     }
     
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "contentSize" {
+            print(change)
+            delegate?.updateSize()
+        }
+    }
 }
 
 extension HomeOptionsCardViewController: UITableViewDataSource {
@@ -217,6 +230,18 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         case .favorites:
             header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, displayAddButton: true)
             header.addFavoritesDelegate = self
+        case .seeAllStops:
+            containerView = UIView()
+            let seperatorView = UIView()
+            seperatorView.backgroundColor = Colors.backgroundWash
+            containerView?.addSubview(seperatorView)
+            containerView?.backgroundColor = .white
+            
+            seperatorView.snp.makeConstraints { (make) in
+                make.leading.trailing.equalToSuperview().inset(20)
+                make.height.equalTo(1)
+                make.top.equalToSuperview()
+            }
         case .searchResults:
             return nil
         default: break
@@ -232,7 +257,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch sections[section].type {
         case .favorites, .recentSearches: return 42
-        case .seeAllStops: return 0
+        case .seeAllStops: return 1
         default: return 24
         }
     }
@@ -284,7 +309,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
     }
 }
 
-extension HomeOptionsCardViewController: HomeOptionsCardDelegate {
+extension HomeOptionsCardViewController: HomeMapViewDelegate {
     func searchCancelButtonClicked() {
         searchBar.placeholder = Constants.General.searchPlaceholder
         searchBar.setShowsCancelButton(false, animated: true)
@@ -295,7 +320,6 @@ extension HomeOptionsCardViewController: HomeOptionsCardDelegate {
     func updatePlaces() {
         recentLocations = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
-        
     }
     
     func networkDown() {

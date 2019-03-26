@@ -13,7 +13,7 @@ import NotificationBannerSwift
 import SnapKit
 import UIKit
 
-protocol HomeOptionsCardDelegate {
+protocol HomeMapViewDelegate {
     func searchCancelButtonClicked()
     func updatePlaces()
     func networkDown()
@@ -22,7 +22,7 @@ protocol HomeOptionsCardDelegate {
 
 class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate, UISearchBarDelegate {
 
-    var delegate: HomeOptionsCardDelegate!
+    var delegate: HomeMapViewDelegate?
     var mapView: GMSMapView!
     var bounds = GMSCoordinateBounds()
     var menuButton: UIImageView!
@@ -30,9 +30,9 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
     var isNetworkDown = false {
         didSet {
             if isNetworkDown {
-                delegate.networkDown()
+                delegate?.networkDown()
             } else {
-                delegate.networkUp()
+                delegate?.networkUp()
             }
         }
     }
@@ -58,14 +58,12 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
         optionsCardVC = HomeOptionsCardViewController()
         add(optionsCardVC)
         delegate = optionsCardVC
+        optionsCardVC.delegate = self
         
         setupOptionsCard()
         setupMenuButton()
         
-        delegate.updatePlaces()
-        if !isNetworkDown {
-            delegate.networkUp()
-        }
+        updatePlaces()
         
         // Add Notification Observers
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -80,6 +78,7 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = true
+        updatePlaces()
     }
     override func viewWillDisappear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = false
@@ -184,7 +183,27 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
     
     @objc func keyboardWillHide(_ notification: Notification) {
         isKeyboardVisible = false
-        delegate.searchCancelButtonClicked()
+        delegate?.searchCancelButtonClicked()
     }
     
+    func updatePlaces() {
+        delegate?.updatePlaces()
+        if !isNetworkDown {
+            delegate?.networkUp()
+        } else {
+            delegate?.networkDown()
+        }
+        
+    }
+}
+
+extension HomeMapViewController: HomeOptionsCardDelegate {
+    func updateSize() {
+        optionsCard.snp.remakeConstraints { (make) in
+            make.trailing.equalToSuperview().inset(optionsCardInset)
+            make.leading.equalTo(menuButton)
+            make.top.equalTo(menuButton.snp.bottom).offset(28)
+            make.height.equalTo(optionsCardVC.calculateCardHeight())
+        }
+    }
 }

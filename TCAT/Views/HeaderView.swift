@@ -41,8 +41,8 @@ class HeaderView: UITableViewHeaderFooterView {
         contentView.addSubview(label)
 
         label.snp.makeConstraints { (make) in
-            make.leading.equalToSuperview().offset(12)
-            make.bottom.equalToSuperview().offset(-6)
+            make.leading.equalToSuperview().offset(20)
+            make.bottom.equalToSuperview().offset(-10)
         }
         if displayAddButton {
             createAddButton()
