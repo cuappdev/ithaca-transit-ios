@@ -11,7 +11,6 @@ import Foundation
 import SwiftyJSON
 import Crashlytics
 
-
 class Analytics {
     static let shared = Analytics()
     

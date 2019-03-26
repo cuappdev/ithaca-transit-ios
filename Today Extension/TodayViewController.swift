@@ -12,7 +12,6 @@ import SnapKit
 import CoreLocation
 import TRON
 import Alamofire
-import SwiftyJSON
 
 @objc(TodayViewController) class TodayViewController: UIViewController, NCWidgetProviding {
 

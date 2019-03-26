@@ -7,8 +7,8 @@
 //
 
 import UIKit
-import SwiftyJSON
 import CoreLocation
+import SwiftyJSON
 
 extension UIColor {
 

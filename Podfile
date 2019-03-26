@@ -2,11 +2,12 @@
 platform :ios, '10.0'
 
 # Comment this line if you're not using Swift and don't want to use dynamic frameworks
+
 use_frameworks!
 inhibit_all_warnings!
 
-target 'TCAT' do    
-    # Pods for TCAT
+# Pods for TCAT
+target 'TCAT' do
     
     # Location
     pod 'GoogleMaps', '~> 2.6'
@@ -47,6 +48,7 @@ target 'TCAT' do
     end
 end
 
+# Pods for Today Extension
 target 'Today Extension' do
     # Pods for Today Extension
 

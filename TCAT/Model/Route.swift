@@ -11,7 +11,6 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 import UIKit
-import SwiftyJSON
 import CoreLocation
 import MapKit
 
