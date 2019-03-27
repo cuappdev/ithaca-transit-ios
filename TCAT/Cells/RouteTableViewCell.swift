@@ -95,7 +95,7 @@ class RouteTableViewCell: UITableViewCell {
         styleVerticalStackView()
         
         contentView.addSubview(containerView)
-        contentView.addSubview(verticalStackView)
+        containerView.addSubview(verticalStackView)
         
         activateConstraints()
     }
