@@ -17,10 +17,6 @@ class TodayExtensionCell: UITableViewCell {
     var route: Route?
     var showLiveElements: Bool = true
 
-    // MARK: Log vars
-
-    var rowNum: Int?
-
     // MARK: View vars
 
     var busIcon: BusIcon?
@@ -28,6 +24,7 @@ class TodayExtensionCell: UITableViewCell {
     var destinationLabel = UILabel() // ex: 10:00 AM at Collegetown Crossing
     var liveLabel = UILabel()
     var liveIndicatorView = LiveIndicator(size: .small, color: .clear)
+    var liveBackground = UIView()
 
     // MARK: Spacing vars
 
@@ -41,51 +38,63 @@ class TodayExtensionCell: UITableViewCell {
 
         contentView.addSubview(departureLabel)
         departureLabel.snp.makeConstraints { make in
-            let leading: CGFloat = 74.0
+            let leading: CGFloat = 76.0
             let bottom: CGFloat = 71.0
-            
+
             make.top.equalToSuperview().inset(verticalMargin)
             make.bottom.equalToSuperview().inset(bottom)
             make.leading.equalToSuperview().inset(leading)
             make.trailing.lessThanOrEqualToSuperview().inset(rightMargin)
         }
-        
+
         contentView.addSubview(destinationLabel)
         destinationLabel.snp.makeConstraints { make in
             let offset: CGFloat = 2.0
             let bottom: CGFloat = 50.0
-            
+
             make.top.equalTo(departureLabel.snp.bottom).offset(offset)
             make.bottom.equalToSuperview().inset(bottom)
             make.leading.equalTo(departureLabel)
             make.trailing.lessThanOrEqualToSuperview().inset(rightMargin)
         }
 
+        contentView.addSubview(liveBackground)
         contentView.addSubview(liveLabel)
         contentView.addSubview(liveIndicatorView)
         if showLiveElements {
             liveLabel.snp.makeConstraints { make in
-                let offset: CGFloat = 9.0
-                
-                make.top.equalTo(destinationLabel.snp.bottom).offset(offset)
+                let vertical: CGFloat = 9.0
+                let inset: CGFloat = 8.0
+
+                make.top.equalTo(destinationLabel.snp.bottom).offset(vertical)
                 make.bottom.equalToSuperview().inset(verticalMargin)
-                make.leading.equalTo(departureLabel)
+                make.leading.equalTo(departureLabel).inset(inset)
                 make.trailing.lessThanOrEqualTo(rightMargin)
             }
-            
+
             liveIndicatorView.snp.makeConstraints { make in
                 let offset: CGFloat = 8.0
-                
+
                 make.centerY.equalTo(liveLabel.snp.centerY)
                 make.leading.equalTo(liveLabel.snp.trailing).offset(offset)
                 make.trailing.lessThanOrEqualTo(rightMargin)
                 make.height.equalTo(liveIndicatorView.intrinsicContentSize.height)
             }
+
+            liveBackground.snp.makeConstraints { make in
+                let offset: CGFloat = 8.0
+                let border: CGFloat = 2.0
+
+                make.leading.equalTo(departureLabel)
+                make.top.equalTo(liveLabel).offset(-border)
+                make.bottom.equalTo(liveLabel).offset(border)
+                make.trailing.equalTo(liveIndicatorView).offset(offset)
+            }
         }
-        
+
     }
 
-    func configure(route: Route?, destination: String) {
+    func configure(route: Route?, destination: String, top: CGFloat, bottom: CGFloat) {
         destinationName = destination
         if let route = route {
             self.route = route
@@ -93,21 +102,23 @@ class TodayExtensionCell: UITableViewCell {
                 busDirection = departDirection
                 busIcon = BusIcon(type: .directionSmall, number: departDirection.routeNumber)
                 contentView.addSubview(busIcon!)
-                
+
                 if let busIcon = busIcon {
                     let bottom: CGFloat = 66.0
+                    let offset: CGFloat = 18.0
+
                     busIcon.snp.makeConstraints { make in
                         make.top.equalToSuperview().inset(verticalMargin)
                         make.bottom.equalToSuperview().inset(bottom)
-                        make.leading.equalToSuperview().inset(leftMargin)
+                        make.leading.equalToSuperview().inset(offset)
                         make.width.equalTo(busIcon.intrinsicContentSize.width)
                     }
                 }
-                
+
                 setUpDepartureLabel()
                 setUpDestinationLabel()
                 setUpLiveElements()
-                
+
             } else { // there is no bus to this destination (i.e. only walking)
                 setUpNoRoute()
             }
@@ -118,15 +129,14 @@ class TodayExtensionCell: UITableViewCell {
 
     func setUpNoRoute() {
         showLiveElements = false
+
         let noRouteLabel = UILabel()
         noRouteLabel.font = .getFont(.regular, size: 14.0)
         noRouteLabel.textColor = Colors.primaryText
         noRouteLabel.textAlignment = .center
         noRouteLabel.lineBreakMode = .byTruncatingTail
         noRouteLabel.text = Constants.TodayExtension.noRoutesAvailable + "\(destinationName)."
-
         contentView.addSubview(noRouteLabel)
-
         noRouteLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.centerX.equalToSuperview()
@@ -150,8 +160,8 @@ class TodayExtensionCell: UITableViewCell {
         if let delay = direction.delay {
             let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
 
-            if Time.compare(date1: delayedDepartTime, date2: departTime) != .orderedSame {
-                return .late(date: delayedDepartTime)
+            if Time.compare(date1: departTime, date2: delayedDepartTime) == .orderedAscending {
+                return .late(date: departTime)
             } else {
                 return .onTime(date: departTime)
             }
@@ -185,15 +195,19 @@ class TodayExtensionCell: UITableViewCell {
             let delayState = getDelayState(fromDirection: direction)
             switch delayState {
             case .late(date: let delayedDepartureTime):
-                liveLabel.textColor = Colors.lateRed
+                liveLabel.textColor = Colors.white
+                liveBackground.backgroundColor = Colors.lateRed
+                liveBackground.layer.cornerRadius = 4
                 let boardTime = Time.timeString(from: Date(), to: delayedDepartureTime)
                 liveLabel.text = (boardTime == "0 min" ? "Board now" : "Board in \(boardTime)")
-                liveIndicatorView.setColor(to: Colors.lateRed)
+                liveIndicatorView.setColor(to: Colors.white)
             case .onTime(date: let departureTime):
-                liveLabel.textColor = Colors.liveGreen
+                liveLabel.textColor = Colors.white
+                liveBackground.backgroundColor = Colors.liveGreen
+                liveBackground.layer.cornerRadius = 4
                 let boardTime = Time.timeString(from: Date(), to: departureTime)
                 liveLabel.text = (boardTime == "0 min" ? "Board now" : "Board in \(boardTime)")
-                liveIndicatorView.setColor(to: Colors.liveGreen)
+                liveIndicatorView.setColor(to: Colors.white)
             case .noDelay(date: _):
                 showLiveElements = false
             }

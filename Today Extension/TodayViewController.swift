@@ -92,14 +92,15 @@ import Alamofire
     func widgetActiveDisplayModeDidChange(_ activeDisplayMode: NCWidgetDisplayMode, withMaximumSize maxSize: CGSize) {
         let expanded = activeDisplayMode == .expanded
         preferredContentSize = expanded ? CGSize(width: maxSize.width, height: cellHeight * CGFloat(numberOfFavorites)) : maxSize
-
         routesTable.reloadData()
     }
 
     func createConstraints() {
         routesTable.snp.makeConstraints { make in
+            let largeCells = CGFloat(116.0 * 2)
+            let normalCells = cellHeight * 3
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(cellHeight*5)
+            make.height.equalTo(largeCells + normalCells)
         }
     }
 
@@ -135,7 +136,6 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     private func setUpRoutesTableView() {
         routesTable.delegate = self
         routesTable.dataSource = self
-        routesTable.separatorStyle = .none
         routesTable.register(TodayExtensionCell.self, forCellReuseIdentifier: Constants.TodayExtension.contentCellIdentifier)
         routesTable.register(TodayExtensionErrorCell.self, forCellReuseIdentifier: Constants.TodayExtension.errorCellIdentifier)
         routesTable.register(LoadingTableViewCell.self, forCellReuseIdentifier: Constants.TodayExtension.loadingCellIdentifier)
@@ -178,15 +178,18 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
             // have routes!! 
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TodayExtension.contentCellIdentifier, for: indexPath) as! TodayExtensionCell
             routes[indexPath.row]?.formatDirections(start: Constants.General.currentLocation, end: favorites[indexPath.row])
-            cell.configure(route: routes[indexPath.row], destination: favorites[indexPath.row])
+
+            let topPadding = CGFloat((indexPath.row == 0) ? 8.0 : 2.0)
+            let bottomPadding = CGFloat((indexPath.row == numberOfFavorites - 1) ? 8.0 : 2.0)
+            cell.configure(route: routes[indexPath.row], destination: favorites[indexPath.row], top: topPadding, bottom: bottomPadding)
             cell.selectionStyle = .none
             return cell
         }
 
         // else: favorites = 0
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TodayExtension.errorCellIdentifier, for: indexPath) as! TodayExtensionErrorCell
-        cell.boldLabel.text = Constants.TodayExtension.addFavorite
-        cell.mainLabel.text = Constants.TodayExtension.showTrips
+        cell.mainLabel.text = Constants.TodayExtension.openIthacaTransit
+        cell.mainLabel.font = .getFont(.medium, size: 14.0)
         cell.selectionStyle = .none
         return cell
     }

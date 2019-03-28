@@ -264,14 +264,11 @@ class RouteTableViewCell: UITableViewCell {
                 
                 let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
                 
-                if Time.compare(date1: delayedDepartTime, date2: departTime) != .orderedSame
-                {
+                if Time.compare(date1: departTime, date2: delayedDepartTime) == .orderedAscending {
                     return .late(date: delayedDepartTime)
                 }
                 else {
-                    
                     return .onTime(date: departTime)
-                    
                 }
                 
             }

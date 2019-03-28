@@ -240,9 +240,8 @@ struct Constants {
         static let loadingCellIdentifier = "loadingCell"
 
         // cell strings
-        static let addFavorite = "Add a favorite "
         static let noRoutesAvailable = "No routes available to "
-        static let showTrips = "to show favorite trips here."
+        static let openIthacaTransit = "Open Ithaca Transit to view favorite shortcuts."
         static let unableToLoad = "Unable to Load Routes"
     }
 
