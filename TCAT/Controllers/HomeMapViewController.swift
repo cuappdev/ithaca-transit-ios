@@ -25,7 +25,6 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
     var delegate: HomeMapViewDelegate?
     var mapView: GMSMapView!
     var bounds = GMSCoordinateBounds()
-    var menuButton: UIImageView!
     var isKeyboardVisible = false
     var isNetworkDown = false {
         didSet {
@@ -61,7 +60,6 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
         optionsCardVC.delegate = self
         
         setupOptionsCard()
-        setupMenuButton()
         
         updatePlaces()
         
@@ -144,11 +142,6 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
         view = mapView
     }
     
-    func setupMenuButton() {
-        menuButton = UIImageView(image: #imageLiteral(resourceName: "list.png"))
-        menuButton.backgroundColor = .clear
-        view.addSubview(menuButton)
-    }
     
     func setupOptionsCard() {
         optionsCard = optionsCardVC.view
@@ -157,21 +150,14 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
     
     func setupConstraints() {
         
-        menuButton.snp.makeConstraints { (make) in
+        optionsCard.snp.makeConstraints { (make) in
+            make.trailing.equalToSuperview().inset(optionsCardInset)
             make.leading.equalToSuperview().inset(20)
             if #available(iOS 11.0, *) {
-                make.top.equalTo(view.safeAreaInsets.top + 60)
+                make.top.equalTo(view.safeAreaInsets.top + 40)
             } else {
                 make.top.equalToSuperview().offset(view.layoutMargins.top + 20)
             }
-            make.width.equalTo(32)
-            make.height.equalTo(22)
-        }
-        
-        optionsCard.snp.makeConstraints { (make) in
-            make.trailing.equalToSuperview().inset(optionsCardInset)
-            make.leading.equalTo(menuButton)
-            make.top.equalTo(menuButton.snp.bottom).offset(28)
             make.height.equalTo(optionsCardVC.calculateCardHeight())
         }
     }
@@ -201,8 +187,12 @@ extension HomeMapViewController: HomeOptionsCardDelegate {
     func updateSize() {
         optionsCard.snp.remakeConstraints { (make) in
             make.trailing.equalToSuperview().inset(optionsCardInset)
-            make.leading.equalTo(menuButton)
-            make.top.equalTo(menuButton.snp.bottom).offset(28)
+            make.leading.equalToSuperview().inset(20)
+            if #available(iOS 11.0, *) {
+                make.top.equalTo(view.safeAreaInsets.top + 40)
+            } else {
+                make.top.equalToSuperview().offset(view.layoutMargins.top + 20)
+            }
             make.height.equalTo(optionsCardVC.calculateCardHeight())
         }
     }

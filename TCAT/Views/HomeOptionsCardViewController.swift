@@ -23,6 +23,7 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
     var currentLocation: CLLocation?
     var tableView: UITableView!
     var searchBar: UISearchBar!
+    let infoButton = UIButton(type: .infoLight)
     var recentLocations: [Place] = [] {
         didSet {
             if recentLocations.count > 2 {
@@ -59,6 +60,7 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
         
         setupTableView()
         setupSearchBar()
+        setupInfoButton()
         setupSearchBarSeperator()
         
         setupConstraints()
@@ -95,6 +97,13 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
         view.addSubview(searchBar)
     }
     
+    func setupInfoButton() {
+        infoButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 0)
+        infoButton.contentVerticalAlignment = .center
+        infoButton.addTarget(self, action: #selector(openInformationScreen), for: .touchUpInside)
+        view.addSubview(infoButton)
+    }
+    
     func setupSearchBarSeperator() {
         searchBarSeperator = UIView()
         searchBarSeperator.backgroundColor = Colors.backgroundWash
@@ -102,8 +111,15 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
     }
     
     func setupConstraints() {
+        infoButton.snp.makeConstraints { (make) in
+            make.trailing.top.equalToSuperview().inset(10)
+            make.width.equalTo(30)
+            make.height.equalTo(38)
+        }
+        
         searchBar.snp.makeConstraints { (make) in
-            make.leading.top.trailing.equalToSuperview()
+            make.leading.top.equalToSuperview()
+            make.trailing.equalTo(infoButton.snp.leading)
             make.height.equalTo(searchBarHeight)
         }
         
@@ -147,6 +163,13 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
         let favoritesTVC = FavoritesTableViewController()
         let navController = CustomNavigationController(rootViewController: favoritesTVC)
         present(navController, animated: true, completion: nil)
+    }
+    
+    /* Open information screen */
+    @objc func openInformationScreen() {
+        let informationViewController = InformationViewController()
+        let navigationVC = CustomNavigationController(rootViewController: informationViewController)
+        present(navigationVC, animated: true)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
