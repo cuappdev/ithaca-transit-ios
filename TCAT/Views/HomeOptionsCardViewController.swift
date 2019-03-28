@@ -15,7 +15,7 @@ protocol HomeOptionsCardDelegate {
     func updateSize()
 }
 
-class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate, UISearchBarDelegate {
+class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     
     var delegate: HomeOptionsCardDelegate?
     
@@ -59,9 +59,9 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
         super.viewDidLoad()
         
         setupTableView()
-        setupSearchBar()
         setupInfoButton()
         setupSearchBarSeperator()
+        setupSearchBar()
         
         setupConstraints()
     }
@@ -177,6 +177,13 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
             print(change)
             delegate?.updateSize()
         }
+    }
+}
+
+extension HomeOptionsCardViewController: UISearchBarDelegate {
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        print("HERE")
+        return true
     }
 }
 

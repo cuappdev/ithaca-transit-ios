@@ -36,7 +36,6 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
         }
     }
     var optionsCardVC: HomeOptionsCardViewController!
-    var optionsCard: UIView!
     
     let optionsCardInset = UIEdgeInsets.init(top: 92, left: 20, bottom: 0, right: 20)
     let minZoom: Float = 12
@@ -53,25 +52,19 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupMapView()
+
         optionsCardVC = HomeOptionsCardViewController()
         add(optionsCardVC)
         delegate = optionsCardVC
         optionsCardVC.delegate = self
-        
-        setupOptionsCard()
-        
         updatePlaces()
-        
+
         // Add Notification Observers
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+
         setupConstraints()
-    }
-    
-    override func loadView() {
-        setupMapView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -128,29 +121,22 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
         mapView.settings.indoorPicker = false
         mapView.isBuildingsEnabled = false
         mapView.isIndoorEnabled = false
-        
-        // Pre-iOS 11 padding. See viewDidLoad for iOS 11 version
-        let top = (navigationController?.navigationBar.frame.height ?? 44) + UIApplication.shared.statusBarFrame.height
-        mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: 0, right: 0)
-        
+
         let northEast = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.north, longitude: Constants.Values.RouteMaxima.east)
         let southWest = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.south, longitude: Constants.Values.RouteMaxima.west)
         let panBounds = GMSCoordinateBounds(coordinate: northEast, coordinate: southWest)
         mapView.cameraTargetBounds = panBounds
         
         self.mapView = mapView
-        view = mapView
-    }
-    
-    
-    func setupOptionsCard() {
-        optionsCard = optionsCardVC.view
-        view.addSubview(optionsCard)
+        view.addSubview(mapView)
+        mapView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
     
     func setupConstraints() {
-        
-        optionsCard.snp.makeConstraints { (make) in
+
+        optionsCardVC.view.snp.makeConstraints { (make) in
             make.trailing.equalToSuperview().inset(optionsCardInset)
             make.leading.equalToSuperview().inset(20)
             if #available(iOS 11.0, *) {
@@ -185,7 +171,7 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
 
 extension HomeMapViewController: HomeOptionsCardDelegate {
     func updateSize() {
-        optionsCard.snp.remakeConstraints { (make) in
+        optionsCardVC.view.snp.remakeConstraints { (make) in
             make.trailing.equalToSuperview().inset(optionsCardInset)
             make.leading.equalToSuperview().inset(20)
             if #available(iOS 11.0, *) {
