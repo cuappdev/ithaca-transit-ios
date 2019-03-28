@@ -118,13 +118,11 @@ class TodayExtensionCell: UITableViewCell {
                 setUpDepartureLabel()
                 setUpDestinationLabel()
                 setUpLiveElements()
-
-            } else { // there is no bus to this destination (i.e. only walking)
-                setUpNoRoute()
+                return
             }
-        } else { // no route at all
-            setUpNoRoute()
         }
+        // no route at all or there is no bus to this destination (i.e. only walking)
+        setUpNoRoute()
     }
 
     func setUpNoRoute() {
