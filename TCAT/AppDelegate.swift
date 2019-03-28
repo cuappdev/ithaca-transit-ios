@@ -16,11 +16,13 @@ import Crashlytics
 import SafariServices
 import WhatsNewKit
 
+// This is used for app-specific preferences
+let userDefaults = UserDefaults.standard
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    let userDefaults = UserDefaults.standard
     let encoder = JSONEncoder()
     let userDataInits: [(key: String, defaultValue: Any)] = [
         (key: Constants.UserDefaults.onboardingShown, defaultValue: false),
@@ -51,7 +53,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         for (key, defaultValue) in userDataInits {
             if userDefaults.value(forKey: key) == nil {
-                userDefaults.set(defaultValue, forKey: key)
+                if key == Constants.UserDefaults.favorites {
+                    sharedUserDefaults?.set(defaultValue, forKey: key)
+                } else {
+                    userDefaults.set(defaultValue, forKey: key)
+                }
+            }
+            else if key == Constants.UserDefaults.favorites && sharedUserDefaults?.value(forKey: key) == nil{
+                sharedUserDefaults?.set(userDefaults.value(forKey: key), forKey: key)
             }
         }
 
@@ -141,7 +150,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             dispatchGroup.enter()
             convertDataToPlaces(data: favorites) { (places, error) in
                 if let encodedObject = try? self.encoder.encode(places), error == nil {
-                    self.userDefaults.set(encodedObject, forKey: favoritesKey)
+                    userDefaults.set(encodedObject, forKey: favoritesKey)
                 } else {
                     success = false
                     description = "Favorites Conversion Failed: \(error ?? "Encoder")"
@@ -162,7 +171,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             dispatchGroup.enter()
             convertDataToPlaces(data: recents) { (places, error) in
                 if let encodedObject = try? self.encoder.encode(places), error == nil {
-                    self.userDefaults.set(encodedObject, forKey: recentSearchesKey)
+                    userDefaults.set(encodedObject, forKey: recentSearchesKey)
                 } else {
                     success = false
                     description = "Recent Searches Conversion Failed: \(error ?? "Encoder")"
@@ -228,9 +237,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func setupUniqueIdentifier() {
         if
             let uid = UIDevice.current.identifierForVendor?.uuidString,
-            uid != userDefaults.string(forKey: Constants.UserDefaults.uid)
+            uid != sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid)
         {
-            userDefaults.set(uid, forKey: Constants.UserDefaults.uid)
+            sharedUserDefaults?.set(uid, forKey: Constants.UserDefaults.uid)
         }
     }
     
@@ -261,7 +270,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.handleGetAllStopsError()
             } else {
                 let encodedObject = try? JSONEncoder().encode(allBusStops)
-                self.userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
+                userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
             }
         }, failure: { error in
             print("getBusStops error:", error.localizedDescription)
@@ -308,7 +317,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
 
-        if url.absoluteString.contains("getRoutes") {
+        if url.absoluteString.contains("getRoutes") { // siri URL scheme
             var latitude: CLLocationDegrees?
             var longitude: CLLocationDegrees?
             var stopName: String?

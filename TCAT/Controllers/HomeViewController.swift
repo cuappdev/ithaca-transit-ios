@@ -19,8 +19,6 @@ import WhatsNewKit
 
 class HomeViewController: UIViewController {
 
-    let userDefaults = UserDefaults.standard
-
     var locationManager = CLLocationManager()
     var currentLocation: CLLocation?
     var timer: Timer?
@@ -520,7 +518,7 @@ extension HomeViewController: CLLocationManagerDelegate {
             }
 
             let dontRemindAgainAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default) { _ in
-                self.userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
+                userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
             }
             alertController.addAction(dontRemindAgainAction)
 

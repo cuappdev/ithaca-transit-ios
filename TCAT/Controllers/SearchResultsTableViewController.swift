@@ -23,7 +23,6 @@ protocol SearchBarCancelDelegate {
 
 class SearchResultsTableViewController: UITableViewController {
 
-    let userDefaults = UserDefaults.standard
     let locationManager = CLLocationManager()
 
     var currentLocation: Place?
