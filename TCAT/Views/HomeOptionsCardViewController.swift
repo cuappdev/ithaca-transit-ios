@@ -222,14 +222,14 @@ extension HomeOptionsCardViewController {
         banner = nil
         
         switch reachability.connection {
-//        case .none:
-//            banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
-//            banner?.autoDismiss = false
-//            banner?.show(queuePosition: .front, on: navigationController)
-//            isNetworkDown = true
-//            searchBar.isUserInteractionEnabled = false
-//            sections = []
-        case .cellular, .wifi, .none:
+        case .none:
+            banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
+            banner?.autoDismiss = false
+            banner?.show(queuePosition: .front, on: navigationController)
+            isNetworkDown = true
+            searchBar.isUserInteractionEnabled = false
+            sections = []
+        case .cellular, .wifi:
             isNetworkDown = false
             sections = createSections()
             searchBar.isUserInteractionEnabled = true
@@ -394,9 +394,18 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let place = sections[indexPath.section].items[indexPath.row]
-            favorites = SearchTableViewManager.shared.deleteFavorite(favorite: place, allFavorites: favorites)
-            sections = createSections()
+            switch sections[indexPath.section].type {
+            case .favorites:
+                let place = sections[indexPath.section].items[indexPath.row]
+                favorites = SearchTableViewManager.shared.deleteFavorite(favorite: place, allFavorites: favorites)
+                sections = createSections()
+            case .recentSearches:
+                let place = sections[indexPath.section].items[indexPath.row]
+                recentLocations = SearchTableViewManager.shared.deleteRecent(recent: place, allRecents: recentLocations)
+                sections = createSections()
+            default: break
+            }
+            
         }
     }
     
@@ -451,7 +460,8 @@ extension HomeOptionsCardViewController: HeaderViewDelegate {
     
     func clearRecentSearches() {
         SearchTableViewManager.shared.deleteAllRecents()
-        tableView.reloadData()
+        recentLocations = []
+        sections = createSections()
     }
 }
 
