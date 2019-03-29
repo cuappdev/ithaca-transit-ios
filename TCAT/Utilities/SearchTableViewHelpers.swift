@@ -93,6 +93,38 @@ class SearchTableViewManager {
 
         return newFavoritesList
     }
+    
+    //returns the rest so we don't have to re-unarchive it
+    func deleteRecent(recent: Place, allRecents: [Place]) -> [Place] {
+        var newRecentsList: [Place] = []
+        for item in allRecents {
+            if recent.isEqual(item) {
+                continue
+            } else {
+                newRecentsList.append(item)
+            }
+        }
+        
+        do {
+            let data = try encoder.encode(newRecentsList)
+            userDefaults.set(data, forKey: Constants.UserDefaults.recentSearch)
+        } catch let error {
+            print(error)
+        }
+        
+        return newRecentsList
+    }
+    
+    //clears recent searches
+    func deleteAllRecents() {
+        let newRecents = [Place]()
+        do {
+            let data = try encoder.encode(newRecents)
+            userDefaults.set(data, forKey: Constants.UserDefaults.recentSearch)
+        } catch let error {
+            print(error)
+        }
+    }
 
     /// Possible Keys: Constants.UserDefaults (.recentSearch | .favorites)
     func insertPlace(for key: String, place: Place, bottom: Bool = false) {

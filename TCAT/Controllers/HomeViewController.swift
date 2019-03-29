@@ -380,10 +380,10 @@ extension HomeViewController: UITableViewDelegate {
 
         switch sections[section].type {
         case .recentSearches:
-            header.setupView(labelText: Constants.TableHeaders.recentSearches, displayAddButton: false)
+            header.setupView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear)
         case .favorites:
-            header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, displayAddButton: true)
-            header.addFavoritesDelegate = self
+            header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, buttonType: .add)
+            header.headerViewDelegate = self
         case .seeAllStops, .searchResults:
             return nil
         default: break
@@ -602,7 +602,11 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 }
 
 // MARK: AddFavorites Delegate
-extension HomeViewController: AddFavoritesDelegate {
+extension HomeViewController: HeaderViewDelegate {
+    func clearRecentSearches() {
+        
+    }
+    
 
     func displayFavoritesTVC() {
         if favorites.count < 5 {

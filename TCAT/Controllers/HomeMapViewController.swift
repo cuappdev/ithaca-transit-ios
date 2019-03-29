@@ -9,32 +9,13 @@
 import CoreLocation
 import GoogleMaps
 import MapKit
-import NotificationBannerSwift
 import SnapKit
 import UIKit
 
-protocol HomeMapViewDelegate {
-    func searchCancelButtonClicked()
-    func updatePlaces()
-    func networkDown()
-    func networkUp()
-}
-
 class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate, UISearchBarDelegate {
 
-    var delegate: HomeMapViewDelegate?
     var mapView: GMSMapView!
     var bounds = GMSCoordinateBounds()
-    var isKeyboardVisible = false
-    var isNetworkDown = false {
-        didSet {
-            if isNetworkDown {
-                delegate?.networkDown()
-            } else {
-                delegate?.networkUp()
-            }
-        }
-    }
     var optionsCardVC: HomeOptionsCardViewController!
     
     let optionsCardInset = UIEdgeInsets.init(top: 92, left: 20, bottom: 0, right: 20)
@@ -42,69 +23,22 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
     let defaultZoom: Float = 15.5
     let maxZoom: Float = 25
     
-    let reachability = Reachability(hostname: Network.ipAddress)
-    
-    var banner: StatusBarNotificationBanner? {
-        didSet {
-            setNeedsStatusBarAppearanceUpdate()
-        }
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupMapView()
 
         optionsCardVC = HomeOptionsCardViewController()
         add(optionsCardVC)
-        delegate = optionsCardVC
         optionsCardVC.delegate = self
-        updatePlaces()
-
-        // Add Notification Observers
-//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 
         setupConstraints()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = true
-        updatePlaces()
     }
     override func viewWillDisappear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = false
-    }
-    
-    override func viewDidLayoutSubviews() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(reachabilityChanged(_:)),
-                                               name: .reachabilityChanged,
-                                               object: reachability)
-        do {
-            try reachability?.startNotifier()
-        } catch {
-            print("HomeVC viewDidLayoutSubviews: Could not start reachability notifier")
-        }
-    }
-    
-    @objc func reachabilityChanged(_ notification: Notification) {
-        guard let reachability = notification.object as? Reachability else {
-            return
-        }
-        
-        // Dismiss current banner or loading indicator, if any
-        banner?.dismiss()
-        banner = nil
-        
-        switch reachability.connection {
-        case .none:
-            banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
-            banner?.autoDismiss = false
-            banner?.show(queuePosition: .front, on: navigationController)
-            self.isNetworkDown = true
-        case .cellular, .wifi:
-            self.isNetworkDown = false
-        }
     }
     
     func setupMapView() {
@@ -146,26 +80,6 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
             }
             make.height.equalTo(optionsCardVC.calculateCardHeight())
         }
-    }
-
-    /* Keyboard Functions */
-    @objc func keyboardWillShow(_ notification: Notification) {
-        isKeyboardVisible = true
-    }
-    
-    @objc func keyboardWillHide(_ notification: Notification) {
-        isKeyboardVisible = false
-        delegate?.searchCancelButtonClicked()
-    }
-    
-    func updatePlaces() {
-        delegate?.updatePlaces()
-        if !isNetworkDown {
-            delegate?.networkUp()
-        } else {
-            delegate?.networkDown()
-        }
-        
     }
 }
 

@@ -160,9 +160,9 @@ class SearchResultsTableViewController: UITableViewController {
 
         switch sections[section].type {
         case .recentSearches:
-            header.setupView(labelText: Constants.TableHeaders.recentSearches, displayAddButton: false)
+            header.setupView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear)
         case .favorites:
-            header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, displayAddButton: false)
+            header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, buttonType: .add)
         case .seeAllStops, .searchResults:
             return nil
         default:

@@ -9,13 +9,19 @@
 import UIKit
 import SnapKit
 
-protocol AddFavoritesDelegate {
+protocol HeaderViewDelegate {
     func displayFavoritesTVC()
+    func clearRecentSearches()
 }
 
+enum buttonOption {
+    case add
+    case clear
+    case none
+}
 class HeaderView: UITableViewHeaderFooterView {
     
-    var addFavoritesDelegate: AddFavoritesDelegate?
+    var headerViewDelegate: HeaderViewDelegate?
 
     var label: UILabel = {
         let label = UILabel()
@@ -24,19 +30,17 @@ class HeaderView: UITableViewHeaderFooterView {
         return label
     }()
 
-    var addButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Add", for: .normal)
-        button.setTitleColor(Colors.tcatBlue, for: .normal)
-        button.addTarget(self, action: #selector(addNewFavorite), for: .touchUpInside)
-        return button
-    }()
+    var button: UIButton?
 
     @objc func addNewFavorite(sender: UIButton) {
-        addFavoritesDelegate?.displayFavoritesTVC()
+        headerViewDelegate?.displayFavoritesTVC()
+    }
+    
+    @objc func clearRecentSearches(sender: UIButton) {
+        headerViewDelegate?.clearRecentSearches()
     }
 
-    func setupView(labelText: String, displayAddButton: Bool = false) {
+    func setupView(labelText: String, buttonType: buttonOption) {
         label.text = labelText
         contentView.addSubview(label)
 
@@ -44,16 +48,29 @@ class HeaderView: UITableViewHeaderFooterView {
             make.leading.equalToSuperview().offset(20)
             make.bottom.equalToSuperview().offset(-10)
         }
-        if displayAddButton {
-            createAddButton()
-        }
+        createButton(type: buttonType)
     }
 
-    func createAddButton() {
-        contentView.addSubview(addButton)
-        addButton.snp.makeConstraints { (make) in
-            make.centerY.equalTo(label.snp.centerY)
-            make.trailing.equalToSuperview().offset(-12)
+    func createButton(type: buttonOption) {
+        button = UIButton(type: .system)
+        button?.setTitleColor(Colors.tcatBlue, for: .normal)
+        
+        switch type {
+        case .add:
+            button?.setTitle("Add", for: .normal)
+            button?.addTarget(self, action: #selector(addNewFavorite), for: .touchUpInside)
+        case .clear:
+            button?.setTitle("Clear", for: .normal)
+            button?.addTarget(self, action: #selector(clearRecentSearches), for: .touchUpInside)
+        default: return
+        }
+        
+        if let button = button {
+            contentView.addSubview(button)
+            button.snp.makeConstraints { (make) in
+                make.centerY.equalTo(label.snp.centerY)
+                make.trailing.equalToSuperview().offset(-12)
+            }
         }
     }
 }

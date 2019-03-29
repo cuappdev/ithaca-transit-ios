@@ -9,21 +9,34 @@
 import UIKit
 import CoreLocation
 import DZNEmptyDataSet
+import NotificationBannerSwift
 import SnapKit
 
 protocol HomeOptionsCardDelegate {
     func updateSize()
 }
 
-class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
+class HomeOptionsCardViewController: UIViewController {
     
     var delegate: HomeOptionsCardDelegate?
     
+    let reachability = Reachability(hostname: Network.ipAddress)
+    var banner: StatusBarNotificationBanner? {
+        didSet {
+            setNeedsStatusBarAppearanceUpdate()
+        }
+    }
     var locationManager = CLLocationManager()
     var currentLocation: CLLocation?
     var tableView: UITableView!
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
+    var searchBarSeperator: UIView!
+    var timer: Timer?
+    var searchResultsSection: Section!
+
+    var isNetworkDown = false
+    let searchBarHeight = 54
     var recentLocations: [Place] = [] {
         didSet {
             if recentLocations.count > 2 {
@@ -46,17 +59,11 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
             }
         }
     }
-    let searchBarHeight = 54
-    var searchBarSeperator: UIView!
-    
-    override func loadView() {
-        let customView = RoundShadowedView()
-        customView.addRoundedCornersAndShadow(radius: 10)
-        view = customView
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        updatePlaces()
         
         setupTableView()
         setupInfoButton()
@@ -71,14 +78,12 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.emptyDataSetSource = self
-        tableView.emptyDataSetDelegate = self
         tableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
-        
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.showsVerticalScrollIndicator = false
+        tableView.rowHeight = 50
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
         view.addSubview(tableView)
@@ -100,6 +105,7 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
     func setupInfoButton() {
         infoButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 0)
         infoButton.contentVerticalAlignment = .center
+        infoButton.tintColor = .black
         infoButton.addTarget(self, action: #selector(openInformationScreen), for: .touchUpInside)
         view.addSubview(infoButton)
     }
@@ -112,7 +118,8 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
     
     func setupConstraints() {
         infoButton.snp.makeConstraints { (make) in
-            make.trailing.top.equalToSuperview().inset(10)
+            make.centerY.equalTo(view.snp.top).inset(searchBarHeight/2)
+            make.trailing.equalToSuperview().inset(16)
             make.width.equalTo(30)
             make.height.equalTo(38)
         }
@@ -156,7 +163,12 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
     }
     
     func calculateCardHeight() -> CGFloat {
-        return tableView.contentSize.height + CGFloat(searchBarHeight)
+        return min(tableView.contentSize.height + CGFloat(searchBarHeight), UIScreen.main.bounds.height/2)
+    }
+    
+    func updatePlaces() {
+        recentLocations = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
+        favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
     }
     
     @objc func presentFavoritesTVC(sender: UIButton? = nil) {
@@ -172,18 +184,105 @@ class HomeOptionsCardViewController: UIViewController, DZNEmptyDataSetSource, DZ
         present(navigationVC, animated: true)
     }
     
+    /* Get Search Results */
+    @objc func getPlaces(timer: Timer) {
+        let searchText = (timer.userInfo as! [String: String])["searchText"]!
+        if !searchText.isEmpty {
+            Network.getSearchResults(searchText: searchText).perform(withSuccess: { response in
+                self.searchResultsSection = Section(type: .searchResults, items: response.data)
+                self.tableView.contentInset = .init(top: -18, left: 0, bottom: 0, right: 0)
+                self.sections = [self.searchResultsSection]
+            })
+        } else {
+            sections = createSections()
+        }
+    }
+    
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "contentSize" {
-            print(change)
             delegate?.updateSize()
         }
     }
 }
 
+extension HomeOptionsCardViewController {
+    override func loadView() {
+        let customView = RoundShadowedView()
+        customView.addRoundedCornersAndShadow(radius: 10)
+        view = customView
+    }
+    
+    @objc func reachabilityChanged(_ notification: Notification) {
+        guard let reachability = notification.object as? Reachability else {
+            return
+        }
+        
+        // Dismiss current banner or loading indicator, if any
+        banner?.dismiss()
+        banner = nil
+        
+        switch reachability.connection {
+//        case .none:
+//            banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
+//            banner?.autoDismiss = false
+//            banner?.show(queuePosition: .front, on: navigationController)
+//            isNetworkDown = true
+//            searchBar.isUserInteractionEnabled = false
+//            sections = []
+        case .cellular, .wifi, .none:
+            isNetworkDown = false
+            sections = createSections()
+            searchBar.isUserInteractionEnabled = true
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        updatePlaces()
+        if !isNetworkDown {
+            sections = createSections()
+        }
+        
+        // Add Notification Observers
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(reachabilityChanged(_:)),
+                                               name: .reachabilityChanged,
+                                               object: reachability)
+        do {
+            try reachability?.startNotifier()
+        } catch {
+            print("HomeVC viewDidLayoutSubviews: Could not start reachability notifier")
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        reachability?.stopNotifier()
+        
+        // Remove Notification Observers
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+        
+        // Remove banner and loading indicator
+        banner?.dismiss()
+        banner = nil
+    }
+}
+
 extension HomeOptionsCardViewController: UISearchBarDelegate {
-    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-        print("HERE")
-        return true
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.placeholder = Constants.General.searchPlaceholder
+        searchBar.setShowsCancelButton(false, animated: true)
+        searchBar.endEditing(true)
+        searchBar.text = nil
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
     }
 }
 
@@ -239,7 +338,8 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         
         switch sections[section].type {
         case .recentSearches:
-            header.setupView(labelText: Constants.TableHeaders.recentSearches, displayAddButton: false)
+            header.setupView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear)
+            header.headerViewDelegate = self
             containerView = UIView()
             
             let seperatorView = UIView()
@@ -258,8 +358,8 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
                 make.top.equalTo(seperatorView.snp.bottom)
             }
         case .favorites:
-            header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, displayAddButton: true)
-            header.addFavoritesDelegate = self
+            header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, buttonType: .add)
+            header.headerViewDelegate = self
         case .seeAllStops:
             containerView = UIView()
             let seperatorView = UIView()
@@ -290,10 +390,6 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         case .seeAllStops: return 1
         default: return 24
         }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50.0
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -339,31 +435,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
     }
 }
 
-extension HomeOptionsCardViewController: HomeMapViewDelegate {
-    func searchCancelButtonClicked() {
-        searchBar.placeholder = Constants.General.searchPlaceholder
-        searchBar.setShowsCancelButton(false, animated: true)
-        searchBar.endEditing(true)
-        searchBar.text = nil
-    }
-    
-    func updatePlaces() {
-        recentLocations = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
-        favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
-    }
-    
-    func networkDown() {
-       searchBar.isUserInteractionEnabled = false
-       sections = []
-    }
-    
-    func networkUp() {
-        sections = createSections()
-        searchBar.isUserInteractionEnabled = true
-    }
-}
-
-extension HomeOptionsCardViewController: AddFavoritesDelegate {
+extension HomeOptionsCardViewController: HeaderViewDelegate {
     func displayFavoritesTVC() {
         if favorites.count < 2 {
             presentFavoritesTVC()
@@ -376,8 +448,14 @@ extension HomeOptionsCardViewController: AddFavoritesDelegate {
             present(alertController, animated: true, completion: nil)
         }
     }
+    
+    func clearRecentSearches() {
+        SearchTableViewManager.shared.deleteAllRecents()
+        tableView.reloadData()
+    }
 }
 
+// Necessary to have shadows AND rounded corners
 private class RoundShadowedView: UIView {
     
     var containerView: UIView!
