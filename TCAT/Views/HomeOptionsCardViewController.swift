@@ -9,6 +9,7 @@
 import UIKit
 import CoreLocation
 import DZNEmptyDataSet
+import GoogleMaps
 import NotificationBannerSwift
 import SnapKit
 
@@ -57,6 +58,7 @@ class HomeOptionsCardViewController: UIViewController {
             if sections.isEmpty {
                 tableView.tableHeaderView = .zero
             }
+            delegate?.updateSize()
         }
     }
 
@@ -78,7 +80,6 @@ class HomeOptionsCardViewController: UIViewController {
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
         tableView.tableFooterView = UIView(frame: .zero)
@@ -143,6 +144,7 @@ class HomeOptionsCardViewController: UIViewController {
     }
     
     func createSections() -> [Section] {
+        tableView.contentInset = .zero
         var allSections: [Section] = []
         let recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
         let seeAllStopsSection = Section(type: .seeAllStops, items: [])
@@ -171,6 +173,31 @@ class HomeOptionsCardViewController: UIViewController {
         favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
     }
     
+    func animateInInfoButton() {
+        UIView.animate(withDuration: 0.1) {
+            self.infoButton.alpha = 1
+            
+            self.searchBar.snp.remakeConstraints { (make) in
+                make.leading.top.equalToSuperview()
+                make.trailing.equalTo(self.infoButton.snp.leading)
+                make.height.equalTo(self.searchBarHeight)
+            }
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    func animateOutInfoButton() {
+        UIView.animate(withDuration: 0.2) {
+            self.infoButton.alpha = 0
+            self.searchBar.snp.remakeConstraints { (make) in
+                make.leading.top.equalToSuperview()
+                make.trailing.equalTo(self.infoButton.snp.trailing)
+                make.height.equalTo(self.searchBarHeight)
+            }
+            self.view.layoutIfNeeded()
+        }
+    }
+    
     @objc func presentFavoritesTVC(sender: UIButton? = nil) {
         let favoritesTVC = FavoritesTableViewController()
         let navController = CustomNavigationController(rootViewController: favoritesTVC)
@@ -190,21 +217,16 @@ class HomeOptionsCardViewController: UIViewController {
         if !searchText.isEmpty {
             Network.getSearchResults(searchText: searchText).perform(withSuccess: { response in
                 self.searchResultsSection = Section(type: .searchResults, items: response.data)
-                self.tableView.contentInset = .init(top: -18, left: 0, bottom: 0, right: 0)
+                self.tableView.contentInset = .init(top: -24, left: 0, bottom: 0, right: 0)
                 self.sections = [self.searchResultsSection]
             })
         } else {
             sections = createSections()
         }
     }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "contentSize" {
-            delegate?.updateSize()
-        }
-    }
 }
 
+// MARK: VC Life Cycle setup
 extension HomeOptionsCardViewController {
     override func loadView() {
         let customView = RoundShadowedView()
@@ -267,6 +289,7 @@ extension HomeOptionsCardViewController {
     }
 }
 
+// MARK: Search Bar Delegate
 extension HomeOptionsCardViewController: UISearchBarDelegate {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -274,9 +297,12 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.endEditing(true)
         searchBar.text = nil
+        animateInInfoButton()
+        sections = createSections()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchBar.showsCancelButton = true
         timer?.invalidate()
         timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
     }
@@ -284,8 +310,43 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.endEditing(true)
     }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchBar.setShowsCancelButton(true, animated: true)
+        searchBar.placeholder = nil
+        animateOutInfoButton()
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        if let text = searchBar.text, text.isEmpty {
+            searchBarCancelButtonClicked(searchBar)
+        }
+    }
 }
 
+// MARK: HeaderView Delegate
+extension HomeOptionsCardViewController: HeaderViewDelegate {
+    func displayFavoritesTVC() {
+        if favorites.count < 2 {
+            presentFavoritesTVC()
+        } else {
+            let title = Constants.Alerts.MaxFavorites.title
+            let message = Constants.Alerts.MaxFavorites.message
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let done = UIAlertAction(title: Constants.Alerts.MaxFavorites.action, style: .default)
+            alertController.addAction(done)
+            present(alertController, animated: true, completion: nil)
+        }
+    }
+    
+    func clearRecentSearches() {
+        SearchTableViewManager.shared.deleteAllRecents()
+        recentLocations = []
+        sections = createSections()
+    }
+}
+
+// MARK: TableView DataSource
 extension HomeOptionsCardViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -323,6 +384,7 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
     }
 }
 
+// MARK: TableView Delegate
 extension HomeOptionsCardViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         return nil
@@ -441,27 +503,6 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         if shouldPushViewController {
             navigationController?.pushViewController(vcToPush, animated: true)
         }
-    }
-}
-
-extension HomeOptionsCardViewController: HeaderViewDelegate {
-    func displayFavoritesTVC() {
-        if favorites.count < 2 {
-            presentFavoritesTVC()
-        } else {
-            let title = Constants.Alerts.MaxFavorites.title
-            let message = Constants.Alerts.MaxFavorites.message
-            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            let done = UIAlertAction(title: Constants.Alerts.MaxFavorites.action, style: .default)
-            alertController.addAction(done)
-            present(alertController, animated: true, completion: nil)
-        }
-    }
-    
-    func clearRecentSearches() {
-        SearchTableViewManager.shared.deleteAllRecents()
-        recentLocations = []
-        sections = createSections()
     }
 }
 

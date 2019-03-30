@@ -12,7 +12,7 @@ import MapKit
 import SnapKit
 import UIKit
 
-class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate, UISearchBarDelegate {
+class HomeMapViewController: UIViewController {
 
     var mapView: GMSMapView!
     var bounds = GMSCoordinateBounds()
@@ -80,6 +80,13 @@ class HomeMapViewController: UIViewController, GMSMapViewDelegate, CLLocationMan
             }
             make.height.equalTo(optionsCardVC.calculateCardHeight())
         }
+    }
+}
+
+extension HomeMapViewController: GMSMapViewDelegate {
+    func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
+        optionsCardVC.searchBar.endEditing(true)
+//        optionsCardVC.searchBarCancelButtonClicked(optionsCardVC.searchBar) // If we want to remove their search
     }
 }
 
