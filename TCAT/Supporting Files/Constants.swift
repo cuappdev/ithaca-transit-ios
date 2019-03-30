@@ -240,6 +240,7 @@ struct Constants {
         static let loadingCellIdentifier = "loadingCell"
 
         // cell strings
+        static let locationOutOfRange = "Location Out of Range"
         static let noRoutesAvailable = "No routes available to "
         static let openIthacaTransit = "Open Ithaca Transit to view favorite shortcuts."
         static let unableToLoad = "Unable to Load Routes"
