@@ -25,6 +25,7 @@ import Alamofire
 
     var locationManager: CLLocationManager!
     var currentLocation: CLLocationCoordinate2D?
+    var invalidLocation: Bool = false
 
     let cellHeight: CGFloat = 110.0
 
@@ -51,8 +52,13 @@ import Alamofire
 
     func searchForRoutes() {
         if numberOfFavorites > 0, let start = currentLocation {
-            Network.getMultiRoutes(startCoord: start, time: Date(), endCoords: coordinates, endPlaceNames: favorites) { (request) in
-                self.processRequest(request: request)
+            if (!checkValidCoordinates(location: start)) {
+                invalidLocation = true
+                routesTable.reloadData()
+            } else {
+                Network.getMultiRoutes(startCoord: start, time: Date(), endCoords: coordinates, endPlaceNames: favorites) { (request) in
+                    self.processRequest(request: request)
+                }
             }
         }
     }
@@ -162,6 +168,13 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if (invalidLocation) {
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TodayExtension.errorCellIdentifier, for: indexPath) as! TodayExtensionErrorCell
+            cell.mainLabel.text = Constants.TodayExtension.locationOutOfRange
+            cell.selectionStyle = .none
+            return cell
+        }
+        
         if (numberOfFavorites != 0) { // if number of favorites = 0
             if (routes.isEmpty) { // no routes yet
                 if (didFetchRoutes) { // tried to get routes, but none retrieved
@@ -238,4 +251,17 @@ extension TodayViewController: CLLocationManagerDelegate {
             searchForRoutes()
         }
     }
+    
+    /// Returns whether location is valid, checking country extremes.
+    func checkValidCoordinates(location: CLLocationCoordinate2D) -> Bool {
+        
+        let validLatitude = location.latitude <= Constants.Values.RouteBorders.northBorder &&
+            location.latitude >= Constants.Values.RouteBorders.southBorder
+        
+        let validLongitude = location.longitude <= Constants.Values.RouteBorders.eastBorder &&
+            location.longitude >= Constants.Values.RouteBorders.westBorder
+        
+        return validLatitude && validLongitude
+    }
+
 }
