@@ -168,7 +168,7 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if (invalidLocation){
+        if (invalidLocation) {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TodayExtension.errorCellIdentifier, for: indexPath) as! TodayExtensionErrorCell
             cell.mainLabel.text = Constants.TodayExtension.locationOutOfRange
             cell.selectionStyle = .none
