@@ -56,15 +56,15 @@ class HomeMapViewController: UIViewController {
         banner?.dismiss()
         banner = nil
         
+        delegate?.reachabilityChanged(connection: reachability.connection)
+        
         switch reachability.connection {
         case .none:
             banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
             banner?.autoDismiss = false
             banner?.show(queuePosition: .front, on: navigationController)
-            
         default: break
         }
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {

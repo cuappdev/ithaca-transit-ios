@@ -33,6 +33,8 @@ class HomeOptionsCardViewController: UIViewController {
     var timer: Timer?
     var searchResultsSection: Section!
 
+    var loadingIndicator: LoadingIndicator?
+    var isLoading: Bool { return loadingIndicator != nil }
     var isNetworkDown = false
     let searchBarHeight: CGFloat = 54
     let headerHeight: CGFloat = 42
@@ -275,6 +277,11 @@ extension HomeOptionsCardViewController {
     override func viewWillAppear(_ animated: Bool) {
         updatePlaces()
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeLoadingIndicator()
+    }
 }
 
 // MARK: Search Bar Delegate
@@ -491,6 +498,69 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         let vcToPush = didSelectAllStops ? allStopsTableViewConroller : routeOptionsViewController
         if shouldPushViewController {
             navigationController?.pushViewController(vcToPush, animated: true)
+        }
+    }
+}
+
+// MARK: DZN Empty Data Set Source
+extension HomeOptionsCardViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        // If tableview header is hidden, increase offset to center EmptyDataSet view
+        return tableView.tableHeaderView == nil ? -80 : (-80 - tableView.contentInset.top)
+    }
+    
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        // If loading indicator is being shown, don't display image
+        if isLoading { return nil }
+        return isNetworkDown ? #imageLiteral(resourceName: "noWifi") : #imageLiteral(resourceName: "noRoutes")
+    }
+    
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display description
+        if isLoading { return nil }
+        let title = isNetworkDown ? Constants.EmptyStateMessages.noNetworkConnection: Constants.EmptyStateMessages.locationNotFound
+        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.metadataIcon])
+    }
+    
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display button
+        if isLoading { return nil }
+        let title = Constants.Buttons.retry
+        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.tcatBlue])
+    }
+    
+    func setupLoadingIndicator() {
+        loadingIndicator = LoadingIndicator()
+        if let loadingIndicator = loadingIndicator {
+            view.addSubview(loadingIndicator)
+            loadingIndicator.snp.makeConstraints { (make) in
+                make.center.equalToSuperview()
+                make.width.height.equalTo(40)
+            }
+        }
+    }
+    
+    func removeLoadingIndicator() {
+        loadingIndicator?.removeFromSuperview()
+        loadingIndicator = nil
+    }
+    
+    func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
+        setupLoadingIndicator()
+        if isLoading {
+            tableView.reloadData()
+            
+            // Have loading indicator time out after one second
+            let delay = 1
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)) {
+                // if the empty state is the "Location Not Found" state, clear the text in the search bar
+                if !self.isNetworkDown {
+                    self.searchBar.text = nil
+                    self.searchBar.placeholder = Constants.General.searchPlaceholder
+                }
+                self.removeLoadingIndicator()
+                self.tableView.reloadData()
+            }
         }
     }
 }
