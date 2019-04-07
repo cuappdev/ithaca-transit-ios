@@ -10,11 +10,11 @@ import UIKit
 import CoreLocation
 import DZNEmptyDataSet
 import GoogleMaps
-import NotificationBannerSwift
 import SnapKit
 
 protocol HomeOptionsCardDelegate {
     func updateSize()
+    func getCurrentLocation() -> CLLocation?
 }
 
 class HomeOptionsCardViewController: UIViewController {
@@ -25,14 +25,7 @@ class HomeOptionsCardViewController: UIViewController {
         }
     }
     
-    let reachability = Reachability(hostname: Network.ipAddress)
-    var banner: StatusBarNotificationBanner? {
-        didSet {
-            setNeedsStatusBarAppearanceUpdate()
-        }
-    }
-    var locationManager = CLLocationManager()
-    var currentLocation: CLLocation?
+    var currentLocation: CLLocation? { return delegate?.getCurrentLocation() }
     var tableView: AutoResizingTableView!
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
@@ -62,9 +55,7 @@ class HomeOptionsCardViewController: UIViewController {
                 recentLocations = Array(recentLocations.prefix(2))
             }
             if !isNetworkDown {
-                if oldValue != recentLocations {
-                    sections = createSections()
-                }
+                sections = createSections()
             }
         }
     }
@@ -74,9 +65,7 @@ class HomeOptionsCardViewController: UIViewController {
                 favorites = Array(favorites.prefix(2))
             }
             if !isNetworkDown {
-                if oldValue != favorites {
-                    sections = createSections()
-                }
+                sections = createSections()
             }
         }
     }
@@ -283,55 +272,8 @@ extension HomeOptionsCardViewController {
         view = customView
     }
     
-    @objc func reachabilityChanged(_ notification: Notification) {
-        guard let reachability = notification.object as? Reachability else {
-            return
-        }
-        
-        // Dismiss current banner or loading indicator, if any
-        banner?.dismiss()
-        banner = nil
-        
-        switch reachability.connection {
-        case .none:
-            banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
-            banner?.autoDismiss = false
-            banner?.show(queuePosition: .front, on: navigationController)
-            isNetworkDown = true
-            searchBar.isUserInteractionEnabled = false
-            sections = []
-        case .cellular, .wifi:
-            isNetworkDown = false
-            sections = createSections()
-            searchBar.isUserInteractionEnabled = true
-        }
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         updatePlaces()
-        
-        // Add Notification Observers
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(reachabilityChanged(_:)),
-                                               name: .reachabilityChanged,
-                                               object: reachability)
-        do {
-            try reachability?.startNotifier()
-        } catch {
-            print("HomeVC viewDidLayoutSubviews: Could not start reachability notifier")
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        reachability?.stopNotifier()
-        
-        // Remove Notification Observers
-        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
-        
-        // Remove banner and loading indicator
-        banner?.dismiss()
-        banner = nil
     }
 }
 
@@ -392,6 +334,22 @@ extension HomeOptionsCardViewController: HeaderViewDelegate {
         SearchTableViewManager.shared.deleteAllRecents()
         recentLocations = []
         sections = createSections()
+    }
+}
+
+// MARK: MapView Delegate
+extension HomeOptionsCardViewController: HomeMapViewDelegate {
+    func reachabilityChanged(connection: Reachability.Connection) {
+        switch connection {
+        case .none:
+            isNetworkDown = true
+            searchBar.isUserInteractionEnabled = false
+            sections = []
+        case .cellular, .wifi:
+            isNetworkDown = false
+            sections = createSections()
+            searchBar.isUserInteractionEnabled = true
+        }
     }
 }
 

@@ -9,15 +9,30 @@
 import CoreLocation
 import GoogleMaps
 import MapKit
+import NotificationBannerSwift
 import SnapKit
 import UIKit
 
-class HomeMapViewController: UIViewController {
+protocol HomeMapViewDelegate {
+    func reachabilityChanged(connection: Reachability.Connection)
+}
 
+class HomeMapViewController: UIViewController {
+    
+    let userDefaults = UserDefaults.standard
+
+    var currentLocation: CLLocation?
     var mapView: GMSMapView!
     var bounds = GMSCoordinateBounds()
     var optionsCardVC: HomeOptionsCardViewController!
-    
+    var delegate: HomeMapViewDelegate?
+    let reachability = Reachability(hostname: Network.ipAddress)
+    var locationManager = CLLocationManager()
+    var banner: StatusBarNotificationBanner? {
+        didSet {
+            setNeedsStatusBarAppearanceUpdate()
+        }
+    }
     static let optionsCardInset = UIEdgeInsets.init(top: UIScreen.main.bounds.height/10, left: 20, bottom: 0, right: 20)
     let minZoom: Float = 12
     let defaultZoom: Float = 15.5
@@ -26,19 +41,67 @@ class HomeMapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupMapView()
-
-        optionsCardVC = HomeOptionsCardViewController()
-        add(optionsCardVC)
-        optionsCardVC.delegate = self
+        
+        setupOptionsCard()
 
         setupConstraints()
     }
     
+    @objc func reachabilityChanged(_ notification: Notification) {
+        guard let reachability = notification.object as? Reachability else {
+            return
+        }
+        
+        // Dismiss current banner or loading indicator, if any
+        banner?.dismiss()
+        banner = nil
+        
+        switch reachability.connection {
+        case .none:
+            banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
+            banner?.autoDismiss = false
+            banner?.show(queuePosition: .front, on: navigationController)
+            
+        default: break
+        }
+        
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = true
+        
+        // Add Notification Observers
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(reachabilityChanged(_:)),
+                                               name: .reachabilityChanged,
+                                               object: reachability)
+        do {
+            try reachability?.startNotifier()
+        } catch {
+            print("HomeVC viewDidLayoutSubviews: Could not start reachability notifier")
+        }
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        
+        StoreReviewHelper.checkAndAskForReview()
+        
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         navigationController?.isNavigationBarHidden = false
+        reachability?.stopNotifier()
+        
+        // Remove Notification Observers
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+        
+        // Remove banner and loading indicator
+        banner?.dismiss()
+        banner = nil
     }
     
     func setupMapView() {
@@ -68,13 +131,70 @@ class HomeMapViewController: UIViewController {
         }
     }
     
+    func setupOptionsCard() {
+        optionsCardVC = HomeOptionsCardViewController()
+        add(optionsCardVC)
+        optionsCardVC.delegate = self
+        delegate = optionsCardVC
+    }
+    
     func setupConstraints() {
-
         optionsCardVC.view.snp.makeConstraints { (make) in
             make.leading.top.trailing.equalToSuperview().inset(HomeMapViewController.optionsCardInset)
             make.height.equalTo(optionsCardVC.calculateCardHeight())
         }
     }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return banner != nil ? .lightContent : .default
+    }
+}
+
+// MARK: Location Delegate
+extension HomeMapViewController: CLLocationManagerDelegate {
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        
+        if status == .denied {
+            let alertTitle = Constants.Alerts.LocationDisabled.title
+            let alertMessage = Constants.Alerts.LocationDisabled.message
+            let alertController = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
+            let settingsAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.settings, style: .default) { (_) in
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            }
+            
+            guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
+                userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
+                let cancelAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default, handler: nil)
+                alertController.addAction(cancelAction)
+                alertController.addAction(settingsAction)
+                alertController.preferredAction = settingsAction
+                present(alertController, animated: true)
+                return
+            }
+            
+            if !showReminder {
+                return
+            }
+            
+            let dontRemindAgainAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default) { _ in
+                self.userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
+            }
+            alertController.addAction(dontRemindAgainAction)
+            
+            alertController.addAction(settingsAction)
+            alertController.preferredAction = settingsAction
+            
+            present(alertController, animated: true)
+            
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        currentLocation = location
+    }
+    
 }
 
 extension HomeMapViewController: GMSMapViewDelegate {
@@ -85,10 +205,11 @@ extension HomeMapViewController: GMSMapViewDelegate {
 }
 
 extension HomeMapViewController: HomeOptionsCardDelegate {
-
+    func getCurrentLocation() -> CLLocation? { return currentLocation }
+    
     func updateSize() {
         let newCardHeight = optionsCardVC.calculateCardHeight()
-        if newCardHeight > optionsCardVC.view.frame.height {
+        if newCardHeight != optionsCardVC.view.frame.height {
             UIView.animate(withDuration: 0.2) {
                 self.optionsCardVC.view.snp.remakeConstraints { (make) in
                     make.leading.top.trailing.equalToSuperview().inset(HomeMapViewController.optionsCardInset)
@@ -98,4 +219,9 @@ extension HomeMapViewController: HomeOptionsCardDelegate {
             }
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }
