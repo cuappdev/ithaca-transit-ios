@@ -18,7 +18,7 @@ class HomeMapViewController: UIViewController {
     var bounds = GMSCoordinateBounds()
     var optionsCardVC: HomeOptionsCardViewController!
     
-    let optionsCardInset = UIEdgeInsets.init(top: 92, left: 20, bottom: 0, right: 20)
+    static let optionsCardInset = UIEdgeInsets.init(top: UIScreen.main.bounds.height/10, left: 20, bottom: 0, right: 20)
     let minZoom: Float = 12
     let defaultZoom: Float = 15.5
     let maxZoom: Float = 25
@@ -71,13 +71,7 @@ class HomeMapViewController: UIViewController {
     func setupConstraints() {
 
         optionsCardVC.view.snp.makeConstraints { (make) in
-            make.trailing.equalToSuperview().inset(optionsCardInset)
-            make.leading.equalToSuperview().inset(20)
-            if #available(iOS 11.0, *) {
-                make.top.equalTo(view.safeAreaInsets.top + 40)
-            } else {
-                make.top.equalToSuperview().offset(view.layoutMargins.top + 20)
-            }
+            make.leading.top.trailing.equalToSuperview().inset(HomeMapViewController.optionsCardInset)
             make.height.equalTo(optionsCardVC.calculateCardHeight())
         }
     }
@@ -91,16 +85,17 @@ extension HomeMapViewController: GMSMapViewDelegate {
 }
 
 extension HomeMapViewController: HomeOptionsCardDelegate {
+
     func updateSize() {
-        optionsCardVC.view.snp.remakeConstraints { (make) in
-            make.trailing.equalToSuperview().inset(optionsCardInset)
-            make.leading.equalToSuperview().inset(20)
-            if #available(iOS 11.0, *) {
-                make.top.equalTo(view.safeAreaInsets.top + 40)
-            } else {
-                make.top.equalToSuperview().offset(view.layoutMargins.top + 20)
+        let newCardHeight = optionsCardVC.calculateCardHeight()
+        if newCardHeight > optionsCardVC.view.frame.height {
+            UIView.animate(withDuration: 0.2) {
+                self.optionsCardVC.view.snp.remakeConstraints { (make) in
+                    make.leading.top.trailing.equalToSuperview().inset(HomeMapViewController.optionsCardInset)
+                    make.height.equalTo(newCardHeight)
+                }
+                self.view.layoutIfNeeded()
             }
-            make.height.equalTo(optionsCardVC.calculateCardHeight())
         }
     }
 }

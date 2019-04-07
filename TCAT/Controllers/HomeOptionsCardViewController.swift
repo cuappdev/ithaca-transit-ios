@@ -19,7 +19,11 @@ protocol HomeOptionsCardDelegate {
 
 class HomeOptionsCardViewController: UIViewController {
     
-    var delegate: HomeOptionsCardDelegate?
+    var delegate: HomeOptionsCardDelegate? {
+        didSet {
+            tableView.optionsCardDelegate = delegate
+        }
+    }
     
     let reachability = Reachability(hostname: Network.ipAddress)
     var banner: StatusBarNotificationBanner? {
@@ -29,19 +33,38 @@ class HomeOptionsCardViewController: UIViewController {
     }
     var locationManager = CLLocationManager()
     var currentLocation: CLLocation?
-    var tableView: UITableView!
+    var tableView: AutoResizingTableView!
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
-    var searchBarSeperator: UIView!
+    var searchBarseparator: UIView!
     var timer: Timer?
     var searchResultsSection: Section!
 
     var isNetworkDown = false
-    let searchBarHeight = 54
+    let searchBarHeight: CGFloat = 54
+    let headerHeight: CGFloat = 42
+    let tableViewRowHeight: CGFloat = 50
+    
+    var maxCardHeight: CGFloat {
+        /* Returns the height of a card that would contain two favorites and two recent searches.
+         This is the height that we will cap all optionCards at, regardless of the phone. */
+        
+        return tableViewRowHeight * 5 + headerHeight * 2 + searchBarHeight + HeaderView.separatorViewHeight
+    }
+    var isDynamicSearchBar: Bool {
+        /* Checks to see if the bottom of the card at maximum height would cover more than 3/5 of the screen */
+        
+        return maxCardHeight > (UIScreen.main.bounds.height*3/5 - HomeMapViewController.optionsCardInset.top)
+    }
     var recentLocations: [Place] = [] {
         didSet {
             if recentLocations.count > 2 {
                 recentLocations = Array(recentLocations.prefix(2))
+            }
+            if !isNetworkDown {
+                if oldValue != recentLocations {
+                    sections = createSections()
+                }
             }
         }
     }
@@ -50,33 +73,34 @@ class HomeOptionsCardViewController: UIViewController {
             if favorites.count > 2 {
                 favorites = Array(favorites.prefix(2))
             }
+            if !isNetworkDown {
+                if oldValue != favorites {
+                    sections = createSections()
+                }
+            }
         }
     }
     var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
-            if sections.isEmpty {
-                tableView.tableHeaderView = .zero
-            }
-            delegate?.updateSize()
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        updatePlaces()
-        
         setupTableView()
         setupInfoButton()
-        setupSearchBarSeperator()
+        setupSearchBarseparator()
         setupSearchBar()
         
         setupConstraints()
+        
+        updatePlaces()
     }
 
     func setupTableView() {
-        tableView = UITableView(frame: .zero, style: .grouped)
+        tableView = AutoResizingTableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
@@ -84,7 +108,7 @@ class HomeOptionsCardViewController: UIViewController {
         tableView.keyboardDismissMode = .onDrag
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.showsVerticalScrollIndicator = false
-        tableView.rowHeight = 50
+        tableView.rowHeight = tableViewRowHeight
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
         view.addSubview(tableView)
@@ -111,10 +135,10 @@ class HomeOptionsCardViewController: UIViewController {
         view.addSubview(infoButton)
     }
     
-    func setupSearchBarSeperator() {
-        searchBarSeperator = UIView()
-        searchBarSeperator.backgroundColor = Colors.backgroundWash
-        view.addSubview(searchBarSeperator)
+    func setupSearchBarseparator() {
+        searchBarseparator = UIView()
+        searchBarseparator.backgroundColor = Colors.backgroundWash
+        view.addSubview(searchBarseparator)
     }
     
     func setupConstraints() {
@@ -131,23 +155,29 @@ class HomeOptionsCardViewController: UIViewController {
             make.height.equalTo(searchBarHeight)
         }
         
-        searchBarSeperator.snp.makeConstraints { (make) in
+        searchBarseparator.snp.makeConstraints { (make) in
             make.leading.trailing.equalToSuperview()
             make.top.equalTo(searchBar.snp.bottom)
             make.height.equalTo(1)
         }
+        
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
-            make.top.equalTo(searchBarSeperator.snp.bottom)
+            make.top.equalTo(searchBarseparator.snp.bottom)
         }
         
     }
     
     func createSections() -> [Section] {
-        tableView.contentInset = .zero
         var allSections: [Section] = []
         let recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
-        let seeAllStopsSection = Section(type: .seeAllStops, items: [])
+        let seeAllStops = Place(
+            name: Constants.Cells.seeAllStopsIdentifier,
+            placeDescription: "dummy_data",
+            placeIdentifier: "dummy_data"
+        )
+        let seeAllStopsSection = Section(type: .seeAllStops, items: [seeAllStops])
+        
         var favoritesSection = Section(type: .favorites, items: favorites)
         if favoritesSection.items.isEmpty {
             let addFavorites = Place(
@@ -164,8 +194,28 @@ class HomeOptionsCardViewController: UIViewController {
         return allSections.filter { !$0.items.isEmpty || $0.type == .seeAllStops }
     }
     
+    func tableViewContentHeight() -> CGFloat {
+        var size: CGFloat = 0
+        for section in sections {
+            switch section.type {
+            case .favorites, .recentSearches: size += headerHeight
+            case .seeAllStops: size += HeaderView.separatorViewHeight
+            default: break
+            }
+            size += tableViewRowHeight*CGFloat(section.items.count)
+        }
+        
+        return size
+    }
+    
     func calculateCardHeight() -> CGFloat {
-        return min(tableView.contentSize.height + CGFloat(searchBarHeight), UIScreen.main.bounds.height/2)
+        // If the screen is too small, decide whether to show full card or just searchBar
+        if isDynamicSearchBar {
+            if searchBar.isFirstResponder {
+                return min(tableViewContentHeight() + CGFloat(searchBarHeight), maxCardHeight)
+            } else { return CGFloat(searchBarHeight) }
+        }
+        return min(tableViewContentHeight() + searchBarHeight, UIScreen.main.bounds.height/2)
     }
     
     func updatePlaces() {
@@ -217,7 +267,6 @@ class HomeOptionsCardViewController: UIViewController {
         if !searchText.isEmpty {
             Network.getSearchResults(searchText: searchText).perform(withSuccess: { response in
                 self.searchResultsSection = Section(type: .searchResults, items: response.data)
-                self.tableView.contentInset = .init(top: -24, left: 0, bottom: 0, right: 0)
                 self.sections = [self.searchResultsSection]
             })
         } else {
@@ -260,9 +309,6 @@ extension HomeOptionsCardViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         updatePlaces()
-        if !isNetworkDown {
-            sections = createSections()
-        }
         
         // Add Notification Observers
         NotificationCenter.default.addObserver(self,
@@ -315,10 +361,13 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(true, animated: true)
         searchBar.placeholder = nil
         animateOutInfoButton()
+        if isDynamicSearchBar {
+            tableView.reloadData()
+        }
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        if let text = searchBar.text, text.isEmpty {
+        if searchBar.showsCancelButton {
             searchBarCancelButtonClicked(searchBar)
         }
     }
@@ -386,71 +435,53 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
 
 // MARK: TableView Delegate
 extension HomeOptionsCardViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return nil
-    }
-    
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0
     }
     
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch sections[section].type {
+        case .favorites, .recentSearches: return headerHeight
+        case .seeAllStops: return HeaderView.separatorViewHeight
+        default: return 0
+        }
+    }
+    
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        var containerView: UIView?
         let header = HeaderView()
         
         switch sections[section].type {
         case .recentSearches:
-            header.setupView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear)
+            header.setupView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear, separatorVisible: true)
             header.headerViewDelegate = self
-            containerView = UIView()
-            
-            let seperatorView = UIView()
-            seperatorView.backgroundColor = Colors.backgroundWash
-            containerView?.addSubview(seperatorView)
-            containerView?.addSubview(header)
-            
-            seperatorView.snp.makeConstraints { (make) in
-                make.leading.trailing.equalToSuperview().inset(20)
-                make.height.equalTo(1)
-                make.top.equalToSuperview()
-            }
-            
-            header.snp.makeConstraints { (make) in
-                make.leading.trailing.bottom.equalToSuperview()
-                make.top.equalTo(seperatorView.snp.bottom)
-            }
         case .favorites:
             header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, buttonType: .add)
             header.headerViewDelegate = self
         case .seeAllStops:
-            containerView = UIView()
-            let seperatorView = UIView()
-            seperatorView.backgroundColor = Colors.backgroundWash
-            containerView?.addSubview(seperatorView)
-            containerView?.backgroundColor = .white
-            
-            seperatorView.snp.makeConstraints { (make) in
-                make.leading.trailing.equalToSuperview().inset(20)
-                make.height.equalTo(1)
-                make.top.equalToSuperview()
-            }
+            header.setupView(separatorVisible: true)
         case .searchResults:
             return nil
         default: break
         }
         
-        if let headerView = containerView {
-            return headerView
-        } else {
-            return header
-        }
+        return header
     }
     
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        switch sections[section].type {
-        case .favorites, .recentSearches: return 42
-        case .seeAllStops: return 1
-        default: return 24
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        let section = sections[indexPath.section]
+        switch section.type {
+        case .favorites:
+            if !section.items.isEmpty, section.items[0].name != Constants.General.firstFavorite {
+                return .delete
+            } else {
+                return .none
+            }
+        case .recentSearches: return .delete
+        default: return .none
         }
     }
     
@@ -503,6 +534,17 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         if shouldPushViewController {
             navigationController?.pushViewController(vcToPush, animated: true)
         }
+    }
+}
+
+// Always updates size of view when reloading cells
+class AutoResizingTableView: UITableView {
+    var optionsCardDelegate: HomeOptionsCardDelegate?
+    
+    override func reloadData() {
+        super.reloadData()
+        layoutIfNeeded()
+        optionsCardDelegate?.updateSize()
     }
 }
 

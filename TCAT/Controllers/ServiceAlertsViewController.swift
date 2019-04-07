@@ -185,13 +185,13 @@ extension ServiceAlertsViewController: UITableViewDelegate {
         
         switch priorities[section] {
         case 0:
-            headerView.setupView(labelText: Constants.TableHeaders.highPriority, buttonType: .none)
+            headerView.setupView(labelText: Constants.TableHeaders.highPriority)
         case 1:
-            headerView.setupView(labelText: Constants.TableHeaders.mediumPriority, buttonType: .none)
+            headerView.setupView(labelText: Constants.TableHeaders.mediumPriority)
         case 2:
-            headerView.setupView(labelText: Constants.TableHeaders.lowPriority, buttonType: .none)
+            headerView.setupView(labelText: Constants.TableHeaders.lowPriority)
         default:
-            headerView.setupView(labelText: Constants.TableHeaders.noPriority, buttonType: .none)
+            headerView.setupView(labelText: Constants.TableHeaders.noPriority)
         }
         
         return headerView

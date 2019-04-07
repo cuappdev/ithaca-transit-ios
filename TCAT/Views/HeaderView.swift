@@ -22,14 +22,10 @@ enum buttonOption {
 class HeaderView: UITableViewHeaderFooterView {
     
     var headerViewDelegate: HeaderViewDelegate?
+    
+    static let separatorViewHeight: CGFloat = 1
 
-    var label: UILabel = {
-        let label = UILabel()
-        label.font = .getFont(.regular, size: 14)
-        label.textColor = Colors.metadataIcon
-        return label
-    }()
-
+    var label: UILabel!
     var button: UIButton?
 
     @objc func addNewFavorite(sender: UIButton) {
@@ -40,15 +36,32 @@ class HeaderView: UITableViewHeaderFooterView {
         headerViewDelegate?.clearRecentSearches()
     }
 
-    func setupView(labelText: String, buttonType: buttonOption) {
-        label.text = labelText
-        contentView.addSubview(label)
-
-        label.snp.makeConstraints { (make) in
-            make.leading.equalToSuperview().offset(20)
-            make.bottom.equalToSuperview().offset(-10)
+    func setupView(labelText: String? = nil, buttonType: buttonOption = .none, separatorVisible: Bool = false) {
+        if labelText != nil {
+            label = UILabel()
+            label.font = .getFont(.regular, size: 14)
+            label.textColor = Colors.metadataIcon
+            label.text = labelText
+            contentView.addSubview(label)
+            
+            label.snp.makeConstraints { (make) in
+                make.leading.equalToSuperview().offset(20)
+                make.bottom.equalToSuperview().offset(-10)
+            }
+            createButton(type: buttonType)
         }
-        createButton(type: buttonType)
+        
+        if separatorVisible {
+            let separatorView = UIView()
+            separatorView.backgroundColor = Colors.backgroundWash
+            contentView.addSubview(separatorView)
+            
+            separatorView.snp.makeConstraints { (make) in
+                make.leading.trailing.equalToSuperview().inset(20)
+                make.height.equalTo(HeaderView.separatorViewHeight)
+                make.top.equalToSuperview()
+            }
+        }
     }
 
     func createButton(type: buttonOption) {

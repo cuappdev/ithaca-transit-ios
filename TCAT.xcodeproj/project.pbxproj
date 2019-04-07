@@ -154,7 +154,7 @@
 		2292486D21BB82180004279C /* ServiceAlertTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlertTableViewCell.swift; path = Cells/ServiceAlertTableViewCell.swift; sourceTree = "<group>"; };
 		22948BFB221B75C5003FC43F /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Models.swift; path = Utilities/Models.swift; sourceTree = "<group>"; };
 		22F1F9A92246C96000028C4F /* HomeMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HomeMapViewController.swift; path = Controllers/HomeMapViewController.swift; sourceTree = "<group>"; };
-		22F1F9AD2246D53400028C4F /* HomeOptionsCardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HomeOptionsCardViewController.swift; path = Views/HomeOptionsCardViewController.swift; sourceTree = "<group>"; };
+		22F1F9AD2246D53400028C4F /* HomeOptionsCardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HomeOptionsCardViewController.swift; path = Controllers/HomeOptionsCardViewController.swift; sourceTree = "<group>"; };
 		449A7C751D80D0E80019300C /* TCAT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCAT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C781D80D0E80019300C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		449A7C7D1D80D0E80019300C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -673,6 +673,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
