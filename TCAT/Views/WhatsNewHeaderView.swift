@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 
 protocol WhatsNewDelegate {
-    func getCurrentHomeViewController() -> HomeViewController
+    func getCurrentHomeViewController() -> HomeMapViewController
     func dismissView(card: WhatsNewCard)
 }
 

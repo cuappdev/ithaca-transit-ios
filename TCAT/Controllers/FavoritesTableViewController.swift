@@ -59,7 +59,7 @@ class FavoritesTableViewController: UITableViewController {
 
     @objc func dismissVC() {
         if fromOnboarding {
-            let rootVC = HomeViewController()
+            let rootVC = HomeMapViewController()
             let desiredViewController = CustomNavigationController(rootViewController: rootVC)
 
             if let appDelegate = UIApplication.shared.delegate as? AppDelegate,

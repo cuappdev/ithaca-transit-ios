@@ -72,7 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // v1.3 Data Migration
         if
             VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1),
-            let homeViewController = rootVC as? HomeViewController
+            let homeViewController = rootVC as? HomeMapViewController
         {
             print("Begin Data Migration")
             homeViewController.showLoadingScreen()
@@ -300,7 +300,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown
         // PlaceResult: ithaca-transit://getRoutes?lat=42.44707979999999&long=-76.4885196&destinationName=Hans%20Bethe%20House
 
-        let rootVC = HomeViewController()
+        let rootVC = HomeMapViewController()
         let navigationController = CustomNavigationController(rootViewController: rootVC)
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = navigationController

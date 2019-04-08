@@ -23,6 +23,7 @@ class HomeMapViewController: UIViewController {
 
     var currentLocation: CLLocation?
     var mapView: GMSMapView!
+    var loadingView = UIView()
     var bounds = GMSCoordinateBounds()
     var optionsCardVC: HomeOptionsCardViewController!
     var delegate: HomeMapViewDelegate?
@@ -37,6 +38,10 @@ class HomeMapViewController: UIViewController {
     let minZoom: Float = 12
     let defaultZoom: Float = 15.5
     let maxZoom: Float = 25
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return banner != nil ? .lightContent : .default
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -144,9 +149,29 @@ class HomeMapViewController: UIViewController {
             make.height.equalTo(optionsCardVC.calculateCardHeight())
         }
     }
-
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return banner != nil ? .lightContent : .default
+    
+    /// Show a temporary loading screen
+    func showLoadingScreen() {
+        
+        loadingView.backgroundColor = Colors.backgroundWash
+        view.addSubview(loadingView)
+        
+        loadingView.snp.makeConstraints { (make) in
+            make.top.bottom.leading.trailing.equalToSuperview()
+        }
+        
+        let indicator = LoadingIndicator()
+        loadingView.addSubview(indicator)
+        indicator.snp.makeConstraints { (make) in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(40)
+        }
+        
+    }
+    
+    func removeLoadingScreen() {
+        loadingView.removeFromSuperview()
+        viewWillAppear(false)
     }
 }
 
