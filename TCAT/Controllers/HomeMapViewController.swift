@@ -235,8 +235,7 @@ extension HomeMapViewController: HomeOptionsCardDelegate {
         let newCardHeight = optionsCardVC.calculateCardHeight()
         if newCardHeight != optionsCardVC.view.frame.height {
             UIView.animate(withDuration: 0.2) {
-                self.optionsCardVC.view.snp.remakeConstraints { (make) in
-                    make.leading.top.trailing.equalToSuperview().inset(HomeMapViewController.optionsCardInset)
+                self.optionsCardVC.view.snp.updateConstraints { (make) in
                     make.height.equalTo(newCardHeight)
                 }
                 self.view.layoutIfNeeded()

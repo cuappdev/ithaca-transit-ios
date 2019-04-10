@@ -25,7 +25,7 @@ class HomeOptionsCardViewController: UIViewController {
     var tableView: UITableView!
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
-    var searchBarseparator: UIView!
+    var searchBarSeparator: UIView!
     var timer: Timer?
     var searchResultsSection: Section!
 
@@ -33,6 +33,7 @@ class HomeOptionsCardViewController: UIViewController {
     var isLoading: Bool { return loadingIndicator != nil }
     var isNetworkDown = false
     let searchBarHeight: CGFloat = 54
+    let searchBarSeparatorHeight: CGFloat = 1
     let headerHeight: CGFloat = 42
     let tableViewRowHeight: CGFloat = 50
     
@@ -79,7 +80,7 @@ class HomeOptionsCardViewController: UIViewController {
         
         setupTableView()
         setupInfoButton()
-        setupSearchBarseparator()
+        setupSearchBarSeparator()
         setupSearchBar()
         
         setupConstraints()
@@ -123,10 +124,10 @@ class HomeOptionsCardViewController: UIViewController {
         view.addSubview(infoButton)
     }
     
-    func setupSearchBarseparator() {
-        searchBarseparator = UIView()
-        searchBarseparator.backgroundColor = Colors.backgroundWash
-        view.addSubview(searchBarseparator)
+    func setupSearchBarSeparator() {
+        searchBarSeparator = UIView()
+        searchBarSeparator.backgroundColor = Colors.backgroundWash
+        view.addSubview(searchBarSeparator)
     }
     
     func setupConstraints() {
@@ -143,15 +144,15 @@ class HomeOptionsCardViewController: UIViewController {
             make.height.equalTo(searchBarHeight)
         }
         
-        searchBarseparator.snp.makeConstraints { (make) in
+        searchBarSeparator.snp.makeConstraints { (make) in
             make.leading.trailing.equalToSuperview()
             make.top.equalTo(searchBar.snp.bottom)
-            make.height.equalTo(1)
+            make.height.equalTo(searchBarSeparatorHeight)
         }
         
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
-            make.top.equalTo(searchBarseparator.snp.bottom)
+            make.top.equalTo(searchBarSeparator.snp.bottom)
         }
     }
     
@@ -199,10 +200,10 @@ class HomeOptionsCardViewController: UIViewController {
         // If the screen is too small, decide whether to show full card or just searchBar
         if isDynamicSearchBar {
             if searchBar.isFirstResponder {
-                return min(tableViewContentHeight() + CGFloat(searchBarHeight), maxCardHeight)
-            } else { return CGFloat(searchBarHeight) }
+                return min(tableViewContentHeight() + CGFloat(searchBarHeight), maxCardHeight) + searchBarSeparatorHeight
+            } else { return CGFloat(searchBarHeight) + searchBarSeparatorHeight }
         }
-        return min(tableViewContentHeight() + searchBarHeight, UIScreen.main.bounds.height/2)
+        return min(tableViewContentHeight() + searchBarHeight, UIScreen.main.bounds.height/2) + searchBarSeparatorHeight
     }
     
     func updatePlaces() {
