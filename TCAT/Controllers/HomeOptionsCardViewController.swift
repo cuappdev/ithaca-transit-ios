@@ -19,14 +19,10 @@ protocol HomeOptionsCardDelegate {
 
 class HomeOptionsCardViewController: UIViewController {
     
-    var delegate: HomeOptionsCardDelegate? {
-        didSet {
-            tableView.optionsCardDelegate = delegate
-        }
-    }
+    var delegate: HomeOptionsCardDelegate?
     
     var currentLocation: CLLocation? { return delegate?.getCurrentLocation() }
-    var tableView: AutoResizingTableView!
+    var tableView: UITableView!
     var searchBar: UISearchBar!
     let infoButton = UIButton(type: .infoLight)
     var searchBarseparator: UIView!
@@ -74,6 +70,7 @@ class HomeOptionsCardViewController: UIViewController {
     var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
+            delegate?.updateSize()
         }
     }
 
@@ -91,7 +88,7 @@ class HomeOptionsCardViewController: UIViewController {
     }
 
     func setupTableView() {
-        tableView = AutoResizingTableView(frame: .zero, style: .grouped)
+        tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
         tableView.dataSource = self
@@ -156,7 +153,6 @@ class HomeOptionsCardViewController: UIViewController {
             make.leading.trailing.bottom.equalToSuperview()
             make.top.equalTo(searchBarseparator.snp.bottom)
         }
-        
     }
     
     func createSections() -> [Section] {
@@ -562,17 +558,6 @@ extension HomeOptionsCardViewController: DZNEmptyDataSetSource, DZNEmptyDataSetD
                 self.tableView.reloadData()
             }
         }
-    }
-}
-
-// Always updates size of view when reloading cells
-class AutoResizingTableView: UITableView {
-    var optionsCardDelegate: HomeOptionsCardDelegate?
-    
-    override func reloadData() {
-        super.reloadData()
-        layoutIfNeeded()
-        optionsCardDelegate?.updateSize()
     }
 }
 

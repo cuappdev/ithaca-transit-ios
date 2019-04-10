@@ -46,7 +46,6 @@ class HomeMapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupMapView()
-        
         setupOptionsCard()
 
         setupConstraints()
