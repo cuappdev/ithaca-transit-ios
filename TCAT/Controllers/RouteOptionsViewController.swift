@@ -951,7 +951,11 @@ extension RouteOptionsViewController: UITableViewDelegate {
             let payload = RouteResultsCellTappedEventPayload()
             Analytics.shared.log(payload)
             let routeId = routes[indexPath.row].routeId
-            Network.routeSelected(routeId: routeId)
+            Network.routeSelected(routeId: routeId).perform(withSuccess: { (request) in
+                print("[RouteOptionsViewController] Route Selected - Success:", request["success"])
+            }) { (error) in
+                print("[RouteOptionsViewController] Route Selected - Error:", error)
+            }
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }
