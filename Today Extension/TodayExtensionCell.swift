@@ -158,9 +158,14 @@ class TodayExtensionCell: UITableViewCell {
         if let delay = direction.delay {
             let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
 
-            if Time.compare(date1: departTime, date2: delayedDepartTime) == .orderedAscending {
-                return .late(date: departTime)
-            } else {
+            if Time.compare(date1: departTime, date2: delayedDepartTime) == .orderedAscending { // bus is delayed
+                if (delayedDepartTime >= Date() || delay >= 120) {
+                    return .late(date: delayedDepartTime)
+                } else { // delay < 120
+                    return .onTime(date: departTime) // what time??
+                }
+            }
+            else { // bus is not delayed
                 return .onTime(date: departTime)
             }
         } else {
