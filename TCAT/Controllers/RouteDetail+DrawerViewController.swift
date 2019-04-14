@@ -225,7 +225,7 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
                     // Update delay variable of other ensuing directions
                     
                     self.directions.filter {
-                        let isAfter = self.directions.index(of: firstDepartDirection)! < self.directions.index(of: $0)!
+                        let isAfter = self.directions.firstIndex(of: firstDepartDirection)! < self.directions.firstIndex(of: $0)!
                         return isAfter && $0.type != .depart
                     }
                     

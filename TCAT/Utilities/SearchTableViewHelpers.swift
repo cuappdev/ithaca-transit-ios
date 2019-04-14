@@ -9,7 +9,6 @@
 import Foundation
 import SwiftyJSON
 import DZNEmptyDataSet
-import Fuzzywuzzy_swift
 
 let encoder = JSONEncoder()
 let decoder = JSONDecoder()

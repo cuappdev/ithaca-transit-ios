@@ -327,7 +327,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 case .invalidData:
                     // print("Invalid Data for", busLocation.routeNumber)
 
-                    if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
+                    if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                     }
 
@@ -340,7 +340,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 case .validData:
                     // print("Valid Data for", busLocation.routeNumber)
 
-                    if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
+                    if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                     }
 
@@ -519,7 +519,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     // existingIndicator.map = mapView // Uncomment to avoid animation
                 } else {
                     existingIndicator.map = nil
-                    busIndicators.remove(at: busIndicators.index(of: existingIndicator)!)
+                    busIndicators.remove(at: busIndicators.firstIndex(of: existingIndicator)!)
                 }
             } else { // Create Indicator
                 if let placement = calculatePlacement(position: bus.position, view: bearingView) {

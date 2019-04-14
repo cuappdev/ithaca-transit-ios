@@ -55,7 +55,7 @@ extension UILabel {
         let maxSize = CGSize(width: frame.size.width, height: CGFloat(Float.infinity))
         let charSize = font.lineHeight
         let labelText = (text ?? "") as NSString
-        let textSize = labelText.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, attributes: [.font: font], context: nil)
+        let textSize = labelText.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, attributes: [.font: font ?? UIFont.getFont(.regular, size: 16)], context: nil)
         return Int(textSize.height/charSize)
     }
 
@@ -90,7 +90,7 @@ extension UILabel {
 extension UIViewController {
 
     var isModal: Bool {
-        if let index = navigationController?.viewControllers.index(of: self), index > 0 {
+        if let index = navigationController?.viewControllers.firstIndex(of: self), index > 0 {
             return false
         } else if presentingViewController != nil {
             return true
@@ -116,9 +116,9 @@ extension String {
 
     /// Convert Range to NSRange
     func nsRange(from range: Range<String.Index>) -> NSRange {
-        let from = range.lowerBound.encodedOffset
-        let to = range.upperBound.encodedOffset
-        return NSRange(location: from - startIndex.encodedOffset, length: to - from)
+        let from = range.upperBound.utf16Offset(in: self)
+        let to = range.upperBound.utf16Offset(in: self)
+        return NSRange(location: from - startIndex.utf16Offset(in: self), length: to - from)
     }
 
     func heightWithConstrainedWidth(width: CGFloat, font: UIFont) -> CGFloat {

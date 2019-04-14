@@ -13,7 +13,7 @@ public protocol Payload: Codable {
 }
 
 public extension Payload {
-    public func toEvent() -> Event<Self> {
+    func toEvent() -> Event<Self> {
         return Event(payload: self)
     }
 }
