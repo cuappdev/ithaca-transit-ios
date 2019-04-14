@@ -51,7 +51,7 @@ class Direction: NSObject, NSCopying, Codable {
     /// The starting time (UTC) associated with the direction. Format: `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`
     var startTime: Date
     
-    /// The starting time (UTC) associated with the direction Format: `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`
+    /// The ending time (UTC) associated with the direction Format: `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`
     var endTime: Date
 
     /// The corresponding path of the direction
@@ -63,7 +63,7 @@ class Direction: NSObject, NSCopying, Codable {
     /// The number representing the bus route.
     var routeNumber: Int = 0
     
-    /// An array of bus stop locations on the bus route, excluding the departure and arrival stop. Empty if `type != .depart`.
+    /// An array of bus stop locations on the bus route, including the departure and arrival stop. Empty if `type != .depart`.
     var stops: [LocationObject] = []
     
     /// Whether the user should stay on this direction's bus for an upcoming transfer.
@@ -211,8 +211,8 @@ class Direction: NSObject, NSCopying, Codable {
             name: \(name),
             startTime: \(startTime),
             endTime: \(endTime),
-            startLocation: \(stops.first?.name ??? "Unknown"),
-            endLocation: \(stops.last?.name ??? "Unknown"),
+            startLocation: \(stops.first?.name ?? "Unknown"),
+            endLocation: \(stops.last?.name ?? "Unknown"),
             distance: \(travelDistance),
             locationNameDescription: \(locationNameDescription),
             numberOfStops: \(stops.count)

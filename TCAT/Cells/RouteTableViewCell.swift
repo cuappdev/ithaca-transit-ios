@@ -14,12 +14,6 @@ protocol TravelDistanceDelegate: NSObjectProtocol {
     func travelDistanceUpdated(withDistance distance: Double)
 }
 
-enum DelayState {
-    case late(date: Date)
-    case onTime(date: Date)
-    case noDelay(date: Date)
-}
-
 class RouteTableViewCell: UITableViewCell {
 
     // MARK: Data vars
@@ -270,14 +264,11 @@ class RouteTableViewCell: UITableViewCell {
                 
                 let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
                 
-                if Time.compare(date1: delayedDepartTime, date2: departTime) != .orderedSame
-                {
+                if Time.compare(date1: departTime, date2: delayedDepartTime) == .orderedAscending {
                     return .late(date: delayedDepartTime)
                 }
                 else {
-                    
                     return .onTime(date: departTime)
-                    
                 }
                 
             }

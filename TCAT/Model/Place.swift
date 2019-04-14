@@ -12,7 +12,7 @@ enum PlaceType: String, Codable {
     case busStop, googlePlace, unknown
 }
 
-class Place: NSObject, Codable {
+@objc(Place) class Place: NSObject, Codable {
 
     var name: String
     var type: PlaceType

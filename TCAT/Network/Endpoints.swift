@@ -10,7 +10,6 @@ import Foundation
 import SwiftyJSON
 import TRON
 import CoreLocation
-import GooglePlaces
 import Alamofire
 
 enum NetworkType: String {
@@ -18,54 +17,30 @@ enum NetworkType: String {
 }
 
 class Network {
+    
+    //
+    // Schemes
+    //
+    
+    // Production - Uses main production server for Network requests.
+    // Staging - Uses development server for Network requests, but will profile and archive to production.
 
     // MARK: Global Network Variables
 
-    /// Testing local servers for Network
-    // Change `networkType` to `.local` to work locally.
-    // Change `localIPAddress` to be the proper address
-
-    static let networkType: NetworkType = .debug
     static let apiVersion = "v1"
-
-    /// Used for local backend testing
-    static let localIPAddress = "10.132.0.68"
-    static let localSource = "http://\(localIPAddress):3000/api/\(apiVersion)/"
-
-    /// Test server used for development
-    static let debugIPAddress = "transit-testflight.cornellappdev.com"
-    static let debugSource = "https://\(debugIPAddress)/api/\(apiVersion)/"
-
-    /// Deployed server instance used for release
-    static let releaseIPAddress = "transit-backend.cornellappdev.com"
-    static let releaseSource = "https://\(releaseIPAddress)/api/\(apiVersion)/"
-
-    /// Network IP address being used for specified networkType
+    
     static var ipAddress: String {
-        #if RELEASE
-        if isTestFlight() {
-           return debugIPAddress
+        // For local testing, use "http://\(localIPAddress):3000/api/\(apiVersion)/"
+        guard let baseURL = Bundle.main.object(forInfoDictionaryKey: "SERVER_URL") as? String else {
+            fatalError("Could not find SERVER_URL in Info.plist!")
         }
-        #endif
-        switch networkType {
-        case .local: return localIPAddress
-        case .debug: return debugIPAddress
-        case .release: return releaseIPAddress
-        }
+        return baseURL
     }
 
-    /// Network source currently being used
+    /// Network address being used within app, defined by schemes and build configurations.
     static var address: String {
-        #if RELEASE
-        if isTestFlight() {
-            return debugSource
-        }
-        #endif
-        switch networkType {
-        case .local: return localSource
-        case .debug: return debugSource
-        case .release: return releaseSource
-        }
+        print("[Network] Using", ipAddress)
+        return "https://\(ipAddress)/api/\(apiVersion)"
     }
 
     static let tron = TRON(baseURL: Network.address)
@@ -84,7 +59,6 @@ class Network {
 
     class func getRoutes(start: Place, end: Place, time: Date, type: SearchType,
                          callback: @escaping (_ request: APIRequest<RoutesRequest, Error>) -> Void) {
-        
         
         let request: APIRequest<RoutesRequest, Error> = tron.codable.request("route")
         request.method = .get
@@ -108,12 +82,12 @@ class Network {
             "destinationName"   :   end.name,
             "originName"        :   start.name
         ]
-        
+
         // Add unique identifier to request
-        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+        if let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid) {
             request.parameters["uid"] = uid
         }
-        
+
         callback(request)
     }
     
@@ -126,7 +100,21 @@ class Network {
         
         return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(endStr)&start=\(startStr)&time=\(time)&destinationName=\(end.name)&originName=\(start.name)"
     }
-    
+
+    class func getMultiRoutes(startCoord: CLLocationCoordinate2D, time: Date, endCoords: [String], endPlaceNames: [String],
+                              callback: @escaping (_ request: APIRequest<MultiRoutesRequest, Error>) -> Void) {
+        let request: APIRequest<MultiRoutesRequest, Error> = tron.codable.request("multiroute")
+        request.method = .get
+        request.parameters = [
+            "start": "\(startCoord.latitude),\(startCoord.longitude)",
+            "time": time.timeIntervalSince1970,
+            "end": endCoords,
+            "destinationNames": endPlaceNames
+        ]
+
+        callback(request)
+    }
+
     class func getSearchResults(searchText: String) -> APIRequest<SearchRequest, Error> {
         let request: APIRequest<SearchRequest, Error> = tron.codable.request("search")
         request.method = .post
@@ -136,7 +124,7 @@ class Network {
         ]
         return request
     }
-    
+
     @discardableResult
     class func routeSelected(routeId: String) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routeSelected")
@@ -145,7 +133,7 @@ class Network {
         request.parameters = ["routeId" : routeId]
         
         // Add unique identifier to request
-        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+        if let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid) {
             request.parameters["uid"] = uid
         }
         
@@ -159,7 +147,7 @@ class Network {
         let dictionary = departDirections.map { (direction) -> [String: Any] in
 
             // The id of the location, or bus stop, the bus needs to get to
-            
+
             let stopID = direction.stops.first?.id ?? "-1"
 
             return [
