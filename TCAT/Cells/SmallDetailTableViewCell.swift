@@ -9,17 +9,17 @@
 import UIKit
 
 class SmallDetailTableViewCell: UITableViewCell {
-    
-    var iconView: DetailIconView? = nil
+
+    var iconView: DetailIconView?
     var titleLabel: UILabel!
-    
+
     let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
     let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
     var iconViewFrame: CGRect = CGRect()
-    
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
+
         titleLabel = UILabel()
         titleLabel.frame = CGRect(x: cellWidth, y: 0, width: UIScreen.main.bounds.width - cellWidth - 20, height: 20)
         titleLabel.font = .getFont(.regular, size: 14)
@@ -30,15 +30,15 @@ class SmallDetailTableViewCell: UITableViewCell {
         titleLabel.sizeToFit()
         titleLabel.center.y = cellHeight / 2
         contentView.addSubview(titleLabel)
-        
+
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func setCell(_ direction: Direction, firstStep: Bool, lastStep: Bool) {
-        
+
         let shouldAddSubview = iconView == nil
 
         if shouldAddSubview {
@@ -47,9 +47,9 @@ class SmallDetailTableViewCell: UITableViewCell {
         } else {
             iconView?.updateTimes(with: direction, isLast: lastStep)
         }
-        
+
         let titleLabelBoldFont: UIFont = .getFont(.semibold, size: 14)
-        
+
         if direction.type == .arrive {
             // Arrive Direction
             titleLabel.attributedText = direction.name.bold(in: direction.locationNameDescription,
@@ -65,11 +65,11 @@ class SmallDetailTableViewCell: UITableViewCell {
                                                             from: titleLabel.font,
                                                             to: titleLabelBoldFont)
         }
-        
+
         titleLabel.sizeToFit()
         titleLabel.frame.size.width = UIScreen.main.bounds.width - cellWidth - 20
         titleLabel.center.y = cellHeight / 2
-        
+
     }
-    
+
 }

@@ -9,13 +9,13 @@
 import UIKit
 import SnapKit
 
-protocol AddFavoritesDelegate {
+protocol AddFavoritesDelegate: class {
     func displayFavoritesTVC()
 }
 
 class HeaderView: UITableViewHeaderFooterView {
-    
-    var addFavoritesDelegate: AddFavoritesDelegate?
+
+    weak var addFavoritesDelegate: AddFavoritesDelegate?
 
     var label: UILabel = {
         let label = UILabel()

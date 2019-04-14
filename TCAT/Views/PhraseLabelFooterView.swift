@@ -15,18 +15,18 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-        
+
         contentView.backgroundColor = Colors.white
         contentView.frame.size = CGSize(width: UIScreen.main.bounds.size.width, height: RouteDetailCellSize.largeHeight)
-        
+
         setupLabel()
         setupConstraints()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
     func setupLabel() {
         label = UILabel()
         label.font = .getFont(.regular, size: 12)
@@ -34,10 +34,10 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
         label.numberOfLines = 0
         label.textAlignment = .center
         label.lineBreakMode = .byWordWrapping
-        
+
         addSubview(label)
     }
-    
+
     func setupConstraints() {
         let topPadding: CGFloat = 20
         label.snp.makeConstraints { (make) in
@@ -45,7 +45,7 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
             make.top.equalToSuperview().offset(topPadding)
         }
     }
-    
+
     func setView(with message: String) {
         label.text = message
     }
