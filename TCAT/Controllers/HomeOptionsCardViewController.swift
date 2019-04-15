@@ -308,7 +308,7 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
         searchBar.placeholder = nil
         animateOutInfoButton()
         if isDynamicSearchBar {
-            tableView.reloadData()
+            sections = createSections()
         }
     }
     
