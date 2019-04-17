@@ -59,7 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     userDefaults.set(defaultValue, forKey: key)
                 }
             }
-            else if key == Constants.UserDefaults.favorites && sharedUserDefaults?.value(forKey: key) == nil{
+            else if key == Constants.UserDefaults.favorites && sharedUserDefaults?.value(forKey: key) == nil {
                 sharedUserDefaults?.set(userDefaults.value(forKey: key), forKey: key)
             }
         }
