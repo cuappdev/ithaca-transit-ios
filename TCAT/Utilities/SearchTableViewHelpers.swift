@@ -11,7 +11,6 @@ import SwiftyJSON
 import DZNEmptyDataSet
 import Fuzzywuzzy_swift
 
-let userDefaults = UserDefaults.standard
 let encoder = JSONEncoder()
 let decoder = JSONDecoder()
 
@@ -63,7 +62,13 @@ class SearchTableViewManager {
     }
 
     func retrievePlaces(for key: String) -> [Place] {
-        if
+        if (key == Constants.UserDefaults.favorites) {
+            if let storedPlaces = sharedUserDefaults?.value(forKey: key) as? Data,
+                let favorites = try? decoder.decode([Place].self, from: storedPlaces) {
+                return favorites
+            }
+            
+        } else if
             let storedPlaces = userDefaults.value(forKey: key) as? Data,
             let places = try? decoder.decode([Place].self, from: storedPlaces)
         {
@@ -85,13 +90,44 @@ class SearchTableViewManager {
         
         do {
             let data = try encoder.encode(newFavoritesList)
-            userDefaults.set(data, forKey: Constants.UserDefaults.favorites)
+            sharedUserDefaults?.set(data, forKey: Constants.UserDefaults.favorites)
             AppShortcuts.shared.updateShortcutItems()
         } catch let error {
             print(error)
         }
-
         return newFavoritesList
+    }
+    
+    //returns the rest so we don't have to re-unarchive it
+    func deleteRecent(recent: Place, allRecents: [Place]) -> [Place] {
+        var newRecentsList: [Place] = []
+        for item in allRecents {
+            if recent.isEqual(item) {
+                continue
+            } else {
+                newRecentsList.append(item)
+            }
+        }
+        
+        do {
+            let data = try encoder.encode(newRecentsList)
+            userDefaults.set(data, forKey: Constants.UserDefaults.recentSearch)
+        } catch let error {
+            print(error)
+        }
+        
+        return newRecentsList
+    }
+    
+    //clears recent searches
+    func deleteAllRecents() {
+        let newRecents = [Place]()
+        do {
+            let data = try encoder.encode(newRecents)
+            userDefaults.set(data, forKey: Constants.UserDefaults.recentSearch)
+        } catch let error {
+            print(error)
+        }
     }
 
     /// Possible Keys: Constants.UserDefaults (.recentSearch | .favorites)
@@ -111,7 +147,11 @@ class SearchTableViewManager {
         
         do {
             let data = try encoder.encode(places)
-            userDefaults.set(data, forKey: key)
+            if key == Constants.UserDefaults.favorites {
+                sharedUserDefaults?.set(data, forKey: key)
+            } else {
+                userDefaults.set(data, forKey: key)
+            }
             AppShortcuts.shared.updateShortcutItems()
         } catch let error {
             print(error)
@@ -149,11 +189,11 @@ extension SearchResultsTableViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
         return -80
     }
-    
+
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
         return #imageLiteral(resourceName: "emptyPin")
     }
-    
+
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         return NSAttributedString(string: Constants.EmptyStateMessages.locationNotFound,
                                   attributes: [.foregroundColor: Colors.metadataIcon])

@@ -11,14 +11,15 @@ import Foundation
 import SwiftyJSON
 import Crashlytics
 
-
 class Analytics {
     static let shared = Analytics()
     
     func log(_ payload: Payload) {
-        let fabricEvent = payload.convertToFabric()
-        Answers.logCustomEvent(withName: fabricEvent.name, customAttributes: fabricEvent.attributes)
-        print("Logging \(fabricEvent.name):", fabricEvent.attributes ?? [:])
+        #if !DEBUG
+            let fabricEvent = payload.convertToFabric()
+            Answers.logCustomEvent(withName: fabricEvent.name, customAttributes: fabricEvent.attributes)
+            print("Logging \(fabricEvent.name):", fabricEvent.attributes ?? [:])
+        #endif
     }
 }
 

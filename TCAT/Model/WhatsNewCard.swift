@@ -101,7 +101,7 @@ struct WhatsNewCard: Codable {
     var primaryActionTitle: String?
     
     /// The function to perform in the app when an action is selected.
-    var primaryActionHandler: ((_: HomeViewController) -> ())?
+    var primaryActionHandler: ((_: HomeMapViewController) -> ())?
     
     
     // MARK: Secondary Button - Gray, Regular
@@ -110,7 +110,7 @@ struct WhatsNewCard: Codable {
     var secondaryActionTitle: String?
     
     /// The function to perform in the app when an action is selected.
-    var secondaryActionHandler: ((_: HomeViewController) -> ())?
+    var secondaryActionHandler: ((_: HomeMapViewController) -> ())?
     
     
     /// Codable support

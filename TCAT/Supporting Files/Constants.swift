@@ -19,7 +19,7 @@ struct Constants {
             static let cancel = "Cancel"
             static let dontRemind = "Don't Remind Me Again"
         }
-        
+
         struct AlertsRequestFailure {
             static let title = "Couldn't Fetch Service Alerts"
             static let message = "There was an error fetching service alerts. Please retry again."
@@ -77,7 +77,7 @@ struct Constants {
             static let message = "To add more favorites, please swipe left and delete one first."
             static let action = "Got It!"
         }
-        
+
         struct GooglePlacesFailure {
             static let title = "Couldn't Fetch Place Information"
             static let message = "We ran into an issue fetching the coordinates of the selected location. Please try again later."
@@ -97,7 +97,7 @@ struct Constants {
 
         /// Developer email address to direct contact inquiries and emails toward
         static let contactEmailAddress = "ithacatransit@cornellappdev.com"
-        
+
         // Twitter screen name
         static let twitterHandle = "IthacaTransit"
 
@@ -134,15 +134,15 @@ struct Constants {
     /// Cell identifiers
     struct Cells {
         static let placeIdentifier = "PlaceTableViewCell"
-        
+
         static let addFavoriteIdentifier = "AddFavorite"
         static let seeAllStopsIdentifier = "SeeAllStops"
-        
+
         static let currentLocationIdentifier = "CurrentLocation"
         static let smallDetailCellIdentifier = "SmallCell"
         static let largeDetailCellIdentifier = "LargeCell"
         static let busStopDetailCellIdentifier = "BusStopCell"
-        
+
         static let informationCellIdentifier = "InformationCell"
     }
 
@@ -233,13 +233,27 @@ struct Constants {
         static let routeResults = "Route Results"
     }
 
+    struct TodayExtension {
+        // cell identifiers
+        static let contentCellIdentifier = "todayExtensionCell"
+        static let errorCellIdentifier = "errorCell"
+        static let loadingCellIdentifier = "loadingCell"
+
+        // cell strings
+        static let locationOutOfRange = "Location Out of Range"
+        static let noRoutesAvailable = "No routes available to "
+        static let openIthacaTransit = "Open Ithaca Transit to view favorite shortcuts."
+        static let unableToLoad = "Unable to Load Routes"
+    }
+
     struct UserDefaults {
+        static let group = "group.tcat"
         static let version = "version"
         static let appLaunchCount = "appLaunchCount"
         static let onboardingShown = "onboardingShown"
         static let showLocationAuthReminder = "locationAuthReminder"
         static let uid = "uid"
-        
+
         /// True if the current card has been dismissed by user
         static let whatsNewDismissed = "whatsNewDismissed"
         static let recentSearch = "recentSearch"
@@ -287,5 +301,5 @@ struct Constants {
             static let westBorder: Double = -76.67690943302259 - (1 / 51.2738554594)
         }
     }
-    
+
 }

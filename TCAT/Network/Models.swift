@@ -10,7 +10,6 @@ import Foundation
 import SwiftyJSON
 import TRON
 import CoreLocation
-import Alamofire
 
 struct Error: JSONDecodable, Codable {
     init(json: JSON) {}
@@ -34,9 +33,9 @@ struct Alert: Codable {
     var routes: [Int]
     var signs: [Int]
     var channelMessages: [ChannelMessage]
-    
+
     init(id: Int, message: String, fromDate: String, toDate: String, fromTime: String, toTime: String, priority: Int, daysOfWeek: String, routes: [Int], signs: [Int], channelMessages: [ChannelMessage]) {
-        
+
         self.id = id
         self.message = message
         self.fromDate = fromDate
@@ -48,7 +47,7 @@ struct Alert: Codable {
         self.routes = routes
         self.signs = signs
         self.channelMessages = channelMessages
-        
+
     }
 }
 
@@ -77,6 +76,11 @@ struct RoutesRequest: Codable {
     var data: [Route]
 }
 
+struct MultiRoutesRequest: Codable {
+    var success: Bool
+    var data: [Route?]
+}
+
 class AllBusStopsRequest: Codable {
     var success: Bool
     var data: [Place]
@@ -95,12 +99,12 @@ class AllBusStopsRequest: Codable {
 
     // TO BE MOVED TO BACKEND
     func parseAllStops() {
-        
+
         // Create dictionary of all pulled stops
         let crossReference = data.reduce(into: [String: [Place]]()) {
             $0[$1.name, default: []].append($1)
         }
-        
+
         // Create an array of all stops that are non duplicates by name
         var nonDuplicateStops = crossReference.filter {$1.count == 1}.map { (_, value) -> Place in
             return value.first!
@@ -126,7 +130,7 @@ class AllBusStopsRequest: Codable {
                 let secondStopLocation = CLLocation(latitude: secondLat, longitude: secondLong)
 
                 let distanceBetween = firstStopLocation.distance(from: secondStopLocation)
-                
+
                 if distanceBetween < Constants.Values.maxDistanceBetweenStops {
                     // If stops are too close to each other, combine into a new stop with averaged location and add to list
                     let middleCoordinate = firstStopLocation.coordinate.middleLocationWith(location: secondStopLocation.coordinate)

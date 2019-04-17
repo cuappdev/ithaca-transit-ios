@@ -15,7 +15,7 @@ class PlaceTableViewCell: UITableViewCell {
     private var iconColor: UIColor = Colors.metadataIcon
     
     let labelWidthPadding: CGFloat = 45.0
-    let labelXPosition: CGFloat = 40.0
+    let labelXPosition: CGFloat = 46.0
     
     let imageHeight: CGFloat = 20.0
     let imageWidth: CGFloat = 20.0
@@ -48,7 +48,7 @@ class PlaceTableViewCell: UITableViewCell {
         detailTextLabel?.text = place?.description
         iconColor = place?.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
         
-        imageView?.frame = CGRect(x: 10, y: 5, width: imageWidth, height: imageHeight)
+        imageView?.frame = CGRect(x: 16, y: 5, width: imageWidth, height: imageHeight)
         imageView?.contentMode = .scaleAspectFit
         imageView?.center.y = bounds.height / 2.0
         imageView?.image = place?.type == .busStop ? UIImage(named: "bus-pin") : UIImage(named: "pin")

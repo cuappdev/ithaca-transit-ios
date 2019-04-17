@@ -12,7 +12,7 @@ enum PlaceType: String, Codable {
     case busStop, googlePlace, unknown
 }
 
-class Place: NSObject, Codable {
+@objc(Place) class Place: NSObject, Codable {
 
     var name: String
     var type: PlaceType
@@ -41,7 +41,7 @@ class Place: NSObject, Codable {
     }
     
     /// Initializer for Google Places
-    convenience init(name: String, placeDescription: String, placeIdentifier: String) {
+    convenience init(name: String, placeDescription: String = "", placeIdentifier: String = "") {
         self.init(name: name)
         self.type = .googlePlace
         self.placeDescription = placeDescription
