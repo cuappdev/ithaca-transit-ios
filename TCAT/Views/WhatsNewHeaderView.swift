@@ -9,47 +9,47 @@
 import UIKit
 import SnapKit
 
-protocol WhatsNewDelegate {
+protocol WhatsNewDelegate: class {
     func getCurrentHomeViewController() -> HomeViewController
     func dismissView(card: WhatsNewCard)
 }
 
 class WhatsNewHeaderView: UIView {
 
-    var whatsNewDelegate: WhatsNewDelegate?
+    weak var whatsNewDelegate: WhatsNewDelegate?
     var card: WhatsNewCard
-    
+
     /// Whether a promotion is being used for the card
     var isPromotion: Bool
-    
+
     // e.g. "New In Ithaca Transit" blue label
     var smallHeaderLabel: UILabel!
     var titleLabel: UILabel!
     var descriptionLabel: UILabel!
-    
+
     var buttonContainerView: UIView!
     var dismissButton: UIButton!
     var primaryButton: UIButton?
     var secondaryButton: UIButton?
-    
+
     private var titleToTop: Constraint?
     private var updateNameToTitle: Constraint?
     private var updateDescToUpdateName: Constraint?
     private var buttonToUpdateDesc: Constraint?
     private var buttonToBottom: Constraint?
     private var updateDescriptionHeight: Constraint?
-    
+
     let containerPadding = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
-    
+
     init(card: WhatsNewCard, isPromotion: Bool = false) {
         self.card = card
         self.isPromotion = isPromotion
-        
+
         super.init(frame: .zero)
         backgroundColor = Colors.white
         layer.cornerRadius = 16
         clipsToBounds = true
-        
+
         createWhatsNewHeader()
         createDismissButton()
         createUpdateTitle(title: card.title)
@@ -57,7 +57,7 @@ class WhatsNewHeaderView: UIView {
         createButtonContainerView()
         createPrimaryActionButton()
         createSecondaryActionButton()
-        
+
         setupConstraints()
     }
 
@@ -69,13 +69,13 @@ class WhatsNewHeaderView: UIView {
 
         addSubview(smallHeaderLabel)
     }
-    
+
     func createDismissButton() {
         dismissButton = LargeTapTargetButton(extendBy: 32)
         dismissButton.setImage(UIImage(named: "x"), for: .normal)
         dismissButton.tintColor = Colors.metadataIcon
         dismissButton.addTarget(self, action: #selector(dismissButtonPressed), for: .touchUpInside)
-        
+
         addSubview(dismissButton)
     }
 
@@ -95,10 +95,10 @@ class WhatsNewHeaderView: UIView {
         descriptionLabel.numberOfLines = 0
         descriptionLabel.textAlignment = .center
         descriptionLabel.isUserInteractionEnabled = true
-        
+
         addSubview(descriptionLabel)
     }
-    
+
     func createButtonContainerView() {
         buttonContainerView = UIView()
         addSubview(buttonContainerView)
@@ -118,7 +118,7 @@ class WhatsNewHeaderView: UIView {
         buttonContainerView.addSubview(primaryButton)
         self.primaryButton = primaryButton
     }
-    
+
     func createSecondaryActionButton() {
         guard let title = card.secondaryActionTitle else { return }
         let secondaryButton = UIButton()
@@ -129,14 +129,14 @@ class WhatsNewHeaderView: UIView {
         secondaryButton.setTitleColor(Colors.white, for: .normal)
         secondaryButton.layer.cornerRadius = secondaryButton.intrinsicContentSize.height / 2
         secondaryButton.clipsToBounds = true
-        
+
         buttonContainerView.addSubview(secondaryButton)
-        
+
         self.secondaryButton = secondaryButton
     }
 
     func setupConstraints() {
-        
+
         let titleToTopPadding: CGFloat = 16
 
         smallHeaderLabel.snp.makeConstraints { (make) in
@@ -145,7 +145,7 @@ class WhatsNewHeaderView: UIView {
             make.height.equalTo(smallHeaderLabel.intrinsicContentSize.height)
             make.width.equalTo(smallHeaderLabel.intrinsicContentSize.width)
         }
-        
+
         let labelToTitlePadding: CGFloat = 8
 
         titleLabel.snp.makeConstraints { (make) in
@@ -154,7 +154,7 @@ class WhatsNewHeaderView: UIView {
             make.height.equalTo(titleLabel.intrinsicContentSize.height)
             make.width.equalTo(titleLabel.intrinsicContentSize.width)
         }
-        
+
         let titletoDescriptionPadding: CGFloat = 6
         let descriptionInset: CGFloat = 32
 
@@ -169,16 +169,16 @@ class WhatsNewHeaderView: UIView {
                 updateDescriptionHeight = make.height.equalTo(ceil(heightValue)).constraint
             }
         }
-        
+
         let descriptionToButtonPadding: CGFloat = 12
         let buttonToBottomPadding: CGFloat = 16
-        
+
         buttonContainerView.snp.makeConstraints { (make) in
             buttonToUpdateDesc = make.top.equalTo(descriptionLabel.snp.bottom).offset(descriptionToButtonPadding).constraint
             buttonToBottom = make.bottom.equalToSuperview().inset(buttonToBottomPadding).constraint
             make.centerX.equalToSuperview()
         }
-        
+
         dismissButton.snp.makeConstraints { (make) in
             make.top.equalToSuperview().offset(titleToTopPadding)
             make.right.equalToSuperview().inset(titleToTopPadding)
@@ -188,7 +188,7 @@ class WhatsNewHeaderView: UIView {
         // Padding for space between buttons
         let buttonWidthPadding: CGFloat = (secondaryButton != nil) ? 16 : 0
         let buttonWidth: CGFloat = 80
-        
+
         primaryButton?.snp.makeConstraints { (make) in
             make.centerY.top.bottom.right.equalToSuperview()
             make.width.equalTo(buttonWidth)
@@ -196,7 +196,7 @@ class WhatsNewHeaderView: UIView {
                 make.left.equalToSuperview()
             }
         }
-        
+
         secondaryButton?.snp.makeConstraints { (make) in
             make.centerY.top.bottom.left.equalToSuperview()
             make.width.equalTo(buttonWidth)
@@ -208,7 +208,7 @@ class WhatsNewHeaderView: UIView {
         }
 
     }
-    
+
     func calculateCardHeight() -> CGFloat {
         guard
             let titleToTop = titleToTop,
@@ -220,32 +220,32 @@ class WhatsNewHeaderView: UIView {
             else {
                 return 0
         }
-            
+
         let titleToTopVal = titleToTop.layoutConstraints[0].constant
         let titleHeight = smallHeaderLabel.intrinsicContentSize.height
-        
+
         let titleSpace = titleToTopVal + titleHeight
-        
+
         let updateNameToTitleVal = updateNameToTitle.layoutConstraints[0].constant
         let updateNameHeight = titleLabel.intrinsicContentSize.height
-        
+
         let updateNameSpace = updateNameToTitleVal + updateNameHeight
-        
+
         let updateDescToUpdateNameVal = updateDescToUpdateName.layoutConstraints[0].constant
         let updateDescHeight = updateDescriptionHeight.layoutConstraints[0].constant
-        
+
         let updateDescSpace = updateDescToUpdateNameVal + updateDescHeight
-        
+
         let actionButtonToUpdateDescVal = actionButtonToUpdateDesc.layoutConstraints[0].constant
         let buttonHeight = primaryButton?.intrinsicContentSize.height ?? secondaryButton?.intrinsicContentSize.height ?? 0
-        
+
         let actionButtonSpace = actionButtonToUpdateDescVal + buttonHeight
-        
+
         let bottomOffset = -actionButtonToBottom.layoutConstraints[0].constant
-        
+
         return ceil(titleSpace + updateNameSpace + updateDescSpace + actionButtonSpace + bottomOffset)
     }
-    
+
     @objc func primaryButtonTapped() {
         if
             let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
@@ -259,7 +259,7 @@ class WhatsNewHeaderView: UIView {
             self.whatsNewDelegate?.dismissView(card: card)
         }
     }
-    
+
     @objc func secondaryButtonTapped() {
         if
             let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
@@ -273,7 +273,7 @@ class WhatsNewHeaderView: UIView {
             self.whatsNewDelegate?.dismissView(card: card)
         }
     }
-    
+
     func open(_ link: String, optionalAppLink: String?, linkOpened: @escaping (() -> Void)) {
         if
             let appLink = optionalAppLink,
@@ -284,9 +284,7 @@ class WhatsNewHeaderView: UIView {
             UIApplication.shared.open(appURL, options: [:]) { _ in
                 linkOpened()
             }
-        }
-        
-        else if let webURL = URL(string: link) {
+        } else if let webURL = URL(string: link) {
             // Open link in Safari.
             UIApplication.shared.open(webURL, options: [:]) { _ in
                 linkOpened()

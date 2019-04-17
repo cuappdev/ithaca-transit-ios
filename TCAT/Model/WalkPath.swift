@@ -11,29 +11,29 @@ import SwiftyJSON
 import GoogleMaps
 
 class WalkPath: Path {
-    
+
     var polylineWidth: CGFloat = 8
     var dashLengths: [NSNumber] = [6, 4]
-    var traveledPath: GMSMutablePath? = nil
-    var untraveledPath: GMSMutablePath? = nil
-    
+    var traveledPath: GMSMutablePath?
+    var untraveledPath: GMSMutablePath?
+
     init(_ waypoints: [Waypoint]) {
-        
+
         super.init(waypoints: waypoints)
         self.color = Colors.metadataIcon
-    
+
         self.untraveledPath = createPathFromWaypoints(waypoints: waypoints)
         self.traveledPath = untraveledPath
-        
+
         self.path = untraveledPath
         self.strokeColor = color
         self.strokeWidth = polylineWidth
-        
+
         self.spans = GMSStyleSpans(untraveledPath!, [.solidColor(self.color)], dashLengths, .projected)
         self.geodesic = false
-        
+
     }
-    
+
     func createPathFromWaypoints(waypoints: [Waypoint]) -> GMSMutablePath {
         let path = GMSMutablePath()
         for waypoint in waypoints {
@@ -41,5 +41,5 @@ class WalkPath: Path {
         }
         return path
     }
-    
+
 }

@@ -54,7 +54,7 @@ struct Constants {
 
         struct EmailFailure {
             static let title = "Couldn't Send Email"
-            static let message = "To send your message with device logs, please add an email account in Settings > Accounts & Passwords > Add Account. You can also contact us at " + Constants.App.contactEmailAddress + " to send feedback."
+            static let message = "To send your message with device logs, please add an email account in Settings > Accounts & Passwords > Add Account. You can also contact us at \(Constants.App.contactEmailAddress) to send feedback."
             static let emailSettings = "Email Settings"
             static let copyEmail = "Copy Address to Clipboard"
             static let cancel = Constants.Alerts.GeneralActions.cancel

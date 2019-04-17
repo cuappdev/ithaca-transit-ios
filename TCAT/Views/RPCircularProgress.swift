@@ -104,11 +104,7 @@ open class RPCircularProgress: UIView {
     /**
       Getter for the current progress (not observed from any active animations)
      */
-    @IBInspectable open var progress: CGFloat {
-        get {
-            return progressLayer.progress
-        }
-    }
+    @IBInspectable open var progress: CGFloat { return progressLayer.progress }
 
     /**
       Sets how much of the progress bar should be filled during an indeterminate animation, pinned between `0.05` and `0.9`
@@ -131,11 +127,7 @@ open class RPCircularProgress: UIView {
 
     // MARK: - Custom Base Layer
 
-    fileprivate var progressLayer: ProgressLayer! {
-        get {
-            return layer as? ProgressLayer
-        }
-    }
+    fileprivate var progressLayer: ProgressLayer! { return layer as? ProgressLayer }
 
     open override class var layerClass: AnyClass {
         return ProgressLayer.self

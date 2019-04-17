@@ -34,7 +34,17 @@ struct Alert: Codable {
     var signs: [Int]
     var channelMessages: [ChannelMessage]
 
-    init(id: Int, message: String, fromDate: String, toDate: String, fromTime: String, toTime: String, priority: Int, daysOfWeek: String, routes: [Int], signs: [Int], channelMessages: [ChannelMessage]) {
+    init(id: Int,
+         message: String,
+         fromDate: String,
+         toDate: String,
+         fromTime: String,
+         toTime: String,
+         priority: Int,
+         daysOfWeek: String,
+         routes: [Int],
+         signs: [Int],
+         channelMessages: [ChannelMessage]) {
 
         self.id = id
         self.message = message

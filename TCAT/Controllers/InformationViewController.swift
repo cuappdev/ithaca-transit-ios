@@ -26,11 +26,11 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
     var tableView = UITableView(frame: .zero, style: .grouped)
 
     var content: [[(name: String, action: Selector)]] = [
-        
+
         [ // Seciton 0
             (name: Constants.InformationView.serviceAlerts, action: #selector(showServiceAlerts))
         ],
-        
+
         [ // Section 1
             (name: Constants.InformationView.onboarding, action: #selector(presentOnboarding)),
             (name: Constants.InformationView.sendFeedback, action: #selector(sendFeedback))
@@ -290,7 +290,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
         let homePage = "http://www.cornellappdev.com"
         open(homePage)
     }
-    
+
     @objc func showServiceAlerts() {
         let serviceAlertsVC = ServiceAlertsViewController()
         navigationController?.pushViewController(serviceAlertsVC, animated: true)
@@ -325,7 +325,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
 
             self.tcatImage.frame.origin.x += constant
 
-        }) { (_) in
+        }, completion: { (_) in
 
             self.tcatImage.frame.origin.x -= 2 * constant
 
@@ -334,7 +334,7 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
 
                 self.tcatImage.frame.origin.x += constant
 
-            }) { (_) in
+            }, completion: { (_) in
 
                 let title = Constants.Alerts.MagicBus.title
                 let message = Constants.Alerts.MagicBus.message
@@ -342,9 +342,9 @@ class InformationViewController: UIViewController, UITableViewDataSource, UITabl
                 alertController.addAction(UIAlertAction(title: Constants.Alerts.MagicBus.action, style: .default, handler: nil))
                 self.present(alertController, animated: true)
 
-            }
+            })
 
-        }
+        })
 
         let payload = BusTappedEventPayload()
         Analytics.shared.log(payload)
