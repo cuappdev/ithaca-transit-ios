@@ -116,7 +116,7 @@ extension String {
 
     /// Convert Range to NSRange
     func nsRange(from range: Range<String.Index>) -> NSRange {
-        let from = range.upperBound.utf16Offset(in: self)
+        let from = range.lowerBound.utf16Offset(in: self)
         let to = range.upperBound.utf16Offset(in: self)
         return NSRange(location: from - startIndex.utf16Offset(in: self), length: to - from)
     }
