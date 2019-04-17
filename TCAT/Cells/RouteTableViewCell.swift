@@ -268,7 +268,7 @@ class RouteTableViewCell: UITableViewCell {
                     if (delayedDepartTime >= Date() || delay >= 120) {
                         return .late(date: delayedDepartTime)
                     } else { // delay < 120
-                        return .onTime(date: departTime) // what time??
+                        return .onTime(date: departTime) 
                     }
                 }
                 else { // bus is not delayed
