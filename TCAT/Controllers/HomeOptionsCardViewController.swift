@@ -202,7 +202,7 @@ class HomeOptionsCardViewController: UIViewController {
                 return min(tableViewContentHeight() + CGFloat(searchBarHeight), maxCardHeight) + searchBarSeparatorHeight
             } else { return CGFloat(searchBarHeight) + searchBarSeparatorHeight }
         }
-        return min(tableViewContentHeight() + searchBarHeight, UIScreen.main.bounds.height/2) + searchBarSeparatorHeight
+        return min(tableViewContentHeight() + searchBarHeight, UIScreen.main.bounds.height*maxScreenCoverage) + searchBarSeparatorHeight
     }
     
     func updatePlaces() {
@@ -397,6 +397,10 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
 extension HomeOptionsCardViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
