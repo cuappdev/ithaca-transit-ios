@@ -41,7 +41,7 @@ enum PlaceType: String, Codable {
     }
     
     /// Initializer for Google Places
-    convenience init(name: String, placeDescription: String, placeIdentifier: String) {
+    convenience init(name: String, placeDescription: String = "", placeIdentifier: String = "") {
         self.init(name: name)
         self.type = .googlePlace
         self.placeDescription = placeDescription

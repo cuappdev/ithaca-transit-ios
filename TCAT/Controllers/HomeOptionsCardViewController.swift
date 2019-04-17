@@ -36,21 +36,27 @@ class HomeOptionsCardViewController: UIViewController {
     let searchBarSeparatorHeight: CGFloat = 1
     let headerHeight: CGFloat = 42
     let tableViewRowHeight: CGFloat = 50
+    let maxRowCount: CGFloat = 5
+    let maxHeaderCount: CGFloat = 2
+    let maxSeparatorCount: CGFloat = 1
+    let maxScreenCoverage: CGFloat = 3/5
+    let maxRecentsCount = 2
+    let maxFavoritesCount = 2
     
+    /** Returns the height of a card that would contain two favorites and two recent searches.
+     This is the height that we will cap all optionCards at, regardless of the phone. */
     var maxCardHeight: CGFloat {
-        /* Returns the height of a card that would contain two favorites and two recent searches.
-         This is the height that we will cap all optionCards at, regardless of the phone. */
-        
-        return tableViewRowHeight * 5 + headerHeight * 2 + searchBarHeight + HeaderView.separatorViewHeight
+        return tableViewRowHeight * maxRowCount + headerHeight * maxHeaderCount + searchBarHeight + HeaderView.separatorViewHeight * maxSeparatorCount
     }
+    
+    /** Checks to see if the bottom of the card at maximum height would cover more than 3/5 of the screen */
     var isDynamicSearchBar: Bool {
-        /* Checks to see if the bottom of the card at maximum height would cover more than 3/5 of the screen */
         
-        return maxCardHeight > (UIScreen.main.bounds.height*3/5 - HomeMapViewController.optionsCardInset.top)
+        return maxCardHeight > (UIScreen.main.bounds.height*maxScreenCoverage - HomeMapViewController.optionsCardInset.top)
     }
     var recentLocations: [Place] = [] {
         didSet {
-            if recentLocations.count > 2 {
+            if recentLocations.count > maxRecentsCount {
                 recentLocations = Array(recentLocations.prefix(2))
             }
             if !isNetworkDown {
@@ -60,7 +66,7 @@ class HomeOptionsCardViewController: UIViewController {
     }
     var favorites: [Place] = [] {
         didSet {
-            if favorites.count > 2 {
+            if favorites.count > maxFavoritesCount {
                 favorites = Array(favorites.prefix(2))
             }
             if !isNetworkDown {
@@ -132,7 +138,7 @@ class HomeOptionsCardViewController: UIViewController {
     
     func setupConstraints() {
         infoButton.snp.makeConstraints { (make) in
-            make.centerY.equalTo(view.snp.top).inset(searchBarHeight/2)
+            make.centerY.equalTo(searchBar)
             make.trailing.equalToSuperview().inset(16)
             make.width.equalTo(30)
             make.height.equalTo(38)
@@ -159,20 +165,13 @@ class HomeOptionsCardViewController: UIViewController {
     func createSections() -> [Section] {
         var allSections: [Section] = []
         let recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
-        let seeAllStops = Place(
-            name: Constants.Cells.seeAllStopsIdentifier,
-            placeDescription: "dummy_data",
-            placeIdentifier: "dummy_data"
-        )
+        let seeAllStops = Place(name: Constants.Cells.seeAllStopsIdentifier)
         let seeAllStopsSection = Section(type: .seeAllStops, items: [seeAllStops])
-        
         var favoritesSection = Section(type: .favorites, items: favorites)
         if favoritesSection.items.isEmpty {
             let addFavorites = Place(
                 name: Constants.General.firstFavorite,
-                placeDescription: Constants.General.tapHere,
-                placeIdentifier: "dummy_data"
-            )
+                placeDescription: Constants.General.tapHere)
             addFavorites.type = .busStop // Special exception to make pin blue for favorite!
             favoritesSection = Section(type: .favorites, items: [addFavorites])
         }
@@ -196,8 +195,8 @@ class HomeOptionsCardViewController: UIViewController {
         return size
     }
     
+    /// If the screen is too small, decide whether to show full card or just searchBar
     func calculateCardHeight() -> CGFloat {
-        // If the screen is too small, decide whether to show full card or just searchBar
         if isDynamicSearchBar {
             if searchBar.isFirstResponder {
                 return min(tableViewContentHeight() + CGFloat(searchBarHeight), maxCardHeight) + searchBarSeparatorHeight
@@ -267,7 +266,7 @@ class HomeOptionsCardViewController: UIViewController {
 extension HomeOptionsCardViewController {
     override func loadView() {
         let customView = RoundShadowedView()
-        customView.addRoundedCornersAndShadow(radius: 10)
+        customView.addRoundedCornersAndShadow(radius: 10, shadowOpacity: 0.4)
         view = customView
     }
     
@@ -380,8 +379,7 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
         if sections[indexPath.section].type == .seeAllStops {
             cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as? GeneralTableViewCell
         }
-            
-            // Favorites (including Add First Favorite!), Recent Searches
+        // Favorites (including Add First Favorite!), Recent Searches
         else {
             guard let placeCell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
                 else { return cell }
@@ -399,10 +397,6 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
 extension HomeOptionsCardViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0
-    }
-    
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return nil
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -558,41 +552,6 @@ extension HomeOptionsCardViewController: DZNEmptyDataSetSource, DZNEmptyDataSetD
                 self.removeLoadingIndicator()
                 self.tableView.reloadData()
             }
-        }
-    }
-}
-
-// Necessary to have shadows AND rounded corners
-private class RoundShadowedView: UIView {
-    
-    var containerView: UIView!
-    
-    func addRoundedCornersAndShadow(radius: CGFloat) {
-        backgroundColor = .clear
-        
-        layer.shadowColor = Colors.secondaryText.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: radius/4)
-        layer.shadowOpacity = 0.4
-        layer.shadowRadius = radius/4
-        
-        containerView = UIView()
-        containerView.backgroundColor = .white
-        
-        containerView.layer.cornerRadius = radius
-        containerView.layer.masksToBounds = true
-        
-        addSubview(containerView)
-        
-        containerView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-        }
-    }
-    
-    override func addSubview(_ view: UIView) {
-        if view.isEqual(containerView) {
-            super.addSubview(view)
-        } else {
-            containerView.addSubview(view)
         }
     }
 }

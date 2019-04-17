@@ -38,6 +38,7 @@ class HomeMapViewController: UIViewController {
     let minZoom: Float = 12
     let defaultZoom: Float = 15.5
     let maxZoom: Float = 25
+    let loadingIndicatorSize = CGSize.init(width: 40, height: 40)
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return banner != nil ? .lightContent : .default
@@ -164,7 +165,7 @@ class HomeMapViewController: UIViewController {
         loadingView.addSubview(indicator)
         indicator.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
-            make.width.height.equalTo(40)
+            make.size.equalTo(loadingIndicatorSize)
         }
         
     }
@@ -225,7 +226,6 @@ extension HomeMapViewController: CLLocationManagerDelegate {
 extension HomeMapViewController: GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
         optionsCardVC.searchBar.endEditing(true)
-//        optionsCardVC.searchBarCancelButtonClicked(optionsCardVC.searchBar) // If we want to remove their search
     }
 }
 

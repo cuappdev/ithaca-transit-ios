@@ -16,6 +16,7 @@
 		22948BFD221B75C5003FC43F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22948BFB221B75C5003FC43F /* Models.swift */; };
 		22D76E8E2263E21F00FA21B9 /* HomeMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D76E8C2263E21F00FA21B9 /* HomeMapViewController.swift */; };
 		22D76E8F2263E21F00FA21B9 /* HomeOptionsCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D76E8D2263E21F00FA21B9 /* HomeOptionsCardViewController.swift */; };
+		22D76E912266CCC000FA21B9 /* RoundedShadowedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D76E902266CCC000FA21B9 /* RoundedShadowedView.swift */; };
 		33E4804C19A7B1F82E34287E /* Pods_TCATUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD42DAD40B50E9B872C105D /* Pods_TCATUITests.framework */; };
 		449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C781D80D0E80019300C /* AppDelegate.swift */; };
 		449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C7C1D80D0E80019300C /* Main.storyboard */; };
@@ -205,6 +206,7 @@
 		22948BFB221B75C5003FC43F /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		22D76E8C2263E21F00FA21B9 /* HomeMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HomeMapViewController.swift; path = Controllers/HomeMapViewController.swift; sourceTree = "<group>"; };
 		22D76E8D2263E21F00FA21B9 /* HomeOptionsCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HomeOptionsCardViewController.swift; path = Controllers/HomeOptionsCardViewController.swift; sourceTree = "<group>"; };
+		22D76E902266CCC000FA21B9 /* RoundedShadowedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RoundedShadowedView.swift; path = Views/RoundedShadowedView.swift; sourceTree = "<group>"; };
 		273FCC5434DC139EFB0E7070 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2993A3AE74704B317B130898 /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
 		449A7C751D80D0E80019300C /* TCAT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCAT.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -615,6 +617,7 @@
 				BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */,
 				BF0002211FB37D0A00773109 /* LoadingIndicator.swift */,
 				BF316CAF2096352B005A14EF /* PhraseLabelFooterView.swift */,
+				22D76E902266CCC000FA21B9 /* RoundedShadowedView.swift */,
 				BF2DA890224539DD006E527D /* RouteDiagram.swift */,
 				DDA134441EC6A8CB00460B18 /* RouteLine.swift */,
 				DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */,
@@ -1132,6 +1135,7 @@
 				7EBD9D92222630DE008BF900 /* EventPayload.swift in Sources */,
 				BF5CBAD11FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift in Sources */,
 				7EBD9D8A22263094008BF900 /* LocationObject.swift in Sources */,
+				22D76E912266CCC000FA21B9 /* RoundedShadowedView.swift in Sources */,
 				7E155FD82231DAAE00FE7A9B /* Direction.swift in Sources */,
 				DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */,
 				7EBD9D8B22263096008BF900 /* Place.swift in Sources */,
@@ -1149,7 +1153,6 @@
 				BFB86A07205C614C000794B2 /* OnboardingViewController.swift in Sources */,
 				7EBD9D95222630EF008BF900 /* Styles.swift in Sources */,
 				7EBD9D9B22263114008BF900 /* LiveIndicator.swift in Sources */,
-				50A19BAE1E4C214000AD6768 /* HomeViewController.swift in Sources */,
 				7EBD9D9C22263118008BF900 /* RouteLine.swift in Sources */,
 				22948BFD221B75C5003FC43F /* Models.swift in Sources */,
 				DDB49C941E8857D000A99C35 /* RouteDetail+ContentViewController.swift in Sources */,
