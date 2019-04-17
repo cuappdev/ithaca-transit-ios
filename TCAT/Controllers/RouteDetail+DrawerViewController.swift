@@ -17,8 +17,11 @@ struct RouteDetailCellSize {
     static let indentedWidth: CGFloat = 140
 }
 
-class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, UITableViewDelegate,
-                                        UIGestureRecognizerDelegate, PulleyDrawerViewControllerDelegate {
+protocol RouteDetailDrawerDelegate {
+    func jumpToRouteSection()
+}
+
+class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDelegate {
     
     // MARK: Variables
     
@@ -31,6 +34,8 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     
     let main = UIScreen.main.bounds
     var justLoaded: Bool = true
+    var visible: Bool = false
+    var ongoing: Bool = false
     
     var busDelayNetworkTimer: Timer?
     /// Number of seconds to wait before auto-refreshing bus delay network call.
@@ -150,57 +155,6 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         safeAreaCover = nil
     }
     
-    // MARK: Pulley Delegate
-    
-    func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return bottomSafeArea + summaryView.frame.height
-    }
-    
-    func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return main.height / 2
-    }
-    
-    func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
-        
-        justLoaded = false
-        
-        // Center map on drawer change
-        if drawer.drawerPosition == .collapsed || drawer.drawerPosition == .partiallyRevealed  {
-            guard let contentViewController = drawer.primaryContentViewController as? RouteDetailContentViewController
-                else { return }
-            contentViewController.centerMap(topHalfCentered: drawer.drawerPosition == .partiallyRevealed)
-        }
-        
-    }
-    
-    private var visible: Bool = false
-    private var ongoing: Bool = false
-    
-    func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
-        
-        // Manage cover view hiding drawer when collapsed
-        if distance - bottomSafeArea == summaryView.frame.height {
-            safeAreaCover?.alpha = 1.0
-            visible = true
-        } else {
-            if !ongoing && visible {
-                UIView.animate(withDuration: 0.25, animations: {
-                    self.safeAreaCover?.alpha = 0.0
-                    self.visible = false
-                }, completion: { (_) in
-                    self.ongoing = false
-                })
-            }
-        }
-        
-    }
-    
-    func supportedDrawerPositions() -> [PulleyPosition] {
-        return [.collapsed, .partiallyRevealed, .open]
-    }
-    
-    // MARK: Network Calls
-    
     /// Fetch delay information and update table view cells.
     @objc func getDelays() {
         
@@ -227,14 +181,14 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
                     self.directions.filter {
                         let isAfter = self.directions.index(of: firstDepartDirection)! < self.directions.index(of: $0)!
                         return isAfter && $0.type != .depart
-                    }
-                    
-                    .forEach { (direction) in
-                        if let _ = direction.delay {
-                            direction.delay! += delayDirection.delay ?? 0
-                        } else {
-                            direction.delay = delayDirection.delay
                         }
+                        
+                        .forEach { (direction) in
+                            if let _ = direction.delay {
+                                direction.delay! += delayDirection.delay ?? 0
+                            } else {
+                                direction.delay = delayDirection.delay
+                            }
                     }
                     
                     self.tableView.reloadData()
@@ -251,16 +205,190 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         
     }
     
-    // MARK: TableView Data Source and Delegate Functions
+    /// Toggle the cell expansion at the indexPath
+    func toggleCellExpansion(at indexPath: IndexPath?) {
+        
+        guard
+            let indexPath = indexPath,
+            let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell
+            else {
+                return
+        }
+        
+        let direction = directions[indexPath.row]
+        
+        // Flip arrow
+        cell.chevron.layer.removeAllAnimations()
+        
+        cell.isExpanded = !cell.isExpanded
+        
+        let transitionOptionsOne: UIView.AnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
+        UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsOne, animations: {
+            cell.chevron.isHidden = true
+        })
+        
+        cell.chevron.transform = cell.chevron.transform.rotated(by: CGFloat.pi)
+        
+        let transitionOptionsTwo: UIView.AnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
+        UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsTwo, animations: {
+            cell.chevron.isHidden = false
+        })
+        
+        // Prepare bus stop data to be inserted / deleted into Directions array
+        var busStops = [Direction]()
+        for stop in direction.stops {
+            let stopAsDirection = Direction(name: stop.name)
+            busStops.append(stopAsDirection)
+        }
+        var indexPathArray: [IndexPath] = []
+        let busStopRange = (indexPath.row + 1)..<(indexPath.row + 1) + busStops.count
+        for i in busStopRange {
+            indexPathArray.append(IndexPath(row: i, section: 0))
+        }
+        
+        tableView.beginUpdates()
+        
+        // Insert or remove bus stop data based on selection
+        
+        if cell.isExpanded {
+            directions.insert(contentsOf: busStops, at: indexPath.row + 1)
+            tableView.insertRows(at: indexPathArray, with: .middle)
+        } else {
+            directions.removeSubrange(busStopRange)
+            tableView.deleteRows(at: indexPathArray, with: .middle)
+        }
+        
+        tableView.endUpdates()
+        
+        busStops = []
+        indexPathArray = []
+        
+    }
+    
+    // MARK: Gesture Recognizers and Interaction-Related Functions
+    
+    /** Animate detailTableView depending on context, centering map */
+    @objc func summaryTapped(_ sender: UITapGestureRecognizer? = nil) {
+        
+        if let drawer = self.parent as? RouteDetailViewController {
+            switch drawer.drawerPosition {
+                
+            case .collapsed, .partiallyRevealed:
+                drawer.setDrawerPosition(position: .open, animated: true)
+                
+            case .open:
+                drawer.setDrawerPosition(position: .collapsed, animated: true)
+                
+                
+            default: break
+                
+            }
+        }
+        
+    }
+}
 
+// MARK: Pulley Delegate
+extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
+    func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
+        return bottomSafeArea + summaryView.frame.height
+    }
+    
+    func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
+        return main.height / 2
+    }
+    
+    func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
+        
+        justLoaded = false
+        
+        // Center map on drawer change
+        if drawer.drawerPosition == .collapsed || drawer.drawerPosition == .partiallyRevealed  {
+            guard let contentViewController = drawer.primaryContentViewController as? RouteDetailContentViewController
+                else { return }
+            contentViewController.centerMap(topHalfCentered: drawer.drawerPosition == .partiallyRevealed)
+        }
+        
+    }
+    
+    func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
+        
+        // Manage cover view hiding drawer when collapsed
+        if distance - bottomSafeArea == summaryView.frame.height {
+            safeAreaCover?.alpha = 1.0
+            visible = true
+        } else {
+            if !ongoing && visible {
+                UIView.animate(withDuration: 0.25, animations: {
+                    self.safeAreaCover?.alpha = 0.0
+                    self.visible = false
+                }, completion: { (_) in
+                    self.ongoing = false
+                })
+            }
+        }
+        
+    }
+    
+    func supportedDrawerPositions() -> [PulleyPosition] {
+        return [.collapsed, .partiallyRevealed, .open]
+    }
+}
+
+    
+    // MARK: TableView Data Source and Delegate Functions
+extension RouteDetailDrawerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return directions.count
     }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let direction = directions[indexPath.row]
+        let isBusStopCell = direction.type == .arrive && direction.startLocation.latitude == 0.0
+        let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
+        
+        /// Formatting, including selectionStyle, and seperator line fixes
+        func format(_ cell: UITableViewCell) -> UITableViewCell {
+            cell.selectionStyle = .none
+            if indexPath.row == directions.count - 1 {
+                // Remove seperator at end of table
+                cell.layoutMargins = UIEdgeInsets(top: 0, left: main.width, bottom: 0, right: 0)
+            }
+            return cell
+        }
+        
+        if isBusStopCell {
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as! BusStopTableViewCell
+            cell.setCell(direction.name)
+            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
+            return format(cell)
+        }
+            
+        else if direction.type == .walk || direction.type == .arrive {
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as! SmallDetailTableViewCell
+            cell.setCell(direction,
+                         firstStep: indexPath.row == 0,
+                         lastStep: indexPath.row == directions.count - 1)
+            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
+            return format(cell)
+        }
+            
+        else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
+            cell.setCell(direction, firstStep: indexPath.row == 0)
+            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
+            return format(cell)
+        }
+        
+    }
+}
 
+extension RouteDetailDrawerViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        let direction = directions[indexPath.row]
+        
         if direction.type == .depart || direction.type == .transfer {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as? LargeDetailTableViewCell
             cell?.setCell(direction, firstStep: indexPath.row == 0)
@@ -268,7 +396,6 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         } else {
             return RouteDetailCellSize.smallHeight
         }
-
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -324,62 +451,21 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         return emptyFooterView
         
     }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-        let direction = directions[indexPath.row]
-        let isBusStopCell = direction.type == .arrive && direction.startLocation.latitude == 0.0
-        let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
-
-        /// Formatting, including selectionStyle, and seperator line fixes
-        func format(_ cell: UITableViewCell) -> UITableViewCell {
-            cell.selectionStyle = .none
-            if indexPath.row == directions.count - 1 {
-                // Remove seperator at end of table
-                cell.layoutMargins = UIEdgeInsets(top: 0, left: main.width, bottom: 0, right: 0)
-            }
-            return cell
-        }
-
-        if isBusStopCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as! BusStopTableViewCell
-            cell.setCell(direction.name)
-            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
-            return format(cell)
-        }
-
-        else if direction.type == .walk || direction.type == .arrive {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as! SmallDetailTableViewCell
-            cell.setCell(direction,
-                         firstStep: indexPath.row == 0,
-                         lastStep: indexPath.row == directions.count - 1)
-            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
-            return format(cell)
-        }
-
-        else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
-            cell.setCell(direction, firstStep: indexPath.row == 0)
-            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
-            return format(cell)
-        }
-
-    }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
+        
         let direction = directions[indexPath.row]
         
         // Limit expandedCell to only one bus route at a time.
         if let cell = expandedCell, cell != tableView.cellForRow(at: indexPath) {
             toggleCellExpansion(at: tableView.indexPath(for: cell))
         }
-
+        
         // Check if cell starts a bus direction, and should be expandable
         if direction.type == .depart || direction.type == .transfer {
-
+            
             if justLoaded { summaryTapped() }
-
+            
             toggleCellExpansion(at: indexPath)
             
             // tableView.scrollToRow(at: indexPath, at: .none, animated: true)
@@ -391,88 +477,6 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         } else {
             summaryTapped()
         }
-
-    }
-    
-    /// Toggle the cell expansion at the indexPath
-    func toggleCellExpansion(at indexPath: IndexPath?) {
-        
-        guard
-            let indexPath = indexPath,
-            let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell
-        else {
-            return
-        }
-        
-        let direction = directions[indexPath.row]
-        
-        // Flip arrow
-        cell.chevron.layer.removeAllAnimations()
-        
-        cell.isExpanded = !cell.isExpanded
-        
-        let transitionOptionsOne: UIView.AnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
-        UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsOne, animations: {
-            cell.chevron.isHidden = true
-        })
-        
-        cell.chevron.transform = cell.chevron.transform.rotated(by: CGFloat.pi)
-        
-        let transitionOptionsTwo: UIView.AnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
-        UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsTwo, animations: {
-            cell.chevron.isHidden = false
-        })
-        
-        // Prepare bus stop data to be inserted / deleted into Directions array
-        var busStops = [Direction]()
-        for stop in direction.stops {
-            let stopAsDirection = Direction(name: stop.name)
-            busStops.append(stopAsDirection)
-        }
-        var indexPathArray: [IndexPath] = []
-        let busStopRange = (indexPath.row + 1)..<(indexPath.row + 1) + busStops.count
-        for i in busStopRange {
-            indexPathArray.append(IndexPath(row: i, section: 0))
-        }
-        
-        tableView.beginUpdates()
-        
-        // Insert or remove bus stop data based on selection
-        
-        if cell.isExpanded {
-            directions.insert(contentsOf: busStops, at: indexPath.row + 1)
-            tableView.insertRows(at: indexPathArray, with: .middle)
-        } else {
-            directions.removeSubrange(busStopRange)
-            tableView.deleteRows(at: indexPathArray, with: .middle)
-        }
-        
-        tableView.endUpdates()
-        
-        busStops = []
-        indexPathArray = []
         
     }
-    
-    // MARK: Gesture Recognizers and Interaction-Related Functions
-
-    /** Animate detailTableView depending on context, centering map */
-    @objc func summaryTapped(_ sender: UITapGestureRecognizer? = nil) {
-        
-        if let drawer = self.parent as? RouteDetailViewController {
-            switch drawer.drawerPosition {
-            
-            case .collapsed, .partiallyRevealed:
-                drawer.setDrawerPosition(position: .open, animated: true)
-            
-            case .open:
-                drawer.setDrawerPosition(position: .collapsed, animated: true)
-            
-            default: break
-                
-            }
-        }
-
-    }
-
 }
