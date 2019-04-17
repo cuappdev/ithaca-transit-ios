@@ -132,9 +132,17 @@ import Alamofire
             }
         }
 
-        favorites = nonNilFavorites + nilFavorites
-        coordinates = nonNilCoordinates + nilCoordinates
-        routes = nonNilRoutes + nilRoutes
+        if (nonNilRoutes.count > 0) {
+            favorites = nonNilFavorites
+            coordinates = nonNilCoordinates
+            routes = nonNilRoutes
+            numberOfFavorites = nonNilFavorites.count
+        } else {
+            favorites = nilFavorites
+            coordinates = nilCoordinates
+            routes = nilRoutes
+            numberOfFavorites = nilFavorites.count
+        }
     }
 }
 
