@@ -241,7 +241,7 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
         // Prepare bus stop data to be inserted / deleted into Directions array
         var busStops = [Direction]()
         for stop in direction.stops {
-            let stopAsDirection = Direction(name: stop.name)
+            let stopAsDirection = Direction(name: stop.name, path: direction.path)
             busStops.append(stopAsDirection)
         }
         var indexPathArray: [IndexPath] = []
