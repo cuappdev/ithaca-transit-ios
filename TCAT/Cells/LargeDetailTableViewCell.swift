@@ -8,13 +8,20 @@
 
 import UIKit
 
+protocol LargeDetailTableViewDelegate: class {
+    func collapseCells(indexPath: IndexPath)
+    func expandCells(indexPath: IndexPath)
+}
+
 class LargeDetailTableViewCell: UITableViewCell {
     
     var iconView: DetailIconView!
     var titleLabel: UILabel!
     var detailLabel: UILabel!
     var busIconView: BusIcon!
-    var chevron: UIImageView!
+    var chevron: UIButton!
+    weak var delegate: LargeDetailTableViewDelegate?
+    var indexPath: IndexPath!
     
     let paragraphStyle = NSMutableParagraphStyle()
     let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
@@ -25,12 +32,13 @@ class LargeDetailTableViewCell: UITableViewCell {
     let edgeSpacing: CGFloat = 16
     let labelSpacing: CGFloat = 4
     
-    func getChevron() -> UIImageView {
-        let chevron = UIImageView()
+    func getChevron() -> UIButton {
+        let chevron = UIButton()
         chevron.frame.size = CGSize(width: 13.5, height: 8)
         chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
-        chevron.image = UIImage(named: "arrow")
+        chevron.setImage(UIImage(named: "arrow"), for: .normal)
         chevron.tintColor = Colors.metadataIcon
+        chevron.addTarget(self, action: #selector(chevronButtonPressed), for: .touchUpInside)
         return chevron
     }
     
@@ -74,22 +82,13 @@ class LargeDetailTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func prepareForReuse() {
-        
-//        busIconView.prepareForReuse()
-//        iconView.prepareForReuse()
-//
-//        chevron.removeFromSuperview()
-//        titleLabel.removeFromSuperview()
-//        detailLabel.removeFromSuperview()
-        
-    }
-    
     /** Precondition: Direction is BoardDirection */
-    func setCell(_ direction: Direction, firstStep: Bool) {
-                
+    func setCell(_ direction: Direction, indexPath: IndexPath) {
+        
+        let firstStep = indexPath.row == 0
         self.direction = direction
         cellHeight = height()
+        self.indexPath = indexPath
         
         let shouldAddViews = iconView == nil || busIconView == nil ||
             titleLabel == nil || detailLabel == nil
@@ -193,5 +192,12 @@ class LargeDetailTableViewCell: UITableViewCell {
         return titleLabel.frame.height + detailLabel.frame.height + labelSpacing + (edgeSpacing * 2)
     }
     
+    @objc func chevronButtonPressed() {
+        if isExpanded {
+            delegate?.collapseCells(indexPath: indexPath)
+        } else {
+            delegate?.expandCells(indexPath: indexPath)
+        }
+    }
 }
 
