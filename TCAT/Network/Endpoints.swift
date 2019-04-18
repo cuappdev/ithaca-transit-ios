@@ -10,7 +10,6 @@ import Foundation
 import SwiftyJSON
 import TRON
 import CoreLocation
-import GooglePlaces
 import Alamofire
 
 enum NetworkType: String {
@@ -18,11 +17,11 @@ enum NetworkType: String {
 }
 
 class Network {
-    
+
     //
     // Schemes
     //
-    
+
     // Production - Uses main production server for Network requests.
     // Staging - Uses development server for Network requests, but will profile and archive to production.
 
@@ -60,12 +59,11 @@ class Network {
 
     class func getRoutes(start: Place, end: Place, time: Date, type: SearchType,
                          callback: @escaping (_ request: APIRequest<RoutesRequest, Error>) -> Void) {
-        
-        
+
         let request: APIRequest<RoutesRequest, Error> = tron.codable.request("route")
         request.method = .post
         request.parameterEncoding = JSONEncoding.default
-        
+
         guard
             let startLat = start.latitude,
             let startLong = start.longitude,
@@ -76,7 +74,7 @@ class Network {
                 callback(request)
                 return
         }
-        
+
         request.parameters = [
             "isArriveBy"          :   type == .arriveBy,
             "end"               :   "\(endLat),\(endLong)",
@@ -85,15 +83,15 @@ class Network {
             "destinationName"   :   end.name,
             "originName"        :   start.name
         ]
-        
+
         // Add unique identifier to request
-        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+        if let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid) {
             request.parameters["uid"] = uid
         }
-        
+
         callback(request)
     }
-    
+
     class func getRequestURL(start: Place, end: Place, time: Date, type: SearchType) -> String {
         let path = "route"
         let arriveBy = (type == .arriveBy)
@@ -103,7 +101,21 @@ class Network {
         
         return  "\(address)\(path)?isArriveBy=\(arriveBy)&end=\(endStr)&start=\(startStr)&time=\(time)&destinationName=\(end.name)&originName=\(start.name)"
     }
-    
+
+    class func getMultiRoutes(startCoord: CLLocationCoordinate2D, time: Date, endCoords: [String], endPlaceNames: [String],
+                              callback: @escaping (_ request: APIRequest<MultiRoutesRequest, Error>) -> Void) {
+        let request: APIRequest<MultiRoutesRequest, Error> = tron.codable.request("multiroute")
+        request.method = .get
+        request.parameters = [
+            "start": "\(startCoord.latitude),\(startCoord.longitude)",
+            "time": time.timeIntervalSince1970,
+            "end": endCoords,
+            "destinationNames": endPlaceNames
+        ]
+
+        callback(request)
+    }
+
     class func getSearchResults(searchText: String) -> APIRequest<SearchRequest, Error> {
         let request: APIRequest<SearchRequest, Error> = tron.codable.request("search")
         request.method = .post
@@ -113,19 +125,19 @@ class Network {
         ]
         return request
     }
-    
+
     @discardableResult
     class func routeSelected(routeId: String) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routeSelected")
         request.method = .post
         request.parameterEncoding = JSONEncoding.default
-        request.parameters = ["routeId" : routeId]
-        
+        request.parameters = ["routeId": routeId]
+
         // Add unique identifier to request
-        if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
+        if let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid) {
             request.parameters["uid"] = uid
         }
-        
+
         return request
     }
 
@@ -136,7 +148,7 @@ class Network {
         let dictionary = departDirections.map { (direction) -> [String: Any] in
 
             // The id of the location, or bus stop, the bus needs to get to
-            
+
             let stopID = direction.stops.first?.id ?? "-1"
 
             return [

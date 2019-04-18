@@ -11,10 +11,9 @@ import Foundation
 import SwiftyJSON
 import Crashlytics
 
-
 class Analytics {
     static let shared = Analytics()
-    
+
     func log(_ payload: Payload) {
         #if !DEBUG
             let fabricEvent = payload.convertToFabric()
@@ -25,16 +24,16 @@ class Analytics {
 }
 
 extension Payload {
-    
-    func convertToFabric() -> (name: String, attributes: [String : Any]?) {
-        
+
+    func convertToFabric() -> (name: String, attributes: [String: Any]?) {
+
         let event = self.toEvent()
-        
+
         do {
             let data = try event.serializeJson()
             let json = try JSON(data: data)
-            
-            var dict: [String : Any] = [:]
+
+            var dict: [String: Any] = [:]
             for (key, value) in json["payload"] {
                 if key == "deviceInfo" {
                     for (infoKey, infoValue) in value {
@@ -44,26 +43,26 @@ extension Payload {
                     dict[key] = value.stringValue
                 }
             }
-            
+
             return(name: json["event_type"].stringValue, dict)
-            
+
         } catch {
             print("Error: Couldn't process data")
             return ("", nil)
         }
-        
+
     }
-    
+
 }
 
 /// Log device information
 struct DeviceInfo: Codable {
-    
+
     let model: String = UIDevice.current.modelName
     let softwareVersion: String = UIDevice.current.systemVersion
     let appVersion: String = Constants.App.version
     let language: String = Locale.preferredLanguages.first ?? "n/a"
-    
+
 }
 
 // MARK: Event Payloads
@@ -79,7 +78,7 @@ struct AppLaunchedPayload: Payload {
 struct FavoriteAddedPayload: Payload {
     static let eventName: String = "Favorite Added"
     let deviceInfo = DeviceInfo()
-    
+
     let name: String
 }
 
@@ -87,7 +86,7 @@ struct FavoriteAddedPayload: Payload {
 struct PlaceSelectedPayload: Payload {
     static let eventName: String = "Place Selected"
     let deviceInfo = DeviceInfo()
-    
+
     let name: String
     let type: PlaceType
 }
@@ -96,7 +95,7 @@ struct PlaceSelectedPayload: Payload {
 struct DestinationSearchedEventPayload: Payload {
     static let eventName: String = "Destination Searched"
     let deviceInfo = DeviceInfo()
-    
+
     let destination: String
     let requestUrl: String?
 }
@@ -128,7 +127,7 @@ struct BusTappedEventPayload: Payload {
 struct RouteSharedEventPayload: Payload {
     static let eventName: String = "Share Route"
     let deviceInfo = DeviceInfo()
-    
+
     let activityType: String
     let didSelectAndCompleteShare: Bool
     let error: String?
@@ -138,7 +137,7 @@ struct RouteSharedEventPayload: Payload {
 struct GetRoutesErrorPayload: Payload {
     static let eventName: String = "Get Routes Error"
     let deviceInfo = DeviceInfo()
-    
+
     let type: String
     let description: String
     let url: String?
@@ -148,7 +147,7 @@ struct GetRoutesErrorPayload: Payload {
 struct FeedbackErrorPayload: Payload {
     static let eventName: String = "Feedback Error"
     let deviceInfo = DeviceInfo()
-    
+
     let description: String
 }
 
@@ -156,7 +155,7 @@ struct FeedbackErrorPayload: Payload {
 struct RouteOptionsSettingsPayload: Payload {
     static let eventName: String = "Route Options Changed"
     let deviceInfo = DeviceInfo()
-    
+
     let description: String
 }
 
@@ -164,7 +163,7 @@ struct RouteOptionsSettingsPayload: Payload {
 struct ScreenshotTakenPayload: Payload {
     static let eventName: String = "Screenshot Taken"
     let deviceInfo = DeviceInfo()
-    
+
     let location: String
 }
 
@@ -172,14 +171,14 @@ struct ScreenshotTakenPayload: Payload {
 struct HomeScreenQuickActionUsedPayload: Payload {
     static let eventName: String = "Home Screen Quick Action Used"
     let deviceInfo = DeviceInfo()
-    
+
     let name: String
 }
 
 struct SiriShortcutUsedPayload: Payload {
     static let eventName: String = "Siri Shortcut used"
     let deviceInfo = DeviceInfo()
-    
+
     let didComplete: Bool
     let intentDescription: String
     let locationName: String
@@ -188,7 +187,7 @@ struct SiriShortcutUsedPayload: Payload {
 struct DataMigrationOnePointThreePayload: Payload {
     static let eventName: String = "v1.2.2 Data Migration"
     let deviceInfo = DeviceInfo()
-    
+
     let success: Bool
     let errorDescription: String?
 }
@@ -196,27 +195,27 @@ struct DataMigrationOnePointThreePayload: Payload {
 struct ServiceAlertsPayload: Payload {
     static let eventName: String = "Service Alerts Opened"
     let deviceInfo = DeviceInfo()
-    
+
     let didTapWhatsNew: Bool
 }
 
 struct PrimaryActionTappedPayload: Payload {
     static let eventName: String = "Primary Action Tapped"
     let deviceInfo = DeviceInfo()
-    
+
     let actionDescription: String
 }
 
 struct SecondaryActionTappedPayload: Payload {
     static let eventName: String = "Secondary Action Tapped"
     let deviceInfo = DeviceInfo()
-    
+
     let actionDescription: String
 }
 
 struct WhatsNewCardDismissedPayload: Payload {
     static let eventName: String = "Card Dismissed"
     let deviceInfo = DeviceInfo()
-    
+
     let actionDescription: String
 }

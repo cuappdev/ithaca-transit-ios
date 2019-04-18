@@ -12,20 +12,20 @@ enum PlaceType: String, Codable {
     case busStop, googlePlace, unknown
 }
 
-class Place: NSObject, Codable {
+@objc(Place) class Place: NSObject, Codable {
 
     var name: String
     var type: PlaceType
-    
+
     // Additional description of the place (e.g. address, "Bus Stop")
     private var placeDescription: String?
-    
+
     // Metadata related to the place (e.g. Google Place ID)
     var placeIdentifier: String?
-    
+
     var latitude: Double?
     var longitude: Double?
-    
+
     private enum CodingKeys: String, CodingKey {
         case name
         case type
@@ -34,7 +34,7 @@ class Place: NSObject, Codable {
         case latitude = "lat"
         case longitude = "long"
     }
-    
+
     init(name: String) {
         self.name = name
         self.type = .unknown
@@ -54,14 +54,14 @@ class Place: NSObject, Codable {
         self.latitude = latitude
         self.longitude = longitude
     }
-    
+
     // MARK: Functions
-    
+
     override var description: String {
         let exception = name == Constants.General.firstFavorite
         return (type == .googlePlace || exception) ? (placeDescription ?? "") : ("Bus Stop")
     }
-    
+
     override func isEqual(_ object: Any?) -> Bool {
         guard let object = object as? Place else {
             return false
@@ -71,5 +71,5 @@ class Place: NSObject, Codable {
         }
         return object.name == name
     }
-    
+
 }

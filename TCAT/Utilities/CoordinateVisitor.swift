@@ -15,15 +15,15 @@ struct CoordinateVisitorError: Swift.Error {
 }
 
 class CoordinateVisitor: NSObject {
-    
+
     static private let placesClient = GMSPlacesClient.shared()
-    
+
     static func getCoordinates(for place: Place, callback: @escaping (_ latitude: Double?, _ longitude: Double?, _ error: CoordinateVisitorError?) -> Void) {
-        
+
         let identifier = place.placeIdentifier ?? ""
-        
+
         placesClient.lookUpPlaceID(identifier) { (result, error) in
-            
+
             if let error = error {
                 let coordVisitError = CoordinateVisitorError(
                     title: "Google Places Lookup",
@@ -32,7 +32,7 @@ class CoordinateVisitor: NSObject {
                 callback(nil, nil, coordVisitError)
                 return
             }
-            
+
             guard let result = result else {
                 let coordVisitError = CoordinateVisitorError(
                     title: "PlaceResult is nil",
@@ -41,10 +41,10 @@ class CoordinateVisitor: NSObject {
                 callback(nil, nil, coordVisitError)
                 return
             }
-            
+
             callback(result.coordinate.latitude, result.coordinate.longitude, nil)
         }
-        
+
     }
-    
+
 }

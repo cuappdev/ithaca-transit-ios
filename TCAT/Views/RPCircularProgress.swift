@@ -104,11 +104,7 @@ open class RPCircularProgress: UIView {
     /**
       Getter for the current progress (not observed from any active animations)
      */
-    @IBInspectable open var progress: CGFloat {
-        get {
-            return progressLayer.progress
-        }
-    }
+    @IBInspectable open var progress: CGFloat { return progressLayer.progress }
 
     /**
       Sets how much of the progress bar should be filled during an indeterminate animation, pinned between `0.05` and `0.9`
@@ -131,13 +127,9 @@ open class RPCircularProgress: UIView {
 
     // MARK: - Custom Base Layer
 
-    fileprivate var progressLayer: ProgressLayer! {
-        get {
-            return layer as? ProgressLayer
-        }
-    }
+    fileprivate var progressLayer: ProgressLayer! { return layer as? ProgressLayer }
 
-    open override class var layerClass : AnyClass {
+    open override class var layerClass: AnyClass {
         return ProgressLayer.self
     }
 
@@ -153,7 +145,7 @@ open class RPCircularProgress: UIView {
 
         setupDefaults()
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
@@ -422,7 +414,7 @@ private extension RPCircularProgress {
 
         static let progress: CGFloat = 0
         static let thicknessRatio: CGFloat = 0.3
-        static let roundedCorners = true
+        static let roundedCorners = false
         static let clockwiseProgress = true
         static let indeterminateDuration: CFTimeInterval = 1.0
         static let indeterminateProgress: CGFloat = 0.3
@@ -454,4 +446,3 @@ extension RPCircularProgress: CAAnimationDelegate {
     }
 
 }
-

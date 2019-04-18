@@ -8,9 +8,7 @@
 
 import Foundation
 import DZNEmptyDataSet
-import Fuzzywuzzy_swift
 
-let userDefaults = UserDefaults.standard
 let encoder = JSONEncoder()
 let decoder = JSONDecoder()
 
@@ -28,12 +26,12 @@ enum SectionType {
 }
 
 class SearchTableViewManager {
-    
+
     static let shared = SearchTableViewManager()
     private var allStops: [Place]?
 
     private init() {}
-    
+
     func getAllStops() -> [Place] {
         if let stops = allStops {
             // Check if not empty so that an empty array isn't returned
@@ -62,7 +60,13 @@ class SearchTableViewManager {
     }
 
     func retrievePlaces(for key: String) -> [Place] {
-        if
+        if key == Constants.UserDefaults.favorites {
+            if let storedPlaces = sharedUserDefaults?.value(forKey: key) as? Data,
+                let favorites = try? decoder.decode([Place].self, from: storedPlaces) {
+                return favorites
+            }
+
+        } else if
             let storedPlaces = userDefaults.value(forKey: key) as? Data,
             let places = try? decoder.decode([Place].self, from: storedPlaces)
         {
@@ -81,36 +85,39 @@ class SearchTableViewManager {
                 newFavoritesList.append(item)
             }
         }
-        
+
         do {
             let data = try encoder.encode(newFavoritesList)
-            userDefaults.set(data, forKey: Constants.UserDefaults.favorites)
+            sharedUserDefaults?.set(data, forKey: Constants.UserDefaults.favorites)
             AppShortcuts.shared.updateShortcutItems()
         } catch let error {
             print(error)
         }
-
         return newFavoritesList
     }
 
     /// Possible Keys: Constants.UserDefaults (.recentSearch | .favorites)
     func insertPlace(for key: String, place: Place, bottom: Bool = false) {
-        
+
         // Could replace with an enum
         let limit = key == Constants.UserDefaults.favorites ? 5 : 8
-        
+
         // Ensure duplicates aren't added
         var places = retrievePlaces(for: key).filter { (savedPlace) -> Bool in
             return !savedPlace.isEqual(place)
         }
-    
+
         places = bottom ? places + [place] : [place] + places
-        
+
         if places.count > limit { places.remove(at: places.count - 1) }
-        
+
         do {
             let data = try encoder.encode(places)
-            userDefaults.set(data, forKey: key)
+            if key == Constants.UserDefaults.favorites {
+                sharedUserDefaults?.set(data, forKey: key)
+            } else {
+                userDefaults.set(data, forKey: key)
+            }
             AppShortcuts.shared.updateShortcutItems()
         } catch let error {
             print(error)
@@ -148,11 +155,11 @@ extension SearchResultsTableViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
         return -80
     }
-    
+
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
         return #imageLiteral(resourceName: "emptyPin")
     }
-    
+
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         return NSAttributedString(string: Constants.EmptyStateMessages.locationNotFound,
                                   attributes: [.foregroundColor: Colors.metadataIcon])

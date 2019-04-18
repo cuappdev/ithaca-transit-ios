@@ -14,20 +14,6 @@ import TRON
 
 let increaseTapTargetTag: Int = 1865
 
-extension UIColor {
-
-    // Use six-character string of a hex color for initialization
-    convenience init(hex: String) {
-        let hex = Int(hex, radix: 16)!
-        self.init(red:(hex >> 16) & 0xff, green:(hex >> 8) & 0xff, blue:hex & 0xff)
-    }
-
-    convenience init(red: Int, green: Int, blue: Int) {
-        self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
-    }
-
-}
-
 extension MKPolyline {
     public var coordinates: [CLLocationCoordinate2D] {
         var coords = [CLLocationCoordinate2D](repeating: kCLLocationCoordinate2DInvalid,
@@ -57,7 +43,7 @@ extension UIView {
         UIGraphicsEndImageContext()
         return img
     }
-    
+
     static let zero = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: CGFloat.leastNormalMagnitude))
 
 }
@@ -69,7 +55,7 @@ extension UILabel {
         let maxSize = CGSize(width: frame.size.width, height: CGFloat(Float.infinity))
         let charSize = font.lineHeight
         let labelText = (text ?? "") as NSString
-        let textSize = labelText.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, attributes: [.font: font], context: nil)
+        let textSize = labelText.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, attributes: [.font: font ?? UIFont.getFont(.regular, size: 16)], context: nil)
         return Int(textSize.height/charSize)
     }
 
@@ -104,89 +90,17 @@ extension UILabel {
 extension UIViewController {
 
     var isModal: Bool {
-        if let index = navigationController?.viewControllers.index(of: self), index > 0 {
+        if let index = navigationController?.viewControllers.firstIndex(of: self), index > 0 {
             return false
         } else if presentingViewController != nil {
             return true
-        } else if navigationController?.presentingViewController?.presentedViewController == navigationController  {
+        } else if navigationController?.presentingViewController?.presentedViewController == navigationController {
             return true
         } else if tabBarController?.presentingViewController is UITabBarController {
             return true
         } else {
             return false
         }
-    }
-
-}
-
-extension UIDevice {
-    
-    // https://stackoverflow.com/questions/26028918/how-to-determine-the-current-iphone-device-model
-    
-    var modelName: String {
-
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let machineMirror = Mirror(reflecting: systemInfo.machine)
-        var identifier = machineMirror.children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8, value != 0 else { return identifier }
-            return identifier + String(UnicodeScalar(UInt8(value)))
-        }
-        
-        let isSimulator = identifier == "i386" || identifier == "x86_64"
-        if isSimulator {
-            identifier = ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"] ?? "iOS"
-        }
-        
-        let parsedModelName: String = {
-            
-            switch identifier {
-                
-            case "iPod5,1":                                 return "iPod Touch 5"
-            case "iPod7,1":                                 return "iPod Touch 6"
-            case "iPhone3,1", "iPhone3,2", "iPhone3,3":     return "iPhone 4"
-            case "iPhone4,1":                               return "iPhone 4s"
-            case "iPhone5,1", "iPhone5,2":                  return "iPhone 5"
-            case "iPhone5,3", "iPhone5,4":                  return "iPhone 5c"
-            case "iPhone6,1", "iPhone6,2":                  return "iPhone 5s"
-            case "iPhone7,2":                               return "iPhone 6"
-            case "iPhone7,1":                               return "iPhone 6 Plus"
-            case "iPhone8,1":                               return "iPhone 6s"
-            case "iPhone8,2":                               return "iPhone 6s Plus"
-            case "iPhone9,1", "iPhone9,3":                  return "iPhone 7"
-            case "iPhone9,2", "iPhone9,4":                  return "iPhone 7 Plus"
-            case "iPhone8,4":                               return "iPhone SE"
-            case "iPhone10,1", "iPhone10,4":                return "iPhone 8"
-            case "iPhone10,2", "iPhone10,5":                return "iPhone 8 Plus"
-            case "iPhone10,3", "iPhone10,6":                return "iPhone X"
-            case "iPhone11,2":                              return "iPhone XS"
-            case "iPhone11,4", "iPhone11,6":                return "iPhone XS Max"
-            case "iPhone11,8":                              return "iPhone XR"
-            case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4":return "iPad 2"
-            case "iPad3,1", "iPad3,2", "iPad3,3":           return "iPad 3"
-            case "iPad3,4", "iPad3,5", "iPad3,6":           return "iPad 4"
-            case "iPad4,1", "iPad4,2", "iPad4,3":           return "iPad Air"
-            case "iPad5,3", "iPad5,4":                      return "iPad Air 2"
-            case "iPad6,11", "iPad6,12":                    return "iPad 5"
-            case "iPad7,5", "iPad7,6":                      return "iPad 6"
-            case "iPad2,5", "iPad2,6", "iPad2,7":           return "iPad Mini"
-            case "iPad4,4", "iPad4,5", "iPad4,6":           return "iPad Mini 2"
-            case "iPad4,7", "iPad4,8", "iPad4,9":           return "iPad Mini 3"
-            case "iPad5,1", "iPad5,2":                      return "iPad Mini 4"
-            case "iPad6,3", "iPad6,4":                      return "iPad Pro 9.7 Inch"
-            case "iPad6,7", "iPad6,8":                      return "iPad Pro 12.9 Inch"
-            case "iPad7,1", "iPad7,2":                      return "iPad Pro 12.9 Inch 2. Generation"
-            case "iPad7,3", "iPad7,4":                      return "iPad Pro 10.5 Inch"
-            case "AppleTV5,3":                              return "Apple TV"
-            case "AppleTV6,2":                              return "Apple TV 4K"
-            case "AudioAccessory1,1":                       return "HomePod"
-            default:                                        return identifier
-                
-            }
-        }()
-        
-        return isSimulator ? "Simulator: \(parsedModelName)" : parsedModelName
-        
     }
 
 }
@@ -202,9 +116,9 @@ extension String {
 
     /// Convert Range to NSRange
     func nsRange(from range: Range<String.Index>) -> NSRange {
-        let from = range.lowerBound.encodedOffset
-        let to = range.upperBound.encodedOffset
-        return NSRange(location: from - startIndex.encodedOffset, length: to - from)
+        let from = range.lowerBound.utf16Offset(in: self)
+        let to = range.upperBound.utf16Offset(in: self)
+        return NSRange(location: from - startIndex.utf16Offset(in: self), length: to - from)
     }
 
     func heightWithConstrainedWidth(width: CGFloat, font: UIFont) -> CGFloat {
@@ -220,7 +134,7 @@ extension String {
         - Parameter boldFont: The font to make the bold string.
      */
     func bold(in containerText: String, from originalFont: UIFont, to boldFont: UIFont) -> NSMutableAttributedString {
-        let attributedString = NSMutableAttributedString(string: containerText, attributes: [.font : originalFont])
+        let attributedString = NSMutableAttributedString(string: containerText, attributes: [.font: originalFont])
         return self.bold(in: attributedString, to: boldFont)
     }
 
@@ -234,8 +148,8 @@ extension String {
 
         do {
             let regex = try NSRegularExpression(pattern: pattern, options: [])
-            let ranges = regex.matches(in: plain_string, options: [], range: NSMakeRange(0, plain_string.count)).map { $0.range }
-            for range in ranges { newAttributedString.addAttributes([.font : boldFont], range: range) }
+            let ranges = regex.matches(in: plain_string, options: [], range: NSRange(location: 0, length: plain_string.count)).map { $0.range }
+            for range in ranges { newAttributedString.addAttributes([.font: boldFont], range: range) }
         } catch {
             print("bold NSRegularExpression failed")
         }
@@ -243,7 +157,7 @@ extension String {
         return newAttributedString
 
     }
-    
+
     /** Return a list of all lone-standing integers in a list */
     func intsFromString() -> [Int] {
         var intList = [Int]()
@@ -255,103 +169,6 @@ extension String {
         }
         return intList
     }
-}
-
-extension CLLocationCoordinate2D: Codable {
-    // MARK: CLLocationCoordinate2D+MidPoint
-    func middleLocationWith(location:CLLocationCoordinate2D) -> CLLocationCoordinate2D {
-
-        let lon1 = longitude * .pi / 180
-        let lon2 = location.longitude * .pi / 180
-        let lat1 = latitude * .pi / 180
-        let lat2 = location.latitude * .pi / 180
-        let dLon = lon2 - lon1
-        let x = cos(lat2) * cos(dLon)
-        let y = cos(lat2) * sin(dLon)
-
-        let lat3 = atan2( sin(lat1) + sin(lat2), sqrt((cos(lat1) + x) * (cos(lat1) + x) + y * y) )
-        let lon3 = lon1 + atan2(y, cos(lat1) + x)
-
-        let center:CLLocationCoordinate2D = CLLocationCoordinate2DMake(lat3 * 180 / .pi, lon3 * 180 / .pi)
-        return center
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case lat
-        case long
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.unkeyedContainer()
-        try container.encode(longitude)
-        try container.encode(latitude)
-    }
-
-    public init(from decoder: Decoder) throws {
-        self.init()
-
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        longitude = try container.decode(Double.self, forKey: .long)
-        latitude = try container.decode(Double.self, forKey: .lat)
-
-    }
-}
-
-extension DateFormatter {
-    static let defaultParser: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
-        return dateFormatter
-    }()
-}
-
-extension Date {
-    static func parseDate(_ dateString: String) -> Date {
-        let dateFormatter = DateFormatter.defaultParser
-        let date = dateFormatter.date(from: dateString) ?? Date()
-        return Time.truncateSeconds(from: date)
-    }
-}
-
-extension Double {
-
-    /** Convert distance from meters to proper unit (based on size)
-
-     - Huge Distances: 16 mi
-     - Medium Distances: 3.2 mi
-     - Small Distances: 410 ft (412 ft -> 410 ft)
-
-     */
-    var roundedString: String {
-
-        let numberOfMetersInMile = 1609.34
-        var distanceInMiles = self / numberOfMetersInMile
-
-        switch distanceInMiles {
-
-        case let x where x >= 10:
-            return "\(Int(distanceInMiles)) mi"
-
-        case let x where x < 0.1:
-            var distanceInFeet = distanceInMiles * 5280
-            var temporaryValue = distanceInFeet.roundTo(places: 0) / 10.0
-            distanceInFeet = temporaryValue.roundTo(places: 0) * 10.0
-            return "\(Int(distanceInFeet)) ft"
-
-        default:
-            return "\(distanceInMiles.roundTo(places: 1)) mi"
-
-        }
-
-    }
-
-    /// Rounds the double to decimal places value
-    mutating func roundTo(places: Int) -> Double {
-        let divisor = pow(10.0, Double(places))
-        return Darwin.round(self * divisor) / divisor
-    }
-
 }
 
 extension Array where Element: UIView {
@@ -367,11 +184,11 @@ extension Array where Element: Comparable {
     }
 }
 
-extension Array : JSONDecodable {
+extension Array: JSONDecodable {
     public init(json: JSON) {
         self.init(json.arrayValue.compactMap {
             if let type = Element.self as? JSONDecodable.Type {
-                let element : Element?
+                let element: Element?
                 do {
                     element = try type.init(json: $0) as? Element
                 } catch {
@@ -417,7 +234,7 @@ func areObjectsEqual<T: Equatable>(type: T.Type, a: Any, b: Any) -> Bool {
 
 infix operator ???: NilCoalescingPrecedence
 
-public func ???<T>(optional: T?, defaultValue: @autoclosure () -> String) -> String {
+public func ???<T> (optional: T?, defaultValue: @autoclosure () -> String) -> String {
     switch optional {
     case let value?: return String(describing: value)
     case nil: return defaultValue()
@@ -444,24 +261,24 @@ extension Collection {
 }
 
 class LargeTapTargetButton: UIButton {
-    
+
     var tapTargetValue: CGFloat
-    
+
     required init(extendBy: CGFloat) {
         tapTargetValue = extendBy
-        
+
         super.init(frame: .zero)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let relativeFrame = self.bounds
         let hitTestEdgeInsets = UIEdgeInsets(top: -tapTargetValue, left: -tapTargetValue, bottom: -tapTargetValue, right: -tapTargetValue)
         let hitFrame = relativeFrame.inset(by: hitTestEdgeInsets)
         return hitFrame.contains(point)
     }
-    
+
 }

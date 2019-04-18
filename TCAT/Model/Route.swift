@@ -11,8 +11,6 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 import UIKit
-import TRON
-import SwiftyJSON
 import CoreLocation
 import MapKit
 
@@ -44,10 +42,6 @@ struct RouteCalculationError: Swift.Error {
     let description: String
 }
 
-class RouteTest: NSObject, Codable {
-    var routeId: String
-}
-
 class Route: NSObject, Codable {
 
     /// The time a user begins their journey
@@ -55,7 +49,7 @@ class Route: NSObject, Codable {
 
     /// The time a user arrives at their destination.
     var arrivalTime: Date
-    
+
     /// A unique identifier for the route
     var routeId: String
 
@@ -97,7 +91,7 @@ class Route: NSObject, Codable {
     var totalDuration: Int {
         return Time.dateComponents(from: departureTime, to: arrivalTime).minute ?? 0
     }
-    
+
     private enum CodingKeys: String, CodingKey {
         case departureTime
         case arrivalTime
@@ -108,7 +102,7 @@ class Route: NSObject, Codable {
         case directions
         case routeId
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         departureTime = Date.parseDate(try container.decode(String.self, forKey: .departureTime))
@@ -127,19 +121,17 @@ class Route: NSObject, Codable {
         func formatDirections(start: String?, end: String?) {
             startName = start ?? Constants.General.currentLocation
             endName = end ?? Constants.General.destination
-            
+
             let first = 0
-            for (index, direction) in rawDirections.enumerated() {
-                if direction.type == .walk {
-                    // Change walking direction name to name of location walking from
-                    if index == first {
-                        direction.name = startName
-                    } else {
-                        direction.name = rawDirections[index - 1].stops.last?.name ?? rawDirections[index - 1].name
-                    }
+            for (index, direction) in rawDirections.enumerated() where direction.type == .walk {
+                // Change walking direction name to name of location walking from
+                if index == first {
+                    direction.name = startName
+                } else {
+                    direction.name = rawDirections[index - 1].stops.last?.name ?? rawDirections[index - 1].name
                 }
             }
-            
+
             // Append extra direction for ending location with ending destination name
             if let direction = rawDirections.last {
                 // Set stayOnBusForTransfer to false b/c ending location can never have transfer
@@ -162,7 +154,7 @@ class Route: NSObject, Codable {
                     rawDirections.append(newDirection)
                 }
             }
-            
+
             // Change all walking directions, except for first and last direction, to arrive
             let last = rawDirections.count - 1
             for (index, direction) in rawDirections.enumerated() {
@@ -171,27 +163,27 @@ class Route: NSObject, Codable {
                     direction.name = rawDirections[index - 1].stops.last?.name ?? "Bus Stop"
                 }
             }
-            
+
             calculateTravelDistance(fromRawDirections: rawDirections)
-            
+
             // Parse and format directions
             // Variable to keep track of additions to direction list (Arrival Directions)
             var offset = 0
-            
+
             for (index, direction) in directions.enumerated() {
-                
+
                 if direction.type == .depart {
-                    
+
                     let beyondRange = index + 1 > directions.count - 1
                     let isLastDepart = index == directions.count - 1
-                    
+
                     if direction.stayOnBusForTransfer {
                         direction.type = .transfer
                     }
-                    
+
                     // If this direction doesn't have a transfer afterwards, or is depart and last
                     if (!beyondRange && !directions[index+1].stayOnBusForTransfer) || isLastDepart {
-                        
+
                         // Create Arrival Direction
                         let arriveDirection = direction.copy() as! Direction
                         arriveDirection.type = .arrive
@@ -201,21 +193,21 @@ class Route: NSObject, Codable {
                         arriveDirection.name = direction.stops.last?.name ?? "Bus Stop"
                         directions.insert(arriveDirection, at: index + offset + 1)
                         offset += 1
-                        
+
                     }
-                    
+
                     // Remove inital bus stop and departure bus stop
                     if direction.stops.count >= 2 {
                         direction.stops.removeFirst()
                         direction.stops.removeLast()
                     }
                 }
-                
+
                 // Change name of last direction to be endName
                 if direction == directions.last {
                     direction.name = endName
                 }
-                
+
             }
         }
 
