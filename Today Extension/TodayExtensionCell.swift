@@ -158,9 +158,15 @@ class TodayExtensionCell: UITableViewCell {
         if let delay = direction.delay {
             let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
 
-            if Time.compare(date1: departTime, date2: delayedDepartTime) == .orderedAscending {
-                return .late(date: departTime)
-            } else {
+            // Our live tracking only updates once every 30 seconds, so we want to show buses that are delayed by < 120 as on time in order to be more accurate about the status of slightly delayed buses. This way riders get to a bus stop earlier rather than later when trying to catch such buses.
+            if Time.compare(date1: departTime, date2: delayedDepartTime) == .orderedAscending { // bus is delayed
+                if (delayedDepartTime >= Date() || delay >= 120) {
+                    return .late(date: delayedDepartTime)
+                } else { // delay < 120
+                    return .onTime(date: departTime) 
+                }
+            }
+            else { // bus is not delayed
                 return .onTime(date: departTime)
             }
         } else {

@@ -9,7 +9,6 @@
 import Foundation
 import SwiftyJSON
 import DZNEmptyDataSet
-import Fuzzywuzzy_swift
 
 let encoder = JSONEncoder()
 let decoder = JSONDecoder()
@@ -28,12 +27,12 @@ enum SectionType {
 }
 
 class SearchTableViewManager {
-    
+
     static let shared = SearchTableViewManager()
     private var allStops: [Place]?
 
     private init() {}
-    
+
     func getAllStops() -> [Place] {
         if let stops = allStops {
             // Check if not empty so that an empty array isn't returned
@@ -62,12 +61,12 @@ class SearchTableViewManager {
     }
 
     func retrievePlaces(for key: String) -> [Place] {
-        if (key == Constants.UserDefaults.favorites) {
+        if key == Constants.UserDefaults.favorites {
             if let storedPlaces = sharedUserDefaults?.value(forKey: key) as? Data,
                 let favorites = try? decoder.decode([Place].self, from: storedPlaces) {
                 return favorites
             }
-            
+
         } else if
             let storedPlaces = userDefaults.value(forKey: key) as? Data,
             let places = try? decoder.decode([Place].self, from: storedPlaces)
@@ -87,7 +86,7 @@ class SearchTableViewManager {
                 newFavoritesList.append(item)
             }
         }
-        
+
         do {
             let data = try encoder.encode(newFavoritesList)
             sharedUserDefaults?.set(data, forKey: Constants.UserDefaults.favorites)
@@ -100,19 +99,19 @@ class SearchTableViewManager {
 
     /// Possible Keys: Constants.UserDefaults (.recentSearch | .favorites)
     func insertPlace(for key: String, place: Place, bottom: Bool = false) {
-        
+
         // Could replace with an enum
         let limit = key == Constants.UserDefaults.favorites ? 5 : 8
-        
+
         // Ensure duplicates aren't added
         var places = retrievePlaces(for: key).filter { (savedPlace) -> Bool in
             return !savedPlace.isEqual(place)
         }
-    
+
         places = bottom ? places + [place] : [place] + places
-        
+
         if places.count > limit { places.remove(at: places.count - 1) }
-        
+
         do {
             let data = try encoder.encode(places)
             if key == Constants.UserDefaults.favorites {

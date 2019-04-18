@@ -56,9 +56,9 @@ class HomeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         updatePlaces()
-        
+
         // Add Notification Observers
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -111,7 +111,7 @@ class HomeViewController: UIViewController {
         }
 
         showWhatsNewCardIfNeeded()
-        
+
         // Set Version
         VersionStore.shared.set(version: WhatsNew.Version.current())
     }
@@ -190,7 +190,7 @@ class HomeViewController: UIViewController {
         StoreReviewHelper.checkAndAskForReview()
 
     }
-    
+
     func updatePlaces() {
         recentLocations = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
@@ -234,34 +234,33 @@ class HomeViewController: UIViewController {
         }
         tableView.tableHeaderView = whatsNewContainerView
     }
-    
+
     func showWhatsNewCardIfNeeded() {
-        
+
         if VersionStore.shared.isNewCardAvailable() {
             userDefaults.set(false, forKey: Constants.UserDefaults.whatsNewDismissed)
         }
 
         let promotionCardDismissed = userDefaults.bool(forKey: Constants.UserDefaults.promotionDismissed)
         let whatsNewDismissed = userDefaults.bool(forKey: Constants.UserDefaults.whatsNewDismissed)
-        
+
         let showPromotionalCard = WhatsNewCard.isPromotionActive() && !promotionCardDismissed
-        
+
         firstViewing = userDefaults.value(forKey: Constants.UserDefaults.version) == nil
 
         // Not the first time loading the app AND there's a new card to show OR the card hasn't been dismissed.
         let showTypicalFeatureCard = !firstViewing && (VersionStore.shared.isNewCardAvailable() || !whatsNewDismissed)
-        
+
         if showPromotionalCard {
             createWhatsNewView(from: WhatsNewCard.promotion, hasPromotion: true)
-        }
-        else if showTypicalFeatureCard {
+        } else if showTypicalFeatureCard {
             createWhatsNewView(from: WhatsNewCard.newFeature, hasPromotion: false)
         }
-        
+
         if !WhatsNewCard.isPromotionActive() {
             userDefaults.set(false, forKey: Constants.UserDefaults.promotionDismissed)
         }
-        
+
     }
 
     /* Keyboard Functions */
@@ -301,33 +300,33 @@ class HomeViewController: UIViewController {
         let navigationVC = CustomNavigationController(rootViewController: informationViewController)
         present(navigationVC, animated: true)
     }
-    
+
     var loadingView = UIView()
-    
+
     /// Show a temporary loading screen
     func showLoadingScreen() {
-        
+
         loadingView.backgroundColor = Colors.backgroundWash
         view.addSubview(loadingView)
-        
+
         loadingView.snp.makeConstraints { (make) in
             make.top.bottom.leading.trailing.equalToSuperview()
         }
-        
+
         let indicator = LoadingIndicator()
         loadingView.addSubview(indicator)
         indicator.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
             make.width.height.equalTo(40)
         }
-        
+
     }
-    
+
     func removeLoadingScreen() {
         loadingView.removeFromSuperview()
         viewWillAppear(false)
     }
-    
+
 }
 
 // MARK: TableView DataSource
@@ -341,13 +340,13 @@ extension HomeViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+
         var cell: UITableViewCell!
-        
+
         if sections[indexPath.section].type == .seeAllStops {
             cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as? GeneralTableViewCell
         }
-        
+
         // Favorites (including Add First Favorite!), Recent Searches
         else {
             guard let placeCell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
@@ -419,19 +418,17 @@ extension HomeViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+
         let routeOptionsViewController = RouteOptionsViewController()
         routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
         let allStopsTableViewConroller = AllStopsTableViewController()
         var didSelectAllStops = false
         var shouldPushViewController = true
-        
+
         if sections[indexPath.section].type == .seeAllStops {
             didSelectAllStops = true
             allStopsTableViewConroller.allStops = SearchTableViewManager.shared.getAllStops()
-        }
-        
-        else {
+        } else {
             let place = sections[indexPath.section].items[indexPath.row]
             if place.name == Constants.General.firstFavorite {
                 shouldPushViewController = false
@@ -445,7 +442,7 @@ extension HomeViewController: UITableViewDelegate {
 
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
-        
+
         let vcToPush = didSelectAllStops ? allStopsTableViewConroller : routeOptionsViewController
         if shouldPushViewController {
             navigationController?.pushViewController(vcToPush, animated: true)
@@ -492,7 +489,7 @@ extension HomeViewController: UISearchBarDelegate {
 
 // MARK: Location Delegate
 extension HomeViewController: CLLocationManagerDelegate {
-    
+
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
 
         if status == .denied {
@@ -529,12 +526,12 @@ extension HomeViewController: CLLocationManagerDelegate {
 
         }
     }
-    
+
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         currentLocation = location
     }
-    
+
 }
 
 // MARK: DZN Empty Data Set Source
@@ -574,7 +571,7 @@ extension HomeViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
             }
         }
     }
-    
+
     func removeLoadingIndicator() {
         loadingIndicator?.removeFromSuperview()
         loadingIndicator = nil
@@ -619,13 +616,13 @@ extension HomeViewController: AddFavoritesDelegate {
 
 // MARK: WhatsNew Delegate
 extension HomeViewController: WhatsNewDelegate {
-    
+
     func getCurrentHomeViewController() -> HomeViewController {
         return self
     }
-    
+
     func dismissView(card: WhatsNewCard) {
-        
+
         if card.isEqual(to: WhatsNewCard.promotion) {
             userDefaults.set(true, forKey: Constants.UserDefaults.promotionDismissed)
         } else if card.isEqual(to: WhatsNewCard.newFeature) {
@@ -633,7 +630,7 @@ extension HomeViewController: WhatsNewDelegate {
             // This will save the card shown and prevent it from being shown again unless changed
             VersionStore.shared.storeShownCard(card: card)
         }
-        
+
         tableView.beginUpdates()
         UIView.animate(withDuration: 0.35, animations: {
             self.tableView.contentInset = .init(top: -self.whatsNewView.frame.height - 20, left: 0, bottom: 0, right: 0)
@@ -649,7 +646,7 @@ extension HomeViewController: WhatsNewDelegate {
             }
         })
         tableView.endUpdates()
-        
+
         let payload = WhatsNewCardDismissedPayload(actionDescription: card.title)
         Analytics.shared.log(payload)
     }
@@ -663,9 +660,9 @@ extension HomeViewController: WhatsNewDelegate {
             for subview in self.whatsNewView.subviews {
                 subview.alpha = 0
             }
-        }) { (_) in
+        }, completion: { (_) in
             self.whatsNewView.isHidden = true
-        }
+        })
     }
 
     /// Present card after user is done searching
@@ -678,11 +675,11 @@ extension HomeViewController: WhatsNewDelegate {
             for subview in self.whatsNewView.subviews {
                 subview.alpha = 1
             }
-        }) { (_) in
+        }, completion: { (_) in
             self.whatsNewView.isHidden = false
-        }
+        })
     }
-    
+
 }
 
 // Helper function inserted by Swift 4.2 migrator.

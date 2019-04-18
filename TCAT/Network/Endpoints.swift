@@ -17,18 +17,18 @@ enum NetworkType: String {
 }
 
 class Network {
-    
+
     //
     // Schemes
     //
-    
+
     // Production - Uses main production server for Network requests.
     // Staging - Uses development server for Network requests, but will profile and archive to production.
 
     // MARK: Global Network Variables
 
     static let apiVersion = "v1"
-    
+
     static var ipAddress: String {
         // For local testing, use "http://\(localIPAddress):3000/api/\(apiVersion)/"
         guard let baseURL = Bundle.main.object(forInfoDictionaryKey: "SERVER_URL") as? String else {
@@ -59,10 +59,10 @@ class Network {
 
     class func getRoutes(start: Place, end: Place, time: Date, type: SearchType,
                          callback: @escaping (_ request: APIRequest<RoutesRequest, Error>) -> Void) {
-        
+
         let request: APIRequest<RoutesRequest, Error> = tron.codable.request("route")
         request.method = .get
-        
+
         guard
             let startLat = start.latitude,
             let startLong = start.longitude,
@@ -73,14 +73,14 @@ class Network {
                 callback(request)
                 return
         }
-        
+
         request.parameters = [
-            "arriveBy"          :   type == .arriveBy,
-            "end"               :   "\(endLat),\(endLong)",
-            "start"             :   "\(startLat),\(startLong)",
-            "time"              :   time.timeIntervalSince1970,
-            "destinationName"   :   end.name,
-            "originName"        :   start.name
+            "arriveBy": type == .arriveBy,
+            "end": "\(endLat),\(endLong)",
+            "start": "\(startLat),\(startLong)",
+            "time": time.timeIntervalSince1970,
+            "destinationName": end.name,
+            "originName": start.name
         ]
 
         // Add unique identifier to request
@@ -90,14 +90,14 @@ class Network {
 
         callback(request)
     }
-    
+
     class func getRequestURL(start: Place, end: Place, time: Date, type: SearchType) -> String {
         let path = "route"
         let arriveBy = (type == .arriveBy)
         let endStr = "\(String(describing: end.latitude)),\(String(describing: end.longitude))"
         let startStr =  "\(String(describing: start.latitude)),\(String(describing: start.longitude))"
         let time = time.timeIntervalSince1970
-        
+
         return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(endStr)&start=\(startStr)&time=\(time)&destinationName=\(end.name)&originName=\(start.name)"
     }
 
@@ -130,13 +130,13 @@ class Network {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routeSelected")
         request.method = .post
         request.parameterEncoding = JSONEncoding.default
-        request.parameters = ["routeId" : routeId]
-        
+        request.parameters = ["routeId": routeId]
+
         // Add unique identifier to request
         if let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid) {
             request.parameters["uid"] = uid
         }
-        
+
         return request
     }
 

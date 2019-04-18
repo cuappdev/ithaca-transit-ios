@@ -20,14 +20,14 @@ struct RouteDetailCellSize {
 class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDelegate {
     
     // MARK: Variables
-    
+
     var summaryView = SummaryView()
     var tableView: UITableView!
-    var safeAreaCover: UIView? = nil
-    
+    var safeAreaCover: UIView?
+
     var route: Route!
     var directions: [Direction] = []
-    
+
     let main = UIScreen.main.bounds
     var justLoaded: Bool = true
     var visible: Bool = false
@@ -40,7 +40,7 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
     var busDelayNetworkTimer: Timer?
     /// Number of seconds to wait before auto-refreshing bus delay network call.
     var busDelayNetworkRefreshRate: Double = 10
-    
+
     // MARK: Initalization
 
     init(route: Route) {
@@ -48,13 +48,13 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
         self.route = route
         self.directions = route.directions
     }
-    
+
     func update(with route: Route) {
         self.route = route
         self.directions = route.directions
         tableView.reloadData()
     }
-    
+
     required convenience init(coder aDecoder: NSCoder) {
         let route = aDecoder.decodeObject(forKey: "route") as! Route
         self.init(route: route)
@@ -69,36 +69,36 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
         }
         summaryView.setRoute()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         // Bus Delay Network Timer
         busDelayNetworkTimer?.invalidate()
         busDelayNetworkTimer = Timer.scheduledTimer(timeInterval: busDelayNetworkRefreshRate, target: self, selector: #selector(getDelays),
                                                     userInfo: nil, repeats: true)
         busDelayNetworkTimer?.fire()
-        
+
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         busDelayNetworkTimer?.invalidate()
     }
-    
+
     override func viewDidDisappear(_ animated: Bool) {
         removeCover()
     }
-    
+
     // MARK: UIView Functions
 
     /** Create and configure detailView, summaryView, tableView */
     func initializeDetailView() {
 
         view.backgroundColor = Colors.white
-        
+
         // Create summaryView
-        
+
         summaryView.route = route
         let summaryTapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
         summaryTapGesture.delegate = self
@@ -118,14 +118,14 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
         tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.emptyFooterView)
         tableView.dataSource = self
         tableView.delegate = self
-        
+
         view.addSubview(tableView)
 
     }
-    
+
     /// Returns the currently expanded cell, if any
     var expandedCell: LargeDetailTableViewCell? {
-        
+
         for index in 0..<tableView.numberOfRows(inSection: 0) {
             let indexPath = IndexPath(row: index, section: 0)
             if let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell {
@@ -133,11 +133,11 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
                     return cell
                 }
             }
-            
+
         }
         return nil
     }
-    
+
     /// Creates a temporary view to cover the drawer contents when collapsed. Hidden by default.
     func initializeCover() {
         if #available(iOS 11.0, *) {
@@ -148,7 +148,7 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
             view.addSubview(safeAreaCover!)
         }
     }
-    
+
     /// Remove cover view
     func removeCover() {
         safeAreaCover?.removeFromSuperview()
@@ -157,29 +157,29 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
     
     /// Fetch delay information and update table view cells.
     @objc func getDelays() {
-        
+
         // First depart direction(s)
         guard let delayDirection = route.getFirstDepartRawDirection() else {
             return // Use rawDirection (preserves first stop metadata)
         }
         let firstDepartDirection = self.directions.first(where: { $0.type == .depart })!
-        
+
         directions.forEach { $0.delay = nil }
-        
+
         if let tripId = delayDirection.tripIdentifiers?.first,
             let stopId = delayDirection.stops.first?.id {
-            
+
             Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (delayRequest) in
-                
+
                 if delayRequest.success {
-                    
+
                     delayDirection.delay = delayRequest.data
                     firstDepartDirection.delay = delayRequest.data
-                    
+
                     // Update delay variable of other ensuing directions
-                    
+
                     self.directions.filter {
-                        let isAfter = self.directions.index(of: firstDepartDirection)! < self.directions.index(of: $0)!
+                        let isAfter = self.directions.firstIndex(of: firstDepartDirection)! < self.directions.firstIndex(of: $0)!
                         return isAfter && $0.type != .depart
                         }
                         
@@ -190,19 +190,18 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
                                 direction.delay = delayDirection.delay
                             }
                     }
-                    
+
                     self.tableView.reloadData()
                     self.summaryView.setRoute()
-                    
-                }
-                else {
+
+                } else {
                     print("getDelays success: false")
                 }
             }, failure: { (error) in
                 print("getDelays error: \(error.errorDescription ?? "")")
             })
         }
-        
+
     }
     
     /// Toggle the cell expansion at the indexPath

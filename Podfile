@@ -33,9 +33,9 @@ target 'TCAT' do
     pod 'Presentation', :git=> 'https://github.com/cuappdev/Presentation.git'
     pod 'SnapKit'
     pod 'WhatsNewKit', '~> 1.1.2'
-    
+
     # Other
-    pod 'Fuzzywuzzy_swift', :git=> 'https://github.com/cuappdev/Fuzzywuzzy_swift.git'
+    pod 'SwiftLint'
     
     target 'TCATTests' do
         inherit! :search_paths
