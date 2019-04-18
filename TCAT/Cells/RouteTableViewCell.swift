@@ -20,7 +20,7 @@ class RouteTableViewCell: UITableViewCell {
 
     static let identifier: String = "routeCell"
     private let fileName: String = "RouteTableViewCell"
-    
+
     var route: Route?
 
     // MARK: Log vars
@@ -28,7 +28,7 @@ class RouteTableViewCell: UITableViewCell {
     var rowNum: Int?
 
     // MARK: View vars
-    
+
     let containerView = UIView()
 
     var timesStackView: UIStackView
@@ -52,9 +52,9 @@ class RouteTableViewCell: UITableViewCell {
     let topMargin: CGFloat = 16
     let bottomMargin: CGFloat = 16
     let rightMargin: CGFloat = 12
-    
+
     let cellMargin: CGFloat = 12
-    
+
     let cornerRadius: CGFloat = 16
     let cellSeparatorHeight: CGFloat = 12
 
@@ -86,30 +86,30 @@ class RouteTableViewCell: UITableViewCell {
 
         styleCellBackground()
         styleVerticalStackView()
-        
+
         contentView.addSubview(containerView)
         containerView.addSubview(verticalStackView)
-        
+
         activateConstraints()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         let padding = UIEdgeInsets(top: 0, left: 0, bottom: cellMargin, right: 0)
-        bounds = bounds.inset(by: padding)
+        contentView.frame = contentView.frame.inset(by: padding)
     }
-    
+
     // MARK: Style
-    
+
     private func styleCellBackground() {
         layer.backgroundColor = UIColor.clear.cgColor
         contentView.backgroundColor = .clear
         backgroundColor = .clear
-        
+
         containerView.backgroundColor = Colors.white
         containerView.layer.cornerRadius = cornerRadius
         containerView.layer.masksToBounds = true
@@ -117,6 +117,7 @@ class RouteTableViewCell: UITableViewCell {
 
     private func styleVerticalStackView() {
         verticalStackView.axis = .vertical
+        verticalStackView.spacing = 8
         verticalStackView.layoutMargins = UIEdgeInsets.init(top: topMargin, left: leftMargin, bottom: bottomMargin, right: rightMargin)
         verticalStackView.isLayoutMarginsRelativeArrangement = true
 
@@ -148,8 +149,9 @@ class RouteTableViewCell: UITableViewCell {
         stretchyFillerView.setContentHuggingPriority(liveLabel.contentHuggingPriority(for: .horizontal) - 1, for: .horizontal)
 
         liveStackView.axis = .horizontal
-        liveStackView.alignment = .lastBaseline
+        liveStackView.alignment = .center
         liveStackView.spacing = spaceBtnLiveElements
+        liveStackView.frame = liveStackView.frame.inset(by: UIEdgeInsets(top: -4, left: 0, bottom: -4, right: 0))
 
         liveLabel.font = .getFont(.semibold, size: 14)
     }
@@ -171,17 +173,17 @@ class RouteTableViewCell: UITableViewCell {
         setDebugIdentifiers()
 
         NSLayoutConstraint.activate([
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: cellMargin),
-            containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -cellMargin),
-            containerView.topAnchor.constraint(equalTo: topAnchor),
-            containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: cellMargin),
+            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -cellMargin),
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
 
         NSLayoutConstraint.activate([
             verticalStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             verticalStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            verticalStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            verticalStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            verticalStackView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            verticalStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
 
         NSLayoutConstraint.activate([
@@ -197,7 +199,6 @@ class RouteTableViewCell: UITableViewCell {
                         departureStackView, departureTimeLabel, arrowImageView,
                         liveStackView, liveLabel, liveIndicatorView, stretchyFillerView,
                         verticalStackView, routeDiagram, containerView]
-        // Previously: verticalStackView, topBorder, routeDiagram, funMessage, bottomBorder, cellSeparator
         subviews.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
     }
 
@@ -242,10 +243,9 @@ class RouteTableViewCell: UITableViewCell {
                     if (delayedDepartTime >= Date() || delay >= 120) {
                         return .late(date: delayedDepartTime)
                     } else { // delay < 120
-                        return .onTime(date: departTime) 
+                        return .onTime(date: departTime)
                     }
-                }
-                else { // bus is not delayed
+                } else { // bus is not delayed
                     return .onTime(date: departTime)
                 }
 

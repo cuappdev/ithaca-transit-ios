@@ -28,7 +28,7 @@ class Network {
     // MARK: Global Network Variables
 
     static let apiVersion = "v2"
-    
+
     static var ipAddress: String {
         // For local testing, use "http://\(localIPAddress):3000/api/\(apiVersion)/"
         guard let baseURL = Bundle.main.object(forInfoDictionaryKey: "SERVER_URL") as? String else {
@@ -76,12 +76,12 @@ class Network {
         }
 
         request.parameters = [
-            "isArriveBy"          :   type == .arriveBy,
-            "end"               :   "\(endLat),\(endLong)",
-            "start"             :   "\(startLat),\(startLong)",
-            "time"              :   time.timeIntervalSince1970,
-            "destinationName"   :   end.name,
-            "originName"        :   start.name
+            "isArriveBy": type == .arriveBy,
+            "end": "\(endLat),\(endLong)",
+            "start": "\(startLat),\(startLong)",
+            "time": time.timeIntervalSince1970,
+            "destinationName": end.name,
+            "originName": start.name
         ]
 
         // Add unique identifier to request
@@ -98,7 +98,7 @@ class Network {
         let endStr = "\(String(describing: end.latitude)),\(String(describing: end.longitude))"
         let startStr =  "\(String(describing: start.latitude)),\(String(describing: start.longitude))"
         let time = time.timeIntervalSince1970
-        
+
         return  "\(address)\(path)?isArriveBy=\(arriveBy)&end=\(endStr)&start=\(startStr)&time=\(time)&destinationName=\(end.name)&originName=\(start.name)"
     }
 

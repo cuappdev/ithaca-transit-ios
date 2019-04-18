@@ -61,7 +61,7 @@ class RouteOptionsViewController: UIViewController {
     // MARK: Data vars
 
     var routes: [[Route]] = []
-    
+
     /// Returns routes from each section in order
     var allRoutes: [Route] {
         return routes.flatMap { $0 }
@@ -432,7 +432,7 @@ class RouteOptionsViewController: UIViewController {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
 
         request.performCollectingTimeline { (response) in
-            
+
             switch response.result {
             case .success(let routesResponse):
 
@@ -444,7 +444,7 @@ class RouteOptionsViewController: UIViewController {
                         print(line)
                     }
                 }
-                
+
                 // Parse sections of routes
                 [routesResponse.data.fromStop, routesResponse.data.boardingSoon, routesResponse.data.walking]
                     .forEach { (routeSection) in
@@ -458,7 +458,7 @@ class RouteOptionsViewController: UIViewController {
                         }
 
                 }
-                
+
                 self.requestDidFinish(perform: [.hideBanner])
             case .failure(let networkError):
                 if let error = networkError as? APIError<Error> {
@@ -948,6 +948,7 @@ extension RouteOptionsViewController: UITableViewDataSource {
 
 // MARK: TableView Delegate
 extension RouteOptionsViewController: UITableViewDelegate {
+
     private func setupRouteResultsTableView() {
         let height = view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0)
         let frame = CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: height)
@@ -981,7 +982,7 @@ extension RouteOptionsViewController: UITableViewDelegate {
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }
-    
+
     /// Different header text based on variable data results (see designs)
     func headerTitles(section: Int) -> String? {
         if routes.count == 3 {
@@ -1003,40 +1004,51 @@ extension RouteOptionsViewController: UITableViewDelegate {
         }
     }
 
+    func isEmptyHeaderView(section: Int) -> Bool {
+         return section == 0 && searchFrom?.type == .busStop && routes.first?.isEmpty ?? false
+    }
+
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
+
         let containerView = UIView()
         let label = UILabel()
-        
+
         // Special centered message alerting no fromStop routes (first in 2D routes array)
-        if section == 0 && searchFrom?.type == .busStop && routes.first?.isEmpty ?? false {
+        if isEmptyHeaderView(section: section) {
             label.text = Constants.TableHeaders.noAvailableRoutes + " from \(searchFrom?.name ?? "Starting Bus Stop")."
             label.font = .getFont(.regular, size: 14)
             label.textAlignment = .center
             label.textColor = Colors.secondaryText
-            
+
             containerView.addSubview(label)
-            
+
             label.snp.makeConstraints { (make) in
-                make.centerX.equalToSuperview()
-                make.height.equalTo(60)
+                make.centerX.centerY.equalToSuperview()
             }
         } else {
             label.text = headerTitles(section: section)
             label.font = .getFont(.regular, size: 12)
             label.textColor = Colors.secondaryText
-            
+
             containerView.addSubview(label)
-            
+
             label.snp.makeConstraints { (make) in
                 make.leading.equalToSuperview().offset(12)
                 make.bottom.equalToSuperview().offset(-12)
             }
         }
-        
+
         return containerView
     }
-    
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if isEmptyHeaderView(section: section) {
+            return 60
+        } else {
+            return UIFont.getFont(.regular, size: 12).lineHeight
+        }
+    }
+
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let tableViewPadding: CGFloat = 12
         return UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: tableViewPadding))
