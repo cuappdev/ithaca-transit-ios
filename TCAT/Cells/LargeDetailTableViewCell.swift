@@ -22,7 +22,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     var chevron: UIButton!
     weak var delegate: LargeDetailTableViewDelegate?
     var indexPath: IndexPath!
-    
+
     let paragraphStyle = NSMutableParagraphStyle()
     let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
     var cellHeight: CGFloat = RouteDetailCellSize.largeHeight
@@ -31,7 +31,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     var isExpanded: Bool = false
     let edgeSpacing: CGFloat = 16
     let labelSpacing: CGFloat = 4
-    
+
     func getChevron() -> UIButton {
         let chevron = UIButton()
         chevron.frame.size = CGSize(width: 13.5, height: 8)
@@ -81,15 +81,15 @@ class LargeDetailTableViewCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     /** Precondition: Direction is BoardDirection */
     func setCell(_ direction: Direction, indexPath: IndexPath) {
-        
+
         let firstStep = indexPath.row == 0
         self.direction = direction
         cellHeight = height()
         self.indexPath = indexPath
-        
+
         let shouldAddViews = iconView == nil || busIconView == nil ||
             titleLabel == nil || detailLabel == nil
 
@@ -191,7 +191,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         let detailLabel = formatDetailLabel(getDetailLabel(), titleLabel)
         return titleLabel.frame.height + detailLabel.frame.height + labelSpacing + (edgeSpacing * 2)
     }
-    
+
     @objc func chevronButtonPressed() {
         if isExpanded {
             delegate?.collapseCells(indexPath: indexPath)
@@ -199,6 +199,4 @@ class LargeDetailTableViewCell: UITableViewCell {
             delegate?.expandCells(indexPath: indexPath)
         }
     }
-}
-
 }

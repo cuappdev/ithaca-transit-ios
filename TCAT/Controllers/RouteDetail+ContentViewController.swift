@@ -666,11 +666,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             mapView.animate(with: update)
         }
     }
-    
+
     func centerMap(on direction: Direction, followPath: Bool = false, topHalfCentered: Bool = false) {
-        
+
         let path = GMSMutablePath()
-        
+
         if followPath {
             for loc in direction.path {
                 path.add(loc)
@@ -678,12 +678,12 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         } else {
             path.add(direction.startLocation)
         }
-        
+
         let bounds = GMSCoordinateBounds(path: path)
         let update = GMSCameraUpdate.fit(bounds)
         mapView.animate(with: update)
         if !followPath {
-            mapView.animate(toZoom: 18)
+            mapView.animate(toZoom: 17)
         }
     }
 
