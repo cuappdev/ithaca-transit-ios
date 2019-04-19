@@ -15,6 +15,7 @@ import Fabric
 import Crashlytics
 import SafariServices
 import WhatsNewKit
+import FutureNova
 
 // This is used for app-specific preferences
 let userDefaults = UserDefaults.standard
@@ -92,6 +93,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Analytics.shared.log(payload)
             }
         }
+        
+        setupEndpointConfig()
 
         // Initalize window without storyboard
         self.window = UIWindow(frame: UIScreen.main.bounds)
@@ -99,6 +102,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.makeKeyAndVisible()
 
         return true
+    }
+    
+    func setupEndpointConfig() {
+        
+        //
+        // Schemes
+        //
+        
+        // Release - Uses main production server for Network requests.
+        // Debug - Uses development server for Network requests, but will profile and archive to production.
+        
+        guard let baseURL = Bundle.main.object(forInfoDictionaryKey: "SERVER_URL") as? String else {
+            fatalError("Could not find SERVER_URL in Info.plist!")
+        }
+        Endpoint.config.scheme = "https"
+        Endpoint.config.host = baseURL
+        Endpoint.config.commonPath = "/api/v1"
     }
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {

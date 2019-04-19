@@ -10,6 +10,47 @@ import Foundation
 import SwiftyJSON
 import CoreLocation
 
+internal struct GetRoutesBody: Codable {
+    let arriveBy: Bool
+    let end: String
+    let start: String
+    let time: Double
+    let destinationName: String
+    let originName: String
+    let uid: String?
+}
+
+internal struct MultiRoutesBody: Codable {
+    let start: String
+    let time: Double
+    let end: [String]
+    let destinationNames: [String]
+}
+
+internal struct SearchResultsBody: Codable {
+    let query: String
+}
+
+internal struct RouteSelectedBody: Codable {
+    let routeId: String
+    let uid: String?
+}
+
+internal struct GetBusLocationsBody: Codable {
+    var data: [BusLocationsInfo]
+}
+
+internal struct BusLocationsInfo: Codable {
+    let stopId: String
+    let routeId: String
+    let tripIdentifiers: [String]
+}
+
+internal struct GetDelayBody: Codable {
+    let stopId: String
+    let tripId: String
+}
+
 struct Error: Codable {
     var error: String!
 }
