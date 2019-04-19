@@ -463,14 +463,14 @@ class RouteOptionsViewController: UIViewController {
         switch result {
         case .value(let response):
 
-//            // Save to JSONFileManager
-//            if let data = response.data {
-//                do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) } catch let error {
-//                    let fileName = "RouteOptionsViewController"
-//                    let line = "\(fileName) \(#function): \(error.localizedDescription)"
-//                    print(line)
-//                }
-//            }
+            // Save to JSONFileManager
+            if let data = try? JSONEncoder().encode(response) {
+                do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) } catch let error {
+                    let fileName = "RouteOptionsViewController"
+                    let line = "\(fileName) \(#function): \(error.localizedDescription)"
+                    print(line)
+                }
+            }
             for each in response.data {
                 each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
             }

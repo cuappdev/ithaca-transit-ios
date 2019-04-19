@@ -337,8 +337,8 @@ class RouteTableViewCell: UITableViewCell {
                 guard let `self` = self else { return }
                 DispatchQueue.main.async {
                     switch result {
-                    case .value (let response):
-                        guard (response.data != nil), let delay = response.data else {
+                    case .value (let delayResponse):
+                        guard (delayResponse.data != nil), let delay = delayResponse.data else {
                             self.setDepartureTimeAndLiveElements(withRoute: route)
                             return
                         }
@@ -347,13 +347,13 @@ class RouteTableViewCell: UITableViewCell {
                         if isNewDelayValue {
                             JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
                             JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
-                            //                        if let data = response.data {
-                            //                            do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: self.rowNum ?? -1)) } catch let error {
-                            //                                let fileName = "RouteTableViewCell"
-                            //                                let line = "\(fileName) \(#function): \(error.localizedDescription)"
-                            //                                print(line)
-                            //                            }
-                            //                        }
+                            if let data = try? JSONEncoder().encode(delayResponse) {
+                                do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: self.rowNum ?? -1)) } catch let error {
+                                    let fileName = "RouteTableViewCell"
+                                    let line = "\(fileName) \(#function): \(error.localizedDescription)"
+                                    print(line)
+                                }
+                            }
                         }
 
                         let departTime = direction.startTime
