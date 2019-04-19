@@ -52,36 +52,8 @@ internal struct GetDelayBody: Codable {
     let tripId: String
 }
 
-// MARK: Responses
-
+// Response
 struct Response<T: Codable>: Codable {
-
     var success: Bool
     var data: T
-
-}
-
-struct ChannelMessage: Codable {
-    var ChannelId: Int
-    var message: String
-}
-
-struct BusLocationRequest: Decodable {
-    var success: Bool
-    var data: [BusLocation]
-}
-
-struct BusDelayRequest: Codable {
-    var success: Bool
-    var data: Int?
-}
-
-struct SearchRequest: Codable {
-    var success: Bool
-    var data: [Place]
-}
-
-struct RoutesRequest: Codable {
-    var success: Bool
-    var data: [Route]
 }
