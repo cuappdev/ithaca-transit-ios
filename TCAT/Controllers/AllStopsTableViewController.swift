@@ -250,7 +250,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
     /* Get all bus stops and store in userDefaults */
     func retryNetwork(completion: @escaping () -> Void) {
         getAllStops().observe { [weak self] result in
-            guard let `self` = self else { return }
+            guard self != nil else { return }
             DispatchQueue.main.async {
                 switch result {
                 case .value(let response):

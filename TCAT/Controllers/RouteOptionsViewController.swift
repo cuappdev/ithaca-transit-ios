@@ -444,7 +444,7 @@ class RouteOptionsViewController: UIViewController {
 
     private func routeSelected(routeId: String) {
         networking(Endpoint.routeSelected(routeId: routeId)).observe { [weak self] result in
-            guard let `self` = self else { return }
+            guard self != nil else { return }
             DispatchQueue.main.async {
                 switch result {
                 case .value:
