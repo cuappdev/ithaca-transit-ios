@@ -8,6 +8,7 @@
 
 import UIKit
 import DZNEmptyDataSet
+import FutureNova
 
 protocol UnwindAllStopsTVCDelegate: class {
     func dismissSearchResultsVC(place: Place)
@@ -23,6 +24,7 @@ class AllStopsTableViewController: UITableViewController {
     var currentChar: Character?
     var loadingIndicator: LoadingIndicator?
     var isLoading: Bool { return loadingIndicator != nil }
+    private let networking: Networking = URLSession.shared.request
 
     override func viewWillLayoutSubviews() {
         if let y = navigationController?.navigationBar.frame.maxY {
@@ -240,20 +242,20 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             self.setUpTableOnRetry()
         }
     }
-    
+
     private func getAllStops() -> Future<Response<[Place]>> {
         return networking(Endpoint.getAllStops()).decode()
     }
-    
+
     /* Get all bus stops and store in userDefaults */
     func retryNetwork(completion: @escaping () -> Void) {
         getAllStops().observe { (result) in
             switch result {
             case .value(let response):
-                let filteredStops = Place.parseAllStops(allStops: response.data)
+                let filteredStops = Place.filterAllStops(allStops: response.data)
                 if !filteredStops.isEmpty {
                     do {
-                        let encodedObject = try JSONEncoder().encode(allBusStops)
+                        let encodedObject = try JSONEncoder().encode(filteredStops)
                         userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
                     } catch let error {
                         print(error)

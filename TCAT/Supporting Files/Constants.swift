@@ -158,7 +158,7 @@ struct Constants {
         // Other empty state messages
         static let lookingForRoutes = "Looking For Routes..."
     }
-    
+
     /// The routes for each of our endpoints
     struct Endpoints {
         static let allStops = "/allStops"

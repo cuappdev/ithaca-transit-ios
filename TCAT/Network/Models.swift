@@ -55,55 +55,10 @@ internal struct GetDelayBody: Codable {
 // MARK: Responses
 
 struct Response<T: Codable>: Codable {
-    
+
     var success: Bool
     var data: T
-    
-}
 
-struct AlertRequest: Codable {
-    let success: Bool
-    let data: [Alert]
-}
-
-struct Alert: Codable {
-    var id: Int
-    var message: String
-    var fromDate: String
-    var toDate: String
-    var fromTime: String
-    var toTime: String
-    var priority: Int
-    var daysOfWeek: String
-    var routes: [Int]
-    var signs: [Int]
-    var channelMessages: [ChannelMessage]
-
-    init(id: Int,
-         message: String,
-         fromDate: String,
-         toDate: String,
-         fromTime: String,
-         toTime: String,
-         priority: Int,
-         daysOfWeek: String,
-         routes: [Int],
-         signs: [Int],
-         channelMessages: [ChannelMessage]) {
-
-        self.id = id
-        self.message = message
-        self.fromDate = fromDate
-        self.toDate = toDate
-        self.fromTime = fromTime
-        self.toTime = toTime
-        self.priority = priority
-        self.daysOfWeek = daysOfWeek
-        self.routes = routes
-        self.signs = signs
-        self.channelMessages = channelMessages
-
-    }
 }
 
 struct ChannelMessage: Codable {
@@ -129,9 +84,4 @@ struct SearchRequest: Codable {
 struct RoutesRequest: Codable {
     var success: Bool
     var data: [Route]
-}
-
-struct MultiRoutesRequest: Codable {
-    var success: Bool
-    var data: [Route?]
 }

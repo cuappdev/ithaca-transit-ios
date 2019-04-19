@@ -11,17 +11,17 @@ import CoreLocation
 import FutureNova
 
 extension Endpoint {
-    
-    static func getAllStopsEndpoint() -> Endpoint {
+
+    static func getAllStops() -> Endpoint {
         return Endpoint(path: Constants.Endpoints.allStops)
     }
-    
+
 //    class func getAllStops() -> APIRequest<AllBusStopsRequest, Error> {
 //        let request: APIRequest<AllBusStopsRequest, Error> = tron.codable.request("allStops")
 //        request.method = .get
 //        return request
 //    }
-    
+
     static func getAlerts() -> Endpoint {
         return Endpoint(path: Constants.Endpoints.alerts)
     }
@@ -31,7 +31,7 @@ extension Endpoint {
 //        request.method = .get
 //        return request
 //    }
-    
+
     static func getRoutes(start: Place,
                           end: Place,
                           time: Date,
@@ -47,7 +47,7 @@ extension Endpoint {
         }
         let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid)
         let body = GetRoutesBody(arriveBy: type == .arriveBy, end: "\(endLat),\(endLong)", start: "\(startLat),\(startLong)", time: time.timeIntervalSince1970, destinationName: end.name, originName: start.name, uid: uid)
-        
+
         return Endpoint(path: Constants.Endpoints.getRoutes, body: body)
     }
 
@@ -88,14 +88,14 @@ extension Endpoint {
 
         return  "\(String(describing: Endpoint.config.host))\(path)?arriveBy=\(arriveBy)&end=\(endStr)&start=\(startStr)&time=\(time)&destinationName=\(end.name)&originName=\(start.name)"
     }
-    
+
     static func getMultiRoutes(startCoord: CLLocationCoordinate2D,
                                time: Date,
                                endCoords: [String],
                                endPlaceNames: [String]) -> Endpoint {
         let body = MultiRoutesBody(start: "\(startCoord.latitude),\(startCoord.longitude)", time: time.timeIntervalSince1970, end: endCoords, destinationNames: endPlaceNames)
         return Endpoint(path: Constants.Endpoints.multiRoute, body: body)
-        
+
     }
 
 //    class func getMultiRoutes(startCoord: CLLocationCoordinate2D, time: Date, endCoords: [String], endPlaceNames: [String],
@@ -111,7 +111,7 @@ extension Endpoint {
 //
 //        callback(request)
 //    }
-    
+
     static func getSearchResults(searchText: String) -> Endpoint {
         let body = SearchResultsBody(query: searchText)
         return Endpoint(path: Constants.Endpoints.searchResults, body: body)
@@ -127,11 +127,10 @@ extension Endpoint {
 //        return request
 //    }
 
-    @discardableResult
     static func routeSelected(routeId: String) -> Endpoint {
         // Add unique identifier to request
         let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid)
-        
+
         let body = RouteSelectedBody(routeId: routeId, uid: uid)
         return Endpoint(path: Constants.Endpoints.routeSelected, body: body)
     }
@@ -148,18 +147,18 @@ extension Endpoint {
 //
 //        return request
 //    }
-    
+
     static func getBusLocations(_ directions: [Direction]) -> Endpoint {
         let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
-        
+
         var locationsInfo: [BusLocationsInfo] = []
         for direction in departDirections {
             // The id of the location, or bus stop, the bus needs to get to
-            
+
             let stopID = direction.stops.first?.id ?? "-1"
             locationsInfo.append(BusLocationsInfo(stopId: stopID, routeId: String(direction.routeNumber), tripIdentifiers: direction.tripIdentifiers!))
         }
-        
+
         let body = GetBusLocationsBody(data: locationsInfo)
         return Endpoint(path: Constants.Endpoints.busLocations, body: body)
     }
@@ -186,7 +185,7 @@ extension Endpoint {
 //        request.parameterEncoding = JSONEncoding.default
 //        return request
 //    }
-    
+
     static func getDelay(tripId: String, stopId: String) -> Endpoint {
         let body = GetDelayBody(stopId: stopId, tripId: tripId)
         return Endpoint(path: Constants.Endpoints.delay, body: body)

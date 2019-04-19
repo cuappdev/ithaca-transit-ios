@@ -13,8 +13,8 @@ import DZNEmptyDataSet
 import NotificationBannerSwift
 import Crashlytics
 import Pulley
-import TRON
 import Intents
+import FutureNova
 
 enum SearchBarType: String {
     case from, to
@@ -65,7 +65,8 @@ class RouteOptionsViewController: UIViewController {
 
     // MARK: Reachability vars
 
-    let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
+    let reachability: Reachability? = Reachability(hostname: Endpoint.config.host ?? "")
+    private let networking: Networking = URLSession.shared.request
 
     var banner: StatusBarNotificationBanner? {
         didSet {
@@ -399,65 +400,86 @@ class RouteOptionsViewController: UIViewController {
             }
 
             // MARK: Search for Routes Data Request
-
-            Network.getRoutes(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType) { request in
-                let requestURL = Network.getRequestURL(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType)
-                self.processRequest(request: request, requestURL: requestURL, endPlace: searchTo)
-            }
-
-            // Donate GetRoutes intent
-            if #available(iOS 12.0, *) {
-                let intent = GetRoutesIntent()
-                intent.searchTo = searchTo.name
-                intent.latitude = String(describing: searchTo.latitude)
-                intent.longitude = String(describing: searchTo.longitude)
-                intent.suggestedInvocationPhrase = "Find bus to \(searchTo.name)"
-                let interaction = INInteraction(intent: intent, response: nil)
-                interaction.donate(completion: { (error) in
-                    guard let error = error else { return }
-                    print("Intent Donation Error: \(error.localizedDescription)")
+            if let result =  getRoutes(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType) {
+                result.observe(with: { (result) in
+                    let requestURL = Endpoint.getRequestURL(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType)
+                    self.processRequest(result: result, requestURL: requestURL, endPlace: searchTo)
                 })
             }
+
+//            { request in
+//                let requestURL = Network.getRequestURL(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType)
+//                self.processRequest(request: request, requestURL: requestURL, endPlace: searchTo)
+//            }
+//
+//            // Donate GetRoutes intent
+//            if #available(iOS 12.0, *) {
+//                let intent = GetRoutesIntent()
+//                intent.searchTo = searchTo.name
+//                intent.latitude = String(describing: searchTo.latitude)
+//                intent.longitude = String(describing: searchTo.longitude)
+//                intent.suggestedInvocationPhrase = "Find bus to \(searchTo.name)"
+//                let interaction = INInteraction(intent: intent, response: nil)
+//                interaction.donate(completion: { (error) in
+//                    guard let error = error else { return }
+//                    print("Intent Donation Error: \(error.localizedDescription)")
+//                })
+//            }
 
         }
 
     }
 
-    func processRequest(request: APIRequest<RoutesRequest, Error>, requestURL: String, endPlace: Place) {
-        JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
+    private func getRoutes(start: Place,
+                           end: Place,
+                           time: Date,
+                           type: SearchType) -> Future<Response<[Route]>>? {
+        if let endpoint = Endpoint.getRoutes(start: start, end: end, time: time, type: type) {
+            return networking(endpoint).decode()
+        } else { return nil }
+    }
 
-        request.performCollectingTimeline { (response) in
-            switch response.result {
-            case .success(let routesResponse):
+    private func routeSelected(routeId: String) {
+        networking(Endpoint.routeSelected(routeId: routeId)).observe { (result) in
+            switch result {
+            case .value:
+                print("[RouteOptionsViewController] Route Selected - Success")
+            case .error(let error):
+                print("[RouteOptionsViewController] Route Selected - Error:", error)
 
-                // Save to JSONFileManager
-                if let data = response.data {
-                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) } catch let error {
-                        let fileName = "RouteOptionsViewController"
-                        let line = "\(fileName) \(#function): \(error.localizedDescription)"
-                        print(line)
-                    }
-                }
-
-                for each in routesResponse.data {
-                    each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
-                }
-                self.routes = routesResponse.data
-                self.requestDidFinish(perform: [.hideBanner])
-            case .failure(let networkError):
-                if let error = networkError as? APIError<Error> {
-                    self.processRequestError(error: error, requestURL: requestURL)
-                }
             }
         }
+    }
 
+    func processRequest(result: Result<Response<[Route]>>, requestURL: String, endPlace: Place) {
+        JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
+
+        switch result {
+        case .value(let response):
+
+//            // Save to JSONFileManager
+//            if let data = response.data {
+//                do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) } catch let error {
+//                    let fileName = "RouteOptionsViewController"
+//                    let line = "\(fileName) \(#function): \(error.localizedDescription)"
+//                    print(line)
+//                }
+//            }
+            for each in response.data {
+                each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
+            }
+            self.routes = response.data
+            self.requestDidFinish(perform: [.hideBanner])
+        case .error(let error):
+            self.processRequestError(error: error, requestURL: requestURL)
+        }
         let payload = DestinationSearchedEventPayload(destination: endPlace.name, requestUrl: requestURL)
         Analytics.shared.log(payload)
     }
 
-    func processRequestError(error: APIError<Error>, requestURL: String) {
-        let title = "Network Failure: \((error.error as NSError?)?.domain ?? "No Domain")"
-        let description = (error.localizedDescription) + ", " + ((error.error as NSError?)?.description ?? "n/a")
+    func processRequestError(error: Error, requestURL: String) {
+        let title = "Network Failure: \((error as NSError?)?.domain ?? "No Domain")"
+        let description = (error.localizedDescription) + ", " + ((error as NSError?)?.description ?? "n/a")
 
         routes = []
         timers = [:]
@@ -954,11 +976,7 @@ extension RouteOptionsViewController: UITableViewDelegate {
             let payload = RouteResultsCellTappedEventPayload()
             Analytics.shared.log(payload)
             let routeId = routes[indexPath.row].routeId
-            Network.routeSelected(routeId: routeId).perform(withSuccess: { (request) in
-                print("[RouteOptionsViewController] Route Selected - Success:", request["success"])
-            }, failure: { (error) in
-                print("[RouteOptionsViewController] Route Selected - Error:", error)
-            })
+            routeSelected(routeId: routeId)
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }

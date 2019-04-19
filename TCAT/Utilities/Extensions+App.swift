@@ -10,7 +10,6 @@ import UIKit
 import MapKit
 import SwiftyJSON
 import CoreLocation
-import TRON
 
 let increaseTapTargetTag: Int = 1865
 

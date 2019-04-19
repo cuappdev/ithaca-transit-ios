@@ -8,7 +8,7 @@
 
 import UIKit
 import SwiftyJSON
-import TRON
+import FutureNova
 
 protocol TravelDistanceDelegate: NSObjectProtocol {
     func travelDistanceUpdated(withDistance distance: Double)
@@ -21,6 +21,7 @@ class RouteTableViewCell: UITableViewCell {
     static let identifier: String = "routeCell"
     private let fileName: String = "RouteTableViewCell"
     var route: Route?
+    private let networking: Networking = URLSession.shared.request
 
     // MARK: Log vars
 
@@ -332,10 +333,10 @@ class RouteTableViewCell: UITableViewCell {
             let tripId = direction.tripIdentifiers?.first,
             let stopId = direction.stops.first?.id {
 
-            Network.getDelay(tripId: tripId, stopId: stopId).performCollectingTimeline { (response) in
-                switch response.result {
-                case .success(let delayResponse):
-                    guard (delayResponse.data != nil), let delay = delayResponse.data else {
+            getDelay(tripId: tripId, stopId: stopId).observe(with: { (result) in
+                switch result {
+                case .value (let response):
+                    guard (response.data != nil), let delay = response.data else {
                         self.setDepartureTimeAndLiveElements(withRoute: route)
                         return
                     }
@@ -343,14 +344,14 @@ class RouteTableViewCell: UITableViewCell {
                     let isNewDelayValue = (route.getFirstDepartRawDirection()?.delay != delay)
                     if isNewDelayValue {
                         JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
-                        JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Network.getDelayUrl(tripId: tripId, stopId: stopId))
-                        if let data = response.data {
-                            do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: self.rowNum ?? -1)) } catch let error {
-                                let fileName = "RouteTableViewCell"
-                                let line = "\(fileName) \(#function): \(error.localizedDescription)"
-                                print(line)
-                            }
-                        }
+                        JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
+//                        if let data = response.data {
+//                            do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: self.rowNum ?? -1)) } catch let error {
+//                                let fileName = "RouteTableViewCell"
+//                                let line = "\(fileName) \(#function): \(error.localizedDescription)"
+//                                print(line)
+//                            }
+//                        }
                     }
 
                     let departTime = direction.startTime
@@ -369,18 +370,20 @@ class RouteTableViewCell: UITableViewCell {
 
                     route.getFirstDepartRawDirection()?.delay = delay
 
-                case .failure(let networkError):
-                    if let error = networkError as? APIError<Error> {
-                        print("\(self.fileName) \(#function) error: \(error.errorDescription ?? "") Request url: \(error.request?.url?.absoluteString ?? "")")
-                        self.setDepartureTimeAndLiveElements(withRoute: route)
-                    }
+                case .error(let error):
+                    print("\(self.fileName) \(#function) error: \(error.localizedDescription)")
+                    self.setDepartureTimeAndLiveElements(withRoute: route)
                 }
-            }
+            })
         } else {
             if let route = route {
-                self.setDepartureTimeAndLiveElements(withRoute: route)
+                setDepartureTimeAndLiveElements(withRoute: route)
             }
         }
+    }
+
+    private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
+        return networking(Endpoint.getDelay(tripId: tripId, stopId: stopId)).decode()
     }
 
     private func setLiveElements(withDelayState delayState: DelayState) {

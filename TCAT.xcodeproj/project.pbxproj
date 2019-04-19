@@ -15,6 +15,7 @@
 		2292486C21B8ECB90004279C /* ServiceAlertsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2292486B21B8ECB90004279C /* ServiceAlertsViewController.swift */; };
 		2292486E21BB82180004279C /* ServiceAlertTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2292486D21BB82180004279C /* ServiceAlertTableViewCell.swift */; };
 		22948BFD221B75C5003FC43F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22948BFB221B75C5003FC43F /* Models.swift */; };
+		22D9599F2269AB1700D115EC /* ServiceAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D9599E2269AB1700D115EC /* ServiceAlert.swift */; };
 		32A9AAD2E5E7F2CC7774C627 /* Pods_Today_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC7C3464F4E42B340A3056B2 /* Pods_Today_Extension.framework */; };
 		449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C781D80D0E80019300C /* AppDelegate.swift */; };
 		449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C7C1D80D0E80019300C /* Main.storyboard */; };
@@ -200,6 +201,7 @@
 		2292486B21B8ECB90004279C /* ServiceAlertsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlertsViewController.swift; path = Controllers/ServiceAlertsViewController.swift; sourceTree = "<group>"; };
 		2292486D21BB82180004279C /* ServiceAlertTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlertTableViewCell.swift; path = Cells/ServiceAlertTableViewCell.swift; sourceTree = "<group>"; };
 		22948BFB221B75C5003FC43F /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		22D9599E2269AB1700D115EC /* ServiceAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlert.swift; path = Model/ServiceAlert.swift; sourceTree = "<group>"; };
 		40F3287DB7464B03A143B606 /* Pods-TCATTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.release.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.release.xcconfig"; sourceTree = "<group>"; };
 		410DC700590FA30190EC5E2B /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
 		42478362963CB42E3694302C /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -562,6 +564,7 @@
 				BF73F0F21F60B0BD003B479D /* LocationObject.swift */,
 				DDE3BC221F5863D50014D2BB /* Place.swift */,
 				DD2F989A1E50F99A0005F6BC /* Route.swift */,
+				22D9599E2269AB1700D115EC /* ServiceAlert.swift */,
 				BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */,
 				DDB49C9C1E8857FC00A99C35 /* Waypoint.swift */,
 				BF40D7642230385B000ED7D8 /* WhatsNewCard.swift */,
@@ -1138,6 +1141,7 @@
 				7EBD9D9C22263118008BF900 /* RouteLine.swift in Sources */,
 				22948BFD221B75C5003FC43F /* Models.swift in Sources */,
 				DDB49C941E8857D000A99C35 /* RouteDetail+ContentViewController.swift in Sources */,
+				22D9599F2269AB1700D115EC /* ServiceAlert.swift in Sources */,
 				2292486E21BB82180004279C /* ServiceAlertTableViewCell.swift in Sources */,
 				2292486C21B8ECB90004279C /* ServiceAlertsViewController.swift in Sources */,
 				BF164D5F221DFCDE0069953E /* LegacyModels.swift in Sources */,
@@ -1394,7 +1398,7 @@
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Siri/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.Siri;
@@ -1645,7 +1649,7 @@
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Siri/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;

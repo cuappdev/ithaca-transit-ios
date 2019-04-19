@@ -34,6 +34,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
+        // Set up networking
+        setupEndpointConfig()
+        
         // Set Up Google Services
         FirebaseApp.configure()
         GMSServices.provideAPIKey(Keys.googleMaps.value)
@@ -94,8 +97,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Analytics.shared.log(payload)
             }
         }
-        
-        setupEndpointConfig()
 
         // Initalize window without storyboard
         self.window = UIWindow(frame: UIScreen.main.bounds)
@@ -292,7 +293,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         getAllStops().observe { (result) in
             switch result {
             case .value(let response):
-                let filteredStops = Place.parseAllStops(allStops: response.data)
+                let filteredStops = Place.filterAllStops(allStops: response.data)
                 if filteredStops.isEmpty { self.handleGetAllStopsError() }
                 else {
                     let encodedObject = try? JSONEncoder().encode(filteredStops)

@@ -9,6 +9,7 @@
 import UIKit
 import SwiftyJSON
 import Pulley
+import FutureNova
 
 struct RouteDetailCellSize {
     static let smallHeight: CGFloat = 60
@@ -35,6 +36,8 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
     var busDelayNetworkTimer: Timer?
     /// Number of seconds to wait before auto-refreshing bus delay network call.
     var busDelayNetworkRefreshRate: Double = 10
+
+    private let networking: Networking = URLSession.shared.request
 
     // MARK: Initalization
 
@@ -215,39 +218,45 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         if let tripId = delayDirection.tripIdentifiers?.first,
             let stopId = delayDirection.stops.first?.id {
 
-            Network.getDelay(tripId: tripId, stopId: stopId).perform(withSuccess: { (delayRequest) in
+            getDelay(tripId: tripId, stopId: stopId).observe(with: { (result) in
+                switch result {
+                case .value(let response):
+                    if response.success {
+                        if response.success {
 
-                if delayRequest.success {
+                            delayDirection.delay = response.data
+                            firstDepartDirection.delay = response.data
 
-                    delayDirection.delay = delayRequest.data
-                    firstDepartDirection.delay = delayRequest.data
+                            // Update delay variable of other ensuing directions
 
-                    // Update delay variable of other ensuing directions
+                            self.directions.filter {
+                                let isAfter = self.directions.firstIndex(of: firstDepartDirection)! < self.directions.firstIndex(of: $0)!
+                                return isAfter && $0.type != .depart
+                                }
 
-                    self.directions.filter {
-                        let isAfter = self.directions.firstIndex(of: firstDepartDirection)! < self.directions.firstIndex(of: $0)!
-                        return isAfter && $0.type != .depart
-                    }
+                                .forEach { (direction) in
+                                    if direction.delay != nil {
+                                        direction.delay! += delayDirection.delay ?? 0
+                                    } else {
+                                        direction.delay = delayDirection.delay
+                                    }
+                            }
 
-                    .forEach { (direction) in
-                        if direction.delay != nil {
-                            direction.delay! += delayDirection.delay ?? 0
+                            self.tableView.reloadData()
+                            self.summaryView.setRoute()
                         } else {
-                            direction.delay = delayDirection.delay
+                            print("getDelays success: false")
                         }
                     }
-
-                    self.tableView.reloadData()
-                    self.summaryView.setRoute()
-
-                } else {
-                    print("getDelays success: false")
+                case .error(let error):
+                    print("getDelays error: \(error.localizedDescription)")
                 }
-            }, failure: { (error) in
-                print("getDelays error: \(error.errorDescription ?? "")")
             })
         }
+    }
 
+    private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
+        return networking(Endpoint.getDelay(tripId: tripId, stopId: stopId)).decode()
     }
 
     // MARK: TableView Data Source and Delegate Functions
