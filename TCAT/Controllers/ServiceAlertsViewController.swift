@@ -105,18 +105,21 @@ class ServiceAlertsViewController: UIViewController {
     }
 
     func getServiceAlerts() {
-        getAlerts().observe(with: { (result) in
-            switch result {
-            case .value (let response):
-                if response.success {
+        getAlerts().observe(with: { [weak self] result in
+            guard let `self` = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .value (let response):
+                    if response.success {
+                        self.removeLoadingIndicator()
+                        self.networkError = false
+                        self.alerts = self.sortedAlerts(alertsList: response.data)
+                    }
+                case .error:
                     self.removeLoadingIndicator()
-                    self.networkError = false
-                    self.alerts = self.sortedAlerts(alertsList: response.data)
+                    self.networkError = true
+                    self.alerts = [:]
                 }
-            case .error:
-                self.removeLoadingIndicator()
-                self.networkError = true
-                self.alerts = [:]
             }
         })
     }

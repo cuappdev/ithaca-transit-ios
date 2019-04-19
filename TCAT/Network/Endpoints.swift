@@ -93,7 +93,7 @@ extension Endpoint {
         let body = GetDelayBody(stopId: stopId, tripId: tripId)
         return Endpoint(path: Constants.Endpoints.delay, body: body)
     }
-    
+
     static func getDelayUrl(tripId: String, stopId: String) -> String {
         let path = "delay"
 

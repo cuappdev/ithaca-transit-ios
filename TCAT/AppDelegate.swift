@@ -290,18 +290,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     /* Get all bus stops and store in userDefaults */
     func getBusStops() {
-        getAllStops().observe { (result) in
-            switch result {
-            case .value(let response):
-                let filteredStops = Place.filterAllStops(allStops: response.data)
-                if filteredStops.isEmpty { self.handleGetAllStopsError() }
-                else {
-                    let encodedObject = try? JSONEncoder().encode(filteredStops)
-                    userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
+        getAllStops().observe { [weak self] result in
+            guard let `self` = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .value(let response):
+                    let filteredStops = Place.filterAllStops(allStops: response.data)
+                    if filteredStops.isEmpty { self.handleGetAllStopsError() }
+                    else {
+                        let encodedObject = try? JSONEncoder().encode(filteredStops)
+                        userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
+                    }
+                case .error(let error):
+                    print("getBusStops error:", error.localizedDescription)
+                    self.handleGetAllStopsError()
                 }
-            case .error(let error):
-                print("getBusStops error:", error.localizedDescription)
-                self.handleGetAllStopsError()
             }
         }
     }

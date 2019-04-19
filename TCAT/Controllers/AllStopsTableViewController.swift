@@ -249,22 +249,25 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
 
     /* Get all bus stops and store in userDefaults */
     func retryNetwork(completion: @escaping () -> Void) {
-        getAllStops().observe { (result) in
-            switch result {
-            case .value(let response):
-                let filteredStops = Place.filterAllStops(allStops: response.data)
-                if !filteredStops.isEmpty {
-                    do {
-                        let encodedObject = try JSONEncoder().encode(filteredStops)
-                        userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
-                    } catch let error {
-                        print(error)
+        getAllStops().observe { [weak self] result in
+            guard let `self` = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .value(let response):
+                    let filteredStops = Place.filterAllStops(allStops: response.data)
+                    if !filteredStops.isEmpty {
+                        do {
+                            let encodedObject = try JSONEncoder().encode(filteredStops)
+                            userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
+                        } catch let error {
+                            print(error)
+                        }
                     }
+                    completion()
+                case .error(let error):
+                    print("AllStopsTableViewController.retryNetwork error:", error)
+                    completion()
                 }
-                completion()
-            case .error(let error):
-                print("AllStopsTableViewController.retryNetwork error:", error)
-                completion()
             }
         }
     }

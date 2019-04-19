@@ -189,20 +189,23 @@ extension FavoritesTableViewController: UISearchBarDelegate {
     @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if !searchText.isEmpty {
-            getSearchResults(searchText: searchText).observe { (result) in
-                switch result {
-                case .value(let response):
-                    if response.success {
-                        self.resultsSection = Section(type: .searchResults, items: response.data)
-                        self.tableView.contentOffset = .zero
-                    } else {
-                        print("[FavoritesTableViewController] success:", response.success)
+            getSearchResults(searchText: searchText).observe { [weak self] result in
+                guard let `self` = self else { return }
+                DispatchQueue.main.async {
+                    switch result {
+                    case .value(let response):
+                        if response.success {
+                            self.resultsSection = Section(type: .searchResults, items: response.data)
+                            self.tableView.contentOffset = .zero
+                        } else {
+                            print("[FavoritesTableViewController] success:", response.success)
+                            self.resultsSection = Section(type: .searchResults, items: [Place]())
+                        }
+                    case .error(let error):
+                        print("[FavoritesTableViewController] getSearchResults Error: \(error.localizedDescription)")
                         self.resultsSection = Section(type: .searchResults, items: [Place]())
-                    }
-                case .error(let error):
-                    print("[FavoritesTableViewController] getSearchResults Error: \(error.localizedDescription)")
-                    self.resultsSection = Section(type: .searchResults, items: [Place]())
 
+                    }
                 }
             }
         } else {

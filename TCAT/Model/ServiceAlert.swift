@@ -47,3 +47,8 @@ struct ServiceAlert: Codable {
 
     }
 }
+
+struct ChannelMessage: Codable {
+    var ChannelId: Int
+    var message: String
+}

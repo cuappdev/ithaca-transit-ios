@@ -401,9 +401,12 @@ class RouteOptionsViewController: UIViewController {
 
             // MARK: Search for Routes Data Request
             if let result =  getRoutes(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType) {
-                result.observe(with: { (result) in
-                    let requestURL = Endpoint.getRequestURL(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType)
-                    self.processRequest(result: result, requestURL: requestURL, endPlace: searchTo)
+                result.observe(with: { [weak self] result in
+                    guard let `self` = self else { return }
+                    DispatchQueue.main.async {
+                        let requestURL = Endpoint.getRequestURL(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType)
+                        self.processRequest(result: result, requestURL: requestURL, endPlace: searchTo)
+                    }
                 })
             }
 
@@ -440,13 +443,16 @@ class RouteOptionsViewController: UIViewController {
     }
 
     private func routeSelected(routeId: String) {
-        networking(Endpoint.routeSelected(routeId: routeId)).observe { (result) in
-            switch result {
-            case .value:
-                print("[RouteOptionsViewController] Route Selected - Success")
-            case .error(let error):
-                print("[RouteOptionsViewController] Route Selected - Error:", error)
+        networking(Endpoint.routeSelected(routeId: routeId)).observe { [weak self] result in
+            guard let `self` = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .value:
+                    print("[RouteOptionsViewController] Route Selected - Success")
+                case .error(let error):
+                    print("[RouteOptionsViewController] Route Selected - Error:", error)
 
+                }
             }
         }
     }

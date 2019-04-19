@@ -218,38 +218,41 @@ class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, 
         if let tripId = delayDirection.tripIdentifiers?.first,
             let stopId = delayDirection.stops.first?.id {
 
-            getDelay(tripId: tripId, stopId: stopId).observe(with: { (result) in
-                switch result {
-                case .value(let response):
-                    if response.success {
+            getDelay(tripId: tripId, stopId: stopId).observe(with: { [weak self] result in
+                guard let `self` = self else { return }
+                DispatchQueue.main.async {
+                    switch result {
+                    case .value(let response):
                         if response.success {
+                            if response.success {
 
-                            delayDirection.delay = response.data
-                            firstDepartDirection.delay = response.data
+                                delayDirection.delay = response.data
+                                firstDepartDirection.delay = response.data
 
-                            // Update delay variable of other ensuing directions
+                                // Update delay variable of other ensuing directions
 
-                            self.directions.filter {
-                                let isAfter = self.directions.firstIndex(of: firstDepartDirection)! < self.directions.firstIndex(of: $0)!
-                                return isAfter && $0.type != .depart
+                                self.directions.filter {
+                                    let isAfter = self.directions.firstIndex(of: firstDepartDirection)! < self.directions.firstIndex(of: $0)!
+                                    return isAfter && $0.type != .depart
+                                    }
+
+                                    .forEach { (direction) in
+                                        if direction.delay != nil {
+                                            direction.delay! += delayDirection.delay ?? 0
+                                        } else {
+                                            direction.delay = delayDirection.delay
+                                        }
                                 }
 
-                                .forEach { (direction) in
-                                    if direction.delay != nil {
-                                        direction.delay! += delayDirection.delay ?? 0
-                                    } else {
-                                        direction.delay = delayDirection.delay
-                                    }
+                                self.tableView.reloadData()
+                                self.summaryView.setRoute()
+                            } else {
+                                print("getDelays success: false")
                             }
-
-                            self.tableView.reloadData()
-                            self.summaryView.setRoute()
-                        } else {
-                            print("getDelays success: false")
                         }
+                    case .error(let error):
+                        print("getDelays error: \(error.localizedDescription)")
                     }
-                case .error(let error):
-                    print("getDelays error: \(error.localizedDescription)")
                 }
             })
         }

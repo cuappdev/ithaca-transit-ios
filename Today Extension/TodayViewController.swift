@@ -58,20 +58,23 @@ import FutureNova
                 invalidLocation = true
                 routesTable.reloadData()
             } else {
-                getMultiRoutes(startCoord: start, time: Date(), endCoords: coordinates, endPlaceNames: favorites).observe { (result) in
-                    switch result {
-                    case .value(let response):
-                        self.routes = response.data
-                        self.rearrangeRoutes()
-                        self.didFetchRoutes = true
-                        if #available(iOSApplicationExtension 10.0, *) {
-                            self.extensionContext?.widgetLargestAvailableDisplayMode = .expanded
-                        } else {
-                            // Fallback on earlier versions
+                getMultiRoutes(startCoord: start, time: Date(), endCoords: coordinates, endPlaceNames: favorites).observe { [weak self] result in
+                    guard let `self` = self else { return }
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .value(let response):
+                            self.routes = response.data
+                            self.rearrangeRoutes()
+                            self.didFetchRoutes = true
+                            if #available(iOSApplicationExtension 10.0, *) {
+                                self.extensionContext?.widgetLargestAvailableDisplayMode = .expanded
+                            } else {
+                                // Fallback on earlier versions
+                            }
+                            self.routesTable.reloadData()
+                        case .error(let error):
+                            self.processRequestError(error: error)
                         }
-                        self.routesTable.reloadData()
-                    case .error(let error):
-                        self.processRequestError(error: error)
                     }
                 }
             }

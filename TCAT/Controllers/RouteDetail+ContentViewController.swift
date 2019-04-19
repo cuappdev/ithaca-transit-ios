@@ -307,68 +307,72 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             return
         }
 
-        busLocations(route.directions).observe { (result) in
-            switch result {
-            case .value(let response):
-                var results = [BusDataType]()
+        busLocations(route.directions).observe { [weak self] result in
+            guard let `self` = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .value(let response):
+                    var results = [BusDataType]()
 
-                if response.data.isEmpty {
-                    // print("No Bus Locations")
-                    // Reset banner in case transitioned from Error to Online - No Bus Locations
-                    self.hideBanner()
+                    if response.data.isEmpty {
+                        // print("No Bus Locations")
+                        // Reset banner in case transitioned from Error to Online - No Bus Locations
+                        self.hideBanner()
 
-                    // Possibly add information about no tracking available.
-                }
+                        // Possibly add information about no tracking available.
+                    }
 
-                for busLocation in response.data {
+                    for busLocation in response.data {
 
-                    results.append(busLocation.dataType)
+                        results.append(busLocation.dataType)
 
-                    switch busLocation.dataType {
+                        switch busLocation.dataType {
 
-                    case .noData:
-                        // print("No Data for", busLocation.routeNumber)
+                        case .noData:
+                            // print("No Data for", busLocation.routeNumber)
 
-                        if !self.noDataRouteList.contains(busLocation.routeNumber) {
-                            self.noDataRouteList.append(busLocation.routeNumber)
-                        }
+                            if !self.noDataRouteList.contains(busLocation.routeNumber) {
+                                self.noDataRouteList.append(busLocation.routeNumber)
+                            }
 
-                    case .invalidData:
-                        // print("Invalid Data for", busLocation.routeNumber)
+                        case .invalidData:
+                            // print("Invalid Data for", busLocation.routeNumber)
 
-                        if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
-                            self.noDataRouteList.remove(at: previouslyUnavailableRoute)
-                        }
+                            if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
+                                self.noDataRouteList.remove(at: previouslyUnavailableRoute)
+                            }
 
-                        if self.noDataRouteList.isEmpty {
-                            self.hideBanner()
-                        }
+                            if self.noDataRouteList.isEmpty {
+                                self.hideBanner()
+                            }
 
-                        self.showBanner(Constants.Banner.trackingLater, status: .info)
+                            self.showBanner(Constants.Banner.trackingLater, status: .info)
 
-                    case .validData:
-                        // print("Valid Data for", busLocation.routeNumber)
+                        case .validData:
+                            // print("Valid Data for", busLocation.routeNumber)
 
-                        if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
-                            self.noDataRouteList.remove(at: previouslyUnavailableRoute)
-                        }
+                            if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
+                                self.noDataRouteList.remove(at: previouslyUnavailableRoute)
+                            }
 
-                        if self.noDataRouteList.isEmpty {
-                            self.hideBanner()
-                        }
+                            if self.noDataRouteList.isEmpty {
+                                self.hideBanner()
+                            }
 
-                        self.setBusLocation(busLocation)
+                            self.setBusLocation(busLocation)
 
-                    } // switch end
+                        } // switch end
 
                 } // busLocations for loop end
-            case .error(let error):
-                print("RouteDetailVC getBusLocations Error:", error.localizedDescription)
-                if let banner = self.banner, !banner.isDisplaying {
-                    self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
-                }
+                case .error(let error):
+                    print("RouteDetailVC getBusLocations Error:", error.localizedDescription)
+                    if let banner = self.banner, !banner.isDisplaying {
+                        self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
+                    }
 
+                }
             }
+
         }
 
         // Bounce any visible indicators
