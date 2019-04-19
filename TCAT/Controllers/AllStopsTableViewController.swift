@@ -240,24 +240,30 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             self.setUpTableOnRetry()
         }
     }
-
-    func retryNetwork(completion: @escaping () -> Void) {
-        Network.getAllStops().perform(withSuccess: { allStopsRequest in
-            let allBusStops = allStopsRequest.data
-            if !allBusStops.isEmpty {
-                // Only updating user defaults if retriving from network is successful
-                do {
-                    let encodedObject = try JSONEncoder().encode(allBusStops)
-                    userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
-                } catch let error {
-                    print(error)
-                }
-            }
-            completion()
-        }, failure: { error in
-            print("AllStopsTableViewController.retryNetwork error:", error)
-            completion()
-        })
+    
+    private func getAllStops() -> Future<Response<[Place]>> {
+        return networking(Endpoint.getAllStops()).decode()
     }
-
+    
+    /* Get all bus stops and store in userDefaults */
+    func retryNetwork(completion: @escaping () -> Void) {
+        getAllStops().observe { (result) in
+            switch result {
+            case .value(let response):
+                let filteredStops = Place.parseAllStops(allStops: response.data)
+                if !filteredStops.isEmpty {
+                    do {
+                        let encodedObject = try JSONEncoder().encode(allBusStops)
+                        userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
+                    } catch let error {
+                        print(error)
+                    }
+                }
+                completion()
+            case .error(let error):
+                print("AllStopsTableViewController.retryNetwork error:", error)
+                completion()
+            }
+        }
+    }
 }
