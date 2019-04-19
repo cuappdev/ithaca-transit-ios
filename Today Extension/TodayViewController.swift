@@ -10,7 +10,6 @@ import UIKit
 import NotificationCenter
 import SnapKit
 import CoreLocation
-import TRON
 import Alamofire
 
 @objc(TodayViewController) class TodayViewController: UIViewController, NCWidgetProviding {

@@ -184,23 +184,6 @@ extension Array where Element: Comparable {
     }
 }
 
-extension Array: JSONDecodable {
-    public init(json: JSON) {
-        self.init(json.arrayValue.compactMap {
-            if let type = Element.self as? JSONDecodable.Type {
-                let element: Element?
-                do {
-                    element = try type.init(json: $0) as? Element
-                } catch {
-                    return nil
-                }
-                return element
-            }
-            return nil
-        })
-    }
-}
-
 /// Present a share sheet for a route in any context.
 func presentShareSheet(from view: UIView, for route: Route, with image: UIImage? = nil) {
 

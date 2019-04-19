@@ -8,12 +8,9 @@
 
 import Foundation
 import SwiftyJSON
-import TRON
 import CoreLocation
 
-struct Error: JSONDecodable, Codable {
-    init(json: JSON) {}
-
+struct Error: Codable {
     var error: String!
 }
 struct AlertRequest: Codable {

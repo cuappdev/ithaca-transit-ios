@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '10.0'
+platform :ios, '12.0'
 
 # Comment this line if you're not using Swift and don't want to use dynamic frameworks
 
@@ -15,8 +15,8 @@ target 'TCAT' do
     
     # Networking + Data
     pod 'Alamofire', '~> 4.7'
-    pod 'TRON', '~> 4.1.2'
     pod 'SwiftyJSON', '~> 4.0'
+    pod 'FutureNova', :git => 'https://github.com/cuappdev/ios-networking.git'
     
     # Analytics
     pod 'Crashlytics', '~> 3.10'
@@ -56,7 +56,7 @@ target 'Today Extension' do
     pod 'SnapKit'
 
     # Networking + Data
-    pod 'TRON', '~> 4.1.2'
+    pod 'FutureNova', :git => 'https://github.com/cuappdev/ios-networking.git'
     pod 'Alamofire', '~> 4.7'
     pod 'SwiftyJSON', '~> 4.0'
  

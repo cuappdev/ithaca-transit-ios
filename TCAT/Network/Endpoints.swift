@@ -8,9 +8,9 @@
 
 import Foundation
 import SwiftyJSON
-import TRON
 import CoreLocation
 import Alamofire
+import FutureNova
 
 enum NetworkType: String {
     case local, debug, release
@@ -42,8 +42,6 @@ class Network {
         print("[Network] Using", ipAddress)
         return "https://\(ipAddress)/api/\(apiVersion)"
     }
-
-    static let tron = TRON(baseURL: Network.address)
 
     class func getAllStops() -> APIRequest<AllBusStopsRequest, Error> {
         let request: APIRequest<AllBusStopsRequest, Error> = tron.codable.request("allStops")
@@ -127,7 +125,7 @@ class Network {
 
     @discardableResult
     class func routeSelected(routeId: String) -> APIRequest<JSON, Error> {
-        let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routeSelected")
+        let request: APIRequest<JSON, Error> = tron.codable.request("routeSelected")
         request.method = .post
         request.parameterEncoding = JSONEncoding.default
         request.parameters = ["routeId": routeId]
