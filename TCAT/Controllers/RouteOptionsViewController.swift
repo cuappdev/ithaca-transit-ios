@@ -410,24 +410,19 @@ class RouteOptionsViewController: UIViewController {
                 })
             }
 
-//            { request in
-//                let requestURL = Network.getRequestURL(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType)
-//                self.processRequest(request: request, requestURL: requestURL, endPlace: searchTo)
-//            }
-//
-//            // Donate GetRoutes intent
-//            if #available(iOS 12.0, *) {
-//                let intent = GetRoutesIntent()
-//                intent.searchTo = searchTo.name
-//                intent.latitude = String(describing: searchTo.latitude)
-//                intent.longitude = String(describing: searchTo.longitude)
-//                intent.suggestedInvocationPhrase = "Find bus to \(searchTo.name)"
-//                let interaction = INInteraction(intent: intent, response: nil)
-//                interaction.donate(completion: { (error) in
-//                    guard let error = error else { return }
-//                    print("Intent Donation Error: \(error.localizedDescription)")
-//                })
-//            }
+            // Donate GetRoutes intent
+            if #available(iOS 12.0, *) {
+                let intent = GetRoutesIntent()
+                intent.searchTo = searchTo.name
+                intent.latitude = String(describing: searchTo.latitude)
+                intent.longitude = String(describing: searchTo.longitude)
+                intent.suggestedInvocationPhrase = "Find bus to \(searchTo.name)"
+                let interaction = INInteraction(intent: intent, response: nil)
+                interaction.donate(completion: { (error) in
+                    guard let error = error else { return }
+                    print("Intent Donation Error: \(error.localizedDescription)")
+                })
+            }
 
         }
 
