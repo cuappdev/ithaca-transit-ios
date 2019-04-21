@@ -127,7 +127,7 @@ class RouteTableViewCell: UITableViewCell {
 
     private func styleTimesStackView() {
         timesStackView.axis = .horizontal
-        timesStackView.alignment = .center
+        timesStackView.alignment = .firstBaseline
 
         travelTimeLabel.font = .getFont(.semibold, size: 16)
         travelTimeLabel.textColor = Colors.primaryText
