@@ -27,7 +27,7 @@ class Network {
 
     // MARK: Global Network Variables
 
-    static let apiVersion = "v1"
+    static let apiVersion = "v2"
 
     static var ipAddress: String {
         // For local testing, use "http://\(localIPAddress):3000/api/\(apiVersion)/"
@@ -40,7 +40,7 @@ class Network {
     /// Network address being used within app, defined by schemes and build configurations.
     static var address: String {
         print("[Network] Using", ipAddress)
-        return "https://\(ipAddress)/api/\(apiVersion)"
+        return "https://\(ipAddress)/api/\(apiVersion)/"
     }
 
     static let tron = TRON(baseURL: Network.address)
@@ -61,7 +61,8 @@ class Network {
                          callback: @escaping (_ request: APIRequest<RoutesRequest, Error>) -> Void) {
 
         let request: APIRequest<RoutesRequest, Error> = tron.codable.request("route")
-        request.method = .get
+        request.method = .post
+        request.parameterEncoding = JSONEncoding.default
 
         guard
             let startLat = start.latitude,
@@ -75,7 +76,7 @@ class Network {
         }
 
         request.parameters = [
-            "arriveBy": type == .arriveBy,
+            "isArriveBy": type == .arriveBy,
             "end": "\(endLat),\(endLong)",
             "start": "\(startLat),\(startLong)",
             "time": time.timeIntervalSince1970,
@@ -98,7 +99,7 @@ class Network {
         let startStr =  "\(String(describing: start.latitude)),\(String(describing: start.longitude))"
         let time = time.timeIntervalSince1970
 
-        return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(endStr)&start=\(startStr)&time=\(time)&destinationName=\(end.name)&originName=\(start.name)"
+        return  "\(address)\(path)?isArriveBy=\(arriveBy)&end=\(endStr)&start=\(startStr)&time=\(time)&destinationName=\(end.name)&originName=\(start.name)"
     }
 
     class func getMultiRoutes(startCoord: CLLocationCoordinate2D, time: Date, endCoords: [String], endPlaceNames: [String],

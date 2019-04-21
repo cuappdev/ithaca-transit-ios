@@ -20,6 +20,7 @@ class RouteTableViewCell: UITableViewCell {
 
     static let identifier: String = "routeCell"
     private let fileName: String = "RouteTableViewCell"
+
     var route: Route?
 
     // MARK: Log vars
@@ -27,6 +28,8 @@ class RouteTableViewCell: UITableViewCell {
     var rowNum: Int?
 
     // MARK: View vars
+
+    let containerView = UIView()
 
     var timesStackView: UIStackView
     var travelTimeLabel: UILabel
@@ -41,11 +44,7 @@ class RouteTableViewCell: UITableViewCell {
     var stretchyFillerView: UIView
 
     var verticalStackView: UIStackView
-    var topBorder: UIView
     var routeDiagram: RouteDiagram
-    var funMessage: UILabel
-    var bottomBorder: UIView
-    var cellSeparator: UIView
 
     // MARK: Spacing vars
 
@@ -54,8 +53,10 @@ class RouteTableViewCell: UITableViewCell {
     let bottomMargin: CGFloat = 16
     let rightMargin: CGFloat = 12
 
-    let cellBorderHeight: CGFloat = 0.75
-    let cellSeparatorHeight: CGFloat = 6.0
+    let cellMargin: CGFloat = 12
+
+    let cornerRadius: CGFloat = 16
+    let cellSeparatorHeight: CGFloat = 12
 
     let spaceBtnDepartureElements: CGFloat = 4
     let arrowImageViewHeight: CGFloat = 11.5
@@ -78,24 +79,16 @@ class RouteTableViewCell: UITableViewCell {
         stretchyFillerView = UIView()
         liveStackView = UIStackView(arrangedSubviews: [liveLabel, liveIndicatorView, stretchyFillerView])
 
-        topBorder = UIView()
         routeDiagram = RouteDiagram()
-        funMessage = UILabel()
-        bottomBorder = UIView()
-        cellSeparator = UIView()
         verticalStackView = UIStackView(arrangedSubviews: [timesStackView, liveStackView, routeDiagram])
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        styleTopBorder()
+        styleCellBackground()
         styleVerticalStackView()
-        styleBottomBorder()
-        styleCellSeparator()
 
-        contentView.addSubview(topBorder)
-        contentView.addSubview(verticalStackView)
-        contentView.addSubview(bottomBorder)
-        contentView.addSubview(cellSeparator)
+        contentView.addSubview(containerView)
+        containerView.addSubview(verticalStackView)
 
         activateConstraints()
     }
@@ -104,21 +97,37 @@ class RouteTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let padding = UIEdgeInsets(top: 0, left: 0, bottom: cellMargin, right: 0)
+        contentView.frame = contentView.frame.inset(by: padding)
+    }
+
     // MARK: Style
+
+    private func styleCellBackground() {
+        layer.backgroundColor = UIColor.clear.cgColor
+        contentView.backgroundColor = .clear
+        backgroundColor = .clear
+
+        containerView.backgroundColor = Colors.white
+        containerView.layer.cornerRadius = cornerRadius
+        containerView.layer.masksToBounds = true
+    }
 
     private func styleVerticalStackView() {
         verticalStackView.axis = .vertical
+        verticalStackView.spacing = 8
         verticalStackView.layoutMargins = UIEdgeInsets.init(top: topMargin, left: leftMargin, bottom: bottomMargin, right: rightMargin)
         verticalStackView.isLayoutMarginsRelativeArrangement = true
 
         styleTimesStackView()
         styleLiveStackView()
-        // styleFunMessage()
     }
 
     private func styleTimesStackView() {
         timesStackView.axis = .horizontal
-        timesStackView.alignment = .center
+        timesStackView.alignment = .firstBaseline
 
         travelTimeLabel.font = .getFont(.semibold, size: 16)
         travelTimeLabel.textColor = Colors.primaryText
@@ -140,27 +149,11 @@ class RouteTableViewCell: UITableViewCell {
         stretchyFillerView.setContentHuggingPriority(liveLabel.contentHuggingPriority(for: .horizontal) - 1, for: .horizontal)
 
         liveStackView.axis = .horizontal
-        liveStackView.alignment = .lastBaseline
+        liveStackView.alignment = .center
         liveStackView.spacing = spaceBtnLiveElements
+        liveStackView.frame = liveStackView.frame.inset(by: UIEdgeInsets(top: -4, left: 0, bottom: -4, right: 0))
 
         liveLabel.font = .getFont(.semibold, size: 14)
-    }
-
-    private func styleFunMessage() {
-        funMessage.font = .getFont(.semibold, size: 12)
-        funMessage.textColor = .lightGray
-    }
-
-    private func styleTopBorder() {
-        topBorder.backgroundColor = Colors.dividerTextField
-    }
-
-    private func styleBottomBorder() {
-        bottomBorder.backgroundColor = Colors.dividerTextField
-    }
-
-    private func styleCellSeparator() {
-        cellSeparator.backgroundColor = Colors.backgroundWash
     }
 
     // MARK: Add subviews
@@ -180,31 +173,17 @@ class RouteTableViewCell: UITableViewCell {
         setDebugIdentifiers()
 
         NSLayoutConstraint.activate([
-            topBorder.topAnchor.constraint(equalTo: contentView.topAnchor),
-            topBorder.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            topBorder.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            topBorder.heightAnchor.constraint(equalToConstant: cellBorderHeight),
-            topBorder.bottomAnchor.constraint(equalTo: verticalStackView.topAnchor)
+            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: cellMargin),
+            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -cellMargin),
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
 
         NSLayoutConstraint.activate([
-            verticalStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            verticalStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            verticalStackView.bottomAnchor.constraint(equalTo: bottomBorder.topAnchor)
-        ])
-
-        NSLayoutConstraint.activate([
-            bottomBorder.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            bottomBorder.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            bottomBorder.heightAnchor.constraint(equalToConstant: cellBorderHeight),
-            bottomBorder.bottomAnchor.constraint(equalTo: cellSeparator.topAnchor)
-        ])
-
-        NSLayoutConstraint.activate([
-            cellSeparator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            cellSeparator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            cellSeparator.heightAnchor.constraint(equalToConstant: cellSeparatorHeight),
-            cellSeparator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            verticalStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            verticalStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            verticalStackView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            verticalStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
 
         NSLayoutConstraint.activate([
@@ -212,14 +191,14 @@ class RouteTableViewCell: UITableViewCell {
             arrowImageView.widthAnchor.constraint(equalToConstant: arrowImageViewWidth),
             arrowImageView.centerYAnchor.constraint(equalTo: departureTimeLabel.centerYAnchor)
         ])
+
     }
 
     private func setTranslatesAutoresizingMaskIntoConstraints() {
         let subviews = [timesStackView, travelTimeLabel,
                         departureStackView, departureTimeLabel, arrowImageView,
                         liveStackView, liveLabel, liveIndicatorView, stretchyFillerView,
-                        verticalStackView, topBorder, routeDiagram, funMessage, bottomBorder, cellSeparator]
-
+                        verticalStackView, routeDiagram, containerView]
         subviews.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
     }
 
@@ -238,10 +217,7 @@ class RouteTableViewCell: UITableViewCell {
         stretchyFillerView.accessibilityIdentifier = "stretchyFillerView"
 
         verticalStackView.accessibilityIdentifier = "verticalStackView"
-        topBorder.accessibilityIdentifier = "topBorder"
         routeDiagram.accessibilityIdentifier = "routeDiagram"
-        bottomBorder.accessibilityIdentifier = "bottomBorder"
-        cellSeparator.accessibilityIdentifier = "cellSeparator"
     }
 
     // MARK: Get Data
@@ -267,10 +243,9 @@ class RouteTableViewCell: UITableViewCell {
                     if (delayedDepartTime >= Date() || delay >= 120) {
                         return .late(date: delayedDepartTime)
                     } else { // delay < 120
-                        return .onTime(date: departTime) 
+                        return .onTime(date: departTime)
                     }
-                }
-                else { // bus is not delayed
+                } else { // bus is not delayed
                     return .onTime(date: departTime)
                 }
 
@@ -306,8 +281,6 @@ class RouteTableViewCell: UITableViewCell {
         setDepartureTimeAndLiveElements(withRoute: route)
 
         routeDiagram.setData(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
-
-        // setFunMessage()
     }
 
     private func setDepartureTimeAndLiveElements(withRoute route: Route) {
@@ -321,10 +294,6 @@ class RouteTableViewCell: UITableViewCell {
         let delayState = getDelayState(fromRoute: route)
         setDepartureTime(withStartTime: Date(), withDelayState: delayState)
         setLiveElements(withDelayState: delayState)
-    }
-
-    private func setFunMessage() {
-        funMessage.text = "Howdy! Here's a fun message! :)"
     }
 
     @objc func updateLiveElementsWithDelay() {

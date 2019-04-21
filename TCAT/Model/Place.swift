@@ -40,18 +40,17 @@ enum PlaceType: String, Codable {
         self.type = .unknown
     }
 
-    /// Initializer for Google Places
+    /// Initializer for Google Places.
     convenience init(name: String, placeDescription: String, placeIdentifier: String) {
         self.init(name: name)
-        self.type = .googlePlace
         self.placeDescription = placeDescription
         self.placeIdentifier = placeIdentifier
     }
 
-    /// Initializer for Bus Stops
+    /// Initializer for any type of location.
     convenience init(name: String, latitude: Double, longitude: Double) {
         self.init(name: name)
-        self.type = .busStop
+        self.type = .unknown
         self.latitude = latitude
         self.longitude = longitude
     }

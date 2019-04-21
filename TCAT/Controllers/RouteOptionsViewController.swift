@@ -60,7 +60,12 @@ class RouteOptionsViewController: UIViewController {
 
     // MARK: Data vars
 
-    var routes: [Route] = []
+    var routes: [[Route]] = []
+
+    /// Returns routes from each section in order
+    var allRoutes: [Route] {
+        return routes.flatMap { $0 }
+    }
     var timers: [Int: Timer] = [:]
 
     // MARK: Reachability vars
@@ -427,6 +432,7 @@ class RouteOptionsViewController: UIViewController {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
 
         request.performCollectingTimeline { (response) in
+
             switch response.result {
             case .success(let routesResponse):
 
@@ -439,10 +445,20 @@ class RouteOptionsViewController: UIViewController {
                     }
                 }
 
-                for each in routesResponse.data {
-                    each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
+                // Parse sections of routes
+                [routesResponse.data.fromStop, routesResponse.data.boardingSoon, routesResponse.data.walking]
+                    .forEach { (routeSection) in
+                        routeSection.forEach { (route) in
+                            route.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
+                        }
+                        // Allow for custom display in search results for fromStop.
+                        // We want to display a [] if a bus stop is the origin and doesn't exist
+                        if !routeSection.isEmpty || self.searchFrom?.type == .busStop {
+                            self.routes.append(routeSection)
+                        }
+
                 }
-                self.routes = routesResponse.data
+
                 self.requestDidFinish(perform: [.hideBanner])
             case .failure(let networkError):
                 if let error = networkError as? APIError<Error> {
@@ -709,7 +725,7 @@ class RouteOptionsViewController: UIViewController {
 
     func createRouteDetailViewController(from indexPath: IndexPath) -> RouteDetailViewController? {
 
-        let route = routes[indexPath.row]
+        let route = routes[indexPath.section][indexPath.row]
         var routeDetailCurrentLocation = currentLocation
         if searchTo?.name != Constants.General.currentLocation && searchFrom?.name != Constants.General.currentLocation {
             routeDetailCurrentLocation = nil // If route doesn't involve current location, don't pass along for view.
@@ -736,7 +752,8 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
         if sender.state == .began {
             let point = sender.location(in: routeResults)
             if let indexPath = routeResults.indexPathForRow(at: point), let cell = routeResults.cellForRow(at: indexPath) {
-                presentShareSheet(from: view, for: routes[indexPath.row], with: cell.getImage())
+                let route = routes[indexPath.section][indexPath.row]
+                presentShareSheet(from: view, for: route, with: cell.getImage())
             }
         }
     }
@@ -892,11 +909,11 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
 // MARK: TableView DataSource
 extension RouteOptionsViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return routes.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return routes.count
+        return routes[section].count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -904,10 +921,10 @@ extension RouteOptionsViewController: UITableViewDataSource {
         var cell = tableView.dequeueReusableCell(withIdentifier: RouteTableViewCell.identifier, for: indexPath) as? RouteTableViewCell
 
         if cell == nil {
-            cell = RouteTableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
+            cell = RouteTableViewCell(style: .default, reuseIdentifier: RouteTableViewCell.identifier)
         }
 
-        cell?.setData(route: routes[indexPath.row], rowNum: indexPath.row)
+        cell?.setData(route: routes[indexPath.section][indexPath.row], rowNum: indexPath.row)
 
         // Activate timers
         let timerDoesNotExist = (timers[indexPath.row] == nil)
@@ -931,8 +948,11 @@ extension RouteOptionsViewController: UITableViewDataSource {
 
 // MARK: TableView Delegate
 extension RouteOptionsViewController: UITableViewDelegate {
+
     private func setupRouteResultsTableView() {
-        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0)), style: .plain)
+        let height = view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0)
+        let frame = CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: height)
+        routeResults = UITableView(frame: frame, style: .grouped)
         routeResults.delegate = self
         routeResults.allowsSelection = true
         routeResults.dataSource = self
@@ -953,7 +973,7 @@ extension RouteOptionsViewController: UITableViewDelegate {
         if let routeDetailViewController = createRouteDetailViewController(from: indexPath) {
             let payload = RouteResultsCellTappedEventPayload()
             Analytics.shared.log(payload)
-            let routeId = routes[indexPath.row].routeId
+            let routeId = routes[indexPath.section][indexPath.row].routeId
             Network.routeSelected(routeId: routeId).perform(withSuccess: { (request) in
                 print("[RouteOptionsViewController] Route Selected - Success:", request["success"])
             }, failure: { (error) in
@@ -963,9 +983,75 @@ extension RouteOptionsViewController: UITableViewDelegate {
         }
     }
 
+    /// Different header text based on variable data results (see designs)
+    func headerTitles(section: Int) -> String? {
+        if routes.count == 3 {
+            switch section {
+            case 1:
+                if (routes.first?.isEmpty ?? false) {
+                    return Constants.TableHeaders.boardingSoon
+                } else {
+                    return Constants.TableHeaders.boardingSoonFromNearby
+                }
+            case 2: return Constants.TableHeaders.walking
+            default: return nil
+            }
+        } else {
+            switch section {
+            case 1: return Constants.TableHeaders.walking
+            default: return nil
+            }
+        }
+    }
+
+    func isEmptyHeaderView(section: Int) -> Bool {
+         return section == 0 && searchFrom?.type == .busStop && routes.first?.isEmpty ?? false
+    }
+
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let tableViewTopMargin: CGFloat = 12
-        return UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: tableViewTopMargin))
+
+        let containerView = UIView()
+        let label = UILabel()
+
+        // Special centered message alerting no fromStop routes (first in 2D routes array)
+        if isEmptyHeaderView(section: section) {
+            label.text = Constants.TableHeaders.noAvailableRoutes + " from \(searchFrom?.name ?? "Starting Bus Stop")."
+            label.font = .getFont(.regular, size: 14)
+            label.textAlignment = .center
+            label.textColor = Colors.secondaryText
+
+            containerView.addSubview(label)
+
+            label.snp.makeConstraints { (make) in
+                make.centerX.centerY.equalToSuperview()
+            }
+        } else {
+            label.text = headerTitles(section: section)
+            label.font = .getFont(.regular, size: 12)
+            label.textColor = Colors.secondaryText
+
+            containerView.addSubview(label)
+
+            label.snp.makeConstraints { (make) in
+                make.leading.equalToSuperview().offset(12)
+                make.bottom.equalToSuperview().offset(-12)
+            }
+        }
+
+        return containerView
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if isEmptyHeaderView(section: section) {
+            return 60
+        } else {
+            return UIFont.getFont(.regular, size: 12).lineHeight
+        }
+    }
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let tableViewPadding: CGFloat = 12
+        return UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: tableViewPadding))
     }
 
 }

@@ -16,6 +16,7 @@ struct Error: JSONDecodable, Codable {
 
     var error: String!
 }
+
 struct AlertRequest: Codable {
     let success: Bool
     let data: [Alert]
@@ -83,7 +84,13 @@ struct SearchRequest: Codable {
 
 struct RoutesRequest: Codable {
     var success: Bool
-    var data: [Route]
+    var data: RouteSectionsObject
+}
+
+class RouteSectionsObject: Codable {
+    var fromStop: [Route]
+    var boardingSoon: [Route]
+    var walking: [Route]
 }
 
 struct MultiRoutesRequest: Codable {
@@ -145,6 +152,7 @@ class AllBusStopsRequest: Codable {
                     // If stops are too close to each other, combine into a new stop with averaged location and add to list
                     let middleCoordinate = firstStopLocation.coordinate.middleLocationWith(location: secondStopLocation.coordinate)
                     let middleBusStop = Place(name: first.name, latitude: middleCoordinate.latitude, longitude: middleCoordinate.longitude)
+                    middleBusStop.type = .busStop
                     nonDuplicateStops.append(middleBusStop)
                 } else {
                     // If not, add directly to the final list to be returned as data
