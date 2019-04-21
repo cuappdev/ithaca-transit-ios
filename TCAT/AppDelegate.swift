@@ -220,10 +220,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Unwrap `Any` to `BusStop` or `PlaceResult`
             if let busStop = item as? BusStop {
                 optionalPlace = Place(name: busStop.name, latitude: busStop.lat, longitude: busStop.long)
+                optionalPlace?.type = .busStop
             }
             
             if let placeResult = item as? PlaceResult {
                 optionalPlace = Place(name: placeResult.name, placeDescription: placeResult.detail, placeIdentifier: placeResult.placeID)
+                optionalPlace?.type = .googlePlace
             }
             
             guard let place = optionalPlace else {

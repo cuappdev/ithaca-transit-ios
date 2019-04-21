@@ -11,7 +11,7 @@ import CoreLocation
 import FutureNova
 
 extension Endpoint {
-
+  
     static func getAllStops() -> Endpoint {
         return Endpoint(path: Constants.Endpoints.allStops)
     }
