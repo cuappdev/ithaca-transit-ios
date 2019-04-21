@@ -120,7 +120,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         Endpoint.config.scheme = "https"
         Endpoint.config.host = baseURL
-        Endpoint.config.commonPath = "/api/v1"
+        Endpoint.config.commonPath = "/api/v2"
     }
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {

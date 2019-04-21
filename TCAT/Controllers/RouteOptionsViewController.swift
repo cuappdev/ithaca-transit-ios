@@ -436,12 +436,12 @@ class RouteOptionsViewController: UIViewController {
     private func getRoutes(start: Place,
                            end: Place,
                            time: Date,
-                           type: SearchType) -> Future<Response<[Route]>>? {
+                           type: SearchType) -> Future<Response<RouteSectionsObject>>? {
         if let endpoint = Endpoint.getRoutes(start: start, end: end, time: time, type: type) {
             return networking(endpoint).decode()
         } else { return nil }
     }
-  
+
     private func routeSelected(routeId: String) {
         networking(Endpoint.routeSelected(routeId: routeId)).observe { [weak self] result in
             guard self != nil else { return }
@@ -455,7 +455,7 @@ class RouteOptionsViewController: UIViewController {
             }
         }
     }
-    func processRequest(result: Result<Response<[Route]>>, requestURL: String, endPlace: Place) {
+    func processRequest(result: Result<Response<RouteSectionsObject>>, requestURL: String, endPlace: Place) {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
 
         switch result {
@@ -469,23 +469,19 @@ class RouteOptionsViewController: UIViewController {
                     print(line)
                 }
             }
-                // Parse sections of routes
-                [response.data.fromStop, response.data.boardingSoon, response.data.walking]
-                    .forEach { (routeSection) in
-                        routeSection.forEach { (route) in
-                            route.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
-                        }
-                        // Allow for custom display in search results for fromStop.
-                        // We want to display a [] if a bus stop is the origin and doesn't exist
-                        if !routeSection.isEmpty || self.searchFrom?.type == .busStop {
-                            self.routes.append(routeSection)
-                        }
+            // Parse sections of routes
+            [response.data.fromStop, response.data.boardingSoon, response.data.walking]
+                .forEach { (routeSection) in
+                    routeSection.forEach { (route) in
+                        route.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
+                    }
+                    // Allow for custom display in search results for fromStop.
+                    // We want to display a [] if a bus stop is the origin and doesn't exist
+                    if !routeSection.isEmpty || self.searchFrom?.type == .busStop {
+                        self.routes.append(routeSection)
+                    }
 
-                }
-            for each in response.data {
-                each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
             }
-            self.routes = response.data
             self.requestDidFinish(perform: [.hideBanner])
         case .error(let error):
             self.processRequestError(error: error, requestURL: requestURL)
@@ -996,7 +992,7 @@ extension RouteOptionsViewController: UITableViewDelegate {
         if let routeDetailViewController = createRouteDetailViewController(from: indexPath) {
             let payload = RouteResultsCellTappedEventPayload()
             Analytics.shared.log(payload)
-            let routeId = routes[indexPath.row].routeId
+            let routeId = routes[indexPath.section][indexPath.row].routeId
             routeSelected(routeId: routeId)
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }

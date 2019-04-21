@@ -45,6 +45,7 @@ internal struct BusLocationsInfo: Codable {
     let stopId: String
     let routeId: String
     let tripIdentifiers: [String]
+}
 
 class RouteSectionsObject: Codable {
     var fromStop: [Route]
