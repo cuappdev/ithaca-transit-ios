@@ -113,7 +113,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //
         
         // Release - Uses main production server for Network requests.
-        // Debug - Uses development server for Network requests, but will profile and archive to production.
+        // Debug - Uses development server for Network requests.
         
         guard let baseURL = Bundle.main.object(forInfoDictionaryKey: "SERVER_URL") as? String else {
             fatalError("Could not find SERVER_URL in Info.plist!")
