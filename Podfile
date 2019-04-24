@@ -15,11 +15,11 @@ target 'TCAT' do
     
     # Networking + Data
     pod 'Alamofire', '~> 4.7'
-    pod 'TRON', '~> 4.1.2'
+    pod 'TRON', '~> 4.2.2'
     pod 'SwiftyJSON', '~> 4.0'
     
     # Analytics
-    pod 'Crashlytics', '~> 3.10'
+    pod 'Crashlytics', '~> 3.12'
     pod 'Fabric'
     pod 'Firebase/Core'
     
@@ -56,10 +56,10 @@ target 'Today Extension' do
     pod 'SnapKit'
 
     # Networking + Data
-    pod 'TRON', '~> 4.1.2'
+    pod 'TRON', '~> 4.2.2'
     pod 'Alamofire', '~> 4.7'
     pod 'SwiftyJSON', '~> 4.0'
  
     # Analytics
-    pod 'Crashlytics', '~> 3.10'
+    pod 'Crashlytics', '~> 3.12'
 end 
