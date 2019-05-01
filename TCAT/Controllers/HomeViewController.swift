@@ -16,6 +16,7 @@ import Crashlytics
 import SafariServices
 import SnapKit
 import WhatsNewKit
+import FutureNova
 
 class HomeViewController: UIViewController {
 
@@ -46,7 +47,8 @@ class HomeViewController: UIViewController {
     var loadingIndicator: LoadingIndicator?
     var isLoading: Bool { return loadingIndicator != nil }
 
-    let reachability = Reachability(hostname: Network.ipAddress)
+    let reachability = Reachability(hostname: Endpoint.config.host ?? "")
+    private let networking: Networking = URLSession.shared.request
 
     var banner: StatusBarNotificationBanner? {
         didSet {
@@ -263,6 +265,10 @@ class HomeViewController: UIViewController {
 
     }
 
+    private func getSearchResults(searchText: String) -> Future<Response<[Place]>> {
+        return networking(Endpoint.getSearchResults(searchText: searchText)).decode()
+    }
+
     /* Keyboard Functions */
     @objc func keyboardWillShow(_ notification: Notification) {
         isKeyboardVisible = true
@@ -284,11 +290,19 @@ class HomeViewController: UIViewController {
     @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if !searchText.isEmpty {
-            Network.getSearchResults(searchText: searchText).perform(withSuccess: { response in
-                self.searchResultsSection = Section(type: .searchResults, items: response.data)
-                self.tableView.contentOffset = .zero
-                self.sections = [self.searchResultsSection]
-            })
+            getSearchResults(searchText: searchText).observe { [weak self] result in
+                guard let `self` = self else { return }
+                DispatchQueue.main.async {
+                    switch result {
+                    case .value(let response):
+                        self.searchResultsSection = Section(type: .searchResults, items: response.data)
+                        self.tableView.contentOffset = .zero
+                        self.sections = [self.searchResultsSection]
+                    default: break
+                    }
+                }
+            }
+
         } else {
             sections = createSections()
         }

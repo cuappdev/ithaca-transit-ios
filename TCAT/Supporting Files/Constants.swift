@@ -159,6 +159,18 @@ struct Constants {
         static let lookingForRoutes = "Looking For Routes..."
     }
 
+    /// The routes for each of our endpoints
+    struct Endpoints {
+        static let allStops = "/allStops"
+        static let alerts = "/alerts"
+        static let getRoutes = "/route"
+        static let multiRoute = "/multiroute"
+        static let searchResults = "/search"
+        static let routeSelected = "/routeSelected"
+        static let busLocations = "/tracking"
+        static let delay = "/delay"
+    }
+
     struct Footers {
         static let emptyFooterView = "RouteDetailEmptyFooterView"
         static let phraseLabelFooterView = "RouteDetailPhraseLabelFooterView"

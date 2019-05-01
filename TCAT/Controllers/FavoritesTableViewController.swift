@@ -8,6 +8,7 @@
 
 import UIKit
 import DZNEmptyDataSet
+import FutureNova
 
 class FavoritesTableViewController: UITableViewController {
 
@@ -19,6 +20,7 @@ class FavoritesTableViewController: UITableViewController {
             tableView.reloadData()
         }
     }
+    private let networking: Networking = URLSession.shared.request
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,6 +57,10 @@ class FavoritesTableViewController: UITableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         searchBar.endEditing(true)
+    }
+
+    private func getSearchResults (searchText: String) -> Future<Response<[Place]>> {
+        return networking(Endpoint.getSearchResults(searchText: searchText)).decode()
     }
 
     @objc func dismissVC() {
@@ -183,18 +189,25 @@ extension FavoritesTableViewController: UISearchBarDelegate {
     @objc func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if !searchText.isEmpty {
-            Network.getSearchResults(searchText: searchText).perform(withSuccess: { (searchRequest) in
-                if searchRequest.success {
-                    self.resultsSection = Section(type: .searchResults, items: searchRequest.data)
-                    self.tableView.contentOffset = .zero
-                } else {
-                    print("[FavoritesTableViewController] success:", searchRequest.success)
-                    self.resultsSection = Section(type: .searchResults, items: [Place]())
+            getSearchResults(searchText: searchText).observe { [weak self] result in
+                guard let `self` = self else { return }
+                DispatchQueue.main.async {
+                    switch result {
+                    case .value(let response):
+                        if response.success {
+                            self.resultsSection = Section(type: .searchResults, items: response.data)
+                            self.tableView.contentOffset = .zero
+                        } else {
+                            print("[FavoritesTableViewController] success:", response.success)
+                            self.resultsSection = Section(type: .searchResults, items: [Place]())
+                        }
+                    case .error(let error):
+                        print("[FavoritesTableViewController] getSearchResults Error: \(error.localizedDescription)")
+                        self.resultsSection = Section(type: .searchResults, items: [Place]())
+
+                    }
                 }
-            }, failure: { (error) in
-                print("[FavoritesTableViewController] getSearchResults Error:", error.errorDescription ?? "")
-                self.resultsSection = Section(type: .searchResults, items: [Place]())
-            })
+            }
         } else {
             resultsSection = Section(type: .searchResults, items: [Place]())
         }

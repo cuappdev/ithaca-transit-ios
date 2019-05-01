@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import DZNEmptyDataSet
+import FutureNova
 
 class ServiceAlertsViewController: UIViewController {
 
@@ -16,7 +17,9 @@ class ServiceAlertsViewController: UIViewController {
     var isLoading: Bool { return loadingIndicator != nil }
     var networkError: Bool = false
 
-    var alerts = [Int: [Alert]]() {
+    private let networking: Networking = URLSession.shared.request
+
+    var alerts = [Int: [ServiceAlert]]() {
         didSet {
             removeLoadingIndicator()
             tableView.reloadData()
@@ -97,22 +100,32 @@ class ServiceAlertsViewController: UIViewController {
         }
     }
 
+    private func getAlerts() -> Future<Response<[ServiceAlert]>> {
+        return networking(Endpoint.getAlerts()).decode()
+    }
+
     func getServiceAlerts() {
-        Network.getAlerts().perform(withSuccess: { (request) in
-            if request.success {
-                self.removeLoadingIndicator()
-                self.networkError = false
-                self.alerts = self.sortedAlerts(alertsList: request.data)
+        getAlerts().observe(with: { [weak self] result in
+            guard let `self` = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .value (let response):
+                    if response.success {
+                        self.removeLoadingIndicator()
+                        self.networkError = false
+                        self.alerts = self.sortedAlerts(alertsList: response.data)
+                    }
+                case .error:
+                    self.removeLoadingIndicator()
+                    self.networkError = true
+                    self.alerts = [:]
+                }
             }
-        }, failure: { (_) in
-            self.removeLoadingIndicator()
-            self.networkError = true
-            self.alerts = [:]
         })
     }
 
-    func sortedAlerts(alertsList: [Alert]) -> [Int: [Alert]] {
-        var sortedAlerts = [Int: [Alert]]()
+    func sortedAlerts(alertsList: [ServiceAlert]) -> [Int: [ServiceAlert]] {
+        var sortedAlerts = [Int: [ServiceAlert]]()
         for alert in alertsList {
             if var alertsAtPriority = sortedAlerts[alert.priority] {
                 alertsAtPriority.append(alert)
@@ -132,9 +145,9 @@ class ServiceAlertsViewController: UIViewController {
         return sortedAlerts
     }
 
-    func combineAlertsByTimeSpan(alertsList: [Alert]) -> [Alert] {
-        var combinedAlerts = [Alert]()
-        var mappedByTimeSpan: [String: Alert] = [:]
+    func combineAlertsByTimeSpan(alertsList: [ServiceAlert]) -> [ServiceAlert] {
+        var combinedAlerts = [ServiceAlert]()
+        var mappedByTimeSpan: [String: ServiceAlert] = [:]
         for alert in alertsList {
             let timeSpan = formatTimeString(alert.fromDate, toDate: alert.toDate)
             if var prevAlert = mappedByTimeSpan[timeSpan] {
@@ -275,7 +288,7 @@ extension ServiceAlertsViewController {
         let data = try! Data(contentsOf: fileUrl!, options: [])
 
         let jsonDecoder = JSONDecoder()
-        let alertsResponse = try! jsonDecoder.decode(AlertRequest.self, from: data)
+        let alertsResponse = try! jsonDecoder.decode(Response<[ServiceAlert]>.self, from: data)
 
         var alertData = alertsResponse.data
 
@@ -284,11 +297,11 @@ extension ServiceAlertsViewController {
             routes.append(i)
         }
 
-        let p0Alert = Alert(id: -1, message: "Come to our community dinner event on April 3 to give us feedback and meet our drivers!", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 0, daysOfWeek: "Every Day", routes: [], signs: [], channelMessages: [])
+        let p0Alert = ServiceAlert(id: -1, message: "Come to our community dinner event on April 3 to give us feedback and meet our drivers!", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 0, daysOfWeek: "Every Day", routes: [], signs: [], channelMessages: [])
 
-        let p3Alert = Alert(id: -2, message: "Due to construction the RT 90 will be on a detour. This will move the stop from Robert Purcell Community Center to Jessup and Northcross. This is the only change.", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 3, daysOfWeek: "Every Day", routes: [10, 20, 30, 40, 50, 60, 70, 80, 90], signs: [], channelMessages: [])
+        let p3Alert = ServiceAlert(id: -2, message: "Due to construction the RT 90 will be on a detour. This will move the stop from Robert Purcell Community Center to Jessup and Northcross. This is the only change.", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 3, daysOfWeek: "Every Day", routes: [10, 20, 30, 40, 50, 60, 70, 80, 90], signs: [], channelMessages: [])
 
-        let p3Alert1To100 = Alert(id: -6, message: "Due to construction the RT 90 will be on a detour. This will move the stop from Robert Purcell Community Center to Jessup and Northcross. This is the only change.", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 3, daysOfWeek: "Every Day", routes: routes, signs: [], channelMessages: [])
+        let p3Alert1To100 = ServiceAlert(id: -6, message: "Due to construction the RT 90 will be on a detour. This will move the stop from Robert Purcell Community Center to Jessup and Northcross. This is the only change.", fromDate: alertsResponse.data[0].fromDate, toDate: alertsResponse.data[0].toDate, fromTime: alertsResponse.data[0].fromTime, toTime: alertsResponse.data[0].toTime, priority: 3, daysOfWeek: "Every Day", routes: routes, signs: [], channelMessages: [])
 
         alertData.append(p0Alert)
         alertData.append(p3Alert1To100)
