@@ -9,7 +9,6 @@
 import UIKit
 import CoreLocation
 import SwiftyJSON
-import Alamofire
 import DZNEmptyDataSet
 import NotificationBannerSwift
 import Crashlytics

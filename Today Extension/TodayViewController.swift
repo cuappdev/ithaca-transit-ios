@@ -10,7 +10,6 @@ import UIKit
 import NotificationCenter
 import SnapKit
 import CoreLocation
-import Alamofire
 import FutureNova
 
 @objc(TodayViewController) class TodayViewController: UIViewController, NCWidgetProviding {

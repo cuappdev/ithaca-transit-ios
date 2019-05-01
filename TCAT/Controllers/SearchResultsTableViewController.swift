@@ -8,7 +8,6 @@
 
 import UIKit
 import SwiftyJSON
-import Alamofire
 import CoreLocation
 import DZNEmptyDataSet
 import Crashlytics

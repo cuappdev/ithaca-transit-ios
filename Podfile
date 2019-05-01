@@ -14,8 +14,7 @@ target 'TCAT' do
     pod 'GooglePlaces', '~>  3.1'
     
     # Networking + Data
-    pod 'Alamofire', '~> 4.7'
-    pod 'SwiftyJSON', '~> 4.0'
+    pod 'SwiftyJSON', '~> 5.0'
     pod 'FutureNova', :git => 'https://github.com/cuappdev/ios-networking.git'
     
     # Analytics
@@ -46,6 +45,7 @@ target 'TCAT' do
         inherit! :search_paths
         # Pods for testing
     end
+    
 end
 
 # Pods for Today Extension
@@ -56,10 +56,19 @@ target 'Today Extension' do
     pod 'SnapKit', '~> 5.0'
 
     # Networking + Data
-    pod 'Alamofire', '~> 4.7'
-    pod 'SwiftyJSON', '~> 4.0'
+    pod 'SwiftyJSON', '~> 5.0'
     pod 'FutureNova', :git => 'https://github.com/cuappdev/ios-networking.git'
  
     # Analytics
     pod 'Crashlytics', '~> 3.12'
-end 
+    
+end
+
+# Added for NotificationBannerSwift build issue
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '10.0'
+    end
+  end
+end
