@@ -14,9 +14,9 @@ target 'TCAT' do
     pod 'GooglePlaces', '~>  3.1'
     
     # Networking + Data
-    pod 'Alamofire', '~> 4.7'
-    pod 'TRON', '~> 4.2'
-    pod 'SwiftyJSON', '~> 4.0'
+    pod 'Alamofire', '~> 5.0.0-beta.4'
+    pod 'TRON', '~> 5.0.0-beta.2'
+    pod 'SwiftyJSON', '~> 4.2'
     
     # Analytics
     pod 'Crashlytics', '~> 3.12'
@@ -56,9 +56,9 @@ target 'Today Extension' do
     pod 'SnapKit', '~> 5.0'
 
     # Networking + Data
-    pod 'TRON', '~> 4.2'
-    pod 'Alamofire', '~> 4.7'
-    pod 'SwiftyJSON', '~> 4.0'
+    pod 'TRON', '~> 5.0.0-beta.2'
+    pod 'Alamofire', '~> 5.0.0-beta.4'
+    pod 'SwiftyJSON', '~> 4.2'
  
     # Analytics
     pod 'Crashlytics', '~> 3.12'

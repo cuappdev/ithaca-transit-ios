@@ -20,7 +20,7 @@ class CoordinateVisitor: NSObject {
 
     static func getCoordinates(for place: Place, callback: @escaping (_ latitude: Double?, _ longitude: Double?, _ error: CoordinateVisitorError?) -> Void) {
 
-        let identifier = place.placeIdentifier ?? "
+        let identifier = place.placeIdentifier ?? ""
 
         placesClient.lookUpPlaceID(identifier) { (result, error) in
 
