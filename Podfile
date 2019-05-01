@@ -11,16 +11,16 @@ target 'TCAT' do
     
     # Location
     pod 'GoogleMaps', '~> 3.1'
-    pod 'GooglePlaces', '~> 3.1'
+    pod 'GooglePlaces', '~>  3.1'
     
     # Networking + Data
     pod 'Alamofire', '~> 4.7'
-    pod 'TRON', '~> 4.2.2'
+    pod 'TRON', '~> 4.2'
     pod 'SwiftyJSON', '~> 4.0'
     
     # Analytics
     pod 'Crashlytics', '~> 3.12'
-    pod 'Fabric'
+    pod 'Fabric', '~> 1.9'
     pod 'Firebase/Core'
     
     # File Management
@@ -29,10 +29,10 @@ target 'TCAT' do
     # UI Frameworks
     pod 'DZNEmptyDataSet', :git=> 'https://github.com/cuappdev/DZNEmptyDataSet.git'
     pod 'NotificationBannerSwift', :git=> 'https://github.com/cuappdev/NotificationBanner.git'
-    pod 'Pulley', '~> 2.6'
+    pod 'Pulley', '~> 2.7'
     pod 'Presentation', :git=> 'https://github.com/cuappdev/Presentation.git'
-    pod 'SnapKit'
-    pod 'WhatsNewKit', '~> 1.1.2'
+    pod 'SnapKit', '~> 5.0'
+    pod 'WhatsNewKit', '~> 1.1'
 
     # Other
     pod 'SwiftLint'
@@ -53,10 +53,10 @@ target 'Today Extension' do
     # Pods for Today Extension
 
     # UI Frameworks	
-    pod 'SnapKit'
+    pod 'SnapKit', '~> 5.0'
 
     # Networking + Data
-    pod 'TRON', '~> 4.2.2'
+    pod 'TRON', '~> 4.2'
     pod 'Alamofire', '~> 4.7'
     pod 'SwiftyJSON', '~> 4.0'
  
