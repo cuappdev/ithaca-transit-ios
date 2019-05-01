@@ -78,7 +78,7 @@ struct Constants {
             static let action = "Got It!"
         }
 
-        struct GooglePlacesFailure {
+        struct PlacesFailure {
             static let title = "Couldn't Fetch Place Information"
             static let message = "We ran into an issue fetching the coordinates of the selected location. Please try again later."
             static let action = "OK"

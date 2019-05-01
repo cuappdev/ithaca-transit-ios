@@ -133,10 +133,10 @@ class FavoritesTableViewController: UITableViewController {
                 if error != nil {
                     print("Unable to get coordinates to save favorite.")
                     cell?.accessoryView = nil
-                    let title = Constants.Alerts.GooglePlacesFailure.title
-                    let message = Constants.Alerts.GooglePlacesFailure.message
+                    let title = Constants.Alerts.PlacesFailure.title
+                    let message = Constants.Alerts.PlacesFailure.message
                     let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-                    let done = UIAlertAction(title: Constants.Alerts.GooglePlacesFailure.action, style: .default)
+                    let done = UIAlertAction(title: Constants.Alerts.PlacesFailure.action, style: .default)
                     alertController.addAction(done)
                     self.present(alertController, animated: true, completion: nil)
                 } else {

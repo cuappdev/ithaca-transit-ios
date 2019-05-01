@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import GooglePlaces
+import CoreLocation
 import SwiftyJSON
 import Alamofire
 import DZNEmptyDataSet
