@@ -79,7 +79,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
         
-        // v1.3 Data Migration
+        patchFunctions(rootVC: rootVC)
+
+        // Initalize window without storyboard
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.window!.rootViewController = navigationController
+        self.window?.makeKeyAndVisible()
+
+        return true
+    }
+    
+    func patchFunctions(rootVC: UIViewController) {
+        
         if
             VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1),
             let homeViewController = rootVC as? HomeViewController
@@ -105,13 +116,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
-
-        // Initalize window without storyboard
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window!.rootViewController = navigationController
-        self.window?.makeKeyAndVisible()
-
-        return true
     }
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
