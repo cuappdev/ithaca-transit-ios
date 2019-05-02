@@ -94,12 +94,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
-        // delete corrupted shortcut donations
-        if
-            VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 4, minor: 1, patch: 0) {
-            print("Begin Deleting Corrupt Shortcuts")
+        // v1.4.1 Delete Corrupted Shortcut Donations
+        if VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 4, patch: 0) {
+            print("Begin Deleting Corrupt Shortcut Donations")
             INInteraction.deleteAll { (error) in
-                print("Failed to delete corrupt shortcuts with error: \(error?.localizedDescription ?? "n/a")"  )
+                if let error = error {
+                    print("Failed to delete corrupt shortcut donations with error: \(error.localizedDescription )")
+                } else {
+                    print("Succesfully deleted corrupt shortcut donations")
+                }
             }
         }
 
