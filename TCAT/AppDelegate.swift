@@ -6,14 +6,15 @@
 //  Copyright © 2016 cuappdev. All rights reserved.
 //
 
-import UIKit
+import Crashlytics
+import Fabric
 import Firebase
 import GoogleMaps
 import GooglePlaces
-import SwiftyJSON
-import Fabric
-import Crashlytics
+import Intents
 import SafariServices
+import SwiftyJSON
+import UIKit
 import WhatsNewKit
 
 // This is used for app-specific preferences
@@ -90,6 +91,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("Data Migration Complete - Success: \(success), Error: \(errorDescription ?? "n/a")")
                 let payload = DataMigrationOnePointThreePayload(success: success, errorDescription: errorDescription)
                 Analytics.shared.log(payload)
+            }
+        }
+        
+        // delete corrupted shortcut donations
+        if
+            VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 4, minor: 1, patch: 0) {
+            print("Begin Deleting Corrupt Shortcuts")
+            INInteraction.deleteAll { (error) in
+                print("Failed to delete corrupt shortcuts with error: \(error?.localizedDescription ?? "n/a")"  )
             }
         }
 
