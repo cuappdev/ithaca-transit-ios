@@ -19,7 +19,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     var titleLabel: UILabel!
     var detailLabel: UILabel!
     var busIconView: BusIcon!
-    var chevron: UIButton!
+    var chevron: IncreasedTapSizeButton!
     weak var delegate: LargeDetailTableViewDelegate?
     var indexPath: IndexPath!
 
@@ -32,8 +32,8 @@ class LargeDetailTableViewCell: UITableViewCell {
     let edgeSpacing: CGFloat = 16
     let labelSpacing: CGFloat = 4
 
-    func getChevron() -> UIButton {
-        let chevron = UIButton()
+    func getChevron() -> IncreasedTapSizeButton {
+        let chevron = IncreasedTapSizeButton(frame: .zero, sizeIncrease: .init(width: 30, height: 30))
         chevron.frame.size = CGSize(width: 13.5, height: 8)
         chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
         chevron.setImage(UIImage(named: "arrow"), for: .normal)
@@ -198,5 +198,33 @@ class LargeDetailTableViewCell: UITableViewCell {
         } else {
             delegate?.expandCells(indexPath: indexPath)
         }
+    }
+}
+
+class IncreasedTapSizeButton: UIButton {
+
+    var verticalInset: CGFloat
+    var horizontalInset: CGFloat
+
+    init(frame: CGRect, sizeIncrease: CGSize) {
+        verticalInset = sizeIncrease.height / 2
+        horizontalInset = sizeIncrease.width / 2
+        super.init(frame: frame)
+    }
+
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+
+        let largerArea = CGRect(
+            x: self.bounds.origin.x - horizontalInset,
+            y: self.bounds.origin.y - verticalInset,
+            width: self.bounds.size.width + horizontalInset*2,
+            height: self.bounds.size.height + verticalInset*2
+        )
+
+        return largerArea.contains(point)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

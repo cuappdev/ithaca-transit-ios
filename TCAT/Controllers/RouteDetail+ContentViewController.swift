@@ -680,7 +680,12 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         }
 
         let bounds = GMSCoordinateBounds(path: path)
-        let update = GMSCameraUpdate.fit(bounds)
+        var bottomOffset: CGFloat = (UIScreen.main.bounds.height / 2) - (mapPadding / 2)
+        if #available(iOS 11.0, *) {
+            bottomOffset -= view.safeAreaInsets.bottom
+        }
+        let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: mapPadding / 2, bottom: bottomOffset, right: mapPadding / 2)
+        let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
         mapView.animate(with: update)
         if !followPath {
             mapView.animate(toZoom: 17)

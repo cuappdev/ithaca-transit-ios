@@ -340,7 +340,6 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
                 contentViewController.centerMap(topHalfCentered: drawer.drawerPosition == .partiallyRevealed)
             }
         }
-        selectedDirection = nil
     }
 
     func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
@@ -485,6 +484,9 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
         let direction = directions[indexPath.row]
 
         selectedDirection = direction
-        summaryTapped()
+
+        if let drawer = self.parent as? RouteDetailViewController {
+            drawer.setDrawerPosition(position: .partiallyRevealed, animated: true)
+        }
     }
 }
