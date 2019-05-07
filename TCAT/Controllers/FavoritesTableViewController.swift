@@ -146,7 +146,7 @@ extension FavoritesTableViewController: UITableViewDelegate {
         cell?.accessoryView = UIActivityIndicatorView()
         tableView.deselectRow(at: indexPath, animated: true)
         let place = resultsSection.items[indexPath.row]
-        
+
         if place.type == .busStop {
             SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
             dismissVC()
@@ -212,10 +212,10 @@ extension FavoritesTableViewController: UISearchBarDelegate {
                     print("[FavoritesTableViewController] success:", searchRequest.success)
                     self.resultsSection = Section(type: .searchResults, items: [Place]())
                 }
-            }) { (error) in
+            }, failure: { (error) in
                 print("[FavoritesTableViewController] getSearchResults Error:", error.errorDescription ?? "")
                 self.resultsSection = Section(type: .searchResults, items: [Place]())
-            }
+            })
         } else {
             resultsSection = Section(type: .searchResults, items: [Place]())
         }

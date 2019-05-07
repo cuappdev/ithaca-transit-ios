@@ -9,7 +9,7 @@
 import UIKit
 import DZNEmptyDataSet
 
-protocol UnwindAllStopsTVCDelegate {
+protocol UnwindAllStopsTVCDelegate: class {
     func dismissSearchResultsVC(place: Place)
 }
 
@@ -18,7 +18,7 @@ class AllStopsTableViewController: UITableViewController {
     var allStops: [Place]!
     var sectionIndexes: [String: [Place]]!
     var sortedKeys: [String]!
-    var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
+    weak var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
     var height: CGFloat?
     var currentChar: Character?
     var loadingIndicator: LoadingIndicator?
@@ -161,7 +161,9 @@ class AllStopsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell else {
+            fatalError("Cell couldn't be cast properly")
+        }
         let section = sectionIndexes[sortedKeys[indexPath.section]]
         cell.place = section?[indexPath.row]
         cell.layoutSubviews()
@@ -176,7 +178,7 @@ class AllStopsTableViewController: UITableViewController {
             return
         }
         optionsVC.didSelectPlace(place: place)
-        
+
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)
 

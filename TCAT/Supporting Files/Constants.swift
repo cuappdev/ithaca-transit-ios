@@ -54,7 +54,7 @@ struct Constants {
 
         struct EmailFailure {
             static let title = "Couldn't Send Email"
-            static let message = "To send your message with device logs, please add an email account in Settings > Accounts & Passwords > Add Account. You can also contact us at " + Constants.App.contactEmailAddress + " to send feedback."
+            static let message = "To send your message with device logs, please add an email account in Settings > Accounts & Passwords > Add Account. You can also contact us at \(Constants.App.contactEmailAddress) to send feedback."
             static let emailSettings = "Email Settings"
             static let copyEmail = "Copy Address to Clipboard"
             static let cancel = Constants.Alerts.GeneralActions.cancel
@@ -215,6 +215,12 @@ struct Constants {
     struct TableHeaders {
         static let recentSearches = "Recent Searches"
         static let favoriteDestinations = "Favorite Destinations"
+
+        static let boardingSoon = "Boarding Soon"
+        static let boardingSoonFromNearby = "Boarding Soon from Nearby Stops"
+        static let walking = "By Walking"
+        static let noAvailableRoutes = "No Available Routes"
+
         static let highPriority = "High Priority"
         static let mediumPriority = "Medium Priority"
         static let lowPriority = "Low Priority"

@@ -23,14 +23,14 @@ class AppShortcuts {
                     localizedTitle: place.name,
                     localizedSubtitle: nil,
                     icon: UIApplicationShortcutIcon(type: .favorite),
-                    userInfo: placeInfo as [String : NSSecureCoding]
+                    userInfo: placeInfo as [String: NSSecureCoding]
                 )
             } catch let error {
                 print(error)
                 return nil
             }
         }
-        
+
         UIApplication.shared.shortcutItems = shortcutItems
     }
 

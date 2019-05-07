@@ -13,11 +13,11 @@ import CoreLocation
 import DZNEmptyDataSet
 import Crashlytics
 
-protocol DestinationDelegate {
+protocol DestinationDelegate: class {
     func didSelectPlace(place: Place)
 }
 
-protocol SearchBarCancelDelegate {
+protocol SearchBarCancelDelegate: class {
     func didCancel()
 }
 
@@ -26,8 +26,8 @@ class SearchResultsTableViewController: UITableViewController {
     let locationManager = CLLocationManager()
 
     var currentLocation: Place?
-    var destinationDelegate: DestinationDelegate?
-    var searchBarCancelDelegate: SearchBarCancelDelegate?
+    weak var destinationDelegate: DestinationDelegate?
+    weak var searchBarCancelDelegate: SearchBarCancelDelegate?
     var timer: Timer?
     var searchBar: UISearchBar?
     var recentSearchesSection: Section!
@@ -42,7 +42,7 @@ class SearchResultsTableViewController: UITableViewController {
     var shouldShowCurrentLocation = true
     var returningFromAllStopsTVC = false
     var returningFromAllStopsBusStop: Place?
-    
+
     var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
@@ -55,7 +55,7 @@ class SearchResultsTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         // Subscribe to Keyboard Notifications
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyboardWillShow),
@@ -81,7 +81,7 @@ class SearchResultsTableViewController: UITableViewController {
 
         // Set Up LocationManager
         locationManager.delegate = self
-        
+
         // Fetch RecentLocation and Favorites
         recentLocations = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
@@ -190,14 +190,12 @@ class SearchResultsTableViewController: UITableViewController {
 
         var didSelectAllStops = false
         let allStopsTVC = AllStopsTableViewController()
-        
+
         if sections[indexPath.section].type == .seeAllStops {
             didSelectAllStops = true
             allStopsTVC.allStops = SearchTableViewManager.shared.getAllStops()
             allStopsTVC.unwindAllStopsTVCDelegate = self
-        }
-        
-        else {
+        } else {
             let place = sections[indexPath.section].items[indexPath.row]
             if place.latitude == 0.0 && place.longitude == 0.0 {
                 showLocationDeniedAlert()
@@ -205,11 +203,11 @@ class SearchResultsTableViewController: UITableViewController {
             }
             destinationDelegate?.didSelectPlace(place: place)
         }
-        
+
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar?.endEditing(true)
-        
+
         if didSelectAllStops {
             if let parentIsSearch = self.parent?.isKind(of: UISearchController.self), parentIsSearch {
                 let navController = self.parent?.presentingViewController?.navigationController
@@ -220,29 +218,25 @@ class SearchResultsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+
         var cell: UITableViewCell!
-        
+
         if sections[indexPath.section].type == .currentLocation {
             cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.currentLocationIdentifier) as? GeneralTableViewCell
-        }
-        
-        else if sections[indexPath.section].type == .seeAllStops {
+        } else if sections[indexPath.section].type == .seeAllStops {
             cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as? GeneralTableViewCell
-        }
-            
-        else {
+        } else {
             guard let placeCell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
                 else { return cell }
             placeCell.place = sections[indexPath.section].items[indexPath.row]
             cell = placeCell
         }
-        
+
         cell.layoutSubviews()
 
         return cell
     }
-    
+
 }
 
 // MARK: ScrollView Delegate

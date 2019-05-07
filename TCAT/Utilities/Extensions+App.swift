@@ -43,7 +43,7 @@ extension UIView {
         UIGraphicsEndImageContext()
         return img
     }
-    
+
     static let zero = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: CGFloat.leastNormalMagnitude))
 
 }
@@ -55,7 +55,7 @@ extension UILabel {
         let maxSize = CGSize(width: frame.size.width, height: CGFloat(Float.infinity))
         let charSize = font.lineHeight
         let labelText = (text ?? "") as NSString
-        let textSize = labelText.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, attributes: [.font: font], context: nil)
+        let textSize = labelText.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, attributes: [.font: font ?? UIFont.getFont(.regular, size: 16)], context: nil)
         return Int(textSize.height/charSize)
     }
 
@@ -90,11 +90,11 @@ extension UILabel {
 extension UIViewController {
 
     var isModal: Bool {
-        if let index = navigationController?.viewControllers.index(of: self), index > 0 {
+        if let index = navigationController?.viewControllers.firstIndex(of: self), index > 0 {
             return false
         } else if presentingViewController != nil {
             return true
-        } else if navigationController?.presentingViewController?.presentedViewController == navigationController  {
+        } else if navigationController?.presentingViewController?.presentedViewController == navigationController {
             return true
         } else if tabBarController?.presentingViewController is UITabBarController {
             return true
@@ -130,9 +130,9 @@ extension String {
 
     /// Convert Range to NSRange
     func nsRange(from range: Range<String.Index>) -> NSRange {
-        let from = range.lowerBound.encodedOffset
-        let to = range.upperBound.encodedOffset
-        return NSRange(location: from - startIndex.encodedOffset, length: to - from)
+        let from = range.lowerBound.utf16Offset(in: self)
+        let to = range.upperBound.utf16Offset(in: self)
+        return NSRange(location: from - startIndex.utf16Offset(in: self), length: to - from)
     }
 
     func heightWithConstrainedWidth(width: CGFloat, font: UIFont) -> CGFloat {
@@ -148,7 +148,7 @@ extension String {
         - Parameter boldFont: The font to make the bold string.
      */
     func bold(in containerText: String, from originalFont: UIFont, to boldFont: UIFont) -> NSMutableAttributedString {
-        let attributedString = NSMutableAttributedString(string: containerText, attributes: [.font : originalFont])
+        let attributedString = NSMutableAttributedString(string: containerText, attributes: [.font: originalFont])
         return self.bold(in: attributedString, to: boldFont)
     }
 
@@ -162,8 +162,8 @@ extension String {
 
         do {
             let regex = try NSRegularExpression(pattern: pattern, options: [])
-            let ranges = regex.matches(in: plain_string, options: [], range: NSMakeRange(0, plain_string.count)).map { $0.range }
-            for range in ranges { newAttributedString.addAttributes([.font : boldFont], range: range) }
+            let ranges = regex.matches(in: plain_string, options: [], range: NSRange(location: 0, length: plain_string.count)).map { $0.range }
+            for range in ranges { newAttributedString.addAttributes([.font: boldFont], range: range) }
         } catch {
             print("bold NSRegularExpression failed")
         }
@@ -171,7 +171,7 @@ extension String {
         return newAttributedString
 
     }
-    
+
     /** Return a list of all lone-standing integers in a list */
     func intsFromString() -> [Int] {
         var intList = [Int]()
@@ -198,11 +198,11 @@ extension Array where Element: Comparable {
     }
 }
 
-extension Array : JSONDecodable {
+extension Array: JSONDecodable {
     public init(json: JSON) {
         self.init(json.arrayValue.compactMap {
             if let type = Element.self as? JSONDecodable.Type {
-                let element : Element?
+                let element: Element?
                 do {
                     element = try type.init(json: $0) as? Element
                 } catch {
@@ -248,24 +248,11 @@ func areObjectsEqual<T: Equatable>(type: T.Type, a: Any, b: Any) -> Bool {
 
 infix operator ???: NilCoalescingPrecedence
 
-public func ???<T>(optional: T?, defaultValue: @autoclosure () -> String) -> String {
+public func ???<T> (optional: T?, defaultValue: @autoclosure () -> String) -> String {
     switch optional {
     case let value?: return String(describing: value)
     case nil: return defaultValue()
     }
-}
-
-func sortFilteredBusStops(busStops: [Place], letter: Character) -> [Place] {
-    var nonLetterArray = [Place]()
-    var letterArray = [Place]()
-    for stop in busStops {
-        if stop.name.first! == letter {
-            letterArray.append(stop)
-        } else {
-            nonLetterArray.append(stop)
-        }
-    }
-    return letterArray + nonLetterArray
 }
 
 extension Collection {
@@ -275,24 +262,24 @@ extension Collection {
 }
 
 class LargeTapTargetButton: UIButton {
-    
+
     var tapTargetValue: CGFloat
-    
+
     required init(extendBy: CGFloat) {
         tapTargetValue = extendBy
-        
+
         super.init(frame: .zero)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let relativeFrame = self.bounds
         let hitTestEdgeInsets = UIEdgeInsets(top: -tapTargetValue, left: -tapTargetValue, bottom: -tapTargetValue, right: -tapTargetValue)
         let hitFrame = relativeFrame.inset(by: hitTestEdgeInsets)
         return hitFrame.contains(point)
     }
-    
+
 }

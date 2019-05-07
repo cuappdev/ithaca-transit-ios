@@ -20,11 +20,11 @@ enum NetworkType: String {
 class Network {
 
     // MARK: Global Network Variables
-    
+
     /// Testing local servers for Network
     // Change `networkType` to `.local` to work locally.
     // Change `localIPAddress` to be the proper address
-    
+
     static let networkType: NetworkType = .release
     static let apiVersion = "v1"
 
@@ -35,11 +35,11 @@ class Network {
     /// Test server used for development
     static let debugIPAddress = "34.238.157.63"
     static let debugSource = "http://\(debugIPAddress)/api/\(apiVersion)/"
-    
+
     /// Deployed server instance used for release
     static let releaseIPAddress = "transit-backend.cornellappdev.com"
     static let releaseSource = "http://\(releaseIPAddress)/api/\(apiVersion)/"
-    
+
     /// Network IP address being used for specified networkType
     static var ipAddress: String {
         switch networkType {
@@ -68,53 +68,53 @@ class Network {
 
     class func getCoordinates(start: CoordinateAcceptor, end: CoordinateAcceptor,
                               callback: @escaping (_ startCoord: CLLocationCoordinate2D?, _ endCoord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void ) {
-        
+
         let visitor = CoordinateVisitor()
-        
+
         start.accept(visitor: visitor) { (startCoord, error) in
-            
+
             guard let startCoord = startCoord else {
                 callback(nil, nil, error)
                 return
             }
-            
+
             end.accept(visitor: visitor) { (endCoord, error) in
-                
+
                 guard let endCoord = endCoord else {
                     callback(nil, nil, error)
                     return
                 }
-                
+
                 callback(startCoord, endCoord, nil)
-                
+
             }
-            
+
         }
 
     }
 
     class func getRoutes(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D, startPlaceName: String, endPlaceName: String, time: Date, type: SearchType,
                          callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void) {
-        
+
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
         request.method = .get
         request.parameters = [
-            "arriveBy"          :   type == .arriveBy,
-            "end"               :   "\(endCoord.latitude),\(endCoord.longitude)",
-            "start"             :   "\(startCoord.latitude),\(startCoord.longitude)",
-            "time"              :   time.timeIntervalSince1970,
-            "destinationName"   :   endPlaceName,
-            "originName"        :   startPlaceName
+            "arriveBy": type == .arriveBy,
+            "end": "\(endCoord.latitude),\(endCoord.longitude)",
+            "start": "\(startCoord.latitude),\(startCoord.longitude)",
+            "time": time.timeIntervalSince1970,
+            "destinationName": endPlaceName,
+            "originName": startPlaceName
         ]
-        
+
         // Add unique identifier to request
         if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
             request.parameters["uid"] = uid
         }
-        
+
         callback(request)
     }
-    
+
     class func getRequestUrl(startCoord: CLLocationCoordinate2D, endCoord: CLLocationCoordinate2D,
                              originName: String, destinationName: String, time: Date, type: SearchType) -> String {
         let path = "route"
@@ -122,21 +122,21 @@ class Network {
         let end = "\(endCoord.latitude),\(endCoord.longitude)"
         let start =  "\(startCoord.latitude),\(startCoord.longitude)"
         let time = time.timeIntervalSince1970
-        
+
         return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(end)&start=\(start)&time=\(time)&destinationName=\(destinationName)&originName=\(originName)"
     }
 
-    class func getMultiRoutes(startCoord: CLLocationCoordinate2D, time: Date, endCoords : [String], endPlaceNames: [String],
+    class func getMultiRoutes(startCoord: CLLocationCoordinate2D, time: Date, endCoords: [String], endPlaceNames: [String],
                               callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void) {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("multiroute")
         request.method = .get
         request.parameters = [
-            "start"                 :   "\(startCoord.latitude),\(startCoord.longitude)",
-            "time"                  :   time.timeIntervalSince1970,
-            "end"                   :   endCoords,
-            "destinationNames"      :   endPlaceNames
+            "start": "\(startCoord.latitude),\(startCoord.longitude)",
+            "time": time.timeIntervalSince1970,
+            "end": endCoords,
+            "destinationNames": endPlaceNames
         ]
-        
+
         callback(request)
     }
 
@@ -144,33 +144,33 @@ class Network {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("places")
         request.method = .post
         request.parameterEncoding = JSONEncoding.default
-        request.parameters = ["query" : searchText]
-        
+        request.parameters = ["query": searchText]
+
         // Add unique identifier to request
         if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
             request.parameters["uid"] = uid
         }
-        
+
         return request
     }
-    
+
     // MARK: #182 • To be updated with Route string identifier
-    
+
     @discardableResult
     class func routeSelected(url: String, rowIndex: Int) -> APIRequest<JSON, Error> {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("routeSelected")
         request.method = .post
         request.parameterEncoding = JSONEncoding.default
         request.parameters = [
-            "tripId" : url,
-            "rowIndex" : rowIndex
+            "tripId": url,
+            "rowIndex": rowIndex
         ]
-        
+
         // Add unique identifier to request
         if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
             request.parameters["uid"] = uid
         }
-        
+
         return request
     }
 
@@ -179,27 +179,27 @@ class Network {
         let request: APIRequest<BusLocationResult, Error> = tron.swiftyJSON.request("tracking")
         request.method = .post
         let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
-        let dictionary = departDirections.map { (direction) -> [String : Any] in
+        let dictionary = departDirections.map { (direction) -> [String: Any] in
 
             // The id of the location, or bus stop, the bus needs to get to
             let stopID = direction.startLocation.id
 
             return [
-                "stopID"                :   stopID,
-                "routeID"               :   String(direction.routeNumber),
-                "tripIdentifiers"       :   direction.tripIdentifiers!
+                "stopID": stopID,
+                "routeID": String(direction.routeNumber),
+                "tripIdentifiers": direction.tripIdentifiers!
             ]
 
         }
 
-        request.parameters = ["data" : dictionary]
+        request.parameters = ["data": dictionary]
         request.parameterEncoding = JSONEncoding.default
-        
+
         // Add unique identifier to request
         if let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) {
             request.parameters["uid"] = uid
         }
-        
+
         return request
 
     }
@@ -208,8 +208,8 @@ class Network {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("delay")
         request.method = .get
         request.parameters = [
-            "stopID" : stopId,
-            "tripID" : tripId
+            "stopID": stopId,
+            "tripID": tripId
         ]
 
         // Add unique identifier to request
@@ -219,7 +219,7 @@ class Network {
 
         return request
     }
-    
+
     class func getDelayUrl(tripId: String, stopId: String) -> String {
         let path = "delay"
         return "\(address)\(path)?stopID=\(stopId)&tripID=\(tripId)"
@@ -232,7 +232,7 @@ class Error: JSONDecodable {
 }
 
 class AllBusStops: JSONDecodable {
-    var allStops : [BusStop] = [BusStop]()
+    var allStops: [BusStop] = [BusStop]()
 
     required init(json: JSON) throws {
         if json["success"].boolValue {
@@ -260,7 +260,7 @@ class AllBusStops: JSONDecodable {
             $0[$1.name, default: []].append($1)
         }
 
-        var nonDuplicateStops = crossReference.filter {$1.count == 1}.map { (key, value) -> BusStop in
+        var nonDuplicateStops = crossReference.filter {$1.count == 1}.map { (_, value) -> BusStop in
             return value.first!
         }
 

@@ -233,12 +233,12 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     func showBanner(_ message: String, status: BannerStyle) {
         hideBanner()
         self.banner = StatusBarNotificationBanner(title: message, style: status)
-        
+
         // Change default colors for specific banners
         if status == .info {
             self.banner?.backgroundColor = Colors.dividerTextField
         }
-        
+
         self.banner?.autoDismiss = false
         self.banner?.dismissOnTap = true
         self.banner?.show(queuePosition: .front, on: navigationController)
@@ -323,11 +323,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     if !self.noDataRouteList.contains(busLocation.routeNumber) {
                         self.noDataRouteList.append(busLocation.routeNumber)
                     }
-                    
+
                 case .invalidData:
                     // print("Invalid Data for", busLocation.routeNumber)
 
-                    if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
+                    if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                     }
 
@@ -340,7 +340,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 case .validData:
                     // print("Valid Data for", busLocation.routeNumber)
 
-                    if let previouslyUnavailableRoute = self.noDataRouteList.index(of: busLocation.routeNumber) {
+                    if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
                         self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                     }
 
@@ -354,14 +354,14 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
             } // busLocations for loop end
 
-        }) { (error) in
+        }, failure: { error in
 
             print("RouteDetailVC getBusLocations Error:", error.localizedDescription)
             if let banner = self.banner, !banner.isDisplaying {
                 self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
             }
 
-        } // network completion handler end
+        }) // network completion handler end
 
         // Bounce any visible indicators
         bounceIndicators()
@@ -519,7 +519,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                     // existingIndicator.map = mapView // Uncomment to avoid animation
                 } else {
                     existingIndicator.map = nil
-                    busIndicators.remove(at: busIndicators.index(of: existingIndicator)!)
+                    busIndicators.remove(at: busIndicators.firstIndex(of: existingIndicator)!)
                 }
             } else { // Create Indicator
                 if let placement = calculatePlacement(position: bus.position, view: bearingView) {
