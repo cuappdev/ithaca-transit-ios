@@ -414,8 +414,10 @@ class RouteOptionsViewController: UIViewController {
             if #available(iOS 12.0, *) {
                 let intent = GetRoutesIntent()
                 intent.searchTo = searchTo.name
-                intent.latitude = String(describing: searchTo.latitude)
-                intent.longitude = String(describing: searchTo.longitude)
+                if let latitude = searchTo.latitude, let longitude = searchTo.longitude {
+                    intent.latitude = String(describing: latitude)
+                    intent.longitude = String(describing: longitude)
+                }
                 intent.suggestedInvocationPhrase = "Find bus to \(searchTo.name)"
                 let interaction = INInteraction(intent: intent, response: nil)
                 interaction.donate(completion: { (error) in

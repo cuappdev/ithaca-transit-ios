@@ -6,14 +6,15 @@
 //  Copyright © 2016 cuappdev. All rights reserved.
 //
 
-import UIKit
+import Crashlytics
+import Fabric
 import Firebase
 import GoogleMaps
 import GooglePlaces
-import SwiftyJSON
-import Fabric
-import Crashlytics
+import Intents
 import SafariServices
+import SwiftyJSON
+import UIKit
 import WhatsNewKit
 
 // This is used for app-specific preferences
@@ -78,7 +79,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
         
-        // v1.3 Data Migration
+        patchFunctions(rootVC: rootVC)
+
+        // Initalize window without storyboard
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.window!.rootViewController = navigationController
+        self.window?.makeKeyAndVisible()
+
+        return true
+    }
+    
+    func patchFunctions(rootVC: UIViewController) {
+        
         if
             VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1),
             let homeViewController = rootVC as? HomeViewController
@@ -92,13 +104,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Analytics.shared.log(payload)
             }
         }
-
-        // Initalize window without storyboard
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window!.rootViewController = navigationController
-        self.window?.makeKeyAndVisible()
-
-        return true
+        
+        // v1.4.1 Delete Corrupted Shortcut Donations
+        if VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 4, patch: 0) {
+            print("Begin Deleting Corrupt Shortcut Donations")
+            INInteraction.deleteAll { (error) in
+                if let error = error {
+                    print("Failed to delete corrupt shortcut donations with error: \(error.localizedDescription )")
+                } else {
+                    print("Succesfully deleted corrupt shortcut donations")
+                }
+            }
+        }
     }
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
