@@ -223,19 +223,6 @@ public func ???<T> (optional: T?, defaultValue: @autoclosure () -> String) -> St
     }
 }
 
-func sortFilteredBusStops(busStops: [Place], letter: Character) -> [Place] {
-    var nonLetterArray = [Place]()
-    var letterArray = [Place]()
-    for stop in busStops {
-        if stop.name.first! == letter {
-            letterArray.append(stop)
-        } else {
-            nonLetterArray.append(stop)
-        }
-    }
-    return letterArray + nonLetterArray
-}
-
 extension Collection {
     subscript(optional i: Index) -> Iterator.Element? {
         return self.indices.contains(i) ? self[i] : nil
