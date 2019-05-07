@@ -44,7 +44,7 @@ class HeaderView: UITableViewHeaderFooterView {
             label.text = labelText
             contentView.addSubview(label)
 
-            label.snp.makeConstraints { (make) in
+            label.snp.makeConstraints { make in
                 make.leading.equalToSuperview().offset(20)
                 make.bottom.equalToSuperview().offset(-10)
             }
@@ -56,7 +56,7 @@ class HeaderView: UITableViewHeaderFooterView {
             separatorView.backgroundColor = Colors.backgroundWash
             contentView.addSubview(separatorView)
 
-            separatorView.snp.makeConstraints { (make) in
+            separatorView.snp.makeConstraints { make in
                 make.leading.trailing.equalToSuperview().inset(20)
                 make.height.equalTo(HeaderView.separatorViewHeight)
                 make.top.equalToSuperview()
@@ -80,7 +80,7 @@ class HeaderView: UITableViewHeaderFooterView {
 
         if let button = button {
             contentView.addSubview(button)
-            button.snp.makeConstraints { (make) in
+            button.snp.makeConstraints { make in
                 make.centerY.equalTo(label.snp.centerY)
                 make.trailing.equalToSuperview().offset(-12)
             }

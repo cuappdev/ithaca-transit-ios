@@ -36,6 +36,8 @@ class HomeMapViewController: UIViewController {
     static let optionsCardInset = UIEdgeInsets.init(top: UIScreen.main.bounds.height/10, left: 20, bottom: 0, right: 20)
     let minZoom: Float = 12
     let defaultZoom: Float = 15.5
+    let startingLat = 42.446179
+    let startingLong = -76.485070
     let maxZoom: Float = 25
     let loadingIndicatorSize = CGSize.init(width: 40, height: 40)
 
@@ -47,7 +49,6 @@ class HomeMapViewController: UIViewController {
         super.viewDidLoad()
         setupMapView()
         setupOptionsCard()
-
         setupConstraints()
     }
 
@@ -62,12 +63,10 @@ class HomeMapViewController: UIViewController {
 
         delegate?.reachabilityChanged(connection: reachability.connection)
 
-        switch reachability.connection {
-        case .none:
+        if reachability.connection == .none {
             banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
             banner?.autoDismiss = false
             banner?.show(queuePosition: .front, on: navigationController)
-        default: break
         }
     }
 
@@ -108,7 +107,7 @@ class HomeMapViewController: UIViewController {
 
     func setupMapView() {
         // Set mapView with settings
-        let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: defaultZoom)
+        let camera = GMSCameraPosition.camera(withLatitude: startingLat, longitude: startingLong, zoom: defaultZoom)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
@@ -142,7 +141,7 @@ class HomeMapViewController: UIViewController {
     }
 
     func setupConstraints() {
-        optionsCardVC.view.snp.makeConstraints { (make) in
+        optionsCardVC.view.snp.makeConstraints { make in
             make.leading.top.trailing.equalToSuperview().inset(HomeMapViewController.optionsCardInset)
             make.height.equalTo(optionsCardVC.calculateCardHeight())
         }
@@ -150,17 +149,16 @@ class HomeMapViewController: UIViewController {
 
     /// Show a temporary loading screen
     func showLoadingScreen() {
-
         loadingView.backgroundColor = Colors.backgroundWash
         view.addSubview(loadingView)
 
-        loadingView.snp.makeConstraints { (make) in
+        loadingView.snp.makeConstraints { make in
             make.top.bottom.leading.trailing.equalToSuperview()
         }
 
         let indicator = LoadingIndicator()
         loadingView.addSubview(indicator)
-        indicator.snp.makeConstraints { (make) in
+        indicator.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.size.equalTo(loadingIndicatorSize)
         }
@@ -182,7 +180,7 @@ extension HomeMapViewController: CLLocationManagerDelegate {
             let alertTitle = Constants.Alerts.LocationDisabled.title
             let alertMessage = Constants.Alerts.LocationDisabled.message
             let alertController = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
-            let settingsAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.settings, style: .default) { (_) in
+            let settingsAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.settings, style: .default) { _ in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
 
@@ -196,20 +194,15 @@ extension HomeMapViewController: CLLocationManagerDelegate {
                 return
             }
 
-            if !showReminder {
-                return
-            }
+            if !showReminder { return }
 
             let dontRemindAgainAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default) { _ in
                 self.userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
             }
             alertController.addAction(dontRemindAgainAction)
-
             alertController.addAction(settingsAction)
             alertController.preferredAction = settingsAction
-
             present(alertController, animated: true)
-
         }
     }
 
@@ -233,7 +226,7 @@ extension HomeMapViewController: HomeOptionsCardDelegate {
         let newCardHeight = optionsCardVC.calculateCardHeight()
         if newCardHeight != optionsCardVC.view.frame.height {
             UIView.animate(withDuration: 0.2) {
-                self.optionsCardVC.view.snp.updateConstraints { (make) in
+                self.optionsCardVC.view.snp.updateConstraints { make in
                     make.height.equalTo(newCardHeight)
                 }
                 self.view.layoutIfNeeded()

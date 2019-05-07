@@ -96,7 +96,7 @@ class SearchTableViewManager {
         return newFavoritesList
     }
 
-    //returns the rest so we don't have to re-unarchive it
+    // Returns the rest so we don't have to re-unarchive it
     func deleteRecent(recent: Place, allRecents: [Place]) -> [Place] {
         var newRecentsList: [Place] = []
         for item in allRecents {
@@ -115,7 +115,7 @@ class SearchTableViewManager {
         return newRecentsList
     }
 
-    //clears recent searches
+    // Clears recent searches
     func deleteAllRecents() {
         let newRecents = [Place]()
         do {
