@@ -33,14 +33,14 @@ class FavoritesTableViewController: UIViewController {
         navigationItem.rightBarButtonItem?.setTitleTextAttributes(
             CustomNavigationController.buttonTitleTextAttributes, for: .normal
         )
-        
+
         setupTableView()
     }
-    
+
     override func viewWillLayoutSubviews() {
         setupConstraints()
     }
-    
+
     func setupTableView() {
         tableView = UITableView(frame: .zero)
         tableView.delegate = self
@@ -51,7 +51,7 @@ class FavoritesTableViewController: UIViewController {
         tableView.tableFooterView = UIView()
         view.addSubview(tableView)
     }
-    
+
     func setupConstraints() {
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()

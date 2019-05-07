@@ -9,7 +9,7 @@
 import UIKit
 import SnapKit
 
-protocol HeaderViewDelegate {
+protocol HeaderViewDelegate: class {
     func displayFavoritesTVC()
     func clearRecentSearches()
 }
@@ -20,9 +20,9 @@ enum buttonOption {
     case none
 }
 class HeaderView: UITableViewHeaderFooterView {
-    
-    var headerViewDelegate: HeaderViewDelegate?
-    
+
+    weak var headerViewDelegate: HeaderViewDelegate?
+
     static let separatorViewHeight: CGFloat = 1
 
     var label: UILabel!
@@ -31,7 +31,7 @@ class HeaderView: UITableViewHeaderFooterView {
     @objc func addNewFavorite(sender: UIButton) {
         headerViewDelegate?.displayFavoritesTVC()
     }
-    
+
     @objc func clearRecentSearches(sender: UIButton) {
         headerViewDelegate?.clearRecentSearches()
     }
@@ -43,19 +43,19 @@ class HeaderView: UITableViewHeaderFooterView {
             label.textColor = Colors.metadataIcon
             label.text = labelText
             contentView.addSubview(label)
-            
+
             label.snp.makeConstraints { (make) in
                 make.leading.equalToSuperview().offset(20)
                 make.bottom.equalToSuperview().offset(-10)
             }
             createButton(type: buttonType)
         }
-        
+
         if separatorVisible {
             let separatorView = UIView()
             separatorView.backgroundColor = Colors.backgroundWash
             contentView.addSubview(separatorView)
-            
+
             separatorView.snp.makeConstraints { (make) in
                 make.leading.trailing.equalToSuperview().inset(20)
                 make.height.equalTo(HeaderView.separatorViewHeight)
@@ -67,17 +67,17 @@ class HeaderView: UITableViewHeaderFooterView {
     func createButton(type: buttonOption) {
         button = UIButton(type: .system)
         button?.setTitleColor(Colors.tcatBlue, for: .normal)
-        
+
         switch type {
         case .add:
-            button?.setTitle("Add", for: .normal)
+            button?.setTitle(Constants.Buttons.add, for: .normal)
             button?.addTarget(self, action: #selector(addNewFavorite), for: .touchUpInside)
         case .clear:
-            button?.setTitle("Clear", for: .normal)
+            button?.setTitle(Constants.Buttons.clear, for: .normal)
             button?.addTarget(self, action: #selector(clearRecentSearches), for: .touchUpInside)
         default: return
         }
-        
+
         if let button = button {
             contentView.addSubview(button)
             button.snp.makeConstraints { (make) in

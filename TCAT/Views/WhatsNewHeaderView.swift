@@ -9,7 +9,7 @@
 import UIKit
 import SnapKit
 
-protocol WhatsNewDelegate {
+protocol WhatsNewDelegate: class {
     func getCurrentHomeViewController() -> HomeMapViewController
     func dismissView(card: WhatsNewCard)
 }

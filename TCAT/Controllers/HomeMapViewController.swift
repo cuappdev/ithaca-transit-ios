@@ -8,7 +8,6 @@
 
 import CoreLocation
 import GoogleMaps
-import MapKit
 import NotificationBannerSwift
 import SnapKit
 import UIKit
@@ -18,7 +17,7 @@ protocol HomeMapViewDelegate {
 }
 
 class HomeMapViewController: UIViewController {
-    
+
     let userDefaults = UserDefaults.standard
 
     var currentLocation: CLLocation?
@@ -39,11 +38,11 @@ class HomeMapViewController: UIViewController {
     let defaultZoom: Float = 15.5
     let maxZoom: Float = 25
     let loadingIndicatorSize = CGSize.init(width: 40, height: 40)
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return banner != nil ? .lightContent : .default
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupMapView()
@@ -51,18 +50,18 @@ class HomeMapViewController: UIViewController {
 
         setupConstraints()
     }
-    
+
     @objc func reachabilityChanged(_ notification: Notification) {
         guard let reachability = notification.object as? Reachability else {
             return
         }
-        
+
         // Dismiss current banner or loading indicator, if any
         banner?.dismiss()
         banner = nil
-        
+
         delegate?.reachabilityChanged(connection: reachability.connection)
-        
+
         switch reachability.connection {
         case .none:
             banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
@@ -71,10 +70,10 @@ class HomeMapViewController: UIViewController {
         default: break
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = true
-        
+
         // Add Notification Observers
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(reachabilityChanged(_:)),
@@ -86,29 +85,27 @@ class HomeMapViewController: UIViewController {
             print("HomeVC viewDidLayoutSubviews: Could not start reachability notifier")
         }
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
-        
         StoreReviewHelper.checkAndAskForReview()
-        
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.isNavigationBarHidden = false
         reachability?.stopNotifier()
-        
+
         // Remove Notification Observers
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
-        
+
         // Remove banner and loading indicator
         banner?.dismiss()
         banner = nil
     }
-    
+
     func setupMapView() {
         // Set mapView with settings
         let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: defaultZoom)
@@ -129,47 +126,47 @@ class HomeMapViewController: UIViewController {
         let southWest = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.south, longitude: Constants.Values.RouteMaxima.west)
         let panBounds = GMSCoordinateBounds(coordinate: northEast, coordinate: southWest)
         mapView.cameraTargetBounds = panBounds
-        
+
         self.mapView = mapView
         view.addSubview(mapView)
         mapView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
-    
+
     func setupOptionsCard() {
         optionsCardVC = HomeOptionsCardViewController()
         add(optionsCardVC)
         optionsCardVC.delegate = self
         delegate = optionsCardVC
     }
-    
+
     func setupConstraints() {
         optionsCardVC.view.snp.makeConstraints { (make) in
             make.leading.top.trailing.equalToSuperview().inset(HomeMapViewController.optionsCardInset)
             make.height.equalTo(optionsCardVC.calculateCardHeight())
         }
     }
-    
+
     /// Show a temporary loading screen
     func showLoadingScreen() {
-        
+
         loadingView.backgroundColor = Colors.backgroundWash
         view.addSubview(loadingView)
-        
+
         loadingView.snp.makeConstraints { (make) in
             make.top.bottom.leading.trailing.equalToSuperview()
         }
-        
+
         let indicator = LoadingIndicator()
         loadingView.addSubview(indicator)
         indicator.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
             make.size.equalTo(loadingIndicatorSize)
         }
-        
+
     }
-    
+
     func removeLoadingScreen() {
         loadingView.removeFromSuperview()
         viewWillAppear(false)
@@ -178,9 +175,9 @@ class HomeMapViewController: UIViewController {
 
 // MARK: Location Delegate
 extension HomeMapViewController: CLLocationManagerDelegate {
-    
+
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        
+
         if status == .denied {
             let alertTitle = Constants.Alerts.LocationDisabled.title
             let alertMessage = Constants.Alerts.LocationDisabled.message
@@ -188,7 +185,7 @@ extension HomeMapViewController: CLLocationManagerDelegate {
             let settingsAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.settings, style: .default) { (_) in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
-            
+
             guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
                 userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
                 let cancelAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default, handler: nil)
@@ -198,29 +195,29 @@ extension HomeMapViewController: CLLocationManagerDelegate {
                 present(alertController, animated: true)
                 return
             }
-            
+
             if !showReminder {
                 return
             }
-            
+
             let dontRemindAgainAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default) { _ in
                 self.userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
             }
             alertController.addAction(dontRemindAgainAction)
-            
+
             alertController.addAction(settingsAction)
             alertController.preferredAction = settingsAction
-            
+
             present(alertController, animated: true)
-            
+
         }
     }
-    
+
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         currentLocation = location
     }
-    
+
 }
 
 extension HomeMapViewController: GMSMapViewDelegate {
@@ -231,7 +228,7 @@ extension HomeMapViewController: GMSMapViewDelegate {
 
 extension HomeMapViewController: HomeOptionsCardDelegate {
     func getCurrentLocation() -> CLLocation? { return currentLocation }
-    
+
     func updateSize() {
         let newCardHeight = optionsCardVC.calculateCardHeight()
         if newCardHeight != optionsCardVC.view.frame.height {

@@ -92,15 +92,15 @@ struct WhatsNewCard: Codable {
     var primaryActionTitle: String?
 
     /// The function to perform in the app when an action is selected.
-    var primaryActionHandler: ((_: HomeMapViewController) -> ())?
+    var primaryActionHandler: ((_: HomeMapViewController) -> Void)?
     // MARK: Secondary Button - Gray, Regular
 
     /// The title of the secondary button. If doesn't exist, make nil to hide button.
     var secondaryActionTitle: String?
 
     /// The function to perform in the app when an action is selected.
-    var secondaryActionHandler: ((_: HomeMapViewController) -> ())?
-    
+    var secondaryActionHandler: ((_: HomeMapViewController) -> Void)?
+
     /// Codable support
     enum CodingKeys: String, CodingKey {
         case label
