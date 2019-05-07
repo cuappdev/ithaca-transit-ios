@@ -35,9 +35,6 @@ class FavoritesTableViewController: UIViewController {
         )
 
         setupTableView()
-    }
-
-    override func viewWillLayoutSubviews() {
         setupConstraints()
     }
 
@@ -56,9 +53,9 @@ class FavoritesTableViewController: UIViewController {
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
             if #available(iOS 11.0, *) {
-                make.top.equalToSuperview().offset(view.safeAreaInsets.top)
+                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             } else {
-                make.top.equalToSuperview().offset(view.layoutMargins.top)
+                make.top.equalTo(self.topLayoutGuide.snp.bottom)
             }
         }
     }

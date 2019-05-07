@@ -33,7 +33,7 @@ class HomeMapViewController: UIViewController {
             setNeedsStatusBarAppearanceUpdate()
         }
     }
-    static let optionsCardInset = UIEdgeInsets.init(top: UIScreen.main.bounds.height/10, left: 20, bottom: 0, right: 20)
+    static let optionsCardInset = UIEdgeInsets.init(top: UIScreen.main.bounds.height / 10, left: 20, bottom: 0, right: 20)
     let minZoom: Float = 12
     let defaultZoom: Float = 15.5
     let startingLat = 42.446179
@@ -87,9 +87,7 @@ class HomeMapViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
-        StoreReviewHelper.checkAndAskForReview()
+        checkReviewAndRequestLocation()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -167,7 +165,13 @@ class HomeMapViewController: UIViewController {
 
     func removeLoadingScreen() {
         loadingView.removeFromSuperview()
-        viewWillAppear(false)
+        checkReviewAndRequestLocation()
+    }
+
+    func checkReviewAndRequestLocation() {
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        StoreReviewHelper.checkAndAskForReview()
     }
 }
 
@@ -184,22 +188,21 @@ extension HomeMapViewController: CLLocationManagerDelegate {
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
 
-            guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
-                userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
-                let cancelAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default, handler: nil)
-                alertController.addAction(cancelAction)
-                alertController.addAction(settingsAction)
-                alertController.preferredAction = settingsAction
-                present(alertController, animated: true)
+            if let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool {
+                if showReminder {
+                    let dontRemindAgainAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default) { _ in
+                        self.userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
+                    }
+                    alertController.addAction(dontRemindAgainAction)
+                    alertController.addAction(settingsAction)
+                    alertController.preferredAction = settingsAction
+                    present(alertController, animated: true)
+                }
                 return
             }
-
-            if !showReminder { return }
-
-            let dontRemindAgainAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default) { _ in
-                self.userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
-            }
-            alertController.addAction(dontRemindAgainAction)
+            userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
+            let cancelAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default, handler: nil)
+            alertController.addAction(cancelAction)
             alertController.addAction(settingsAction)
             alertController.preferredAction = settingsAction
             present(alertController, animated: true)
@@ -207,8 +210,9 @@ extension HomeMapViewController: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        currentLocation = location
+        if let location = locations.last {
+            currentLocation = location
+        }
     }
 
 }

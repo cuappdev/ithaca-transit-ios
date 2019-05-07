@@ -91,9 +91,7 @@ class HomeOptionsCardViewController: UIViewController {
         setupInfoButton()
         setupSearchBarSeparator()
         setupSearchBar()
-
         setupConstraints()
-
         updatePlaces()
     }
 
@@ -187,17 +185,13 @@ class HomeOptionsCardViewController: UIViewController {
     }
 
     func tableViewContentHeight() -> CGFloat {
-        var size: CGFloat = 0
-        for section in sections {
+        return sections.reduce(0) { (result, section) -> CGFloat in
             switch section.type {
-            case .favorites, .recentSearches: size += headerHeight
-            case .seeAllStops: size += HeaderView.separatorViewHeight
-            default: break
+            case .favorites, .recentSearches: return result + headerHeight
+            case .seeAllStops: return result + HeaderView.separatorViewHeight
+            default: return result
             }
-            size += tableViewRowHeight*CGFloat(section.items.count)
         }
-
-        return size
     }
 
     /// If the screen is too small, decide whether to show full card or just searchBar
@@ -207,7 +201,7 @@ class HomeOptionsCardViewController: UIViewController {
                 return min(tableViewContentHeight() + CGFloat(searchBarHeight), maxCardHeight) + searchBarSeparatorHeight
             } else { return CGFloat(searchBarHeight) + searchBarSeparatorHeight }
         }
-        return min(tableViewContentHeight() + searchBarHeight, UIScreen.main.bounds.height*maxScreenCoverage) + searchBarSeparatorHeight
+        return min(tableViewContentHeight() + searchBarHeight, UIScreen.main.bounds.height * maxScreenCoverage) + searchBarSeparatorHeight
     }
 
     func updatePlaces() {
