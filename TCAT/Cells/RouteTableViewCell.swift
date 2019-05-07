@@ -223,10 +223,6 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Get Data
 
     private func getDepartureAndArrivalTimes(fromRoute route: Route) -> (departureTime: Date, arrivalTime: Date) {
-        if let firstDepartDirection = route.getFirstDepartRawDirection(), let lastDepartDirection = route.getLastDepartRawDirection() {
-            return (departureTime: firstDepartDirection.startTime, arrivalTime: lastDepartDirection.endTime)
-        }
-
         return (departureTime: route.departureTime, arrivalTime: route.arrivalTime)
     }
 
