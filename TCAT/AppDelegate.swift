@@ -75,7 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Initalize first view based on context
         let showOnboarding = !userDefaults.bool(forKey: Constants.UserDefaults.onboardingShown)
-        let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : HomeViewController()
+        let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : HomeMapViewController()
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
         
@@ -93,7 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if
             VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1),
-            let homeViewController = rootVC as? HomeViewController
+            let homeViewController = rootVC as? HomeMapViewController
         {
             print("Begin Data Migration")
             homeViewController.showLoadingScreen()
@@ -328,7 +328,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown
         // PlaceResult: ithaca-transit://getRoutes?lat=42.44707979999999&long=-76.4885196&destinationName=Hans%20Bethe%20House
 
-        let rootVC = HomeViewController()
+        let rootVC = HomeMapViewController()
         let navigationController = CustomNavigationController(rootViewController: rootVC)
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = navigationController

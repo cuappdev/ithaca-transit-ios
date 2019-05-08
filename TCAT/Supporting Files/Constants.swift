@@ -129,6 +129,8 @@ struct Constants {
         static let done = "Done"
         static let retry = "Retry"
         static let share = "Share"
+        static let add = "Add"
+        static let clear = "Clear"
     }
 
     /// Cell identifiers
