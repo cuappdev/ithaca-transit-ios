@@ -185,12 +185,26 @@ class HomeOptionsCardViewController: UIViewController {
     }
 
     func tableViewContentHeight() -> CGFloat {
+        //        var size: CGFloat = 0
+        //        for section in sections {
+        //            switch section.type {
+        //            case .favorites, .recentSearches: size += headerHeight
+        //            case .seeAllStops: size += HeaderView.separatorViewHeight
+        //            default: break
+        //            }
+        //            size += tableViewRowHeight*CGFloat(section.items.count)
+        //        }
+        //
+        //        return size
+
         return sections.reduce(0) { (result, section) -> CGFloat in
+            var sectionHeaderHeight: CGFloat = 0
             switch section.type {
-            case .favorites, .recentSearches: return result + headerHeight
-            case .seeAllStops: return result + HeaderView.separatorViewHeight
-            default: return result
+            case .favorites, .recentSearches: sectionHeaderHeight = headerHeight
+            case .seeAllStops: sectionHeaderHeight = HeaderView.separatorViewHeight
+            default: break
             }
+            return sectionHeaderHeight + tableViewRowHeight * CGFloat(section.items.count) + result
         }
     }
 
@@ -378,7 +392,7 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
         if sections[indexPath.section].type == .seeAllStops {
             cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as? GeneralTableViewCell
         }
-        // Favorites (including Add First Favorite!), Recent Searches
+            // Favorites (including Add First Favorite!), Recent Searches
         else {
             guard let placeCell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
                 else { return cell }
