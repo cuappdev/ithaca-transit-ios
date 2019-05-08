@@ -185,18 +185,6 @@ class HomeOptionsCardViewController: UIViewController {
     }
 
     func tableViewContentHeight() -> CGFloat {
-        //        var size: CGFloat = 0
-        //        for section in sections {
-        //            switch section.type {
-        //            case .favorites, .recentSearches: size += headerHeight
-        //            case .seeAllStops: size += HeaderView.separatorViewHeight
-        //            default: break
-        //            }
-        //            size += tableViewRowHeight*CGFloat(section.items.count)
-        //        }
-        //
-        //        return size
-
         return sections.reduce(0) { (result, section) -> CGFloat in
             var sectionHeaderHeight: CGFloat = 0
             switch section.type {
