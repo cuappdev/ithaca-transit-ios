@@ -88,7 +88,7 @@ enum PlaceType: String, Codable {
         let duplicates = crossReference.filter { $1.count > 1 }
 
         // Begin filtering stops with same names
-        for key in duplicates.keys {
+        duplicates.keys.forEach { key in
             if
                 let currentBusStops = duplicates[key],
                 let first = currentBusStops.first,
@@ -97,9 +97,7 @@ enum PlaceType: String, Codable {
                 guard
                     let firstLat = first.latitude, let firstLong = first.longitude,
                     let secondLat = second.latitude, let secondLong = second.longitude
-                    else {
-                        continue
-                }
+                    else { return }
                 let firstStopLocation = CLLocation(latitude: firstLat, longitude: firstLong)
                 let secondStopLocation = CLLocation(latitude: secondLat, longitude: secondLong)
 
