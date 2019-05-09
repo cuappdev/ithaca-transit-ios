@@ -10,6 +10,10 @@ import UIKit
 import CoreLocation
 import SwiftyJSON
 
+class Shared {
+
+}
+
 extension UIColor {
 
     // Use six-character string of a hex color for initialization

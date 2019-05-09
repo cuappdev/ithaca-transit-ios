@@ -26,6 +26,7 @@ internal struct MultiRoutesBody: Codable {
     let time: Double
     let end: [String]
     let destinationNames: [String]
+
 }
 
 internal struct SearchResultsBody: Codable {
@@ -56,6 +57,10 @@ class RouteSectionsObject: Codable {
 internal struct GetDelayBody: Codable {
     let stopId: String
     let tripId: String
+
+    func toQueryItems() -> [URLQueryItem] {
+        return [URLQueryItem(name: "stopID", value: stopId), URLQueryItem(name: "tripID", value: tripId)]
+    }
 }
 
 // Response

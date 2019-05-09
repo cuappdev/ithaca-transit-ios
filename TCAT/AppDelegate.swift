@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         // Set up networking
-        setupEndpointConfig()
+        Endpoint.setupEndpointConfig()
         
         // Set Up Google Services
         FirebaseApp.configure()
@@ -121,23 +121,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
-    }
-    
-    func setupEndpointConfig() {
-        
-        //
-        // Schemes
-        //
-        
-        // Release - Uses main production server for Network requests.
-        // Debug - Uses development server for Network requests.
-        
-        guard let baseURL = Bundle.main.object(forInfoDictionaryKey: "SERVER_URL") as? String else {
-            fatalError("Could not find SERVER_URL in Info.plist!")
-        }
-        Endpoint.config.scheme = "https"
-        Endpoint.config.host = baseURL
-        Endpoint.config.commonPath = "/api/v2"
     }
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {

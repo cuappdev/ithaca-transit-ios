@@ -32,6 +32,8 @@ import FutureNova
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        Endpoint.setupEndpointConfig()
 
         if #available(iOSApplicationExtension 10.0, *) {
             extensionContext?.widgetLargestAvailableDisplayMode = .compact

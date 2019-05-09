@@ -12,6 +12,23 @@ import FutureNova
 
 extension Endpoint {
 
+    static func setupEndpointConfig() {
+
+        //
+        // Schemes
+        //
+
+        // Release - Uses main production server for Network requests.
+        // Debug - Uses development server for Network requests.
+
+        guard let baseURL = Bundle.main.object(forInfoDictionaryKey: "SERVER_URL") as? String else {
+            fatalError("Could not find SERVER_URL in Info.plist!")
+        }
+        Endpoint.config.scheme = "https"
+        Endpoint.config.host = baseURL
+        Endpoint.config.commonPath = "/api/v2"
+    }
+
     static func getAllStops() -> Endpoint {
         return Endpoint(path: Constants.Endpoints.allStops)
     }
@@ -90,8 +107,8 @@ extension Endpoint {
     }
 
     static func getDelay(tripId: String, stopId: String) -> Endpoint {
-        let body = GetDelayBody(stopId: stopId, tripId: tripId)
-        return Endpoint(path: Constants.Endpoints.delay, body: body)
+        let queryItems = GetDelayBody(stopId: stopId, tripId: tripId).toQueryItems()
+        return Endpoint(path: Constants.Endpoints.delay, queryItems: queryItems)
     }
 
     static func getDelayUrl(tripId: String, stopId: String) -> String {
