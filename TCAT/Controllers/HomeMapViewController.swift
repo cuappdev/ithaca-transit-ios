@@ -7,6 +7,7 @@
 //
 
 import CoreLocation
+import FutureNova
 import GoogleMaps
 import NotificationBannerSwift
 import SnapKit
@@ -26,7 +27,7 @@ class HomeMapViewController: UIViewController {
     var bounds = GMSCoordinateBounds()
     var optionsCardVC: HomeOptionsCardViewController!
     var delegate: HomeMapViewDelegate?
-    let reachability = Reachability(hostname: Network.ipAddress)
+    let reachability = Reachability(hostname: Endpoint.config.host ?? "")
     var locationManager = CLLocationManager()
     var banner: StatusBarNotificationBanner? {
         didSet {

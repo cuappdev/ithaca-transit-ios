@@ -98,7 +98,7 @@ class SearchTableViewManager {
 
     // Returns the rest so we don't have to re-unarchive it
     func deleteRecent(recent: Place, allRecents: [Place]) -> [Place] {
-        var newRecentsList = allRecents.filter { !recent.isEqual($0) }
+        let newRecentsList = allRecents.filter { !recent.isEqual($0) }
         do {
             let data = try encoder.encode(newRecentsList)
             userDefaults.set(data, forKey: Constants.UserDefaults.recentSearch)
