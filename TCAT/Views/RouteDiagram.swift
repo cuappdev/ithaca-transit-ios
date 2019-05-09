@@ -33,7 +33,7 @@ class RouteDiagram: UIView {
     var routeDiagramElements: [RouteDiagramElement] = []
 
     // MARK: Spacing vars
-    let topMargin: CGFloat = 16
+    let topMargin: CGFloat = 8
     let spaceBtnStopDotAndStopLabel: CGFloat = 14
 
     let spaceBtnBusIconAndRouteLine: CGFloat = 19.5

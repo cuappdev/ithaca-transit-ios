@@ -6,15 +6,17 @@
 //  Copyright © 2016 cuappdev. All rights reserved.
 //
 
-import UIKit
+import Crashlytics
+import Fabric
 import Firebase
 import GoogleMaps
 import GooglePlaces
-import SwiftyJSON
-import Fabric
-import Crashlytics
+import Intents
 import SafariServices
+import SwiftyJSON
+import UIKit
 import WhatsNewKit
+import FutureNova
 
 // This is used for app-specific preferences
 let userDefaults = UserDefaults.standard
@@ -29,8 +31,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         (key: Constants.UserDefaults.recentSearch, defaultValue: [Any]()),
         (key: Constants.UserDefaults.favorites, defaultValue: [Any]())
     ]
+    private let networking: Networking = URLSession.shared.request
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        // Set up networking
+        Endpoint.setupEndpointConfig()
         
         // Set Up Google Services
         FirebaseApp.configure()
@@ -74,14 +80,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Initalize first view based on context
         let showOnboarding = !userDefaults.bool(forKey: Constants.UserDefaults.onboardingShown)
-        let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : HomeViewController()
+        let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : HomeMapViewController()
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
         
-        // v1.3 Data Migration
+        patchFunctions(rootVC: rootVC)
+
+        // Initalize window without storyboard
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.window!.rootViewController = navigationController
+        self.window?.makeKeyAndVisible()
+
+        return true
+    }
+    
+    func patchFunctions(rootVC: UIViewController) {
+        
         if
             VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1),
-            let homeViewController = rootVC as? HomeViewController
+            let homeViewController = rootVC as? HomeMapViewController
         {
             print("Begin Data Migration")
             homeViewController.showLoadingScreen()
@@ -92,13 +109,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Analytics.shared.log(payload)
             }
         }
-
-        // Initalize window without storyboard
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window!.rootViewController = navigationController
-        self.window?.makeKeyAndVisible()
-
-        return true
+        
+        // v1.4.1 Delete Corrupted Shortcut Donations
+        if VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 4, patch: 0) {
+            print("Begin Deleting Corrupt Shortcut Donations")
+            INInteraction.deleteAll { (error) in
+                if let error = error {
+                    print("Failed to delete corrupt shortcut donations with error: \(error.localizedDescription )")
+                } else {
+                    print("Succesfully deleted corrupt shortcut donations")
+                }
+            }
+        }
     }
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
@@ -198,10 +220,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Unwrap `Any` to `BusStop` or `PlaceResult`
             if let busStop = item as? BusStop {
                 optionalPlace = Place(name: busStop.name, latitude: busStop.lat, longitude: busStop.long)
+                optionalPlace?.type = .busStop
             }
             
             if let placeResult = item as? PlaceResult {
                 optionalPlace = Place(name: placeResult.name, placeDescription: placeResult.detail, placeIdentifier: placeResult.placeID)
+                optionalPlace?.type = .googlePlace
             }
             
             guard let place = optionalPlace else {
@@ -262,20 +286,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
+    private func getAllStops() -> Future<Response<[Place]>> {
+        return networking(Endpoint.getAllStops()).decode()
+    }
+
     /* Get all bus stops and store in userDefaults */
     func getBusStops() {
-        Network.getAllStops().perform(withSuccess: { allBusStopsRequest in
-            let allBusStops = allBusStopsRequest.data
-            if allBusStops.isEmpty {
-                self.handleGetAllStopsError()
-            } else {
-                let encodedObject = try? JSONEncoder().encode(allBusStops)
-                userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
+        getAllStops().observe { [weak self] result in
+            guard let `self` = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .value(let response):
+                    let filteredStops = Place.filterAllStops(allStops: response.data)
+                    if filteredStops.isEmpty { self.handleGetAllStopsError() }
+                    else {
+                        let encodedObject = try? JSONEncoder().encode(filteredStops)
+                        userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
+                    }
+                case .error(let error):
+                    print("getBusStops error:", error.localizedDescription)
+                    self.handleGetAllStopsError()
+                }
             }
-        }, failure: { error in
-            print("getBusStops error:", error.localizedDescription)
-            self.handleGetAllStopsError()
-        })
+        }
     }
 
     func showWhatsNew(items: [WhatsNew.Item]) {
@@ -309,7 +342,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown
         // PlaceResult: ithaca-transit://getRoutes?lat=42.44707979999999&long=-76.4885196&destinationName=Hans%20Bethe%20House
 
-        let rootVC = HomeViewController()
+        let rootVC = HomeMapViewController()
         let navigationController = CustomNavigationController(rootViewController: rootVC)
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = navigationController

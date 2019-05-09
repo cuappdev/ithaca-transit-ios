@@ -14,18 +14,10 @@ struct WhatsNewCard: Codable {
 
     static let newFeature = WhatsNewCard(
         label: "New in Ithaca Transit",
-        title: "Integrated Service Alerts",
-        description: "View all active service alerts provided by TCAT. All route calculations incorporate this data.",
-        primaryActionTitle: "View",
-        primaryActionHandler: { (homeViewController) in
-            let informationViewController = InformationViewController()
-            let navigationVC = CustomNavigationController(rootViewController: informationViewController)
-            homeViewController.present(navigationVC, animated: true, completion: {
-                let payload = ServiceAlertsPayload(didTapWhatsNew: true)
-                Analytics.shared.log(payload)
-                informationViewController.showServiceAlerts()
-            })
-        },
+        title: "Today Extension Widget",
+        description: "View live bus routes to your favorite places at a glance. Tap Edit in Notification Center and add Ithaca Transit to get started.",
+        primaryActionTitle: "Dismiss",
+        primaryActionHandler: nil,
         secondaryActionTitle: nil,
         secondaryActionHandler: nil
     )
@@ -100,15 +92,14 @@ struct WhatsNewCard: Codable {
     var primaryActionTitle: String?
 
     /// The function to perform in the app when an action is selected.
-    var primaryActionHandler: ((_: HomeViewController) -> Void)?
-
+    var primaryActionHandler: ((_: HomeMapViewController) -> Void)?
     // MARK: Secondary Button - Gray, Regular
 
     /// The title of the secondary button. If doesn't exist, make nil to hide button.
     var secondaryActionTitle: String?
 
     /// The function to perform in the app when an action is selected.
-    var secondaryActionHandler: ((_: HomeViewController) -> Void)?
+    var secondaryActionHandler: ((_: HomeMapViewController) -> Void)?
 
     /// Codable support
     enum CodingKeys: String, CodingKey {

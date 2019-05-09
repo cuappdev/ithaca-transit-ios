@@ -13,8 +13,8 @@ import DZNEmptyDataSet
 import NotificationBannerSwift
 import Crashlytics
 import Pulley
-import TRON
 import Intents
+import FutureNova
 
 enum SearchBarType: String {
     case from, to
@@ -60,12 +60,18 @@ class RouteOptionsViewController: UIViewController {
 
     // MARK: Data vars
 
-    var routes: [Route] = []
+    var routes: [[Route]] = []
+
+    /// Returns routes from each section in order
+    var allRoutes: [Route] {
+        return routes.flatMap { $0 }
+    }
     var timers: [Int: Timer] = [:]
 
     // MARK: Reachability vars
 
-    let reachability: Reachability? = Reachability(hostname: Network.ipAddress)
+    let reachability: Reachability? = Reachability(hostname: Endpoint.config.host ?? "")
+    private let networking: Networking = URLSession.shared.request
 
     var banner: StatusBarNotificationBanner? {
         didSet {
@@ -399,18 +405,24 @@ class RouteOptionsViewController: UIViewController {
             }
 
             // MARK: Search for Routes Data Request
-
-            Network.getRoutes(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType) { request in
-                let requestURL = Network.getRequestURL(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType)
-                self.processRequest(request: request, requestURL: requestURL, endPlace: searchTo)
+            if let result =  getRoutes(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType) {
+                result.observe(with: { [weak self] result in
+                    guard let `self` = self else { return }
+                    DispatchQueue.main.async {
+                        let requestURL = Endpoint.getRequestURL(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType)
+                        self.processRequest(result: result, requestURL: requestURL, endPlace: searchTo)
+                    }
+                })
             }
 
             // Donate GetRoutes intent
             if #available(iOS 12.0, *) {
                 let intent = GetRoutesIntent()
                 intent.searchTo = searchTo.name
-                intent.latitude = String(describing: searchTo.latitude)
-                intent.longitude = String(describing: searchTo.longitude)
+                if let latitude = searchTo.latitude, let longitude = searchTo.longitude {
+                    intent.latitude = String(describing: latitude)
+                    intent.longitude = String(describing: longitude)
+                }
                 intent.suggestedInvocationPhrase = "Find bus to \(searchTo.name)"
                 let interaction = INInteraction(intent: intent, response: nil)
                 interaction.donate(completion: { (error) in
@@ -423,41 +435,66 @@ class RouteOptionsViewController: UIViewController {
 
     }
 
-    func processRequest(request: APIRequest<RoutesRequest, Error>, requestURL: String, endPlace: Place) {
-        JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
+    private func getRoutes(start: Place,
+                           end: Place,
+                           time: Date,
+                           type: SearchType) -> Future<Response<RouteSectionsObject>>? {
+        if let endpoint = Endpoint.getRoutes(start: start, end: end, time: time, type: type) {
+            return networking(endpoint).decode()
+        } else { return nil }
+    }
 
-        request.performCollectingTimeline { (response) in
-            switch response.result {
-            case .success(let routesResponse):
-
-                // Save to JSONFileManager
-                if let data = response.data {
-                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) } catch let error {
-                        let fileName = "RouteOptionsViewController"
-                        let line = "\(fileName) \(#function): \(error.localizedDescription)"
-                        print(line)
-                    }
-                }
-
-                for each in routesResponse.data {
-                    each.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
-                }
-                self.routes = routesResponse.data
-                self.requestDidFinish(perform: [.hideBanner])
-            case .failure(let networkError):
-                if let error = networkError as? APIError<Error> {
-                    self.processRequestError(error: error, requestURL: requestURL)
+    private func routeSelected(routeId: String) {
+        networking(Endpoint.routeSelected(routeId: routeId)).observe { [weak self] result in
+            guard self != nil else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .value:
+                    print("[RouteOptionsViewController] Route Selected - Success")
+                case .error(let error):
+                    print("[RouteOptionsViewController] Route Selected - Error:", error)
                 }
             }
         }
+    }
+    func processRequest(result: Result<Response<RouteSectionsObject>>, requestURL: String, endPlace: Place) {
+        JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
 
+        switch result {
+        case .value(let response):
+
+            // Save to JSONFileManager
+            if let data = try? JSONEncoder().encode(response) {
+                do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) } catch let error {
+                    let fileName = "RouteOptionsViewController"
+                    let line = "\(fileName) \(#function): \(error.localizedDescription)"
+                    print(line)
+                }
+            }
+            // Parse sections of routes
+            [response.data.fromStop, response.data.boardingSoon, response.data.walking]
+                .forEach { (routeSection) in
+                    routeSection.forEach { (route) in
+                        route.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
+                    }
+                    // Allow for custom display in search results for fromStop.
+                    // We want to display a [] if a bus stop is the origin and doesn't exist
+                    if !routeSection.isEmpty || self.searchFrom?.type == .busStop {
+                        self.routes.append(routeSection)
+                    }
+
+            }
+            self.requestDidFinish(perform: [.hideBanner])
+        case .error(let error):
+            self.processRequestError(error: error, requestURL: requestURL)
+        }
         let payload = DestinationSearchedEventPayload(destination: endPlace.name, requestUrl: requestURL)
         Analytics.shared.log(payload)
     }
 
-    func processRequestError(error: APIError<Error>, requestURL: String) {
-        let title = "Network Failure: \((error.error as NSError?)?.domain ?? "No Domain")"
-        let description = (error.localizedDescription) + ", " + ((error.error as NSError?)?.description ?? "n/a")
+    func processRequestError(error: Error, requestURL: String) {
+        let title = "Network Failure: \((error as NSError?)?.domain ?? "No Domain")"
+        let description = (error.localizedDescription) + ", " + ((error as NSError?)?.description ?? "n/a")
 
         routes = []
         timers = [:]
@@ -709,7 +746,7 @@ class RouteOptionsViewController: UIViewController {
 
     func createRouteDetailViewController(from indexPath: IndexPath) -> RouteDetailViewController? {
 
-        let route = routes[indexPath.row]
+        let route = routes[indexPath.section][indexPath.row]
         var routeDetailCurrentLocation = currentLocation
         if searchTo?.name != Constants.General.currentLocation && searchFrom?.name != Constants.General.currentLocation {
             routeDetailCurrentLocation = nil // If route doesn't involve current location, don't pass along for view.
@@ -736,7 +773,8 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
         if sender.state == .began {
             let point = sender.location(in: routeResults)
             if let indexPath = routeResults.indexPathForRow(at: point), let cell = routeResults.cellForRow(at: indexPath) {
-                presentShareSheet(from: view, for: routes[indexPath.row], with: cell.getImage())
+                let route = routes[indexPath.section][indexPath.row]
+                presentShareSheet(from: view, for: route, with: cell.getImage())
             }
         }
     }
@@ -892,11 +930,11 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
 // MARK: TableView DataSource
 extension RouteOptionsViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return routes.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return routes.count
+        return routes[section].count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -904,10 +942,10 @@ extension RouteOptionsViewController: UITableViewDataSource {
         var cell = tableView.dequeueReusableCell(withIdentifier: RouteTableViewCell.identifier, for: indexPath) as? RouteTableViewCell
 
         if cell == nil {
-            cell = RouteTableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: RouteTableViewCell.identifier)
+            cell = RouteTableViewCell(style: .default, reuseIdentifier: RouteTableViewCell.identifier)
         }
 
-        cell?.setData(route: routes[indexPath.row], rowNum: indexPath.row)
+        cell?.setData(route: routes[indexPath.section][indexPath.row], rowNum: indexPath.row)
 
         // Activate timers
         let timerDoesNotExist = (timers[indexPath.row] == nil)
@@ -931,8 +969,11 @@ extension RouteOptionsViewController: UITableViewDataSource {
 
 // MARK: TableView Delegate
 extension RouteOptionsViewController: UITableViewDelegate {
+
     private func setupRouteResultsTableView() {
-        routeResults = UITableView(frame: CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0)), style: .plain)
+        let height = view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0)
+        let frame = CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: height)
+        routeResults = UITableView(frame: frame, style: .grouped)
         routeResults.delegate = self
         routeResults.allowsSelection = true
         routeResults.dataSource = self
@@ -953,19 +994,81 @@ extension RouteOptionsViewController: UITableViewDelegate {
         if let routeDetailViewController = createRouteDetailViewController(from: indexPath) {
             let payload = RouteResultsCellTappedEventPayload()
             Analytics.shared.log(payload)
-            let routeId = routes[indexPath.row].routeId
-            Network.routeSelected(routeId: routeId).perform(withSuccess: { (request) in
-                print("[RouteOptionsViewController] Route Selected - Success:", request["success"])
-            }, failure: { (error) in
-                print("[RouteOptionsViewController] Route Selected - Error:", error)
-            })
+            let routeId = routes[indexPath.section][indexPath.row].routeId
+            routeSelected(routeId: routeId)
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }
 
+    /// Different header text based on variable data results (see designs)
+    func headerTitles(section: Int) -> String? {
+        if routes.count == 3 {
+            switch section {
+            case 1:
+                if (routes.first?.isEmpty ?? false) {
+                    return Constants.TableHeaders.boardingSoon
+                } else {
+                    return Constants.TableHeaders.boardingSoonFromNearby
+                }
+            case 2: return Constants.TableHeaders.walking
+            default: return nil
+            }
+        } else {
+            switch section {
+            case 1: return Constants.TableHeaders.walking
+            default: return nil
+            }
+        }
+    }
+
+    func isEmptyHeaderView(section: Int) -> Bool {
+         return section == 0 && searchFrom?.type == .busStop && routes.first?.isEmpty ?? false
+    }
+
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let tableViewTopMargin: CGFloat = 12
-        return UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: tableViewTopMargin))
+
+        let containerView = UIView()
+        let label = UILabel()
+
+        // Special centered message alerting no fromStop routes (first in 2D routes array)
+        if isEmptyHeaderView(section: section) {
+            label.text = Constants.TableHeaders.noAvailableRoutes + " from \(searchFrom?.name ?? "Starting Bus Stop")."
+            label.font = .getFont(.regular, size: 14)
+            label.textAlignment = .center
+            label.textColor = Colors.secondaryText
+
+            containerView.addSubview(label)
+
+            label.snp.makeConstraints { (make) in
+                make.centerX.centerY.equalToSuperview()
+            }
+        } else {
+            label.text = headerTitles(section: section)
+            label.font = .getFont(.regular, size: 12)
+            label.textColor = Colors.secondaryText
+
+            containerView.addSubview(label)
+
+            label.snp.makeConstraints { (make) in
+                make.leading.equalToSuperview().offset(12)
+                make.bottom.equalToSuperview().offset(-12)
+            }
+        }
+
+        return containerView
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if isEmptyHeaderView(section: section) {
+            return 60
+        } else {
+            return UIFont.getFont(.regular, size: 12).lineHeight
+        }
+    }
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let tableViewPadding: CGFloat = 12
+        return UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: tableViewPadding))
     }
 
 }
