@@ -10,7 +10,6 @@ import UIKit
 import MapKit
 import SwiftyJSON
 import CoreLocation
-import TRON
 
 let increaseTapTargetTag: Int = 1865
 
@@ -195,23 +194,6 @@ extension Array where Element: UIView {
 extension Array where Element: Comparable {
     func containsSameElements(as other: [Element]) -> Bool {
         return self.count == other.count && self.sorted() == other.sorted()
-    }
-}
-
-extension Array: JSONDecodable {
-    public init(json: JSON) {
-        self.init(json.arrayValue.compactMap {
-            if let type = Element.self as? JSONDecodable.Type {
-                let element: Element?
-                do {
-                    element = try type.init(json: $0) as? Element
-                } catch {
-                    return nil
-                }
-                return element
-            }
-            return nil
-        })
     }
 }
 

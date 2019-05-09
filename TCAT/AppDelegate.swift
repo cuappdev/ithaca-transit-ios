@@ -16,6 +16,7 @@ import SafariServices
 import SwiftyJSON
 import UIKit
 import WhatsNewKit
+import FutureNova
 
 // This is used for app-specific preferences
 let userDefaults = UserDefaults.standard
@@ -30,8 +31,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         (key: Constants.UserDefaults.recentSearch, defaultValue: [Any]()),
         (key: Constants.UserDefaults.favorites, defaultValue: [Any]())
     ]
+    private let networking: Networking = URLSession.shared.request
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        // Set up networking
+        Endpoint.setupEndpointConfig()
         
         // Set Up Google Services
         FirebaseApp.configure()
@@ -281,20 +286,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
+    private func getAllStops() -> Future<Response<[Place]>> {
+        return networking(Endpoint.getAllStops()).decode()
+    }
+
     /* Get all bus stops and store in userDefaults */
     func getBusStops() {
-        Network.getAllStops().perform(withSuccess: { allBusStopsRequest in
-            let allBusStops = allBusStopsRequest.data
-            if allBusStops.isEmpty {
-                self.handleGetAllStopsError()
-            } else {
-                let encodedObject = try? JSONEncoder().encode(allBusStops)
-                userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
+        getAllStops().observe { [weak self] result in
+            guard let `self` = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .value(let response):
+                    let filteredStops = Place.filterAllStops(allStops: response.data)
+                    if filteredStops.isEmpty { self.handleGetAllStopsError() }
+                    else {
+                        let encodedObject = try? JSONEncoder().encode(filteredStops)
+                        userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
+                    }
+                case .error(let error):
+                    print("getBusStops error:", error.localizedDescription)
+                    self.handleGetAllStopsError()
+                }
             }
-        }, failure: { error in
-            print("getBusStops error:", error.localizedDescription)
-            self.handleGetAllStopsError()
-        })
+        }
     }
 
     func showWhatsNew(items: [WhatsNew.Item]) {
