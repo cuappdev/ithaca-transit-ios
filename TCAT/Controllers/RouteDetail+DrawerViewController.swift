@@ -18,7 +18,7 @@ struct RouteDetailCellSize {
     static let indentedWidth: CGFloat = 140
 }
 
-class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDelegate {
+class RouteDetailDrawerViewController: UIViewController {
 
     // MARK: Variables
 
@@ -41,6 +41,8 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
     var busDelayNetworkTimer: Timer?
     /// Number of seconds to wait before auto-refreshing bus delay network call.
     var busDelayNetworkRefreshRate: Double = 10
+    
+    let chevronFlipDurationTime = 0.25
 
     private let networking: Networking = URLSession.shared.request
 
@@ -189,7 +191,7 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
                                 return isAfter && $0.type != .depart
                                 }
 
-                                .forEach { (direction) in
+                                .forEach { direction in
                                     if direction.delay != nil {
                                         direction.delay! += delayDirection.delay ?? 0
                                     } else {
@@ -218,11 +220,9 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
     func toggleCellExpansion(at indexPath: IndexPath?) {
 
         guard let indexPath = indexPath else { return }
-        var expandedCellCount = 0
-        for (origRow, expandedCount) in expandedCellDict {
-            if indexPath.row > origRow {
-                expandedCellCount += expandedCount
-            }
+        let expandedCellCount = expandedCellDict.reduce(0) { (result, arg1) -> Int in
+            let (_, expandedCount) = arg1
+            return result + expandedCount
         }
 
         let newIndexPath = IndexPath(row: indexPath.row + expandedCellCount, section: indexPath.section)
@@ -233,37 +233,28 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
 
         // Flip arrow
         cell.chevron.layer.removeAllAnimations()
-
         cell.isExpanded.toggle()
 
         let transitionOptionsOne: UIView.AnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
-        UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsOne, animations: {
+        UIView.transition(with: cell.chevron, duration: chevronFlipDurationTime, options: transitionOptionsOne, animations: {
             cell.chevron.isHidden = true
         })
 
         cell.chevron.transform = cell.chevron.transform.rotated(by: CGFloat.pi)
 
         let transitionOptionsTwo: UIView.AnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
-        UIView.transition(with: cell.chevron, duration: 0.25, options: transitionOptionsTwo, animations: {
+        UIView.transition(with: cell.chevron, duration: chevronFlipDurationTime, options: transitionOptionsTwo, animations: {
             cell.chevron.isHidden = false
         })
 
         // Prepare bus stop data to be inserted / deleted into Directions array
-        var busStops = [Direction]()
-        for stop in direction.stops {
-            let stopAsDirection = Direction(name: stop.name, path: direction.path)
-            busStops.append(stopAsDirection)
-        }
-        var indexPathArray: [IndexPath] = []
+        var busStops = direction.stops.map { stop in return Direction(name: stop.name, path: direction.path) }
         let busStopRange = (newIndexPath.row + 1)..<(newIndexPath.row + 1) + busStops.count
-        for i in busStopRange {
-            indexPathArray.append(IndexPath(row: i, section: 0))
-        }
+        var indexPathArray = busStopRange.map { i in return IndexPath(row: i, section: 0) }
 
         tableView.beginUpdates()
 
         // Insert or remove bus stop data based on selection
-
         if cell.isExpanded {
             directions.insert(contentsOf: busStops, at: newIndexPath.row + 1)
             tableView.insertRows(at: indexPathArray, with: .middle)
@@ -278,9 +269,10 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
 
         busStops = []
         indexPathArray = []
-
     }
+}
 
+extension RouteDetailDrawerViewController: UIGestureRecognizerDelegate {
     // MARK: Gesture Recognizers and Interaction-Related Functions
 
     /** Animate detailTableView depending on context, centering map */
@@ -308,14 +300,14 @@ class RouteDetailDrawerViewController: UIViewController, UIGestureRecognizerDele
 
 extension RouteDetailDrawerViewController: LargeDetailTableViewDelegate {
 
-    func collapseCells(indexPath: IndexPath) {
-        toggleCellExpansion(at: indexPath)
+    func collapseCells(on cell: UITableViewCell) {
+        toggleCellExpansion(at: tableView.indexPath(for: cell))
     }
 
-    func expandCells(indexPath: IndexPath) {
+    func expandCells(on cell: UITableViewCell) {
         if justLoaded { summaryTapped() }
 
-        toggleCellExpansion(at: indexPath)
+        toggleCellExpansion(at: tableView.indexPath(for: cell))
 
         tableView.layoutIfNeeded()
         tableView.layoutSubviews()
@@ -337,18 +329,21 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
         justLoaded = false
 
         // Center map on drawer change
-        if drawer.drawerPosition == .collapsed || drawer.drawerPosition == .partiallyRevealed {
+        switch drawer.drawerPosition {
+        case .collapsed, .partiallyRevealed:
             guard let contentViewController = drawer.primaryContentViewController as? RouteDetailContentViewController
                 else { return }
             if let direction = selectedDirection {
                 if direction.type == .depart || direction.type == .transfer {
                     contentViewController.centerMap(on: direction)
                 } else {
-                    contentViewController.centerMap(on: direction, followPath: true)
+                    contentViewController.centerMap(on: direction, overviewOfPath: true)
                 }
+                selectedDirection = nil
             } else {
-                contentViewController.centerMap(topHalfCentered: drawer.drawerPosition == .partiallyRevealed)
+                contentViewController.centerMapOnOverview(drawerPreviewing: drawer.drawerPosition == .partiallyRevealed)
             }
+        default: break
         }
     }
 
@@ -363,7 +358,7 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
                 UIView.animate(withDuration: 0.25, animations: {
                     self.safeAreaCover?.alpha = 0.0
                     self.visible = false
-                }, completion: { (_) in
+                }, completion: { _ in
                     self.ongoing = false
                 })
             }
@@ -495,7 +490,7 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
         selectedDirection = direction
 
         if let drawer = self.parent as? RouteDetailViewController {
-            drawer.setDrawerPosition(position: .partiallyRevealed, animated: true)
+            drawer.setDrawerPosition(position: .collapsed, animated: true)
         }
     }
 }

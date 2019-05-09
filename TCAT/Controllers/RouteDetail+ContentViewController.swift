@@ -50,10 +50,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     let markerRadius: CGFloat = 8
     let mapPadding: CGFloat = 80
 
-    let minZoom: Float = 12
-    let defaultZoom: Float = 15.5
-    let maxZoom: Float = 25
-
     /** Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
      * dummy data will be used. The directions parameter have logical assumptions,
      * such as ArriveDirection always comes after DepartDirection. */
@@ -202,12 +198,12 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     override func loadView() {
 
         // Set mapView with settings
-        let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: defaultZoom)
+        let camera = GMSCameraPosition.camera(withLatitude: Constants.Map.startingLat, longitude: Constants.Map.startingLong, zoom: Constants.Map.defaultZoom)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
         mapView.paddingAdjustmentBehavior = .never // handled by code
-        mapView.setMinZoom(minZoom, maxZoom: maxZoom)
+        mapView.setMinZoom(Constants.Map.minZoom, maxZoom: Constants.Map.maxZoom)
         mapView.settings.compassButton = true
         mapView.settings.myLocationButton = true
         mapView.settings.tiltGestures = false
@@ -273,9 +269,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         if initalUpdate { // try and cut down on didUpdateLocation spam.
             initalUpdate = false
             drawMapRoute()
-            centerMap(topHalfCentered: true)
+            centerMapOnOverview(drawerPreviewing: true)
         }
-        // (self.parent as? PulleyViewController)?.bounceDrawer()
     }
 
     // MARK: Network Calls
@@ -662,14 +657,14 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     // MARK: Map Functions
 
     /** Centers map around all waypoints in routePaths, and animates the map */
-    func centerMap(topHalfCentered: Bool = false) {
+    func centerMapOnOverview(drawerPreviewing: Bool = false) {
 
         var bottomOffset: CGFloat = (UIScreen.main.bounds.height / 2) - (mapPadding / 2)
         if #available(iOS 11.0, *) {
             bottomOffset -= view.safeAreaInsets.bottom
         }
 
-        if topHalfCentered {
+        if drawerPreviewing {
             let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: mapPadding / 2, bottom: bottomOffset, right: mapPadding / 2)
             let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
             mapView.animate(with: update)
@@ -679,11 +674,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         }
     }
 
-    func centerMap(on direction: Direction, followPath: Bool = false, topHalfCentered: Bool = false) {
+    func centerMap(on direction: Direction, overviewOfPath: Bool = false, drawerPreviewing: Bool = false) {
 
         let path = GMSMutablePath()
 
-        if followPath {
+        if overviewOfPath {
             for loc in direction.path {
                 path.add(loc)
             }
@@ -692,15 +687,10 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         }
 
         let bounds = GMSCoordinateBounds(path: path)
-        var bottomOffset: CGFloat = (UIScreen.main.bounds.height / 2) - (mapPadding / 2)
-        if #available(iOS 11.0, *) {
-            bottomOffset -= view.safeAreaInsets.bottom
-        }
-        let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: mapPadding / 2, bottom: bottomOffset, right: mapPadding / 2)
-        let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
+        let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
         mapView.animate(with: update)
-        if !followPath {
-            mapView.animate(toZoom: 17)
+        if !overviewOfPath {
+            mapView.animate(toZoom: Constants.Map.directionZoom)
         }
     }
 

@@ -9,8 +9,8 @@
 import UIKit
 
 protocol LargeDetailTableViewDelegate: class {
-    func collapseCells(indexPath: IndexPath)
-    func expandCells(indexPath: IndexPath)
+    func collapseCells(on cell: UITableViewCell)
+    func expandCells(on cell: UITableViewCell)
 }
 
 class LargeDetailTableViewCell: UITableViewCell {
@@ -21,7 +21,6 @@ class LargeDetailTableViewCell: UITableViewCell {
     var busIconView: BusIcon!
     var chevron: IncreasedTapSizeButton!
     weak var delegate: LargeDetailTableViewDelegate?
-    var indexPath: IndexPath!
 
     let paragraphStyle = NSMutableParagraphStyle()
     let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
@@ -88,7 +87,6 @@ class LargeDetailTableViewCell: UITableViewCell {
         let firstStep = indexPath.row == 0
         self.direction = direction
         cellHeight = height()
-        self.indexPath = indexPath
 
         let shouldAddViews = iconView == nil || busIconView == nil ||
             titleLabel == nil || detailLabel == nil
@@ -194,9 +192,9 @@ class LargeDetailTableViewCell: UITableViewCell {
 
     @objc func chevronButtonPressed() {
         if isExpanded {
-            delegate?.collapseCells(indexPath: indexPath)
+            delegate?.collapseCells(on: self)
         } else {
-            delegate?.expandCells(indexPath: indexPath)
+            delegate?.expandCells(on: self)
         }
     }
 }

@@ -190,6 +190,15 @@ struct Constants {
         static let serviceAlerts = "Service Alerts"
     }
 
+    struct Map {
+        static let minZoom: Float = 12
+        static let directionZoom: Float = 17 // Use when zooming in on a direction in routeDetailsVC
+        static let startingLat = 42.446179
+        static let startingLong = -76.485070
+        static let defaultZoom: Float = 15.5 // Use as initial zoom on homeMapVC
+        static let maxZoom: Float = 25
+    }
+
     /// The phrases used in onboarding
     struct Onboarding {
         // Title label phrases
