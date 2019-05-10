@@ -255,7 +255,7 @@ UIGestureRecognizerDelegate, PulleyDrawerViewControllerDelegate {
     }
 
     private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
-        return networking(Endpoint.getDelay(tripId: tripId, stopId: stopId)).decode()
+        return networking(Endpoint.getDelay(tripID: tripId, stopID: stopId)).decode()
     }
 
     // MARK: TableView Data Source and Delegate Functions
