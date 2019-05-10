@@ -35,11 +35,6 @@ class HomeMapViewController: UIViewController {
         }
     }
     static let optionsCardInset = UIEdgeInsets.init(top: UIScreen.main.bounds.height / 10, left: 20, bottom: 0, right: 20)
-    let minZoom: Float = 12
-    let defaultZoom: Float = 15.5
-    let startingLat = 42.446179
-    let startingLong = -76.485070
-    let maxZoom: Float = 25
     let loadingIndicatorSize = CGSize.init(width: 40, height: 40)
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -106,12 +101,12 @@ class HomeMapViewController: UIViewController {
 
     func setupMapView() {
         // Set mapView with settings
-        let camera = GMSCameraPosition.camera(withLatitude: startingLat, longitude: startingLong, zoom: defaultZoom)
+        let camera = GMSCameraPosition.camera(withLatitude: Constants.Map.startingLat, longitude: Constants.Map.startingLong, zoom: 15.5)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
         mapView.paddingAdjustmentBehavior = .never // handled by code
-        mapView.setMinZoom(minZoom, maxZoom: maxZoom)
+        mapView.setMinZoom(Constants.Map.minZoom, maxZoom: Constants.Map.maxZoom)
         mapView.settings.compassButton = true
         mapView.settings.myLocationButton = true
         mapView.settings.tiltGestures = false

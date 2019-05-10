@@ -8,13 +8,19 @@
 
 import UIKit
 
+protocol LargeDetailTableViewDelegate: class {
+    func collapseCells(on cell: UITableViewCell)
+    func expandCells(on cell: UITableViewCell)
+}
+
 class LargeDetailTableViewCell: UITableViewCell {
 
     var iconView: DetailIconView!
     var titleLabel: UILabel!
     var detailLabel: UILabel!
     var busIconView: BusIcon!
-    var chevron: UIImageView!
+    var chevron: IncreasedTapSizeButton!
+    weak var delegate: LargeDetailTableViewDelegate?
 
     let paragraphStyle = NSMutableParagraphStyle()
     let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
@@ -25,12 +31,13 @@ class LargeDetailTableViewCell: UITableViewCell {
     let edgeSpacing: CGFloat = 16
     let labelSpacing: CGFloat = 4
 
-    func getChevron() -> UIImageView {
-        let chevron = UIImageView()
+    func getChevron() -> IncreasedTapSizeButton {
+        let chevron = IncreasedTapSizeButton(frame: .zero, sizeIncrease: .init(width: 30, height: 30))
         chevron.frame.size = CGSize(width: 13.5, height: 8)
         chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
-        chevron.image = UIImage(named: "arrow")
+        chevron.setImage(UIImage(named: "arrow"), for: .normal)
         chevron.tintColor = Colors.metadataIcon
+        chevron.addTarget(self, action: #selector(chevronButtonPressed), for: .touchUpInside)
         return chevron
     }
 
@@ -74,20 +81,10 @@ class LargeDetailTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func prepareForReuse() {
-
-//        busIconView.prepareForReuse()
-//        iconView.prepareForReuse()
-//
-//        chevron.removeFromSuperview()
-//        titleLabel.removeFromSuperview()
-//        detailLabel.removeFromSuperview()
-
-    }
-
     /** Precondition: Direction is BoardDirection */
-    func setCell(_ direction: Direction, firstStep: Bool) {
+    func setCell(_ direction: Direction, indexPath: IndexPath) {
 
+        let firstStep = indexPath.row == 0
         self.direction = direction
         cellHeight = height()
 
@@ -193,4 +190,39 @@ class LargeDetailTableViewCell: UITableViewCell {
         return titleLabel.frame.height + detailLabel.frame.height + labelSpacing + (edgeSpacing * 2)
     }
 
+    @objc func chevronButtonPressed() {
+        if isExpanded {
+            delegate?.collapseCells(on: self)
+        } else {
+            delegate?.expandCells(on: self)
+        }
+    }
+}
+
+class IncreasedTapSizeButton: UIButton {
+
+    var verticalInset: CGFloat
+    var horizontalInset: CGFloat
+
+    init(frame: CGRect, sizeIncrease: CGSize) {
+        verticalInset = sizeIncrease.height / 2
+        horizontalInset = sizeIncrease.width / 2
+        super.init(frame: frame)
+    }
+
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+
+        let largerArea = CGRect(
+            x: self.bounds.origin.x - horizontalInset,
+            y: self.bounds.origin.y - verticalInset,
+            width: self.bounds.size.width + horizontalInset*2,
+            height: self.bounds.size.height + verticalInset*2
+        )
+
+        return largerArea.contains(point)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
