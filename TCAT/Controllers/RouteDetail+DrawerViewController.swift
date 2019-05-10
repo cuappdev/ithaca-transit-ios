@@ -32,6 +32,9 @@ UIGestureRecognizerDelegate, PulleyDrawerViewControllerDelegate {
     private var directions: [Direction] = []
     private var justLoaded: Bool = true
     private let main = UIScreen.main.bounds
+
+    private let chevronFlipDurationTime = 0.25
+
     private let networking: Networking = URLSession.shared.request
     private var route: Route!
 
@@ -256,7 +259,6 @@ UIGestureRecognizerDelegate, PulleyDrawerViewControllerDelegate {
     }
 
     // MARK: TableView Data Source and Delegate Functions
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return directions.count
     }
