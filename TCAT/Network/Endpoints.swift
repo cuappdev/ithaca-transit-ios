@@ -94,20 +94,19 @@ extension Endpoint {
     static func getBusLocations(_ directions: [Direction]) -> Endpoint {
         let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
 
-        var locationsInfo: [BusLocationsInfo] = []
-        for direction in departDirections {
+        let locationsInfo = departDirections.map { direction -> BusLocationsInfo in
             // The id of the location, or bus stop, the bus needs to get to
 
             let stopID = direction.stops.first?.id ?? "-1"
-            locationsInfo.append(BusLocationsInfo(stopId: stopID, routeId: String(direction.routeNumber), tripIdentifiers: direction.tripIdentifiers!))
+            return BusLocationsInfo(stopID: stopID, routeID: String(direction.routeNumber), tripIdentifiers: direction.tripIdentifiers!)
         }
 
         let body = GetBusLocationsBody(data: locationsInfo)
         return Endpoint(path: Constants.Endpoints.busLocations, body: body)
     }
 
-    static func getDelay(tripId: String, stopId: String) -> Endpoint {
-        let queryItems = GetDelayBody(stopId: stopId, tripId: tripId).toQueryItems()
+    static func getDelay(tripID: String, stopID: String) -> Endpoint {
+        let queryItems = GetDelayBody(stopID: stopID, tripID: tripID).toQueryItems()
         return Endpoint(path: Constants.Endpoints.delay, queryItems: queryItems)
     }
 
