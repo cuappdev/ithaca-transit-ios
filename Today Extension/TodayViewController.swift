@@ -6,25 +6,25 @@
 //  Copyright © 2018 cuappdev. All rights reserved.
 //
 
-import UIKit
-import NotificationCenter
-import SnapKit
 import CoreLocation
 import FutureNova
+import NotificationCenter
+import SnapKit
+import UIKit
 
 @objc(TodayViewController) class TodayViewController: UIViewController, NCWidgetProviding {
 
-    var routesTable: UITableView = UITableView()
-    var favorites: [String] = []
     var coordinates: [String] = []
+    var favorites: [String] = []
     var routes: [Route?] = []
+    var routesTable: UITableView = UITableView()
 
     var didFetchRoutes: Bool = false
     var numberOfFavorites: Int = 0
 
-    var locationManager: CLLocationManager!
     var currentLocation: CLLocationCoordinate2D?
     var invalidLocation: Bool = false
+    var locationManager: CLLocationManager!
 
     let cellHeight: CGFloat = 110.0
     

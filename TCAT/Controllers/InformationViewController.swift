@@ -6,28 +6,27 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
-import SafariServices
 import MessageUI
+import SafariServices
+import UIKit
 
 class InformationViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate {
 
-    var titleLabel = UILabel()
     var appDevImage = UIImageView()
     var appDevTitle = UILabel()
     var descriptionLabel = UILabel()
-    var tcatQuoteText = UILabel()
-    var hiddenLabel = UILabel()
-    var tcatImage = UIImageView()
-    var sendFeedbackButton = UIButton()
-    var visitWebsiteButton = UIButton()
     var dismissButton = UIButton(type: .system)
-
+    var hiddenLabel = UILabel()
+    var sendFeedbackButton = UIButton()
     var tableView = UITableView(frame: .zero, style: .grouped)
+    var tcatImage = UIImageView()
+    var tcatQuoteText = UILabel()
+    var titleLabel = UILabel()
+    var visitWebsiteButton = UIButton()
 
     var content: [[(name: String, action: Selector)]] = [
 
-        [ // Seciton 0
+        [ // Section 0
             (name: Constants.InformationView.serviceAlerts, action: #selector(showServiceAlerts))
         ],
 

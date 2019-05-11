@@ -9,17 +9,17 @@
 import UIKit
 
 struct ServiceAlert: Codable {
+    var channelMessages: [ChannelMessage]
+    var daysOfWeek: String
+    var fromDate: String
+    var fromTime: String
     var id: Int
     var message: String
-    var fromDate: String
-    var toDate: String
-    var fromTime: String
-    var toTime: String
     var priority: Int
-    var daysOfWeek: String
     var routes: [Int]
     var signs: [Int]
-    var channelMessages: [ChannelMessage]
+    var toDate: String
+    var toTime: String
 }
 
 struct ChannelMessage: Codable {

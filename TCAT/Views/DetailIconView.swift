@@ -10,19 +10,19 @@ import UIKit
 
 class DetailIconView: UIView {
 
-    private let timeLabelConstant: CGFloat = 8
     private let constant: CGFloat = 16
+    private let timeLabelConstant: CGFloat = 8
     private var shouldAddSubviews: Bool = true
 
     static let width: CGFloat = 114
 
     var direction: Direction!
 
-    var scheduledTimeLabel = UILabel()
     var delayedTimeLabel = UILabel()
+    var scheduledTimeLabel = UILabel()
 
-    var connectorTop: UIView!
     var connectorBottom: UIView!
+    var connectorTop: UIView!
     var statusCircle: Circle!
 
     init(direction: Direction, height: CGFloat, firstStep: Bool, lastStep: Bool) {

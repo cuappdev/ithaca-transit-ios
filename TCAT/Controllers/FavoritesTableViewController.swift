@@ -13,14 +13,15 @@ import FutureNova
 class FavoritesTableViewController: UIViewController {
 
     var fromOnboarding = false
-    var timer: Timer?
     var searchBar = UISearchBar()
     var tableView: UITableView!
+    var timer: Timer?
     var resultsSection = Section(type: .searchResults, items: [Place]()) {
         didSet {
             tableView.reloadData()
         }
     }
+
     private let networking: Networking = URLSession.shared.request
 
     override func viewDidLoad() {

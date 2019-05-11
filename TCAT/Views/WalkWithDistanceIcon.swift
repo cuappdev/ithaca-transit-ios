@@ -12,13 +12,13 @@ class WalkWithDistanceIcon: UIView {
 
     // MARK: Size vars
 
-    let width: CGFloat
     let height: CGFloat
+    let width: CGFloat
 
     // MARK: View vars
 
-    var walkIcon: UIImageView
     var travelDistanceLabel: UILabel
+    var walkIcon: UIImageView
 
     // MARK: Spacing vars
 

@@ -10,8 +10,8 @@ import UIKit
 
 class SearchBarView: UIView, UISearchControllerDelegate {
 
-    var searchController: UISearchController?
     var resultsViewController: SearchResultsTableViewController?
+    var searchController: UISearchController?
 
     override init(frame: CGRect) {
         super.init(frame: frame)

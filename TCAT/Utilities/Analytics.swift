@@ -7,9 +7,9 @@
 //
 // To log an event, use the shared RegisterSession (RegisterSession.shared)
 
+import Crashlytics
 import Foundation
 import SwiftyJSON
-import Crashlytics
 
 class Analytics {
     static let shared = Analytics()

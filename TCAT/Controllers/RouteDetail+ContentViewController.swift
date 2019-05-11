@@ -6,31 +6,30 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
-import GoogleMaps
 import CoreLocation
+import FutureNova
+import GoogleMaps
 import MapKit
-import SwiftyJSON
 import NotificationBannerSwift
 import Pulley
-import FutureNova
+import SwiftyJSON
+import UIKit
 
 class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate {
 
-    // var loadingView: UIView!
     var drawerDisplayController: RouteDetailDrawerViewController?
     var routeOptionsCell: RouteTableViewCell?
 
-    var locationManager = CLLocationManager()
     var currentLocation: CLLocationCoordinate2D?
     var initalUpdate: Bool = true
+    var locationManager = CLLocationManager()
 
-    var mapView: GMSMapView!
     var bounds = GMSCoordinateBounds()
+    var mapView: GMSMapView!
 
-    var liveTrackingNetworkTimer: Timer?
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
     var liveTrackingNetworkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
+    var liveTrackingNetworkTimer: Timer?
 
     var buses = [GMSMarker]()
     var busIndicators = [GMSMarker]()
@@ -43,16 +42,16 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     private let networking: Networking = URLSession.shared.request
 
-    var route: Route!
     var directions: [Direction] = []
     var paths: [Path] = []
+    var route: Route!
 
-    let markerRadius: CGFloat = 8
     let mapPadding: CGFloat = 80
+    let markerRadius: CGFloat = 8
 
-    let minZoom: Float = 12
     let defaultZoom: Float = 15.5
     let maxZoom: Float = 25
+    let minZoom: Float = 12
 
     /** Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
      * dummy data will be used. The directions parameter have logical assumptions,

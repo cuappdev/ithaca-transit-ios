@@ -12,32 +12,32 @@ class RouteSelectionView: UIView {
 
     // MARK: View vars
 
-    var searcbarView: UIView = UIView()
-    var fromLabel: UILabel = UILabel()
-    var toLabel: UILabel = UILabel()
-    var fromSearchbar: UIButton = UIButton()
-    var toSearchbar: UIButton = UIButton()
-    var solidCircle: Circle!
-    var line: SolidLine!
     var borderedCircle: Circle!
-    var swapButton: UIButton = UIButton()
-    var datepickerButton: UIButton = UIButton()
-    var topLine: UIView = UIView()
     var bottomLine: UIView = UIView()
+    var datepickerButton: UIButton = UIButton()
+    var fromLabel: UILabel = UILabel()
+    var fromSearchbar: UIButton = UIButton()
+    var line: SolidLine!
+    var searcbarView: UIView = UIView()
+    var solidCircle: Circle!
+    var swapButton: UIButton = UIButton()
+    var toLabel: UILabel = UILabel()
+    var toSearchbar: UIButton = UIButton()
+    var topLine: UIView = UIView()
 
     // MARK: Spacing vars
 
-    let lineWidth: CGFloat = 1.0
-    let leadingSpace: CGFloat = 16.0
-    let topSpace: CGFloat = 21.5
-    let solidCircleLeftSpace: CGFloat = 11.0
-    let solidCircleRightSpace: CGFloat = 14.0
-    let searchbarTextSpaceFromLeft: CGFloat = 12.0
-    let searchbarHeight: CGFloat = 28
-    let swapPadding: CGFloat = 16.0
     let datepickerButtonHeight: CGFloat = 40.0
     let datepickerImageWidth: CGFloat = 1.5
     let datepickerTitleLeadingSpace: CGFloat = 12.0
+    let leadingSpace: CGFloat = 16.0
+    let lineWidth: CGFloat = 1.0
+    let searchbarHeight: CGFloat = 28
+    let searchbarTextSpaceFromLeft: CGFloat = 12.0
+    let solidCircleLeftSpace: CGFloat = 11.0
+    let solidCircleRightSpace: CGFloat = 14.0
+    let swapPadding: CGFloat = 16.0
+    let topSpace: CGFloat = 21.5
 
     // MARK: Init
 

@@ -6,9 +6,9 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
+import CoreLocation
 import Foundation
 import SwiftyJSON
-import CoreLocation
 
 // MARK: Request Bodies
 internal struct GetRoutesBody: Codable {

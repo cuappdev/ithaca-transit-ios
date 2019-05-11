@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import SwiftyJSON
 import GoogleMaps
+import SwiftyJSON
 
 enum PathType: String {
     case driving
@@ -17,9 +17,9 @@ enum PathType: String {
 
 class Path: GMSPolyline {
 
-    var waypoints: [Waypoint] = []
-    var traveledPolyline: GMSPolyline = GMSPolyline()
     var color: UIColor = .clear
+    var traveledPolyline: GMSPolyline = GMSPolyline()
+    var waypoints: [Waypoint] = []
 
     init(waypoints: [Waypoint]) {
         self.waypoints = waypoints
@@ -30,10 +30,10 @@ class Path: GMSPolyline {
 
 class BusPath: Path {
 
-    // Length of dash corresponding to position in dashColors
-    var dashLengths: [NSNumber] = [6, 4]
     // To be initialized with dash colors
     var dashColors = [UIColor]()
+    // Length of dash corresponding to position in dashColors
+    var dashLengths: [NSNumber] = [6, 4]
 
     var polylineWidth: CGFloat!
     var traveledPath: GMSMutablePath?

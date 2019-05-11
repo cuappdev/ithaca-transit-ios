@@ -6,10 +6,10 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
+import CoreLocation
 import MapKit
 import SwiftyJSON
-import CoreLocation
+import UIKit
 
 let increaseTapTargetTag: Int = 1865
 

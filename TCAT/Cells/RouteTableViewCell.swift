@@ -6,9 +6,9 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
-import SwiftyJSON
 import FutureNova
+import SwiftyJSON
+import UIKit
 
 protocol TravelDistanceDelegate: NSObjectProtocol {
     func travelDistanceUpdated(withDistance distance: Double)
@@ -17,51 +17,48 @@ protocol TravelDistanceDelegate: NSObjectProtocol {
 class RouteTableViewCell: UITableViewCell {
 
     // MARK: Data vars
-
     static let identifier: String = "routeCell"
-    private let fileName: String = "RouteTableViewCell"
 
-    var route: Route?
+    private let fileName: String = "RouteTableViewCell"
     private let networking: Networking = URLSession.shared.request
+    var route: Route?
 
     // MARK: Log vars
-
     var rowNum: Int?
 
     // MARK: View vars
-
     let containerView = UIView()
 
     var timesStackView: UIStackView
     var travelTimeLabel: UILabel
 
+    var arrowImageView: UIImageView
     var departureStackView: UIStackView
     var departureTimeLabel: UILabel
-    var arrowImageView: UIImageView
 
-    var liveStackView: UIStackView
-    var liveLabel: UILabel
     var liveIndicatorView: LiveIndicator
+    var liveLabel: UILabel
+    var liveStackView: UIStackView
     var stretchyFillerView: UIView
 
-    var verticalStackView: UIStackView
     var routeDiagram: RouteDiagram
+    var verticalStackView: UIStackView
 
     // MARK: Spacing vars
 
-    let leftMargin: CGFloat =  16
-    let topMargin: CGFloat = 16
     let bottomMargin: CGFloat = 16
+    let leftMargin: CGFloat =  16
     let rightMargin: CGFloat = 12
+    let topMargin: CGFloat = 16
 
     let cellMargin: CGFloat = 12
 
-    let cornerRadius: CGFloat = 16
     let cellSeparatorHeight: CGFloat = 12
+    let cornerRadius: CGFloat = 16
 
-    let spaceBtnDepartureElements: CGFloat = 4
     let arrowImageViewHeight: CGFloat = 11.5
     let arrowImageViewWidth: CGFloat = 6
+    let spaceBtnDepartureElements: CGFloat = 4
 
     let spaceBtnLiveElements: CGFloat = 4
 

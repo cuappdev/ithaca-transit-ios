@@ -6,21 +6,21 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
 import CoreLocation
 import SwiftyJSON
+import UIKit
 
 /// An enum for the type of direction
 enum DirectionType: String, Codable {
 
-    /// Directions that involving walking
-    case walk
-    /// Directions where the user gets on the bus
-    case depart
     /// Direction where the user gets off the bus
     case arrive
+    /// Directions where the user gets on the bus
+    case depart
     /// Direction where transfer is involved, but user stays on bus
     case transfer
+    /// Directions that involving walking
+    case walk
 
 }
 
@@ -76,19 +76,19 @@ class Direction: NSObject, NSCopying, Codable {
     var delay: Int?
 
     private enum CodingKeys: String, CodingKey {
-        case type
-        case name
-        case startLocation
+        case delay
         case endLocation
-        case startTime
         case endTime
+        case name
         case path
         case routeNumber
-        case stops
+        case startLocation
+        case startTime
         case stayOnBusForTransfer
-        case tripIdentifiers
-        case delay
+        case stops
         case travelDistance = "distance"
+        case tripIdentifiers
+        case type
     }
 
     // MARK: Initalizers

@@ -6,12 +6,12 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
 import SnapKit
+import UIKit
 
 protocol HeaderViewDelegate: class {
-    func displayFavoritesTVC()
     func clearRecentSearches()
+    func displayFavoritesTVC()
 }
 
 enum buttonOption {
@@ -25,8 +25,8 @@ class HeaderView: UITableViewHeaderFooterView {
 
     static let separatorViewHeight: CGFloat = 1
 
-    var label: UILabel!
     var button: UIButton?
+    var label: UILabel!
 
     @objc func addNewFavorite(sender: UIButton) {
         headerViewDelegate?.displayFavoritesTVC()

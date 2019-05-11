@@ -6,12 +6,12 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
-import SwiftyJSON
 import CoreLocation
-import DZNEmptyDataSet
 import Crashlytics
+import DZNEmptyDataSet
 import FutureNova
+import SwiftyJSON
+import UIKit
 
 protocol DestinationDelegate: class {
     func didSelectPlace(place: Place)
@@ -25,24 +25,24 @@ class SearchResultsTableViewController: UITableViewController {
 
     let locationManager = CLLocationManager()
 
+    private let networking: Networking = URLSession.shared.request
     var currentLocation: Place?
-    weak var destinationDelegate: DestinationDelegate?
-    weak var searchBarCancelDelegate: SearchBarCancelDelegate?
-    var timer: Timer?
-    var searchBar: UISearchBar?
-    var recentSearchesSection: Section!
-    var seeAllStopsSection: Section!
-    var searchResultsSection: Section!
     var currentLocationSection: Section!
-    var favoritesSection: Section!
-    var recentLocations: [Place] = []
     var favorites: [Place] = []
+    var favoritesSection: Section!
     var initialTableViewIndexMinY: CGFloat!
     var isKeyboardVisible = false
-    var shouldShowCurrentLocation = true
-    var returningFromAllStopsTVC = false
+    var recentLocations: [Place] = []
+    var recentSearchesSection: Section!
     var returningFromAllStopsBusStop: Place?
-    private let networking: Networking = URLSession.shared.request
+    var returningFromAllStopsTVC = false
+    var searchBar: UISearchBar?
+    var searchResultsSection: Section!
+    var seeAllStopsSection: Section!
+    var shouldShowCurrentLocation = true
+    var timer: Timer?
+    weak var destinationDelegate: DestinationDelegate?
+    weak var searchBarCancelDelegate: SearchBarCancelDelegate?
 
     var sections: [Section] = [] {
         didSet {

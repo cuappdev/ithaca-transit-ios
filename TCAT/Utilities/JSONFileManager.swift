@@ -6,8 +6,8 @@
 //  Copyright © 2018 cuappdev. All rights reserved.
 //
 
-import UIKit
 import SwiftyJSON
+import UIKit
 import Zip
 
 enum JSONType {

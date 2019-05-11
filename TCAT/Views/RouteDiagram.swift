@@ -10,12 +10,12 @@ import UIKit
 
 class RouteDiagramElement: NSObject {
 
-    var stopLabel: UILabel
     var stopDot: Circle
+    var stopLabel: UILabel
 
     var icon: UIView?
-    var stayOnBusCoverUpView: UIView?
     var routeLine: RouteLine?
+    var stayOnBusCoverUpView: UIView?
 
     init(stopLabel: UILabel, stopDot: Circle, icon: UIView?, routeLine: RouteLine?) {
         self.stopLabel = stopLabel

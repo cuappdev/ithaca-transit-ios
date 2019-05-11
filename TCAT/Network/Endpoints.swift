@@ -6,8 +6,8 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import Foundation
 import CoreLocation
+import Foundation
 import FutureNova
 
 extension Endpoint {

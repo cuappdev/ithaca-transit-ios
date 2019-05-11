@@ -6,8 +6,8 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
 import Pulley
+import UIKit
 
 class RouteDetailViewController: PulleyViewController {
 

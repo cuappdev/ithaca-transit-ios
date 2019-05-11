@@ -49,14 +49,14 @@ class BusIcon: UIView {
 
     // MARK: Data vars
 
-    let type: BusIconType
     let number: Int
+    let type: BusIconType
 
     // MARK: View vars
 
     var baseView: UIView!
-    var label: UILabel!
     var image: UIImageView!
+    var label: UILabel!
     var liveIndicator: LiveIndicator?
 
     // MARK: Constraint vars

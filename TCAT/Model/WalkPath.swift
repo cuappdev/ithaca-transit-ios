@@ -7,13 +7,13 @@
 //
 
 import Foundation
-import SwiftyJSON
 import GoogleMaps
+import SwiftyJSON
 
 class WalkPath: Path {
 
-    var polylineWidth: CGFloat = 8
     var dashLengths: [NSNumber] = [6, 4]
+    var polylineWidth: CGFloat = 8
     var traveledPath: GMSMutablePath?
     var untraveledPath: GMSMutablePath?
 

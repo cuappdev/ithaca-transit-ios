@@ -6,24 +6,24 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
 import MapKit
+import UIKit
 
 enum BusDataType: String, Codable {
+    /// Invalid data (e.g. bus trip too far in future)
+    case invalidData
     /// No data to show
     case noData
     /// Valid data to show
     case validData
-    /// Invalid data (e.g. bus trip too far in future)
-    case invalidData
 }
 
 class BusLocation: NSObject, Codable {
 
     var dataType: BusDataType
+    var delay: Int
     var destination: String
     var deviation: Int
-    var delay: Int
     var direction: String
     var displayStatus: String
     var gpsStatus: Int
@@ -44,9 +44,9 @@ class BusLocation: NSObject, Codable {
 
     private enum CodingKeys: String, CodingKey {
         case dataType = "case"
+        case delay
         case destination
         case deviation
-        case delay
         case direction
         case displayStatus
         case gpsStatus
@@ -85,9 +85,9 @@ class BusLocation: NSObject, Codable {
          vehicleID: Int
     ) {
         self.dataType = dataType
+        self.delay = delay
         self.destination = destination
         self.deviation = deviation
-        self.delay = delay
         self.direction = direction
         self.displayStatus = displayStatus
         self.gpsStatus = gpsStatus

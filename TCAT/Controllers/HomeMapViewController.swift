@@ -19,28 +19,29 @@ protocol HomeMapViewDelegate {
 
 class HomeMapViewController: UIViewController {
 
-    let userDefaults = UserDefaults.standard
+    static let optionsCardInset = UIEdgeInsets.init(top: UIScreen.main.bounds.height / 10, left: 20, bottom: 0, right: 20)
 
-    var currentLocation: CLLocation?
-    var mapView: GMSMapView!
-    var loadingView = UIView()
     var bounds = GMSCoordinateBounds()
-    var optionsCardVC: HomeOptionsCardViewController!
+    var currentLocation: CLLocation?
     var delegate: HomeMapViewDelegate?
-    let reachability = Reachability(hostname: Endpoint.config.host ?? "")
+    var loadingView = UIView()
     var locationManager = CLLocationManager()
+    var mapView: GMSMapView!
+    var optionsCardVC: HomeOptionsCardViewController!
     var banner: StatusBarNotificationBanner? {
         didSet {
             setNeedsStatusBarAppearanceUpdate()
         }
     }
-    static let optionsCardInset = UIEdgeInsets.init(top: UIScreen.main.bounds.height / 10, left: 20, bottom: 0, right: 20)
-    let minZoom: Float = 12
+
     let defaultZoom: Float = 15.5
+    let loadingIndicatorSize = CGSize.init(width: 40, height: 40)
+    let maxZoom: Float = 25
+    let minZoom: Float = 12
+    let reachability = Reachability(hostname: Endpoint.config.host ?? "")
     let startingLat = 42.446179
     let startingLong = -76.485070
-    let maxZoom: Float = 25
-    let loadingIndicatorSize = CGSize.init(width: 40, height: 40)
+    let userDefaults = UserDefaults.standard
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return banner != nil ? .lightContent : .default

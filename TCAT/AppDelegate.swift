@@ -9,6 +9,7 @@
 import Crashlytics
 import Fabric
 import Firebase
+import FutureNova
 import GoogleMaps
 import GooglePlaces
 import Intents
@@ -16,7 +17,6 @@ import SafariServices
 import SwiftyJSON
 import UIKit
 import WhatsNewKit
-import FutureNova
 
 // This is used for app-specific preferences
 let userDefaults = UserDefaults.standard
