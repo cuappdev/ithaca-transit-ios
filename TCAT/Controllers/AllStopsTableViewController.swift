@@ -16,15 +16,16 @@ protocol UnwindAllStopsTVCDelegate: class {
 
 class AllStopsTableViewController: UITableViewController {
 
-    private let networking: Networking = URLSession.shared.request
     var allStops: [Place]!
-    var currentChar: Character?
-    var height: CGFloat?
-    var isLoading: Bool { return loadingIndicator != nil }
-    var loadingIndicator: LoadingIndicator?
-    var sectionIndexes: [String: [Place]]!
-    var sortedKeys: [String]!
     weak var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
+
+    private let networking: Networking = URLSession.shared.request
+    private var currentChar: Character?
+    private var height: CGFloat?
+    private var isLoading: Bool { return loadingIndicator != nil }
+    private var loadingIndicator: LoadingIndicator?
+    private var sectionIndexes: [String: [Place]]!
+    private var sortedKeys: [String]!
 
     override func viewWillLayoutSubviews() {
         if let y = navigationController?.navigationBar.frame.maxY {

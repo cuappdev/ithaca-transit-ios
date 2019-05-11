@@ -10,8 +10,8 @@ import UIKit
 
 class CustomNavigationController: UINavigationController, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
 
-    let additionalWidth: CGFloat = 30
-    let additionalHeight: CGFloat = 100
+    private let additionalWidth: CGFloat = 30
+    private let additionalHeight: CGFloat = 100
 
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)

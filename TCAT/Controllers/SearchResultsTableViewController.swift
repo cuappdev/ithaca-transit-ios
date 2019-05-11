@@ -23,28 +23,29 @@ protocol SearchBarCancelDelegate: class {
 
 class SearchResultsTableViewController: UITableViewController {
 
-    let locationManager = CLLocationManager()
-
-    private let networking: Networking = URLSession.shared.request
-    var currentLocation: Place?
-    var currentLocationSection: Section!
-    var favorites: [Place] = []
-    var favoritesSection: Section!
-    var initialTableViewIndexMinY: CGFloat!
-    var isKeyboardVisible = false
-    var recentLocations: [Place] = []
-    var recentSearchesSection: Section!
-    var returningFromAllStopsBusStop: Place?
-    var returningFromAllStopsTVC = false
     var searchBar: UISearchBar?
-    var searchResultsSection: Section!
-    var seeAllStopsSection: Section!
-    var shouldShowCurrentLocation = true
-    var timer: Timer?
+
+    var currentLocation: Place?
     weak var destinationDelegate: DestinationDelegate?
     weak var searchBarCancelDelegate: SearchBarCancelDelegate?
+    var shouldShowCurrentLocation = true
 
-    var sections: [Section] = [] {
+    private var currentLocationSection: Section!
+    private var favorites: [Place] = []
+    private var favoritesSection: Section!
+    private var initialTableViewIndexMinY: CGFloat!
+    private var isKeyboardVisible = false
+    private let locationManager = CLLocationManager()
+    private let networking: Networking = URLSession.shared.request
+    private var recentLocations: [Place] = []
+    private var recentSearchesSection: Section!
+    private var returningFromAllStopsBusStop: Place?
+    private var returningFromAllStopsTVC = false
+    private var searchResultsSection: Section!
+    private var seeAllStopsSection: Section!
+    private var timer: Timer?
+
+    private var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
         }

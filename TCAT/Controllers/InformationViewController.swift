@@ -12,19 +12,19 @@ import UIKit
 
 class InformationViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate {
 
-    var appDevImage = UIImageView()
-    var appDevTitle = UILabel()
-    var descriptionLabel = UILabel()
-    var dismissButton = UIButton(type: .system)
-    var hiddenLabel = UILabel()
-    var sendFeedbackButton = UIButton()
-    var tableView = UITableView(frame: .zero, style: .grouped)
-    var tcatImage = UIImageView()
-    var tcatQuoteText = UILabel()
-    var titleLabel = UILabel()
-    var visitWebsiteButton = UIButton()
+    private var appDevImage = UIImageView()
+    private var appDevTitle = UILabel()
+    private var descriptionLabel = UILabel()
+    private var dismissButton = UIButton(type: .system)
+    private var hiddenLabel = UILabel()
+    private var sendFeedbackButton = UIButton()
+    private var tableView = UITableView(frame: .zero, style: .grouped)
+    private var tcatImage = UIImageView()
+    private var tcatQuoteText = UILabel()
+    private var titleLabel = UILabel()
+    private var visitWebsiteButton = UIButton()
 
-    var content: [[(name: String, action: Selector)]] = [
+    private var content: [[(name: String, action: Selector)]] = [
 
         [ // Section 0
             (name: Constants.InformationView.serviceAlerts, action: #selector(showServiceAlerts))

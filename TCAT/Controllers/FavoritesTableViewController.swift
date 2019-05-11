@@ -12,11 +12,12 @@ import FutureNova
 
 class FavoritesTableViewController: UIViewController {
 
-    var fromOnboarding = false
-    var searchBar = UISearchBar()
-    var tableView: UITableView!
-    var timer: Timer?
-    var resultsSection = Section(type: .searchResults, items: [Place]()) {
+    private var searchBar = UISearchBar()
+    private var tableView: UITableView!
+
+    private var fromOnboarding = false
+    private var timer: Timer?
+    private var resultsSection = Section(type: .searchResults, items: [Place]()) {
         didSet {
             tableView.reloadData()
         }

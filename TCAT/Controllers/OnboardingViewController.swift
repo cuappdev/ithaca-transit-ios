@@ -16,14 +16,14 @@ class OnboardingViewController: PresentationController {
     //
 
     /// Change the main view's background color
-    let backgroundColor = UIColor(hex: "C0DDEB")
+    private let backgroundColor = UIColor(hex: "C0DDEB")
 
     //
     // Navigation
     //
 
     /// The text color of the navigation buttons
-    let navigationAttributes: [NSAttributedString.Key: Any] = [
+    private let navigationAttributes: [NSAttributedString.Key: Any] = [
         .foregroundColor: UIColor(hex: "243C47")
     ]
 
@@ -36,11 +36,11 @@ class OnboardingViewController: PresentationController {
     //
 
     /// The position of the header label
-    let titleLabelFontName = Fonts.bold
-    let titleLabelFontSize: CGFloat = 48.0
-    let titleLabelPosition = Position(left: 0.5, top: 0.2)
-    let titleLabelTextColor = UIColor(hex: "243C47")
-    let titleLabelMessages = [
+    private let titleLabelFontName = Fonts.bold
+    private let titleLabelFontSize: CGFloat = 48.0
+    private let titleLabelPosition = Position(left: 0.5, top: 0.2)
+    private let titleLabelTextColor = UIColor(hex: "243C47")
+    private let titleLabelMessages = [
         Constants.Onboarding.welcome,
         Constants.Onboarding.liveTracking,
         Constants.Onboarding.searchAnywhere,
@@ -53,19 +53,19 @@ class OnboardingViewController: PresentationController {
     //
 
     /// The position of the main label
-    let detailLabelPosition = Position(left: 0.5, top: 0.35)
+    private let detailLabelPosition = Position(left: 0.5, top: 0.35)
 
     /// Change the font type of text label
-    let detailLabelFontName = Fonts.medium
+    private let detailLabelFontName = Fonts.medium
 
     /// Change the font size of text label
-    let detailLabelFontSize: CGFloat = 32.0
+    private let detailLabelFontSize: CGFloat = 32.0
 
     /// Change the text label color
-    let detailLabelTextColor = UIColor(hex: "243C47")
+    private let detailLabelTextColor = UIColor(hex: "243C47")
 
     /// Change the amount of messages in the view. The number of pages shown will equal the number of messages
-    let detailLabelMessages = [
+    private let detailLabelMessages = [
         Constants.Onboarding.welcomeMessage,
         Constants.Onboarding.liveTrackingMessage,
         Constants.Onboarding.searchAnywhereMessage,
@@ -78,7 +78,7 @@ class OnboardingViewController: PresentationController {
     //
 
     /// Set the asset type, position, and speed.
-    let backgroundImages = [
+    private let backgroundImages = [
         BackgroundImage(name: "treesnroad", left: -2.7, top: 0.71, speed: -1.3),
         BackgroundImage(name: "tcat", left: -0.60, top: 0.703, speed: 0.4),
         BackgroundImage(name: "hill", left: -1.5, top: 0.55, speed: -0.5),
@@ -91,20 +91,20 @@ class OnboardingViewController: PresentationController {
     //
 
     /// The size of the ground view
-    let groundViewSize = CGSize(width: 1024, height: 60)
+    private let groundViewSize = CGSize(width: 1024, height: 60)
 
     /// The position of the ground view
-    let groundViewPosition = Position(left: 0.0, bottom: 0.063)
+    private let groundViewPosition = Position(left: 0.0, bottom: 0.063)
 
     /// The background color of the ground view
-    let groundViewBackgroundColor = UIColor(hex: "243C47")
+    private let groundViewBackgroundColor = UIColor(hex: "243C47")
 
     //
     // MARK: Implementation
     //
 
     /// Used to determine what context this view is being shown in
-    var isInitialViewing: Bool = true
+    private var isInitialViewing: Bool = true
 
     struct BackgroundImage {
 

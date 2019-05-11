@@ -10,15 +10,14 @@ import UIKit
 
 class BusStopTableViewCell: UITableViewCell {
 
-    let linePosition: CGFloat = DetailIconView.width - 16 // max of DetailIconView (114) - constant (16) = 98
+    private var connectorBottom: UIView!
+    private var connectorTop: UIView!
+    private var statusCircle: Circle!
+    private var titleLabel: UILabel!
 
-    let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
-    let cellWidth: CGFloat = RouteDetailCellSize.indentedWidth
-    var titleLabel: UILabel!
-
-    var connectorBottom: UIView!
-    var connectorTop: UIView!
-    var statusCircle: Circle!
+    private let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
+    private let cellWidth: CGFloat = RouteDetailCellSize.indentedWidth
+    private let linePosition: CGFloat = DetailIconView.width - 16 // max of DetailIconView (114) - constant (16) = 98
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

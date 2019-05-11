@@ -18,40 +18,35 @@ import UIKit
 class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate {
 
     var drawerDisplayController: RouteDetailDrawerViewController?
-    var routeOptionsCell: RouteTableViewCell?
 
-    var currentLocation: CLLocationCoordinate2D?
-    var initalUpdate: Bool = true
-    var locationManager = CLLocationManager()
+    private var mapView: GMSMapView!
+    private var routeOptionsCell: RouteTableViewCell?
 
-    var bounds = GMSCoordinateBounds()
-    var mapView: GMSMapView!
-
+    private var bounds = GMSCoordinateBounds()
+    private var busIndicators = [GMSMarker]()
+    private var buses = [GMSMarker]()
+    private var currentLocation: CLLocationCoordinate2D?
+    private var directions: [Direction] = []
+    private var initalUpdate: Bool = true
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
-    var liveTrackingNetworkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
-    var liveTrackingNetworkTimer: Timer?
+    private var liveTrackingNetworkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
+    private var liveTrackingNetworkTimer: Timer?
+    private var locationManager = CLLocationManager()
+    private let networking: Networking = URLSession.shared.request
+    private var paths: [Path] = []
+    private var route: Route!
 
-    var buses = [GMSMarker]()
-    var busIndicators = [GMSMarker]()
-
-    var banner: StatusBarNotificationBanner? {
+    private var banner: StatusBarNotificationBanner? {
         didSet {
             setNeedsStatusBarAppearanceUpdate()
         }
     }
 
-    private let networking: Networking = URLSession.shared.request
-
-    var directions: [Direction] = []
-    var paths: [Path] = []
-    var route: Route!
-
-    let mapPadding: CGFloat = 80
-    let markerRadius: CGFloat = 8
-
-    let defaultZoom: Float = 15.5
-    let maxZoom: Float = 25
-    let minZoom: Float = 12
+    private let mapPadding: CGFloat = 80
+    private let markerRadius: CGFloat = 8
+    private let defaultZoom: Float = 15.5
+    private let maxZoom: Float = 25
+    private let minZoom: Float = 12
 
     /** Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
      * dummy data will be used. The directions parameter have logical assumptions,

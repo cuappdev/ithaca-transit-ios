@@ -21,27 +21,28 @@ class HomeMapViewController: UIViewController {
 
     static let optionsCardInset = UIEdgeInsets.init(top: UIScreen.main.bounds.height / 10, left: 20, bottom: 0, right: 20)
 
-    var bounds = GMSCoordinateBounds()
-    var currentLocation: CLLocation?
-    var delegate: HomeMapViewDelegate?
-    var loadingView = UIView()
-    var locationManager = CLLocationManager()
-    var mapView: GMSMapView!
-    var optionsCardVC: HomeOptionsCardViewController!
-    var banner: StatusBarNotificationBanner? {
+    private var loadingView = UIView()
+    private var mapView: GMSMapView!
+
+    private var bounds = GMSCoordinateBounds()
+    private var currentLocation: CLLocation?
+    private var delegate: HomeMapViewDelegate?
+    private var locationManager = CLLocationManager()
+    private var optionsCardVC: HomeOptionsCardViewController!
+    private var banner: StatusBarNotificationBanner? {
         didSet {
             setNeedsStatusBarAppearanceUpdate()
         }
     }
 
-    let defaultZoom: Float = 15.5
-    let loadingIndicatorSize = CGSize.init(width: 40, height: 40)
-    let maxZoom: Float = 25
-    let minZoom: Float = 12
-    let reachability = Reachability(hostname: Endpoint.config.host ?? "")
-    let startingLat = 42.446179
-    let startingLong = -76.485070
-    let userDefaults = UserDefaults.standard
+    private let defaultZoom: Float = 15.5
+    private let loadingIndicatorSize = CGSize.init(width: 40, height: 40)
+    private let maxZoom: Float = 25
+    private let minZoom: Float = 12
+    private let reachability = Reachability(hostname: Endpoint.config.host ?? "")
+    private let startingLat = 42.446179
+    private let startingLong = -76.485070
+    private let userDefaults = UserDefaults.standard
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return banner != nil ? .lightContent : .default
