@@ -6,8 +6,8 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
 import MapKit
+import UIKit
 
 /// Generic location object for locations with identifiers and names
 class LocationObject: NSObject, Codable {

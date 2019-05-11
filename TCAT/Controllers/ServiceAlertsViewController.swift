@@ -5,17 +5,18 @@
 //  Created by Omar Rasheed on 10/23/18.
 //  Copyright © 2018 cuappdev. All rights reserved.
 //
-import UIKit
-import SnapKit
+
 import DZNEmptyDataSet
 import FutureNova
+import SnapKit
+import UIKit
 
 class ServiceAlertsViewController: UIViewController {
 
-    var tableView: UITableView!
-    var loadingIndicator: LoadingIndicator?
     var isLoading: Bool { return loadingIndicator != nil }
+    var loadingIndicator: LoadingIndicator?
     var networkError: Bool = false
+    var tableView: UITableView!
 
     private let networking: Networking = URLSession.shared.request
 

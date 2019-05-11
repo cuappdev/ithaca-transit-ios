@@ -8,30 +8,30 @@
 import UIKit
 
 enum LiveIndicatorSize: Double {
-    case small = 8
     case large = 12
+    case small = 8
 }
 
 class LiveIndicator: UIView {
 
     // MARK: State vars
 
-    let size: LiveIndicatorSize
     let lineWidth: CGFloat
+    let size: LiveIndicatorSize
 
     // MARK: View vars
 
     var circleLayer: CAShapeLayer!
-    var smallArcLayer: CAShapeLayer!
     var largeArcLayer: CAShapeLayer!
+    var smallArcLayer: CAShapeLayer!
 
     // MARK: Animation vars
 
-    static let INTERVAL: TimeInterval = 4.0
-    static let DURATION: TimeInterval = 0.2
-    let START_DELAY: TimeInterval = 0.0
-    let END_DELAY: TimeInterval = 0.0
     let DIM_OPACITY: CGFloat = 0.5
+    let END_DELAY: TimeInterval = 0.0
+    let START_DELAY: TimeInterval = 0.0
+    static let DURATION: TimeInterval = 0.2
+    static let INTERVAL: TimeInterval = 4.0
 
     // MARK: Constraint vars
 

@@ -6,8 +6,8 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
 import GooglePlaces
+import UIKit
 
 struct CoordinateVisitorError: Swift.Error {
     let title: String

@@ -6,21 +6,26 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
 import CoreLocation
+import UIKit
 
 enum WaypointType: String, Codable {
-    /// The startLocation origin point of the trip
-    case origin
+    case bus
+    case bussing
+
     /// The endLocation destination point of the trip
     case destination
+
+    /// The startLocation origin point of the trip
+    case origin
+
+    case none
+
     /// Used for bus stops
     case stop
-    case bus
+
     case walk
     case walking
-    case bussing
-    case none
 }
 
 class Waypoint: NSObject {
@@ -28,11 +33,11 @@ class Waypoint: NSObject {
     let smallDiameter: CGFloat = 12
     let largeDiameter: CGFloat = 24
 
+    var busNumber: Int = 0
+    var iconView: UIView = UIView()
     var latitude: CLLocationDegrees = 0
     var longitude: CLLocationDegrees = 0
     var wpType: WaypointType = .origin
-    var iconView: UIView = UIView()
-    var busNumber: Int = 0
 
     init(lat: CLLocationDegrees, long: CLLocationDegrees, wpType: WaypointType, busNumber: Int = 0, isStop: Bool = false) {
         super.init()

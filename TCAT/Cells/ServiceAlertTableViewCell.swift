@@ -6,8 +6,8 @@
 //  Copyright © 2018 cuappdev. All rights reserved.
 //
 
-import UIKit
 import SnapKit
+import UIKit
 
 class ServiceAlertTableViewCell: UITableViewCell {
 
@@ -26,10 +26,10 @@ class ServiceAlertTableViewCell: UITableViewCell {
         return (screenWidth - totalConstraintInset + busIconSpacing) / (iconWidth + busIconSpacing)
     }
 
-    var timeSpanLabel: UILabel!
-    var descriptionLabel: UILabel!
     var affectedRoutesLabel: UILabel!
     var affectedRoutesStackView: UIStackView?
+    var descriptionLabel: UILabel!
+    var timeSpanLabel: UILabel!
     var topSeparator: UIView?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

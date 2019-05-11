@@ -6,9 +6,9 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
 import DZNEmptyDataSet
 import FutureNova
+import UIKit
 
 protocol UnwindAllStopsTVCDelegate: class {
     func dismissSearchResultsVC(place: Place)
@@ -16,15 +16,15 @@ protocol UnwindAllStopsTVCDelegate: class {
 
 class AllStopsTableViewController: UITableViewController {
 
+    private let networking: Networking = URLSession.shared.request
     var allStops: [Place]!
+    var currentChar: Character?
+    var height: CGFloat?
+    var isLoading: Bool { return loadingIndicator != nil }
+    var loadingIndicator: LoadingIndicator?
     var sectionIndexes: [String: [Place]]!
     var sortedKeys: [String]!
     weak var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
-    var height: CGFloat?
-    var currentChar: Character?
-    var loadingIndicator: LoadingIndicator?
-    var isLoading: Bool { return loadingIndicator != nil }
-    private let networking: Networking = URLSession.shared.request
 
     override func viewWillLayoutSubviews() {
         if let y = navigationController?.navigationBar.frame.maxY {

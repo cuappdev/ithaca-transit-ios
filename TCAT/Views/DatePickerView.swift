@@ -16,31 +16,31 @@ class DatePickerView: UIView {
 
     // MARK: Data vars
 
+    let leaveNowSegmentedControlOptions: [String]
     let typeToSegmentControlElements: [SearchType: SegmentControlElement] = [
         .leaveNow: SegmentControlElement(title: Constants.General.datepickerLeaveNow, index: 0),
         .leaveAt: SegmentControlElement(title: "Leave At", index: 0),
         .arriveBy: SegmentControlElement(title: "Arrive By", index: 1)]
-    let leaveNowSegmentedControlOptions: [String]
     let timeTypeSegmentedControlOptions: [String]
 
     // MARK: View vars
 
+    var cancelButton: UIButton = UIButton()
     var datepicker: UIDatePicker = UIDatePicker()
+    var doneButton: UIButton = UIButton()
     var leaveNowSegmentedControl: UISegmentedControl = UISegmentedControl()
     var timeTypeSegmentedControl: UISegmentedControl = UISegmentedControl()
-    var cancelButton: UIButton = UIButton()
-    var doneButton: UIButton = UIButton()
 
     // MARK: Spacing vars
 
     let buttonHeight: CGFloat = 20
-    let segmentedControlHeight: CGFloat = 29
     let datePickerHeight: CGFloat = 164.5
     let labelHeight: CGFloat = 28
+    let segmentedControlHeight: CGFloat = 29
 
-    let spaceBtButtonAndSuprviewTop: CGFloat = 16.0
-    let spaceBtButtonAndSuperviewSide: CGFloat = 12.0
     let spaceBtButtonAndSegmentedControl: CGFloat = 16.0
+    let spaceBtButtonAndSuperviewSide: CGFloat = 12.0
+    let spaceBtButtonAndSuprviewTop: CGFloat = 16.0
     let spaceBtSegmentControlAndDatePicker: CGFloat = 8.0
     let spaceBtSegmentControls: CGFloat = 8.0
 

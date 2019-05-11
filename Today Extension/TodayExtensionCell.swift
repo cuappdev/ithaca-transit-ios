@@ -22,9 +22,9 @@ class TodayExtensionCell: UITableViewCell {
     var busIcon: BusIcon?
     var departureLabel = UILabel() // ex: To Baker Flagpole
     var destinationLabel = UILabel() // ex: 10:00 AM at Collegetown Crossing
-    var liveLabel = UILabel()
-    var liveIndicatorView = LiveIndicator(size: .small, color: .clear)
     var liveBackground = UIView()
+    var liveIndicatorView = LiveIndicator(size: .small, color: .clear)
+    var liveLabel = UILabel()
 
     // MARK: Spacing vars
 

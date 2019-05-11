@@ -6,38 +6,38 @@
 //  Copyright © 2018 cuappdev. All rights reserved.
 //
 
-import UIKit
 import SnapKit
+import UIKit
 
 protocol WhatsNewDelegate: class {
-    func getCurrentHomeViewController() -> HomeMapViewController
     func dismissView(card: WhatsNewCard)
+    func getCurrentHomeViewController() -> HomeMapViewController
 }
 
 class WhatsNewHeaderView: UIView {
 
-    weak var whatsNewDelegate: WhatsNewDelegate?
     var card: WhatsNewCard
+    weak var whatsNewDelegate: WhatsNewDelegate?
 
     /// Whether a promotion is being used for the card
     var isPromotion: Bool
 
     // e.g. "New In Ithaca Transit" blue label
+    var descriptionLabel: UILabel!
     var smallHeaderLabel: UILabel!
     var titleLabel: UILabel!
-    var descriptionLabel: UILabel!
 
     var buttonContainerView: UIView!
     var dismissButton: UIButton!
     var primaryButton: UIButton?
     var secondaryButton: UIButton?
 
-    private var titleToTop: Constraint?
-    private var updateNameToTitle: Constraint?
-    private var updateDescToUpdateName: Constraint?
-    private var buttonToUpdateDesc: Constraint?
     private var buttonToBottom: Constraint?
+    private var buttonToUpdateDesc: Constraint?
+    private var titleToTop: Constraint?
+    private var updateDescToUpdateName: Constraint?
     private var updateDescriptionHeight: Constraint?
+    private var updateNameToTitle: Constraint?
 
     let containerPadding = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
 

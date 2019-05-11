@@ -6,12 +6,12 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
+import Alamofire
+import CoreLocation
 import Foundation
+import GooglePlaces
 import SwiftyJSON
 import TRON
-import CoreLocation
-import GooglePlaces
-import Alamofire
 
 enum NetworkType: String {
     case local, debug, release
@@ -25,8 +25,8 @@ class Network {
     // Change `networkType` to `.local` to work locally.
     // Change `localIPAddress` to be the proper address
 
-    static let networkType: NetworkType = .release
     static let apiVersion = "v1"
+    static let networkType: NetworkType = .release
 
     /// Used for local backend testing
     static let localIPAddress = "10.132.0.68"
@@ -43,8 +43,8 @@ class Network {
     /// Network IP address being used for specified networkType
     static var ipAddress: String {
         switch networkType {
-        case .local: return localIPAddress
         case .debug: return debugIPAddress
+        case .local: return localIPAddress
         case .release: return releaseIPAddress
         }
     }

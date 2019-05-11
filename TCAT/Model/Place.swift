@@ -6,8 +6,8 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
 import CoreLocation
+import UIKit
 
 enum PlaceType: String, Codable {
     case busStop, googlePlace, unknown
@@ -28,12 +28,12 @@ enum PlaceType: String, Codable {
     var longitude: Double?
 
     private enum CodingKeys: String, CodingKey {
-        case name
-        case type
-        case placeDescription = "detail"
-        case placeIdentifier = "placeID"
         case latitude = "lat"
         case longitude = "long"
+        case name
+        case placeDescription = "detail"
+        case placeIdentifier = "placeID"
+        case type
     }
 
     init(name: String) {

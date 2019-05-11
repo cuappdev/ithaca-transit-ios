@@ -6,9 +6,9 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
 import CoreLocation
 import SwiftyJSON
+import UIKit
 
 extension UIColor {
 

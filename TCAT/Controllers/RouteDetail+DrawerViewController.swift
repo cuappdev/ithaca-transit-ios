@@ -6,16 +6,16 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
-import SwiftyJSON
-import Pulley
 import FutureNova
+import Pulley
+import SwiftyJSON
+import UIKit
 
 struct RouteDetailCellSize {
-    static let smallHeight: CGFloat = 60
+    static let indentedWidth: CGFloat = 140
     static let largeHeight: CGFloat = 80
     static let regularWidth: CGFloat = 120
-    static let indentedWidth: CGFloat = 140
+    static let smallHeight: CGFloat = 60
 }
 
 class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, UITableViewDelegate,
@@ -23,19 +23,19 @@ UIGestureRecognizerDelegate, PulleyDrawerViewControllerDelegate {
 
     // MARK: Variables
 
+    var safeAreaCover: UIView?
     var summaryView = SummaryView()
     var tableView: UITableView!
-    var safeAreaCover: UIView?
 
-    var route: Route!
     var directions: [Direction] = []
+    var route: Route!
 
     let main = UIScreen.main.bounds
     var justLoaded: Bool = true
 
-    var busDelayNetworkTimer: Timer?
     /// Number of seconds to wait before auto-refreshing bus delay network call.
     var busDelayNetworkRefreshRate: Double = 10
+    var busDelayNetworkTimer: Timer?
 
     private let networking: Networking = URLSession.shared.request
 

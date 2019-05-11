@@ -10,9 +10,10 @@
 //  Created by Monica Ong on 2/12/17.
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
-import UIKit
+
 import CoreLocation
 import MapKit
+import UIKit
 
 struct Bounds: Codable {
 
@@ -38,8 +39,8 @@ struct Bounds: Codable {
 }
 
 struct RouteCalculationError: Swift.Error {
-    let title: String
     let description: String
+    let title: String
 }
 
 class Route: NSObject, Codable {
@@ -93,14 +94,14 @@ class Route: NSObject, Codable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case departureTime
         case arrivalTime
-        case startCoords
-        case endCoords
         case boundingBox
-        case numberOfTransfers
+        case departureTime
         case directions
+        case endCoords
+        case numberOfTransfers
         case routeId
+        case startCoords
     }
 
     required init(from decoder: Decoder) throws {

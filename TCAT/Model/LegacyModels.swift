@@ -3,14 +3,14 @@
 //  TCAT
 //
 
-import UIKit
 import CoreLocation
+import UIKit
 
 class BusStop: NSObject, NSCoding {
 
-    var name: String
     var lat: CLLocationDegrees
     var long: CLLocationDegrees
+    var name: String
 
     private let nameKey = "name"
     private let latKey = "latitude"

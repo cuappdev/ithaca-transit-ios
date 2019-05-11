@@ -15,73 +15,73 @@ struct Constants {
     struct Alerts {
 
         struct GeneralActions {
-            static let settings = "Settings"
             static let cancel = "Cancel"
             static let dontRemind = "Don't Remind Me Again"
+            static let settings = "Settings"
         }
 
         struct AlertsRequestFailure {
-            static let title = "Couldn't Fetch Service Alerts"
-            static let message = "There was an error fetching service alerts. Please retry again."
             static let action = "OK"
+            static let message = "There was an error fetching service alerts. Please retry again."
+            static let title = "Couldn't Fetch Service Alerts"
         }
 
         struct LocationPermissions {
-            static let title =  Constants.Alerts.LocationDisabled.title
             static let message = "Tap Settings to change your location permissions, or continue using a limited version of the app."
+            static let title =  Constants.Alerts.LocationDisabled.title
         }
 
         struct LocationDisabled {
-            static let title = "Location Services Disabled"
-            static let message = "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services."
-            static let settings = Constants.Alerts.GeneralActions.settings
             static let cancel = Constants.Alerts.GeneralActions.cancel
             static let dontRemind = Constants.Alerts.GeneralActions.dontRemind
+            static let message = "The app won't be able to use your current location without permission. Tap Settings to turn on Location Services."
+            static let settings = Constants.Alerts.GeneralActions.settings
+            static let title = "Location Services Disabled"
         }
 
         struct LocationEnable {
-            static let title = Constants.Alerts.LocationDisabled.title
+            static let cancel = Constants.Alerts.GeneralActions.cancel
             static let message = "You need to enable Location Services in Settings"
             static let settings = Constants.Alerts.GeneralActions.settings
-            static let cancel = Constants.Alerts.GeneralActions.cancel
+            static let title = Constants.Alerts.LocationDisabled.title
         }
 
         struct MagicBus {
-            static let title = "Be-beep be-beep!"
-            static let message = "says the TCAT bus."
             static let action = "✨📚🚌"
+            static let message = "says the TCAT bus."
+            static let title = "Be-beep be-beep!"
         }
 
         struct EmailFailure {
-            static let title = "Couldn't Send Email"
-            static let message = "To send your message with device logs, please add an email account in Settings > Accounts & Passwords > Add Account. You can also contact us at \(Constants.App.contactEmailAddress) to send feedback."
-            static let emailSettings = "Email Settings"
-            static let copyEmail = "Copy Address to Clipboard"
             static let cancel = Constants.Alerts.GeneralActions.cancel
+            static let copyEmail = "Copy Address to Clipboard"
+            static let emailSettings = "Email Settings"
+            static let message = "To send your message with device logs, please add an email account in Settings > Accounts & Passwords > Add Account. You can also contact us at \(Constants.App.contactEmailAddress) to send feedback."
+            static let title = "Couldn't Send Email"
         }
 
         struct Teleportation {
-            static let title = "You're here!"
-            static let message = "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta)."
             static let action = "😐😒🙄"
+            static let message = "You have arrived at your destination. Thank you for using our TCAT Teleporation™ feature (beta)."
+            static let title = "You're here!"
         }
 
         struct OutOfRange {
-            static let title = "Location Out Of Range"
-            static let message = "Try looking for another route with start and end locations closer to Tompkins County."
             static let action = "OK"
+            static let message = "Try looking for another route with start and end locations closer to Tompkins County."
+            static let title = "Location Out Of Range"
         }
 
         struct MaxFavorites {
-            static let title = "Maximum Number of Favorites"
-            static let message = "To add more favorites, please swipe left and delete one first."
             static let action = "Got It!"
+            static let message = "To add more favorites, please swipe left and delete one first."
+            static let title = "Maximum Number of Favorites"
         }
 
         struct PlacesFailure {
-            static let title = "Couldn't Fetch Place Information"
-            static let message = "We ran into an issue fetching the coordinates of the selected location. Please try again later."
             static let action = "OK"
+            static let message = "We ran into an issue fetching the coordinates of the selected location. Please try again later."
+            static let title = "Couldn't Fetch Place Information"
         }
     }
 
@@ -107,13 +107,13 @@ struct Constants {
 
     /// Banner titles
     struct Banner {
-        static let noInternetConnection = "No internet connection"
-        static let trackingLater = "Tracking available near departure time"
         static let cannotConnectLive = "Cannot connect to live tracking"
-        static let noLiveTrackingForRoutes = "No live tracking available for routes."
-        static let noLiveTrackingForRoute = "No live tracking available for Route"
         static let cantConnectServer = "Could not connect to server"
+        static let noInternetConnection = "No internet connection"
+        static let noLiveTrackingForRoute = "No live tracking available for Route"
+        static let noLiveTrackingForRoutes = "No live tracking available for routes."
         static let routeCalculationError = "Route calculation error. Please retry."
+        static let trackingLater = "Tracking available near departure time"
     }
 
     struct BusUserData {
@@ -124,13 +124,13 @@ struct Constants {
 
     /// The phrases used for buttons throughout the app
     struct Buttons {
+        static let add = "Add"
         static let back = "Back"
         static let cancel = "Cancel"
+        static let clear = "Clear"
         static let done = "Done"
         static let retry = "Retry"
         static let share = "Share"
-        static let add = "Add"
-        static let clear = "Clear"
     }
 
     /// Cell identifiers
@@ -140,10 +140,10 @@ struct Constants {
         static let addFavoriteIdentifier = "AddFavorite"
         static let seeAllStopsIdentifier = "SeeAllStops"
 
-        static let currentLocationIdentifier = "CurrentLocation"
-        static let smallDetailCellIdentifier = "SmallCell"
-        static let largeDetailCellIdentifier = "LargeCell"
         static let busStopDetailCellIdentifier = "BusStopCell"
+        static let currentLocationIdentifier = "CurrentLocation"
+        static let largeDetailCellIdentifier = "LargeCell"
+        static let smallDetailCellIdentifier = "SmallCell"
 
         static let informationCellIdentifier = "InformationCell"
     }
@@ -153,9 +153,9 @@ struct Constants {
         // Error messages
         static let couldntGetStops = "Couldn't Get Stops"
         static let locationNotFound = "Location Not Found"
+        static let noActiveAlerts = "No Active Service Alerts"
         static let noNetworkConnection = "No Network Connection"
         static let noRoutesFound = "No Routes Found"
-        static let noActiveAlerts = "No Active Service Alerts"
 
         // Other empty state messages
         static let lookingForRoutes = "Looking For Routes..."
@@ -163,14 +163,14 @@ struct Constants {
 
     /// The routes for each of our endpoints
     struct Endpoints {
-        static let allStops = "/allStops"
         static let alerts = "/alerts"
-        static let getRoutes = "/route"
-        static let multiRoute = "/multiroute"
-        static let searchResults = "/search"
-        static let routeSelected = "/routeSelected"
+        static let allStops = "/allStops"
         static let busLocations = "/tracking"
         static let delay = "/delay"
+        static let getRoutes = "/route"
+        static let multiRoute = "/multiroute"
+        static let routeSelected = "/routeSelected"
+        static let searchResults = "/search"
     }
 
     struct Footers {
@@ -180,30 +180,30 @@ struct Constants {
 
     /// The phrases used in InformationViewController
     struct InformationView {
+        static let appDevDescription = "An Engineering Project Team\nat Cornell University"
+        static let madeBy = "Made by Cornell App Development"
+        static let magicSchoolBus = "Ride on the Magic School Bus"
+        static let moreApps = "More Apps"
         static let onboarding = "Show Onboarding"
         static let sendFeedback = "Send Feedback"
-        static let moreApps = "More Apps"
-        static let website = "Visit Our Website"
-        static let madeBy = "Made by Cornell App Development"
-        static let appDevDescription = "An Engineering Project Team\nat Cornell University"
-        static let magicSchoolBus = "Ride on the Magic School Bus"
         static let serviceAlerts = "Service Alerts"
+        static let website = "Visit Our Website"
     }
 
     /// The phrases used in onboarding
     struct Onboarding {
         // Title label phrases
-        static let welcome = "Welcome to Ithaca Transit."
+        static let bestFeatures = "All the best features. All in one app."
+        static let favorites = "Your Favorites."
         static let liveTracking = "Live Tracking."
         static let searchAnywhere = "Search Anywhere."
-        static let favorites = "Your Favorites."
-        static let bestFeatures = "All the best features. All in one app."
+        static let welcome = "Welcome to Ithaca Transit."
 
         // Detail label messages
-        static let welcomeMessage = "A beautiful and simple end-to-end navigation app for TCAT. Made by AppDev."
+        static let favoritesMessage = "All of your favorite destinations are just one tap away."
         static let liveTrackingMessage = "Know exactly where your bus is and when it will be there."
         static let searchAnywhereMessage = "From Ithaca Mall to Taughannock Falls, search any location and get there fast."
-        static let favoritesMessage = "All of your favorite destinations are just one tap away."
+        static let welcomeMessage = "A beautiful and simple end-to-end navigation app for TCAT. Made by AppDev."
 
         // Button labels
         static let begin = "BEGIN"
@@ -212,45 +212,45 @@ struct Constants {
 
     /// General phrases used throughout the app
     struct General {
-        static let firstFavorite = "Add Your First Favorite!"
-        static let tapHere = "Tap Here"
-        static let searchPlaceholder = "Where to?"
-        static let favoritesPlaceholder = "Search any destination"
-        static let fromSearchBarPlaceholder = "Choose starting point..."
-        static let toSearchBarPlaceholder = "Choose destination..."
-        static let datepickerLeaveNow = "Leave Now"
-        static let searchForDestination = "Search for a destination"
-        static let currentLocation = "Current Location"
-        static let destination = "your destination"
         static let affectedRoutes = "Affected Routes"
+        static let currentLocation = "Current Location"
+        static let datepickerLeaveNow = "Leave Now"
+        static let destination = "your destination"
+        static let favoritesPlaceholder = "Search any destination"
+        static let firstFavorite = "Add Your First Favorite!"
+        static let fromSearchBarPlaceholder = "Choose starting point..."
+        static let searchForDestination = "Search for a destination"
+        static let searchPlaceholder = "Where to?"
         static let seeAllStops = "See All Stops"
+        static let tapHere = "Tap Here"
+        static let toSearchBarPlaceholder = "Choose destination..."
     }
 
     struct TableHeaders {
-        static let recentSearches = "Recent Searches"
         static let favoriteDestinations = "Favorite Destinations"
+        static let recentSearches = "Recent Searches"
 
         static let boardingSoon = "Boarding Soon"
         static let boardingSoonFromNearby = "Boarding Soon from Nearby Stops"
-        static let walking = "By Walking"
         static let noAvailableRoutes = "No Available Routes"
+        static let walking = "By Walking"
 
         static let highPriority = "High Priority"
-        static let mediumPriority = "Medium Priority"
         static let lowPriority = "Low Priority"
+        static let mediumPriority = "Medium Priority"
         static let noPriority = "Other"
     }
 
     /// The titles of controllers
     struct Titles {
+        static let aboutUs = "About Us"
         static let allStops = "All Stops"
         static let favorite = "Add Favorite"
         static let favorites = "Add Favorites"
-        static let aboutUs = "About Us"
-        static let serviceAlerts = "TCAT Service Alerts"
         static let routeDetails = "Route Details"
         static let routeOptions = "Route Options"
         static let routeResults = "Route Results"
+        static let serviceAlerts = "TCAT Service Alerts"
     }
 
     struct TodayExtension {
@@ -267,21 +267,21 @@ struct Constants {
     }
 
     struct UserDefaults {
-        static let group = "group.tcat"
-        static let version = "version"
         static let appLaunchCount = "appLaunchCount"
+        static let group = "group.tcat"
         static let onboardingShown = "onboardingShown"
         static let showLocationAuthReminder = "locationAuthReminder"
         static let uid = "uid"
+        static let version = "version"
 
         /// True if the current card has been dismissed by user
-        static let whatsNewDismissed = "whatsNewDismissed"
-        static let recentSearch = "recentSearch"
         static let allBusStops = "allBusStops"
         static let favorites = "favorites"
+        static let promotionDismissed = "promotionDismissed"
+        static let recentSearch = "recentSearch"
         static let servicedRoutes = "servicedRoutes"
         static let whatsNewCardVersion = "whatsNewVersion"
-        static let promotionDismissed = "promotionDismissed"
+        static let whatsNewDismissed = "whatsNewDismissed"
     }
 
     struct Values {

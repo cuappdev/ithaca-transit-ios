@@ -12,12 +12,12 @@ class BusStopTableViewCell: UITableViewCell {
 
     let linePosition: CGFloat = DetailIconView.width - 16 // max of DetailIconView (114) - constant (16) = 98
 
-    var titleLabel: UILabel!
     let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
     let cellWidth: CGFloat = RouteDetailCellSize.indentedWidth
+    var titleLabel: UILabel!
 
-    var connectorTop: UIView!
     var connectorBottom: UIView!
+    var connectorTop: UIView!
     var statusCircle: Circle!
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

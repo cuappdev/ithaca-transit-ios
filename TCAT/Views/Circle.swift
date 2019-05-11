@@ -9,17 +9,17 @@
 import UIKit
 
 enum CircleStyle {
-    case solid
     /// Thick border and center dot with same color, white donut.
     case bordered
     /// Color is used as border, middle is white.
     case outline
+    case solid
 }
 
 enum CircleSize: Int {
-    case small = 12
-    case medium = 16
     case large = 18
+    case medium = 16
+    case small = 12
 }
 
 class Circle: UIView {

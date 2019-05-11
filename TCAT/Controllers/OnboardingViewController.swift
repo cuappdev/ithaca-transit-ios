@@ -6,8 +6,8 @@
 //  Copyright © 2018 cuappdev. All rights reserved.
 //
 
-import UIKit
 import Presentation
+import UIKit
 
 class OnboardingViewController: PresentationController {
 
@@ -36,22 +36,16 @@ class OnboardingViewController: PresentationController {
     //
 
     /// The position of the header label
-    let titleLabelPosition = Position(left: 0.5, top: 0.2)
-
     let titleLabelFontName = Fonts.bold
-
     let titleLabelFontSize: CGFloat = 48.0
-
+    let titleLabelPosition = Position(left: 0.5, top: 0.2)
     let titleLabelTextColor = UIColor(hex: "243C47")
-
     let titleLabelMessages = [
-
         Constants.Onboarding.welcome,
         Constants.Onboarding.liveTracking,
         Constants.Onboarding.searchAnywhere,
         Constants.Onboarding.favorites,
         Constants.Onboarding.bestFeatures
-
     ]
 
     //

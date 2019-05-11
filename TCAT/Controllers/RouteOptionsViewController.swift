@@ -6,15 +6,15 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import UIKit
 import CoreLocation
-import SwiftyJSON
-import DZNEmptyDataSet
-import NotificationBannerSwift
 import Crashlytics
-import Pulley
-import Intents
+import DZNEmptyDataSet
 import FutureNova
+import Intents
+import NotificationBannerSwift
+import Pulley
+import SwiftyJSON
+import UIKit
 
 enum SearchBarType: String {
     case from, to
@@ -26,34 +26,34 @@ struct BannerInfo {
 }
 
 enum RequestAction {
+    case hideBanner
     case showAlert(title: String, message: String, actionTitle: String)
     case showError(bannerInfo: BannerInfo, payload: GetRoutesErrorPayload)
-    case hideBanner
 }
 
 class RouteOptionsViewController: UIViewController {
 
     // MARK: Search bar vars
 
-    var searchBarView: SearchBarView?
-    var locationManager: CLLocationManager!
     var currentLocation: CLLocationCoordinate2D?
-    var searchType: SearchBarType = .to
-    var searchTimeType: SearchType = .leaveNow
+    var locationManager: CLLocationManager!
+    var searchBarView: SearchBarView?
     var searchFrom: Place?
-    var searchTo: Place?
     var searchTime: Date?
+    var searchTimeType: SearchType = .leaveNow
+    var searchTo: Place?
+    var searchType: SearchBarType = .to
     var showRouteSearchingLoader: Bool = false
 
     // MARK: View vars
 
     let mediumTapticGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    var routeSelection: RouteSelectionView!
-    var datePickerView: DatePickerView!
     var datePickerOverlay: UIView!
-    var routeResults: UITableView!
+    var datePickerView: DatePickerView!
     var refreshControl: UIRefreshControl!
+    var routeResults: UITableView!
+    var routeSelection: RouteSelectionView!
 
     let navigationBarTitle: String = Constants.Titles.routeOptions
     let routeResultsTitle: String = Constants.Titles.routeResults
