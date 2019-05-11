@@ -10,12 +10,12 @@ import UIKit
 
 class SmallDetailTableViewCell: UITableViewCell {
 
-    var iconView: DetailIconView?
-    var titleLabel: UILabel!
+    private var iconView: DetailIconView?
+    private var titleLabel: UILabel!
 
-    let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
-    let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
-    var iconViewFrame: CGRect = CGRect()
+    private var iconViewFrame: CGRect = CGRect()
+    private let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
+    private let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

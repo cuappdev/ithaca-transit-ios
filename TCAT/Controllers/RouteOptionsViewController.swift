@@ -33,61 +33,44 @@ enum RequestAction {
 
 class RouteOptionsViewController: UIViewController {
 
-    // MARK: Search bar vars
-
-    var currentLocation: CLLocationCoordinate2D?
-    var locationManager: CLLocationManager!
-    var searchBarView: SearchBarView?
-    var searchFrom: Place?
-    var searchTime: Date?
-    var searchTimeType: SearchType = .leaveNow
     var searchTo: Place?
-    var searchType: SearchBarType = .to
-    var showRouteSearchingLoader: Bool = false
 
-    // MARK: View vars
+    private var datePickerOverlay: UIView!
+    private var datePickerView: DatePickerView!
+    private var refreshControl: UIRefreshControl!
+    private var routeResults: UITableView!
+    private var routeSelection: RouteSelectionView!
+    private var searchBarView: SearchBarView?
 
-    let mediumTapticGenerator = UIImpactFeedbackGenerator(style: .medium)
+    private var currentLocation: CLLocationCoordinate2D?
+    private var locationManager: CLLocationManager!
+    private var routes: [[Route]] = []
+    private var searchFrom: Place?
+    private var searchTime: Date?
+    private var searchTimeType: SearchType = .leaveNow
+    private var searchType: SearchBarType = .to
+    private var showRouteSearchingLoader: Bool = false
+    private var timers: [Int: Timer] = [:]
 
-    var datePickerOverlay: UIView!
-    var datePickerView: DatePickerView!
-    var refreshControl: UIRefreshControl!
-    var routeResults: UITableView!
-    var routeSelection: RouteSelectionView!
-
-    let navigationBarTitle: String = Constants.Titles.routeOptions
-    let routeResultsTitle: String = Constants.Titles.routeResults
-
-    // MARK: Data vars
-
-    var routes: [[Route]] = []
+    private var cellUserInteraction = true
+    private let estimatedRowHeight: CGFloat = 115
+    private let fileName: String = "RouteOptionsVC"
+    private let mediumTapticGenerator = UIImpactFeedbackGenerator(style: .medium)
+    private let navigationBarTitle: String = Constants.Titles.routeOptions
+    private let networking: Networking = URLSession.shared.request
+    private let reachability: Reachability? = Reachability(hostname: Endpoint.config.host ?? "")
+    private let routeResultsTitle: String = Constants.Titles.routeResults
 
     /// Returns routes from each section in order
-    var allRoutes: [Route] {
+    private var allRoutes: [Route] {
         return routes.flatMap { $0 }
     }
-    var timers: [Int: Timer] = [:]
 
-    // MARK: Reachability vars
-
-    let reachability: Reachability? = Reachability(hostname: Endpoint.config.host ?? "")
-    private let networking: Networking = URLSession.shared.request
-
-    var banner: StatusBarNotificationBanner? {
+    private var banner: StatusBarNotificationBanner? {
         didSet {
             setNeedsStatusBarAppearanceUpdate()
         }
     }
-
-    var cellUserInteraction = true
-
-    // MARK: Spacing vars
-
-    let estimatedRowHeight: CGFloat = 115
-
-    // MARK: Print vars
-
-    private let fileName: String = "RouteOptionsVC"
 
     // MARK: View Lifecycle
 

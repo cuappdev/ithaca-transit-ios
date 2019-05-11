@@ -25,8 +25,8 @@ let userDefaults = UserDefaults.standard
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    let encoder = JSONEncoder()
-    let userDataInits: [(key: String, defaultValue: Any)] = [
+    private let encoder = JSONEncoder()
+    private let userDataInits: [(key: String, defaultValue: Any)] = [
         (key: Constants.UserDefaults.onboardingShown, defaultValue: false),
         (key: Constants.UserDefaults.recentSearch, defaultValue: [Any]()),
         (key: Constants.UserDefaults.favorites, defaultValue: [Any]())

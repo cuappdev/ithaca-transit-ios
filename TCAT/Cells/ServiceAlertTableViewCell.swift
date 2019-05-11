@@ -12,25 +12,26 @@ import UIKit
 class ServiceAlertTableViewCell: UITableViewCell {
 
     static let identifier: String = "serviceAlertCell"
-    private let fileName: String = "serviceAlertTableViewCell"
+
     var alert: ServiceAlert?
     var rowNum: Int!
 
-    let borderInset = 16
-    let busIconSpacing = 10
-    var maxIconsPerRow: Int {
+    private var affectedRoutesLabel: UILabel!
+    private var affectedRoutesStackView: UIStackView?
+    private var descriptionLabel: UILabel!
+    private var timeSpanLabel: UILabel!
+    private var topSeparator: UIView?
+
+    private let borderInset = 16
+    private let busIconSpacing = 10
+    private let fileName: String = "serviceAlertTableViewCell"
+    private var maxIconsPerRow: Int {
         let iconWidth = Int(BusIconType.directionSmall.width)
         let screenWidth = Int(UIScreen.main.bounds.width)
         let totalConstraintInset = borderInset * 2
 
         return (screenWidth - totalConstraintInset + busIconSpacing) / (iconWidth + busIconSpacing)
     }
-
-    var affectedRoutesLabel: UILabel!
-    var affectedRoutesStackView: UIStackView?
-    var descriptionLabel: UILabel!
-    var timeSpanLabel: UILabel!
-    var topSeparator: UIView?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

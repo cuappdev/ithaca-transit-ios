@@ -6,12 +6,12 @@
 //  Copyright © 2019 cuappdev. All rights reserved.
 //
 
-import UIKit
 import CoreLocation
 import DZNEmptyDataSet
 import FutureNova
 import GoogleMaps
 import SnapKit
+import UIKit
 
 protocol HomeOptionsCardDelegate {
     func updateSize()
@@ -20,35 +20,37 @@ protocol HomeOptionsCardDelegate {
 
 class HomeOptionsCardViewController: UIViewController {
 
+    var searchBar: UISearchBar!
+
     var delegate: HomeOptionsCardDelegate?
 
-    var currentLocation: CLLocation? { return delegate?.getCurrentLocation() }
-    var tableView: UITableView!
-    var searchBar: UISearchBar!
-    let infoButton = UIButton(type: .infoLight)
-    var searchBarSeparator: UIView!
-    var timer: Timer?
-    var searchResultsSection: Section!
-    private let networking: Networking = URLSession.shared.request
+    private let infoButton = UIButton(type: .infoLight)
+    private var searchBarSeparator: UIView!
+    private var tableView: UITableView!
 
-    var loadingIndicator: LoadingIndicator?
-    var isLoading: Bool { return loadingIndicator != nil }
-    var isNetworkDown = false
-    let searchBarHeight: CGFloat = 54
-    let searchBarSeparatorHeight: CGFloat = 1
-    let headerHeight: CGFloat = 42
-    let tableViewRowHeight: CGFloat = 50
-    let maxRowCount: CGFloat = 5
-    let maxHeaderCount: CGFloat = 2
-    let maxSeparatorCount: CGFloat = 1
-    let maxScreenCoverage: CGFloat = 3/5
-    let infoButtonAnimationDuration = 0.1
-    let maxRecentsCount = 2
-    let maxFavoritesCount = 2
+    private var currentLocation: CLLocation? { return delegate?.getCurrentLocation() }
+    private let networking: Networking = URLSession.shared.request
+    private var searchResultsSection: Section!
+    private var timer: Timer?
+
+    private let headerHeight: CGFloat = 42
+    private let infoButtonAnimationDuration = 0.1
+    private var isLoading: Bool { return loadingIndicator != nil }
+    private var isNetworkDown = false
+    private var loadingIndicator: LoadingIndicator?
+    private let maxFavoritesCount = 2
+    private let maxHeaderCount: CGFloat = 2
+    private let maxRecentsCount = 2
+    private let maxRowCount: CGFloat = 5
+    private let maxScreenCoverage: CGFloat = 3/5
+    private let maxSeparatorCount: CGFloat = 1
+    private let searchBarHeight: CGFloat = 54
+    private let searchBarSeparatorHeight: CGFloat = 1
+    private let tableViewRowHeight: CGFloat = 50
 
     /** Returns the height of a card that would contain two favorites and two recent searches.
      This is the height that we will cap all optionCards at, regardless of the phone. */
-    var maxCardHeight: CGFloat {
+    private var maxCardHeight: CGFloat {
         let totalRowHeight = tableViewRowHeight * maxRowCount
         let totalHeaderHeight = headerHeight * maxHeaderCount
         let totalSeparatorHeight = HeaderView.separatorViewHeight * maxSeparatorCount
@@ -56,10 +58,10 @@ class HomeOptionsCardViewController: UIViewController {
     }
 
     /** Checks to see if the bottom of the card at maximum height would cover more than the maxScreenCoverage */
-    var isDynamicSearchBar: Bool {
+    private var isDynamicSearchBar: Bool {
         return maxCardHeight > (UIScreen.main.bounds.height*maxScreenCoverage - HomeMapViewController.optionsCardInset.top)
     }
-    var recentLocations: [Place] = [] {
+    private var recentLocations: [Place] = [] {
         didSet {
             if recentLocations.count > maxRecentsCount {
                 recentLocations = Array(recentLocations.prefix(maxRecentsCount))
@@ -69,7 +71,7 @@ class HomeOptionsCardViewController: UIViewController {
             }
         }
     }
-    var favorites: [Place] = [] {
+    private var favorites: [Place] = [] {
         didSet {
             if favorites.count > maxFavoritesCount {
                 favorites = Array(favorites.prefix(maxFavoritesCount))
@@ -79,7 +81,7 @@ class HomeOptionsCardViewController: UIViewController {
             }
         }
     }
-    var sections: [Section] = [] {
+    private var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
             delegate?.updateSize()

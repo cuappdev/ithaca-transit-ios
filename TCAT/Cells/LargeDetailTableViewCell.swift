@@ -10,20 +10,21 @@ import UIKit
 
 class LargeDetailTableViewCell: UITableViewCell {
 
-    var busIconView: BusIcon!
     var chevron: UIImageView!
-    var detailLabel: UILabel!
-    var iconView: DetailIconView!
-    var titleLabel: UILabel!
 
-    let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
-    let paragraphStyle = NSMutableParagraphStyle()
-    var cellHeight: CGFloat = RouteDetailCellSize.largeHeight
-
-    let edgeSpacing: CGFloat = 16
-    let labelSpacing: CGFloat = 4
-    var direction: Direction!
     var isExpanded: Bool = false
+
+    private var busIconView: BusIcon!
+    private var detailLabel: UILabel!
+    private var iconView: DetailIconView!
+    private var titleLabel: UILabel!
+
+    private let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
+    private let edgeSpacing: CGFloat = 16
+    private let labelSpacing: CGFloat = 4
+    private let paragraphStyle = NSMutableParagraphStyle()
+    private var cellHeight: CGFloat = RouteDetailCellSize.largeHeight
+    private var direction: Direction!
 
     func getChevron() -> UIImageView {
         let chevron = UIImageView()

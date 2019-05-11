@@ -19,48 +19,48 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Data vars
     static let identifier: String = "routeCell"
 
+    private var route: Route?
     private let fileName: String = "RouteTableViewCell"
     private let networking: Networking = URLSession.shared.request
-    var route: Route?
 
     // MARK: Log vars
-    var rowNum: Int?
+    private var rowNum: Int?
 
     // MARK: View vars
-    let containerView = UIView()
+    private let containerView = UIView()
 
-    var timesStackView: UIStackView
-    var travelTimeLabel: UILabel
+    private var timesStackView: UIStackView
+    private var travelTimeLabel: UILabel
 
-    var arrowImageView: UIImageView
-    var departureStackView: UIStackView
-    var departureTimeLabel: UILabel
+    private var arrowImageView: UIImageView
+    private var departureStackView: UIStackView
+    private var departureTimeLabel: UILabel
 
-    var liveIndicatorView: LiveIndicator
-    var liveLabel: UILabel
-    var liveStackView: UIStackView
-    var stretchyFillerView: UIView
+    private var liveIndicatorView: LiveIndicator
+    private var liveLabel: UILabel
+    private var liveStackView: UIStackView
+    private var stretchyFillerView: UIView
 
-    var routeDiagram: RouteDiagram
-    var verticalStackView: UIStackView
+    private var routeDiagram: RouteDiagram
+    private var verticalStackView: UIStackView
 
     // MARK: Spacing vars
 
-    let bottomMargin: CGFloat = 16
-    let leftMargin: CGFloat =  16
-    let rightMargin: CGFloat = 12
-    let topMargin: CGFloat = 16
+    private let bottomMargin: CGFloat = 16
+    private let leftMargin: CGFloat =  16
+    private let rightMargin: CGFloat = 12
+    private let topMargin: CGFloat = 16
 
-    let cellMargin: CGFloat = 12
+    private let cellMargin: CGFloat = 12
 
-    let cellSeparatorHeight: CGFloat = 12
-    let cornerRadius: CGFloat = 16
+    private let cellSeparatorHeight: CGFloat = 12
+    private let cornerRadius: CGFloat = 16
 
-    let arrowImageViewHeight: CGFloat = 11.5
-    let arrowImageViewWidth: CGFloat = 6
-    let spaceBtnDepartureElements: CGFloat = 4
+    private let arrowImageViewHeight: CGFloat = 11.5
+    private let arrowImageViewWidth: CGFloat = 6
+    private let spaceBtnDepartureElements: CGFloat = 4
 
-    let spaceBtnLiveElements: CGFloat = 4
+    private let spaceBtnLiveElements: CGFloat = 4
 
     // MARK: Init
 

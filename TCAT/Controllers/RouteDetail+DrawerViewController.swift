@@ -21,26 +21,21 @@ struct RouteDetailCellSize {
 class RouteDetailDrawerViewController: UIViewController, UITableViewDataSource, UITableViewDelegate,
 UIGestureRecognizerDelegate, PulleyDrawerViewControllerDelegate {
 
-    // MARK: Variables
-
-    var safeAreaCover: UIView?
     var summaryView = SummaryView()
-    var tableView: UITableView!
 
-    var directions: [Direction] = []
-    var route: Route!
-
-    let main = UIScreen.main.bounds
-    var justLoaded: Bool = true
+    private var safeAreaCover: UIView?
+    private var tableView: UITableView!
 
     /// Number of seconds to wait before auto-refreshing bus delay network call.
-    var busDelayNetworkRefreshRate: Double = 10
-    var busDelayNetworkTimer: Timer?
-
+    private var busDelayNetworkRefreshRate: Double = 10
+    private var busDelayNetworkTimer: Timer?
+    private var directions: [Direction] = []
+    private var justLoaded: Bool = true
+    private let main = UIScreen.main.bounds
     private let networking: Networking = URLSession.shared.request
+    private var route: Route!
 
     // MARK: Initalization
-
     init(route: Route) {
         super.init(nibName: nil, bundle: nil)
         self.route = route

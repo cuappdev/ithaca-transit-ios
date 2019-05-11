@@ -14,10 +14,10 @@ class PlaceTableViewCell: UITableViewCell {
 
     private var iconColor: UIColor = Colors.metadataIcon
 
-    let imageHeight: CGFloat = 20.0
-    let imageWidth: CGFloat = 20.0
-    let labelWidthPadding: CGFloat = 45.0
-    let labelXPosition: CGFloat = 46.0
+    private let imageHeight: CGFloat = 20.0
+    private let imageWidth: CGFloat = 20.0
+    private let labelWidthPadding: CGFloat = 45.0
+    private let labelXPosition: CGFloat = 46.0
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)

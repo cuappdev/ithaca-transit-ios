@@ -13,14 +13,15 @@ import UIKit
 
 class ServiceAlertsViewController: UIViewController {
 
-    var isLoading: Bool { return loadingIndicator != nil }
-    var loadingIndicator: LoadingIndicator?
-    var networkError: Bool = false
-    var tableView: UITableView!
+    private var tableView: UITableView!
 
+    private var isLoading: Bool { return loadingIndicator != nil }
+    private var loadingIndicator: LoadingIndicator?
+    private var networkError: Bool = false
     private let networking: Networking = URLSession.shared.request
+    private var priorities = [Int]()
 
-    var alerts = [Int: [ServiceAlert]]() {
+    private var alerts = [Int: [ServiceAlert]]() {
         didSet {
             removeLoadingIndicator()
             tableView.reloadData()
@@ -37,7 +38,6 @@ class ServiceAlertsViewController: UIViewController {
             }
         }
     }
-    var priorities = [Int]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
