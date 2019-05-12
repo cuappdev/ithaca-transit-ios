@@ -124,6 +124,8 @@ class HomeOptionsCardViewController: UIViewController {
         searchBar.barTintColor = .white
         searchBar.layer.borderColor = UIColor.white.cgColor
         searchBar.layer.borderWidth = 1
+        // Add horizontal offset so that placeholder text is aligned with bus stop names and all stops
+        searchBar.searchTextPositionAdjustment = UIOffset(horizontal: 8, vertical: 0)
         view.addSubview(searchBar)
     }
 
@@ -144,6 +146,8 @@ class HomeOptionsCardViewController: UIViewController {
     func setupConstraints() {
         let infoButtonSize = CGSize.init(width: 30, height: 38)
         let infoButtonTrailinginset = 16
+        // Add top offset to search bar so that the search bar text is vertically centered.
+        let searchBarTopOffset = 3
 
         infoButton.snp.makeConstraints { (make) in
             make.centerY.equalTo(searchBar)
@@ -152,7 +156,8 @@ class HomeOptionsCardViewController: UIViewController {
         }
 
         searchBar.snp.makeConstraints { (make) in
-            make.leading.top.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.top.equalToSuperview().offset(searchBarTopOffset)
             make.trailing.equalTo(infoButton.snp.leading)
             make.height.equalTo(searchBarHeight)
         }
