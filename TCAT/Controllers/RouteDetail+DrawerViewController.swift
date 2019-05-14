@@ -325,10 +325,10 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
             guard let contentViewController = drawer.primaryContentViewController as? RouteDetailContentViewController
                 else { return }
             if let direction = selectedDirection {
-                if direction.type == .depart || direction.type == .transfer {
-                    contentViewController.centerMap(on: direction)
-                } else {
+                if direction.type == .walk {
                     contentViewController.centerMap(on: direction, overviewOfPath: true)
+                } else {
+                    contentViewController.centerMap(on: direction)
                 }
                 selectedDirection = nil
             } else {

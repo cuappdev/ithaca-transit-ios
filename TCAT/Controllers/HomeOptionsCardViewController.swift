@@ -46,6 +46,7 @@ class HomeOptionsCardViewController: UIViewController {
     private let maxSeparatorCount: CGFloat = 1
     private let searchBarHeight: CGFloat = 54
     private let searchBarSeparatorHeight: CGFloat = 1
+    private let searchBarTopOffset: CGFloat = 3 // Add top offset to search bar so that the search bar text is vertically centered.
     private let tableViewRowHeight: CGFloat = 50
 
     /** Returns the height of a card that would contain two favorites and two recent searches.
@@ -57,10 +58,6 @@ class HomeOptionsCardViewController: UIViewController {
         return totalRowHeight + totalHeaderHeight + searchBarHeight + totalSeparatorHeight
     }
 
-    /** Checks to see if the bottom of the card at maximum height would cover more than the maxScreenCoverage */
-    private var isDynamicSearchBar: Bool {
-        return maxCardHeight > (UIScreen.main.bounds.height*maxScreenCoverage - HomeMapViewController.optionsCardInset.top)
-    }
     private var recentLocations: [Place] = [] {
         didSet {
             if recentLocations.count > maxRecentsCount {
@@ -119,11 +116,17 @@ class HomeOptionsCardViewController: UIViewController {
         searchBar.placeholder = Constants.General.searchPlaceholder
         searchBar.delegate = self
         searchBar.searchBarStyle = .default
-        let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
-        textFieldInsideSearchBar?.backgroundColor = Colors.white
+        searchBar.returnKeyType = .search
         searchBar.barTintColor = .white
         searchBar.layer.borderColor = UIColor.white.cgColor
         searchBar.layer.borderWidth = 1
+
+        if let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField,
+            let searchView = textFieldInsideSearchBar.leftView as? UIImageView {
+            textFieldInsideSearchBar.backgroundColor = Colors.white
+            searchView.image = #imageLiteral(resourceName: "search-large")
+        }
+
         // Add horizontal offset so that placeholder text is aligned with bus stop names and all stops
         searchBar.searchTextPositionAdjustment = UIOffset(horizontal: 8, vertical: 0)
         view.addSubview(searchBar)
@@ -146,8 +149,6 @@ class HomeOptionsCardViewController: UIViewController {
     func setupConstraints() {
         let infoButtonSize = CGSize.init(width: 30, height: 38)
         let infoButtonTrailinginset = 16
-        // Add top offset to search bar so that the search bar text is vertically centered.
-        let searchBarTopOffset = 3
 
         infoButton.snp.makeConstraints { (make) in
             make.centerY.equalTo(searchBar)
@@ -157,7 +158,7 @@ class HomeOptionsCardViewController: UIViewController {
 
         searchBar.snp.makeConstraints { (make) in
             make.leading.equalToSuperview()
-            make.top.equalToSuperview().offset(searchBarTopOffset)
+            make.top.equalToSuperview().inset(searchBarTopOffset)
             make.trailing.equalTo(infoButton.snp.leading)
             make.height.equalTo(searchBarHeight)
         }
@@ -207,12 +208,15 @@ class HomeOptionsCardViewController: UIViewController {
 
     /// If the screen is too small, decide whether to show full card or just searchBar
     func calculateCardHeight() -> CGFloat {
-        if isDynamicSearchBar {
-            if searchBar.isFirstResponder {
-                return min(tableViewContentHeight() + CGFloat(searchBarHeight), maxCardHeight) + searchBarSeparatorHeight
-            } else { return CGFloat(searchBarHeight) + searchBarSeparatorHeight }
-        }
-        return min(tableViewContentHeight() + searchBarHeight, UIScreen.main.bounds.height * maxScreenCoverage) + searchBarSeparatorHeight
+        if searchBar.isFirstResponder {
+            let contentHeight = tableViewContentHeight() + CGFloat(searchBarHeight)
+            if contentHeight >= maxCardHeight {
+                tableView.isScrollEnabled = true
+            } else {
+                tableView.isScrollEnabled = false
+            }
+            return min(tableViewContentHeight() + CGFloat(searchBarHeight), maxCardHeight) + searchBarSeparatorHeight + searchBarTopOffset
+        } else { return CGFloat(searchBarHeight) + searchBarTopOffset + searchBarSeparatorHeight }
     }
 
     func updatePlaces() {
@@ -225,7 +229,8 @@ class HomeOptionsCardViewController: UIViewController {
             self.infoButton.alpha = 1
 
             self.searchBar.snp.remakeConstraints { (make) in
-                make.leading.top.equalToSuperview()
+                make.leading.equalToSuperview()
+                make.top.equalToSuperview().inset(self.searchBarTopOffset)
                 make.trailing.equalTo(self.infoButton.snp.leading)
                 make.height.equalTo(self.searchBarHeight)
             }
@@ -237,7 +242,8 @@ class HomeOptionsCardViewController: UIViewController {
         UIView.animate(withDuration: infoButtonAnimationDuration) {
             self.infoButton.alpha = 0
             self.searchBar.snp.remakeConstraints { (make) in
-                make.leading.top.equalToSuperview()
+                make.leading.equalToSuperview()
+                make.top.equalToSuperview().inset(self.searchBarTopOffset)
                 make.trailing.equalTo(self.infoButton.snp.trailing)
                 make.height.equalTo(self.searchBarHeight)
             }
@@ -315,7 +321,12 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        searchBar.showsCancelButton = true
+        if searchText == "" {
+            searchBar.returnKeyType = .default
+        } else {
+            searchBar.returnKeyType = .search
+        }
+        searchBar.setShowsCancelButton(true, animated: true)
         timer?.invalidate()
         timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
     }
@@ -326,16 +337,23 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
 
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(true, animated: true)
+        if let cancelButton = searchBar.value(forKey: "cancelButton") as? UIButton {
+            cancelButton.setTitleColor(Colors.tcatBlue, for: .normal)
+        }
+
         searchBar.placeholder = nil
         animateOutInfoButton()
-        if isDynamicSearchBar {
+        if searchBar.text == "" {
             sections = createSections()
         }
     }
 
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        if searchBar.showsCancelButton {
+        if let searchBarText = searchBar.text,
+            searchBarText.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
             searchBarCancelButtonClicked(searchBar)
+        } else {
+            searchBar.setShowsCancelButton(false, animated: true)
         }
     }
 }
@@ -375,6 +393,15 @@ extension HomeOptionsCardViewController: HomeMapViewDelegate {
             sections = createSections()
             searchBar.isUserInteractionEnabled = true
         }
+    }
+
+    func mapViewWillMove() {
+        searchBar.placeholder = Constants.General.searchPlaceholder
+        searchBar.setShowsCancelButton(false, animated: true)
+        searchBar.endEditing(true)
+        searchBar.text = nil
+        animateInInfoButton()
+        sections = createSections()
     }
 }
 

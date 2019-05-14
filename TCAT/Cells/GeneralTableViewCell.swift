@@ -10,10 +10,10 @@ import UIKit
 
 class GeneralTableViewCell: UITableViewCell {
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
+    private let imageHeight: CGFloat = 20.0
+    private let imageWidth: CGFloat = 20.0
+    private let labelWidthPadding: CGFloat = 45.0
+    private let labelXPosition: CGFloat = 46.0
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
@@ -32,8 +32,15 @@ class GeneralTableViewCell: UITableViewCell {
 
         switch reuseIdentifier {
         case Constants.Cells.seeAllStopsIdentifier:
+
             textLabel?.text = Constants.General.seeAllStops
+            textLabel?.frame.origin.x = labelXPosition
+            textLabel?.frame.size.width = frame.width - labelWidthPadding
+
+            imageView?.frame = CGRect(x: 16, y: 5, width: imageWidth, height: imageHeight)
+            imageView?.center.y = bounds.height / 2.0
             imageView?.image = #imageLiteral(resourceName: "list")
+
             accessoryType = .disclosureIndicator
         case Constants.Cells.currentLocationIdentifier:
             textLabel?.text = Constants.General.currentLocation

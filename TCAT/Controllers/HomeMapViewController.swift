@@ -15,6 +15,7 @@ import UIKit
 
 protocol HomeMapViewDelegate {
     func reachabilityChanged(connection: Reachability.Connection)
+    func mapViewWillMove()
 }
 
 class HomeMapViewController: UIViewController {
@@ -217,7 +218,7 @@ extension HomeMapViewController: CLLocationManagerDelegate {
 
 extension HomeMapViewController: GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
-        optionsCardVC.searchBar.endEditing(true)
+        delegate?.mapViewWillMove()
     }
 }
 
