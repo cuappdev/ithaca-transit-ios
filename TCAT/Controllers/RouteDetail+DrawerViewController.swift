@@ -326,7 +326,7 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
                 else { return }
             if let direction = selectedDirection {
                 if direction.type == .walk {
-                    contentViewController.centerMap(on: direction, overviewOfPath: true)
+                    contentViewController.centerMap(on: direction, isOverviewOfPath: true)
                 } else {
                     contentViewController.centerMap(on: direction)
                 }

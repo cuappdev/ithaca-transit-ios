@@ -331,7 +331,7 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText == "" {
+        if searchText.isEmpty {
             searchBar.returnKeyType = .default
         } else {
             searchBar.returnKeyType = .search
@@ -353,14 +353,14 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
 
         searchBar.placeholder = nil
         animateOutInfoButton()
-        if searchBar.text == "" {
+        if searchBar.text?.isEmpty ?? false {
             sections = createSections()
         }
     }
 
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         if let searchBarText = searchBar.text,
-            searchBarText.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+            searchBarText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             searchBarCancelButtonClicked(searchBar)
         } else {
             searchBar.setShowsCancelButton(false, animated: true)

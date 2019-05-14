@@ -670,11 +670,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     }
 
-    func centerMap(on direction: Direction, overviewOfPath: Bool = false, drawerPreviewing: Bool = false) {
+    func centerMap(on direction: Direction, isOverviewOfPath: Bool = false, drawerPreviewing: Bool = false) {
 
         let path = GMSMutablePath()
 
-        if overviewOfPath {
+        if isOverviewOfPath {
             for loc in direction.path {
                 path.add(loc)
             }
@@ -685,7 +685,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         let bounds = GMSCoordinateBounds(path: path)
         let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
         mapView.animate(with: update)
-        if !overviewOfPath {
+        if !isOverviewOfPath {
             mapView.animate(toZoom: Constants.Map.directionZoom)
         }
     }

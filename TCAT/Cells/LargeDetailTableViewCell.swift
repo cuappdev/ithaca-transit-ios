@@ -202,12 +202,12 @@ class LargeDetailTableViewCell: UITableViewCell {
 
 class IncreasedTapSizeButton: UIButton {
 
-    var verticalInset: CGFloat
-    var horizontalInset: CGFloat
+    private var horizontalInset: CGFloat
+    private var verticalInset: CGFloat
 
     init(frame: CGRect, sizeIncrease: CGSize) {
-        verticalInset = sizeIncrease.height / 2
         horizontalInset = sizeIncrease.width / 2
+        verticalInset = sizeIncrease.height / 2
         super.init(frame: frame)
     }
 
@@ -216,8 +216,8 @@ class IncreasedTapSizeButton: UIButton {
         let largerArea = CGRect(
             x: self.bounds.origin.x - horizontalInset,
             y: self.bounds.origin.y - verticalInset,
-            width: self.bounds.size.width + horizontalInset*2,
-            height: self.bounds.size.height + verticalInset*2
+            width: self.bounds.size.width + horizontalInset * 2,
+            height: self.bounds.size.height + verticalInset * 2
         )
 
         return largerArea.contains(point)

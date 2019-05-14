@@ -10,10 +10,10 @@ import UIKit
 
 class GeneralTableViewCell: UITableViewCell {
 
-    private let imageHeight: CGFloat = 20.0
-    private let imageWidth: CGFloat = 20.0
-    private let labelWidthPadding: CGFloat = 45.0
-    private let labelXPosition: CGFloat = 46.0
+    private let imageHeight: CGFloat = 20
+    private let imageWidth: CGFloat = 20
+    private let labelWidthPadding: CGFloat = 45
+    private let labelXPosition: CGFloat = 46
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
@@ -38,7 +38,7 @@ class GeneralTableViewCell: UITableViewCell {
             textLabel?.frame.size.width = frame.width - labelWidthPadding
 
             imageView?.frame = CGRect(x: 16, y: 5, width: imageWidth, height: imageHeight)
-            imageView?.center.y = bounds.height / 2.0
+            imageView?.center.y = bounds.height / 2
             imageView?.image = #imageLiteral(resourceName: "list")
 
             accessoryType = .disclosureIndicator
