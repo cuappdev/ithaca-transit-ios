@@ -128,7 +128,7 @@ class HomeOptionsCardViewController: UIViewController {
         }
 
         // Add horizontal offset so that placeholder text is aligned with bus stop names and all stops
-        searchBar.searchTextPositionAdjustment = UIOffset(horizontal: 8, vertical: 0)
+        searchBar.searchTextPositionAdjustment = .init(horizontal: 8, vertical: 0)
         view.addSubview(searchBar)
     }
 
@@ -151,7 +151,7 @@ class HomeOptionsCardViewController: UIViewController {
         let infoButtonTrailinginset = 16
 
         infoButton.snp.makeConstraints { (make) in
-            make.centerY.equalTo(searchBar)
+            make.centerY.equalTo(searchBar).offset(-searchBarTopOffset/2)
             make.trailing.equalToSuperview().inset(infoButtonTrailinginset)
             make.size.equalTo(infoButtonSize)
         }
@@ -299,9 +299,16 @@ extension HomeOptionsCardViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        updatePlaces()
+        // Update searchbar attributes
+        if let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField,
+            let searchView = textFieldInsideSearchBar.leftView as? UIImageView {
+            textFieldInsideSearchBar.backgroundColor = Colors.white
+            searchView.image = #imageLiteral(resourceName: "search-large")
+        }
         searchBar.placeholder = Constants.General.searchPlaceholder
         searchBar.text = nil
+
+        updatePlaces()
         sections = createSections()
     }
 

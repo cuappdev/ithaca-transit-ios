@@ -140,7 +140,7 @@ class Direction: NSObject, NSCopying, Codable {
         self.tripIdentifiers = tripIdentifiers
         self.delay = delay
     }
-    
+
     func copy(with zone: NSZone? = nil) -> Any {
         return Swift.type(of: self).init(
             type: type,
