@@ -218,8 +218,8 @@ class RouteDetailDrawerViewController: UIViewController {
 
         guard let indexPath = indexPath else { return }
         let expandedCellCount = expandedCellDict.reduce(0) { (result, arg1) -> Int in
-            let (_, expandedCount) = arg1
-            return result + expandedCount
+            let (origRow, expandedCount) = arg1
+            return indexPath.row > origRow ? result + expandedCount : result
         }
 
         let newIndexPath = IndexPath(row: indexPath.row + expandedCellCount, section: indexPath.section)
