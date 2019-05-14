@@ -161,7 +161,28 @@ class Direction: NSObject, NSCopying, Codable {
             tripIdentifiers: [],
             delay: nil
         )
+    }
 
+    convenience init(name: String? = nil, path: [CLLocationCoordinate2D] = []) {
+
+        let blankLocation = CLLocationCoordinate2D(latitude: 0, longitude: 0)
+        let blankTime = Date()
+
+        self.init(
+            type: .arrive,
+            name: name ?? "",
+            startLocation: blankLocation,
+            endLocation: blankLocation,
+            startTime: blankTime,
+            endTime: blankTime,
+            path: path,
+            travelDistance: 0,
+            routeNumber: 0,
+            stops: [],
+            stayOnBusForTransfer: false,
+            tripIdentifiers: [],
+            delay: nil
+        )
     }
 
     func copy(with zone: NSZone? = nil) -> Any {

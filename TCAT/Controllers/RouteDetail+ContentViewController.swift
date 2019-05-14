@@ -44,9 +44,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     private let mapPadding: CGFloat = 80
     private let markerRadius: CGFloat = 8
-    private let defaultZoom: Float = 15.5
-    private let maxZoom: Float = 25
-    private let minZoom: Float = 12
 
     /** Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
      * dummy data will be used. The directions parameter have logical assumptions,
@@ -196,12 +193,12 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     override func loadView() {
 
         // Set mapView with settings
-        let camera = GMSCameraPosition.camera(withLatitude: 42.446179, longitude: -76.485070, zoom: defaultZoom)
+        let camera = GMSCameraPosition.camera(withLatitude: Constants.Map.startingLat, longitude: Constants.Map.startingLong, zoom: Constants.Map.defaultZoom)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
         mapView.paddingAdjustmentBehavior = .never // handled by code
-        mapView.setMinZoom(minZoom, maxZoom: maxZoom)
+        mapView.setMinZoom(Constants.Map.minZoom, maxZoom: Constants.Map.maxZoom)
         mapView.settings.compassButton = true
         mapView.settings.myLocationButton = true
         mapView.settings.tiltGestures = false
@@ -267,9 +264,8 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         if initalUpdate { // try and cut down on didUpdateLocation spam.
             initalUpdate = false
             drawMapRoute()
-            centerMap(topHalfCentered: true)
+            centerMapOnOverview(drawerPreviewing: true)
         }
-        // (self.parent as? PulleyViewController)?.bounceDrawer()
     }
 
     // MARK: Network Calls
@@ -656,14 +652,14 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     // MARK: Map Functions
 
     /** Centers map around all waypoints in routePaths, and animates the map */
-    func centerMap(topHalfCentered: Bool = false) {
+    func centerMapOnOverview(drawerPreviewing: Bool = false) {
 
         var bottomOffset: CGFloat = (UIScreen.main.bounds.height / 2) - (mapPadding / 2)
         if #available(iOS 11.0, *) {
             bottomOffset -= view.safeAreaInsets.bottom
         }
 
-        if topHalfCentered {
+        if drawerPreviewing {
             let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: mapPadding / 2, bottom: bottomOffset, right: mapPadding / 2)
             let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
             mapView.animate(with: update)
@@ -672,6 +668,26 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             mapView.animate(with: update)
         }
 
+    }
+
+    func centerMap(on direction: Direction, overviewOfPath: Bool = false, drawerPreviewing: Bool = false) {
+
+        let path = GMSMutablePath()
+
+        if overviewOfPath {
+            for loc in direction.path {
+                path.add(loc)
+            }
+        } else {
+            path.add(direction.startLocation)
+        }
+
+        let bounds = GMSCoordinateBounds(path: path)
+        let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
+        mapView.animate(with: update)
+        if !overviewOfPath {
+            mapView.animate(toZoom: Constants.Map.directionZoom)
+        }
     }
 
     func setIndex(of marker: GMSMarker, with waypointType: WaypointType) {
