@@ -300,6 +300,9 @@ extension HomeOptionsCardViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         updatePlaces()
+        searchBar.placeholder = Constants.General.searchPlaceholder
+        searchBar.text = nil
+        sections = createSections()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
