@@ -112,19 +112,19 @@ class Direction: NSObject, NSCopying, Codable {
     }
 
     required init (
-        type: DirectionType,
-        name: String,
-        startLocation: CLLocationCoordinate2D,
-        endLocation: CLLocationCoordinate2D,
-        startTime: Date,
-        endTime: Date,
-        path: [CLLocationCoordinate2D],
-        travelDistance: Double,
-        routeNumber: Int,
-        stops: [LocationObject],
-        stayOnBusForTransfer: Bool,
-        tripIdentifiers: [String]?,
-        delay: Int?
+        type: DirectionType = .walk,
+        name: String = "",
+        startLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0),
+        endLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0),
+        startTime: Date = Date(),
+        endTime: Date = Date(),
+        path: [CLLocationCoordinate2D] = [],
+        travelDistance: Double = 0,
+        routeNumber: Int = 0,
+        stops: [LocationObject] = [],
+        stayOnBusForTransfer: Bool = false,
+        tripIdentifiers: [String]? = [],
+        delay: Int? = 0
     ) {
         self.type = type
         self.name = name
@@ -140,51 +140,7 @@ class Direction: NSObject, NSCopying, Codable {
         self.tripIdentifiers = tripIdentifiers
         self.delay = delay
     }
-
-    convenience init(name: String? = nil) {
-
-        let blankLocation = CLLocationCoordinate2D(latitude: 0, longitude: 0)
-        let blankTime = Date()
-
-        self.init(
-            type: .arrive,
-            name: name ?? "",
-            startLocation: blankLocation,
-            endLocation: blankLocation,
-            startTime: blankTime,
-            endTime: blankTime,
-            path: [],
-            travelDistance: 0,
-            routeNumber: 0,
-            stops: [],
-            stayOnBusForTransfer: false,
-            tripIdentifiers: [],
-            delay: nil
-        )
-    }
-
-    convenience init(name: String? = nil, path: [CLLocationCoordinate2D] = []) {
-
-        let blankLocation = CLLocationCoordinate2D(latitude: 0, longitude: 0)
-        let blankTime = Date()
-
-        self.init(
-            type: .arrive,
-            name: name ?? "",
-            startLocation: blankLocation,
-            endLocation: blankLocation,
-            startTime: blankTime,
-            endTime: blankTime,
-            path: path,
-            travelDistance: 0,
-            routeNumber: 0,
-            stops: [],
-            stayOnBusForTransfer: false,
-            tripIdentifiers: [],
-            delay: nil
-        )
-    }
-
+    
     func copy(with zone: NSZone? = nil) -> Any {
         return Swift.type(of: self).init(
             type: type,

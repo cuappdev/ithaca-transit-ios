@@ -369,7 +369,7 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         let direction = directions[indexPath.row]
-        let isBusStopCell = direction.type == .arrive && direction.startLocation.latitude == 0.0
+        let isBusStopCell = direction.type == .walk && direction.startLocation.latitude == 0.0
         let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
 
         /// Formatting, including selectionStyle, and seperator line fixes
