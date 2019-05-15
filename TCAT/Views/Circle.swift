@@ -74,7 +74,7 @@ class Circle: UIView {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        diameter = CGFloat(CircleSize.small.rawValue)
+        super.init(coder: aDecoder)
     }
-
 }
