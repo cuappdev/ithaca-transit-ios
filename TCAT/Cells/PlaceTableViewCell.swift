@@ -14,10 +14,6 @@ class PlaceTableViewCell: UITableViewCell {
     private let nameLabel = UILabel()
     private let descriptionLabel = UILabel()
 
-    private let descriptionLabelHeight: CGFloat = 14.5
-    private let nameLabelHeight: CGFloat = 17
-    private let placeNameToDescriptionSpacing: CGFloat = 2.5 // Standard number from apple's UITableviewCell with .subtitle style
-
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
@@ -36,9 +32,12 @@ class PlaceTableViewCell: UITableViewCell {
     }
 
     func setupConstraints() {
-        let iconSize = CGSize.init(width: 20, height: 20)
+        let descriptionLabelHeight: CGFloat = 14.5
+        let iconSize = CGSize(width: 20, height: 20)
         let iconLeadingInset = 16
+        let nameLabelHeight: CGFloat = 17
         let nameLabelLeadingInset = 10
+        let placeNameToDescriptionSpacing: CGFloat = 2.5 // Standard number from apple's UITableviewCell with .subtitle style
         let trailingInset = 45
 
         iconView.snp.makeConstraints { make in
