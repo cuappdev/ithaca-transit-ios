@@ -38,6 +38,7 @@ class HomeOptionsCardViewController: UIViewController {
     private var isLoading: Bool { return loadingIndicator != nil }
     private var isNetworkDown = false
     private var loadingIndicator: LoadingIndicator?
+    private var keyboardHeight: CGFloat = 0
     private let maxFavoritesCount = 2
     private let maxHeaderCount: CGFloat = 2
     private let maxRecentsCount = 2
@@ -49,13 +50,25 @@ class HomeOptionsCardViewController: UIViewController {
     private let searchBarTopOffset: CGFloat = 3 // Add top offset to search bar so that the search bar text is vertically centered.
     private let tableViewRowHeight: CGFloat = 50
 
-    /** Returns the height of a card that would contain two favorites and two recent searches.
-     This is the height that we will cap all optionCards at, regardless of the phone. */
+    /** Height of the card when collapsed. This includes just searchbar height and any extra padding/spacing */
+    private var collapsedHeight: CGFloat {
+        return searchBarHeight + searchBarSeparatorHeight + searchBarTopOffset
+    }
+
+    /** Returns the height of a card that would contain two favorites and two recent searches. */
     private var maxCardHeight: CGFloat {
         let totalRowHeight = tableViewRowHeight * maxRowCount
         let totalHeaderHeight = headerHeight * maxHeaderCount
         let totalSeparatorHeight = HeaderView.separatorViewHeight * maxSeparatorCount
-        return totalRowHeight + totalHeaderHeight + searchBarHeight + totalSeparatorHeight
+        return totalRowHeight + totalHeaderHeight + totalSeparatorHeight + collapsedHeight
+    }
+
+    /** Returns the maximum height of the options card given the size of the phone. If the usual
+     max height would make the card get covered by the keyboard, then we adjust it to be smaller.
+     Otherwise, we keep it at the maximum height. */
+    private var adjustedMaxCardHeight: CGFloat {
+        let openScreenSpace = UIScreen.main.bounds.height - HomeMapViewController.optionsCardInset.top - keyboardHeight - 20
+        return min(maxCardHeight, openScreenSpace)
     }
 
     private var recentLocations: [Place] = [] {
@@ -208,13 +221,12 @@ class HomeOptionsCardViewController: UIViewController {
         }
     }
 
-    /// If the screen is too small, decide whether to show full card or just searchBar
+    /// Decide whether to show full card or just searchBar
     func calculateCardHeight() -> CGFloat {
         if searchBar.isFirstResponder {
-            let contentHeight = tableViewContentHeight() + CGFloat(searchBarHeight)
-            tableView.isScrollEnabled = contentHeight >= maxCardHeight
-            return min(tableViewContentHeight() + CGFloat(searchBarHeight), maxCardHeight) + searchBarSeparatorHeight + searchBarTopOffset
-        } else { return CGFloat(searchBarHeight) + searchBarTopOffset + searchBarSeparatorHeight }
+            let contentHeight = tableViewContentHeight() + collapsedHeight
+            return min(contentHeight, adjustedMaxCardHeight)
+        } else { return collapsedHeight }
     }
 
     func updatePlaces() {
@@ -286,6 +298,16 @@ class HomeOptionsCardViewController: UIViewController {
             sections = createSections()
         }
     }
+
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+            keyboardHeight = keyboardSize.height
+        }
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        keyboardHeight = 0
+    }
 }
 
 // MARK: VC Life Cycle setup
@@ -306,12 +328,29 @@ extension HomeOptionsCardViewController {
         searchBar.placeholder = Constants.General.searchPlaceholder
         searchBar.text = nil
 
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+
         updatePlaces()
         sections = createSections()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
         removeLoadingIndicator()
     }
 }
@@ -347,19 +386,17 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
 
         searchBar.placeholder = nil
         animateOutInfoButton()
-        if searchBar.text?.isEmpty ?? false {
-            sections = createSections()
-        } else {
-            delegate?.updateSize()
-        }
-    }
-
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        if let searchBarText = searchBar.text,
-            searchBarText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            searchBarCancelButtonClicked(searchBar)
-        } else {
-            searchBar.setShowsCancelButton(false, animated: true)
+        print (view.frame)
+        if view.frame.height == collapsedHeight {
+            if let searchText = searchBar.text,
+                searchText.isEmpty {
+                sections = createSections()
+            } else {
+                tableView.reloadData()
+                DispatchQueue.main.async {
+                    self.delegate?.updateSize()
+                }
+            }
         }
     }
 }
@@ -416,7 +453,6 @@ extension HomeOptionsCardViewController: HomeMapViewDelegate {
 
 // MARK: TableView DataSource
 extension HomeOptionsCardViewController: UITableViewDataSource {
-
     func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
     }
@@ -453,6 +489,17 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
 
 // MARK: TableView Delegate
 extension HomeOptionsCardViewController: UITableViewDelegate {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        if let searchBarText = searchBar.text,
+            searchBarText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            searchBar.placeholder = Constants.General.searchPlaceholder
+            searchBar.endEditing(true)
+            searchBar.text = nil
+        }
+        searchBar.setShowsCancelButton(false, animated: true)
+        animateInInfoButton()
+    }
+
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0
     }
