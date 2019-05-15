@@ -353,7 +353,7 @@ UIGestureRecognizerDelegate, PulleyDrawerViewControllerDelegate {
             return format(cell)
         } else if direction.type == .walk || direction.type == .arrive {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as! SmallDetailTableViewCell
-            cell.setCell(direction,
+            cell.configureCell(for: direction,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
             // Set position of separator at bottom of cell
