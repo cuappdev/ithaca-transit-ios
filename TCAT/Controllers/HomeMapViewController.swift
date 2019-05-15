@@ -220,6 +220,10 @@ extension HomeMapViewController: GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
         delegate?.mapViewWillMove()
     }
+
+    func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
+        delegate?.mapViewWillMove()
+    }
 }
 
 extension HomeMapViewController: HomeOptionsCardDelegate {

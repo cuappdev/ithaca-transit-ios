@@ -81,7 +81,9 @@ class HomeOptionsCardViewController: UIViewController {
     private var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
-            delegate?.updateSize()
+            DispatchQueue.main.async {
+                self.delegate?.updateSize()
+            }
         }
     }
 
@@ -347,6 +349,8 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
         animateOutInfoButton()
         if searchBar.text?.isEmpty ?? false {
             sections = createSections()
+        } else {
+            delegate?.updateSize()
         }
     }
 
@@ -398,12 +402,15 @@ extension HomeOptionsCardViewController: HomeMapViewDelegate {
     }
 
     func mapViewWillMove() {
-        searchBar.placeholder = Constants.General.searchPlaceholder
-        searchBar.setShowsCancelButton(false, animated: true)
-        searchBar.endEditing(true)
-        searchBar.text = nil
-        animateInInfoButton()
-        sections = createSections()
+        if let searchBarText = searchBar.text,
+            searchBarText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            self.searchBarCancelButtonClicked(self.searchBar)
+        } else {
+            searchBar.resignFirstResponder()
+            DispatchQueue.main.async {
+                self.delegate?.updateSize()
+            }
+        }
     }
 }
 
