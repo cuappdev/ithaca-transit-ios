@@ -471,16 +471,15 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
 
         if sections[indexPath.section].type == .seeAllStops {
             cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as? GeneralTableViewCell
+            cell.layoutSubviews()
         }
             // Favorites (including Add First Favorite!), Recent Searches
         else {
             guard let placeCell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
                 else { return cell }
-            placeCell.place = sections[indexPath.section].items[indexPath.row]
+            placeCell.configureCell(for: sections[indexPath.section].items[indexPath.row])
             cell = placeCell
         }
-
-        cell.layoutSubviews()
 
         return cell
     }

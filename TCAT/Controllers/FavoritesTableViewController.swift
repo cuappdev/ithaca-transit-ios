@@ -118,8 +118,8 @@ extension FavoritesTableViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as! PlaceTableViewCell
-        cell.place = resultsSection.items[indexPath.row]
-        cell.layoutSubviews()
+        cell.configureCell(for: resultsSection.items[indexPath.row])
+
         return cell
     }
 }
