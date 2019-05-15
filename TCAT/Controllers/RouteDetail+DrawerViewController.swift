@@ -347,7 +347,8 @@ UIGestureRecognizerDelegate, PulleyDrawerViewControllerDelegate {
 
         if isBusStopCell {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as! BusStopTableViewCell
-            cell.setCell(direction.name)
+            cell.configureCell(for: direction.name)
+            // Set position of separator at bottom of cell
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
             return format(cell)
         } else if direction.type == .walk || direction.type == .arrive {
@@ -355,11 +356,13 @@ UIGestureRecognizerDelegate, PulleyDrawerViewControllerDelegate {
             cell.setCell(direction,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
+            // Set position of separator at bottom of cell
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
             return format(cell)
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
             cell.setCell(direction, firstStep: indexPath.row == 0)
+            // Set position of separator at bottom of cell
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
             return format(cell)
         }
