@@ -10,39 +10,53 @@ import UIKit
 
 class GeneralTableViewCell: UITableViewCell {
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
+    private let iconView = UIImageView()
+    private let titleLabel = UILabel()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+
+        switch reuseIdentifier {
+        case Constants.Cells.seeAllStopsIdentifier:
+            titleLabel.text = Constants.General.seeAllStops
+            iconView.image = #imageLiteral(resourceName: "list")
+            accessoryType = .disclosureIndicator
+        case Constants.Cells.currentLocationIdentifier:
+            titleLabel.text = Constants.General.currentLocation
+            iconView.image = #imageLiteral(resourceName: "location")
+        default:
+            break
+        }
+        titleLabel.font = .getFont(.regular, size: 14)
+
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(iconView)
+
+        setupConstraints()
+    }
+
+    func setupConstraints() {
+        let iconLeadingInset = 16
+        let iconSize = CGSize(width: 20, height: 20)
+        let titleLabelHeight: CGFloat = 17
+        let titleLabelLeadingInset = 10
+        let titleLabelTrailingInset = 45
+
+        iconView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(iconLeadingInset)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(iconSize)
+        }
+
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(iconView.snp.trailing).offset(titleLabelLeadingInset)
+            make.trailing.equalToSuperview().inset(titleLabelTrailingInset)
+            make.centerY.equalToSuperview()
+            make.height.equalTo(titleLabelHeight)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        preservesSuperviewLayoutMargins = false
-        separatorInset = .zero
-        layoutMargins = .zero
-
-        switch reuseIdentifier {
-        case Constants.Cells.seeAllStopsIdentifier:
-            textLabel?.text = Constants.General.seeAllStops
-            imageView?.image = #imageLiteral(resourceName: "list")
-            accessoryType = .disclosureIndicator
-        case Constants.Cells.currentLocationIdentifier:
-            textLabel?.text = Constants.General.currentLocation
-            imageView?.image = #imageLiteral(resourceName: "location")
-        default:
-            break
-        }
-
-        textLabel?.font = .getFont(.regular, size: 14)
-
     }
 }

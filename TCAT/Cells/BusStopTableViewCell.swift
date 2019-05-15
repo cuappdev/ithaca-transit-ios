@@ -41,9 +41,9 @@ class BusStopTableViewCell: UITableViewCell {
     func setupConstraints() {
         let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
         let cellWidth: CGFloat = RouteDetailCellSize.indentedWidth
-        let connectorSize = CGSize.init(width: 4, height: cellHeight / 2)
+        let connectorSize = CGSize(width: 4, height: cellHeight / 2)
         let statusCircleLeadingInset = linePosition - (statusCircle.frame.width / 2)
-        let titleLabelSize = CGSize.init(width: UIScreen.main.bounds.width - cellWidth - 20, height: 20)
+        let titleLabelSize = CGSize(width: UIScreen.main.bounds.width - cellWidth - 20, height: 20)
 
         titleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(cellWidth)
