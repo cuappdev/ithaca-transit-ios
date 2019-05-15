@@ -232,9 +232,7 @@ extension ServiceAlertsViewController: UITableViewDataSource {
             else { return UITableViewCell() }
 
         if let alertList = alerts[priorities[indexPath.section]] {
-            cell.alert = alertList[indexPath.row]
-            cell.rowNum = indexPath.row
-            cell.setData()
+            cell.configureCell(for: alertList[indexPath.row], isNotFirstRow: indexPath.row > 0)
             cell.setNeedsUpdateConstraints()
         }
 

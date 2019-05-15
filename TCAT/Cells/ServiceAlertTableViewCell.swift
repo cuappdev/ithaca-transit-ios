@@ -13,9 +13,6 @@ class ServiceAlertTableViewCell: UITableViewCell {
 
     static let identifier: String = "serviceAlertCell"
 
-    var alert: ServiceAlert?
-    var rowNum: Int!
-
     private var affectedRoutesLabel: UILabel!
     private var affectedRoutesStackView: UIStackView?
     private var descriptionLabel: UILabel!
@@ -40,18 +37,16 @@ class ServiceAlertTableViewCell: UITableViewCell {
         setupDescriptionLabel()
     }
 
-    func setData() {
-        if let fromDate = alert?.fromDate, let toDate = alert?.toDate {
-            timeSpanLabel.text = formatTimeString(fromDate, toDate: toDate)
-        }
+    func configureCell(for alert: ServiceAlert, isNotFirstRow: Bool) {
+        timeSpanLabel.text = formatTimeString(alert.fromDate, toDate: alert.toDate)
 
-        descriptionLabel.text = alert?.message
-        if let routes = alert?.routes, !routes.isEmpty {
-            setupAffectedRoutesStackView()
+        descriptionLabel.text = alert.message
+        if !alert.routes.isEmpty {
+            setupAffectedRoutesStackView(alert: alert)
             setupaffectedRoutesLabel()
         }
 
-        if rowNum > 0 {
+        if isNotFirstRow {
             setupTopSeparator()
         }
     }
@@ -86,22 +81,20 @@ class ServiceAlertTableViewCell: UITableViewCell {
         contentView.addSubview(affectedRoutesLabel)
     }
 
-    private func setupAffectedRoutesStackView() {
-
-        if var routes = alert?.routes, !routes.isEmpty {
-            affectedRoutesStackView = UIStackView()
-            for _ in 0..<rowCount() {
-                var subviews = [BusIcon]()
-                for _ in 0..<maxIconsPerRow where !routes.isEmpty {
-                    let route = routes.removeFirst()
-                    subviews.append(BusIcon(type: .directionSmall, number: route))
-                }
-                let rowStackView = UIStackView(arrangedSubviews: subviews)
-                rowStackView.axis = .horizontal
-                rowStackView.spacing = 10
-                rowStackView.alignment = .leading
-                affectedRoutesStackView?.addArrangedSubview(rowStackView)
+    private func setupAffectedRoutesStackView(alert: ServiceAlert) {
+        affectedRoutesStackView = UIStackView()
+        var routesCopy = alert.routes
+        for _ in 0..<rowCount(alert: alert) {
+            var subviews = [BusIcon]()
+            for _ in 0..<maxIconsPerRow where !routesCopy.isEmpty {
+                let route = routesCopy.removeFirst()
+                subviews.append(BusIcon(type: .directionSmall, number: route))
             }
+            let rowStackView = UIStackView(arrangedSubviews: subviews)
+            rowStackView.axis = .horizontal
+            rowStackView.spacing = 10
+            rowStackView.alignment = .leading
+            affectedRoutesStackView?.addArrangedSubview(rowStackView)
         }
 
         guard let stackView = affectedRoutesStackView else { return }
@@ -221,11 +214,10 @@ class ServiceAlertTableViewCell: UITableViewCell {
         return "Time: Unknown"
     }
 
-    private func rowCount() -> Int {
-        guard let routes = alert?.routes else { return 0 }
-        if routes.count > maxIconsPerRow {
-            let addExtra = routes.count % maxIconsPerRow > 0 ? 1 : 0
-            let rowCount = routes.count / maxIconsPerRow
+    private func rowCount(alert: ServiceAlert) -> Int {
+        if alert.routes.count > maxIconsPerRow {
+            let addExtra = alert.routes.count % maxIconsPerRow > 0 ? 1 : 0
+            let rowCount = alert.routes.count / maxIconsPerRow
 
             return rowCount + addExtra
         } else {

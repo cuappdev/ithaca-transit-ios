@@ -928,7 +928,7 @@ extension RouteOptionsViewController: UITableViewDataSource {
             cell = RouteTableViewCell(style: .default, reuseIdentifier: RouteTableViewCell.identifier)
         }
 
-        cell?.setData(route: routes[indexPath.section][indexPath.row], rowNum: indexPath.row)
+        cell?.configureCell(for: routes[indexPath.section][indexPath.row], rowNum: indexPath.row)
 
         // Activate timers
         let timerDoesNotExist = (timers[indexPath.row] == nil)
