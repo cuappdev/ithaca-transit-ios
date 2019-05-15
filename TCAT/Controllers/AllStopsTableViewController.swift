@@ -167,8 +167,9 @@ class AllStopsTableViewController: UITableViewController {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell else {
             fatalError("Cell couldn't be cast properly")
         }
-        let section = sectionIndexes[sortedKeys[indexPath.section]]
-        cell.place = section?[indexPath.row]
+
+        guard let section = sectionIndexes[sortedKeys[indexPath.section]] else { return cell }
+        cell.configureCell(for: section[indexPath.row])
         cell.layoutSubviews()
         return cell
     }
