@@ -130,7 +130,7 @@ class HomeOptionsCardViewController: UIViewController {
         }
 
         // Add horizontal offset so that placeholder text is aligned with bus stop names and all stops
-        searchBar.searchTextPositionAdjustment = UIOffset.init(horizontal: 8, vertical: 0)
+        searchBar.searchTextPositionAdjustment = UIOffset(horizontal: 8, vertical: 0)
         view.addSubview(searchBar)
     }
 
