@@ -675,9 +675,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         let path = GMSMutablePath()
 
         if isOverviewOfPath {
-            for loc in direction.path {
-                path.add(loc)
-            }
+            direction.path.forEach { loc in path.add(loc) }
         } else {
             path.add(direction.startLocation)
         }

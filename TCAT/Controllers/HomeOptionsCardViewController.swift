@@ -128,7 +128,7 @@ class HomeOptionsCardViewController: UIViewController {
         }
 
         // Add horizontal offset so that placeholder text is aligned with bus stop names and all stops
-        searchBar.searchTextPositionAdjustment = .init(horizontal: 8, vertical: 0)
+        searchBar.searchTextPositionAdjustment = UIOffset.init(horizontal: 8, vertical: 0)
         view.addSubview(searchBar)
     }
 
@@ -151,7 +151,7 @@ class HomeOptionsCardViewController: UIViewController {
         let infoButtonTrailinginset = 16
 
         infoButton.snp.makeConstraints { (make) in
-            make.centerY.equalTo(searchBar).offset(-searchBarTopOffset/2)
+            make.centerY.equalTo(searchBar).offset(-searchBarTopOffset / 2)
             make.trailing.equalToSuperview().inset(infoButtonTrailinginset)
             make.size.equalTo(infoButtonSize)
         }
@@ -210,11 +210,7 @@ class HomeOptionsCardViewController: UIViewController {
     func calculateCardHeight() -> CGFloat {
         if searchBar.isFirstResponder {
             let contentHeight = tableViewContentHeight() + CGFloat(searchBarHeight)
-            if contentHeight >= maxCardHeight {
-                tableView.isScrollEnabled = true
-            } else {
-                tableView.isScrollEnabled = false
-            }
+            tableView.isScrollEnabled = contentHeight >= maxCardHeight
             return min(tableViewContentHeight() + CGFloat(searchBarHeight), maxCardHeight) + searchBarSeparatorHeight + searchBarTopOffset
         } else { return CGFloat(searchBarHeight) + searchBarTopOffset + searchBarSeparatorHeight }
     }
@@ -300,7 +296,7 @@ extension HomeOptionsCardViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         // Update searchbar attributes
-        if let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField,
+        if let textFieldInsideSearchBar = searchBar.value(forKey: Constants.SearchBar.searchField) as? UITextField,
             let searchView = textFieldInsideSearchBar.leftView as? UIImageView {
             textFieldInsideSearchBar.backgroundColor = Colors.white
             searchView.image = #imageLiteral(resourceName: "search-large")
@@ -331,11 +327,7 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.isEmpty {
-            searchBar.returnKeyType = .default
-        } else {
-            searchBar.returnKeyType = .search
-        }
+        searchBar.returnKeyType = searchText.isEmpty ? .default : .search
         searchBar.setShowsCancelButton(true, animated: true)
         timer?.invalidate()
         timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
@@ -347,7 +339,7 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
 
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(true, animated: true)
-        if let cancelButton = searchBar.value(forKey: "cancelButton") as? UIButton {
+        if let cancelButton = searchBar.value(forKey: Constants.SearchBar.cancelButton) as? UIButton {
             cancelButton.setTitleColor(Colors.tcatBlue, for: .normal)
         }
 

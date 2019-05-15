@@ -235,6 +235,11 @@ struct Constants {
         static let maxZoom: Float = 25
     }
 
+    struct SearchBar {
+        static let searchField = "searchField"
+        static let cancelButton = "cancelButton"
+    }
+
     struct TableHeaders {
         static let favoriteDestinations = "Favorite Destinations"
         static let recentSearches = "Recent Searches"

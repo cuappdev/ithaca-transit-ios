@@ -17,6 +17,7 @@ class LargeDetailTableViewCell: UITableViewCell {
 
     var chevron: IncreasedTapSizeButton!
 
+    weak var delegate: LargeDetailTableViewDelegate?
     var isExpanded: Bool = false
 
     private var busIconView: BusIcon!
@@ -30,7 +31,6 @@ class LargeDetailTableViewCell: UITableViewCell {
     private let paragraphStyle = NSMutableParagraphStyle()
     private var cellHeight: CGFloat = RouteDetailCellSize.largeHeight
     private var direction: Direction!
-    weak var delegate: LargeDetailTableViewDelegate?
 
     func getChevron() -> IncreasedTapSizeButton {
         let chevron = IncreasedTapSizeButton(frame: .zero, sizeIncrease: .init(width: 30, height: 30))
@@ -85,7 +85,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     /** Precondition: Direction is BoardDirection */
     func setCell(_ direction: Direction, indexPath: IndexPath) {
 
-        let firstStep = indexPath.row == 0
+        let isFirstStep = indexPath.row == 0
         self.direction = direction
         cellHeight = height()
 
@@ -94,7 +94,7 @@ class LargeDetailTableViewCell: UITableViewCell {
 
         if shouldAddViews {
 
-            iconView = DetailIconView(direction: direction, height: cellHeight, firstStep: firstStep, lastStep: false)
+            iconView = DetailIconView(direction: direction, height: cellHeight, firstStep: isFirstStep, lastStep: false)
             contentView.addSubview(iconView!)
 
             titleLabel = formatTitleLabel(titleLabel)

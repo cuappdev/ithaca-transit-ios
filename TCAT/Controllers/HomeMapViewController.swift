@@ -14,8 +14,8 @@ import SnapKit
 import UIKit
 
 protocol HomeMapViewDelegate {
-    func reachabilityChanged(connection: Reachability.Connection)
     func mapViewWillMove()
+    func reachabilityChanged(connection: Reachability.Connection)
 }
 
 class HomeMapViewController: UIViewController {
