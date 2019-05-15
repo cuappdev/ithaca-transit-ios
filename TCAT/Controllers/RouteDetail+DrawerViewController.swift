@@ -267,7 +267,7 @@ UIGestureRecognizerDelegate, PulleyDrawerViewControllerDelegate {
 
         if direction.type == .depart || direction.type == .transfer {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as? LargeDetailTableViewCell
-            cell?.setCell(direction, firstStep: indexPath.row == 0)
+            cell?.configureCell(for: direction, firstStep: indexPath.row == 0)
             return cell?.height() ?? RouteDetailCellSize.largeHeight
         } else {
             return RouteDetailCellSize.smallHeight
@@ -361,7 +361,7 @@ UIGestureRecognizerDelegate, PulleyDrawerViewControllerDelegate {
             return format(cell)
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
-            cell.setCell(direction, firstStep: indexPath.row == 0)
+            cell.configureCell(for: direction, firstStep: indexPath.row == 0)
             // Set position of separator at bottom of cell
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
             return format(cell)

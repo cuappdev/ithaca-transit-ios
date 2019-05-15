@@ -26,13 +26,12 @@ class LargeDetailTableViewCell: UITableViewCell {
     private var cellHeight: CGFloat = RouteDetailCellSize.largeHeight
     private var direction: Direction!
 
-    func getChevron() -> UIImageView {
-        let chevron = UIImageView()
-        chevron.frame.size = CGSize(width: 13.5, height: 8)
-        chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
-        chevron.image = UIImage(named: "arrow")
-        chevron.tintColor = Colors.metadataIcon
-        return chevron
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+
+        setupChevron()
+        setupTitleLabel()
+        setupDetailLabel()
     }
 
     func getTitleLabel() -> UILabel {
@@ -57,37 +56,27 @@ class LargeDetailTableViewCell: UITableViewCell {
         return detailLabel
     }
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        chevron = getChevron()
+    func setupChevron() {
+        chevron = UIImageView()
+        chevron.frame.size = CGSize(width: 13.5, height: 8)
+        chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
+        chevron.image = UIImage(named: "arrow")
+        chevron.tintColor = Colors.metadataIcon
         contentView.addSubview(chevron)
+    }
 
+    func setupTitleLabel() {
         titleLabel = getTitleLabel()
         contentView.addSubview(titleLabel)
+    }
 
+    func setupDetailLabel() {
         detailLabel = getDetailLabel()
         contentView.addSubview(detailLabel)
-
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func prepareForReuse() {
-
-//        busIconView.prepareForReuse()
-//        iconView.prepareForReuse()
-//
-//        chevron.removeFromSuperview()
-//        titleLabel.removeFromSuperview()
-//        detailLabel.removeFromSuperview()
-
     }
 
     /** Precondition: Direction is BoardDirection */
-    func setCell(_ direction: Direction, firstStep: Bool) {
+    func configureCell(for direction: Direction, firstStep: Bool) {
 
         self.direction = direction
         cellHeight = height()
@@ -192,6 +181,10 @@ class LargeDetailTableViewCell: UITableViewCell {
         let titleLabel = formatTitleLabel(getTitleLabel())
         let detailLabel = formatDetailLabel(getDetailLabel(), titleLabel)
         return titleLabel.frame.height + detailLabel.frame.height + labelSpacing + (edgeSpacing * 2)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
 }
