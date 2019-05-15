@@ -122,7 +122,7 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
 
         if isBusStopCell {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as! BusStopTableViewCell
-            cell.setCell(direction.name)
+            cell.configureCell(for: direction.name)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
             return format(cell)
         } else if direction.type == .walk || direction.type == .arrive {
