@@ -16,7 +16,6 @@ class PlaceTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
         iconView.contentMode = .scaleAspectFit
         contentView.addSubview(iconView)
 

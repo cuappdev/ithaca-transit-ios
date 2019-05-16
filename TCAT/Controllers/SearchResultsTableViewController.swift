@@ -224,7 +224,6 @@ class SearchResultsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
         switch sections[indexPath.section].type {
         case .currentLocation:
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.currentLocationIdentifier) as! GeneralTableViewCell
@@ -244,7 +243,6 @@ class SearchResultsTableViewController: UITableViewController {
 
 // MARK: ScrollView Delegate
 extension SearchResultsTableViewController {
-
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if let cancelButton = searchBar?.value(forKey: "_cancelButton") as? UIButton {
             cancelButton.isEnabled = true

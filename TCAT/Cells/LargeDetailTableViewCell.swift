@@ -34,12 +34,11 @@ class LargeDetailTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
         setupChevron()
         setupTitleLabel()
         setupDetailLabel()
     }
-    
+
     func getTitleLabel() -> UILabel {
         let titleLabel = UILabel()
         titleLabel.frame = CGRect(x: cellWidth, y: 0, width: chevron.frame.minX - cellWidth, height: 20)

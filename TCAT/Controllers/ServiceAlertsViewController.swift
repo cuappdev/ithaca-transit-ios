@@ -232,6 +232,7 @@ extension ServiceAlertsViewController: UITableViewDataSource {
 
         if let alertList = alerts[priorities[indexPath.section]] {
             cell.configure(for: alertList[indexPath.row], isNotFirstRow: indexPath.row > 0)
+            cell.setNeedsUpdateConstraints()
         }
 
         return cell
