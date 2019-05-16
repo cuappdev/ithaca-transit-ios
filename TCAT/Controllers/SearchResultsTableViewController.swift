@@ -225,13 +225,9 @@ class SearchResultsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch sections[indexPath.section].type {
-        case .currentLocation:
+        case .currentLocation, .seeAllStops:
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.currentLocationIdentifier) as! GeneralTableViewCell
-            cell.configure(for: .currentLocation)
-            return cell
-        case .seeAllStops:
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as! GeneralTableViewCell
-            cell.configure(for: .seeAllStops)
+            cell.configure(for: sections[indexPath.section].type)
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
