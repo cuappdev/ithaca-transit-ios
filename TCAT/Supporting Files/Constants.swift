@@ -226,6 +226,20 @@ struct Constants {
         static let toSearchBarPlaceholder = "Choose destination..."
     }
 
+    struct Map {
+        static let minZoom: Float = 12
+        static let directionZoom: Float = 17 // Use when zooming in on a direction in routeDetailsVC
+        static let startingLat = 42.446179 // Latitude of the center point of TCAT's range which it services
+        static let startingLong = -76.485070 // Longitude of the center point of TCAT's range which it services
+        static let defaultZoom: Float = 15.5 // Use as initial zoom on homeMapVC
+        static let maxZoom: Float = 25
+    }
+
+    struct SearchBar {
+        static let searchField = "searchField"
+        static let cancelButton = "cancelButton"
+    }
+
     struct TableHeaders {
         static let favoriteDestinations = "Favorite Destinations"
         static let recentSearches = "Recent Searches"

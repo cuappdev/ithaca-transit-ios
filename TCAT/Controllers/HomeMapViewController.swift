@@ -14,6 +14,7 @@ import SnapKit
 import UIKit
 
 protocol HomeMapViewDelegate {
+    func mapViewWillMove()
     func reachabilityChanged(connection: Reachability.Connection)
 }
 
@@ -35,13 +36,8 @@ class HomeMapViewController: UIViewController {
         }
     }
 
-    private let defaultZoom: Float = 15.5
     private let loadingIndicatorSize = CGSize.init(width: 40, height: 40)
-    private let maxZoom: Float = 25
-    private let minZoom: Float = 12
     private let reachability = Reachability(hostname: Endpoint.config.host ?? "")
-    private let startingLat = 42.446179
-    private let startingLong = -76.485070
     private let userDefaults = UserDefaults.standard
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -108,12 +104,12 @@ class HomeMapViewController: UIViewController {
 
     func setupMapView() {
         // Set mapView with settings
-        let camera = GMSCameraPosition.camera(withLatitude: startingLat, longitude: startingLong, zoom: defaultZoom)
+        let camera = GMSCameraPosition.camera(withLatitude: Constants.Map.startingLat, longitude: Constants.Map.startingLong, zoom: 15.5)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
         mapView.paddingAdjustmentBehavior = .never // handled by code
-        mapView.setMinZoom(minZoom, maxZoom: maxZoom)
+        mapView.setMinZoom(Constants.Map.minZoom, maxZoom: Constants.Map.maxZoom)
         mapView.settings.compassButton = true
         mapView.settings.myLocationButton = true
         mapView.settings.tiltGestures = false
@@ -222,7 +218,11 @@ extension HomeMapViewController: CLLocationManagerDelegate {
 
 extension HomeMapViewController: GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
-        optionsCardVC.searchBar.endEditing(true)
+        delegate?.mapViewWillMove()
+    }
+
+    func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
+        delegate?.mapViewWillMove()
     }
 }
 

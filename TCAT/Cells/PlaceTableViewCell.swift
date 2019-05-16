@@ -43,6 +43,7 @@ class PlaceTableViewCell: UITableViewCell {
         textLabel?.frame.size.width = frame.width - labelWidthPadding
         textLabel?.font = .getFont(.regular, size: 14) // has been size: 14 elsewhere
 
+        detailTextLabel?.text = place?.description
         detailTextLabel?.frame.origin.x = labelXPosition
         detailTextLabel?.frame.size.width = frame.width - labelWidthPadding
         detailTextLabel?.textColor = Colors.metadataIcon
