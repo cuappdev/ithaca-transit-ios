@@ -37,7 +37,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
         setupDescriptionLabel()
     }
 
-    func configureCell(for alert: ServiceAlert, isNotFirstRow: Bool) {
+    func configure(for alert: ServiceAlert, isNotFirstRow: Bool) {
         timeSpanLabel.text = formatTimeString(alert.fromDate, toDate: alert.toDate)
 
         descriptionLabel.text = alert.message

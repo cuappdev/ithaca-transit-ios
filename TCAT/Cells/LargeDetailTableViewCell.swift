@@ -83,7 +83,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     }
 
     /** Precondition: Direction is BoardDirection */
-    func configureCell(for direction: Direction, firstStep: Bool) {
+    func configure(for direction: Direction, firstStep: Bool) {
 
         self.direction = direction
         cellHeight = height()

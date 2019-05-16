@@ -265,7 +265,7 @@ class RouteTableViewCell: UITableViewCell {
 
     // MARK: Set Data
 
-    func configureCell(for route: Route, rowNum: Int) {
+    func configure(for route: Route, rowNum: Int) {
         self.route = route
         self.rowNum = rowNum
 

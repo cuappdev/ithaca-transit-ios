@@ -164,13 +164,10 @@ class AllStopsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell else {
-            fatalError("Cell couldn't be cast properly")
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
 
         guard let section = sectionIndexes[sortedKeys[indexPath.section]] else { return cell }
-        cell.configureCell(for: section[indexPath.row])
-        cell.layoutSubviews()
+        cell.configure(for: section[indexPath.row])
         return cell
     }
 

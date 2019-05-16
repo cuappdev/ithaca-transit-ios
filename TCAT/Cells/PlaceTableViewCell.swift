@@ -17,7 +17,6 @@ class PlaceTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        print(frame.height)
         iconView.contentMode = .scaleAspectFit
         contentView.addSubview(iconView)
 
@@ -60,7 +59,7 @@ class PlaceTableViewCell: UITableViewCell {
         }
     }
 
-    func configureCell(for place: Place) {
+    func configure(for place: Place) {
         iconView.tintColor = place.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
         iconView.image = place.type == .busStop ? UIImage(named: "bus-pin") : UIImage(named: "pin")
         nameLabel.text = place.name

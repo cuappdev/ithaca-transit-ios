@@ -37,7 +37,7 @@ class SmallDetailTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configureCell(for direction: Direction, firstStep: Bool, lastStep: Bool) {
+    func configure(for direction: Direction, firstStep: Bool, lastStep: Bool) {
 
         let shouldAddSubview = iconView == nil
 

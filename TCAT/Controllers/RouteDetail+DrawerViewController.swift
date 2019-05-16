@@ -223,7 +223,7 @@ class RouteDetailDrawerViewController: UIViewController {
 
         if direction.type == .depart || direction.type == .transfer {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as? LargeDetailTableViewCell
-            cell?.configureCell(for: direction, firstStep: indexPath.row == 0)
+            cell?.configure(for: direction, firstStep: indexPath.row == 0)
             return cell?.height() ?? RouteDetailCellSize.largeHeight
         } else {
             return RouteDetailCellSize.smallHeight
@@ -303,13 +303,13 @@ class RouteDetailDrawerViewController: UIViewController {
 
         if isBusStopCell {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as! BusStopTableViewCell
-            cell.configureCell(for: direction.name)
+            cell.configure(for: direction.name)
             // Set position of separator at bottom of cell
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
             return format(cell)
         } else if direction.type == .walk || direction.type == .arrive {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as! SmallDetailTableViewCell
-            cell.configureCell(for: direction,
+            cell.configure(for: direction,
                          firstStep: indexPath.row == 0,
                          lastStep: indexPath.row == directions.count - 1)
             // Set position of separator at bottom of cell
@@ -317,7 +317,7 @@ class RouteDetailDrawerViewController: UIViewController {
             return format(cell)
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
-            cell.configureCell(for: direction, firstStep: indexPath.row == 0)
+            cell.configure(for: direction, firstStep: indexPath.row == 0)
             // Set position of separator at bottom of cell
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
             return format(cell)

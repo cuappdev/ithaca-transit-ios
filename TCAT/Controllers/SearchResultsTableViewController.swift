@@ -225,24 +225,21 @@ class SearchResultsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        var cell: UITableViewCell!
-
-        if sections[indexPath.section].type == .currentLocation {
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.currentLocationIdentifier) as? GeneralTableViewCell
-            cell.layoutSubviews()
-        } else if sections[indexPath.section].type == .seeAllStops {
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as? GeneralTableViewCell
-            cell.layoutSubviews()
-        } else {
-            guard let placeCell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-                else { return cell }
-            placeCell.configureCell(for: sections[indexPath.section].items[indexPath.row])
-            cell = placeCell
+        switch sections[indexPath.section].type {
+        case .currentLocation:
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.currentLocationIdentifier) as! GeneralTableViewCell
+            cell.configure(for: .currentLocation)
+            return cell
+        case .seeAllStops:
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as! GeneralTableViewCell
+            cell.configure(for: .seeAllStops)
+            return cell
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
+            cell.configure(for: sections[indexPath.section].items[indexPath.row])
+            return cell
         }
-
-        return cell
     }
-
 }
 
 // MARK: ScrollView Delegate

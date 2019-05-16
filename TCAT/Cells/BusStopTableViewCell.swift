@@ -10,17 +10,16 @@ import UIKit
 
 class BusStopTableViewCell: UITableViewCell {
 
-    private var connectorBottom = UIView()
-    private var connectorTop = UIView()
-    private var statusCircle = Circle(size: .small, style: .outline, color: Colors.tcatBlue)
-    private var titleLabel = UILabel()
+    private let connectorBottom = UIView()
+    private let connectorTop = UIView()
+    private let statusCircle = Circle(size: .small, style: .outline, color: Colors.tcatBlue)
+    private let titleLabel = UILabel()
 
     private let linePosition: CGFloat = DetailIconView.width - 16 // max of DetailIconView (114) - constant (16) = 98
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        titleLabel = UILabel()
         titleLabel.font = .getFont(.regular, size: 14)
         titleLabel.textColor = Colors.secondaryText
         titleLabel.lineBreakMode = .byWordWrapping
@@ -70,7 +69,7 @@ class BusStopTableViewCell: UITableViewCell {
         }
     }
 
-    func configureCell(for name: String) {
+    func configure(for name: String) {
         titleLabel.text = name
     }
 

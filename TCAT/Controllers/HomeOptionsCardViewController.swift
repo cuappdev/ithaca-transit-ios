@@ -467,21 +467,17 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell: UITableViewCell!
-
         if sections[indexPath.section].type == .seeAllStops {
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as? GeneralTableViewCell
-            cell.layoutSubviews()
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as! GeneralTableViewCell
+            cell.configure(for: .seeAllStops)
+            return cell
         }
             // Favorites (including Add First Favorite!), Recent Searches
         else {
-            guard let placeCell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-                else { return cell }
-            placeCell.configureCell(for: sections[indexPath.section].items[indexPath.row])
-            cell = placeCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
+            cell.configure(for: sections[indexPath.section].items[indexPath.row])
+            return cell
         }
-
-        return cell
     }
 }
 

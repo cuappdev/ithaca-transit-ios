@@ -15,18 +15,6 @@ class GeneralTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        switch reuseIdentifier {
-        case Constants.Cells.seeAllStopsIdentifier:
-            titleLabel.text = Constants.General.seeAllStops
-            iconView.image = #imageLiteral(resourceName: "list")
-            accessoryType = .disclosureIndicator
-        case Constants.Cells.currentLocationIdentifier:
-            titleLabel.text = Constants.General.currentLocation
-            iconView.image = #imageLiteral(resourceName: "location")
-        default:
-            break
-        }
         titleLabel.font = .getFont(.regular, size: 14)
 
         contentView.addSubview(titleLabel)
@@ -53,6 +41,18 @@ class GeneralTableViewCell: UITableViewCell {
             make.trailing.equalToSuperview().inset(titleLabelTrailingInset)
             make.centerY.equalToSuperview()
             make.height.equalTo(titleLabelHeight)
+        }
+    }
+
+    func configure(for type: SectionType) {
+        switch type {
+        case .seeAllStops:
+            titleLabel.text = Constants.General.seeAllStops
+            iconView.image = #imageLiteral(resourceName: "list")
+        case .currentLocation:
+            titleLabel.text = Constants.General.currentLocation
+            iconView.image = #imageLiteral(resourceName: "location")
+        default: break
         }
     }
 
