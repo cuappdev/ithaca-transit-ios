@@ -56,7 +56,6 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
     }
 
     func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
-
         justLoaded = false
         // Center map on drawer change
         switch drawer.drawerPosition {
@@ -145,7 +144,6 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
 }
 
 extension RouteDetailDrawerViewController: UITableViewDelegate {
-
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
         let direction = directions[indexPath.row]
@@ -161,9 +159,7 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-
         // Empty Footer
-
         let emptyFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.emptyFooterView) ??
             UITableViewHeaderFooterView(reuseIdentifier: Constants.Footers.emptyFooterView)
 
@@ -182,7 +178,6 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
         emptyFooterView.layoutIfNeeded()
 
         // Create Footer for No Data from Live Tracking Footer, if needed
-
         guard
             let drawer = self.parent as? RouteDetailViewController,
             let contentViewController = drawer.primaryContentViewController as? RouteDetailContentViewController
@@ -215,7 +210,6 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
         let direction = directions[indexPath.row]
 
         selectedDirection = direction

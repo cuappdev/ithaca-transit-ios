@@ -239,9 +239,9 @@ class RouteDetailDrawerViewController: UIViewController {
         })
 
         // Prepare bus stop data to be inserted / deleted into Directions array
-        var busStops = direction.stops.map { stop in return Direction(name: stop.name, path: direction.path) }
+        let busStops = direction.stops.map { return Direction(name: $0.name, path: direction.path) }
         let busStopRange = (newIndexPath.row + 1)..<(newIndexPath.row + 1) + busStops.count
-        var indexPathArray = busStopRange.map { i in return IndexPath(row: i, section: 0) }
+        let indexPathArray = busStopRange.map { return IndexPath(row: $0, section: 0) }
 
         tableView.beginUpdates()
 

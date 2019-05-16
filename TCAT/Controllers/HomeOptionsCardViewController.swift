@@ -386,7 +386,6 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
 
         searchBar.placeholder = nil
         animateOutInfoButton()
-        print (view.frame)
         if view.frame.height == collapsedHeight {
             if let searchText = searchBar.text,
                 searchText.isEmpty {
