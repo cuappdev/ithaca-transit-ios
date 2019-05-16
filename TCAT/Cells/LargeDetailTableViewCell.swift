@@ -83,7 +83,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     }
 
     /** Precondition: Direction is BoardDirection */
-    func configure(for direction: Direction, firstStep: Bool) {
+    func configure(for direction: Direction, isFirstStep: Bool) {
 
         self.direction = direction
         cellHeight = height()
@@ -93,7 +93,7 @@ class LargeDetailTableViewCell: UITableViewCell {
 
         if shouldAddViews {
 
-            iconView = DetailIconView(direction: direction, height: cellHeight, firstStep: isFirstStep, lastStep: false)
+            iconView = DetailIconView(direction: direction, height: cellHeight, isFirstStep: isFirstStep, isLastStep: false)
             contentView.addSubview(iconView!)
 
             titleLabel = formatTitleLabel(titleLabel)
@@ -197,7 +197,7 @@ class LargeDetailTableViewCell: UITableViewCell {
             delegate?.expandCells(on: self)
         }
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

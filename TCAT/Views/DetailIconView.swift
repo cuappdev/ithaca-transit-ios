@@ -25,7 +25,7 @@ class DetailIconView: UIView {
     var connectorTop: UIView!
     var statusCircle: Circle!
 
-    init(direction: Direction, height: CGFloat, firstStep: Bool, lastStep: Bool) {
+    init(direction: Direction, height: CGFloat, isFirstStep: Bool, isLastStep: Bool) {
 
         self.direction = direction
 
@@ -49,7 +49,7 @@ class DetailIconView: UIView {
         connectorBottom.frame.origin.x -= connectorBottom.frame.width / 2
 
         if direction.type == .walk {
-            if lastStep {
+            if isLastStep {
                 statusCircle = Circle(size: .large, style: .bordered, color: Colors.dividerTextField)
                 connectorTop.backgroundColor = Colors.dividerTextField
                 connectorBottom.backgroundColor = .clear
@@ -57,12 +57,12 @@ class DetailIconView: UIView {
                 statusCircle = Circle(size: .small, style: .solid, color: Colors.dividerTextField)
                 connectorTop.backgroundColor = Colors.dividerTextField
                 connectorBottom.backgroundColor = Colors.dividerTextField
-                if firstStep {
+                if isFirstStep {
                     connectorTop.backgroundColor = .clear
                 }
             }
         } else {
-            if lastStep {
+            if isLastStep {
                 statusCircle = Circle(size: .large, style: .bordered, color: Colors.tcatBlue)
                 connectorTop.backgroundColor = Colors.tcatBlue
                 connectorBottom.backgroundColor = .clear
@@ -78,13 +78,13 @@ class DetailIconView: UIView {
                     connectorTop.backgroundColor = Colors.tcatBlue
                     connectorBottom.backgroundColor = Colors.dividerTextField
                 }
-                if firstStep {
+                if isFirstStep {
                     connectorTop.backgroundColor = .clear
                 }
             }
         }
 
-        if firstStep && lastStep {
+        if isFirstStep && isLastStep {
             connectorTop.backgroundColor = .clear
             connectorBottom.backgroundColor = .clear
         }

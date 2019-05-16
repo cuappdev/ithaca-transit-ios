@@ -37,15 +37,15 @@ class SmallDetailTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(for direction: Direction, firstStep: Bool, lastStep: Bool) {
+    func configure(for direction: Direction, isFirstStep: Bool, isLastStep: Bool) {
 
         let shouldAddSubview = iconView == nil
 
         if shouldAddSubview {
-            iconView = DetailIconView(direction: direction, height: cellHeight, firstStep: firstStep, lastStep: lastStep)
+            iconView = DetailIconView(direction: direction, height: cellHeight, isFirstStep: isFirstStep, isLastStep: isLastStep)
             contentView.addSubview(iconView!)
         } else {
-            iconView?.updateTimes(with: direction, isLast: lastStep)
+            iconView?.updateTimes(with: direction, isLast: isLastStep)
         }
 
         let titleLabelBoldFont: UIFont = .getFont(.semibold, size: 14)
