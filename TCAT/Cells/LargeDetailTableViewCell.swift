@@ -32,14 +32,11 @@ class LargeDetailTableViewCell: UITableViewCell {
     private var cellHeight: CGFloat = RouteDetailCellSize.largeHeight
     private var direction: Direction!
 
-    func getChevron() -> IncreasedTapSizeButton {
-        let chevron = IncreasedTapSizeButton(frame: .zero, sizeIncrease: .init(width: 30, height: 30))
-        chevron.frame.size = CGSize(width: 13.5, height: 8)
-        chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
-        chevron.setImage(UIImage(named: "arrow"), for: .normal)
-        chevron.tintColor = Colors.metadataIcon
-        chevron.addTarget(self, action: #selector(chevronButtonPressed), for: .touchUpInside)
-        return chevron
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupChevron()
+        setupTitleLabel()
+        setupDetailLabel()
     }
 
     func getTitleLabel() -> UILabel {
@@ -64,28 +61,29 @@ class LargeDetailTableViewCell: UITableViewCell {
         return detailLabel
     }
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        chevron = getChevron()
+    func setupChevron() {
+        chevron = IncreasedTapSizeButton(frame: .zero, sizeIncrease: .init(width: 30, height: 30))
+        chevron.frame.size = CGSize(width: 13.5, height: 8)
+        chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
+        chevron.setImage(UIImage(named: "arrow"), for: .normal)
+        chevron.tintColor = Colors.metadataIcon
+        chevron.addTarget(self, action: #selector(chevronButtonPressed), for: .touchUpInside)
         contentView.addSubview(chevron)
-
-        titleLabel = getTitleLabel()
-        contentView.addSubview(titleLabel)
-
-        detailLabel = getDetailLabel()
-        contentView.addSubview(detailLabel)
-
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func setupTitleLabel() {
+        titleLabel = getTitleLabel()
+        contentView.addSubview(titleLabel)
+    }
+
+    func setupDetailLabel() {
+        detailLabel = getDetailLabel()
+        contentView.addSubview(detailLabel)
     }
 
     /** Precondition: Direction is BoardDirection */
-    func setCell(_ direction: Direction, indexPath: IndexPath) {
+    func configure(for direction: Direction, isFirstStep: Bool) {
 
-        let isFirstStep = indexPath.row == 0
         self.direction = direction
         cellHeight = height()
 
@@ -94,7 +92,7 @@ class LargeDetailTableViewCell: UITableViewCell {
 
         if shouldAddViews {
 
-            iconView = DetailIconView(direction: direction, height: cellHeight, firstStep: isFirstStep, lastStep: false)
+            iconView = DetailIconView(direction: direction, height: cellHeight, isFirstStep: isFirstStep, isLastStep: false)
             contentView.addSubview(iconView!)
 
             titleLabel = formatTitleLabel(titleLabel)
@@ -197,6 +195,10 @@ class LargeDetailTableViewCell: UITableViewCell {
         } else {
             delegate?.expandCells(on: self)
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

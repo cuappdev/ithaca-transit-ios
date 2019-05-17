@@ -922,30 +922,26 @@ extension RouteOptionsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        var cell = tableView.dequeueReusableCell(withIdentifier: RouteTableViewCell.identifier, for: indexPath) as? RouteTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: RouteTableViewCell.identifier, for: indexPath) as! RouteTableViewCell
 
-        if cell == nil {
-            cell = RouteTableViewCell(style: .default, reuseIdentifier: RouteTableViewCell.identifier)
-        }
-
-        cell?.setData(route: routes[indexPath.section][indexPath.row], rowNum: indexPath.row)
+        cell.configure(for: routes[indexPath.section][indexPath.row], rowNum: indexPath.row)
 
         // Activate timers
         let timerDoesNotExist = (timers[indexPath.row] == nil)
         if timerDoesNotExist {
-            timers[indexPath.row] = Timer.scheduledTimer(timeInterval: 5.0, target: cell!, selector: #selector(RouteTableViewCell.updateLiveElementsWithDelay), userInfo: nil, repeats: true)
+            timers[indexPath.row] = Timer.scheduledTimer(timeInterval: 5.0, target: cell, selector: #selector(RouteTableViewCell.updateLiveElementsWithDelay), userInfo: nil, repeats: true)
         }
 
-        cell?.addRouteDiagramSubviews()
-        cell?.activateRouteDiagramConstraints()
+        cell.addRouteDiagramSubviews()
+        cell.activateRouteDiagramConstraints()
 
         // Add share action for long press gestures on non 3D Touch devices
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
-        cell?.addGestureRecognizer(longPressGestureRecognizer)
+        cell.addGestureRecognizer(longPressGestureRecognizer)
 
         setCellUserInteraction(cell, to: cellUserInteraction)
 
-        return cell!
+        return cell
     }
 
 }

@@ -259,7 +259,5 @@ class RouteDetailDrawerViewController: UIViewController {
 
         tableView.endUpdates()
 
-        busStops = []
-        indexPathArray = []
     }
 }

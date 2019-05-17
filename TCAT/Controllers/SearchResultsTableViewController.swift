@@ -224,30 +224,21 @@ class SearchResultsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-        var cell: UITableViewCell!
-
-        if sections[indexPath.section].type == .currentLocation {
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.currentLocationIdentifier) as? GeneralTableViewCell
-        } else if sections[indexPath.section].type == .seeAllStops {
-            cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as? GeneralTableViewCell
-        } else {
-            guard let placeCell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-                else { return cell }
-            placeCell.place = sections[indexPath.section].items[indexPath.row]
-            cell = placeCell
+        switch sections[indexPath.section].type {
+        case .currentLocation, .seeAllStops:
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.currentLocationIdentifier) as! GeneralTableViewCell
+            cell.configure(for: sections[indexPath.section].type)
+            return cell
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
+            cell.configure(for: sections[indexPath.section].items[indexPath.row])
+            return cell
         }
-
-        cell.layoutSubviews()
-
-        return cell
     }
-
 }
 
 // MARK: ScrollView Delegate
 extension SearchResultsTableViewController {
-
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if let cancelButton = searchBar?.value(forKey: "_cancelButton") as? UIButton {
             cancelButton.isEnabled = true

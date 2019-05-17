@@ -10,44 +10,59 @@ import UIKit
 
 class PlaceTableViewCell: UITableViewCell {
 
-    var place: Place?
-
-    private var iconColor: UIColor = Colors.metadataIcon
-
-    private let imageHeight: CGFloat = 20.0
-    private let imageWidth: CGFloat = 20.0
-    private let labelWidthPadding: CGFloat = 45.0
-    private let labelXPosition: CGFloat = 46.0
+    private let iconView = UIImageView()
+    private let nameLabel = UILabel()
+    private let descriptionLabel = UILabel()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        iconView.contentMode = .scaleAspectFit
+        contentView.addSubview(iconView)
+
+        nameLabel.font = .getFont(.regular, size: 14) // has been size: 14 elsewhere
+        contentView.addSubview(nameLabel)
+
+        descriptionLabel.textColor = Colors.metadataIcon
+        descriptionLabel.font = .getFont(.regular, size: 12)
+        contentView.addSubview(descriptionLabel)
+
+        setupConstraints()
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    func setupConstraints() {
+        let descriptionLabelHeight: CGFloat = 14.5
+        let iconSize = CGSize(width: 20, height: 20)
+        let iconLeadingInset = 16
+        let nameLabelHeight: CGFloat = 17
+        let nameLabelLeadingInset = 10
+        let placeNameToDescriptionSpacing: CGFloat = 2.5 // Standard number from apple's UITableviewCell with .subtitle style
+        let trailingInset = 45
 
-        preservesSuperviewLayoutMargins = false
-        separatorInset = .zero
-        layoutMargins = .zero
+        iconView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(iconLeadingInset)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(iconSize)
+        }
 
-        iconColor = place?.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
+        nameLabel.snp.makeConstraints { make in
+            make.leading.equalTo(iconView.snp.trailing).offset(nameLabelLeadingInset)
+            make.trailing.equalToSuperview().inset(trailingInset)
+            make.bottom.equalTo(contentView.snp.centerY).offset(-placeNameToDescriptionSpacing / 2)
+            make.height.equalTo(nameLabelHeight)
+        }
 
-        imageView?.image = place?.type == .busStop ? UIImage(named: "bus-pin") : UIImage(named: "pin")
-        imageView?.frame = CGRect(x: 16, y: 5, width: imageWidth, height: imageHeight)
-        imageView?.contentMode = .scaleAspectFit
-        imageView?.center.y = bounds.height / 2.0
-        imageView?.tintColor = iconColor
+        descriptionLabel.snp.makeConstraints { make in
+            make.leading.trailing.equalTo(nameLabel)
+            make.top.equalTo(contentView.snp.centerY).offset(placeNameToDescriptionSpacing / 2)
+            make.height.equalTo(descriptionLabelHeight)
+        }
+    }
 
-        textLabel?.text = place?.name
-        textLabel?.frame.origin.x = labelXPosition
-        textLabel?.frame.size.width = frame.width - labelWidthPadding
-        textLabel?.font = .getFont(.regular, size: 14) // has been size: 14 elsewhere
-
-        detailTextLabel?.text = place?.description
-        detailTextLabel?.frame.origin.x = labelXPosition
-        detailTextLabel?.frame.size.width = frame.width - labelWidthPadding
-        detailTextLabel?.textColor = Colors.metadataIcon
-        detailTextLabel?.font = .getFont(.regular, size: 12)
+    func configure(for place: Place) {
+        iconView.tintColor = place.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
+        iconView.image = place.type == .busStop ? UIImage(named: "bus-pin") : UIImage(named: "pin")
+        nameLabel.text = place.name
+        descriptionLabel.text = place.description
     }
 
     required init?(coder aDecoder: NSCoder) {

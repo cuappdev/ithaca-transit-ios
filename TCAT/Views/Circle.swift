@@ -77,5 +77,4 @@ class Circle: UIView {
         diameter = CGFloat(CircleSize.small.rawValue)
         super.init(coder: aDecoder)
     }
-
 }

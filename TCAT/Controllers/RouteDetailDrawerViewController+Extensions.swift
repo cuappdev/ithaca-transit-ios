@@ -122,19 +122,19 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
 
         if isBusStopCell {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as! BusStopTableViewCell
-            cell.setCell(direction.name)
+            cell.configure(for: direction.name)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
             return format(cell)
         } else if direction.type == .walk || direction.type == .arrive {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as! SmallDetailTableViewCell
-            cell.setCell(direction,
-                         firstStep: indexPath.row == 0,
-                         lastStep: indexPath.row == directions.count - 1)
+            cell.configure(for: direction,
+                           isFirstStep: indexPath.row == 0,
+                           isLastStep: indexPath.row == directions.count - 1)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
             return format(cell)
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
-            cell.setCell(direction, indexPath: indexPath)
+            cell.configure(for: direction, isFirstStep: indexPath.row == 0)
             cell.delegate = self
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
             return format(cell)
@@ -150,7 +150,7 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
 
         if direction.type == .depart || direction.type == .transfer {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as? LargeDetailTableViewCell
-            cell?.setCell(direction, indexPath: indexPath)
+            cell?.configure(for: direction, isFirstStep: indexPath.row == 0)
             return cell?.height() ?? RouteDetailCellSize.largeHeight
         } else {
             return RouteDetailCellSize.smallHeight
