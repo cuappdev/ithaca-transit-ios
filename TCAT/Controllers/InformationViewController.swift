@@ -12,18 +12,8 @@ import UIKit
 
 class InformationViewController: UIViewController {
 
-    private let appDevImage = UIImageView()
-    private let appDevTitle = UILabel()
-    private let descriptionLabel = UILabel()
     private let dismissButton = UIButton(type: .system)
-    private var headerView: UIView!
-    private let hiddenLabel = UILabel()
-    private let sendFeedbackButton = UIButton()
     private let tableView = UITableView(frame: .zero, style: .grouped)
-    private let tcatImage = UIImageView()
-    private let tcatQuoteText = UILabel()
-    private let titleLabel = UILabel()
-    private let visitWebsiteButton = UIButton()
 
     private var content: [[(name: String, action: Selector)]] = [
 
@@ -43,21 +33,6 @@ class InformationViewController: UIViewController {
 
     ]
 
-    private let descriptionLabelSize = CGSize(width: 167, height: 34)
-    private let descriptionLabelTopOffset: CGFloat = 12
-    private let headerWidth = UIScreen.main.bounds.width
-    /** Represents the total height of the headerView given the width of the phone screen. Most of the variables
-     used are static except for the tcat image height, which is dependent on the width of the user's screen.
-     The extra 37 is used for bottom inset padding for the headerView, but I felt it would be unnecessary to
-     create a variable for it */
-    private var headerHeight: CGFloat {
-        return tcatImageTopOffset + tcatImageSize.height + titleLabelTopOffset + titleLabelSize.height + descriptionLabelTopOffset + descriptionLabelSize.height + 37
-    }
-    private var tcatImageSize: CGSize { return CGSize(width: headerWidth-80, height: (headerWidth - 80) * 0.4) }
-    private let tcatImageTopOffset: CGFloat = 44
-    private let titleLabelSize = CGSize(width: 240, height: 20)
-    private let titleLabelTopOffset: CGFloat = 44
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -69,6 +44,7 @@ class InformationViewController: UIViewController {
         view.backgroundColor = Colors.backgroundWash
         navigationController?.navigationBar.tintColor = Colors.primaryText
 
+        setupDismissButton()
         setupTableView()
 
         setupConstraints()
@@ -81,23 +57,11 @@ class InformationViewController: UIViewController {
         tableView.backgroundColor = Colors.backgroundWash
         tableView.separatorColor = Colors.dividerTextField
         tableView.showsVerticalScrollIndicator = false
-
-        setupHeaderView()
+        let headerView = InformationTableHeaderView()
+        headerView.delegate = self
         tableView.tableHeaderView = headerView
 
         view.addSubview(tableView)
-    }
-
-    func setupHeaderView() {
-        headerView = UIView(frame: CGRect(x: 0, y: 0, width: headerWidth, height: headerHeight))
-
-        setupDismissButton()
-        setupHiddenLabel()
-        setupTcatImage()
-        setupTitleLabel()
-        setupDescriptionLabel()
-
-        setupHeaderViewConstraints()
     }
 
     func setupDismissButton() {
@@ -108,65 +72,6 @@ class InformationViewController: UIViewController {
         )
         let backButtonItem = UIBarButtonItem(customView: dismissButton)
         navigationItem.setRightBarButton(backButtonItem, animated: false)
-    }
-
-    func setupHiddenLabel() {
-        hiddenLabel.font = .getFont(.regular, size: 16)
-        hiddenLabel.textColor = Colors.primaryText
-        hiddenLabel.text = Constants.InformationView.magicSchoolBus
-        hiddenLabel.textAlignment = .center
-        hiddenLabel.backgroundColor = .clear
-        headerView.addSubview(hiddenLabel)
-    }
-
-    func setupTcatImage() {
-        tcatImage.image = UIImage(named: "tcat")
-        tcatImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(busTapped)))
-        tcatImage.isUserInteractionEnabled = true
-        headerView.addSubview(tcatImage)
-    }
-
-    func setupTitleLabel() {
-        titleLabel.font = .getFont(.medium, size: 16)
-        titleLabel.textColor = Colors.primaryText
-        titleLabel.text = Constants.InformationView.madeBy
-        titleLabel.backgroundColor = .clear
-        headerView.addSubview(titleLabel)
-    }
-
-    func setupDescriptionLabel() {
-        descriptionLabel.font = .getFont(.regular, size: 14)
-        descriptionLabel.textColor = Colors.primaryText
-        descriptionLabel.text = Constants.InformationView.appDevDescription
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.backgroundColor = .clear
-        descriptionLabel.textAlignment = .center
-        headerView.addSubview(descriptionLabel)
-    }
-
-    func setupHeaderViewConstraints() {
-        hiddenLabel.snp.makeConstraints { make in
-            make.center.equalTo(tcatImage)
-            make.size.equalTo(hiddenLabel.intrinsicContentSize)
-        }
-
-        tcatImage.snp.makeConstraints { make in
-            make.top.equalTo(headerView).offset(tcatImageTopOffset)
-            make.size.equalTo(tcatImageSize)
-            make.centerX.equalToSuperview()
-        }
-
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(tcatImage.snp.bottom).offset(titleLabelTopOffset)
-            make.centerX.equalToSuperview()
-            make.size.equalTo(titleLabelSize)
-        }
-
-        descriptionLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(descriptionLabelTopOffset)
-            make.size.equalTo(descriptionLabelSize)
-            make.centerX.equalToSuperview()
-        }
     }
 
     func setupConstraints() {
@@ -254,47 +159,6 @@ class InformationViewController: UIViewController {
         }
 
     }
-
-    @objc func busTapped() {
-
-        let constant: CGFloat = UIScreen.main.bounds.width
-        let duration: TimeInterval = 1.5
-        let delay: TimeInterval = 0
-        let damping: CGFloat = 0.6
-        let velocity: CGFloat = 0
-        let options: UIView.AnimationOptions = .curveEaseInOut
-
-        UIView.animate(withDuration: duration, delay: delay, usingSpringWithDamping: damping,
-                       initialSpringVelocity: velocity, options: options, animations: {
-
-                        self.tcatImage.frame.origin.x += constant
-
-        }, completion: { (_) in
-
-            self.tcatImage.frame.origin.x -= 2 * constant
-
-            UIView.animate(withDuration: duration, delay: delay, usingSpringWithDamping: damping,
-                           initialSpringVelocity: velocity, options: options, animations: {
-
-                            self.tcatImage.frame.origin.x += constant
-
-            }, completion: { (_) in
-
-                let title = Constants.Alerts.MagicBus.title
-                let message = Constants.Alerts.MagicBus.message
-                let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-                alertController.addAction(UIAlertAction(title: Constants.Alerts.MagicBus.action, style: .default, handler: nil))
-                self.present(alertController, animated: true)
-
-            })
-
-        })
-
-        let payload = BusTappedEventPayload()
-        Analytics.shared.log(payload)
-
-    }
-
 }
 
 // MARK: Table View Data Source
@@ -321,35 +185,29 @@ extension InformationViewController: UITableViewDataSource {
         cell.textLabel?.text = content[indexPath.section][indexPath.row].name
 
         // Set custom formatting based on cell
-        switch (indexPath.section, indexPath.row) {
-
-        case (1, 1): // Send Feedback
+        if indexPath.section == 1 && indexPath.row == 1 {
             cell.textLabel?.textColor = Colors.tcatBlue
-        default:
-            break
-
         }
 
         return cell
-
     }
 }
 
 // MARK: Table View Delegate
 extension InformationViewController: UITableViewDelegate {
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selector = content[indexPath.section][indexPath.row].action
         performSelector(onMainThread: selector, with: nil, waitUntilDone: false)
     }
+
 }
 
 extension InformationViewController: MFMailComposeViewControllerDelegate {
+
     @objc func sendFeedback() {
-
         let emailAddress = Constants.App.contactEmailAddress
-
         if MFMailComposeViewController.canSendMail() {
-
             let mailComposerVC = MFMailComposeViewController()
             mailComposerVC.mailComposeDelegate = self
             var didRetrieveLog = false
@@ -368,9 +226,7 @@ extension InformationViewController: MFMailComposeViewControllerDelegate {
             mailComposerVC.setMessageBody(body, isHTML: true)
 
             present(mailComposerVC, animated: true)
-
         } else {
-
             let title = Constants.Alerts.EmailFailure.title
             let message = Constants.Alerts.EmailFailure.message
             let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -394,8 +250,17 @@ extension InformationViewController: MFMailComposeViewControllerDelegate {
                 Analytics.shared.log(payload)
             }))
             present(alertController, animated: true)
-
         }
+    }
 
+}
+
+extension InformationViewController: InfoHeaderViewDelegate {
+    func showFunMessage() {
+        let title = Constants.Alerts.MagicBus.title
+        let message = Constants.Alerts.MagicBus.message
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: Constants.Alerts.MagicBus.action, style: .default, handler: nil))
+        present(alertController, animated: true)
     }
 }
