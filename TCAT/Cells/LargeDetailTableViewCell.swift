@@ -15,7 +15,7 @@ protocol LargeDetailTableViewDelegate: class {
 
 class LargeDetailTableViewCell: UITableViewCell {
 
-    var chevron: IncreasedTapSizeButton!
+    var chevron: LargeTapTargetButton!
 
     weak var delegate: LargeDetailTableViewDelegate?
     var isExpanded: Bool = false
@@ -62,7 +62,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     }
 
     func setupChevron() {
-        chevron = IncreasedTapSizeButton(frame: .zero, sizeIncrease: .init(width: 30, height: 30))
+        chevron = LargeTapTargetButton(extendBy: 15)
         chevron.frame.size = CGSize(width: 13.5, height: 8)
         chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
         chevron.setImage(UIImage(named: "arrow"), for: .normal)
@@ -81,6 +81,10 @@ class LargeDetailTableViewCell: UITableViewCell {
         contentView.addSubview(detailLabel)
     }
 
+    func setupConstraints() {
+
+    }
+
     /** Precondition: Direction is BoardDirection */
     func configure(for direction: Direction, isFirstStep: Bool) {
 
@@ -95,9 +99,8 @@ class LargeDetailTableViewCell: UITableViewCell {
             iconView = DetailIconView(direction: direction, height: cellHeight, isFirstStep: isFirstStep, isLastStep: false)
             contentView.addSubview(iconView!)
 
-            titleLabel = formatTitleLabel(titleLabel)
+            formatTitleLabel()
 
-            busIconView = BusIcon(type: .directionSmall, number: direction.routeNumber)
             busIconView = formatBusIconView(busIconView, titleLabel)
             contentView.addSubview(busIconView)
 
@@ -117,41 +120,36 @@ class LargeDetailTableViewCell: UITableViewCell {
     }
 
     /** Abstracted formatting of content for titleLabel */
-    func formatTitleLabel(_ label: UILabel) -> UILabel {
+    func formatTitleLabel() {
 
-        // Set inital text in label
-        label.text = direction.type == .transfer ? "Bus becomes" : "Board"
+        busIconView = BusIcon(type: .directionSmall, number: direction.routeNumber)
 
-        // Add correct amount of spacing to create a gap for the busIcon
-        // Using constant always returned from
-        //      while label.frame.maxX < busIconView.frame.maxX + 8 {
-        // because it will occasionally run infinitely because of format func calls
-        // TODO: Do this better!
-        var accum = 0
-        while accum <= (21) {
-            accum += 1
-            label.text! += " "
-            label.sizeToFit()
-        }
+        let titleLabelText = NSMutableAttributedString(string: direction.type == .transfer ? "Bus becomes" : "Board")
 
-        // Format and place labels
-
-        let content = label.text! + direction.locationNameDescription
+        // create our NSTextAttachment
+        let iconAttachment = NSTextAttachment()
+        busIconView.frame.size.width += 10
+        iconAttachment.image = busIconView.getImage()
+        var frame = busIconView.frame
+        frame.origin.y -= 5
+        iconAttachment.bounds = frame
+        titleLabelText.append(NSAttributedString(attachment: iconAttachment))
+        let content = direction.locationNameDescription
         let labelBoldFont: UIFont = .getFont(.semibold, size: 14)
-        let attributedString = direction.name.bold(in: content, from: label.font, to: labelBoldFont)
-        label.attributedText = attributedString
+        let attributedString = direction.name.bold(in: content, from: titleLabel.font, to: labelBoldFont)
+        titleLabelText.append(attributedString)
+        titleLabel.attributedText = titleLabelText
+
         paragraphStyle.lineSpacing = 4
 
-        label.numberOfLines = 0
-        label.sizeToFit()
-        label.frame.size.width = (chevron.frame.minX - 12) - cellWidth
-        label.frame.origin.y = edgeSpacing // - paragraphStyle.lineSpacing
+        titleLabel.numberOfLines = 0
+        titleLabel.sizeToFit()
+        titleLabel.frame.size.width = (chevron.frame.minX - 12) - cellWidth
+        titleLabel.frame.origin.y = edgeSpacing // - paragraphStyle.lineSpacing
 
-        attributedString.addAttribute(.paragraphStyle, value: paragraphStyle,
-                                      range: NSRange(location: 0, length: label.attributedText!.length))
-        label.attributedText = attributedString
-
-        return label
+        titleLabelText.addAttribute(.paragraphStyle, value: paragraphStyle,
+                                      range: NSRange(location: 0, length: titleLabel.attributedText!.length))
+        titleLabel.attributedText = titleLabelText
     }
 
     /** Abstracted formatting of content for detailLabel. Needs titleLabel */
@@ -184,9 +182,9 @@ class LargeDetailTableViewCell: UITableViewCell {
 
     /** Precondition: setCell must be called before using this function */
     func height() -> CGFloat {
-        let titleLabel = formatTitleLabel(getTitleLabel())
+//        let titleLabel = formatTitleLabel(getTitleLabel())
         let detailLabel = formatDetailLabel(getDetailLabel(), titleLabel)
-        return titleLabel.frame.height + detailLabel.frame.height + labelSpacing + (edgeSpacing * 2)
+        return 70
     }
 
     @objc func chevronButtonPressed() {
@@ -195,34 +193,6 @@ class LargeDetailTableViewCell: UITableViewCell {
         } else {
             delegate?.expandCells(on: self)
         }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class IncreasedTapSizeButton: UIButton {
-
-    private var horizontalInset: CGFloat
-    private var verticalInset: CGFloat
-
-    init(frame: CGRect, sizeIncrease: CGSize) {
-        horizontalInset = sizeIncrease.width / 2
-        verticalInset = sizeIncrease.height / 2
-        super.init(frame: frame)
-    }
-
-    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-
-        let largerArea = CGRect(
-            x: self.bounds.origin.x - horizontalInset,
-            y: self.bounds.origin.y - verticalInset,
-            width: self.bounds.size.width + horizontalInset * 2,
-            height: self.bounds.size.height + verticalInset * 2
-        )
-
-        return largerArea.contains(point)
     }
 
     required init?(coder aDecoder: NSCoder) {
