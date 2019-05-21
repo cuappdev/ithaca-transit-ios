@@ -137,21 +137,9 @@ class Route: NSObject, Codable {
             if let direction = rawDirections.last {
                 // Set stayOnBusForTransfer to false b/c ending location can never have transfer
                 if direction.type == .walk || direction.type == .depart {
-                    let newDirection = Direction(
-                        type: direction.type == .depart ? .arrive : .walk,
-                        name: endName,
-                        startLocation: direction.startLocation,
-                        endLocation: direction.endLocation,
-                        startTime: direction.startTime,
-                        endTime: direction.endTime,
-                        path: direction.path,
-                        travelDistance: direction.travelDistance,
-                        routeNumber: direction.routeNumber,
-                        stops: direction.stops,
-                        stayOnBusForTransfer: false,
-                        tripIdentifiers: direction.tripIdentifiers,
-                        delay: direction.delay
-                    )
+                    let newDirection = direction.copy() as! Direction
+                    newDirection.type = newDirection.type == .depart ? .arrive : .walk
+                    newDirection.stayOnBusForTransfer = false
                     rawDirections.append(newDirection)
                 }
             }
