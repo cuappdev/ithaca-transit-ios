@@ -537,8 +537,11 @@ extension RouteDetailContentViewController {
         // Live Tracking Network Timer
         liveTrackingNetworkTimer?.invalidate()
         if directions.contains(where: { $0.type != .walk }) {
-            liveTrackingNetworkTimer = Timer.scheduledTimer(timeInterval: liveTrackingNetworkRefreshRate, target: self, selector: #selector(getBusLocations),
-                                                            userInfo: nil, repeats: true)
+            liveTrackingNetworkTimer = Timer.scheduledTimer(timeInterval: liveTrackingNetworkRefreshRate,
+                                                            target: self,
+                                                            selector: #selector(getBusLocations),
+                                                            userInfo: nil,
+                                                            repeats: true)
             liveTrackingNetworkTimer?.fire()
         }
     }
@@ -550,7 +553,6 @@ extension RouteDetailContentViewController {
     }
 
     override func loadView() {
-
         // Set mapView with settings
         let camera = GMSCameraPosition.camera(withLatitude: Constants.Map.startingLat, longitude: Constants.Map.startingLong, zoom: Constants.Map.defaultZoom)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
@@ -616,7 +618,6 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
         mapView.animate(with: update)
 
         return true
-
     }
 
     func updateUserData(for marker: GMSMarker, with values: [String: Any]) {
@@ -624,19 +625,19 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
             marker.userData = values
             return
         }
-        for (key, value) in values {
+        values.forEach { (key, value) in
             userData[key] = value
         }
         marker.userData = userData
     }
 
     func getUserData(for marker: GMSMarker, key: String) -> Any? {
-        guard var userData = marker.userData as? [String: Any] else { return nil }
+        guard let userData = marker.userData as? [String: Any] else { return nil }
         return userData[key]
     }
 
     func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
-        for bus in buses {
+        buses.forEach { bus in
             let bearingView = UIImageView(image: #imageLiteral(resourceName: "indicator"))
             bearingView.frame.size = CGSize(width: bearingView.frame.width / 2, height: bearingView.frame.height / 2)
             bearingView.tag = increaseTapTargetTag
