@@ -28,18 +28,15 @@ extension RouteDetailDrawerViewController: UIGestureRecognizerDelegate {
             }
         }
     }
-
 }
 
 extension RouteDetailDrawerViewController: LargeDetailTableViewDelegate {
-    func collapseCells(on cell: UITableViewCell) {
-        toggleCellExpansion(at: tableView.indexPath(for: cell))
+    func collapseCells(on cell: LargeDetailTableViewCell) {
+        toggleCellExpansion(for: cell)
     }
 
-    func expandCells(on cell: UITableViewCell) {
-        if justLoaded { summaryTapped() }
-
-        toggleCellExpansion(at: tableView.indexPath(for: cell))
+    func expandCells(on cell: LargeDetailTableViewCell) {
+        toggleCellExpansion(for: cell)
 
         tableView.layoutIfNeeded()
         tableView.layoutSubviews()
@@ -56,7 +53,6 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
     }
 
     func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
-        justLoaded = false
         // Center map on drawer change
         switch drawer.drawerPosition {
         case .collapsed, .partiallyRevealed:
@@ -83,12 +79,10 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
             safeAreaCover?.alpha = 1.0
             visible = true
         } else {
-            if !ongoing && visible {
+            if visible {
                 UIView.animate(withDuration: 0.25, animations: {
                     self.safeAreaCover?.alpha = 0.0
                     self.visible = false
-                }, completion: { _ in
-                    self.ongoing = false
                 })
             }
         }
@@ -101,61 +95,58 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
 
 extension RouteDetailDrawerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return directions.count
+        return directionsAndVisibleStops.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let direction = directions[indexPath.row]
-        let isBusStopCell = direction.type == .walk && direction.startLocation.latitude == 0.0
-        let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
-
         /// Formatting, including selectionStyle, and seperator line fixes
         func format(_ cell: UITableViewCell) -> UITableViewCell {
             cell.selectionStyle = .none
-            if indexPath.row == directions.count - 1 {
+            if indexPath.row == directionsAndVisibleStops.count - 1 {
                 // Remove seperator at end of table
                 cell.layoutMargins = UIEdgeInsets(top: 0, left: UIScreen.main.bounds.width, bottom: 0, right: 0)
             }
             return cell
         }
 
-        if isBusStopCell {
+        let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
+
+        switch directionsAndVisibleStops[indexPath.row] {
+        case .busStop(let busStop):
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as! BusStopTableViewCell
-            cell.configure(for: direction.name)
+            cell.configure(for: busStop.name)
             cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
             return format(cell)
-        } else if direction.type == .walk || direction.type == .arrive {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as! SmallDetailTableViewCell
-            cell.configure(for: direction,
-                           isFirstStep: indexPath.row == 0,
-                           isLastStep: indexPath.row == directions.count - 1)
-            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
-            return format(cell)
-        } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
-            cell.configure(for: direction, isFirstStep: indexPath.row == 0)
-            cell.delegate = self
-            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
-            return format(cell)
+        case .direction(let direction):
+            if direction.type == .walk || direction.type == .arrive {
+                let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as! SmallDetailTableViewCell
+                cell.configure(for: direction,
+                               isFirstStep: indexPath.row == 0,
+                               isLastStep: indexPath.row == directionsAndVisibleStops.count - 1)
+                cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
+                return format(cell)
+            } else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
+                cell.configure(for: direction, isFirstStep: indexPath.row == 0)
+                cell.delegate = self
+                cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
+                return format(cell)
+            }
         }
-
     }
 }
 
 extension RouteDetailDrawerViewController: UITableViewDelegate {
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-
-        let direction = directions[indexPath.row]
-
-        if direction.type == .depart || direction.type == .transfer {
+        if let direction = directionsAndVisibleStops[indexPath.row].getDirection(),
+            direction.type == .depart || direction.type == .transfer {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as? LargeDetailTableViewCell
             cell?.configure(for: direction, isFirstStep: indexPath.row == 0)
             return cell?.height() ?? RouteDetailCellSize.largeHeight
-        } else {
-            return RouteDetailCellSize.smallHeight
         }
-
+        return RouteDetailCellSize.smallHeight
     }
 
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -210,7 +201,7 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let direction = directions[indexPath.row]
+        let direction = directionsAndVisibleStops[indexPath.row].getDirection()
 
         selectedDirection = direction
 
