@@ -81,6 +81,11 @@ class LargeDetailTableViewCell: UITableViewCell {
         contentView.addSubview(detailLabel)
     }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        formatTitleLabel()
+    }
+
     func setupConstraints() {
 
     }
@@ -96,15 +101,15 @@ class LargeDetailTableViewCell: UITableViewCell {
 
         if shouldAddViews {
 
+            busIconView = BusIcon(type: .directionSmall, number: direction.routeNumber)
+
             iconView = DetailIconView(direction: direction, height: cellHeight, isFirstStep: isFirstStep, isLastStep: false)
             contentView.addSubview(iconView!)
 
-            formatTitleLabel()
-
-            busIconView = formatBusIconView(busIconView, titleLabel)
+            busIconView = formatBusIconView(busIconView, getTitleLabel())
             contentView.addSubview(busIconView)
 
-            detailLabel = formatDetailLabel(detailLabel, titleLabel)
+            detailLabel = formatDetailLabel(getDetailLabel(), getTitleLabel())
 
             // Place bus icon and chevron accordingly
             chevron.center.y = cellHeight / 2
@@ -122,13 +127,10 @@ class LargeDetailTableViewCell: UITableViewCell {
     /** Abstracted formatting of content for titleLabel */
     func formatTitleLabel() {
 
-        busIconView = BusIcon(type: .directionSmall, number: direction.routeNumber)
-
         let titleLabelText = NSMutableAttributedString(string: direction.type == .transfer ? "Bus becomes" : "Board")
 
         // create our NSTextAttachment
         let iconAttachment = NSTextAttachment()
-        busIconView.frame.size.width += 10
         iconAttachment.image = busIconView.getImage()
         var frame = busIconView.frame
         frame.origin.y -= 5
@@ -182,8 +184,6 @@ class LargeDetailTableViewCell: UITableViewCell {
 
     /** Precondition: setCell must be called before using this function */
     func height() -> CGFloat {
-//        let titleLabel = formatTitleLabel(getTitleLabel())
-        let detailLabel = formatDetailLabel(getDetailLabel(), titleLabel)
         return 70
     }
 

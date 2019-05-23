@@ -54,9 +54,9 @@ class BusIcon: UIView {
 
     // MARK: View vars
 
-    var baseView: UIView!
-    var image: UIImageView!
-    var label: UILabel!
+    var baseView = UIView()
+    let image = UIImageView(image: UIImage(named: "bus"))
+    var label = UILabel()
     var liveIndicator: LiveIndicator?
 
     // MARK: Constraint vars
@@ -73,50 +73,76 @@ class BusIcon: UIView {
 
         super.init(frame: CGRect(x: 0, y: 0, width: type.width, height: type.height))
 
+        var fontSize: CGFloat {
+            switch type {
+            case .directionSmall: return 14
+            case .directionLarge: return 20
+            case .liveTracking: return 16
+            }
+        }
+
         backgroundColor = .clear
         isOpaque = false
 
-        baseView = UIView(frame: self.frame)
         baseView.backgroundColor = Colors.tcatBlue
         baseView.layer.cornerRadius = type.cornerRadius
         addSubview(baseView)
 
-        image = UIImageView(image: UIImage(named: "bus"))
-        let constant: CGFloat = type == .directionSmall ? 0.75 : 1.0
-        image.frame.size = CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
         image.tintColor = Colors.white
-        image.center.y = baseView.center.y
-        image.frame.origin.x = type == .directionSmall ? 8 : 12
         addSubview(image)
 
-        label = UILabel(frame: CGRect(x: image.frame.maxX, y: 0, width: frame.width - image.frame.maxX, height: frame.height))
         label.text = "\(number)"
-        let fontSize: CGFloat = type == .directionLarge ? 20 : 14
         label.font = .getFont(.semibold, size: fontSize)
         label.textColor = Colors.white
         label.textAlignment = .center
-        label.center.y = baseView.center.y
-        label.frame.size.width = frame.maxX - image.frame.maxX
-        label.frame.origin.x = image.frame.maxX
         addSubview(label)
 
         if type == .liveTracking {
-
-            label.font = .getFont(.semibold, size: 16)
-            label.sizeToFit()
-            image.frame.origin.x = 8
-            let sizeConstant: CGFloat = 0.87
-            image.frame.size = CGSize(width: image.frame.width * sizeConstant, height: image.frame.height * sizeConstant)
-            label.center.y = baseView.center.y
-            label.frame.origin.x = image.frame.maxX + 4
-
             liveIndicator = LiveIndicator(size: .large, color: Colors.white)
-            liveIndicator!.frame.origin = CGPoint(x: label.frame.maxX + 5, y: label.frame.origin.y)
-            liveIndicator!.center.y = baseView.center.y
             addSubview(liveIndicator!)
-
         }
 
+        setupConstraints()
+    }
+
+    func setupConstraints() {
+        let imageLeadingOffset: CGFloat = type == .directionLarge ? 12 : 8
+        var imageSize: CGSize {
+            var constant: CGFloat {
+                switch type {
+                case .liveTracking: return 0.87
+                case .directionSmall: return 0.75
+                case .directionLarge: return 1
+                }
+            }
+            return CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
+        }
+        let labelLeadingOffset: CGFloat = type == .liveTracking ? 3 : 6
+        let liveIndicatorLeadingOffset = 5
+
+        baseView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
+        image.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(imageLeadingOffset)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(imageSize)
+        }
+
+        label.snp.makeConstraints { make in
+            make.leading.equalTo(image.snp.trailing).offset(labelLeadingOffset)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(label.intrinsicContentSize)
+        }
+
+        if let liveIndicator = liveIndicator {
+            liveIndicator.snp.makeConstraints { make in
+                make.leading.equalTo(label.snp.trailing).offset(liveIndicatorLeadingOffset)
+                make.centerY.equalToSuperview()
+                make.size.equalTo(liveIndicator.intrinsicContentSize)
+            }
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
