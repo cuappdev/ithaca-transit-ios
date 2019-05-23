@@ -9,8 +9,8 @@
 import UIKit
 
 protocol LargeDetailTableViewDelegate: class {
-    func collapseCells(on cell: UITableViewCell)
-    func expandCells(on cell: UITableViewCell)
+    func collapseCells(on cell: LargeDetailTableViewCell)
+    func expandCells(on cell: LargeDetailTableViewCell)
 }
 
 class LargeDetailTableViewCell: UITableViewCell {

@@ -15,12 +15,9 @@ import Pulley
 import SwiftyJSON
 import UIKit
 
-class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CLLocationManagerDelegate {
+class RouteDetailContentViewController: UIViewController {
 
     var drawerDisplayController: RouteDetailDrawerViewController?
-
-    private var mapView: GMSMapView!
-    private var routeOptionsCell: RouteTableViewCell?
 
     private var bounds = GMSCoordinateBounds()
     private var busIndicators = [GMSMarker]()
@@ -32,9 +29,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     private var liveTrackingNetworkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
     private var liveTrackingNetworkTimer: Timer?
     private var locationManager = CLLocationManager()
+    private var mapView: GMSMapView!
     private let networking: Networking = URLSession.shared.request
     private var paths: [Path] = []
     private var route: Route!
+    private var routeOptionsCell: RouteTableViewCell?
 
     private var banner: StatusBarNotificationBanner? {
         didSet {
@@ -54,22 +53,37 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         initializeRoute(route, currentLocation)
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Set up Location Manager
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager.distanceFilter = 10
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+
+        // Set up Share button
+        let shareButton = UIBarButtonItem(image: #imageLiteral(resourceName: "share"), style: .plain, target: self, action: #selector(shareRoute))
+        shareButton.tintColor = Colors.primaryText
+        guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
+        routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
+
+        // Debug Function
+        // createDebugBusIcon()
+    }
+
     /** Construct Directions based on Route and parse Waypoint / Path data */
     func initializeRoute(_ route: Route, _ currentLocation: CLLocationCoordinate2D?) {
-
         self.route = route
         self.directions = route.directions
         self.currentLocation = currentLocation
 
         let isWalkingRoute = directions.reduce(true) { $0 && $1.type == .walk }
-
         // Plot the paths of all directions
         for (arrayIndex, direction) in directions.enumerated() {
-
             var waypoints: [Waypoint] = []
-
             for (pathIndex, point) in direction.path.enumerated() {
-
                 let isStop: Bool = direction.type != .walk
                 var typeNotSet = true
                 var type: WaypointType = .none {
@@ -116,112 +130,20 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
                 let waypoint = Waypoint(lat: point.latitude, long: point.longitude, wpType: type, isStop: isStop)
                 waypoints.append(waypoint)
-
             }
 
             let path = direction.type == .walk ? WalkPath(waypoints) : BusPath(waypoints)
             paths.append(path)
-
         }
 
         drawerDisplayController = RouteDetailDrawerViewController(route: route)
-
     }
 
-    required convenience init(coder aDecoder: NSCoder) {
-        let route = aDecoder.decodeObject(forKey: "route") as! Route
-        self.init(route: route, currentLocation: nil, routeOptionsCell: nil)
-    }
-
-    // MARK: View-Related Functions
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Set up Location Manager
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-        locationManager.distanceFilter = 10
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.startUpdatingLocation()
-
-        // Set up Share button
-        let shareButton = UIBarButtonItem(image: #imageLiteral(resourceName: "share"), style: .plain, target: self, action: #selector(shareRoute))
-        shareButton.tintColor = Colors.primaryText
-        guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
-        routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
-
-        // Debug Function
-        // createDebugBusIcon()
-
-    }
+    // MARK: Status Bar Functions
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return banner != nil ? .lightContent : .default
     }
-
-    override func viewSafeAreaInsetsDidChange() {
-        if #available(iOS 11.0, *) {
-            let top = view.safeAreaInsets.top
-            let bottom = view.safeAreaInsets.bottom + (drawerDisplayController?.summaryView.frame.height ?? 92)
-            mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
-        }
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        // Live Tracking Network Timer
-        liveTrackingNetworkTimer?.invalidate()
-        if directions.contains(where: { $0.type != .walk }) {
-            liveTrackingNetworkTimer = Timer.scheduledTimer(timeInterval: liveTrackingNetworkRefreshRate, target: self, selector: #selector(getBusLocations),
-                                                            userInfo: nil, repeats: true)
-            liveTrackingNetworkTimer?.fire()
-        }
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        liveTrackingNetworkTimer?.invalidate()
-        hideBanner()
-    }
-
-    override func loadView() {
-
-        // Set mapView with settings
-        let camera = GMSCameraPosition.camera(withLatitude: Constants.Map.startingLat, longitude: Constants.Map.startingLong, zoom: Constants.Map.defaultZoom)
-        let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
-        mapView.delegate = self
-        mapView.isMyLocationEnabled = true
-        mapView.paddingAdjustmentBehavior = .never // handled by code
-        mapView.setMinZoom(Constants.Map.minZoom, maxZoom: Constants.Map.maxZoom)
-        mapView.settings.compassButton = true
-        mapView.settings.myLocationButton = true
-        mapView.settings.tiltGestures = false
-        mapView.settings.indoorPicker = false
-        mapView.isBuildingsEnabled = false
-        mapView.isIndoorEnabled = false
-
-        // Pre-iOS 11 padding. See viewDidLoad for iOS 11 version
-        let top = (navigationController?.navigationBar.frame.height ?? 44) + UIApplication.shared.statusBarFrame.height
-        let bottom = drawerDisplayController?.summaryView.frame.height ?? 0
-        mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
-
-        let northEast = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.north, longitude: Constants.Values.RouteMaxima.east)
-        let southWest = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.south, longitude: Constants.Values.RouteMaxima.west)
-        let panBounds = GMSCoordinateBounds(coordinate: northEast, coordinate: southWest)
-        mapView.cameraTargetBounds = panBounds
-
-        self.mapView = mapView
-        view = mapView
-
-    }
-
-    // MARK: Status Bar Functions
 
     /// Show banner if no other status banner exists; turns status bar light
     func showBanner(_ message: String, status: BannerStyle) {
@@ -244,44 +166,17 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         self.banner = nil
     }
 
-    // MARK: Location Manager Functions
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let newCoord = locations.last?.coordinate {
-            bounds = bounds.includingCoordinate(newCoord)
-            currentLocation = newCoord
-        }
-        didUpdateLocation()
-    }
-
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-        print("RouteDetailVC CLLocationManager didFailWithError: \(error)")
-        didUpdateLocation()
-    }
-
-    /// Completion after locationManager functions return
-    func didUpdateLocation() {
-        if initalUpdate { // try and cut down on didUpdateLocation spam.
-            initalUpdate = false
-            drawMapRoute()
-            centerMapOnOverview(drawerPreviewing: true)
-        }
-    }
-
     // MARK: Network Calls
 
     // Keep track of statuses of bus routes throughout view life cycle
     var noDataRouteList: [Int] = []
 
-    /** Fetch live-tracking information for the first direction's bus route.
-        Handles connection issues with banners.
-        Animated indicators
-     */
-
     private func busLocations(_ directions: [Direction]) -> Future<Response<[BusLocation]>> {
         return networking(Endpoint.getBusLocations(directions)).decode()
     }
 
+    /** Fetch live-tracking information for the first direction's bus route.
+     Handles connection issues with banners. Animated indicators */
     @objc func getBusLocations() {
 
         let directionsAreValid = route.directions.reduce(true) { (result, direction) in
@@ -291,7 +186,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 return true
             }
         }
-
         if !directionsAreValid {
             print("getBusLocations - Directions are not valid")
             return
@@ -303,77 +197,53 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 switch result {
                 case .value(let response):
                     var results = [BusDataType]()
-
                     if response.data.isEmpty {
-                        // print("No Bus Locations")
                         // Reset banner in case transitioned from Error to Online - No Bus Locations
                         self.hideBanner()
-
-                        // Possibly add information about no tracking available.
                     }
 
                     for busLocation in response.data {
-
                         results.append(busLocation.dataType)
-
                         switch busLocation.dataType {
-
                         case .noData:
-                            // print("No Data for", busLocation.routeNumber)
-
                             if !self.noDataRouteList.contains(busLocation.routeNumber) {
                                 self.noDataRouteList.append(busLocation.routeNumber)
                             }
-
                         case .invalidData:
-                            // print("Invalid Data for", busLocation.routeNumber)
-
                             if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
                                 self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                             }
-
                             if self.noDataRouteList.isEmpty {
                                 self.hideBanner()
                             }
-
                             self.showBanner(Constants.Banner.trackingLater, status: .info)
 
                         case .validData:
-                            // print("Valid Data for", busLocation.routeNumber)
-
                             if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
                                 self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                             }
-
                             if self.noDataRouteList.isEmpty {
                                 self.hideBanner()
                             }
-
                             self.setBusLocation(busLocation)
-
-                        } // switch end
-
-                } // busLocations for loop end
+                        }
+                }
                 case .error(let error):
                     print("RouteDetailVC getBusLocations Error:", error.localizedDescription)
                     if let banner = self.banner, !banner.isDisplaying {
                         self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
                     }
-
                 }
             }
-
         }
-
         // Bounce any visible indicators
         bounceIndicators()
-
     }
 
     /** Update the map with new busLocations, adding or replacing based on vehicleID.
-        If `validTripIDs` is passed in, only buses that match the tripID will be drawn.
-        The input includes every bus associated with a certain line. Any visible indicators
-        are also animated
+     If `validTripIDs` is passed in, only buses that match the tripID will be drawn.
+     The input includes every bus associated with a certain line. Any visible indicators
+     are also animated
      */
     func setBusLocation(_ bus: BusLocation) {
 
@@ -398,7 +268,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             updateUserData(for: newBus, with: [
                 Constants.BusUserData.actualCoordinates: busCoords,
                 Constants.BusUserData.vehicleID: bus.vehicleID
-            ])
+                ])
 
             // Position
             newBus.position = busCoords
@@ -409,7 +279,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
         }
 
-        // Otherwise, add bus to map
+            // Otherwise, add bus to map
         else {
 
             guard let iconView = bus.iconView as? BusLocationView else { return }
@@ -420,7 +290,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             updateUserData(for: marker, with: [
                 Constants.BusUserData.actualCoordinates: busCoords,
                 Constants.BusUserData.vehicleID: bus.vehicleID
-            ])
+                ])
 
             // Actual Coordinates, Bearing
             iconView.updateBus(to: busCoords, with: Double(bus.heading))
@@ -445,107 +315,14 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
             indicator.iconView?.transform = CGAffineTransform(scaleX: insetValue, y: insetValue)
             UIView.animate(withDuration: LiveIndicator.DURATION * 2, delay: 0, usingSpringWithDamping: 1,
                            initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
-                indicator.iconView?.transform = originalTransform
+                            indicator.iconView?.transform = originalTransform
             })
         }
     }
 
     // MARK: Share Function
-
     @objc func shareRoute() {
         presentShareSheet(from: view, for: route, with: routeOptionsCell?.getImage())
-    }
-
-    // MARK: Google Map View Delegate Functions
-
-    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
-
-        guard
-            let coordinates = getUserData(for: marker, key: Constants.BusUserData.actualCoordinates) as? CLLocationCoordinate2D
-        else {
-            return true
-        }
-
-        let update = GMSCameraUpdate.setTarget(coordinates)
-        mapView.animate(with: update)
-
-        return true
-
-    }
-
-    func updateUserData(for marker: GMSMarker, with values: [String: Any]) {
-
-        guard var userData = marker.userData as? [String: Any] else {
-            marker.userData = values
-            return
-        }
-
-        for (key, value) in values {
-            userData[key] = value
-        }
-
-        marker.userData = userData
-
-    }
-
-    func getUserData(for marker: GMSMarker, key: String) -> Any? {
-        guard var userData = marker.userData as? [String: Any] else { return nil }
-        return userData[key]
-    }
-
-    func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
-
-        for bus in buses {
-
-            let bearingView = UIImageView(image: #imageLiteral(resourceName: "indicator"))
-            bearingView.frame.size = CGSize(width: bearingView.frame.width / 2, height: bearingView.frame.height / 2)
-            bearingView.tag = increaseTapTargetTag
-
-            if let existingIndicator = busIndicators.first(where: {
-                let markerID = getUserData(for: $0, key: Constants.BusUserData.vehicleID) as? Int
-                let busID = getUserData(for: bus, key: Constants.BusUserData.vehicleID) as? Int
-                return markerID == busID
-            }) { // Update Indicator
-                if let placement = calculatePlacement(position: bus.position, view: bearingView) {
-
-                    // existingIndicator.map = nil // Uncomment to avoid animation
-                    existingIndicator.position = placement
-                    existingIndicator.rotation = calculateBearing(from: placement, to: bus.position)
-
-                    updateUserData(for: existingIndicator, with: [
-                        Constants.BusUserData.actualCoordinates: bus.position,
-                        Constants.BusUserData.indicatorCoordinates: placement
-                    ])
-
-                    existingIndicator.appearAnimation = .none
-                    // existingIndicator.map = mapView // Uncomment to avoid animation
-                } else {
-                    existingIndicator.map = nil
-                    busIndicators.remove(at: busIndicators.firstIndex(of: existingIndicator)!)
-                }
-            } else { // Create Indicator
-                if let placement = calculatePlacement(position: bus.position, view: bearingView) {
-
-                    let indicator = GMSMarker(position: placement)
-                    indicator.appearAnimation = .pop
-                    indicator.rotation = calculateBearing(from: placement, to: bus.position)
-                    indicator.iconView = bearingView
-                    setIndex(of: indicator, with: .bussing)
-
-                    updateUserData(for: indicator, with: [
-                        Constants.BusUserData.actualCoordinates: bus.position,
-                        Constants.BusUserData.indicatorCoordinates: placement,
-                        Constants.BusUserData.vehicleID: getUserData(for: bus, key: Constants.BusUserData.vehicleID) as? Int ?? -1
-                    ])
-
-                    indicator.map = mapView
-                    busIndicators.append(indicator)
-                }
-
-            }
-
-        }
-
     }
 
     func calculatePlacement(position: CLLocationCoordinate2D, view: UIView) -> CLLocationCoordinate2D? {
@@ -623,7 +400,6 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     }
 
     func calculateBearing(from marker: CLLocationCoordinate2D, to location: CLLocationCoordinate2D) -> Double {
-
         func degreesToRadians(_ degrees: Any) -> Double {
             let value = degrees as? Double ?? Double(degrees as! Int)
             return value * .pi / 180
@@ -673,13 +449,11 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
     func centerMap(on direction: Direction, isOverviewOfPath: Bool = false, drawerPreviewing: Bool = false) {
 
         let path = GMSMutablePath()
-
         if isOverviewOfPath {
             direction.path.forEach { loc in path.add(loc) }
         } else {
             path.add(direction.startLocation)
         }
-
         let bounds = GMSCoordinateBounds(path: path)
         let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
         mapView.animate(with: update)
@@ -706,12 +480,9 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
 
     /** Draw all waypoints initially for all paths in [Path] or [[CLLocationCoordinate2D]], plus fill bounds */
     func drawMapRoute() {
-
         for path in paths {
-
             path.traveledPolyline.map = mapView
             path.map = mapView
-
             for waypoint in path.waypoints {
                 let marker = GMSMarker(position: waypoint.coordinate)
                 marker.iconView = waypoint.iconView
@@ -719,9 +490,7 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
                 setIndex(of: marker, with: waypoint.wpType)
                 bounds = bounds.includingCoordinate(waypoint.coordinate)
             }
-
-        } // end for loop
-
+        }
     }
 
     /// Create fake bus for debugging and testing bus indicators
@@ -741,4 +510,179 @@ class RouteDetailContentViewController: UIViewController, GMSMapViewDelegate, CL
         buses.append(marker)
     }
 
+    required convenience init(coder aDecoder: NSCoder) {
+        let route = aDecoder.decodeObject(forKey: "route") as! Route
+        self.init(route: route, currentLocation: nil, routeOptionsCell: nil)
+    }
+}
+
+// MARK: View Life Cycle
+extension RouteDetailContentViewController {
+
+    override func viewSafeAreaInsetsDidChange() {
+        if #available(iOS 11.0, *) {
+            let top = view.safeAreaInsets.top
+            let bottom = view.safeAreaInsets.bottom + (drawerDisplayController?.summaryView.frame.height ?? 92)
+            mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
+        }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // Live Tracking Network Timer
+        liveTrackingNetworkTimer?.invalidate()
+        if directions.contains(where: { $0.type != .walk }) {
+            liveTrackingNetworkTimer = Timer.scheduledTimer(timeInterval: liveTrackingNetworkRefreshRate,
+                                                            target: self,
+                                                            selector: #selector(getBusLocations),
+                                                            userInfo: nil,
+                                                            repeats: true)
+            liveTrackingNetworkTimer?.fire()
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        liveTrackingNetworkTimer?.invalidate()
+        hideBanner()
+    }
+
+    override func loadView() {
+        // Set mapView with settings
+        let camera = GMSCameraPosition.camera(withLatitude: Constants.Map.startingLat, longitude: Constants.Map.startingLong, zoom: Constants.Map.defaultZoom)
+        let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
+        mapView.delegate = self
+        mapView.isMyLocationEnabled = true
+        mapView.paddingAdjustmentBehavior = .never // handled by code
+        mapView.setMinZoom(Constants.Map.minZoom, maxZoom: Constants.Map.maxZoom)
+        mapView.settings.compassButton = true
+        mapView.settings.myLocationButton = true
+        mapView.settings.tiltGestures = false
+        mapView.settings.indoorPicker = false
+        mapView.isBuildingsEnabled = false
+        mapView.isIndoorEnabled = false
+
+        // Pre-iOS 11 padding. See viewDidLoad for iOS 11 version
+        let top = (navigationController?.navigationBar.frame.height ?? 44) + UIApplication.shared.statusBarFrame.height
+        let bottom = drawerDisplayController?.summaryView.frame.height ?? 0
+        mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
+
+        let northEast = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.north, longitude: Constants.Values.RouteMaxima.east)
+        let southWest = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.south, longitude: Constants.Values.RouteMaxima.west)
+        let panBounds = GMSCoordinateBounds(coordinate: northEast, coordinate: southWest)
+        mapView.cameraTargetBounds = panBounds
+
+        self.mapView = mapView
+        view = mapView
+    }
+}
+
+// MARK: Location Manager Functions
+extension RouteDetailContentViewController: CLLocationManagerDelegate {
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let newCoord = locations.last?.coordinate {
+            bounds = bounds.includingCoordinate(newCoord)
+            currentLocation = newCoord
+        }
+        didUpdateLocation()
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
+        print("RouteDetailVC CLLocationManager didFailWithError: \(error)")
+        didUpdateLocation()
+    }
+
+    /// Completion after locationManager functions return
+    func didUpdateLocation() {
+        if initalUpdate { // try and cut down on didUpdateLocation spam.
+            initalUpdate = false
+            drawMapRoute()
+            centerMapOnOverview(drawerPreviewing: true)
+        }
+    }
+}
+
+// MARK: Google Map View Delegate Functions
+extension RouteDetailContentViewController: GMSMapViewDelegate {
+
+    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+        guard let coordinates = getUserData(for: marker, key: Constants.BusUserData.actualCoordinates) as? CLLocationCoordinate2D
+            else { return true }
+        let update = GMSCameraUpdate.setTarget(coordinates)
+        mapView.animate(with: update)
+
+        return true
+    }
+
+    func updateUserData(for marker: GMSMarker, with values: [String: Any]) {
+        guard var userData = marker.userData as? [String: Any] else {
+            marker.userData = values
+            return
+        }
+        values.forEach { (key, value) in
+            userData[key] = value
+        }
+        marker.userData = userData
+    }
+
+    func getUserData(for marker: GMSMarker, key: String) -> Any? {
+        guard let userData = marker.userData as? [String: Any] else { return nil }
+        return userData[key]
+    }
+
+    func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
+        buses.forEach { bus in
+            let bearingView = UIImageView(image: #imageLiteral(resourceName: "indicator"))
+            bearingView.frame.size = CGSize(width: bearingView.frame.width / 2, height: bearingView.frame.height / 2)
+            bearingView.tag = increaseTapTargetTag
+
+            if let existingIndicator = busIndicators.first(where: {
+                let markerID = getUserData(for: $0, key: Constants.BusUserData.vehicleID) as? Int
+                let busID = getUserData(for: bus, key: Constants.BusUserData.vehicleID) as? Int
+                return markerID == busID
+            }) { // Update Indicator
+                if let placement = calculatePlacement(position: bus.position, view: bearingView) {
+
+                    // existingIndicator.map = nil // Uncomment to avoid animation
+                    existingIndicator.position = placement
+                    existingIndicator.rotation = calculateBearing(from: placement, to: bus.position)
+
+                    updateUserData(for: existingIndicator, with: [
+                        Constants.BusUserData.actualCoordinates: bus.position,
+                        Constants.BusUserData.indicatorCoordinates: placement
+                        ])
+
+                    existingIndicator.appearAnimation = .none
+                    // existingIndicator.map = mapView // Uncomment to avoid animation
+                } else {
+                    existingIndicator.map = nil
+                    busIndicators.remove(at: busIndicators.firstIndex(of: existingIndicator)!)
+                }
+            } else { // Create Indicator
+                if let placement = calculatePlacement(position: bus.position, view: bearingView) {
+
+                    let indicator = GMSMarker(position: placement)
+                    indicator.appearAnimation = .pop
+                    indicator.rotation = calculateBearing(from: placement, to: bus.position)
+                    indicator.iconView = bearingView
+                    setIndex(of: indicator, with: .bussing)
+
+                    updateUserData(for: indicator, with: [
+                        Constants.BusUserData.actualCoordinates: bus.position,
+                        Constants.BusUserData.indicatorCoordinates: placement,
+                        Constants.BusUserData.vehicleID: getUserData(for: bus, key: Constants.BusUserData.vehicleID) as? Int ?? -1
+                        ])
+
+                    indicator.map = mapView
+                    busIndicators.append(indicator)
+                }
+            }
+        }
+    }
 }

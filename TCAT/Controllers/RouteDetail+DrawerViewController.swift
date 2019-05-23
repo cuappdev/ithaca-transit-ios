@@ -18,15 +18,32 @@ struct RouteDetailCellSize {
     static let smallHeight: CGFloat = 60
 }
 
+enum RouteDetailItem {
+    case direction (Direction)
+    case busStop (LocationObject)
+
+    func getDirection() -> Direction? {
+        switch self {
+        case .direction(let direction): return direction
+        default: return nil
+        }
+    }
+
+    func getBusStop() -> LocationObject? {
+        switch self {
+        case .busStop(let busStop): return busStop
+        default: return nil
+        }
+    }
+}
+
 class RouteDetailDrawerViewController: UIViewController {
 
     var safeAreaCover: UIView?
     var summaryView = SummaryView()
     var tableView: UITableView!
 
-    var directions: [Direction] = []
-    var justLoaded: Bool = true
-    var ongoing: Bool = false
+    var directionsAndVisibleStops: [RouteDetailItem] = []
     var selectedDirection: Direction?
     var visible: Bool = false
 
@@ -34,8 +51,6 @@ class RouteDetailDrawerViewController: UIViewController {
     private var busDelayNetworkRefreshRate: Double = 10
     private var busDelayNetworkTimer: Timer?
     private let chevronFlipDurationTime = 0.25
-    /// Dictionary that maps the original indexPath.row to the number of cells that specific row added
-    private var expandedCellDict: [Int: Int] = [:]
     private let networking: Networking = URLSession.shared.request
     private var route: Route!
 
@@ -43,12 +58,12 @@ class RouteDetailDrawerViewController: UIViewController {
     init(route: Route) {
         super.init(nibName: nil, bundle: nil)
         self.route = route
-        self.directions = route.directions
+        self.directionsAndVisibleStops = route.directions.map({ RouteDetailItem.direction($0) })
     }
 
     func update(with route: Route) {
         self.route = route
-        self.directions = route.directions
+        self.directionsAndVisibleStops = route.directions.map({ RouteDetailItem.direction($0) })
         tableView.reloadData()
     }
 
@@ -159,7 +174,10 @@ class RouteDetailDrawerViewController: UIViewController {
         guard let delayDirection = route.getFirstDepartRawDirection() else {
             return // Use rawDirection (preserves first stop metadata)
         }
-        let firstDepartDirection = self.directions.first(where: { $0.type == .depart })!
+
+        let directions = directionsAndVisibleStops.compactMap { $0.getDirection() }
+
+        let firstDepartDirection = directions.first(where: { $0.type == .depart })!
 
         directions.forEach { $0.delay = nil }
 
@@ -177,9 +195,8 @@ class RouteDetailDrawerViewController: UIViewController {
                             firstDepartDirection.delay = response.data
 
                             // Update delay variable of other ensuing directions
-
-                            self.directions.filter {
-                                let isAfter = self.directions.firstIndex(of: firstDepartDirection)! < self.directions.firstIndex(of: $0)!
+                            directions.filter {
+                                let isAfter = directions.firstIndex(of: firstDepartDirection)! < directions.firstIndex(of: $0)!
                                 return isAfter && $0.type != .depart
                                 }
 
@@ -209,19 +226,10 @@ class RouteDetailDrawerViewController: UIViewController {
     }
 
     /// Toggle the cell expansion at the indexPath
-    func toggleCellExpansion(at indexPath: IndexPath?) {
+    func toggleCellExpansion(for cell: LargeDetailTableViewCell) {
 
-        guard let indexPath = indexPath else { return }
-        let expandedCellCount = expandedCellDict.reduce(0) { (result, arg1) -> Int in
-            let (origRow, expandedCount) = arg1
-            return indexPath.row > origRow ? result + expandedCount : result
-        }
-
-        let newIndexPath = IndexPath(row: indexPath.row + expandedCellCount, section: indexPath.section)
-
-        guard let cell = tableView.cellForRow(at: newIndexPath) as? LargeDetailTableViewCell else { return }
-
-        let direction = directions[newIndexPath.row]
+        guard let indexPath = tableView.indexPath(for: cell),
+            let direction = directionsAndVisibleStops[indexPath.row].getDirection() else { return }
 
         // Flip arrow
         cell.chevron.layer.removeAllAnimations()
@@ -239,25 +247,21 @@ class RouteDetailDrawerViewController: UIViewController {
         })
 
         // Prepare bus stop data to be inserted / deleted into Directions array
-        let busStops = direction.stops.map { return Direction(name: $0.name, path: direction.path) }
-        let busStopRange = (newIndexPath.row + 1)..<(newIndexPath.row + 1) + busStops.count
+        let busStops = direction.stops.map { return RouteDetailItem.busStop($0) }
+        let busStopRange = (indexPath.row + 1)..<(indexPath.row + 1) + busStops.count
         let indexPathArray = busStopRange.map { return IndexPath(row: $0, section: 0) }
 
         tableView.beginUpdates()
 
         // Insert or remove bus stop data based on selection
-
         if cell.isExpanded {
-            directions.insert(contentsOf: busStops, at: newIndexPath.row + 1)
+            directionsAndVisibleStops.insert(contentsOf: busStops, at: indexPath.row + 1)
             tableView.insertRows(at: indexPathArray, with: .middle)
-            expandedCellDict[indexPath.row] = indexPathArray.count
         } else {
-            directions.removeSubrange(busStopRange)
+            directionsAndVisibleStops.removeSubrange(busStopRange)
             tableView.deleteRows(at: indexPathArray, with: .middle)
-            expandedCellDict.removeValue(forKey: indexPath.row)
         }
 
         tableView.endUpdates()
-
     }
 }
