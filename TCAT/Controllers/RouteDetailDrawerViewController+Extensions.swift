@@ -149,9 +149,7 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
         let direction = directions[indexPath.row]
 
         if direction.type == .depart || direction.type == .transfer {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as? LargeDetailTableViewCell
-            cell?.configure(for: direction, isFirstStep: indexPath.row == 0)
-            return cell?.height() ?? RouteDetailCellSize.largeHeight
+            return UITableView.automaticDimension
         } else {
             return RouteDetailCellSize.smallHeight
         }

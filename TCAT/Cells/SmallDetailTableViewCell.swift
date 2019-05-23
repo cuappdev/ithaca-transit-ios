@@ -42,8 +42,9 @@ class SmallDetailTableViewCell: UITableViewCell {
         let shouldAddSubview = iconView == nil
 
         if shouldAddSubview {
-            iconView = DetailIconView(direction: direction, height: cellHeight, isFirstStep: isFirstStep, isLastStep: isLastStep)
-            contentView.addSubview(iconView!)
+//            iconView = DetailIconView()
+//            iconView?.setData(for: direction, isFirstStep: isFirstStep, isLastStep: isLastStep)
+//            contentView.addSubview(iconView!)
         } else {
             iconView?.updateTimes(with: direction, isLast: isLastStep)
         }

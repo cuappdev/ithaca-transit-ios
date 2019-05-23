@@ -117,8 +117,8 @@ class BusIcon: UIView {
             }
             return CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
         }
-        let labelLeadingOffset: CGFloat = type == .liveTracking ? 3 : 6
-        let liveIndicatorLeadingOffset = 5
+        let labelLeadingOffset: CGFloat = type == .liveTracking ? 4 : (bounds.width - imageSize.width - imageLeadingOffset - label.intrinsicContentSize.width) / 2
+        let liveIndicatorLeadingOffset = 4
 
         baseView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
