@@ -10,8 +10,8 @@ import UIKit
 
 class SmallDetailTableViewCell: UITableViewCell {
 
-    private var iconView: DetailIconView?
-    private var titleLabel: UILabel!
+    private var iconView = DetailIconView()
+    private var titleLabel = UILabel()
 
     private var iconViewFrame: CGRect = CGRect()
     private let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
@@ -20,34 +20,20 @@ class SmallDetailTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        titleLabel = UILabel()
-        titleLabel.frame = CGRect(x: cellWidth, y: 0, width: UIScreen.main.bounds.width - cellWidth - 20, height: 20)
+        contentView.addSubview(iconView)
+
         titleLabel.font = .getFont(.regular, size: 14)
         titleLabel.textColor = Colors.primaryText
-        titleLabel.text = "Small Cell"
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.numberOfLines = 0
-        titleLabel.sizeToFit()
-        titleLabel.center.y = cellHeight / 2
         contentView.addSubview(titleLabel)
 
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        setupConstraints()
     }
 
     func configure(for direction: Direction, isFirstStep: Bool, isLastStep: Bool) {
 
-        let shouldAddSubview = iconView == nil
-
-        if shouldAddSubview {
-//            iconView = DetailIconView()
-//            iconView?.setData(for: direction, isFirstStep: isFirstStep, isLastStep: isLastStep)
-//            contentView.addSubview(iconView!)
-        } else {
-            iconView?.updateTimes(with: direction, isLast: isLastStep)
-        }
+        iconView.setData(for: direction, isFirstStep: isFirstStep, isLastStep: isLastStep)
 
         let titleLabelBoldFont: UIFont = .getFont(.semibold, size: 14)
 
@@ -66,11 +52,29 @@ class SmallDetailTableViewCell: UITableViewCell {
                                                             from: titleLabel.font,
                                                             to: titleLabelBoldFont)
         }
+    }
 
-        titleLabel.sizeToFit()
-        titleLabel.frame.size.width = UIScreen.main.bounds.width - cellWidth - 20
-        titleLabel.center.y = cellHeight / 2
+    func setupConstraints() {
+        let detailIconViewWidth = 114
+        let titleLabelLeadingOffset = 6
+        let titleLabelTrailingInset = 20
+        let titleLabelHeight = 20
+        
+        iconView.snp.makeConstraints { make in
+            make.top.leading.bottom.equalToSuperview()
+            make.width.equalTo(detailIconViewWidth)
+        }
+        
+        titleLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalTo(iconView.snp.trailing).offset(titleLabelLeadingOffset)
+            make.trailing.equalToSuperview().inset(titleLabelTrailingInset)
+            make.height.equalTo(titleLabelHeight)
+        }
+    }
 
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
 }

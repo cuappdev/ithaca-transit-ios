@@ -175,6 +175,7 @@ class DetailIconView: UIView {
                     centerScheduledLabel()
                     hideDelayedLabel()
                 } else {
+                    scheduledTimeLabel.textColor = Colors.primaryText
                     showDelayedLabel()
                     offsetScheduledLabel()
                 }
