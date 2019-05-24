@@ -932,9 +932,6 @@ extension RouteOptionsViewController: UITableViewDataSource {
             timers[indexPath.row] = Timer.scheduledTimer(timeInterval: 5.0, target: cell, selector: #selector(RouteTableViewCell.updateLiveElementsWithDelay), userInfo: nil, repeats: true)
         }
 
-        cell.addRouteDiagramSubviews()
-        cell.activateRouteDiagramConstraints()
-
         // Add share action for long press gestures on non 3D Touch devices
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
         cell.addGestureRecognizer(longPressGestureRecognizer)

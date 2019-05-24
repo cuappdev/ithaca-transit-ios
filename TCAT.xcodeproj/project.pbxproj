@@ -13,6 +13,7 @@
 		2292486C21B8ECB90004279C /* ServiceAlertsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2292486B21B8ECB90004279C /* ServiceAlertsViewController.swift */; };
 		2292486E21BB82180004279C /* ServiceAlertTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2292486D21BB82180004279C /* ServiceAlertTableViewCell.swift */; };
 		22948BFD221B75C5003FC43F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22948BFB221B75C5003FC43F /* Models.swift */; };
+		229BD4E7229792A90042D9D3 /* RouteDiagramSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229BD4E6229792A90042D9D3 /* RouteDiagramSegment.swift */; };
 		22A83FD4228B85CE005DE4EB /* RouteDetailDrawerViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A83FD3228B85CE005DE4EB /* RouteDetailDrawerViewController+Extensions.swift */; };
 		22D76E8E2263E21F00FA21B9 /* HomeMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D76E8C2263E21F00FA21B9 /* HomeMapViewController.swift */; };
 		22D76E8F2263E21F00FA21B9 /* HomeOptionsCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D76E8D2263E21F00FA21B9 /* HomeOptionsCardViewController.swift */; };
@@ -204,6 +205,7 @@
 		2292486B21B8ECB90004279C /* ServiceAlertsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlertsViewController.swift; path = Controllers/ServiceAlertsViewController.swift; sourceTree = "<group>"; };
 		2292486D21BB82180004279C /* ServiceAlertTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlertTableViewCell.swift; path = Cells/ServiceAlertTableViewCell.swift; sourceTree = "<group>"; };
 		22948BFB221B75C5003FC43F /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		229BD4E6229792A90042D9D3 /* RouteDiagramSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RouteDiagramSegment.swift; path = Views/RouteDiagramSegment.swift; sourceTree = "<group>"; };
 		22A83FD3228B85CE005DE4EB /* RouteDetailDrawerViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RouteDetailDrawerViewController+Extensions.swift"; path = "Controllers/RouteDetailDrawerViewController+Extensions.swift"; sourceTree = "<group>"; };
 		22D76E8C2263E21F00FA21B9 /* HomeMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HomeMapViewController.swift; path = Controllers/HomeMapViewController.swift; sourceTree = "<group>"; };
 		22D76E8D2263E21F00FA21B9 /* HomeOptionsCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HomeOptionsCardViewController.swift; path = Controllers/HomeOptionsCardViewController.swift; sourceTree = "<group>"; };
@@ -614,6 +616,7 @@
 				BF316CAF2096352B005A14EF /* PhraseLabelFooterView.swift */,
 				22D76E902266CCC000FA21B9 /* RoundedShadowedView.swift */,
 				BF2DA890224539DD006E527D /* RouteDiagram.swift */,
+				229BD4E6229792A90042D9D3 /* RouteDiagramSegment.swift */,
 				DDA134441EC6A8CB00460B18 /* RouteLine.swift */,
 				DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */,
 				DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */,
@@ -1100,6 +1103,7 @@
 				7EEB14272231A3CA00134C8B /* Analytics.swift in Sources */,
 				224EB5A5214F2F01008232C2 /* AppShortcuts.swift in Sources */,
 				BF2DA891224539DE006E527D /* RouteDiagram.swift in Sources */,
+				229BD4E7229792A90042D9D3 /* RouteDiagramSegment.swift in Sources */,
 				BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */,
 				7EBD9D8D2226309A008BF900 /* Route.swift in Sources */,
 				BFEDB85B2232F22100052D49 /* GeneralTableViewCell.swift in Sources */,

@@ -10,7 +10,7 @@ import UIKit
 
 class SmallDetailTableViewCell: UITableViewCell {
 
-    private var iconView = DetailIconView()
+    private var iconView: DetailIconView!
     private var titleLabel = UILabel()
 
     private var iconViewFrame: CGRect = CGRect()
@@ -19,8 +19,6 @@ class SmallDetailTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        contentView.addSubview(iconView)
 
         titleLabel.font = .getFont(.regular, size: 14)
         titleLabel.textColor = Colors.primaryText
@@ -33,7 +31,8 @@ class SmallDetailTableViewCell: UITableViewCell {
 
     func configure(for direction: Direction, isFirstStep: Bool, isLastStep: Bool) {
 
-        iconView.setData(for: direction, isFirstStep: isFirstStep, isLastStep: isLastStep)
+        iconView = DetailIconView(for: direction, isFirstStep: isFirstStep, isLastStep: isLastStep)
+        contentView.addSubview(iconView)
 
         let titleLabelBoldFont: UIFont = .getFont(.semibold, size: 14)
 
@@ -52,22 +51,29 @@ class SmallDetailTableViewCell: UITableViewCell {
                                                             from: titleLabel.font,
                                                             to: titleLabelBoldFont)
         }
+
+        setupIconViewConstraints()
     }
 
-    func setupConstraints() {
+    func setupIconViewConstraints() {
         let detailIconViewWidth = 114
         let titleLabelLeadingOffset = 6
-        let titleLabelTrailingInset = 20
-        let titleLabelHeight = 20
-
         iconView.snp.makeConstraints { make in
             make.top.leading.bottom.equalToSuperview()
             make.width.equalTo(detailIconViewWidth)
         }
 
         titleLabel.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
             make.leading.equalTo(iconView.snp.trailing).offset(titleLabelLeadingOffset)
+        }
+    }
+
+    func setupConstraints() {
+        let titleLabelTrailingInset = 20
+        let titleLabelHeight = 20
+
+        titleLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().inset(titleLabelTrailingInset)
             make.height.equalTo(titleLabelHeight)
         }

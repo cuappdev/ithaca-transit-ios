@@ -21,7 +21,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     var isExpanded: Bool = false
 
     private let detailLabel = UILabel()
-    private let iconView = DetailIconView()
+    private var iconView: DetailIconView!
     private let titleLabel = UILabel()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -29,7 +29,6 @@ class LargeDetailTableViewCell: UITableViewCell {
         setupChevron()
         setupTitleLabel()
         setupDetailLabel()
-        contentView.addSubview(iconView)
 
         setupConstraints()
     }
@@ -59,16 +58,9 @@ class LargeDetailTableViewCell: UITableViewCell {
     private func setupConstraints() {
         let chevronSize = CGSize(width: 13.5, height: 8)
         let chevronTrailingInset = 20
-        let detailIconViewWidth = 114
         let labelSpacing: CGFloat = 4
         let labelInset: CGFloat = 12
-        let titleLabelLeadingOffset = 6
         let titleLabelTrailingInset = 12
-
-        iconView.snp.makeConstraints { make in
-            make.leading.top.bottom.equalToSuperview()
-            make.width.equalTo(detailIconViewWidth)
-        }
 
         chevron.snp.makeConstraints { make in
             make.size.equalTo(chevronSize)
@@ -79,7 +71,6 @@ class LargeDetailTableViewCell: UITableViewCell {
         titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(labelInset)
             make.trailing.equalTo(chevron.snp.leading).inset(titleLabelTrailingInset)
-            make.leading.equalTo(iconView.snp.trailing).offset(titleLabelLeadingOffset)
             make.bottom.equalTo(detailLabel.snp.top).offset(-labelSpacing)
         }
 
@@ -90,15 +81,32 @@ class LargeDetailTableViewCell: UITableViewCell {
         }
     }
 
+    func setupIconViewConstraints() {
+        let detailIconViewWidth = 114
+        let titleLabelLeadingOffset = 6
+
+        iconView.snp.makeConstraints { make in
+            make.leading.top.bottom.equalToSuperview()
+            make.width.equalTo(detailIconViewWidth)
+        }
+
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(iconView.snp.trailing).offset(titleLabelLeadingOffset)
+        }
+    }
+
     /** Precondition: Direction is BoardDirection */
     func configure(for direction: Direction, isFirstStep: Bool) {
 
         formatTitleLabel(for: direction)
         formatDetailLabel(for: direction)
-        iconView.setData(for: direction, isFirstStep: isFirstStep, isLastStep: false)
+        iconView = DetailIconView(for: direction, isFirstStep: isFirstStep, isLastStep: false)
         if direction.stops.isEmpty {
             chevron.alpha = 0 // .hidden attribute used for animation
         }
+        contentView.addSubview(iconView)
+
+        setupIconViewConstraints()
     }
 
     private func getBusIconImageAsTextAttachment(for direction: Direction) -> NSTextAttachment {

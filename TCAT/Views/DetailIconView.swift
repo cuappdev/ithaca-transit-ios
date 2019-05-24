@@ -25,26 +25,11 @@ class DetailIconView: UIView {
     var connectorTop = UIView()
     var statusCircle: Circle!
 
-    func setData(for direction: Direction, isFirstStep: Bool, isLastStep: Bool) {
-        if isSet { updateTimes(with: direction); return }
-
-        var timeString: String
-
-        var scheduledTimeString: String {
-            if direction.type == .walk {
-                return isLastStep ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
-            } else {
-                return isLastStep ? direction.endTimeDescription : direction.startTimeDescription
-            }
-        }
-        let delayedTimeString = isLastStep ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
-
-        delayedTimeLabel.text = delayedTimeString
-        scheduledTimeLabel.text = scheduledTimeString
+    init(for direction: Direction, isFirstStep: Bool, isLastStep: Bool) {
+        super.init(frame: .zero)
 
         // Format and place time labels
         scheduledTimeLabel.font = .getFont(.regular, size: 14)
-        scheduledTimeLabel.textColor = Colors.primaryText
         delayedTimeLabel.font = .getFont(.regular, size: 14)
         delayedTimeLabel.textColor = Colors.lateRed
 
@@ -97,8 +82,7 @@ class DetailIconView: UIView {
 
         setupConstraints()
 
-        isSet = true
-        updateTimes(with: direction)
+        updateTimes(with: direction, isLast: isLastStep)
     }
 
     private func setupConstraints() {
@@ -127,7 +111,7 @@ class DetailIconView: UIView {
 
         scheduledTimeLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(labelLeadingInset)
-            make.size.equalTo(scheduledTimeLabel.intrinsicContentSize)
+            make.size.greaterThanOrEqualTo(scheduledTimeLabel.intrinsicContentSize)
             scheduledLabelOffsetFromCenter = make.bottom.equalTo(snp.centerY).offset(-labelInsetFromCenterY).constraint
         }
         scheduledLabelOffsetFromCenter?.deactivate()
@@ -137,32 +121,35 @@ class DetailIconView: UIView {
 
         delayedTimeLabel.snp.makeConstraints { make in
             make.top.equalTo(snp.centerY).offset(labelInsetFromCenterY)
-            make.size.equalTo(delayedTimeLabel.intrinsicContentSize)
+            make.size.greaterThanOrEqualTo(delayedTimeLabel.intrinsicContentSize)
             make.leading.equalToSuperview().inset(labelLeadingInset)
         }
+    }
+
+    private func setTimeLabelTexts(for direction: Direction, isLastStep: Bool) {
+        var scheduledTimeString: String {
+            if direction.type == .walk {
+                return isLastStep ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
+            } else {
+                return isLastStep ? direction.endTimeDescription : direction.startTimeDescription
+            }
+        }
+        let delayedTimeString = isLastStep ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
+
+        scheduledTimeLabel.text = scheduledTimeString
+        delayedTimeLabel.text = delayedTimeString
     }
 
     // MARK: Utility Functions
 
     public func updateTimes(with newDirection: Direction, isLast: Bool = false) {
-        updateScheduledTime(with: newDirection, isLast: isLast)
+        updateTimeLabels(with: newDirection, isLast: isLast)
     }
 
     /// Update scheduled label with direction's delay description. Use self.direction by default.
-    func updateScheduledTime(with newDirection: Direction? = nil, isLast: Bool = false) {
+    func updateTimeLabels(with direction: Direction, isLast: Bool = false) {
 
-        let direction: Direction = newDirection!
-        var scheduledTimeString: String {
-            if direction.type == .walk {
-                return isLast ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
-            } else {
-                return isLast ? direction.endTimeDescription : direction.startTimeDescription
-            }
-        }
-        let delayedTimeString = isLast ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
-
-        delayedTimeLabel.text = delayedTimeString
-        scheduledTimeLabel.text = scheduledTimeString
+        setTimeLabelTexts(for: direction, isLastStep: isLast)
 
         if direction.type == .walk {
             scheduledTimeLabel.textColor = Colors.primaryText
@@ -204,6 +191,10 @@ class DetailIconView: UIView {
 
     func showDelayedLabel() {
         delayedTimeLabel.isHidden = false
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
 }
