@@ -23,29 +23,23 @@ class RouteTableViewCell: UITableViewCell {
 
     // MARK: Data vars
     var delegate: RouteTableViewCellDelegate?
+    var timer: Timer?
 
-    private let fileName: String = "RouteTableViewCell"
     private let networking: Networking = URLSession.shared.request
 
     // MARK: View vars
-    private let containerView = UIView()
-
-    private var travelTimeLabel = UILabel()
-
     private var arrowImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
+    private let containerView = UIView()
     private var departureStackView: UIStackView!
     private var departureTimeLabel = UILabel()
-
+    private var liveContainerView = UIView()
     private var liveIndicatorView = LiveIndicator(size: .small, color: .clear)
     private var liveLabel = UILabel()
-    private var liveContainerView = UIView()
-
     private var routeDiagram: RouteDiagram!
+    private var travelTimeLabel = UILabel()
 
     // MARK: Spacing vars
-    private let spaceBtnDepartureElements: CGFloat = 4
     private let containerViewLayoutInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 12)
-    private let liveStackViewFrameInset = UIEdgeInsets(top: -4, left: 0, bottom: -4, right: 0)
 
     // MARK: Init
 
@@ -77,6 +71,8 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     private func setupDepartureStackView() {
+        let spaceBtnDepartureElements: CGFloat = 4
+
         departureStackView = UIStackView(arrangedSubviews: [departureTimeLabel, arrowImageView])
 
         departureStackView.axis = .horizontal
@@ -164,6 +160,23 @@ class RouteTableViewCell: UITableViewCell {
         }
     }
 
+    // MARK: Set Data
+    func configure(for route: Route, delegate: (UIViewController & RouteTableViewCellDelegate)?) {
+
+        self.delegate = delegate
+
+        timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay(sender:)), userInfo: ["route": route], repeats: true)
+
+        setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
+
+        setDepartureTimeAndLiveElements(withRoute: route)
+        routeDiagram = RouteDiagram(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
+
+        containerView.addSubview(routeDiagram)
+
+        setupDataDependentConstraints()
+    }
+
     // MARK: Get Data
 
     private func getDelayState(fromRoute route: Route) -> DelayState {
@@ -190,30 +203,6 @@ class RouteTableViewCell: UITableViewCell {
         return .noDelay(date: route.departureTime)
     }
 
-    // MARK: Reuse
-
-    override func prepareForReuse() {
-        routeDiagram.removeFromSuperview()
-        routeDiagram.snp.removeConstraints()
-
-        hideLiveElements()
-    }
-
-    // MARK: Set Data
-    func configure(for route: Route, delegate: UIViewController & RouteTableViewCellDelegate) {
-
-        self.delegate = delegate
-
-        setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
-
-        setDepartureTimeAndLiveElements(withRoute: route)
-        routeDiagram = RouteDiagram(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
-
-        containerView.addSubview(routeDiagram)
-
-        setupDataDependentConstraints()
-    }
-
     private func setDepartureTimeAndLiveElements(withRoute route: Route) {
         let isWalkingRoute = route.isRawWalkingRoute()
 
@@ -227,7 +216,10 @@ class RouteTableViewCell: UITableViewCell {
         setLiveElements(withDelayState: delayState)
     }
 
-    @objc func updateLiveElementsWithDelay(for route: Route) {
+    @objc func updateLiveElementsWithDelay(sender: Timer) {
+        guard let userInfo = sender.userInfo as? [String: Route],
+            let route = userInfo["route"] else { return }
+
         if !route.isRawWalkingRoute(),
             let direction = route.getFirstDepartRawDirection(),
             let tripId = direction.tripIdentifiers?.first,
@@ -235,6 +227,7 @@ class RouteTableViewCell: UITableViewCell {
 
             getDelay(tripId: tripId, stopId: stopId).observe(with: { [weak self] result in
                 guard let `self` = self else { return }
+                let fileName = "RouteTableViewCell"
                 DispatchQueue.main.async {
                     switch result {
                     case .value (let delayResponse):
@@ -249,7 +242,6 @@ class RouteTableViewCell: UITableViewCell {
                             JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
                             if let data = try? JSONEncoder().encode(delayResponse) {
                                 do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: self.delegate?.getRowNum(for: self) ?? -1)) } catch let error {
-                                    let fileName = "RouteTableViewCell"
                                     let line = "\(fileName) \(#function): \(error.localizedDescription)"
                                     print(line)
                                 }
@@ -273,7 +265,7 @@ class RouteTableViewCell: UITableViewCell {
                         route.getFirstDepartRawDirection()?.delay = delay
 
                     case .error(let error):
-                        print("\(self.fileName) \(#function) error: \(error.localizedDescription)")
+                        print("\(fileName) \(#function) error: \(error.localizedDescription)")
                         self.setDepartureTimeAndLiveElements(withRoute: route)
                     }
                 }
@@ -360,6 +352,21 @@ class RouteTableViewCell: UITableViewCell {
         departureTimeLabel.text = "Directions"
         departureTimeLabel.textColor = Colors.metadataIcon
         arrowImageView.tintColor = Colors.metadataIcon
+    }
+
+    func invalidateTimer() {
+
+    }
+
+    // MARK: Reuse
+
+    override func prepareForReuse() {
+        routeDiagram.removeFromSuperview()
+        routeDiagram.snp.removeConstraints()
+
+        timer?.invalidate()
+
+        hideLiveElements()
     }
 
     required init?(coder aDecoder: NSCoder) {

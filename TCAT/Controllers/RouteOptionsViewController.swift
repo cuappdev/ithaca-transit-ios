@@ -138,8 +138,11 @@ class RouteOptionsViewController: UIViewController {
         banner?.dismiss()
         banner = nil
         // Deactivate and remove timers
-        timers.values.forEach { $0.invalidate() }
-        timers = [:]
+        routeResults.visibleCells.forEach {
+            if let cell = $0 as? RouteTableViewCell {
+                cell.invalidateTimer()
+            }
+        }
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -333,7 +336,6 @@ class RouteOptionsViewController: UIViewController {
         self.hideRefreshControl()
 
         routes = []
-        timers = [:]
         routeResults.contentOffset = .zero
         routeResults.reloadData()
     }
@@ -505,7 +507,6 @@ class RouteOptionsViewController: UIViewController {
         let description = (error.localizedDescription) + ", " + ((error as NSError?)?.description ?? "n/a")
 
         routes = []
-        timers = [:]
         requestDidFinish(perform: [
             .showError(bannerInfo: BannerInfo(title: Constants.Banner.cantConnectServer, style: .danger),
                        payload: GetRoutesErrorPayload(type: title, description: description, url: requestURL))
