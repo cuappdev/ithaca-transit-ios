@@ -13,9 +13,6 @@ class RouteDiagram: UIView {
     // MARK: View vars
     private var routeDiagramSegments: [RouteDiagramSegment] = []
 
-    // MARK: Spacing vars
-    let topMargin: CGFloat = 8
-
     init(withDirections directions: [Direction], withTravelDistance travelDistance: Double, withWalkingRoute isWalkingRoute: Bool) {
         super.init(frame: .zero)
 
@@ -65,7 +62,7 @@ class RouteDiagram: UIView {
                 }
             } else {
                 current.snp.makeConstraints { make in
-                    make.top.equalToSuperview().inset(topMargin)
+                    make.top.equalToSuperview()
                 }
             }
 
@@ -77,7 +74,7 @@ class RouteDiagram: UIView {
     }
 
     func calculateHeight() -> CGFloat {
-        return routeDiagramSegments.reduce(topMargin) { (res, segment) -> CGFloat in return res + segment.calculateHeight() }
+        return routeDiagramSegments.reduce(0) { (res, segment) -> CGFloat in return res + segment.calculateHeight() }
     }
 
     required init?(coder aDecoder: NSCoder) {

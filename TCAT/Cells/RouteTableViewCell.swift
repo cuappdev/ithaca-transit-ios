@@ -14,22 +14,22 @@ protocol TravelDistanceDelegate: NSObjectProtocol {
     func travelDistanceUpdated(withDistance distance: Double)
 }
 
+protocol RouteTableViewCellDelegate: class {
+    func updateLiveElements(fun: () -> Void)
+    func getRowNum(for cell: RouteTableViewCell) -> Int?
+}
+
 class RouteTableViewCell: UITableViewCell {
 
     // MARK: Data vars
-    static let identifier: String = "routeCell"
+    var delegate: RouteTableViewCellDelegate?
 
-    private var route: Route?
     private let fileName: String = "RouteTableViewCell"
     private let networking: Networking = URLSession.shared.request
-
-    // MARK: Log vars
-    private var rowNum: Int?
 
     // MARK: View vars
     private let containerView = UIView()
 
-    private var timesStackView: UIStackView!
     private var travelTimeLabel = UILabel()
 
     private var arrowImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
@@ -38,44 +38,33 @@ class RouteTableViewCell: UITableViewCell {
 
     private var liveIndicatorView = LiveIndicator(size: .small, color: .clear)
     private var liveLabel = UILabel()
-    private var liveStackView: UIStackView!
+    private var liveContainerView = UIView()
 
     private var routeDiagram: RouteDiagram!
-    private var verticalStackView: UIStackView!
 
     // MARK: Spacing vars
-
-    private let cellMargin: CGFloat = 12
-    private let verticalStackViewLayoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 12)
+    private let spaceBtnDepartureElements: CGFloat = 4
+    private let containerViewLayoutInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 12)
+    private let liveStackViewFrameInset = UIEdgeInsets(top: -4, left: 0, bottom: -4, right: 0)
 
     // MARK: Init
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        departureStackView = UIStackView(arrangedSubviews: [departureTimeLabel, arrowImageView])
-        timesStackView = UIStackView(arrangedSubviews: [travelTimeLabel, departureStackView])
-        liveStackView = UIStackView(arrangedSubviews: [liveLabel, liveIndicatorView])
-        verticalStackView = UIStackView(arrangedSubviews: [timesStackView])
-
-        styleCellBackground()
-        styleVerticalStackView()
+        setupCellBackground()
+        setupDepartureStackView()
+        setupTravelTimeLabel()
+        setupLiveStackView()
 
         contentView.addSubview(containerView)
-        containerView.addSubview(verticalStackView)
 
         setupConstraints()
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let padding = UIEdgeInsets(top: 0, left: 0, bottom: cellMargin, right: 0)
-        contentView.frame = contentView.frame.inset(by: padding)
-    }
-
     // MARK: Style
 
-    private func styleCellBackground() {
+    private func setupCellBackground() {
         let cornerRadius: CGFloat = 16
 
         layer.backgroundColor = UIColor.clear.cgColor
@@ -87,77 +76,95 @@ class RouteTableViewCell: UITableViewCell {
         containerView.layer.masksToBounds = true
     }
 
-    private func styleVerticalStackView() {
-        verticalStackView.axis = .vertical
-        verticalStackView.spacing = 8
-        verticalStackView.alignment = .leading
-        verticalStackView.layoutMargins = verticalStackViewLayoutMargins
-        verticalStackView.isLayoutMarginsRelativeArrangement = true
-
-        styleTimesStackView()
-        styleLiveStackView()
-    }
-
-    private func styleTimesStackView() {
-        timesStackView.axis = .horizontal
-        timesStackView.alignment = .firstBaseline
-        timesStackView.distribution = .equalSpacing
-
-        travelTimeLabel.font = .getFont(.semibold, size: 16)
-        travelTimeLabel.textColor = Colors.primaryText
-
-        styleDepartureStackView()
-    }
-
-    private func styleDepartureStackView() {
-        let spaceBtnDepartureElements: CGFloat = 4
+    private func setupDepartureStackView() {
+        departureStackView = UIStackView(arrangedSubviews: [departureTimeLabel, arrowImageView])
 
         departureStackView.axis = .horizontal
         departureStackView.spacing = spaceBtnDepartureElements
+        departureStackView.alignment = .center
 
         departureTimeLabel.font = .getFont(.semibold, size: 14)
         departureTimeLabel.textColor = Colors.primaryText
         arrowImageView.tintColor = Colors.metadataIcon
+
+        containerView.addSubview(departureStackView)
     }
 
-    private func styleLiveStackView() {
-        let liveStackViewFrameInset = UIEdgeInsets(top: -4, left: 0, bottom: -4, right: 0)
-        let spaceBtnLiveElements: CGFloat = 4
+    private func setupTravelTimeLabel() {
+        travelTimeLabel.font = .getFont(.semibold, size: 16)
+        travelTimeLabel.textColor = Colors.primaryText
 
-        liveStackView.axis = .horizontal
-        liveStackView.spacing = spaceBtnLiveElements
-        liveStackView.frame = liveStackView.frame.inset(by: liveStackViewFrameInset)
+        containerView.addSubview(travelTimeLabel)
+    }
 
+    private func setupLiveStackView() {
         liveLabel.font = .getFont(.semibold, size: 14)
+
+        liveContainerView.addSubview(liveLabel)
+        liveContainerView.addSubview(liveIndicatorView)
+
+        setLiveIndicatorViewsConstraints()
+
+        containerView.addSubview(liveContainerView)
     }
 
     private func setupConstraints() {
         let arrowImageViewSize = CGSize(width: 6, height: 11.5)
+        let cellMargin: CGFloat = 12
 
         containerView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(cellMargin)
-            make.top.bottom.equalToSuperview()
-        }
-
-        verticalStackView.snp.makeConstraints { make in
-            make.edges.equalTo(containerView)
+            make.leading.bottom.trailing.equalToSuperview().inset(cellMargin)
+            make.top.equalToSuperview()
         }
 
         arrowImageView.snp.makeConstraints { make in
             make.size.equalTo(arrowImageViewSize)
         }
-        arrowImageView.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
 
-        timesStackView.snp.makeConstraints { make in
-            make.width.equalToSuperview().offset(-(verticalStackViewLayoutMargins.right + verticalStackViewLayoutMargins.left))
+        travelTimeLabel.snp.makeConstraints { make in
+            make.leading.top.equalToSuperview().inset(containerViewLayoutInsets)
+        }
+
+        departureStackView.snp.makeConstraints { make in
+            make.trailing.top.equalToSuperview().inset(containerViewLayoutInsets)
+        }
+
+        liveContainerView.snp.makeConstraints { make in
+            make.top.equalTo(travelTimeLabel.snp.bottom)
+            make.leading.equalTo(travelTimeLabel)
+            make.trailing.equalTo(departureStackView)
+        }
+    }
+
+    private func setLiveIndicatorViewsConstraints() {
+        let spaceBtnLiveElements: CGFloat = 4
+
+        liveLabel.snp.remakeConstraints { make in
+            make.leading.top.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+
+        liveIndicatorView.snp.remakeConstraints { make in
+            make.leading.equalTo(liveLabel.snp.trailing).offset(spaceBtnLiveElements)
+            make.centerY.equalTo(liveLabel)
+            make.size.equalTo(liveIndicatorView.intrinsicContentSize)
+        }
+
+    }
+
+    private func setupDataDependentConstraints() {
+        let routeDiagramTopOffset = 8
+
+        routeDiagram.snp.makeConstraints { make in
+            make.top.equalTo(liveContainerView.snp.bottom).offset(routeDiagramTopOffset)
+            make.height.equalTo(routeDiagram.calculateHeight())
+            make.leading.equalTo(travelTimeLabel)
+            make.trailing.equalTo(departureStackView)
+            make.bottom.equalToSuperview().inset(containerViewLayoutInsets)
         }
     }
 
     // MARK: Get Data
-
-    private func getDepartureAndArrivalTimes(fromRoute route: Route) -> (departureTime: Date, arrivalTime: Date) {
-        return (departureTime: route.departureTime, arrivalTime: route.arrivalTime)
-    }
 
     private func getDelayState(fromRoute route: Route) -> DelayState {
         if let firstDepartDirection = route.getFirstDepartRawDirection() {
@@ -187,27 +194,24 @@ class RouteTableViewCell: UITableViewCell {
 
     override func prepareForReuse() {
         routeDiagram.removeFromSuperview()
-        liveStackView.removeFromSuperview()
+        routeDiagram.snp.removeConstraints()
 
-        hideLiveElements(animate: false)
+        hideLiveElements()
     }
 
     // MARK: Set Data
-    func configure(for route: Route, rowNum: Int) {
-        self.route = route
-        self.rowNum = rowNum
+    func configure(for route: Route, delegate: UIViewController & RouteTableViewCellDelegate) {
 
-        let (departureTime, arrivalTime) = getDepartureAndArrivalTimes(fromRoute: route)
-        setTravelTime(withDepartureTime: departureTime, withArrivalTime: arrivalTime)
+        self.delegate = delegate
+
+        setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
 
         setDepartureTimeAndLiveElements(withRoute: route)
         routeDiagram = RouteDiagram(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
 
-        verticalStackView.addArrangedSubview(routeDiagram)
+        containerView.addSubview(routeDiagram)
 
-        routeDiagram.snp.remakeConstraints { make in
-            make.height.equalTo(routeDiagram.calculateHeight())
-        }
+        setupDataDependentConstraints()
     }
 
     private func setDepartureTimeAndLiveElements(withRoute route: Route) {
@@ -218,14 +222,13 @@ class RouteTableViewCell: UITableViewCell {
             return
         }
 
-        verticalStackView.addArrangedSubview(liveStackView)
         let delayState = getDelayState(fromRoute: route)
         setDepartureTime(withStartTime: Date(), withDelayState: delayState)
         setLiveElements(withDelayState: delayState)
     }
 
-    @objc func updateLiveElementsWithDelay() {
-        if let route = route,
+    @objc func updateLiveElementsWithDelay(for route: Route) {
+        if !route.isRawWalkingRoute(),
             let direction = route.getFirstDepartRawDirection(),
             let tripId = direction.tripIdentifiers?.first,
             let stopId = direction.stops.first?.id {
@@ -245,7 +248,7 @@ class RouteTableViewCell: UITableViewCell {
                             JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
                             JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
                             if let data = try? JSONEncoder().encode(delayResponse) {
-                                do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: self.rowNum ?? -1)) } catch let error {
+                                do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: self.delegate?.getRowNum(for: self) ?? -1)) } catch let error {
                                     let fileName = "RouteTableViewCell"
                                     let line = "\(fileName) \(#function): \(error.localizedDescription)"
                                     print(line)
@@ -276,9 +279,7 @@ class RouteTableViewCell: UITableViewCell {
                 }
             })
         } else {
-            if let route = route {
-                setDepartureTimeAndLiveElements(withRoute: route)
-            }
+            setDepartureTimeAndLiveElements(withRoute: route)
         }
     }
 
@@ -294,40 +295,33 @@ class RouteTableViewCell: UITableViewCell {
             liveLabel.textColor = Colors.lateRed
             liveLabel.text = "Late - \(Time.timeString(from: delayedDepartureTime))"
             liveIndicatorView.setColor(to: Colors.lateRed)
-            if liveStackView.isHidden {
-                showLiveElements()
-            }
+            showLiveElements()
 
         case .onTime(date: _):
             liveLabel.textColor = Colors.liveGreen
             liveLabel.text = "On Time"
             liveIndicatorView.setColor(to: Colors.liveGreen)
-            if liveStackView.isHidden {
-                showLiveElements()
-            }
+            showLiveElements()
 
         case .noDelay(date: _):
-            if !liveStackView.isHidden {
-                hideLiveElements(animate: true)
-            }
-
+            hideLiveElements()
         }
 
     }
 
     private func showLiveElements() {
-        UIView.animate(withDuration: 0.3) {
-            self.liveStackView.isHidden = false
+        delegate?.updateLiveElements {
+            liveContainerView.addSubview(liveIndicatorView)
+            liveContainerView.addSubview(liveLabel)
+            setLiveIndicatorViewsConstraints()
+            layoutIfNeeded()
         }
     }
 
-    private func hideLiveElements(animate: Bool) {
-        if animate {
-            UIView.animate(withDuration: 0.3) {
-                self.liveStackView.isHidden = true
-            }
-        } else {
-            self.liveStackView.isHidden = true
+    private func hideLiveElements() {
+        delegate?.updateLiveElements {
+            liveLabel.removeFromSuperview()
+            liveIndicatorView.removeFromSuperview()
         }
     }
 

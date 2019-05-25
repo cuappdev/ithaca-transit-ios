@@ -136,6 +136,7 @@ struct Constants {
     /// Cell identifiers
     struct Cells {
         static let placeIdentifier = "PlaceTableViewCell"
+        static let routeOptionsCellIdentifier = "routeCell"
 
         static let addFavoriteIdentifier = "AddFavorite"
         static let seeAllStopsIdentifier = "SeeAllStops"

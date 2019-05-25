@@ -30,10 +30,15 @@ class SmallDetailTableViewCell: UITableViewCell {
     }
 
     func configure(for direction: Direction, isFirstStep: Bool, isLastStep: Bool) {
-
         iconView = DetailIconView(for: direction, isFirstStep: isFirstStep, isLastStep: isLastStep)
         contentView.addSubview(iconView)
 
+        formatTitleLabel(for: direction)
+
+        setupIconViewConstraints()
+    }
+
+    func formatTitleLabel(for direction: Direction) {
         let titleLabelBoldFont: UIFont = .getFont(.semibold, size: 14)
 
         if direction.type == .arrive {
@@ -51,18 +56,17 @@ class SmallDetailTableViewCell: UITableViewCell {
                                                             from: titleLabel.font,
                                                             to: titleLabelBoldFont)
         }
-
-        setupIconViewConstraints()
     }
 
     func setupIconViewConstraints() {
         let detailIconViewWidth = 114
         let titleLabelLeadingOffset = 6
+        
         iconView.snp.makeConstraints { make in
             make.top.leading.bottom.equalToSuperview()
             make.width.equalTo(detailIconViewWidth)
         }
-
+        
         titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(iconView.snp.trailing).offset(titleLabelLeadingOffset)
         }
@@ -77,6 +81,10 @@ class SmallDetailTableViewCell: UITableViewCell {
             make.trailing.equalToSuperview().inset(titleLabelTrailingInset)
             make.height.equalTo(titleLabelHeight)
         }
+    }
+
+    override func prepareForReuse() {
+        iconView.removeFromSuperview()
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -72,6 +72,7 @@ class LargeDetailTableViewCell: UITableViewCell {
             make.top.equalToSuperview().inset(labelInset)
             make.trailing.equalTo(chevron.snp.leading).inset(titleLabelTrailingInset)
             make.bottom.equalTo(detailLabel.snp.top).offset(-labelSpacing)
+//            make.leading.equalToSuperview().inset(120)
         }
 
         detailLabel.snp.makeConstraints { make in
@@ -182,6 +183,10 @@ class LargeDetailTableViewCell: UITableViewCell {
         } else {
             delegate?.expandCells(on: self)
         }
+    }
+
+    override func prepareForReuse() {
+        iconView.removeFromSuperview()
     }
 
     required init?(coder aDecoder: NSCoder) {
