@@ -152,13 +152,11 @@ class RouteDetailDrawerViewController: UIViewController {
 
     /// Creates a temporary view to cover the drawer contents when collapsed. Hidden by default.
     func initializeCover() {
-        if #available(iOS 11.0, *) {
-            let bottom = UIApplication.shared.keyWindow?.rootViewController?.view.safeAreaInsets.bottom ?? 34
-            safeAreaCover = UIView(frame: CGRect(x: 0, y: summaryView.frame.height, width: UIScreen.main.bounds.width, height: bottom))
-            safeAreaCover!.backgroundColor = Colors.backgroundWash
-            safeAreaCover!.alpha = 0
-            view.addSubview(safeAreaCover!)
-        }
+        let bottom = UIApplication.shared.keyWindow?.rootViewController?.view.safeAreaInsets.bottom ?? 34
+        safeAreaCover = UIView(frame: CGRect(x: 0, y: summaryView.frame.height, width: UIScreen.main.bounds.width, height: bottom))
+        safeAreaCover!.backgroundColor = Colors.backgroundWash
+        safeAreaCover!.alpha = 0
+        view.addSubview(safeAreaCover!)
     }
 
     /// Remove cover view

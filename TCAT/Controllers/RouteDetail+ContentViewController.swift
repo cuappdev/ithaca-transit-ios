@@ -431,9 +431,8 @@ class RouteDetailContentViewController: UIViewController {
     func centerMapOnOverview(drawerPreviewing: Bool = false) {
 
         var bottomOffset: CGFloat = (UIScreen.main.bounds.height / 2) - (mapPadding / 2)
-        if #available(iOS 11.0, *) {
-            bottomOffset -= view.safeAreaInsets.bottom
-        }
+
+        bottomOffset -= view.safeAreaInsets.bottom
 
         if drawerPreviewing {
             let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: mapPadding / 2, bottom: bottomOffset, right: mapPadding / 2)
@@ -520,11 +519,9 @@ class RouteDetailContentViewController: UIViewController {
 extension RouteDetailContentViewController {
 
     override func viewSafeAreaInsetsDidChange() {
-        if #available(iOS 11.0, *) {
-            let top = view.safeAreaInsets.top
-            let bottom = view.safeAreaInsets.bottom + (drawerDisplayController?.summaryView.frame.height ?? 92)
-            mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
-        }
+        let top = view.safeAreaInsets.top
+        let bottom = view.safeAreaInsets.bottom + (drawerDisplayController?.summaryView.frame.height ?? 92)
+        mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
     }
 
     override func viewWillAppear(_ animated: Bool) {

@@ -48,13 +48,8 @@ class AllStopsTableViewController: UITableViewController {
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.cellLayoutMarginsFollowReadableWidth = false
 
-        if #available(iOS 11.0, *) {
-            navigationItem.searchController = nil
-            tableView.contentInsetAdjustmentBehavior = .never
-        } else {
-            navigationItem.titleView = nil
-            automaticallyAdjustsScrollViewInsets = false
-        }
+        navigationItem.searchController = nil
+        tableView.contentInsetAdjustmentBehavior = .never
 
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self

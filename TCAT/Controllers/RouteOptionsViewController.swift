@@ -126,9 +126,7 @@ class RouteOptionsViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if #available(iOS 11, *) {
-            addHeightToDatepicker(20) // add bottom padding to date picker for iPhone X
-        }
+        addHeightToDatepicker(20) // add bottom padding to date picker for iPhone X
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -293,11 +291,7 @@ class RouteOptionsViewController: UIViewController {
     var backButton: UIBarButtonItem?
 
     func hideSearchBar() {
-        if #available(iOS 11.0, *) {
-            navigationItem.searchController = nil
-        } else {
-            navigationItem.titleView = nil
-        }
+        navigationItem.searchController = nil
         if let backButton = backButton {
             navigationItem.setLeftBarButton(backButton, animated: false)
         }
@@ -306,11 +300,7 @@ class RouteOptionsViewController: UIViewController {
     }
 
     func showSearchBar() {
-        if #available(iOS 11.0, *) {
-            navigationItem.searchController = searchBarView?.searchController
-        } else {
-            navigationItem.titleView = searchBarView?.searchController?.searchBar
-        }
+        navigationItem.searchController = searchBarView?.searchController
         backButton = navigationItem.leftBarButtonItem
         navigationItem.setLeftBarButton(nil, animated: false)
         navigationItem.hidesBackButton = true
@@ -733,11 +723,7 @@ class RouteOptionsViewController: UIViewController {
         refreshControl = UIRefreshControl()
         refreshControl.isHidden = true
 
-        if #available(iOS 10.0, *) {
-            routeResults.refreshControl = refreshControl
-        } else {
-            routeResults.addSubview(refreshControl)
-        }
+        routeResults.refreshControl = refreshControl
     }
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -753,11 +739,7 @@ class RouteOptionsViewController: UIViewController {
     }
 
     func hideRefreshControl() {
-        if #available(iOS 10.0, *) {
-            routeResults.refreshControl?.endRefreshing()
-        } else {
-            refreshControl.endRefreshing()
-        }
+        routeResults.refreshControl?.endRefreshing()
     }
 
     // MARK: RouteDetailViewController

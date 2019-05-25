@@ -155,9 +155,7 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
 
         let lastCellIndexPath = IndexPath(row: tableView.numberOfRows(inSection: 0) - 1, section: 0)
         var screenBottom = UIScreen.main.bounds.height
-        if #available(iOS 11.0, *) {
-            screenBottom -= view.safeAreaInsets.bottom
-        }
+        screenBottom -= view.safeAreaInsets.bottom
 
         // Calculate height of space between last cell and the bottom of the screen, also accounting for summary
         var footerHeight = screenBottom - (tableView.cellForRow(at: lastCellIndexPath)?.frame.maxY ?? screenBottom) - summaryView.frame.height

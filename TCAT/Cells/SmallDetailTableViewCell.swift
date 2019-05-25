@@ -61,12 +61,12 @@ class SmallDetailTableViewCell: UITableViewCell {
     func setupIconViewConstraints() {
         let detailIconViewWidth = 114
         let titleLabelLeadingOffset = 6
-        
+
         iconView.snp.makeConstraints { make in
             make.top.leading.bottom.equalToSuperview()
             make.width.equalTo(detailIconViewWidth)
         }
-        
+
         titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(iconView.snp.trailing).offset(titleLabelLeadingOffset)
         }

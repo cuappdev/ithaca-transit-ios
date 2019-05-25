@@ -56,11 +56,7 @@ class FavoritesTableViewController: UIViewController {
     func setupConstraints() {
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
-            if #available(iOS 11.0, *) {
-                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            } else {
-                make.top.equalTo(self.topLayoutGuide.snp.bottom)
-            }
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
     }
 
