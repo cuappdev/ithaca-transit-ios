@@ -10,14 +10,12 @@ import CoreLocation
 import UIKit
 
 extension UIView {
-
     func addShadow(shadowOffset: CGSize, shadowRadius: CGFloat) {
         layer.shadowColor = Colors.black.cgColor
         layer.shadowOffset = shadowOffset
         layer.shadowOpacity = 0.33
         layer.shadowRadius = shadowRadius
     }
-
 }
 
 class BusLocationView: UIView {
@@ -64,6 +62,10 @@ class BusLocationView: UIView {
         circle.backgroundColor = Colors.tcatBlue
         addSubview(circle)
         circle.isHidden = false
+
+    }
+
+    func setupConstraints() {
 
     }
 

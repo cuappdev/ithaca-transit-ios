@@ -297,10 +297,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             DispatchQueue.main.async {
                 switch result {
                 case .value(let response):
-                    let filteredStops = Place.filterAllStops(allStops: response.data)
-                    if filteredStops.isEmpty { self.handleGetAllStopsError() }
+                    if response.data.isEmpty { self.handleGetAllStopsError() }
                     else {
-                        let encodedObject = try? JSONEncoder().encode(filteredStops)
+                        let encodedObject = try? JSONEncoder().encode(response.data)
                         userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
                     }
                 case .error(let error):

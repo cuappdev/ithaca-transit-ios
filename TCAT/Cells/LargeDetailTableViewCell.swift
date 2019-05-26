@@ -72,7 +72,6 @@ class LargeDetailTableViewCell: UITableViewCell {
             make.top.equalToSuperview().inset(labelInset)
             make.trailing.equalTo(chevron.snp.leading).inset(titleLabelTrailingInset)
             make.bottom.equalTo(detailLabel.snp.top).offset(-labelSpacing)
-//            make.leading.equalToSuperview().inset(120)
         }
 
         detailLabel.snp.makeConstraints { make in
@@ -115,9 +114,7 @@ class LargeDetailTableViewCell: UITableViewCell {
 
         // Instantiate busIconView offScreen to later turn into UIImage
         let busIconView = BusIcon(type: .directionSmall, number: direction.routeNumber)
-        var busIconFrame = busIconView.frame
-        busIconFrame.size.width += busIconSpacingBetweenText * 2
-        busIconFrame.origin.x = -busIconFrame.width
+        let busIconFrame = CGRect(x: -busIconView.intrinsicContentSize.width, y: 0, width: busIconView.intrinsicContentSize.width + busIconSpacingBetweenText * 2, height: busIconView.intrinsicContentSize.height)
 
         // Create container to add padding on sides
         let containerView = UIView(frame: busIconFrame)

@@ -47,19 +47,12 @@ enum BusIconType: String {
 
 class BusIcon: UIView {
 
-    // MARK: Data vars
+    private var type: BusIconType
 
-    let number: Int
-    let type: BusIconType
-
-    // MARK: View vars
-
-    var baseView = UIView()
-    let image = UIImageView(image: UIImage(named: "bus"))
-    var label = UILabel()
-    var liveIndicator: LiveIndicator?
-
-    // MARK: Constraint vars
+    private let baseView = UIView()
+    private let image = UIImageView(image: UIImage(named: "bus"))
+    private let label = UILabel()
+    private var liveIndicator: LiveIndicator?
 
     override var intrinsicContentSize: CGSize {
         return CGSize(width: type.width, height: type.height)
@@ -69,9 +62,7 @@ class BusIcon: UIView {
 
     init(type: BusIconType, number: Int) {
         self.type = type
-        self.number = number
-
-        super.init(frame: CGRect(x: 0, y: 0, width: type.width, height: type.height))
+        super.init(frame: .zero)
 
         var fontSize: CGFloat {
             switch type {
@@ -102,10 +93,10 @@ class BusIcon: UIView {
             addSubview(liveIndicator!)
         }
 
-        setupConstraints()
+        setupConstraints(for: type)
     }
 
-    func setupConstraints() {
+    private func setupConstraints(for type: BusIconType) {
         let imageLeadingOffset: CGFloat = type == .directionLarge ? 12 : 8
         var imageSize: CGSize {
             var constant: CGFloat {
@@ -117,11 +108,12 @@ class BusIcon: UIView {
             }
             return CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
         }
-        let labelLeadingOffset: CGFloat = type == .liveTracking ? 4 : (bounds.width - imageSize.width - imageLeadingOffset - label.intrinsicContentSize.width) / 2
+        let labelLeadingOffset: CGFloat = type == .liveTracking ? 4 : (type.width - imageSize.width - imageLeadingOffset - label.intrinsicContentSize.width) / 2
         let liveIndicatorLeadingOffset = 4
 
         baseView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+            make.size.equalTo(CGSize(width: type.width, height: type.height))
         }
 
         image.snp.makeConstraints { make in
@@ -147,17 +139,6 @@ class BusIcon: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         type = .directionSmall
-        number = 99
         super.init(coder: aDecoder)
     }
-
-    // MARK: Reuse
-
-    func prepareForReuse() {
-        baseView.removeFromSuperview()
-        label.removeFromSuperview()
-        image.removeFromSuperview()
-        liveIndicator?.removeFromSuperview()
-    }
-
 }

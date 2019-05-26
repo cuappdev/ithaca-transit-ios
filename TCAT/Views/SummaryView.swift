@@ -10,11 +10,8 @@ import UIKit
 
 class SummaryView: UIView {
 
-    /// The route being used for the summary view
-    var route: Route!
-
     /// The puller tab used to indicate dragability
-    private var tab = UIView(frame: CGRect(x: 0, y: 6, width: 32, height: 4))
+    private var tab = UIView()
 
     /// Three times the height of the tab view (spacing + tabHeight + spacing)
     private var tabInsetHeight: CGFloat = 12
@@ -52,7 +49,7 @@ class SummaryView: UIView {
         super.init(coder: aDecoder)
     }
 
-    init() {
+    init(route: Route) {
 
         // View Initialization
         let height: CGFloat = 80 + tabInsetHeight
@@ -60,33 +57,69 @@ class SummaryView: UIView {
         backgroundColor = Colors.backgroundWash
         roundCorners(corners: [.topLeft, .topRight], radius: 16)
 
-        // Create puller tab
-        tab.center.x = center.x
+        setupTab()
+        setupMainLabel()
+        setupSecondaryLabel()
+        addSubview(liveIndicator)
+        configure(for: route)
+        setupConstraints()
+    }
+    
+    func setupTab() {
         tab.backgroundColor = Colors.metadataIcon
         tab.layer.cornerRadius = tab.frame.height / 2
         addSubview(tab)
-
-        // Place and format top summary label
+    }
+    
+    func setupMainLabel() {
         mainLabel.font = .getFont(.regular, size: 16)
         mainLabel.textColor = Colors.primaryText
         mainLabel.numberOfLines = 1
         mainLabel.allowsDefaultTighteningForTruncation = true
         mainLabel.lineBreakMode = .byTruncatingTail
         addSubview(mainLabel)
-
-        // Place and format secondary label
+    }
+    
+    func setupSecondaryLabel() {
         secondaryLabel.font = .getFont(.regular, size: 12)
         secondaryLabel.textColor = Colors.metadataIcon
         addSubview(secondaryLabel)
-
-        addSubview(liveIndicator)
-
+    }
+    
+    func setupConstraints() {
+        let labelSpacing: CGFloat = 4
+        let maximumY = safeAreaCenterY + (totalLabelHeight / 2)
+        let labelLeadingInset = 120
+        
+        tab.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().inset(6)
+            make.size.equalTo(CGSize(width: 32, height: 4))
+        }
+        
+//        secondaryLabel.frame.origin.y = maximumY - secondaryLabel.frame.height
+//        mainLabel.frame.origin.y = secondaryLabel.frame.origin.y - mainLabel.frame.height - (labelSpacing)
+//
+//        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
+//        mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
+        mainLabel.snp.makeConstraints { make in
+//            make.top.eq
+            make.leading.equalToSuperview().inset(labelLeadingInset)
+            make.trailing.equalToSuperview().inset(textLabelPadding)
+            make.height.equalTo(mainLabel.intrinsicContentSize.height)
+        }
+        
+        secondaryLabel.snp.makeConstraints { make in
+//            make.bottom.equalToSuperview().inset()
+            make.leading.trailing.equalTo(mainLabel)
+            make.height.equalTo(secondaryLabel.intrinsicContentSize.height)
+        }
     }
 
     /// Update summary card data and position accordingly
-    func setRoute() {
+    func configure(for route: Route) {
 
-        setBusIcons()
+        setBusIcons(for: route)
 
         var color: UIColor = Colors.primaryText
 
@@ -152,8 +185,7 @@ class SummaryView: UIView {
 
         // Reset main label positioning
         mainLabel.sizeToFit()
-        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
-        mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
+        
 
         // MARK: Secondary Label
 
@@ -162,11 +194,10 @@ class SummaryView: UIView {
         secondaryLabel.frame.origin.x = mainLabel.frame.origin.x
 
         adjustLabelPositions()
-
     }
 
     // Create string with enough space for Live Indicator
-    func createStringWithSpaces() -> String {
+    private func createStringWithSpaces() -> String {
         let testLabel = UILabel()
         testLabel.font = mainLabel.font
         testLabel.text = " "
@@ -180,17 +211,8 @@ class SummaryView: UIView {
         return space
     }
 
-    func adjustLabelPositions() {
-        // Adjust labels vertically
-        let labelSpacing: CGFloat = 4
-        let totalLabelHeight = mainLabel.frame.size.height + secondaryLabel.frame.size.height + labelSpacing
-        let maximumY = safeAreaCenterY + (totalLabelHeight / 2)
-        secondaryLabel.frame.origin.y = maximumY - secondaryLabel.frame.height
-        mainLabel.frame.origin.y = secondaryLabel.frame.origin.y - mainLabel.frame.height - (labelSpacing)
-    }
-
     /// Add and place bus icons.
-    func setBusIcons() {
+    private func setBusIcons(for route: Route) {
 
         let spacing: CGFloat = 12
 
@@ -216,6 +238,10 @@ class SummaryView: UIView {
             walkIcon.tintColor = Colors.metadataIcon
             walkIcon.center = iconCenter
             addSubview(walkIcon)
+            
+            walkIcon.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+            }
 
         }
 

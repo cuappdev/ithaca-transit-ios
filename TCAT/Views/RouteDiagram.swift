@@ -28,10 +28,6 @@ class RouteDiagram: UIView {
             routeDiagramSegments.append(routeDiagramSegment)
         }
 
-        for routeDiagramSegment in routeDiagramSegments {
-            addSubview(routeDiagramSegment)
-        }
-
         setupConstraints()
     }
 
@@ -48,6 +44,7 @@ class RouteDiagram: UIView {
     private func setupConstraints() {
 
         for (i, current) in routeDiagramSegments.enumerated() {
+            addSubview(current)
             let prev = routeDiagramSegments[optional: i-1]
             let isDestination = i == routeDiagramSegments.count - 1
             current.setupConstraints(prev: prev, isLastDirection: isDestination)
@@ -56,6 +53,10 @@ class RouteDiagram: UIView {
                     current.snp.makeConstraints { make in
                         make.bottom.equalToSuperview()
                     }
+                } else {
+                    current.snp.makeConstraints { make in
+                        make.height.equalTo(current.calculateHeight())
+                    }
                 }
                 current.snp.makeConstraints { make in
                     make.top.equalTo(prev.snp.bottom)
@@ -63,12 +64,12 @@ class RouteDiagram: UIView {
             } else {
                 current.snp.makeConstraints { make in
                     make.top.equalToSuperview()
+                    make.height.equalTo(current.calculateHeight())
                 }
             }
 
             current.snp.makeConstraints { make in
                 make.leading.trailing.equalToSuperview()
-                make.height.equalTo(current.calculateHeight())
             }
         }
     }

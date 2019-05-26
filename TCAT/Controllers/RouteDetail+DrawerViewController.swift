@@ -40,7 +40,7 @@ enum RouteDetailItem {
 class RouteDetailDrawerViewController: UIViewController {
 
     var safeAreaCover: UIView?
-    var summaryView = SummaryView()
+    var summaryView: SummaryView!
     var tableView: UITableView!
 
     var directionsAndVisibleStops: [RouteDetailItem] = []
@@ -58,13 +58,8 @@ class RouteDetailDrawerViewController: UIViewController {
     init(route: Route) {
         super.init(nibName: nil, bundle: nil)
         self.route = route
+        summaryView = SummaryView(route: route)
         self.directionsAndVisibleStops = route.directions.map({ RouteDetailItem.direction($0) })
-    }
-
-    func update(with route: Route) {
-        self.route = route
-        self.directionsAndVisibleStops = route.directions.map({ RouteDetailItem.direction($0) })
-        tableView.reloadData()
     }
 
     required convenience init(coder aDecoder: NSCoder) {
@@ -79,7 +74,6 @@ class RouteDetailDrawerViewController: UIViewController {
         if let drawer = self.parent as? RouteDetailViewController {
             drawer.initialDrawerPosition = .partiallyRevealed
         }
-        summaryView.setRoute()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -110,8 +104,6 @@ class RouteDetailDrawerViewController: UIViewController {
         view.backgroundColor = Colors.white
 
         // Create summaryView
-
-        summaryView.route = route
         let summaryTapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
         summaryTapGesture.delegate = self
         summaryView.addGestureRecognizer(summaryTapGesture)
@@ -207,7 +199,7 @@ class RouteDetailDrawerViewController: UIViewController {
                             }
 
                             self.tableView.reloadData()
-                            self.summaryView.setRoute()
+                            self.summaryView.configure(for: self.route)
                         } else {
                             print("getDelays success: false")
                         }

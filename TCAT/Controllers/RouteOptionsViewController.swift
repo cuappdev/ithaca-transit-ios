@@ -33,33 +33,32 @@ enum RequestAction {
 
 class RouteOptionsViewController: UIViewController {
 
-    var searchTo: Place?
-
-    private var datePickerOverlay: UIView!
-    private var datePickerView: DatePickerView!
-    private var refreshControl: UIRefreshControl!
     var routeResults: UITableView!
     var routeSelection: RouteSelectionView!
     var searchBarView: SearchBarView?
 
+    var cellUserInteraction = true
     var currentLocation: CLLocationCoordinate2D?
+    let fileName: String = "RouteOptionsVC"
     var locationManager: CLLocationManager!
     var routes: [[Route]] = []
     var searchFrom: Place?
-    private var searchTime: Date?
-    private var searchTimeType: SearchType = .leaveNow
+    var searchTo: Place?
     var searchType: SearchBarType = .to
     var showRouteSearchingLoader: Bool = false
-    var timers: [Int: Timer] = [:]
 
-    var cellUserInteraction = true
+    private var datePickerOverlay: UIView!
+    private var datePickerView: DatePickerView!
+    private var refreshControl: UIRefreshControl!
+
     private let estimatedRowHeight: CGFloat = 115
-    let fileName: String = "RouteOptionsVC"
     private let mediumTapticGenerator = UIImpactFeedbackGenerator(style: .medium)
     private let navigationBarTitle: String = Constants.Titles.routeOptions
     private let networking: Networking = URLSession.shared.request
     private let reachability: Reachability? = Reachability(hostname: Endpoint.config.host ?? "")
     private let routeResultsTitle: String = Constants.Titles.routeResults
+    private var searchTime: Date?
+    private var searchTimeType: SearchType = .leaveNow
 
     /// Returns routes from each section in order
     private var allRoutes: [Route] {

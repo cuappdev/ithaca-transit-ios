@@ -22,7 +22,7 @@ protocol RouteTableViewCellDelegate: class {
 class RouteTableViewCell: UITableViewCell {
 
     // MARK: Data vars
-    var delegate: RouteTableViewCellDelegate?
+    weak var delegate: RouteTableViewCellDelegate?
     var timer: Timer?
 
     private let networking: Networking = URLSession.shared.request
@@ -40,18 +40,19 @@ class RouteTableViewCell: UITableViewCell {
 
     // MARK: Spacing vars
     private let containerViewLayoutInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 12)
+    private let routeDiagramTopOffset = 8
 
     // MARK: Init
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
+        contentView.addSubview(containerView)
+
         setupCellBackground()
         setupDepartureStackView()
         setupTravelTimeLabel()
-        setupLiveStackView()
-
-        contentView.addSubview(containerView)
+        setupLiveContainerView()
 
         setupConstraints()
     }
@@ -93,7 +94,7 @@ class RouteTableViewCell: UITableViewCell {
         containerView.addSubview(travelTimeLabel)
     }
 
-    private func setupLiveStackView() {
+    private func setupLiveContainerView() {
         liveLabel.font = .getFont(.semibold, size: 14)
 
         liveContainerView.addSubview(liveLabel)
@@ -143,20 +144,22 @@ class RouteTableViewCell: UITableViewCell {
         liveIndicatorView.snp.remakeConstraints { make in
             make.leading.equalTo(liveLabel.snp.trailing).offset(spaceBtnLiveElements)
             make.centerY.equalTo(liveLabel)
-            make.size.equalTo(liveIndicatorView.intrinsicContentSize)
         }
 
     }
 
     private func setupDataDependentConstraints() {
-        let routeDiagramTopOffset = 8
 
+        liveContainerView.snp.makeConstraints { make in
+            make.bottom.equalTo(routeDiagram.snp.top).offset(-routeDiagramTopOffset)
+        }
+
+        // Set trailing and bottom prioirites to 999 to surpress constraint errors
         routeDiagram.snp.makeConstraints { make in
             make.top.equalTo(liveContainerView.snp.bottom).offset(routeDiagramTopOffset)
-            make.height.equalTo(routeDiagram.calculateHeight())
             make.leading.equalTo(travelTimeLabel)
-            make.trailing.equalTo(departureStackView)
-            make.bottom.equalToSuperview().inset(containerViewLayoutInsets)
+            make.trailing.equalTo(departureStackView).priority(999)
+            make.bottom.equalToSuperview().inset(containerViewLayoutInsets).priority(999)
         }
     }
 

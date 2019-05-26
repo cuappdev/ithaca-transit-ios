@@ -248,10 +248,9 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDel
             DispatchQueue.main.async {
                 switch result {
                 case .value(let response):
-                    let filteredStops = Place.filterAllStops(allStops: response.data)
-                    if !filteredStops.isEmpty {
+                    if !response.data.isEmpty {
                         do {
-                            let encodedObject = try JSONEncoder().encode(filteredStops)
+                            let encodedObject = try JSONEncoder().encode(response.data)
                             userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
                         } catch let error {
                             print(error)

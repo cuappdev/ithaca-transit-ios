@@ -13,21 +13,20 @@ class ServiceAlertTableViewCell: UITableViewCell {
 
     static let identifier: String = "serviceAlertCell"
 
-    private var affectedRoutesLabel: UILabel!
+    private var affectedRoutesLabel: UILabel?
     private var affectedRoutesStackView: UIStackView?
-    private var descriptionLabel: UILabel!
-    private var timeSpanLabel: UILabel!
+    private var descriptionLabel = UILabel()
+    private var timeSpanLabel = UILabel()
     private var topSeparator: UIView?
 
-    private let borderInset = 16
-    private let busIconSpacing = 10
-    private let fileName: String = "serviceAlertTableViewCell"
+    private let busIconHorizontalSpacing: CGFloat = 10
+    private let borderInset: CGFloat = 16
     private var maxIconsPerRow: Int {
-        let iconWidth = Int(BusIconType.directionSmall.width)
-        let screenWidth = Int(UIScreen.main.bounds.width)
+        let iconWidth = BusIconType.directionSmall.width
+        let screenWidth = UIScreen.main.bounds.width
         let totalConstraintInset = borderInset * 2
 
-        return (screenWidth - totalConstraintInset + busIconSpacing) / (iconWidth + busIconSpacing)
+        return Int((screenWidth - totalConstraintInset + busIconHorizontalSpacing) / (iconWidth + busIconHorizontalSpacing))
     }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -53,7 +52,6 @@ class ServiceAlertTableViewCell: UITableViewCell {
 
     private func setupTimeSpanLabel() {
 
-        timeSpanLabel = UILabel()
         timeSpanLabel.numberOfLines = 0
         timeSpanLabel.font = .getFont(.semibold, size: 18)
         timeSpanLabel.textColor = Colors.primaryText
@@ -73,15 +71,19 @@ class ServiceAlertTableViewCell: UITableViewCell {
 
     private func setupaffectedRoutesLabel() {
 
-        affectedRoutesLabel = UILabel()
+        let affectedRoutesLabel = UILabel()
         affectedRoutesLabel.font = .getFont(.semibold, size: 18)
         affectedRoutesLabel.textColor = Colors.primaryText
         affectedRoutesLabel.text = Constants.General.affectedRoutes
+
+        self.affectedRoutesLabel = affectedRoutesLabel
 
         contentView.addSubview(affectedRoutesLabel)
     }
 
     private func setupAffectedRoutesStackView(alert: ServiceAlert) {
+        let busIconVerticalSpacing: CGFloat = 10
+
         affectedRoutesStackView = UIStackView()
         var routesCopy = alert.routes
         for _ in 0..<rowCount(alert: alert) {
@@ -92,15 +94,15 @@ class ServiceAlertTableViewCell: UITableViewCell {
             }
             let rowStackView = UIStackView(arrangedSubviews: subviews)
             rowStackView.axis = .horizontal
-            rowStackView.spacing = 10
-            rowStackView.alignment = .leading
+            rowStackView.spacing = busIconHorizontalSpacing
+            rowStackView.alignment = .top
             affectedRoutesStackView?.addArrangedSubview(rowStackView)
         }
 
         guard let stackView = affectedRoutesStackView else { return }
         stackView.axis = .vertical
-        stackView.alignment = .top
-        stackView.spacing = 10
+        stackView.alignment = .leading
+        stackView.spacing = busIconVerticalSpacing
         contentView.addSubview(stackView)
     }
 
@@ -143,15 +145,17 @@ class ServiceAlertTableViewCell: UITableViewCell {
     }
 
     func topSeparatorConstraints() {
+        let topSeparatorHeight = 8
         if let topSeparator = topSeparator {
             topSeparator.snp.remakeConstraints { (make) in
                 make.top.leading.trailing.equalToSuperview()
-                make.height.equalTo(8)
+                make.height.equalTo(topSeparatorHeight)
             }
         }
     }
 
     override func updateConstraints() {
+        let stackViewTopOffset = 24
         if let topSeparator = topSeparator, timeSpanLabel.isDescendant(of: contentView) {
             // Both topSeparator and timeSpanLabel exist
             topSeparatorConstraints()
@@ -170,18 +174,17 @@ class ServiceAlertTableViewCell: UITableViewCell {
             descriptionLabelConstraints(topConstraint: contentView)
         }
 
-        if let stackView = affectedRoutesStackView {
+        if let stackView = affectedRoutesStackView, let affectedRoutesLabel = affectedRoutesLabel {
             // When both a separator view and stackView are required
             affectedRoutesLabel.snp.remakeConstraints { (make) in
                 make.leading.equalTo(descriptionLabel)
-                make.top.equalTo(descriptionLabel.snp.bottom).offset(24)
-                make.width.equalTo(affectedRoutesLabel.intrinsicContentSize.width)
-                make.height.equalTo(affectedRoutesLabel.intrinsicContentSize.height)
+                make.top.equalTo(descriptionLabel.snp.bottom).offset(stackViewTopOffset)
+                make.size.equalTo(affectedRoutesLabel.intrinsicContentSize)
             }
             stackView.snp.remakeConstraints { (make) in
                 make.top.equalTo(affectedRoutesLabel.snp.bottom).offset(8)
                 make.leading.equalTo(descriptionLabel)
-                make.trailing.bottom.equalToSuperview().inset(borderInset)
+                make.bottom.equalToSuperview().inset(borderInset)
             }
         } else {
             descriptionLabel.snp.makeConstraints { (make) in
@@ -234,15 +237,13 @@ class ServiceAlertTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         if let stackView = affectedRoutesStackView {
             stackView.removeFromSuperview()
+            affectedRoutesStackView = nil
         }
-
-        affectedRoutesStackView = nil
 
         if let routesLabel = affectedRoutesLabel {
             routesLabel.removeFromSuperview()
+            affectedRoutesLabel = nil
         }
-
-        affectedRoutesLabel = nil
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
