@@ -114,7 +114,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
         contentView.addSubview(topSeparator!)
     }
 
-    func descriptionLabelConstraints(topConstraint: UIView) {
+    private func descriptionLabelConstraints(topConstraint: UIView) {
         descriptionLabel.snp.remakeConstraints { (make) in
             if topConstraint == contentView {
                 make.top.equalToSuperview().inset(borderInset)
@@ -132,7 +132,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
         }
     }
 
-    func timeSpanLabelConstraints(topConstraint: UIView) {
+    private func timeSpanLabelConstraints(topConstraint: UIView) {
         timeSpanLabel.snp.remakeConstraints { (make) in
             if topConstraint == contentView {
                 make.top.equalToSuperview().inset(borderInset)
@@ -144,7 +144,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
         }
     }
 
-    func topSeparatorConstraints() {
+    private func topSeparatorConstraints() {
         let topSeparatorHeight = 8
         if let topSeparator = topSeparator {
             topSeparator.snp.remakeConstraints { (make) in
@@ -245,6 +245,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
             affectedRoutesLabel = nil
         }
     }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

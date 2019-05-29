@@ -139,12 +139,11 @@ struct Constants {
         static let routeOptionsCellIdentifier = "routeCell"
 
         static let addFavoriteIdentifier = "AddFavorite"
-        static let seeAllStopsIdentifier = "SeeAllStops"
 
         static let busStopDetailCellIdentifier = "BusStopCell"
-        static let currentLocationIdentifier = "CurrentLocation"
         static let largeDetailCellIdentifier = "LargeCell"
         static let smallDetailCellIdentifier = "SmallCell"
+        static let generalCellIdentifier = "GeneralCell"
 
         static let informationCellIdentifier = "InformationCell"
     }

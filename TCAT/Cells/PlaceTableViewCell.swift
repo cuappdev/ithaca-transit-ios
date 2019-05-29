@@ -29,7 +29,7 @@ class PlaceTableViewCell: UITableViewCell {
         setupConstraints()
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         let descriptionLabelHeight: CGFloat = 14.5
         let iconSize = CGSize(width: 20, height: 20)
         let iconLeadingInset = 16

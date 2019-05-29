@@ -69,8 +69,7 @@ class SearchResultsTableViewController: UITableViewController {
                                                object: nil)
 
         // Set Up TableView
-        tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
-        tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.currentLocationIdentifier)
+        tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.generalCellIdentifier)
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
@@ -120,7 +119,7 @@ class SearchResultsTableViewController: UITableViewController {
         super.didReceiveMemoryWarning()
     }
 
-    func createSections() -> [Section] {
+    private func createSections() -> [Section] {
         var allSections: [Section] = []
         if currentLocationSection != nil {
             allSections.append(currentLocationSection)
@@ -131,20 +130,64 @@ class SearchResultsTableViewController: UITableViewController {
         return allSections.filter { !$0.items.isEmpty }
     }
 
+    private func showLocationDeniedAlert() {
+        let alertController = UIAlertController(title: Constants.Alerts.LocationEnable.title,
+                                                message: Constants.Alerts.LocationEnable.message,
+                                                preferredStyle: .alert)
+
+        let settingsAction = UIAlertAction(title: Constants.Alerts.LocationEnable.settings, style: .default) { _ in
+            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
+                                      options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]),
+                                      completionHandler: nil)
+        }
+        let cancelAction = UIAlertAction(title: Constants.Alerts.LocationEnable.cancel, style: .cancel, handler: nil)
+        alertController.addAction(settingsAction)
+        alertController.addAction(cancelAction)
+
+        present(alertController, animated: true, completion: {
+            self.tableView.deselectRow(at: IndexPath(row: 0, section: 0), animated: true)
+        })
+    }
+
     private func getSearchResults (searchText: String) -> Future<Response<[Place]>> {
         return networking(Endpoint.getSearchResults(searchText: searchText)).decode()
     }
 
+    @objc func getPlaces(timer: Timer) {
+        let searchText = (timer.userInfo as! [String: String])["searchText"]!
+        if !searchText.isEmpty {
+            getSearchResults(searchText: searchText).observe { [weak self] result in
+                guard let `self` = self else { return }
+                DispatchQueue.main.async {
+                    switch result {
+                    case .value(let response):
+                        self.searchResultsSection = Section(type: .searchResults, items: response.data)
+                        self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
+                        if !self.sections.isEmpty {
+                            self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+                        }
+                    default: break
+                    }
+                }
+            }
+        } else {
+            sections = createSections()
+        }
+    }
+
     /* Keyboard Functions */
-    @objc func keyboardWillShow(_ notification: Notification) {
+    @objc private func keyboardWillShow(_ notification: Notification) {
         isKeyboardVisible = true
     }
 
-    @objc func keyboardWillHide(_ notification: Notification) {
+    @objc private func keyboardWillHide(_ notification: Notification) {
         isKeyboardVisible = false
     }
+}
 
-    /* TableView Methods */
+// MARK: TableView Data Source
+extension SearchResultsTableViewController {
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
     }
@@ -159,6 +202,23 @@ class SearchResultsTableViewController: UITableViewController {
             return sections[section].items.count
         }
     }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch sections[indexPath.section].type {
+        case .currentLocation, .seeAllStops:
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier) as! GeneralTableViewCell
+            cell.configure(for: sections[indexPath.section].type)
+            return cell
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
+            cell.configure(for: sections[indexPath.section].items[indexPath.row])
+            return cell
+        }
+    }
+}
+
+// MARK: TableView Delegate
+extension SearchResultsTableViewController {
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = HeaderView()
@@ -193,13 +253,11 @@ class SearchResultsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
         var didSelectAllStops = false
         let allStopsTVC = AllStopsTableViewController()
 
         if sections[indexPath.section].type == .seeAllStops {
             didSelectAllStops = true
-            allStopsTVC.allStops = SearchTableViewManager.shared.getAllStops()
             allStopsTVC.unwindAllStopsTVCDelegate = self
         } else {
             let place = sections[indexPath.section].items[indexPath.row]
@@ -215,80 +273,27 @@ class SearchResultsTableViewController: UITableViewController {
         searchBar?.endEditing(true)
 
         if didSelectAllStops {
-            if let parentIsSearch = self.parent?.isKind(of: UISearchController.self), parentIsSearch {
+            if parent?.isKind(of: UISearchController.self) ?? false {
                 let navController = self.parent?.presentingViewController?.navigationController
                 navController?.delegate = self
                 navController?.pushViewController(allStopsTVC, animated: true)
             }
         }
     }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch sections[indexPath.section].type {
-        case .currentLocation, .seeAllStops:
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.currentLocationIdentifier) as! GeneralTableViewCell
-            cell.configure(for: sections[indexPath.section].type)
-            return cell
-        default:
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
-            cell.configure(for: sections[indexPath.section].items[indexPath.row])
-            return cell
-        }
-    }
 }
 
 // MARK: ScrollView Delegate
 extension SearchResultsTableViewController {
+
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if let cancelButton = searchBar?.value(forKey: "_cancelButton") as? UIButton {
             cancelButton.isEnabled = true
         }
     }
-
-    func showLocationDeniedAlert() {
-        let alertController = UIAlertController(title: Constants.Alerts.LocationEnable.title,
-                                                message: Constants.Alerts.LocationEnable.message,
-                                                preferredStyle: .alert)
-
-        let settingsAction = UIAlertAction(title: Constants.Alerts.LocationEnable.settings, style: .default) { _ in
-            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
-                                      options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]),
-                                      completionHandler: nil)
-        }
-        let cancelAction = UIAlertAction(title: Constants.Alerts.LocationEnable.cancel, style: .cancel, handler: nil)
-        alertController.addAction(settingsAction)
-        alertController.addAction(cancelAction)
-
-        present(alertController, animated: true, completion: {
-            self.tableView.deselectRow(at: IndexPath(row: 0, section: 0), animated: true)
-        })
-    }
 }
 
 // MARK: Search Bar Delegate
 extension SearchResultsTableViewController: UISearchBarDelegate, UISearchResultsUpdating {
-
-    @objc func getPlaces(timer: Timer) {
-        let searchText = (timer.userInfo as! [String: String])["searchText"]!
-        if !searchText.isEmpty {
-            getSearchResults(searchText: searchText).observe { [weak self] result in
-                guard let `self` = self else { return }
-                DispatchQueue.main.async {
-                    switch result {
-                    case .value(let response):
-                        self.searchResultsSection = Section(type: .searchResults, items: response.data)
-                        self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
-                        if !self.sections.isEmpty {
-                            self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
-                        }
-                    default: break
-                    }
-                }
-            }
-        } else {
-            sections = createSections()
-        }
-    }
 
     func updateSearchResults(for searchController: UISearchController) {
         if !sections.isEmpty {
@@ -351,6 +356,24 @@ extension SearchResultsTableViewController: UINavigationControllerDelegate {
         if returningFromAllStopsTVC, let place = returningFromAllStopsBusStop {
             destinationDelegate?.didSelectPlace(place: place)
         }
+    }
+}
+
+/// MARK: DZNEmptyDataSet DataSource
+
+// To be eventually removed and replaced with recent searches
+extension SearchResultsTableViewController: DZNEmptyDataSetSource {
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        return -80
+    }
+
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        return #imageLiteral(resourceName: "emptyPin")
+    }
+
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return NSAttributedString(string: Constants.EmptyStateMessages.locationNotFound,
+                                  attributes: [.foregroundColor: Colors.metadataIcon])
     }
 }
 

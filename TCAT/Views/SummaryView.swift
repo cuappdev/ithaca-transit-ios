@@ -29,6 +29,10 @@ class SummaryView: UIView {
     /// The primary summary label
     private var mainLabel = UILabel()
 
+    private let labelsContainerView = UIView()
+
+    private var iconView: UIView!
+
     /// The live indicator
     private var liveIndicator = LiveIndicator(size: .small, color: .clear)
 
@@ -58,61 +62,84 @@ class SummaryView: UIView {
         roundCorners(corners: [.topLeft, .topRight], radius: 16)
 
         setupTab()
-        setupMainLabel()
-        setupSecondaryLabel()
+        setupLabelsContainerView()
         addSubview(liveIndicator)
         configure(for: route)
         setupConstraints()
     }
-    
+
     func setupTab() {
         tab.backgroundColor = Colors.metadataIcon
         tab.layer.cornerRadius = tab.frame.height / 2
         addSubview(tab)
     }
-    
+
+    func setupLabelsContainerView() {
+        setupMainLabel()
+        setupSecondaryLabel()
+
+        setupLabelConstraints()
+
+        addSubview(labelsContainerView)
+    }
+
     func setupMainLabel() {
         mainLabel.font = .getFont(.regular, size: 16)
         mainLabel.textColor = Colors.primaryText
-        mainLabel.numberOfLines = 1
+        mainLabel.numberOfLines = 0
         mainLabel.allowsDefaultTighteningForTruncation = true
         mainLabel.lineBreakMode = .byTruncatingTail
-        addSubview(mainLabel)
+        labelsContainerView.addSubview(mainLabel)
     }
-    
+
     func setupSecondaryLabel() {
         secondaryLabel.font = .getFont(.regular, size: 12)
         secondaryLabel.textColor = Colors.metadataIcon
-        addSubview(secondaryLabel)
+        labelsContainerView.addSubview(secondaryLabel)
     }
-    
-    func setupConstraints() {
+
+    func setupLabelConstraints() {
         let labelSpacing: CGFloat = 4
-        let maximumY = safeAreaCenterY + (totalLabelHeight / 2)
-        let labelLeadingInset = 120
-        
-        tab.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().inset(6)
-            make.size.equalTo(CGSize(width: 32, height: 4))
-        }
-        
-//        secondaryLabel.frame.origin.y = maximumY - secondaryLabel.frame.height
-//        mainLabel.frame.origin.y = secondaryLabel.frame.origin.y - mainLabel.frame.height - (labelSpacing)
-//
-//        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
-//        mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
+
         mainLabel.snp.makeConstraints { make in
-//            make.top.eq
-            make.leading.equalToSuperview().inset(labelLeadingInset)
-            make.trailing.equalToSuperview().inset(textLabelPadding)
+            make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(mainLabel.intrinsicContentSize.height)
         }
-        
+
         secondaryLabel.snp.makeConstraints { make in
-//            make.bottom.equalToSuperview().inset()
-            make.leading.trailing.equalTo(mainLabel)
-            make.height.equalTo(secondaryLabel.intrinsicContentSize.height)
+            make.top.equalTo(mainLabel.snp.bottom).offset(labelSpacing)
+            make.leading.trailing.bottom.equalToSuperview()
+        }
+    }
+
+    func setupConstraints() {
+        let tabTopInset = 6
+        let labelLeadingInset = 120
+        let walkIconSize = CGSize(width: iconView.frame.size.width * 2, height: iconView.frame.size.height * 2)
+        /// The center to use for the next bus icon. Initalized for 0-1 bus(es).
+        let iconCenter = CGPoint(x: DetailIconView.width / 2, y: safeAreaCenterY)
+
+        tab.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().inset(tabTopInset)
+            make.size.equalTo(CGSize(width: 32, height: 4))
+        }
+
+        labelsContainerView.snp.makeConstraints { make in
+            make.centerY.equalTo(iconView)
+            make.leading.equalTo(labelLeadingInset)
+            make.trailing.equalToSuperview().inset(textLabelPadding)
+        }
+
+        iconView.snp.makeConstraints { make in
+            if iconView is UIImageView {
+                make.size.equalTo(walkIconSize)
+            } else if iconView is BusIcon {
+                make.size.equalTo(iconView.intrinsicContentSize)
+            }
+
+            make.centerY.equalToSuperview()
+            make.centerX.equalTo(snp.leading).inset(DetailIconView.width / 2)
         }
     }
 
@@ -123,21 +150,11 @@ class SummaryView: UIView {
 
         var color: UIColor = Colors.primaryText
 
-        // MARK: Main Label and Live Indicator Formatting
-
-        let space = createStringWithSpaces()
-        let extraLabelPadding: CGFloat = 6
-
-        mainLabel.frame.origin.x = DetailIconView.width + extraLabelPadding
-        mainLabel.frame.size.width = frame.maxX - mainLabel.frame.origin.x - textLabelPadding
         let mainLabelBoldFont: UIFont = .getFont(.semibold, size: 14)
 
         if let departDirection = (route.directions.filter { $0.type == .depart }).first {
 
-            var fragment = ""
-
             if let delay = departDirection.delay {
-                fragment = " \(space)" // Include space for live indicator
                 if delay >= 60 {
                     color = Colors.lateRed
                 } else {
@@ -148,7 +165,7 @@ class SummaryView: UIView {
                 color = Colors.primaryText
             }
 
-            let content = "Depart at \(departDirection.startTimeWithDelayDescription)\(fragment) from \(departDirection.name)"
+            let content = "Depart at \(departDirection.startTimeWithDelayDescription) from \(departDirection.name)"
             // This changes font to standard size. Label's font is different.
             var attributedString = departDirection.startTimeWithDelayDescription.bold(
                                        in: content,
@@ -177,47 +194,13 @@ class SummaryView: UIView {
             mainLabel.attributedText = pattern.bold(in: content, from: mainLabel.font, to: mainLabelBoldFont)
         }
 
-        // Calculate and adjust label based on number of lines
-        let numOfLines = mainLabel.numberOfLines()
-        if numOfLines != mainLabel.numberOfLines {
-            mainLabel.numberOfLines = numOfLines
-        }
-
-        // Reset main label positioning
-        mainLabel.sizeToFit()
-        
-
-        // MARK: Secondary Label
-
         secondaryLabel.text = "Trip Duration: \(route.totalDuration) minute\(route.totalDuration == 1 ? "" : "s")"
-        secondaryLabel.sizeToFit()
-        secondaryLabel.frame.origin.x = mainLabel.frame.origin.x
-
-        adjustLabelPositions()
-    }
-
-    // Create string with enough space for Live Indicator
-    private func createStringWithSpaces() -> String {
-        let testLabel = UILabel()
-        testLabel.font = mainLabel.font
-        testLabel.text = " "
-        testLabel.sizeToFit()
-        let sizeOfSpace = testLabel.frame.size.width
-        var space = ""
-        let numberOfSpaces = Int(ceil(liveIndicator.frame.size.width / sizeOfSpace))
-        for _ in 1...numberOfSpaces {
-            space += " "
-        }
-        return space
     }
 
     /// Add and place bus icons.
     private func setBusIcons(for route: Route) {
 
         let spacing: CGFloat = 12
-
-        /// The center to use for the next bus icon. Initalized for 0-1 bus(es).
-        var iconCenter = CGPoint(x: DetailIconView.width / 2, y: safeAreaCenterY)
 
         subviews.filter { $0.tag == iconTag }.removeViewsFromSuperview()
 
@@ -230,57 +213,43 @@ class SummaryView: UIView {
         if busRoutes.isEmpty {
 
             // Create and add bus icon
-            let walkIcon = UIImageView(image: #imageLiteral(resourceName: "walk"))
-            walkIcon.tag = iconTag
-            walkIcon.contentMode = .scaleAspectFit
-            // Ideally, have a larger higher-res version for this. But we need to release.
-            walkIcon.frame.size = CGSize(width: walkIcon.frame.size.width * 2, height: walkIcon.frame.size.height * 2)
-            walkIcon.tintColor = Colors.metadataIcon
-            walkIcon.center = iconCenter
-            addSubview(walkIcon)
-            
-            walkIcon.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-            }
-
+            iconView = UIImageView(image: #imageLiteral(resourceName: "walk"))
+            iconView.tag = iconTag
+            iconView.contentMode = .scaleAspectFit
+            iconView.tintColor = Colors.metadataIcon
+            addSubview(iconView)
         }
 
             // Place one sole bus icon
         else if busRoutes.count == 1 {
 
             // Create and add bus icon
-            let busIcon = BusIcon(type: .directionLarge, number: busRoutes.first!)
-            busIcon.tag = iconTag
-            busIcon.center = iconCenter
-            addSubview(busIcon)
-
+            iconView = BusIcon(type: .directionLarge, number: busRoutes.first!)
+            iconView.tag = iconTag
+            addSubview(iconView)
         }
 
             // Place up to 2 bus icons. This will not support more buses without changes
         else {
-
-            // Adjust initial variables
-            let exampleBusIcon = BusIcon(type: .directionSmall, number: 0)
-            iconCenter.y = tabInsetHeight + safeAreaCenterY - (spacing / 4) - exampleBusIcon.frame.height
-
-            for (index, route) in busRoutes.enumerated() {
-
-                // Create and add bus icon
-                let busIcon = BusIcon(type: .directionSmall, number: route)
-                busIcon.tag = iconTag
-                busIcon.center = iconCenter
-                addSubview(busIcon)
-
-                // Adjust center point
-                iconCenter.y += busIcon.frame.height + (spacing / 2)
-
-                // Stop once two buses have been placed
-                if index == 1 { break }
-
-            }
-
+//            // Adjust initial variables
+//            let exampleBusIcon = BusIcon(type: .directionSmall, number: 0)
+//            iconCenter.y = tabInsetHeight + safeAreaCenterY - (spacing / 4) - exampleBusIcon.frame.height
+//
+//            for (index, route) in busRoutes.enumerated() {
+//
+//                // Create and add bus icon
+//                let busIcon = BusIcon(type: .directionSmall, number: route)
+//                busIcon.tag = iconTag
+//                busIcon.center = iconCenter
+//                addSubview(busIcon)
+//
+//                // Adjust center point
+//                iconCenter.y += busIcon.frame.height + (spacing / 2)
+//
+//                // Stop once two buses have been placed
+//                if index == 1 { break }
+//
+//            }
         }
-
     }
-
 }

@@ -10,10 +10,6 @@ import FutureNova
 import SwiftyJSON
 import UIKit
 
-protocol TravelDistanceDelegate: NSObjectProtocol {
-    func travelDistanceUpdated(withDistance distance: Double)
-}
-
 protocol RouteTableViewCellDelegate: class {
     func updateLiveElements(fun: () -> Void)
     func getRowNum(for cell: RouteTableViewCell) -> Int?
@@ -23,9 +19,6 @@ class RouteTableViewCell: UITableViewCell {
 
     // MARK: Data vars
     weak var delegate: RouteTableViewCellDelegate?
-    var timer: Timer?
-
-    private let networking: Networking = URLSession.shared.request
 
     // MARK: View vars
     private var arrowImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
@@ -38,9 +31,10 @@ class RouteTableViewCell: UITableViewCell {
     private var routeDiagram: RouteDiagram!
     private var travelTimeLabel = UILabel()
 
-    // MARK: Spacing vars
+    // MARK: Data vars
     private let containerViewLayoutInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 12)
-    private let routeDiagramTopOffset = 8
+    private let networking: Networking = URLSession.shared.request
+    private var timer: Timer?
 
     // MARK: Init
 
@@ -149,6 +143,7 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     private func setupDataDependentConstraints() {
+        let routeDiagramTopOffset = 8
 
         liveContainerView.snp.makeConstraints { make in
             make.bottom.equalTo(routeDiagram.snp.top).offset(-routeDiagramTopOffset)
@@ -219,7 +214,7 @@ class RouteTableViewCell: UITableViewCell {
         setLiveElements(withDelayState: delayState)
     }
 
-    @objc func updateLiveElementsWithDelay(sender: Timer) {
+    @objc private func updateLiveElementsWithDelay(sender: Timer) {
         guard let userInfo = sender.userInfo as? [String: Route],
             let route = userInfo["route"] else { return }
 
@@ -358,7 +353,7 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     func invalidateTimer() {
-
+        timer?.invalidate()
     }
 
     // MARK: Reuse

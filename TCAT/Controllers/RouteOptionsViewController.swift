@@ -47,6 +47,8 @@ class RouteOptionsViewController: UIViewController {
     var searchType: SearchBarType = .to
     var showRouteSearchingLoader: Bool = false
 
+    // Variable to remember back button when hiding
+    private var backButton: UIBarButtonItem?
     private var datePickerOverlay: UIView!
     private var datePickerView: DatePickerView!
     private var refreshControl: UIRefreshControl!
@@ -204,7 +206,7 @@ class RouteOptionsViewController: UIViewController {
         routeSelection.toSearchbar.setTitle(destination?.name ?? "", for: .normal)
     }
 
-    @objc func swapFromAndTo(sender: UIButton) {
+    @objc private func swapFromAndTo(sender: UIButton) {
         //Swap data
         let searchFromOld = searchFrom
         searchFrom = searchTo
@@ -233,14 +235,14 @@ class RouteOptionsViewController: UIViewController {
         hideSearchBar()
     }
 
-    @objc func searchingTo(sender: UIButton? = nil) {
+    @objc private func searchingTo(sender: UIButton? = nil) {
         searchType = .to
         presentSearchBar()
         let payload = RouteOptionsSettingsPayload(description: "Searching To Tapped")
         Analytics.shared.log(payload)
     }
 
-    @objc func searchingFrom(sender: UIButton? = nil) {
+    @objc private func searchingFrom(sender: UIButton? = nil) {
         searchType = .from
         searchBarView?.resultsViewController?.shouldShowCurrentLocation = true
         presentSearchBar()
@@ -248,7 +250,7 @@ class RouteOptionsViewController: UIViewController {
         Analytics.shared.log(payload)
     }
 
-    func presentSearchBar() {
+    private func presentSearchBar() {
         var placeholder = ""
         var searchBarText = ""
 
@@ -289,9 +291,6 @@ class RouteOptionsViewController: UIViewController {
         searchBarView?.searchController?.dismiss(animated: true, completion: nil)
     }
 
-    // Variable to remember back button when hiding
-    var backButton: UIBarButtonItem?
-
     func hideSearchBar() {
         navigationItem.searchController = nil
         if let backButton = backButton {
@@ -301,7 +300,7 @@ class RouteOptionsViewController: UIViewController {
         searchBarView?.searchController?.isActive = false
     }
 
-    func showSearchBar() {
+    private func showSearchBar() {
         navigationItem.searchController = searchBarView?.searchController
         backButton = navigationItem.leftBarButtonItem
         navigationItem.setLeftBarButton(nil, animated: false)
@@ -310,7 +309,7 @@ class RouteOptionsViewController: UIViewController {
     }
 
     /// Fetch coordinates, store in place, return updated place
-    func fetchCoordinates(place: Place, completion: @escaping (_ place: Place?) -> Void) {
+    private func fetchCoordinates(place: Place, completion: @escaping (_ place: Place?) -> Void) {
         if place.latitude == nil || place.longitude == nil {
             CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
                 if error != nil {
@@ -330,7 +329,7 @@ class RouteOptionsViewController: UIViewController {
         }
     }
 
-    func resetAndShowCurrentlyLoading() {
+    private func resetAndShowCurrentlyLoading() {
         showRouteSearchingLoader = true
         self.hideRefreshControl()
 
@@ -466,7 +465,7 @@ class RouteOptionsViewController: UIViewController {
             }
         }
     }
-    func processRequest(result: Result<Response<RouteSectionsObject>>, requestURL: String, endPlace: Place) {
+    private func processRequest(result: Result<Response<RouteSectionsObject>>, requestURL: String, endPlace: Place) {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
 
         switch result {
@@ -501,7 +500,7 @@ class RouteOptionsViewController: UIViewController {
         Analytics.shared.log(payload)
     }
 
-    func processRequestError(error: Error, requestURL: String) {
+    private func processRequestError(error: Error, requestURL: String) {
         let title = "Network Failure: \((error as NSError?)?.domain ?? "No Domain")"
         let description = (error.localizedDescription) + ", " + ((error as NSError?)?.description ?? "n/a")
 
@@ -513,7 +512,7 @@ class RouteOptionsViewController: UIViewController {
     }
 
     /// Returns whether coordinates are valid, checking country extremes. Returns nil if places don't have coordinates.
-    func checkPlaceCoordinates(startPlace: Place, endPlace: Place) -> Bool? {
+    private func checkPlaceCoordinates(startPlace: Place, endPlace: Place) -> Bool? {
 
         guard
             let startCoordLatitude = startPlace.latitude,
@@ -540,7 +539,7 @@ class RouteOptionsViewController: UIViewController {
         return validLatitudes && validLongitudes
     }
 
-    func requestDidFinish(perform actions: [RequestAction]) {
+    private func requestDidFinish(perform actions: [RequestAction]) {
 
         for action in actions {
 
@@ -606,7 +605,7 @@ class RouteOptionsViewController: UIViewController {
         datePickerView.frame = newFrame
     }
 
-    @objc func showDatePicker(sender: UIButton) {
+    @objc private func showDatePicker(sender: UIButton) {
 
         view.bringSubviewToFront(datePickerOverlay)
         view.bringSubviewToFront(datePickerView)
@@ -628,7 +627,7 @@ class RouteOptionsViewController: UIViewController {
 
     }
 
-    @objc func dismissDatePicker(sender: UIButton) {
+    @objc private func dismissDatePicker(sender: UIButton) {
         UIView.animate(withDuration: 0.5, animations: {
             self.datePickerView.center.y = self.view.frame.height + (self.datePickerView.frame.height/2)
             self.datePickerOverlay.alpha = 0.0
@@ -638,7 +637,7 @@ class RouteOptionsViewController: UIViewController {
         })
     }
 
-    @objc func saveDatePickerDate(sender: UIButton) {
+    @objc private func saveDatePickerDate(sender: UIButton) {
 
         let date = datePickerView.getDate()
         searchTime = date
@@ -683,7 +682,7 @@ class RouteOptionsViewController: UIViewController {
         }
     }
 
-    @objc func reachabilityChanged(notification: Notification) {
+    @objc private func reachabilityChanged(notification: Notification) {
         if let reachability = notification.object as? Reachability {
 
             // Dismiss current banner, if any
@@ -738,7 +737,7 @@ class RouteOptionsViewController: UIViewController {
         }
     }
 
-    func hideRefreshControl() {
+    private func hideRefreshControl() {
         routeResults.refreshControl?.endRefreshing()
     }
 

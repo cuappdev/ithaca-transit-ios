@@ -51,6 +51,18 @@ class RouteDetailDrawerViewController: UIViewController {
     private var busDelayNetworkRefreshRate: Double = 10
     private var busDelayNetworkTimer: Timer?
     private let chevronFlipDurationTime = 0.25
+    /// Returns the currently expanded cell, if any
+    var expandedCell: LargeDetailTableViewCell? {
+        for index in 0..<tableView.numberOfRows(inSection: 0) {
+            let indexPath = IndexPath(row: index, section: 0)
+            if let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell {
+                if cell.isExpanded {
+                    return cell
+                }
+            }
+        }
+        return nil
+    }
     private let networking: Networking = URLSession.shared.request
     private var route: Route!
 
@@ -99,7 +111,7 @@ class RouteDetailDrawerViewController: UIViewController {
     // MARK: UIView Functions
 
     /** Create and configure detailView, summaryView, tableView */
-    func initializeDetailView() {
+    private func initializeDetailView() {
 
         view.backgroundColor = Colors.white
 
@@ -127,23 +139,8 @@ class RouteDetailDrawerViewController: UIViewController {
 
     }
 
-    /// Returns the currently expanded cell, if any
-    var expandedCell: LargeDetailTableViewCell? {
-
-        for index in 0..<tableView.numberOfRows(inSection: 0) {
-            let indexPath = IndexPath(row: index, section: 0)
-            if let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell {
-                if cell.isExpanded {
-                    return cell
-                }
-            }
-
-        }
-        return nil
-    }
-
     /// Creates a temporary view to cover the drawer contents when collapsed. Hidden by default.
-    func initializeCover() {
+    private func initializeCover() {
         let bottom = UIApplication.shared.keyWindow?.rootViewController?.view.safeAreaInsets.bottom ?? 34
         safeAreaCover = UIView(frame: CGRect(x: 0, y: summaryView.frame.height, width: UIScreen.main.bounds.width, height: bottom))
         safeAreaCover!.backgroundColor = Colors.backgroundWash
@@ -152,13 +149,13 @@ class RouteDetailDrawerViewController: UIViewController {
     }
 
     /// Remove cover view
-    func removeCover() {
+    private func removeCover() {
         safeAreaCover?.removeFromSuperview()
         safeAreaCover = nil
     }
 
     /// Fetch delay information and update table view cells.
-    @objc func getDelays() {
+    @objc private func getDelays() {
 
         // First depart direction(s)
         guard let delayDirection = route.getFirstDepartRawDirection() else {

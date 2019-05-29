@@ -51,7 +51,7 @@ class HomeMapViewController: UIViewController {
         setupConstraints()
     }
 
-    @objc func reachabilityChanged(_ notification: Notification) {
+    @objc private func reachabilityChanged(_ notification: Notification) {
         guard let reachability = notification.object as? Reachability else {
             return
         }

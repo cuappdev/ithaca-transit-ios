@@ -37,7 +37,7 @@ class BusStopTableViewCell: UITableViewCell {
         setupConstraints()
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
         let cellWidth: CGFloat = RouteDetailCellSize.indentedWidth
         let connectorSize = CGSize(width: 4, height: cellHeight / 2)
@@ -76,5 +76,4 @@ class BusStopTableViewCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
 }

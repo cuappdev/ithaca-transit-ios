@@ -11,29 +11,13 @@ import UIKit
 
 class OnboardingViewController: PresentationController {
 
-    //
-    // MARK: Variables
-    //
-
     /// Change the main view's background color
     private let backgroundColor = UIColor(hex: "C0DDEB")
-
-    //
-    // Navigation
-    //
 
     /// The text color of the navigation buttons
     private let navigationAttributes: [NSAttributedString.Key: Any] = [
         .foregroundColor: UIColor(hex: "243C47")
     ]
-
-    //
-    // Labels
-    //
-
-    //
-    //  Header Label
-    //
 
     /// The position of the header label
     private let titleLabelFontName = Fonts.bold
@@ -47,10 +31,6 @@ class OnboardingViewController: PresentationController {
         Constants.Onboarding.favorites,
         Constants.Onboarding.bestFeatures
     ]
-
-    //
-    // Detail Label
-    //
 
     /// The position of the main label
     private let detailLabelPosition = Position(left: 0.5, top: 0.35)
@@ -73,10 +53,6 @@ class OnboardingViewController: PresentationController {
         ""
     ]
 
-    //
-    // Assets
-    //
-
     /// Set the asset type, position, and speed.
     private let backgroundImages = [
         BackgroundImage(name: "treesnroad", left: -2.7, top: 0.71, speed: -1.3),
@@ -86,10 +62,6 @@ class OnboardingViewController: PresentationController {
         BackgroundImage(name: "cloud", left: -2.0, top: 0.10, speed: -0.1)
     ]
 
-    //
-    // Ground View
-    //
-
     /// The size of the ground view
     private let groundViewSize = CGSize(width: 1024, height: 60)
 
@@ -98,10 +70,6 @@ class OnboardingViewController: PresentationController {
 
     /// The background color of the ground view
     private let groundViewBackgroundColor = UIColor(hex: "243C47")
-
-    //
-    // MARK: Implementation
-    //
 
     /// Used to determine what context this view is being shown in
     private var isInitialViewing: Bool = true
@@ -140,13 +108,12 @@ class OnboardingViewController: PresentationController {
             target: self,
             action: #selector(dismissView)
         )
-
         dismissButton.setTitleTextAttributes(navigationAttributes, for: .normal)
 
         return dismissButton
     }()
 
-    @objc func dismissView() {
+    @objc private func dismissView() {
 
         if isInitialViewing {
 
@@ -311,7 +278,7 @@ class OnboardingViewController: PresentationController {
 
         for row in 1...4 {
             for (column, backgroundImage) in backgroundImages.enumerated() {
-                if let position = backgroundImage.positionAt(row), let content = contents.at(column) {
+                if let position = backgroundImage.positionAt(row), let content = contents[optional: column] {
                     addAnimation(TransitionAnimation(content: content, destination: position,
                                                      duration: 2.0, damping: 1.0), forPage: row)
                 }
@@ -332,15 +299,4 @@ class OnboardingViewController: PresentationController {
 
     }
 
-}
-
-private extension Array {
-    func at(_ index: Int?) -> Element? {
-        var object: Element?
-        if let index = index, index >= 0 && index < endIndex {
-            object = self[index]
-        }
-
-        return object
-    }
 }

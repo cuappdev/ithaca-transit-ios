@@ -23,7 +23,7 @@ class GeneralTableViewCell: UITableViewCell {
         setupConstraints()
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         let iconLeadingInset = 16
         let iconSize = CGSize(width: 20, height: 20)
         let titleLabelHeight: CGFloat = 17

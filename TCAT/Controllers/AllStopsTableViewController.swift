@@ -16,59 +16,54 @@ protocol UnwindAllStopsTVCDelegate: class {
 
 class AllStopsTableViewController: UITableViewController {
 
-    var allStops: [Place]!
+    private var allStops = [Place]()
     weak var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
-
-    private let networking: Networking = URLSession.shared.request
-    private var currentChar: Character?
-    private var height: CGFloat?
     private var isLoading: Bool { return loadingIndicator != nil }
     private var loadingIndicator: LoadingIndicator?
-    private var sectionIndexes: [String: [Place]]!
-    private var sortedKeys: [String]!
+    private let networking: Networking = URLSession.shared.request
+    private var sectionIndexes = [String: [Place]]()
+    private var sortedKeys = [String]()
 
     override func viewWillLayoutSubviews() {
         if let y = navigationController?.navigationBar.frame.maxY {
-            if height == nil {
-                height = tableView.bounds.height
-            }
-            tableView.frame = CGRect(x: 0.0, y: y, width: view.bounds.width, height: height! - y)
+            tableView.frame = CGRect(x: 0.0, y: y, width: view.bounds.width, height: tableView.bounds.height - y)
         }
     }
 
     override func viewDidLoad() {
-
         super.viewDidLoad()
-        sectionIndexes = sectionIndexesForBusStop()
-
-        sortedKeys = sortedKeysForBusStops()
 
         title = Constants.Titles.allStops
+//        navigationItem.searchController = nil
+        setupTableView()
+        refreshAllStops()
+    }
+
+    private func setupTableView() {
         tableView.sectionIndexColor = Colors.primaryText
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.cellLayoutMarginsFollowReadableWidth = false
-
-        navigationItem.searchController = nil
         tableView.contentInsetAdjustmentBehavior = .never
-
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
         // Set top of table view to align with scroll view
         tableView.contentOffset = .zero
-
     }
 
-    func sectionIndexesForBusStop() -> [String: [Place]] {
-
+    private func createSectionIndexesForBusStop() {
+        var currentChar: Character?
         var sectionIndexDictionary: [String: [Place]] = [:]
         var currBusStopArray: [Place] = []
 
         currentChar = allStops.first?.name.capitalized.first
 
         var numberBusStops: [Place] = {
-            guard let firstStop = allStops.first else { return [] }
-            return [firstStop]
+            if let firstStop = allStops.first {
+                return [firstStop]
+            } else {
+                return []
+            }
         }()
 
         if currentChar != nil {
@@ -97,12 +92,12 @@ class AllStopsTableViewController: UITableViewController {
             sectionIndexDictionary["#"] = numberBusStops
         }
 
-        return sectionIndexDictionary
-
+        sectionIndexes = sectionIndexDictionary
+        sortBusStopKeys()
     }
 
     /// Retrieves the keys from the sectionIndexDictionary
-    func sortedKeysForBusStops() -> [String] {
+    private func sortBusStopKeys() {
         // Don't include key '#'
         sortedKeys = Array(sectionIndexes.keys)
             .sorted()
@@ -112,39 +107,116 @@ class AllStopsTableViewController: UITableViewController {
             // Adding "#" to keys for bus stops that start with a number
             sortedKeys.append("#")
         }
-
-        return sortedKeys
     }
 
-    func setUpTableOnRetry() {
-        // Retry getting data from user defaults
-        self.allStops = SearchTableViewManager.shared.getAllStops()
-        // Set up table information
-        self.sectionIndexes = self.sectionIndexesForBusStop()
-        self.sortedKeys = self.sortedKeysForBusStops()
-
-        self.tableView.reloadData()
+    @objc private func backAction() {
+        navigationController?.popViewController(animated: true)
     }
 
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return sectionIndexes.count
+    private func setUpLoadingIndicator() {
+        loadingIndicator = LoadingIndicator()
+        if let loadingIndicator = loadingIndicator {
+            view.addSubview(loadingIndicator)
+            loadingIndicator.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+                make.width.height.equalTo(40)
+            }
+        }
     }
 
-    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return sortedKeys
+    private func getAllStops() -> Future<Response<[Place]>> {
+        return networking(Endpoint.getAllStops()).decode()
     }
 
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sortedKeys[section]
+    /* Get all bus stops and store in userDefaults */
+    private func refreshAllStops() {
+        setUpLoadingIndicator()
+        if let allBusStops = userDefaults.value(forKey: Constants.UserDefaults.allBusStops) as? Data,
+            var busStopArray = try? decoder.decode([Place].self, from: allBusStops) {
+            // Check if empty so that an empty array isn't returned
+            if !busStopArray.isEmpty {
+                // TODO: Move to backend
+                // Creating "fake" bus stop to remove Google Places central Collegetown location choice
+                let collegetownStop = Place(name: "Collegetown", latitude: 42.442558, longitude: -76.485336)
+                busStopArray.append(collegetownStop)
+                allStops = busStopArray
+            }
+            loadingIndicator?.removeFromSuperview()
+            loadingIndicator = nil
+            createSectionIndexesForBusStop()
+            tableView.reloadData()
+        } else {
+            getAllStops().observe { [weak self] result in
+                guard let `self` = self else { return }
+                DispatchQueue.main.async {
+                    switch result {
+                    case .value(var response):
+                        if !response.data.isEmpty {
+                            // Save bus stops in userDefaults
+                            do {
+                                let encodedObject = try JSONEncoder().encode(response.data)
+                                userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
+                            } catch let error {
+                                print(error)
+                            }
+                            let collegetownStop = Place(name: "Collegetown", latitude: 42.442558, longitude: -76.485336)
+                            response.data.append(collegetownStop)
+                            self.allStops = response.data
+                        }
+                    case .error(let error):
+                        print("AllStopsTableViewController.retryNetwork error:", error)
+                    }
+                    self.loadingIndicator?.removeFromSuperview()
+                    self.loadingIndicator = nil
+                    self.createSectionIndexesForBusStop()
+                    self.tableView.reloadData()
+                }
+            }
+        }
+
+    }
+}
+
+// MARK: DZNEmptyDataSetSource
+extension AllStopsTableViewController: DZNEmptyDataSetSource {
+
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        // If loading indicator is being shown, don't display image
+        return isLoading ? nil : #imageLiteral(resourceName: "serverDown")
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sectionIndexes[sortedKeys[section]]?.count ?? 0
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display description
+        if isLoading {
+            return nil
+        }
+        let title = Constants.EmptyStateMessages.couldntGetStops
+        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.metadataIcon])
     }
 
-    // MARK: - TableView Delegate
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        // If loading indicator is being shown, don't display button
+        if isLoading {
+            return nil
+        }
+        let title = Constants.Buttons.retry
+        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.tcatBlue])
+    }
+}
+
+// MARK: DZNEmptyDataSetDelegate
+extension AllStopsTableViewController: DZNEmptyDataSetDelegate {
+
+    func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
+        setUpLoadingIndicator()
+        tableView.reloadData()
+        refreshAllStops()
+    }
+}
+
+// MARK: - TableView Delegate
+extension AllStopsTableViewController {
+
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let inset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
         if cell.responds(to: #selector(setter: UITableViewCell.separatorInset)) {
@@ -185,83 +257,24 @@ class AllStopsTableViewController: UITableViewController {
             navigationController?.pushViewController(optionsVC, animated: true)
         }
     }
-
-    @objc func backAction() {
-        navigationController?.popViewController(animated: true)
-    }
 }
 
-// MARK: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate
-extension AllStopsTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-    func setUpLoadingIndicator() {
-        loadingIndicator = LoadingIndicator()
-        if let loadingIndicator = loadingIndicator {
-            view.addSubview(loadingIndicator)
-            loadingIndicator.snp.makeConstraints { (make) in
-                make.center.equalToSuperview()
-                make.width.height.equalTo(40)
-            }
-        }
+// MARK: - Table view data source
+extension AllStopsTableViewController {
+
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return sectionIndexes.count
     }
 
-    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
-        // If loading indicator is being shown, don't display image
-        return isLoading ? nil : #imageLiteral(resourceName: "serverDown")
+    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        return sortedKeys
     }
 
-    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        // If loading indicator is being shown, don't display description
-        if isLoading {
-            return nil
-        }
-        let title = Constants.EmptyStateMessages.couldntGetStops
-        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.metadataIcon])
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return sortedKeys[section]
     }
 
-    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
-        // If loading indicator is being shown, don't display button
-        if isLoading {
-            return nil
-        }
-        let title = Constants.Buttons.retry
-        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.tcatBlue])
-    }
-
-    func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
-        setUpLoadingIndicator()
-        tableView.reloadData()
-        retryNetwork {
-            self.loadingIndicator?.removeFromSuperview()
-            self.loadingIndicator = nil
-            self.setUpTableOnRetry()
-        }
-    }
-
-    private func getAllStops() -> Future<Response<[Place]>> {
-        return networking(Endpoint.getAllStops()).decode()
-    }
-
-    /* Get all bus stops and store in userDefaults */
-    func retryNetwork(completion: @escaping () -> Void) {
-        getAllStops().observe { [weak self] result in
-            guard self != nil else { return }
-            DispatchQueue.main.async {
-                switch result {
-                case .value(let response):
-                    if !response.data.isEmpty {
-                        do {
-                            let encodedObject = try JSONEncoder().encode(response.data)
-                            userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
-                        } catch let error {
-                            print(error)
-                        }
-                    }
-                    completion()
-                case .error(let error):
-                    print("AllStopsTableViewController.retryNetwork error:", error)
-                    completion()
-                }
-            }
-        }
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return sectionIndexes[sortedKeys[section]]?.count ?? 0
     }
 }

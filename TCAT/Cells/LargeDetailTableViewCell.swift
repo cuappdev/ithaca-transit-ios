@@ -81,7 +81,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         }
     }
 
-    func setupIconViewConstraints() {
+    private func setupIconViewConstraints() {
         let detailIconViewWidth = 114
         let titleLabelLeadingOffset = 6
 
@@ -174,7 +174,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         detailLabel.text = detailLabelText +  " • \(timeString)"
     }
 
-    @objc func chevronButtonPressed() {
+     @objc private func chevronButtonPressed() {
         if isExpanded {
             delegate?.collapseCells(on: self)
         } else {

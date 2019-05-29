@@ -14,8 +14,6 @@ class SmallDetailTableViewCell: UITableViewCell {
     private var titleLabel = UILabel()
 
     private var iconViewFrame: CGRect = CGRect()
-    private let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
-    private let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -38,7 +36,7 @@ class SmallDetailTableViewCell: UITableViewCell {
         setupIconViewConstraints()
     }
 
-    func formatTitleLabel(for direction: Direction) {
+    private func formatTitleLabel(for direction: Direction) {
         let titleLabelBoldFont: UIFont = .getFont(.semibold, size: 14)
 
         if direction.type == .arrive {
@@ -58,7 +56,7 @@ class SmallDetailTableViewCell: UITableViewCell {
         }
     }
 
-    func setupIconViewConstraints() {
+    private func setupIconViewConstraints() {
         let detailIconViewWidth = 114
         let titleLabelLeadingOffset = 6
 
@@ -72,7 +70,7 @@ class SmallDetailTableViewCell: UITableViewCell {
         }
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         let titleLabelTrailingInset = 20
         let titleLabelHeight = 20
 

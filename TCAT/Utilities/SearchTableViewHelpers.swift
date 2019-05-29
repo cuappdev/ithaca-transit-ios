@@ -28,36 +28,8 @@ enum SectionType {
 class SearchTableViewManager {
 
     static let shared = SearchTableViewManager()
-    private var allStops: [Place]?
 
     private init() {}
-
-    func getAllStops() -> [Place] {
-        if let stops = allStops {
-            // Check if not empty so that an empty array isn't returned
-            if !stops.isEmpty {
-                return stops
-            }
-        }
-        let stops = getAllBusStops()
-        allStops = stops
-        return stops
-    }
-
-    private func getAllBusStops() -> [Place] {
-        if let allBusStops = userDefaults.value(forKey: Constants.UserDefaults.allBusStops) as? Data,
-            var busStopArray = try? decoder.decode([Place].self, from: allBusStops) {
-            // Check if empty so that an empty array isn't returned
-            if !busStopArray.isEmpty {
-                // TODO: Move to backend
-                // Creating "fake" bus stop to remove Google Places central Collegetown location choice
-                let collegetownStop = Place(name: "Collegetown", latitude: 42.442558, longitude: -76.485336)
-                busStopArray.append(collegetownStop)
-                return busStopArray
-            }
-        }
-        return [Place]()
-    }
 
     func retrievePlaces(for key: String) -> [Place] {
         if key == Constants.UserDefaults.favorites {
@@ -151,41 +123,5 @@ class SearchTableViewManager {
             let payload = FavoriteAddedPayload(name: place.name)
             Analytics.shared.log(payload)
         }
-    }
-
-    func sectionIndexesForBusStop() -> [String: Int] {
-        var sectionIndexDictionary: [String: Int] = [:]
-        let allStops = SearchTableViewManager.shared.getAllStops()
-        var currentChar: Character = Character("+")
-        var currentIndex = 0
-        for busStop in allStops {
-            if let firstChar = busStop.name.capitalized.first {
-                if currentChar != firstChar {
-                    sectionIndexDictionary["\(firstChar)"] = currentIndex
-                    currentChar = firstChar
-                }
-                currentIndex += 1
-            }
-        }
-        return sectionIndexDictionary
-    }
-
-}
-
-/// MARK: DZNEmptyDataSet DataSource
-
-// To be eventuallt removed and replaced with recent searches
-extension SearchResultsTableViewController: DZNEmptyDataSetSource {
-    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
-        return -80
-    }
-
-    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
-        return #imageLiteral(resourceName: "emptyPin")
-    }
-
-    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        return NSAttributedString(string: Constants.EmptyStateMessages.locationNotFound,
-                                  attributes: [.foregroundColor: Colors.metadataIcon])
     }
 }

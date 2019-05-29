@@ -77,7 +77,7 @@ class HomeOptionsCardViewController: UIViewController {
                 recentLocations = Array(recentLocations.prefix(maxRecentsCount))
             }
             if !isNetworkDown {
-                sections = createSections()
+                createDefaultSections()
             }
         }
     }
@@ -87,7 +87,7 @@ class HomeOptionsCardViewController: UIViewController {
                 favorites = Array(favorites.prefix(maxFavoritesCount))
             }
             if !isNetworkDown {
-                sections = createSections()
+                createDefaultSections()
             }
         }
     }
@@ -111,7 +111,7 @@ class HomeOptionsCardViewController: UIViewController {
         updatePlaces()
     }
 
-    func setupTableView() {
+    private func setupTableView() {
         tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.delegate = self
@@ -122,11 +122,11 @@ class HomeOptionsCardViewController: UIViewController {
         tableView.showsVerticalScrollIndicator = false
         tableView.rowHeight = tableViewRowHeight
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
-        tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.seeAllStopsIdentifier)
+        tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.generalCellIdentifier)
         view.addSubview(tableView)
     }
 
-    func setupSearchBar() {
+    private func setupSearchBar() {
         searchBar = UISearchBar()
         searchBar.placeholder = Constants.General.searchPlaceholder
         searchBar.delegate = self
@@ -147,7 +147,7 @@ class HomeOptionsCardViewController: UIViewController {
         view.addSubview(searchBar)
     }
 
-    func setupInfoButton() {
+    private func setupInfoButton() {
         infoButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 0)
         infoButton.contentVerticalAlignment = .center
         infoButton.tintColor = .black
@@ -155,13 +155,13 @@ class HomeOptionsCardViewController: UIViewController {
         view.addSubview(infoButton)
     }
 
-    func setupSearchBarSeparator() {
+    private func setupSearchBarSeparator() {
         searchBarSeparator = UIView()
         searchBarSeparator.backgroundColor = Colors.backgroundWash
         view.addSubview(searchBarSeparator)
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         let infoButtonSize = CGSize.init(width: 30, height: 38)
         let infoButtonTrailinginset = 16
 
@@ -190,10 +190,10 @@ class HomeOptionsCardViewController: UIViewController {
         }
     }
 
-    func createSections() -> [Section] {
+    private func createDefaultSections() {
         var allSections: [Section] = []
         let recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
-        let seeAllStops = Place(name: Constants.Cells.seeAllStopsIdentifier)
+        let seeAllStops = Place(name: Constants.Cells.generalCellIdentifier)
         let seeAllStopsSection = Section(type: .seeAllStops, items: [seeAllStops])
         var favoritesSection = Section(type: .favorites, items: favorites)
         if favoritesSection.items.isEmpty {
@@ -206,10 +206,10 @@ class HomeOptionsCardViewController: UIViewController {
         allSections.append(favoritesSection)
         allSections.append(recentSearchesSection)
         allSections.append(seeAllStopsSection)
-        return allSections.filter { !$0.items.isEmpty || $0.type == .seeAllStops }
+        sections = allSections.filter { !$0.items.isEmpty || $0.type == .seeAllStops }
     }
 
-    func tableViewContentHeight() -> CGFloat {
+    private func tableViewContentHeight() -> CGFloat {
         return sections.reduce(0) { (result, section) -> CGFloat in
             var sectionHeaderHeight: CGFloat = 0
             switch section.type {
@@ -229,12 +229,12 @@ class HomeOptionsCardViewController: UIViewController {
         } else { return collapsedHeight }
     }
 
-    func updatePlaces() {
+    private func updatePlaces() {
         recentLocations = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
         favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
     }
 
-    func animateInInfoButton() {
+    private func animateInInfoButton() {
         UIView.animate(withDuration: infoButtonAnimationDuration) {
             self.infoButton.alpha = 1
 
@@ -248,7 +248,7 @@ class HomeOptionsCardViewController: UIViewController {
         }
     }
 
-    func animateOutInfoButton() {
+    private func animateOutInfoButton() {
         UIView.animate(withDuration: infoButtonAnimationDuration) {
             self.infoButton.alpha = 0
             self.searchBar.snp.remakeConstraints { (make) in
@@ -265,21 +265,21 @@ class HomeOptionsCardViewController: UIViewController {
         return networking(Endpoint.getSearchResults(searchText: searchText)).decode()
     }
 
-    @objc func presentFavoritesTVC(sender: UIButton? = nil) {
+    @objc private func presentFavoritesTVC(sender: UIButton? = nil) {
         let favoritesTVC = FavoritesTableViewController()
         let navController = CustomNavigationController(rootViewController: favoritesTVC)
         present(navController, animated: true, completion: nil)
     }
 
     /* Open information screen */
-    @objc func openInformationScreen() {
+    @objc private func openInformationScreen() {
         let informationViewController = InformationViewController()
         let navigationVC = CustomNavigationController(rootViewController: informationViewController)
         present(navigationVC, animated: true)
     }
 
     /* Get Search Results */
-    @objc func getPlaces(timer: Timer) {
+    @objc private func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if !searchText.isEmpty {
             getSearchResults(searchText: searchText).observe { [weak self] result in
@@ -295,17 +295,17 @@ class HomeOptionsCardViewController: UIViewController {
                 }
             }
         } else {
-            sections = createSections()
+            createDefaultSections()
         }
     }
 
-    @objc func keyboardWillShow(notification: NSNotification) {
+    @objc private func keyboardWillShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
             keyboardHeight = keyboardSize.height
         }
     }
 
-    @objc func keyboardWillHide(notification: NSNotification) {
+    @objc private func keyboardWillHide(notification: NSNotification) {
         keyboardHeight = 0
     }
 }
@@ -343,7 +343,7 @@ extension HomeOptionsCardViewController {
         )
 
         updatePlaces()
-        sections = createSections()
+        createDefaultSections()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -364,7 +364,7 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
         searchBar.endEditing(true)
         searchBar.text = nil
         animateInInfoButton()
-        sections = createSections()
+        createDefaultSections()
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -389,7 +389,7 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
         if view.frame.height == collapsedHeight {
             if let searchText = searchBar.text,
                 searchText.isEmpty {
-                sections = createSections()
+                createDefaultSections()
             } else {
                 tableView.reloadData()
                 DispatchQueue.main.async {
@@ -418,7 +418,7 @@ extension HomeOptionsCardViewController: HeaderViewDelegate {
     func clearRecentSearches() {
         SearchTableViewManager.shared.deleteAllRecents()
         recentLocations = []
-        sections = createSections()
+        createDefaultSections()
     }
 }
 
@@ -432,7 +432,7 @@ extension HomeOptionsCardViewController: HomeMapViewDelegate {
             sections = []
         case .cellular, .wifi:
             isNetworkDown = false
-            sections = createSections()
+            createDefaultSections()
             searchBar.isUserInteractionEnabled = true
         }
     }
@@ -468,7 +468,7 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if sections[indexPath.section].type == .seeAllStops {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.seeAllStopsIdentifier) as! GeneralTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier) as! GeneralTableViewCell
             cell.configure(for: .seeAllStops)
             return cell
         }
@@ -550,11 +550,11 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
             case .favorites:
                 let place = sections[indexPath.section].items[indexPath.row]
                 favorites = SearchTableViewManager.shared.deleteFavorite(favorite: place, allFavorites: favorites)
-                sections = createSections()
+                createDefaultSections()
             case .recentSearches:
                 let place = sections[indexPath.section].items[indexPath.row]
                 recentLocations = SearchTableViewManager.shared.deleteRecent(recent: place, allRecents: recentLocations)
-                sections = createSections()
+                createDefaultSections()
             default: break
             }
 
@@ -571,7 +571,6 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
 
         if sections[indexPath.section].type == .seeAllStops {
             didSelectAllStops = true
-            allStopsTableViewConroller.allStops = SearchTableViewManager.shared.getAllStops()
         } else {
             let place = sections[indexPath.section].items[indexPath.row]
             if place.name == Constants.General.firstFavorite {

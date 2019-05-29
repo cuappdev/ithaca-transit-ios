@@ -15,22 +15,20 @@ class FavoritesTableViewController: UIViewController {
     private var searchBar = UISearchBar()
     private var tableView: UITableView!
 
-    private var fromOnboarding = false
     private var timer: Timer?
+    private let networking: Networking = URLSession.shared.request
     private var resultsSection = Section(type: .searchResults, items: [Place]()) {
         didSet {
             tableView.reloadData()
         }
     }
 
-    private let networking: Networking = URLSession.shared.request
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = Colors.white
-        title = fromOnboarding ? Constants.Titles.favorites : Constants.Titles.favorite
-        let systemItem: UIBarButtonItem.SystemItem = fromOnboarding ? .done : .cancel
+        title = Constants.Titles.favorite
+        let systemItem: UIBarButtonItem.SystemItem = .cancel
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem,
                                                             target: self,
                                                             action: #selector(dismissVC))
@@ -42,7 +40,7 @@ class FavoritesTableViewController: UIViewController {
         setupConstraints()
     }
 
-    func setupTableView() {
+    private func setupTableView() {
         tableView = UITableView(frame: .zero)
         tableView.delegate = self
         tableView.dataSource = self
@@ -53,16 +51,11 @@ class FavoritesTableViewController: UIViewController {
         view.addSubview(tableView)
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -80,29 +73,8 @@ class FavoritesTableViewController: UIViewController {
         return networking(Endpoint.getSearchResults(searchText: searchText)).decode()
     }
 
-    @objc func dismissVC() {
-        if fromOnboarding {
-            let rootVC = HomeMapViewController()
-            let desiredViewController = CustomNavigationController(rootViewController: rootVC)
-
-            if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-                let window = appDelegate.window,
-                let snapshot = window.snapshotView(afterScreenUpdates: true) {
-                    desiredViewController.view.addSubview(snapshot)
-
-                    appDelegate.window?.rootViewController = desiredViewController
-                    userDefaults.setValue(true, forKey: Constants.UserDefaults.onboardingShown)
-
-                    UIView.animate(withDuration: 0.5, animations: {
-                        snapshot.layer.opacity = 0
-                        snapshot.layer.transform = CATransform3DMakeScale(1.5, 1.5, 1.5)
-                    }, completion: { _ in
-                        snapshot.removeFromSuperview()
-                    })
-                }
-        } else {
-            dismiss(animated: true)
-        }
+    @objc private func dismissVC() {
+        dismiss(animated: true)
     }
 }
 
