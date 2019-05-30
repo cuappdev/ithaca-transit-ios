@@ -428,7 +428,7 @@ extension HomeOptionsCardViewController: HomeMapViewDelegate {
         switch connection {
         case .none:
             isNetworkDown = true
-            searchBar.isUserInteractionEnabled = false
+//            searchBar.isUserInteractionEnabled = false
             sections = []
         case .cellular, .wifi:
             isNetworkDown = false

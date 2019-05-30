@@ -12,19 +12,6 @@ import DZNEmptyDataSet
 let encoder = JSONEncoder()
 let decoder = JSONDecoder()
 
-struct Section {
-    let type: SectionType
-    var items: [Place]
-}
-
-enum SectionType {
-    case recentSearches
-    case seeAllStops
-    case searchResults
-    case currentLocation
-    case favorites
-}
-
 class SearchTableViewManager {
 
     static let shared = SearchTableViewManager()
@@ -47,17 +34,9 @@ class SearchTableViewManager {
         return [Place]()
     }
 
-    //returns the rest so we don't have to re-unarchive it
+    // Returns the rest so we don't have to re-unarchive it
     func deleteFavorite(favorite: Place, allFavorites: [Place]) -> [Place] {
-        var newFavoritesList: [Place] = []
-        for item in allFavorites {
-            if favorite.isEqual(item) {
-                continue
-            } else {
-                newFavoritesList.append(item)
-            }
-        }
-
+        let newFavoritesList = allFavorites.filter { !favorite.isEqual($0) }
         do {
             let data = try encoder.encode(newFavoritesList)
             sharedUserDefaults?.set(data, forKey: Constants.UserDefaults.favorites)

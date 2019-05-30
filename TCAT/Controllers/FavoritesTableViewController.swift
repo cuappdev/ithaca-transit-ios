@@ -17,7 +17,7 @@ class FavoritesTableViewController: UIViewController {
 
     private var timer: Timer?
     private let networking: Networking = URLSession.shared.request
-    private var resultsSection = Section(type: .searchResults, items: [Place]()) {
+    private var resultsSection = Section.searchResults(items: []) {
         didSet {
             tableView.reloadData()
         }
@@ -81,12 +81,14 @@ class FavoritesTableViewController: UIViewController {
 // MARK: - Table view data source
 extension FavoritesTableViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return resultsSection.items.count
+        return resultsSection.getItems().count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as! PlaceTableViewCell
-        cell.configure(for: resultsSection.items[indexPath.row])
+        if let place = resultsSection.getItem(at: indexPath.row) {
+            cell.configure(for: place)
+        }
         return cell
     }
 }
@@ -117,28 +119,28 @@ extension FavoritesTableViewController: UITableViewDelegate {
         let cell = tableView.cellForRow(at: indexPath)
         cell?.accessoryView = UIActivityIndicatorView()
         tableView.deselectRow(at: indexPath, animated: true)
-        let place = resultsSection.items[indexPath.row]
-
-        if place.type == .busStop {
-            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
-            dismissVC()
-        } else {
-            // Fetch coordinates and store
-            CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
-                if error != nil {
-                    print("Unable to get coordinates to save favorite.")
-                    cell?.accessoryView = nil
-                    let title = Constants.Alerts.PlacesFailure.title
-                    let message = Constants.Alerts.PlacesFailure.message
-                    let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-                    let done = UIAlertAction(title: Constants.Alerts.PlacesFailure.action, style: .default)
-                    alertController.addAction(done)
-                    self.present(alertController, animated: true, completion: nil)
-                } else {
-                    place.latitude = latitude
-                    place.longitude = longitude
-                    SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
-                    self.dismissVC()
+        if let place = resultsSection.getItem(at: indexPath.row) {
+            if place.type == .busStop {
+                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
+                dismissVC()
+            } else {
+                // Fetch coordinates and store
+                CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
+                    if error != nil {
+                        print("Unable to get coordinates to save favorite.")
+                        cell?.accessoryView = nil
+                        let title = Constants.Alerts.PlacesFailure.title
+                        let message = Constants.Alerts.PlacesFailure.message
+                        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                        let done = UIAlertAction(title: Constants.Alerts.PlacesFailure.action, style: .default)
+                        alertController.addAction(done)
+                        self.present(alertController, animated: true, completion: nil)
+                    } else {
+                        place.latitude = latitude
+                        place.longitude = longitude
+                        SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
+                        self.dismissVC()
+                    }
                 }
             }
         }
@@ -182,21 +184,21 @@ extension FavoritesTableViewController: UISearchBarDelegate {
                     switch result {
                     case .value(let response):
                         if response.success {
-                            self.resultsSection = Section(type: .searchResults, items: response.data)
-                            self.tableView.contentOffset = .zero
+                            self.resultsSection = Section.searchResults(items: [])
+//                            self.tableView.contentOffset = .zero
                         } else {
-                            print("[FavoritesTableViewController] success:", response.success)
-                            self.resultsSection = Section(type: .searchResults, items: [Place]())
+                            print("[FavoritesTableViewController] success: false")
+                            self.resultsSection = Section.searchResults(items: [])
                         }
                     case .error(let error):
                         print("[FavoritesTableViewController] getSearchResults Error: \(error.localizedDescription)")
-                        self.resultsSection = Section(type: .searchResults, items: [Place]())
+                        self.resultsSection = Section.recentSearches(items: [])
 
                     }
                 }
             }
         } else {
-            resultsSection = Section(type: .searchResults, items: [Place]())
+            resultsSection = Section.searchResults(items: [])
         }
     }
 

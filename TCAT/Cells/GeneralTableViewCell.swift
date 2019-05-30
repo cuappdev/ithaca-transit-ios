@@ -44,7 +44,7 @@ class GeneralTableViewCell: UITableViewCell {
         }
     }
 
-    func configure(for type: SectionType) {
+    func configure(for type: Section) {
         switch type {
         case .seeAllStops:
             titleLabel.text = Constants.General.seeAllStops

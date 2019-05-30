@@ -694,7 +694,7 @@ class RouteOptionsViewController: UIViewController {
                 banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
                 banner?.autoDismiss = false
                 banner?.show(queuePosition: .front, bannerPosition: .top, on: navigationController)
-                setUserInteraction(to: false)
+//                setUserInteraction(to: false)
             case .cellular, .wifi:
                 setUserInteraction(to: true)
             }

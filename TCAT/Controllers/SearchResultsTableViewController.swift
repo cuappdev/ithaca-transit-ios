@@ -30,11 +30,9 @@ class SearchResultsTableViewController: UITableViewController {
     weak var searchBarCancelDelegate: SearchBarCancelDelegate?
     var shouldShowCurrentLocation = true
 
-    private var currentLocationSection: Section!
     private var favorites: [Place] = []
     private var favoritesSection: Section!
     private var initialTableViewIndexMinY: CGFloat!
-    private var isKeyboardVisible = false
     private let locationManager = CLLocationManager()
     private let networking: Networking = URLSession.shared.request
     private var recentLocations: [Place] = []
@@ -58,16 +56,6 @@ class SearchResultsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Subscribe to Keyboard Notifications
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillShow),
-                                               name: UIResponder.keyboardWillShowNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillHide),
-                                               name: UIResponder.keyboardWillHideNotification,
-                                               object: nil)
-
         // Set Up TableView
         tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.generalCellIdentifier)
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
@@ -88,15 +76,12 @@ class SearchResultsTableViewController: UITableViewController {
         favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
 
         // Set Up Sections For TableView
-        seeAllStopsSection = Section(type: .seeAllStops, items: [])
+        seeAllStopsSection = Section.seeAllStops
         recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
         favoritesSection = Section(type: .favorites, items: favorites)
         searchResultsSection = Section(type: .searchResults, items: [])
-        if let currentLocation = currentLocation {
-            currentLocationSection = Section(type: .currentLocation, items: [currentLocation])
-        }
 
-        sections = createSections()
+        createDefaultSections()
         searchBar?.becomeFirstResponder()
         searchBar?.tintColor = Colors.black
 
@@ -104,7 +89,6 @@ class SearchResultsTableViewController: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        searchBar?.sizeToFit()
         searchBar?.tintColor = Colors.primaryText
     }
 
@@ -119,15 +103,17 @@ class SearchResultsTableViewController: UITableViewController {
         super.didReceiveMemoryWarning()
     }
 
-    private func createSections() -> [Section] {
+    private func createDefaultSections() {
         var allSections: [Section] = []
-        if currentLocationSection != nil {
-            allSections.append(currentLocationSection)
+        if let currentLocation = currentLocation {
+            allSections.append(Section(type: .currentLocation, items: [currentLocation]))
+        } else {
+            allSections.append(Section(type: .currentLocation, items: []))
         }
         allSections.append(favoritesSection)
         allSections.append(recentSearchesSection)
         allSections.append(seeAllStopsSection)
-        return allSections.filter { !$0.items.isEmpty }
+        sections = allSections.filter { !$0.items.isEmpty }
     }
 
     private func showLocationDeniedAlert() {
@@ -153,7 +139,7 @@ class SearchResultsTableViewController: UITableViewController {
         return networking(Endpoint.getSearchResults(searchText: searchText)).decode()
     }
 
-    @objc func getPlaces(timer: Timer) {
+    @objc private func getPlaces(timer: Timer) {
         let searchText = (timer.userInfo as! [String: String])["searchText"]!
         if !searchText.isEmpty {
             getSearchResults(searchText: searchText).observe { [weak self] result in
@@ -171,17 +157,8 @@ class SearchResultsTableViewController: UITableViewController {
                 }
             }
         } else {
-            sections = createSections()
+            createDefaultSections()
         }
-    }
-
-    /* Keyboard Functions */
-    @objc private func keyboardWillShow(_ notification: Notification) {
-        isKeyboardVisible = true
-    }
-
-    @objc private func keyboardWillHide(_ notification: Notification) {
-        isKeyboardVisible = false
     }
 }
 
@@ -331,11 +308,10 @@ extension SearchResultsTableViewController: UnwindAllStopsTVCDelegate {
 extension SearchResultsTableViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
-            let currentLocationPlace = Place(name: Constants.General.currentLocation,
+            currentLocation = Place(name: Constants.General.currentLocation,
                                              latitude: location.coordinate.latitude,
                                              longitude: location.coordinate.longitude)
-            currentLocationSection = Section(type: .currentLocation, items: [currentLocationPlace])
-            sections = createSections()
+            createDefaultSections()
         }
     }
 
@@ -343,9 +319,8 @@ extension SearchResultsTableViewController: CLLocationManagerDelegate {
         print("SearchResultsTableVC CLLocationManager didFailWithError: \(error)")
         // This means they dont have location services enabled. We catch this.
         if error._code == CLError.denied.rawValue {
-            let currentLocationPlace = Place(name: Constants.General.currentLocation, latitude: 0.0, longitude: 0.0)
-            currentLocationSection = Section(type: .currentLocation, items: [currentLocationPlace])
-            sections = createSections()
+            currentLocation = nil
+            createDefaultSections()
         }
     }
 }

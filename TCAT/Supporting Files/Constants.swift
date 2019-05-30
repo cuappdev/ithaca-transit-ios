@@ -100,9 +100,6 @@ struct Constants {
 
         // Twitter screen name
         static let twitterHandle = "IthacaTransit"
-
-        /// Link to Google Forms for Feedback
-        // static let feedbackLink = "https://goo.gl/forms/jYejUtVccVQ3UHH12"
     }
 
     /// Banner titles
