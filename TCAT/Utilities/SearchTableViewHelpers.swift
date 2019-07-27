@@ -12,11 +12,9 @@ import DZNEmptyDataSet
 let encoder = JSONEncoder()
 let decoder = JSONDecoder()
 
-class SearchTableViewManager {
+class Global {
 
-    static let shared = SearchTableViewManager()
-
-    private init() {}
+    static let shared = Global()
 
     func retrievePlaces(for key: String) -> [Place] {
         if key == Constants.UserDefaults.favorites {

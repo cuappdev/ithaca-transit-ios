@@ -70,7 +70,7 @@ class LargeDetailTableViewCell: UITableViewCell {
 
         titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(labelInset)
-            make.trailing.equalTo(chevron.snp.leading).inset(titleLabelTrailingInset)
+            make.trailing.equalTo(chevron.snp.leading).offset(-titleLabelTrailingInset)
             make.bottom.equalTo(detailLabel.snp.top).offset(-labelSpacing)
         }
 

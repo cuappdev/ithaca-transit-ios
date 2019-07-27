@@ -13,7 +13,7 @@ class AppShortcuts {
     static let shared = AppShortcuts()
 
     func updateShortcutItems() {
-        let favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
+        let favorites = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
         let shortcutItems: [UIApplicationShortcutItem] = favorites.compactMap { (place) -> UIApplicationShortcutItem? in
             do {
                 let data = try encoder.encode(place)

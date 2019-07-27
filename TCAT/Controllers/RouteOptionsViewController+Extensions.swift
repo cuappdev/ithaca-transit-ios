@@ -70,7 +70,7 @@ extension RouteOptionsViewController: DestinationDelegate {
         }
 
         if place.name != Constants.General.currentLocation && place.name != Constants.General.firstFavorite {
-            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
+            Global.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
         }
 
         hideSearchBar()

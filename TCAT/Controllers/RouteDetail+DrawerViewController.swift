@@ -196,7 +196,7 @@ class RouteDetailDrawerViewController: UIViewController {
                             }
 
                             self.tableView.reloadData()
-                            self.summaryView.configure(for: self.route)
+                            self.summaryView.updateTimes(for: self.route)
                         } else {
                             print("getDelays success: false")
                         }

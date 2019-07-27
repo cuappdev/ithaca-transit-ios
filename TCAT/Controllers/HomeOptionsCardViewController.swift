@@ -192,32 +192,30 @@ class HomeOptionsCardViewController: UIViewController {
 
     private func createDefaultSections() {
         var allSections: [Section] = []
-        let recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
-        let seeAllStops = Place(name: Constants.Cells.generalCellIdentifier)
-        let seeAllStopsSection = Section(type: .seeAllStops, items: [seeAllStops])
-        var favoritesSection = Section(type: .favorites, items: favorites)
-        if favoritesSection.items.isEmpty {
+        let recentSearchesSection = Section.recentSearches(items: recentLocations)
+        var favoritesSection = Section.favorites(items: favorites)
+        if favoritesSection.isEmpty {
             let addFavorites = Place(
                 name: Constants.General.firstFavorite,
                 placeDescription: Constants.General.tapHere)
             addFavorites.type = .busStop // Special exception to make pin blue for favorite!
-            favoritesSection = Section(type: .favorites, items: [addFavorites])
+            favoritesSection = Section.favorites(items: [addFavorites])
         }
         allSections.append(favoritesSection)
         allSections.append(recentSearchesSection)
-        allSections.append(seeAllStopsSection)
-        sections = allSections.filter { !$0.items.isEmpty || $0.type == .seeAllStops }
+        allSections.append(Section.seeAllStops)
+        sections = allSections.filter { !$0.isEmpty || $0 == Section.seeAllStops }
     }
 
     private func tableViewContentHeight() -> CGFloat {
         return sections.reduce(0) { (result, section) -> CGFloat in
             var sectionHeaderHeight: CGFloat = 0
-            switch section.type {
+            switch section {
             case .favorites, .recentSearches: sectionHeaderHeight = headerHeight
             case .seeAllStops: sectionHeaderHeight = HeaderView.separatorViewHeight
             default: break
             }
-            return sectionHeaderHeight + tableViewRowHeight * CGFloat(section.items.count) + result
+            return sectionHeaderHeight + tableViewRowHeight * CGFloat(section.getItems().count) + result
         }
     }
 
@@ -230,8 +228,8 @@ class HomeOptionsCardViewController: UIViewController {
     }
 
     private func updatePlaces() {
-        recentLocations = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
-        favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
+        recentLocations = Global.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
+        favorites = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
     }
 
     private func animateInInfoButton() {
@@ -287,7 +285,7 @@ class HomeOptionsCardViewController: UIViewController {
                 DispatchQueue.main.async {
                     switch result {
                     case .value(let response):
-                        self.searchResultsSection = Section(type: .searchResults, items: response.data)
+                        self.searchResultsSection = Section.searchResults(items: response.data)
                         self.tableView.contentOffset = .zero
                         self.sections = [self.searchResultsSection]
                     default: break
@@ -416,7 +414,7 @@ extension HomeOptionsCardViewController: HeaderViewDelegate {
     }
 
     func clearRecentSearches() {
-        SearchTableViewManager.shared.deleteAllRecents()
+        Global.shared.deleteAllRecents()
         recentLocations = []
         createDefaultSections()
     }
@@ -457,17 +455,17 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch sections[section].type {
+        switch sections[section] {
         case .seeAllStops: return 1
         case .recentSearches: return recentLocations.count
         case .favorites: return favorites.isEmpty ? 1 : favorites.count
-        case .searchResults: return sections[section].items.count
+        case .searchResults: return sections[section].getItems().count
         default: return 0
         }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if sections[indexPath.section].type == .seeAllStops {
+        if sections[indexPath.section] == .seeAllStops {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier) as! GeneralTableViewCell
             cell.configure(for: .seeAllStops)
             return cell
@@ -475,7 +473,7 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
             // Favorites (including Add First Favorite!), Recent Searches
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
-            cell.configure(for: sections[indexPath.section].items[indexPath.row])
+            cell.configure(for: sections[indexPath.section].getItems()[indexPath.row])
             return cell
         }
     }
@@ -503,7 +501,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        switch sections[section].type {
+        switch sections[section] {
         case .favorites, .recentSearches: return headerHeight
         case .seeAllStops: return HeaderView.separatorViewHeight
         default: return 0
@@ -513,7 +511,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = HeaderView()
 
-        switch sections[section].type {
+        switch sections[section] {
         case .recentSearches:
             header.setupView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear, separatorVisible: true)
             header.headerViewDelegate = self
@@ -532,9 +530,9 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         let section = sections[indexPath.section]
-        switch section.type {
+        switch section {
         case .favorites:
-            if !section.items.isEmpty, section.items[0].name != Constants.General.firstFavorite {
+            if !section.isEmpty, section.getItems()[0].name != Constants.General.firstFavorite {
                 return .delete
             } else {
                 return .none
@@ -546,14 +544,14 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            switch sections[indexPath.section].type {
+            switch sections[indexPath.section] {
             case .favorites:
-                let place = sections[indexPath.section].items[indexPath.row]
-                favorites = SearchTableViewManager.shared.deleteFavorite(favorite: place, allFavorites: favorites)
+                let place = sections[indexPath.section].getItems()[indexPath.row]
+                favorites = Global.shared.deleteFavorite(favorite: place, allFavorites: favorites)
                 createDefaultSections()
             case .recentSearches:
-                let place = sections[indexPath.section].items[indexPath.row]
-                recentLocations = SearchTableViewManager.shared.deleteRecent(recent: place, allRecents: recentLocations)
+                let place = sections[indexPath.section].getItems()[indexPath.row]
+                recentLocations = Global.shared.deleteRecent(recent: place, allRecents: recentLocations)
                 createDefaultSections()
             default: break
             }
@@ -569,16 +567,16 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         var didSelectAllStops = false
         var shouldPushViewController = true
 
-        if sections[indexPath.section].type == .seeAllStops {
+        if sections[indexPath.section] == .seeAllStops {
             didSelectAllStops = true
         } else {
-            let place = sections[indexPath.section].items[indexPath.row]
+            let place = sections[indexPath.section].getItems()[indexPath.row]
             if place.name == Constants.General.firstFavorite {
                 shouldPushViewController = false
                 presentFavoritesTVC()
             } else {
                 routeOptionsViewController.searchTo = place
-                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
+                Global.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
                 routeOptionsViewController.didSelectPlace(place: place)
             }
         }

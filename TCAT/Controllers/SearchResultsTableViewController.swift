@@ -72,14 +72,14 @@ class SearchResultsTableViewController: UITableViewController {
         locationManager.delegate = self
 
         // Fetch RecentLocation and Favorites
-        recentLocations = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
-        favorites = SearchTableViewManager.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
+        recentLocations = Global.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
+        favorites = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
 
         // Set Up Sections For TableView
         seeAllStopsSection = Section.seeAllStops
-        recentSearchesSection = Section(type: .recentSearches, items: recentLocations)
-        favoritesSection = Section(type: .favorites, items: favorites)
-        searchResultsSection = Section(type: .searchResults, items: [])
+        recentSearchesSection = Section.recentSearches(items: recentLocations)
+        favoritesSection = Section.favorites(items: favorites)
+        searchResultsSection = Section.searchResults(items: [])
 
         createDefaultSections()
         searchBar?.becomeFirstResponder()
@@ -99,21 +99,13 @@ class SearchResultsTableViewController: UITableViewController {
         }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-
     private func createDefaultSections() {
-        var allSections: [Section] = []
-        if let currentLocation = currentLocation {
-            allSections.append(Section(type: .currentLocation, items: [currentLocation]))
-        } else {
-            allSections.append(Section(type: .currentLocation, items: []))
-        }
-        allSections.append(favoritesSection)
-        allSections.append(recentSearchesSection)
-        allSections.append(seeAllStopsSection)
-        sections = allSections.filter { !$0.items.isEmpty }
+        sections = [
+            Section.currentLocation(location: currentLocation),
+            favoritesSection,
+            recentSearchesSection,
+            seeAllStopsSection
+            ].filter { !$0.isEmpty }
     }
 
     private func showLocationDeniedAlert() {
@@ -147,8 +139,8 @@ class SearchResultsTableViewController: UITableViewController {
                 DispatchQueue.main.async {
                     switch result {
                     case .value(let response):
-                        self.searchResultsSection = Section(type: .searchResults, items: response.data)
-                        self.sections = self.searchResultsSection.items.isEmpty ? [] : [self.searchResultsSection]
+                        self.searchResultsSection = Section.searchResults(items: response.data)
+                        self.sections = self.searchResultsSection.isEmpty ? [] : [self.searchResultsSection]
                         if !self.sections.isEmpty {
                             self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
                         }
@@ -170,25 +162,25 @@ extension SearchResultsTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch sections[section].type {
+        switch sections[section] {
         case .recentSearches:
             return recentLocations.count
         case .favorites:
             return favorites.count
         default:
-            return sections[section].items.count
+            return sections[section].getItems().count
         }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch sections[indexPath.section].type {
+        switch sections[indexPath.section] {
         case .currentLocation, .seeAllStops:
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier) as! GeneralTableViewCell
-            cell.configure(for: sections[indexPath.section].type)
+            cell.configure(for: sections[indexPath.section])
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
-            cell.configure(for: sections[indexPath.section].items[indexPath.row])
+            cell.configure(for: sections[indexPath.section].getItems()[indexPath.row])
             return cell
         }
     }
@@ -200,7 +192,7 @@ extension SearchResultsTableViewController {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = HeaderView()
 
-        switch sections[section].type {
+        switch sections[section] {
         case .recentSearches:
             header.setupView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear)
         case .favorites:
@@ -219,7 +211,7 @@ extension SearchResultsTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        switch sections[section].type {
+        switch sections[section] {
         case .favorites, .recentSearches: return 50
         default: return 24
         }
@@ -233,11 +225,11 @@ extension SearchResultsTableViewController {
         var didSelectAllStops = false
         let allStopsTVC = AllStopsTableViewController()
 
-        if sections[indexPath.section].type == .seeAllStops {
+        if sections[indexPath.section] == .seeAllStops {
             didSelectAllStops = true
             allStopsTVC.unwindAllStopsTVCDelegate = self
         } else {
-            let place = sections[indexPath.section].items[indexPath.row]
+            let place = sections[indexPath.section].getItems()[indexPath.row]
             if place.latitude == 0.0 && place.longitude == 0.0 {
                 showLocationDeniedAlert()
                 return

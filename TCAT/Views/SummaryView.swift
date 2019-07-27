@@ -103,7 +103,6 @@ class SummaryView: UIView {
 
         mainLabel.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
-            make.height.equalTo(mainLabel.intrinsicContentSize.height)
         }
 
         secondaryLabel.snp.makeConstraints { make in
@@ -195,6 +194,14 @@ class SummaryView: UIView {
         }
 
         secondaryLabel.text = "Trip Duration: \(route.totalDuration) minute\(route.totalDuration == 1 ? "" : "s")"
+
+        mainLabel.snp.makeConstraints { make in
+            make.height.equalTo(mainLabel.text?.heightWithConstrainedWidth(width: UIScreen.main.bounds.width - 136, font: mainLabel.font) ?? 0)
+        }
+    }
+
+    func updateTimes(for route: Route) {
+
     }
 
     /// Add and place bus icons.
@@ -232,7 +239,7 @@ class SummaryView: UIView {
             // Place up to 2 bus icons. This will not support more buses without changes
         else {
 //            // Adjust initial variables
-//            let exampleBusIcon = BusIcon(type: .directionSmall, number: 0)
+            let exampleBusIcon = BusIcon(type: .directionSmall, number: 0)
 //            iconCenter.y = tabInsetHeight + safeAreaCenterY - (spacing / 4) - exampleBusIcon.frame.height
 //
 //            for (index, route) in busRoutes.enumerated() {

@@ -121,7 +121,7 @@ extension FavoritesTableViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         if let place = resultsSection.getItem(at: indexPath.row) {
             if place.type == .busStop {
-                SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
+                Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
                 dismissVC()
             } else {
                 // Fetch coordinates and store
@@ -138,7 +138,7 @@ extension FavoritesTableViewController: UITableViewDelegate {
                     } else {
                         place.latitude = latitude
                         place.longitude = longitude
-                        SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
+                        Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
                         self.dismissVC()
                     }
                 }
