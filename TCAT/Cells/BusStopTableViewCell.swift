@@ -14,6 +14,7 @@ class BusStopTableViewCell: UITableViewCell {
     private let connectorTop = UIView()
     private let statusCircle = Circle(size: .small, style: .outline, color: Colors.tcatBlue)
     private let titleLabel = UILabel()
+    private let hairline = UIView()
 
     private let linePosition: CGFloat = DetailIconView.width - 16 // max of DetailIconView (114) - constant (16) = 98
 
@@ -33,6 +34,9 @@ class BusStopTableViewCell: UITableViewCell {
         contentView.addSubview(connectorBottom)
 
         contentView.addSubview(statusCircle)
+
+        hairline.backgroundColor = UIColor.gray
+        contentView.addSubview(hairline)
 
         setupConstraints()
     }
@@ -66,6 +70,12 @@ class BusStopTableViewCell: UITableViewCell {
             make.leading.equalToSuperview().inset(statusCircleLeadingInset)
             make.centerY.equalToSuperview()
             make.size.equalTo(statusCircle.intrinsicContentSize)
+        }
+
+        hairline.snp.makeConstraints { make in
+            make.leading.equalTo(titleLabel)
+            make.bottom.trailing.equalToSuperview()
+            make.height.equalTo(0.5)
         }
     }
 

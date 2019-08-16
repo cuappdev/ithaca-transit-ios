@@ -50,7 +50,7 @@ class RouteDiagramSegment: UIView {
 
             return self.icon is UIImageView ? spaceBtnWalkIconAndSuperview : (self.icon is BusIcon ? 0 : 8.5)
         }
-        let spaceBtnStopDotCenterXAndStopLabel: CGFloat = 14 + stopDot.intrinsicContentSize.width / 2
+        let spaceBtnStopDotCenterXAndStopLabel: CGFloat = 26
 
         if let icon = icon, let routeLine = routeLine {
             icon.snp.makeConstraints { make in
@@ -64,8 +64,9 @@ class RouteDiagramSegment: UIView {
 
             routeLine.snp.makeConstraints { make in
                 make.centerX.equalTo(stopDot)
-                make.top.equalTo(stopDot.snp.bottom)
-                make.size.equalTo(routeLine.intrinsicContentSize)
+                make.top.equalTo(stopDot.snp.bottom).offset(-1)
+                make.width.equalTo(routeLine.intrinsicContentSize.width)
+                make.height.equalTo(routeLine.intrinsicContentSize.height + 2)
             }
         } else {
             stopLabel.snp.makeConstraints { make in
@@ -80,7 +81,7 @@ class RouteDiagramSegment: UIView {
         }
 
         stopLabel.snp.makeConstraints { make in
-            make.leading.equalTo(stopDot.snp.trailing).offset(spaceBtnStopDotCenterXAndStopLabel)
+            make.leading.equalTo(stopDot.snp.centerX).offset(spaceBtnStopDotCenterXAndStopLabel)
             make.top.equalTo(stopDot)
         }
     }

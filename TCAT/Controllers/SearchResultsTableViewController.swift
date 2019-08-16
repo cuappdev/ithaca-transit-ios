@@ -84,7 +84,6 @@ class SearchResultsTableViewController: UITableViewController {
         createDefaultSections()
         searchBar?.becomeFirstResponder()
         searchBar?.tintColor = Colors.black
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -100,12 +99,16 @@ class SearchResultsTableViewController: UITableViewController {
     }
 
     private func createDefaultSections() {
-        sections = [
-            Section.currentLocation(location: currentLocation),
+        var sections = [
             favoritesSection,
             recentSearchesSection,
             seeAllStopsSection
             ].filter { !$0.isEmpty }
+        if let currentLocation = currentLocation {
+            sections.insert(Section.currentLocation(location: currentLocation), at: 0)
+        }
+
+        self.sections = sections
     }
 
     private func showLocationDeniedAlert() {

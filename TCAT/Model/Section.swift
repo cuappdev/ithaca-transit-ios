@@ -10,7 +10,7 @@ import UIKit
 import CoreLocation
 
 enum Section {
-    case currentLocation(location: Place?)
+    case currentLocation(location: Place)
     case favorites(items: [Place])
     case recentSearches(items: [Place])
     case searchResults(items: [Place])
@@ -18,8 +18,7 @@ enum Section {
 
     var isEmpty: Bool {
         switch self {
-        case .currentLocation(let loc): return loc == nil
-        case .seeAllStops: return false
+        case .currentLocation, .seeAllStops: return false
         case .favorites(let items),
              .recentSearches(let items),
              .searchResults(let items): return items.isEmpty
@@ -28,7 +27,8 @@ enum Section {
 
     func getItems() -> [Place] {
         switch self {
-        case .currentLocation, .seeAllStops: return []
+        case .seeAllStops: return []
+        case .currentLocation(let currLocation): return [currLocation]
         case .favorites(let items),
              .recentSearches(let items),
              .searchResults(let items): return items

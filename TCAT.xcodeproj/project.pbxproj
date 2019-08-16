@@ -816,10 +816,9 @@
 			};
 			buildConfigurationList = 449A7C701D80D0E80019300C /* Build configuration list for PBXProject "TCAT" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);

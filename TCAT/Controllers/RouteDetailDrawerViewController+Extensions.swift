@@ -103,10 +103,6 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
         /// Formatting, including selectionStyle, and seperator line fixes
         func format(_ cell: UITableViewCell) -> UITableViewCell {
             cell.selectionStyle = .none
-            if indexPath.row == directionsAndVisibleStops.count - 1 {
-                // Remove seperator at end of table
-                cell.layoutMargins = UIEdgeInsets(top: 0, left: UIScreen.main.bounds.width, bottom: 0, right: 0)
-            }
             return cell
         }
 
@@ -124,13 +120,11 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                 cell.configure(for: direction,
                                isFirstStep: indexPath.row == 0,
                                isLastStep: indexPath.row == directionsAndVisibleStops.count - 1)
-                cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
                 return format(cell)
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
                 cell.configure(for: direction, isFirstStep: indexPath.row == 0)
                 cell.delegate = self
-                cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
                 return format(cell)
             }
         }

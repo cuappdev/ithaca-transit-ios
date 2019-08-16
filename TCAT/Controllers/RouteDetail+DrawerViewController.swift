@@ -134,6 +134,7 @@ class RouteDetailDrawerViewController: UIViewController {
         tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.emptyFooterView)
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.separatorStyle = .none
 
         view.addSubview(tableView)
 

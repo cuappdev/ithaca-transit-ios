@@ -23,12 +23,14 @@ class LargeDetailTableViewCell: UITableViewCell {
     private let detailLabel = UILabel()
     private var iconView: DetailIconView!
     private let titleLabel = UILabel()
+    private let hairline = UIView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupChevron()
         setupTitleLabel()
         setupDetailLabel()
+        setupHairline()
 
         setupConstraints()
     }
@@ -53,6 +55,11 @@ class LargeDetailTableViewCell: UITableViewCell {
         detailLabel.textColor = Colors.metadataIcon
         detailLabel.lineBreakMode = .byWordWrapping
         contentView.addSubview(detailLabel)
+    }
+
+    private func setupHairline() {
+        hairline.backgroundColor = UIColor.gray
+        contentView.addSubview(hairline)
     }
 
     private func setupConstraints() {
@@ -92,6 +99,12 @@ class LargeDetailTableViewCell: UITableViewCell {
 
         titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(iconView.snp.trailing).offset(titleLabelLeadingOffset)
+        }
+
+        hairline.snp.makeConstraints { make in
+            make.leading.equalTo(titleLabel)
+            make.bottom.trailing.equalToSuperview()
+            make.height.equalTo(0.5)
         }
     }
 

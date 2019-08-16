@@ -11,7 +11,8 @@ import UIKit
 class SmallDetailTableViewCell: UITableViewCell {
 
     private var iconView: DetailIconView!
-    private var titleLabel = UILabel()
+    private let titleLabel = UILabel()
+    private let hairline = UIView()
 
     private var iconViewFrame: CGRect = CGRect()
 
@@ -23,6 +24,9 @@ class SmallDetailTableViewCell: UITableViewCell {
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.numberOfLines = 0
         contentView.addSubview(titleLabel)
+
+        hairline.backgroundColor = UIColor.gray
+        contentView.addSubview(hairline)
 
         setupConstraints()
     }
@@ -67,6 +71,12 @@ class SmallDetailTableViewCell: UITableViewCell {
 
         titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(iconView.snp.trailing).offset(titleLabelLeadingOffset)
+        }
+
+        hairline.snp.makeConstraints { make in
+            make.leading.equalTo(titleLabel)
+            make.bottom.trailing.equalToSuperview()
+            make.height.equalTo(0.5)
         }
     }
 
