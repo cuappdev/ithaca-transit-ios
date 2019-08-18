@@ -82,6 +82,53 @@ extension RouteOptionsViewController: DestinationDelegate {
     }
 }
 
+// MARK: DatePickerViewDelegate
+extension RouteOptionsViewController: DatePickerViewDelegate {
+    @objc func dismissDatePicker() {
+        UIView.animate(withDuration: 0.5, animations: {
+            self.datePickerView.center.y = self.view.frame.height + (self.datePickerView.frame.height/2)
+            self.datePickerOverlay.alpha = 0.0
+        }, completion: { (_) in
+            self.view.sendSubviewToBack(self.datePickerOverlay)
+            self.view.sendSubviewToBack(self.datePickerView)
+        })
+    }
+
+    func saveDatePickerDate(for date: Date, searchType: SearchType) {
+
+        let date = datePickerView.getDate()
+        searchTime = date
+
+        let typeToSegmentControlElements = datePickerView.typeToSegmentControlElements
+        let timeTypeSegmentControl = datePickerView.timeTypeSegmentedControl
+        let leaveNowSegmentControl = datePickerView.leaveNowSegmentedControl
+
+        var buttonTapped = ""
+
+        // Get selected time type
+        if leaveNowSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.leaveNow]!.index {
+            searchTimeType = .leaveNow
+            buttonTapped = "Leave Now Tapped"
+        } else if timeTypeSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.arriveBy]!.index {
+            searchTimeType = .arriveBy
+            buttonTapped = "Arrive By Tapped"
+        } else {
+            searchTimeType = .leaveAt
+            buttonTapped = "Leave At Tapped"
+        }
+
+        routeSelection.setDatepicker(withDate: date, withSearchTimeType: searchTimeType)
+
+        dismissDatePicker()
+
+        searchForRoutes()
+
+        let payload = RouteOptionsSettingsPayload(description: buttonTapped)
+        Analytics.shared.log(payload)
+
+    }
+}
+
 // MARK: Location Manager Delegate
 extension RouteOptionsViewController: CLLocationManagerDelegate {
 

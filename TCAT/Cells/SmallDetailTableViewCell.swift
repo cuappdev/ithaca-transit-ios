@@ -25,9 +25,6 @@ class SmallDetailTableViewCell: UITableViewCell {
         titleLabel.numberOfLines = 0
         contentView.addSubview(titleLabel)
 
-        hairline.backgroundColor = UIColor.gray
-        contentView.addSubview(hairline)
-
         setupConstraints()
     }
 
@@ -35,9 +32,12 @@ class SmallDetailTableViewCell: UITableViewCell {
         iconView = DetailIconView(for: direction, isFirstStep: isFirstStep, isLastStep: isLastStep)
         contentView.addSubview(iconView)
 
+        hairline.backgroundColor = Colors.tableViewSeparator
+        contentView.addSubview(hairline)
+
         formatTitleLabel(for: direction)
 
-        setupIconViewConstraints()
+        setupConfigDependentConstraints()
     }
 
     private func formatTitleLabel(for direction: Direction) {
@@ -60,7 +60,7 @@ class SmallDetailTableViewCell: UITableViewCell {
         }
     }
 
-    private func setupIconViewConstraints() {
+    private func setupConfigDependentConstraints() {
         let detailIconViewWidth = 114
         let titleLabelLeadingOffset = 6
 

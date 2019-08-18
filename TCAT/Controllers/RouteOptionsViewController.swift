@@ -33,6 +33,8 @@ enum RequestAction {
 
 class RouteOptionsViewController: UIViewController {
 
+    var datePickerOverlay: UIView!
+    var datePickerView: DatePickerView!
     var routeResults: UITableView!
     var routeSelection: RouteSelectionView!
     var searchBarView: SearchBarView?
@@ -43,14 +45,14 @@ class RouteOptionsViewController: UIViewController {
     var locationManager: CLLocationManager!
     var routes: [[Route]] = []
     var searchFrom: Place?
+    var searchTime: Date?
+    var searchTimeType: SearchType = .leaveNow
     var searchTo: Place?
     var searchType: SearchBarType = .to
     var showRouteSearchingLoader: Bool = false
 
     // Variable to remember back button when hiding
     private var backButton: UIBarButtonItem?
-    private var datePickerOverlay: UIView!
-    private var datePickerView: DatePickerView!
     private var refreshControl: UIRefreshControl!
 
     private let estimatedRowHeight: CGFloat = 115
@@ -59,8 +61,6 @@ class RouteOptionsViewController: UIViewController {
     private let networking: Networking = URLSession.shared.request
     private let reachability: Reachability? = Reachability(hostname: Endpoint.config.host ?? "")
     private let routeResultsTitle: String = Constants.Titles.routeResults
-    private var searchTime: Date?
-    private var searchTimeType: SearchType = .leaveNow
 
     /// Returns routes from each section in order
     private var allRoutes: [Route] {
@@ -582,12 +582,9 @@ class RouteOptionsViewController: UIViewController {
 
     private func setupDatePickerView() {
         datePickerView = DatePickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 254))
-
+        datePickerView.delegate = self
         datePickerView.positionSubviews()
         datePickerView.addSubviews()
-
-        datePickerView.cancelButton.addTarget(self, action: #selector(self.dismissDatePicker), for: .touchUpInside)
-        datePickerView.doneButton.addTarget(self, action: #selector(self.saveDatePickerDate), for: .touchUpInside)
     }
 
     private func setupDatePickerOverlay() {
@@ -623,50 +620,6 @@ class RouteOptionsViewController: UIViewController {
         }
 
         let payload = RouteOptionsSettingsPayload(description: "Date Picker Accessed")
-        Analytics.shared.log(payload)
-
-    }
-
-    @objc private func dismissDatePicker(sender: UIButton) {
-        UIView.animate(withDuration: 0.5, animations: {
-            self.datePickerView.center.y = self.view.frame.height + (self.datePickerView.frame.height/2)
-            self.datePickerOverlay.alpha = 0.0
-        }, completion: { (_) in
-            self.view.sendSubviewToBack(self.datePickerOverlay)
-            self.view.sendSubviewToBack(self.datePickerView)
-        })
-    }
-
-    @objc private func saveDatePickerDate(sender: UIButton) {
-
-        let date = datePickerView.getDate()
-        searchTime = date
-
-        let typeToSegmentControlElements = datePickerView.typeToSegmentControlElements
-        let timeTypeSegmentControl = datePickerView.timeTypeSegmentedControl
-        let leaveNowSegmentControl = datePickerView.leaveNowSegmentedControl
-
-        var buttonTapped = ""
-
-        // Get selected time type
-        if leaveNowSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.leaveNow]!.index {
-            searchTimeType = .leaveNow
-            buttonTapped = "Leave Now Tapped"
-        } else if timeTypeSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.arriveBy]!.index {
-            searchTimeType = .arriveBy
-            buttonTapped = "Arrive By Tapped"
-        } else {
-            searchTimeType = .leaveAt
-            buttonTapped = "Leave At Tapped"
-        }
-
-        routeSelection.setDatepicker(withDate: date, withSearchTimeType: searchTimeType)
-
-        dismissDatePicker(sender: sender)
-
-        searchForRoutes()
-
-        let payload = RouteOptionsSettingsPayload(description: buttonTapped)
         Analytics.shared.log(payload)
 
     }

@@ -21,15 +21,15 @@ class RouteTableViewCell: UITableViewCell {
     weak var delegate: RouteTableViewCellDelegate?
 
     // MARK: View vars
-    private var arrowImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
+    private let arrowImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
     private let containerView = UIView()
     private var departureStackView: UIStackView!
-    private var departureTimeLabel = UILabel()
-    private var liveContainerView = UIView()
-    private var liveIndicatorView = LiveIndicator(size: .small, color: .clear)
-    private var liveLabel = UILabel()
+    private let departureTimeLabel = UILabel()
+    private let liveContainerView = UIView()
+    private let liveIndicatorView = LiveIndicator(size: .small, color: .clear)
+    private let liveLabel = UILabel()
     private var routeDiagram: RouteDiagram!
-    private var travelTimeLabel = UILabel()
+    private let travelTimeLabel = UILabel()
 
     // MARK: Data vars
     private let containerViewLayoutInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 12)
@@ -159,7 +159,7 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     // MARK: Set Data
-    func configure(for route: Route, delegate: (UIViewController & RouteTableViewCellDelegate)?) {
+    func configure(for route: Route, delegate: RouteTableViewCellDelegate?) {
 
         self.delegate = delegate
 

@@ -35,9 +35,6 @@ class BusStopTableViewCell: UITableViewCell {
 
         contentView.addSubview(statusCircle)
 
-        hairline.backgroundColor = UIColor.gray
-        contentView.addSubview(hairline)
-
         setupConstraints()
     }
 
@@ -71,7 +68,9 @@ class BusStopTableViewCell: UITableViewCell {
             make.centerY.equalToSuperview()
             make.size.equalTo(statusCircle.intrinsicContentSize)
         }
+    }
 
+    private func setupConfigDependentConstraints() {
         hairline.snp.makeConstraints { make in
             make.leading.equalTo(titleLabel)
             make.bottom.trailing.equalToSuperview()
@@ -81,6 +80,11 @@ class BusStopTableViewCell: UITableViewCell {
 
     func configure(for name: String) {
         titleLabel.text = name
+
+        hairline.backgroundColor = Colors.tableViewSeparator
+        contentView.addSubview(hairline)
+
+        setupConfigDependentConstraints()
     }
 
     required init?(coder aDecoder: NSCoder) {

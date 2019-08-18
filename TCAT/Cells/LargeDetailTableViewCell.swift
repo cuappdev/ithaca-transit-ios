@@ -30,7 +30,6 @@ class LargeDetailTableViewCell: UITableViewCell {
         setupChevron()
         setupTitleLabel()
         setupDetailLabel()
-        setupHairline()
 
         setupConstraints()
     }
@@ -47,6 +46,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         titleLabel.font = .getFont(.regular, size: 14)
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.textColor = Colors.primaryText
+        titleLabel.numberOfLines = 0
         contentView.addSubview(titleLabel)
     }
 
@@ -58,7 +58,7 @@ class LargeDetailTableViewCell: UITableViewCell {
     }
 
     private func setupHairline() {
-        hairline.backgroundColor = UIColor.gray
+        hairline.backgroundColor = Colors.tableViewSeparator
         contentView.addSubview(hairline)
     }
 
@@ -88,7 +88,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         }
     }
 
-    private func setupIconViewConstraints() {
+    private func setupConfigDependentConstraints() {
         let detailIconViewWidth = 114
         let titleLabelLeadingOffset = 6
 
@@ -110,6 +110,7 @@ class LargeDetailTableViewCell: UITableViewCell {
 
     /** Precondition: Direction is BoardDirection */
     func configure(for direction: Direction, isFirstStep: Bool) {
+        setupHairline()
 
         formatTitleLabel(for: direction)
         formatDetailLabel(for: direction)
@@ -119,7 +120,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         }
         contentView.addSubview(iconView)
 
-        setupIconViewConstraints()
+        setupConfigDependentConstraints()
     }
 
     private func getBusIconImageAsTextAttachment(for direction: Direction) -> NSTextAttachment {
@@ -156,6 +157,7 @@ class LargeDetailTableViewCell: UITableViewCell {
 
     private func formatTitleLabel(for direction: Direction) {
         let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 4
 
         // Beginning of string
         let titleLabelText = NSMutableAttributedString(string: direction.type == .transfer ? "Bus becomes" : "Board")
@@ -167,24 +169,21 @@ class LargeDetailTableViewCell: UITableViewCell {
         let labelBoldFont: UIFont = .getFont(.semibold, size: 14)
         let attributedString = direction.name.bold(in: content, from: titleLabel.font, to: labelBoldFont)
         titleLabelText.append(attributedString)
-        titleLabel.attributedText = titleLabelText
-
-        paragraphStyle.lineSpacing = 4
-
-        titleLabel.numberOfLines = 0
         titleLabelText.addAttribute(.paragraphStyle,
                                     value: paragraphStyle,
-                                    range: NSRange(location: 0, length: titleLabel.attributedText!.length))
+                                    range: NSRange(location: 0, length: titleLabelText.length))
         titleLabel.attributedText = titleLabelText
     }
 
     private func formatDetailLabel(for direction: Direction) {
-        let detailLabelText = "\(direction.stops.count + 1) stop\(direction.stops.count + 1 == 1 ? "" : "s")"
+        let totalStopCount = direction.stops.count + 1
+
+        let detailLabelText = "\(totalStopCount) stop\(totalStopCount == 1 ? "" : "s")"
 
         // Number of minutes for the bus direction
         var timeString = Time.timeString(from: direction.startTime, to: direction.endTime)
         if timeString == "0 min" {  timeString = "1 min" }
-        detailLabel.text = detailLabelText +  " • \(timeString)"
+        detailLabel.text = "\(detailLabelText) • \(timeString)"
     }
 
      @objc private func chevronButtonPressed() {

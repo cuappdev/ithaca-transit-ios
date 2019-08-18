@@ -12,10 +12,17 @@ struct SegmentControlElement {
     var title: String
     var index: Int
 }
+
+protocol DatePickerViewDelegate {
+    func dismissDatePicker()
+    func saveDatePickerDate(for date: Date, searchType: SearchType)
+}
+
 class DatePickerView: UIView {
 
     // MARK: Data vars
 
+    var delegate: DatePickerViewDelegate?
     let leaveNowSegmentedControlOptions: [String]
     let typeToSegmentControlElements: [SearchType: SegmentControlElement] = [
         .leaveNow: SegmentControlElement(title: Constants.General.datepickerLeaveNow, index: 0),
@@ -143,6 +150,7 @@ class DatePickerView: UIView {
         doneButton.frame = CGRect(x: 0, y: 0, width: 55, height: buttonHeight)
         doneButton.titleLabel?.font = .getFont(.regular, size: 17.0)
         doneButton.setTitleColor(Colors.tcatBlue, for: .normal)
+        doneButton.addTarget(self, action: #selector(doneButtonPressed), for: .touchUpInside)
     }
 
     // MARK: Set data
@@ -223,6 +231,24 @@ class DatePickerView: UIView {
         addSubview(timeTypeSegmentedControl)
         addSubview(leaveNowSegmentedControl)
         addSubview(datepicker)
+    }
+
+    @objc private func doneButtonPressed() {
+        var searchTimeType: SearchType = .leaveNow
+        switch leaveNowSegmentedControl.selectedSegmentIndex {
+        case typeToSegmentControlElements[.leaveNow]!.index:
+            searchTimeType = .leaveNow
+        case typeToSegmentControlElements[.arriveBy]!.index:
+            searchTimeType = .arriveBy
+        default:
+            searchTimeType = .leaveAt
+        }
+
+        delegate?.saveDatePickerDate(for: getDate(), searchType: searchTimeType)
+    }
+
+    @objc private func cancelButtonPressed() {
+        delegate?.dismissDatePicker()
     }
 
 }
