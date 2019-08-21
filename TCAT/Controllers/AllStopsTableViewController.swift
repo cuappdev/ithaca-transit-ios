@@ -14,7 +14,9 @@ protocol UnwindAllStopsTVCDelegate: class {
     func dismissSearchResultsVC(place: Place)
 }
 
-class AllStopsTableViewController: UITableViewController {
+class AllStopsTableViewController: UIViewController {
+
+    private var tableView = UITableView(frame: .zero)
 
     private var allStops: [Place] = []
     weak var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
@@ -25,20 +27,13 @@ class AllStopsTableViewController: UITableViewController {
     private var sortedKeys: [String] = []
     private var height: CGFloat?
 
-    override func viewWillLayoutSubviews() {
-        if let y = navigationController?.navigationBar.frame.maxY {
-            if height == nil {
-                height = tableView.bounds.height
-            }
-            tableView.frame = CGRect(x: 0.0, y: y, width: view.bounds.width, height: height! - y)
-        }
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
         title = Constants.Titles.allStops
         setupTableView()
+        setupConstraints()
+
         refreshAllStops()
     }
 
@@ -46,12 +41,20 @@ class AllStopsTableViewController: UITableViewController {
         tableView.sectionIndexColor = Colors.primaryText
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.cellLayoutMarginsFollowReadableWidth = false
-        tableView.contentInsetAdjustmentBehavior = .never
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
+        tableView.delegate = self
+        tableView.dataSource = self
         tableView.tableFooterView = UIView()
-        // Set top of table view to align with scroll view
-        tableView.contentOffset = .zero
+
+        view.addSubview(tableView)
+    }
+
+    private func setupConstraints() {
+        tableView.snp.makeConstraints { make in
+            make.leading.bottom.trailing.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide)
+        }
     }
 
     private func createSectionIndexesForBusStop() {
@@ -175,7 +178,6 @@ class AllStopsTableViewController: UITableViewController {
                 }
             }
         }
-
     }
 }
 
@@ -211,15 +213,14 @@ extension AllStopsTableViewController: DZNEmptyDataSetDelegate {
 
     func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
         setUpLoadingIndicator()
-        tableView.reloadData()
         refreshAllStops()
     }
 }
 
 // MARK: - TableView Delegate
-extension AllStopsTableViewController {
+extension AllStopsTableViewController: UITableViewDelegate {
 
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let inset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
         if cell.responds(to: #selector(setter: UITableViewCell.separatorInset)) {
             cell.separatorInset = inset
@@ -232,7 +233,7 @@ extension AllStopsTableViewController {
         }
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
 
         guard let section = sectionIndexes[sortedKeys[indexPath.section]] else { return cell }
@@ -240,7 +241,7 @@ extension AllStopsTableViewController {
         return cell
     }
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let section = sectionIndexes[sortedKeys[indexPath.section]]
         let optionsVC = RouteOptionsViewController()
         guard let place = section?[indexPath.row] else {
@@ -262,21 +263,21 @@ extension AllStopsTableViewController {
 }
 
 // MARK: - Table view data source
-extension AllStopsTableViewController {
+extension AllStopsTableViewController: UITableViewDataSource {
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return sectionIndexes.count
     }
 
-    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         return sortedKeys
     }
 
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return sortedKeys[section]
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sectionIndexes[sortedKeys[section]]?.count ?? 0
     }
 }
