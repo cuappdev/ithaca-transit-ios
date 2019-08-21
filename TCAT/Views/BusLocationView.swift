@@ -65,10 +65,6 @@ class BusLocationView: UIView {
 
     }
 
-    func setupConstraints() {
-
-    }
-
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }

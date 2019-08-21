@@ -215,7 +215,8 @@ class HomeOptionsCardViewController: UIViewController {
             case .seeAllStops: sectionHeaderHeight = HeaderView.separatorViewHeight
             default: break
             }
-            return sectionHeaderHeight + tableViewRowHeight * CGFloat(section.getItems().count) + result
+            let rowCount = section == .seeAllStops ? 1 : section.getItems().count // TODO: Find better way to represent sections
+            return sectionHeaderHeight + tableViewRowHeight * CGFloat(rowCount) + result
         }
     }
 
@@ -426,7 +427,7 @@ extension HomeOptionsCardViewController: HomeMapViewDelegate {
         switch connection {
         case .none:
             isNetworkDown = true
-//            searchBar.isUserInteractionEnabled = false
+            searchBar.isUserInteractionEnabled = false
             sections = []
         case .cellular, .wifi:
             isNetworkDown = false

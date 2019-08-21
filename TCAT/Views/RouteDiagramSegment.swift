@@ -166,10 +166,7 @@ class RouteDiagramSegment: UIView {
     private func getStopDot(fromDirection direction: Direction, withWalkingRoute isWalkingRoute: Bool, isDestination: Bool) -> Circle {
         var pin: Circle
 
-        switch direction.type {
-
-        case .walk:
-
+        if direction.type == .walk {
             if isDestination {
                 let framedGreyCircle = Circle(size: .medium, style: .bordered, color: Colors.metadataIcon)
                 framedGreyCircle.backgroundColor = Colors.white
@@ -178,9 +175,7 @@ class RouteDiagramSegment: UIView {
                 let solidGreyCircle = Circle(size: .small, style: .solid, color: Colors.metadataIcon)
                 pin = solidGreyCircle
             }
-
-        default:
-
+        } else {
             if isDestination {
                 if isWalkingRoute {
                     // walking route destination should always be grey no matter what direction type
@@ -196,7 +191,6 @@ class RouteDiagramSegment: UIView {
                 let solidBlueCircle = Circle(size: .small, style: .solid, color: Colors.tcatBlue)
                 pin = solidBlueCircle
             }
-
         }
 
         return pin

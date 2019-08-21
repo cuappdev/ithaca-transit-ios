@@ -13,7 +13,7 @@ struct SegmentControlElement {
     var index: Int
 }
 
-protocol DatePickerViewDelegate {
+protocol DatePickerViewDelegate: class {
     func dismissDatePicker()
     func saveDatePickerDate(for date: Date, searchType: SearchType)
 }
@@ -22,7 +22,7 @@ class DatePickerView: UIView {
 
     // MARK: Data vars
 
-    var delegate: DatePickerViewDelegate?
+    weak var delegate: DatePickerViewDelegate?
     let leaveNowSegmentedControlOptions: [String]
     let typeToSegmentControlElements: [SearchType: SegmentControlElement] = [
         .leaveNow: SegmentControlElement(title: Constants.General.datepickerLeaveNow, index: 0),

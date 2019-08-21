@@ -53,15 +53,17 @@ class RouteDetailDrawerViewController: UIViewController {
     private let chevronFlipDurationTime = 0.25
     /// Returns the currently expanded cell, if any
     var expandedCell: LargeDetailTableViewCell? {
-        for index in 0..<tableView.numberOfRows(inSection: 0) {
-            let indexPath = IndexPath(row: index, section: 0)
-            if let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell {
-                if cell.isExpanded {
-                    return cell
+        var firstExpandedCell: LargeDetailTableViewCell?
+        (0..<tableView.numberOfRows(inSection: 0))
+            .forEach { index in
+                let indexPath = IndexPath(row: index, section: 0)
+                if firstExpandedCell == nil,
+                    let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell,
+                    cell.isExpanded {
+                    firstExpandedCell = cell
                 }
-            }
         }
-        return nil
+        return firstExpandedCell
     }
     private let networking: Networking = URLSession.shared.request
     private var route: Route!

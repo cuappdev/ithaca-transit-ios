@@ -52,8 +52,8 @@ class LargeDetailTableViewCell: UITableViewCell {
 
     private func setupDetailLabel() {
         detailLabel.font = .getFont(.regular, size: 14)
-        detailLabel.textColor = Colors.metadataIcon
         detailLabel.lineBreakMode = .byWordWrapping
+        detailLabel.textColor = Colors.metadataIcon
         contentView.addSubview(detailLabel)
     }
 

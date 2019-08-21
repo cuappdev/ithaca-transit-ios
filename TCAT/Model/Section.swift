@@ -16,6 +16,18 @@ enum Section {
     case searchResults(items: [Place])
     case seeAllStops
 
+    private func getVal() -> Any? {
+        switch self {
+        case .seeAllStops: return nil
+        case .currentLocation(let location):
+            return location
+        case .favorites(let items),
+             .recentSearches(let items),
+             .searchResults(let items):
+            return items
+        }
+    }
+
     var isEmpty: Bool {
         switch self {
         case .currentLocation, .seeAllStops: return false
@@ -45,17 +57,16 @@ enum Section {
     }
 
     func getCurrentLocation() -> Place? {
-        switch self {
-        case .currentLocation(let loc): return loc
-        default: return nil
+        if let loc = self.getVal() as? Place {
+            return loc
         }
+        return nil
     }
 }
 
 extension Section: Equatable {
 
     public static func == (lhs: Section, rhs: Section) -> Bool {
-
         switch (lhs, rhs) {
         case (.seeAllStops, .seeAllStops):
             return true
@@ -68,4 +79,5 @@ extension Section: Equatable {
         default: return false
         }
     }
+
 }

@@ -23,10 +23,14 @@ class AllStopsTableViewController: UITableViewController {
     private let networking: Networking = URLSession.shared.request
     private var sectionIndexes: [String: [Place]] = [:]
     private var sortedKeys: [String] = []
+    private var height: CGFloat?
 
     override func viewWillLayoutSubviews() {
         if let y = navigationController?.navigationBar.frame.maxY {
-            tableView.frame = CGRect(x: 0.0, y: y, width: view.bounds.width, height: tableView.bounds.height - y)
+            if height == nil {
+                height = tableView.bounds.height
+            }
+            tableView.frame = CGRect(x: 0.0, y: y, width: view.bounds.width, height: height! - y)
         }
     }
 
@@ -60,9 +64,8 @@ class AllStopsTableViewController: UITableViewController {
         var numberBusStops: [Place] = {
             if let firstStop = allStops.first {
                 return [firstStop]
-            } else {
-                return []
             }
+            return []
         }()
 
         if currentChar != nil {
@@ -216,18 +219,18 @@ extension AllStopsTableViewController: DZNEmptyDataSetDelegate {
 // MARK: - TableView Delegate
 extension AllStopsTableViewController {
 
-//    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        let inset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
-//        if cell.responds(to: #selector(setter: UITableViewCell.separatorInset)) {
-//            cell.separatorInset = inset
-//        }
-//        if cell.responds(to: #selector(setter: UIView.preservesSuperviewLayoutMargins)) {
-//            cell.preservesSuperviewLayoutMargins = false
-//        }
-//        if cell.responds(to: #selector(setter: UIView.layoutMargins)) {
-//            cell.layoutMargins = inset
-//        }
-//    }
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let inset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
+        if cell.responds(to: #selector(setter: UITableViewCell.separatorInset)) {
+            cell.separatorInset = inset
+        }
+        if cell.responds(to: #selector(setter: UIView.preservesSuperviewLayoutMargins)) {
+            cell.preservesSuperviewLayoutMargins = false
+        }
+        if cell.responds(to: #selector(setter: UIView.layoutMargins)) {
+            cell.layoutMargins = inset
+        }
+    }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell

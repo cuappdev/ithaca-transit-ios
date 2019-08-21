@@ -123,24 +123,24 @@ extension FavoritesTableViewController: UITableViewDelegate {
             if place.type == .busStop {
                 Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
                 dismissVC()
-            } else {
-                // Fetch coordinates and store
-                CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
-                    if error != nil {
-                        print("Unable to get coordinates to save favorite.")
-                        cell?.accessoryView = nil
-                        let title = Constants.Alerts.PlacesFailure.title
-                        let message = Constants.Alerts.PlacesFailure.message
-                        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-                        let done = UIAlertAction(title: Constants.Alerts.PlacesFailure.action, style: .default)
-                        alertController.addAction(done)
-                        self.present(alertController, animated: true, completion: nil)
-                    } else {
-                        place.latitude = latitude
-                        place.longitude = longitude
-                        Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
-                        self.dismissVC()
-                    }
+                return
+            }
+            // Fetch coordinates and store
+            CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
+                if error != nil {
+                    print("Unable to get coordinates to save favorite.")
+                    cell?.accessoryView = nil
+                    let title = Constants.Alerts.PlacesFailure.title
+                    let message = Constants.Alerts.PlacesFailure.message
+                    let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                    let done = UIAlertAction(title: Constants.Alerts.PlacesFailure.action, style: .default)
+                    alertController.addAction(done)
+                    self.present(alertController, animated: true, completion: nil)
+                } else {
+                    place.latitude = latitude
+                    place.longitude = longitude
+                    Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
+                    self.dismissVC()
                 }
             }
         }
@@ -185,7 +185,6 @@ extension FavoritesTableViewController: UISearchBarDelegate {
                     case .value(let response):
                         if response.success {
                             self.resultsSection = Section.searchResults(items: [])
-//                            self.tableView.contentOffset = .zero
                         } else {
                             print("[FavoritesTableViewController] success: false")
                             self.resultsSection = Section.searchResults(items: [])
