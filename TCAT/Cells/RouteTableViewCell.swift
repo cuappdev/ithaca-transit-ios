@@ -153,8 +153,8 @@ class RouteTableViewCell: UITableViewCell {
         routeDiagram.snp.makeConstraints { make in
             make.top.equalTo(liveContainerView.snp.bottom).offset(routeDiagramTopOffset)
             make.leading.equalTo(travelTimeLabel)
-            make.trailing.equalTo(departureStackView).priority(999)
-            make.bottom.equalToSuperview().inset(containerViewLayoutInsets).priority(999)
+            make.trailing.equalTo(departureStackView).priority(.high)
+            make.bottom.equalToSuperview().inset(containerViewLayoutInsets).priority(.high)
         }
     }
 

@@ -82,13 +82,13 @@ class RouteDetailDrawerViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         view.backgroundColor = Colors.white
-        
+
         setupSummaryView()
         setupTableView()
         setupSafeAreaCoverView()
-        
+
         if let drawer = self.parent as? RouteDetailViewController {
             drawer.initialDrawerPosition = .partiallyRevealed
         }
@@ -143,7 +143,6 @@ class RouteDetailDrawerViewController: UIViewController {
     private func setupConstraints() {
         summaryView.snp.makeConstraints { make in
             make.leading.trailing.top.equalToSuperview()
-            make.height.equalTo(92) // TODO: Fix once summaryView is converted to snapkit
         }
 
         tableView.snp.makeConstraints { make in
