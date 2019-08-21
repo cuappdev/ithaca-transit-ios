@@ -98,7 +98,6 @@ class OnboardingViewController: PresentationController {
 
             return position
         }
-
     }
 
     private lazy var dismissButton: UIBarButtonItem = { [unowned self] in
@@ -114,7 +113,6 @@ class OnboardingViewController: PresentationController {
     }()
 
     @objc private func dismissView() {
-
         if isInitialViewing {
 
             let rootVC = HomeMapViewController()
@@ -137,7 +135,6 @@ class OnboardingViewController: PresentationController {
         } else {
             dismiss(animated: true)
         }
-
     }
 
     init(initialViewing: Bool) {
@@ -154,7 +151,6 @@ class OnboardingViewController: PresentationController {
 
         setNavigationTitle = false
         navigationItem.leftBarButtonItem = isInitialViewing ? nil : dismissButton
-
         view.backgroundColor = backgroundColor
 
         configureSlides()
@@ -185,7 +181,8 @@ class OnboardingViewController: PresentationController {
         ]
 
         let detailTitles = detailLabelMessages.map { title -> Content in
-            let label = UILabel(frame: CGRect(x: 0, y: 0, width: width * detailWidth, height: height * detailHeight))
+            let label = UILabel()
+            label.frame.size = CGSize(width: width * detailWidth, height: height * detailHeight)
             label.numberOfLines = 5
             label.attributedText = NSAttributedString(string: title, attributes: attributes)
             return Content(view: label, position: detailLabelPosition)
@@ -206,7 +203,8 @@ class OnboardingViewController: PresentationController {
         ]
 
         let headerTitles = titleLabelMessages.map { title -> Content in
-            let label = UILabel(frame: CGRect(x: 0, y: 0, width: width * headerWidth, height: height * headerHeight))
+            let label = UILabel()
+            label.frame.size = CGSize(width: width * headerWidth, height: height * headerHeight)
             label.numberOfLines = 5
             label.attributedText = NSAttributedString(string: title, attributes: headerAttributes)
             return Content(view: label, position: titleLabelPosition)
@@ -215,7 +213,7 @@ class OnboardingViewController: PresentationController {
         // Button
 
         let button = UIButton()
-        button.frame = CGRect(x: 0, y: 0, width: 160, height: 60)
+        button.frame.size = CGSize(width: 160, height: 60)
         button.layer.shadowOffset = CGSize(width: 0, height: 4)
         button.layer.shadowColor = Colors.metadataIcon.cgColor
         button.layer.shadowOpacity = 0.5
@@ -229,11 +227,9 @@ class OnboardingViewController: PresentationController {
         let startButton = Content(view: button, position: buttonPosition, centered: true)
 
         // Slides
-
         var slides = [SlideController]()
 
         for index in 0..<detailLabelMessages.count {
-
             var contents: [Content] = [detailTitles[index], headerTitles[index]]
 
             // Go Button
@@ -256,15 +252,11 @@ class OnboardingViewController: PresentationController {
             controller.add(animation: Content.centerTransition(forSlideContent: startButton))
 
             slides.append(controller)
-
         }
-
         add(slides)
-
     }
 
     private func configureBackground() {
-
         var contents = [Content]()
 
         for backgroundImage in backgroundImages {
@@ -296,7 +288,5 @@ class OnboardingViewController: PresentationController {
 
         contents.append(groundContent)
         addToBackground([groundContent])
-
     }
-
 }
