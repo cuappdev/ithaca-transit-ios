@@ -117,7 +117,7 @@ extension RouteOptionsViewController: DatePickerViewDelegate {
             buttonTapped = "Leave At Tapped"
         }
 
-        routeSelection.setDatepicker(withDate: date, withSearchTimeType: searchTimeType)
+        routeSelection.setDatepickerTitle(withDate: date, withSearchTimeType: searchTimeType)
 
         dismissDatePicker()
 

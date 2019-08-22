@@ -101,7 +101,7 @@ class RouteOptionsViewController: UIViewController {
         // assume user wants to find routes that leave at current time and set datepicker accordingly
         searchTime = Date()
         if let searchTime = searchTime {
-            routeSelection.setDatepicker(withDate: searchTime, withSearchTimeType: searchTimeType)
+            routeSelection.setDatepickerTitle(withDate: searchTime, withSearchTimeType: searchTimeType)
         }
 
         searchForRoutes()
@@ -153,13 +153,7 @@ class RouteOptionsViewController: UIViewController {
     // MARK: Route Selection view
 
     private func setupRouteSelection() {
-        // offset for -12 for larger views, get rid of black space
-        routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: 150))
-        routeSelection.backgroundColor = Colors.white
-        var newRSFrame = routeSelection.frame
-        newRSFrame.size.height =  routeSelection.lineWidth + routeSelection.searcbarView.frame.height + routeSelection.lineWidth + routeSelection.datepickerButton.frame.height
-        routeSelection.frame = newRSFrame
-
+        routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 130))
         routeSelection.toSearchbar.addTarget(self, action: #selector(self.searchingTo), for: .touchUpInside)
         routeSelection.fromSearchbar.addTarget(self, action: #selector(self.searchingFrom), for: .touchUpInside)
         routeSelection.datepickerButton.addTarget(self, action: #selector(self.showDatePicker), for: .touchUpInside)
@@ -684,7 +678,7 @@ class RouteOptionsViewController: UIViewController {
             if searchTimeType == .leaveNow {
                 let now = Date()
                 searchTime = now
-                routeSelection.setDatepicker(withDate: now, withSearchTimeType: searchTimeType)
+                routeSelection.setDatepickerTitle(withDate: now, withSearchTimeType: searchTimeType)
             }
             searchForRoutes()
         }
