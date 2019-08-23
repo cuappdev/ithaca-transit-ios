@@ -23,7 +23,6 @@ class SearchBarView: UIView, UISearchControllerDelegate {
         resultsViewController = SearchResultsTableViewController()
         searchController = UISearchController(searchResultsController: resultsViewController)
         searchController?.searchResultsUpdater = resultsViewController
-        searchController?.searchBar.sizeToFit()
         searchController?.searchBar.delegate = resultsViewController
         resultsViewController?.searchBar = searchController?.searchBar
 
