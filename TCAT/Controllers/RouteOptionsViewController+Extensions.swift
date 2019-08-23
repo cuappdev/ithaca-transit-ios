@@ -99,17 +99,16 @@ extension RouteOptionsViewController: DatePickerViewDelegate {
         let date = datePickerView.getDate()
         searchTime = date
 
-        let typeToSegmentControlElements = datePickerView.typeToSegmentControlElements
         let timeTypeSegmentControl = datePickerView.timeTypeSegmentedControl
         let leaveNowSegmentControl = datePickerView.leaveNowSegmentedControl
 
         var buttonTapped = ""
 
         // Get selected time type
-        if leaveNowSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.leaveNow]!.index {
+        if leaveNowSegmentControl.selectedSegmentIndex == datePickerView.leaveNowElement.index {
             searchTimeType = .leaveNow
             buttonTapped = "Leave Now Tapped"
-        } else if timeTypeSegmentControl.selectedSegmentIndex == typeToSegmentControlElements[.arriveBy]!.index {
+        } else if timeTypeSegmentControl.selectedSegmentIndex == datePickerView.arriveByElement.index {
             searchTimeType = .arriveBy
             buttonTapped = "Arrive By Tapped"
         } else {
