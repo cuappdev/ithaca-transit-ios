@@ -221,19 +221,19 @@ class RouteDiagramSegment: UIView {
         let isStopLabelSingleLine = isStopLabelOneLine(stopLabel)
 
         if isWalkingRoute {
-            let greyRouteLine = isStopLabelSingleLine ? SolidLine(color: Colors.metadataIcon) : SolidLine(height: RouteLine.extendedHeight, color: Colors.metadataIcon)
+            let greyRouteLine = isStopLabelSingleLine ? SolidLine(color: Colors.metadataIcon) : SolidLine(overrideHeight: RouteLine.extendedHeight, color: Colors.metadataIcon)
 
             return greyRouteLine
         }
 
         switch direction.type {
         case .depart:
-            let solidBlueRouteLine = isStopLabelSingleLine ? SolidLine(color: Colors.tcatBlue) : SolidLine(height: RouteLine.extendedHeight, color: Colors.tcatBlue)
+            let solidBlueRouteLine = isStopLabelSingleLine ? SolidLine(color: Colors.tcatBlue) : SolidLine(overrideHeight: RouteLine.extendedHeight, color: Colors.tcatBlue)
 
             return solidBlueRouteLine
 
         default:
-            let dashedGreyRouteLine = isStopLabelSingleLine ? DottedLine(color: Colors.metadataIcon) : DottedLine(height: RouteLine.extendedHeight, color: Colors.metadataIcon)
+            let dashedGreyRouteLine = isStopLabelSingleLine ? DottedLine(color: Colors.metadataIcon) : DottedLine(overrideHeight: RouteLine.extendedHeight, color: Colors.metadataIcon)
 
             return dashedGreyRouteLine
         }
