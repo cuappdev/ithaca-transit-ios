@@ -74,15 +74,12 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
 
     func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
         // Manage cover view hiding drawer when collapsed
-        let isCollapsed = distance - bottomSafeArea == summaryView.frame.height
-        if isCollapsed {
-            safeAreaCover?.alpha = 1.0
-            visible = true
+        if distance == collapsedDrawerHeight(bottomSafeArea: bottomSafeArea) {
+            safeAreaCover.alpha = 1.0
         } else {
-            if visible {
+            if safeAreaCover.alpha == 1 {
                 UIView.animate(withDuration: 0.25, animations: {
-                    self.safeAreaCover?.alpha = 0.0
-                    self.visible = false
+                    self.safeAreaCover.alpha = 0.0
                 })
             }
         }
@@ -105,8 +102,6 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
             cell.selectionStyle = .none
             return cell
         }
-
-        let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
 
         switch directionsAndVisibleStops[indexPath.row] {
         case .busStop(let busStop):
@@ -146,17 +141,7 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
         let emptyFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.emptyFooterView) ??
             UITableViewHeaderFooterView(reuseIdentifier: Constants.Footers.emptyFooterView)
 
-        let lastCellIndexPath = IndexPath(row: tableView.numberOfRows(inSection: 0) - 1, section: 0)
-        var screenBottom = UIScreen.main.bounds.height
-        screenBottom -= view.safeAreaInsets.bottom
-
-        // Calculate height of space between last cell and the bottom of the screen, also accounting for summary
-        var footerHeight = screenBottom - (tableView.cellForRow(at: lastCellIndexPath)?.frame.maxY ?? screenBottom) - summaryView.frame.height
-        footerHeight = expandedCell != nil ? 0 : footerHeight
-
-        emptyFooterView.frame.size = CGSize(width: view.frame.width, height: footerHeight)
         emptyFooterView.contentView.backgroundColor = Colors.white
-        emptyFooterView.layoutIfNeeded()
 
         // Create Footer for No Data from Live Tracking Footer, if needed
         guard

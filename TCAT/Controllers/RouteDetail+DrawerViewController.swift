@@ -39,13 +39,12 @@ enum RouteDetailItem {
 
 class RouteDetailDrawerViewController: UIViewController {
 
-    var safeAreaCover: UIView?
+    let safeAreaCover = UIView()
     var summaryView: SummaryView!
-    var tableView: UITableView!
+    let tableView = UITableView()
 
     var directionsAndVisibleStops: [RouteDetailItem] = []
     var selectedDirection: Direction?
-    var visible: Bool = false
 
     /// Number of seconds to wait before auto-refreshing bus delay network call.
     private var busDelayNetworkRefreshRate: Double = 10
@@ -83,11 +82,18 @@ class RouteDetailDrawerViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        initializeDetailView()
-        initializeCover()
+        
+        view.backgroundColor = Colors.white
+        
+        setupSummaryView()
+        setupTableView()
+        setupSafeAreaCoverView()
+        
         if let drawer = self.parent as? RouteDetailViewController {
             drawer.initialDrawerPosition = .partiallyRevealed
         }
+
+        setupConstraints()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -106,27 +112,14 @@ class RouteDetailDrawerViewController: UIViewController {
         busDelayNetworkTimer?.invalidate()
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
-        removeCover()
-    }
-
-    // MARK: UIView Functions
-
-    /** Create and configure detailView, summaryView, tableView */
-    private func initializeDetailView() {
-
-        view.backgroundColor = Colors.white
-
-        // Create summaryView
+    private func setupSummaryView() {
         let summaryTapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
         summaryTapGesture.delegate = self
         summaryView.addGestureRecognizer(summaryTapGesture)
         view.addSubview(summaryView)
+    }
 
-        // Create Detail Table View
-        tableView = UITableView()
-        tableView.frame.origin = CGPoint(x: 0, y: summaryView.frame.height)
-        tableView.frame.size = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - summaryView.frame.height)
+    private func setupTableView() {
         tableView.bounces = false
         tableView.estimatedRowHeight = RouteDetailCellSize.smallHeight
         tableView.rowHeight = UITableView.automaticDimension
@@ -137,24 +130,31 @@ class RouteDetailDrawerViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
-
         view.addSubview(tableView)
-
     }
 
     /// Creates a temporary view to cover the drawer contents when collapsed. Hidden by default.
-    private func initializeCover() {
-        let bottom = UIApplication.shared.keyWindow?.rootViewController?.view.safeAreaInsets.bottom ?? 34
-        safeAreaCover = UIView(frame: CGRect(x: 0, y: summaryView.frame.height, width: UIScreen.main.bounds.width, height: bottom))
-        safeAreaCover!.backgroundColor = Colors.backgroundWash
-        safeAreaCover!.alpha = 0
-        view.addSubview(safeAreaCover!)
+    private func setupSafeAreaCoverView() {
+        safeAreaCover.backgroundColor = Colors.backgroundWash
+        safeAreaCover.alpha = 0
+        view.addSubview(safeAreaCover)
     }
 
-    /// Remove cover view
-    private func removeCover() {
-        safeAreaCover?.removeFromSuperview()
-        safeAreaCover = nil
+    private func setupConstraints() {
+        summaryView.snp.makeConstraints { make in
+            make.leading.trailing.top.equalToSuperview()
+            make.height.equalTo(92) // TODO: Fix once summaryView is converted to snapkit
+        }
+
+        tableView.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo(summaryView.snp.bottom)
+        }
+
+        safeAreaCover.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo(summaryView.snp.bottom)
+        }
     }
 
     /// Fetch delay information and update table view cells.
