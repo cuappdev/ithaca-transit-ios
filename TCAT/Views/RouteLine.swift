@@ -23,15 +23,11 @@ class RouteLine: UIView {
         return CGSize(width: width, height: height)
     }
 
-    // MARK: Init
-
-    init(x: CGFloat, y: CGFloat, height: CGFloat) {
-        self.height = height
-        super.init(frame: CGRect(x: x, y: y, width: width, height: height))
-    }
-
-    init(x: CGFloat, y: CGFloat) {
-        super.init(frame: CGRect(x: x, y: y, width: width, height: height))
+    init(overrideHeight: CGFloat? = nil) {
+        if let overrideHeight = overrideHeight {
+            self.height = overrideHeight
+        }
+        super.init(frame: .zero)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -42,22 +38,10 @@ class RouteLine: UIView {
 
 class SolidLine: RouteLine {
 
-    // MARK: Init
-
-    init(x: CGFloat, y: CGFloat, height: CGFloat, color: UIColor) {
-        super.init(x: x, y: y, height: height)
+    init(overrideHeight: CGFloat? = nil, color: UIColor) {
+        super.init(overrideHeight: overrideHeight)
 
         backgroundColor = color
-    }
-
-    init(color: UIColor) {
-        super.init(x: 0, y: 0)
-
-        backgroundColor = color
-    }
-
-    convenience init(height: CGFloat, color: UIColor) {
-        self.init(x: 0, y: 0, height: height, color: color)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -69,47 +53,36 @@ class SolidLine: RouteLine {
 class DottedLine: RouteLine {
 
     // MARK: Init
+    init(overrideHeight: CGFloat? = nil, color: UIColor) {
+        super.init(overrideHeight: overrideHeight)
 
-    init(x: CGFloat, y: CGFloat, height: CGFloat, color: UIColor) {
-        super.init(x: x, y: y, height: height)
+        let dashSize = CGSize(width: width, height: 3.75)
+        let dashSpace: CGFloat = (height - dashSize.height * 2) / 3
+        let numDashes = 2
+        var prevDash: UIView?
 
-        let dashHeight: CGFloat = 3.75
-        let dashSpace: CGFloat = 4
+        for _ in 0..<numDashes {
+            let dash = UIView()
 
-        var nextDashYPos: CGFloat = dashSpace
-        while nextDashYPos <= height - dashHeight {
-            let line = CALayer()
+            dash.backgroundColor = color
+            dash.layer.cornerRadius = dashSize.height / 2
+            dash.clipsToBounds = true
 
-            line.frame = CGRect(x: 0, y: nextDashYPos, width: frame.width, height: dashHeight)
-            line.backgroundColor = color.cgColor
-            line.cornerRadius = dashHeight / 2
+            addSubview(dash)
 
-            layer.addSublayer(line)
-            nextDashYPos += line.frame.height + dashSpace
+            dash.snp.makeConstraints { make in
+                make.leading.trailing.equalToSuperview()
+                make.size.equalTo(dashSize)
+
+                if let prevDash = prevDash {
+                    make.top.equalTo(prevDash.snp.bottom).offset(dashSpace)
+                } else {
+                    make.top.equalToSuperview().offset(dashSpace)
+                }
+            }
+
+            prevDash = dash
         }
-    }
-
-    init(color: UIColor) {
-        super.init(x: 0, y: 0)
-
-        let dashHeight: CGFloat = 3.75
-        let dashSpace: CGFloat = 4
-
-        var nextDashYPos: CGFloat = dashSpace
-        for _ in 0..<2 {
-            let line = CALayer()
-
-            line.frame = CGRect(x: 0, y: nextDashYPos, width: frame.width, height: dashHeight)
-            line.backgroundColor = color.cgColor
-            line.cornerRadius = dashHeight / 2
-
-            layer.addSublayer(line)
-            nextDashYPos += line.frame.height + dashSpace
-        }
-    }
-
-    convenience init(height: CGFloat, color: UIColor) {
-        self.init(x: 0, y: 0, height: height, color: color)
     }
 
     required init?(coder aDecoder: NSCoder) {
