@@ -33,11 +33,11 @@ enum RequestAction {
 
 class RouteOptionsViewController: UIViewController {
 
-    var datePickerOverlay: UIView!
-    var datePickerView: DatePickerView!
-    var routeResults: UITableView!
-    var routeSelection: RouteSelectionView!
-    var searchBarView: SearchBarView?
+    let datePickerOverlay = UIView()
+    let datePickerView = DatePickerView()
+    let routeResults = UITableView(frame: .zero, style: .grouped)
+    let routeSelection = RouteSelectionView()
+    let searchBarView = SearchBarView()
 
     var cellUserInteraction = true
     var currentLocation: CLLocationCoordinate2D?
@@ -57,7 +57,6 @@ class RouteOptionsViewController: UIViewController {
 
     private let estimatedRowHeight: CGFloat = 115
     private let mediumTapticGenerator = UIImpactFeedbackGenerator(style: .medium)
-    private let navigationBarTitle: String = Constants.Titles.routeOptions
     private let networking: Networking = URLSession.shared.request
     private let reachability: Reachability? = Reachability(hostname: Endpoint.config.host ?? "")
     private let routeResultsTitle: String = Constants.Titles.routeResults
@@ -81,19 +80,12 @@ class RouteOptionsViewController: UIViewController {
 
         edgesForExtendedLayout = []
 
-        title = navigationBarTitle
+        title = Constants.Titles.routeOptions
 
         setupRouteSelection()
         setupSearchBar()
         setupDatePicker()
         setupRouteResultsTableView()
-        setupEmptyDataSet()
-
-        view.addSubview(routeSelection)
-        view.addSubview(datePickerOverlay)
-        view.sendSubviewToBack(datePickerOverlay)
-        view.addSubview(routeResults)
-        view.addSubview(datePickerView) // so datePicker can go ontop of other views
 
         setRouteSelectionView(withDestination: searchTo)
         setupLocationManager()
@@ -111,23 +103,17 @@ class RouteOptionsViewController: UIViewController {
             registerForPreviewing(with: self, sourceView: view)
         }
 
+        setupConstraints()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: Constants.Cells.routeOptionsCellIdentifier)
         setupReachability()
 
         // Reload data to activate timers again
         if !routes.isEmpty {
             routeResults.reloadData()
         }
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        addHeightToDatepicker(20) // add bottom padding to date picker for iPhone X
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -153,30 +139,32 @@ class RouteOptionsViewController: UIViewController {
     // MARK: Route Selection view
 
     private func setupRouteSelection() {
-        routeSelection = RouteSelectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 130))
         routeSelection.toSearchbar.addTarget(self, action: #selector(self.searchingTo), for: .touchUpInside)
         routeSelection.fromSearchbar.addTarget(self, action: #selector(self.searchingFrom), for: .touchUpInside)
         routeSelection.datepickerButton.addTarget(self, action: #selector(self.showDatePicker), for: .touchUpInside)
         routeSelection.swapButton.addTarget(self, action: #selector(self.swapFromAndTo), for: .touchUpInside)
+
+        view.addSubview(routeSelection)
     }
 
     private func setupRouteResultsTableView() {
-        let height = view.frame.height - routeSelection.frame.height - (navigationController?.navigationBar.frame.height ?? 0)
-        let frame = CGRect(x: 0, y: routeSelection.frame.maxY, width: view.frame.width, height: height)
-        routeResults = UITableView(frame: frame, style: .grouped)
         routeResults.delegate = self
         routeResults.allowsSelection = true
         routeResults.dataSource = self
         routeResults.separatorStyle = .none
         routeResults.backgroundColor = Colors.backgroundWash
-        routeResults.alwaysBounceVertical = true //so table view doesn't scroll over top & bottom
+        routeResults.alwaysBounceVertical = true
         routeResults.showsVerticalScrollIndicator = false
-
-        // so can have dynamic height cells
         routeResults.estimatedRowHeight = estimatedRowHeight
         routeResults.rowHeight = UITableView.automaticDimension
+        routeResults.emptyDataSetSource = self
+        routeResults.emptyDataSetDelegate = self
+        routeResults.contentOffset = .zero
+        routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: Constants.Cells.routeOptionsCellIdentifier)
 
         setupRefreshControl()
+
+        view.addSubview(routeResults)
     }
 
     private func setupLocationManager() {
@@ -188,16 +176,72 @@ class RouteOptionsViewController: UIViewController {
         locationManager.startUpdatingLocation()
     }
 
-    private func setupEmptyDataSet() {
-        routeResults.emptyDataSetSource = self
-        routeResults.emptyDataSetDelegate = self
-        routeResults.tableFooterView = UIView()
-        routeResults.contentOffset = .zero
-    }
-
     private func setRouteSelectionView(withDestination destination: Place?) {
         routeSelection.fromSearchbar.setTitle(Constants.General.fromSearchBarPlaceholder, for: .normal)
         routeSelection.toSearchbar.setTitle(destination?.name ?? "", for: .normal)
+    }
+
+    private func setupDatePicker() {
+        setupDatePickerView()
+        setupDatePickerOverlay()
+    }
+
+    private func setupDatePickerView() {
+        datePickerView.delegate = self
+        view.addSubview(datePickerView) // so datePicker can go ontop of other views
+    }
+
+    private func setupDatePickerOverlay() {
+        datePickerOverlay.backgroundColor = Colors.black
+        datePickerOverlay.alpha = 0
+        datePickerOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissDatePicker)))
+        view.addSubview(datePickerOverlay)
+        view.sendSubviewToBack(datePickerOverlay)
+    }
+
+    private func setupSearchBar() {
+        searchBarView.resultsViewController?.destinationDelegate = self
+        searchBarView.resultsViewController?.searchBarCancelDelegate = self
+        self.definesPresentationContext = true
+        hideSearchBar()
+    }
+
+    private func setupConstraintsForVisibleDatePickerView() {
+        datePickerView.snp.remakeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.height.equalTo(self.datePickerView.frame.height)
+        }
+    }
+
+    func setupConstraintsForHiddenDatePickerView() {
+        datePickerView.snp.remakeConstraints { make in
+            make.top.equalTo(self.view.snp.bottom)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(self.datePickerView.frame.height)
+        }
+    }
+
+    private func setupConstraints() {
+        routeSelection.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(routeResults.snp.top)
+        }
+
+        routeResults.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo(routeSelection.snp.bottom)
+        }
+
+        datePickerView.snp.makeConstraints { make in
+            make.top.equalTo(view.snp.bottom)
+            make.leading.trailing.equalToSuperview()
+        }
+
+        datePickerOverlay.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo(routeSelection)
+        }
     }
 
     @objc private func swapFromAndTo(sender: UIButton) {
@@ -220,15 +264,6 @@ class RouteOptionsViewController: UIViewController {
 
     // MARK: Search bar
 
-    private func setupSearchBar() {
-        searchBarView = SearchBarView()
-        searchBarView?.resultsViewController?.destinationDelegate = self
-        searchBarView?.resultsViewController?.searchBarCancelDelegate = self
-        searchBarView?.searchController?.searchBar.sizeToFit()
-        self.definesPresentationContext = true
-        hideSearchBar()
-    }
-
     @objc private func searchingTo(sender: UIButton? = nil) {
         searchType = .to
         presentSearchBar()
@@ -238,7 +273,7 @@ class RouteOptionsViewController: UIViewController {
 
     @objc private func searchingFrom(sender: UIButton? = nil) {
         searchType = .from
-        searchBarView?.resultsViewController?.shouldShowCurrentLocation = true
+        searchBarView.resultsViewController?.shouldShowCurrentLocation = true
         presentSearchBar()
         let payload = RouteOptionsSettingsPayload(description: "Searching From Tapped")
         Analytics.shared.log(payload)
@@ -273,7 +308,7 @@ class RouteOptionsViewController: UIViewController {
 
         }
 
-        if let textFieldInsideSearchBar = searchBarView?.searchController?.searchBar.value(forKey: "searchField") as? UITextField {
+        if let textFieldInsideSearchBar = searchBarView.searchController?.searchBar.value(forKey: "searchField") as? UITextField {
             textFieldInsideSearchBar.attributedPlaceholder = NSAttributedString(string: placeholder) // make placeholder invisible
             textFieldInsideSearchBar.text = searchBarText
         }
@@ -282,7 +317,7 @@ class RouteOptionsViewController: UIViewController {
     }
 
     func dismissSearchBar() {
-        searchBarView?.searchController?.dismiss(animated: true, completion: nil)
+        searchBarView.searchController?.dismiss(animated: true, completion: nil)
     }
 
     func hideSearchBar() {
@@ -291,15 +326,15 @@ class RouteOptionsViewController: UIViewController {
             navigationItem.setLeftBarButton(backButton, animated: false)
         }
         navigationItem.hidesBackButton = false
-        searchBarView?.searchController?.isActive = false
+        searchBarView.searchController?.isActive = false
     }
 
     private func showSearchBar() {
-        navigationItem.searchController = searchBarView?.searchController
+        navigationItem.searchController = searchBarView.searchController
         backButton = navigationItem.leftBarButtonItem
         navigationItem.setLeftBarButton(nil, animated: false)
         navigationItem.hidesBackButton = true
-        searchBarView?.searchController?.isActive = true
+        searchBarView.searchController?.isActive = true
     }
 
     /// Fetch coordinates, store in place, return updated place
@@ -568,32 +603,6 @@ class RouteOptionsViewController: UIViewController {
     }
 
     // MARK: Date Picker
-
-    private func setupDatePicker() {
-        setupDatePickerView()
-        setupDatePickerOverlay()
-    }
-
-    private func setupDatePickerView() {
-        datePickerView = DatePickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 254))
-        datePickerView.delegate = self
-    }
-
-    private func setupDatePickerOverlay() {
-        datePickerOverlay = UIView(frame: CGRect(x: 0, y: -12, width: view.frame.width, height: view.frame.height + 12)) // 12 for sliver that shows up when click datepicker immediately after transition from HomeVC
-        datePickerOverlay.backgroundColor = Colors.black
-        datePickerOverlay.alpha = 0
-
-        datePickerOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissDatePicker)))
-    }
-
-    private func addHeightToDatepicker(_ height: CGFloat) {
-        let oldFrame = datePickerView.frame
-        let newFrame = CGRect(x: oldFrame.minX, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height + height)
-
-        datePickerView.frame = newFrame
-    }
-
     @objc private func showDatePicker(sender: UIButton) {
 
         view.bringSubviewToFront(datePickerOverlay)
@@ -607,8 +616,10 @@ class RouteOptionsViewController: UIViewController {
         datePickerView.setDatepickerTimeType(searchTimeType: searchTimeType)
 
         UIView.animate(withDuration: 0.5) {
-            self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
+            self.setupConstraintsForVisibleDatePickerView()
             self.datePickerOverlay.alpha = 0.6 // darken screen when pull up datepicker
+
+            self.view.layoutIfNeeded()
         }
 
         let payload = RouteOptionsSettingsPayload(description: "Date Picker Accessed")
@@ -639,7 +650,7 @@ class RouteOptionsViewController: UIViewController {
                 banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
                 banner?.autoDismiss = false
                 banner?.show(queuePosition: .front, bannerPosition: .top, on: navigationController)
-//                setUserInteraction(to: false)
+                setUserInteraction(to: false)
             case .cellular, .wifi:
                 setUserInteraction(to: true)
             }

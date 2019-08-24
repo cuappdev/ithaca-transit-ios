@@ -37,10 +37,12 @@ class DatePickerView: UIView {
 
     // MARK: Init
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init() {
+        super.init(frame: .zero)
 
         backgroundColor = Colors.white
+        layer.cornerRadius = 8
+        clipsToBounds = true
 
         setupDatePicker()
         setupTimeTypeSegmentedControl()
@@ -51,11 +53,7 @@ class DatePickerView: UIView {
         setupConstraints()
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    // MARK: Style
+    // MARK: View setup
 
     private func setupDatePicker() {
         let now = Date()
@@ -140,6 +138,8 @@ class DatePickerView: UIView {
     }
 
     private func setupConstraints() {
+        let buttonHeight = 20
+        let datePickerHeight = 164.5
         let segmentedControlHeight = 29
         let segmentedControlSizeRatio = 0.5
         let spaceBtButtonAndSegmentedControl = 16
@@ -151,13 +151,15 @@ class DatePickerView: UIView {
         cancelButton.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(spaceBtButtonAndSuperviewSide)
             make.top.equalToSuperview().inset(spaceBtButtonAndSuprviewTop)
-            make.size.equalTo(cancelButton.intrinsicContentSize)
+            make.width.equalTo(cancelButton.intrinsicContentSize.width)
+            make.height.equalTo(buttonHeight)
         }
 
         doneButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(spaceBtButtonAndSuperviewSide)
             make.top.equalToSuperview().inset(spaceBtButtonAndSuprviewTop)
-            make.size.equalTo(doneButton.intrinsicContentSize)
+            make.width.equalTo(doneButton.intrinsicContentSize.width)
+            make.height.equalTo(buttonHeight)
         }
 
         timeTypeSegmentedControl.snp.makeConstraints { make in
@@ -177,6 +179,7 @@ class DatePickerView: UIView {
         datepicker.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.top.equalTo(leaveNowSegmentedControl.snp.bottom).offset(spaceBtSegmentControlAndDatePicker)
+            make.height.equalTo(datePickerHeight)
             make.bottom.equalTo(safeAreaLayoutGuide)
         }
     }
@@ -222,5 +225,9 @@ class DatePickerView: UIView {
         } else {
             leaveNowSegmentedControl.selectedSegmentIndex = UISegmentedControl.noSegment
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
