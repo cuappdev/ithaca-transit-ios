@@ -577,8 +577,6 @@ class RouteOptionsViewController: UIViewController {
     private func setupDatePickerView() {
         datePickerView = DatePickerView(frame: CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 254))
         datePickerView.delegate = self
-        datePickerView.positionSubviews()
-        datePickerView.addSubviews()
     }
 
     private func setupDatePickerOverlay() {

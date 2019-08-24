@@ -211,6 +211,8 @@ struct Constants {
     struct General {
         static let affectedRoutes = "Affected Routes"
         static let currentLocation = "Current Location"
+        static let datepickerArriveBy = "Arrive By"
+        static let datepickerLeaveAt = "Leave At"
         static let datepickerLeaveNow = "Leave Now"
         static let destination = "your destination"
         static let favoritesPlaceholder = "Search any destination"
