@@ -86,8 +86,10 @@ extension RouteOptionsViewController: DestinationDelegate {
 extension RouteOptionsViewController: DatePickerViewDelegate {
     @objc func dismissDatePicker() {
         UIView.animate(withDuration: 0.5, animations: {
-            self.datePickerView.center.y = self.view.frame.height + (self.datePickerView.frame.height/2)
+            self.setupConstraintsForHiddenDatePickerView()
             self.datePickerOverlay.alpha = 0.0
+
+            self.view.layoutIfNeeded()
         }, completion: { (_) in
             self.view.sendSubviewToBack(self.datePickerOverlay)
             self.view.sendSubviewToBack(self.datePickerView)
@@ -181,8 +183,8 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
     func didReceiveCurrentLocation(_ location: CLLocation?) {
         currentLocation = location?.coordinate
 
-        searchBarView?.resultsViewController?.currentLocation?.latitude = currentLocation?.latitude
-        searchBarView?.resultsViewController?.currentLocation?.longitude = currentLocation?.longitude
+        searchBarView.resultsViewController?.currentLocation?.latitude = currentLocation?.latitude
+        searchBarView.resultsViewController?.currentLocation?.longitude = currentLocation?.longitude
 
         if searchFrom?.name == Constants.General.currentLocation {
             searchFrom?.latitude = currentLocation?.latitude
@@ -200,7 +202,7 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
                                         latitude: coordinates.latitude,
                                         longitude: coordinates.longitude)
             searchFrom = currentLocation
-            searchBarView?.resultsViewController?.currentLocation = currentLocation
+            searchBarView.resultsViewController?.currentLocation = currentLocation
             routeSelection.fromSearchbar.setTitle(currentLocation.name, for: .normal)
             searchForRoutes()
         }
@@ -314,12 +316,6 @@ extension RouteOptionsViewController: UITableViewDelegate {
             return UIFont.getFont(.regular, size: 12).lineHeight
         }
     }
-
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        let tableViewPadding: CGFloat = 12
-        return UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: tableViewPadding))
-    }
-
 }
 
 // MARK: DZNEmptyDataSet
@@ -348,7 +344,6 @@ extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDele
         titleLabel.font = .getFont(.regular, size: 18.0)
         titleLabel.textColor = Colors.metadataIcon
         titleLabel.text = showRouteSearchingLoader ? Constants.EmptyStateMessages.lookingForRoutes : Constants.EmptyStateMessages.noRoutesFound
-        titleLabel.sizeToFit()
 
         customView.addSubview(symbolView)
         customView.addSubview(titleLabel)
