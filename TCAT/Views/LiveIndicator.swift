@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum LiveIndicatorSize: Double {
+enum LiveIndicatorSize: CGFloat {
     case large = 12
     case small = 8
 }
@@ -16,8 +16,8 @@ class LiveIndicator: UIView {
 
     // MARK: State vars
 
-    let lineWidth: CGFloat
-    let size: LiveIndicatorSize
+    private var lineWidth: CGFloat
+    private var size: LiveIndicatorSize
 
     // MARK: View vars
 
@@ -43,16 +43,16 @@ class LiveIndicator: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         size = .small
-        lineWidth = CGFloat(size.rawValue) / 4
+        lineWidth = size.rawValue / 4
 
         super.init(coder: aDecoder)
     }
 
     init(size: LiveIndicatorSize, color: UIColor) {
         self.size = size
-        self.lineWidth = CGFloat(size.rawValue) / 4
+        lineWidth = size.rawValue / 4
 
-        super.init(frame: CGRect(x: 0, y: 0, width: size.rawValue, height: size.rawValue))
+        super.init(frame: .zero)
 
         circleLayer = getCircleLayer(color: color)
         largeArcLayer = getLargeArcLayer(color: color, lineWidth: lineWidth)
@@ -62,31 +62,15 @@ class LiveIndicator: UIView {
         layer.addSublayer(largeArcLayer)
         layer.addSublayer(smallArcLayer)
 
-        resizeFrameToFitLayers(lineWidth: lineWidth)
-
         startAnimation()
-
-    }
-
-    // MARK: Resize
-
-    private func resizeFrameToFitLayers(lineWidth: CGFloat) {
-        frame = CGRect(x: frame.minX, y: frame.minY, width: frame.width + lineWidth, height: frame.height + lineWidth)
-        repositionLayer(circleLayer, withY: lineWidth)
-        repositionLayer(smallArcLayer, withY: lineWidth)
-        repositionLayer(largeArcLayer, withY: lineWidth)
-    }
-
-    private func repositionLayer(_ layer: CAShapeLayer, withY y: CGFloat) {
-        layer.frame = CGRect(x: 0, y: y, width: layer.frame.width, height: layer.frame.height)
 
     }
 
     // MARK: Create views
 
     private func getCircleLayer(color: UIColor) -> CAShapeLayer {
-        let diameter = bounds.size.width / 4
-        let circlePath = UIBezierPath(ovalIn: CGRect(x: 0, y: bounds.maxY - diameter, width: diameter, height: diameter))
+        let diameter = intrinsicContentSize.height / 5
+        let circlePath = UIBezierPath(ovalIn: CGRect(x: 0, y: intrinsicContentSize.height - diameter, width: diameter, height: diameter))
 
         let circleLayer = CAShapeLayer()
         circleLayer.path = circlePath.cgPath
@@ -96,7 +80,7 @@ class LiveIndicator: UIView {
     }
 
     private func drawBezierPath(radius: CGFloat, lineWidth: CGFloat) -> UIBezierPath {
-        return UIBezierPath(arcCenter: CGPoint(x: 0, y: bounds.maxY),
+        return UIBezierPath(arcCenter: CGPoint(x: 0, y: intrinsicContentSize.height),
                             radius: radius,
                             startAngle: .pi * (3/2) + asin((lineWidth / 2) / (radius + (lineWidth / 2))),
                             endAngle: -asin((lineWidth / 2) / (radius + (lineWidth / 2))),
@@ -104,26 +88,26 @@ class LiveIndicator: UIView {
     }
 
     private func getLargeArcLayer(color: UIColor, lineWidth: CGFloat) -> CAShapeLayer {
-        let radius = bounds.size.height + lineWidth / 2
+        let radius = intrinsicContentSize.height - lineWidth / 2
         let largeArcPath = drawBezierPath(radius: radius, lineWidth: lineWidth)
         let largeArcLayer = CAShapeLayer()
         largeArcLayer.path = largeArcPath.cgPath
         largeArcLayer.strokeColor = color.cgColor
         largeArcLayer.fillColor = UIColor.clear.cgColor
-        largeArcLayer.lineWidth = bounds.width/4
+        largeArcLayer.lineWidth = lineWidth
         largeArcLayer.lineCap = CAShapeLayerLineCap.round
 
         return largeArcLayer
     }
 
     private func getSmallArcLayer(color: UIColor, lineWidth: CGFloat) -> CAShapeLayer {
-        let radius = bounds.size.height / 2 + lineWidth / 2
+        let radius = intrinsicContentSize.height * 3 / 5 - lineWidth / 2
         let smallArcPath = drawBezierPath(radius: radius, lineWidth: lineWidth)
         let smallArcLayer = CAShapeLayer()
         smallArcLayer.path = smallArcPath.cgPath
         smallArcLayer.strokeColor = color.cgColor
         smallArcLayer.fillColor = UIColor.clear.cgColor
-        smallArcLayer.lineWidth = bounds.width / 4
+        smallArcLayer.lineWidth = lineWidth
         smallArcLayer.lineCap = CAShapeLayerLineCap.round
 
         return smallArcLayer
