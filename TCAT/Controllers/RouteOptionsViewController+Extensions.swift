@@ -264,12 +264,8 @@ extension RouteOptionsViewController: UITableViewDelegate {
             case 2: return Constants.TableHeaders.walking
             default: return nil
             }
-        } else {
-            switch section {
-            case 1: return Constants.TableHeaders.walking
-            default: return nil
-            }
         }
+        return section == 1 ? Constants.TableHeaders.walking : nil
     }
 
     func isEmptyHeaderView(section: Int) -> Bool {

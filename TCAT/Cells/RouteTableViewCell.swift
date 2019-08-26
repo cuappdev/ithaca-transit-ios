@@ -170,7 +170,7 @@ class RouteTableViewCell: UITableViewCell {
         setDepartureTimeAndLiveElements(withRoute: route)
 
         /*
-         TODO: Find fix for updating tableview when delays occur. We currently just update the tableview but because
+         TODO #266: Find fix for updating tableview when delays occur. We currently just update the tableview but because
          it's an asynchronous call and is run for each cell, we update the tableview way more often than we need
          to and prepareForResuse doesn't seem to get called as often. This causes overlaps in the routeDiagram and
          sometimes makes it impossible to read.

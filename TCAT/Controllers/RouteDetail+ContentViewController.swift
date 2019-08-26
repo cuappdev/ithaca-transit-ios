@@ -73,7 +73,7 @@ class RouteDetailContentViewController: UIViewController {
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
 
         // Debug Function
-        // createDebugBusIcon()
+//        createDebugBusIcon()
     }
 
     /** Construct Directions based on Route and parse Waypoint / Path data */
@@ -262,7 +262,6 @@ class RouteDetailContentViewController: UIViewController {
             CATransaction.begin()
             CATransaction.setAnimationDuration(liveTrackingNetworkRefreshRate + latencyConstant)
 
-            guard let iconView = bus.iconView as? BusLocationView else { return }
             newBus.appearAnimation = .none
 
             updateUserData(for: newBus, with: [
@@ -272,8 +271,6 @@ class RouteDetailContentViewController: UIViewController {
 
             // Position
             newBus.position = busCoords
-            // Actual Coordinates, Bearing
-            iconView.updateBus(from: existingBus!.position, to: busCoords)
 
             CATransaction.commit()
 
@@ -291,9 +288,6 @@ class RouteDetailContentViewController: UIViewController {
                 Constants.BusUserData.actualCoordinates: busCoords,
                 Constants.BusUserData.vehicleID: bus.vehicleID
                 ])
-
-            // Actual Coordinates, Bearing
-            iconView.updateBus(to: busCoords, with: Double(bus.heading))
 
             setIndex(of: marker, with: .bussing)
             marker.map = mapView
@@ -494,7 +488,7 @@ class RouteDetailContentViewController: UIViewController {
 
     /// Completion after locationManager functions return
     private func didUpdateLocation() {
-        // TODO: Find better way to cut down on didUpdateLocation calls
+        // TODO #267: Find better way to cut down on didUpdateLocation calls
         if initalUpdate {
             initalUpdate = false
             drawMapRoute()
@@ -672,12 +666,9 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
 extension RouteDetailContentViewController {
     /// Create fake bus for debugging and testing bus indicators
     private func createDebugBusIcon() {
-        let bus = BusLocation(dataType: .validData, destination: "", deviation: 0, delay: 0, direction: "", displayStatus: "", gpsStatus: 0, heading: 0, lastStop: "", lastUpdated: Date(), latitude: 42.4491411, longitude: -76.4836815, name: "16", opStatus: "", routeID: 0, runID: 0, speed: 0, tripID: 0, vehicleID: 0)
+        let bus = BusLocation(dataType: .validData, destination: "", deviation: 0, delay: 0, direction: "", displayStatus: "", gpsStatus: 0, heading: 0, lastStop: "", lastUpdated: Date(), latitude: 42.4491411, longitude: -76.4836815, name: "16", opStatus: "", routeID: 10, runID: 0, speed: 0, tripID: 0, vehicleID: 0)
         let coords = CLLocationCoordinate2D(latitude: 42.4491411, longitude: -76.4836815)
         let marker = GMSMarker(position: coords)
-        if let iconView = bus.iconView as? BusLocationView {
-            iconView.updateBus(to: coords, with: Double(bus.heading))
-        }
         marker.iconView = bus.iconView
         marker.appearAnimation = .pop
         setIndex(of: marker, with: .bussing)

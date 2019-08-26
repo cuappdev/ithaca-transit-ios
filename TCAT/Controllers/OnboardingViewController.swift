@@ -268,7 +268,7 @@ class OnboardingViewController: PresentationController {
 
         addToBackground(contents)
 
-        for row in 1...4 {
+        (1...4).forEach { row in
             for (column, backgroundImage) in backgroundImages.enumerated() {
                 if let position = backgroundImage.positionAt(row), let content = contents[optional: column] {
                     addAnimation(TransitionAnimation(content: content, destination: position,

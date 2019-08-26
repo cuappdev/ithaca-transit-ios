@@ -150,32 +150,32 @@ class AllStopsTableViewController: UIViewController {
             loadingIndicator = nil
             createSectionIndexesForBusStop()
             tableView.reloadData()
-        } else {
-            getAllStops().observe { [weak self] result in
-                guard let `self` = self else { return }
-                DispatchQueue.main.async {
-                    switch result {
-                    case .value(var response):
-                        if !response.data.isEmpty {
-                            // Save bus stops in userDefaults
-                            do {
-                                let encodedObject = try JSONEncoder().encode(response.data)
-                                userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
-                            } catch let error {
-                                print(error)
-                            }
-                            let collegetownStop = Place(name: "Collegetown", latitude: 42.442558, longitude: -76.485336)
-                            response.data.append(collegetownStop)
-                            self.allStops = response.data
+            return
+        }
+        getAllStops().observe { [weak self] result in
+            guard let `self` = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .value(var response):
+                    if !response.data.isEmpty {
+                        // Save bus stops in userDefaults
+                        do {
+                            let encodedObject = try JSONEncoder().encode(response.data)
+                            userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
+                        } catch let error {
+                            print(error)
                         }
-                    case .error(let error):
-                        print("AllStopsTableViewController.retryNetwork error:", error)
+                        let collegetownStop = Place(name: "Collegetown", latitude: 42.442558, longitude: -76.485336)
+                        response.data.append(collegetownStop)
+                        self.allStops = response.data
                     }
-                    self.loadingIndicator?.removeFromSuperview()
-                    self.loadingIndicator = nil
-                    self.createSectionIndexesForBusStop()
-                    self.tableView.reloadData()
+                case .error(let error):
+                    print("AllStopsTableViewController.retryNetwork error:", error)
                 }
+                self.loadingIndicator?.removeFromSuperview()
+                self.loadingIndicator = nil
+                self.createSectionIndexesForBusStop()
+                self.tableView.reloadData()
             }
         }
     }
