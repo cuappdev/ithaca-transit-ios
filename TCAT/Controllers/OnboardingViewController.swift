@@ -11,29 +11,13 @@ import UIKit
 
 class OnboardingViewController: PresentationController {
 
-    //
-    // MARK: Variables
-    //
-
     /// Change the main view's background color
     private let backgroundColor = UIColor(hex: "C0DDEB")
-
-    //
-    // Navigation
-    //
 
     /// The text color of the navigation buttons
     private let navigationAttributes: [NSAttributedString.Key: Any] = [
         .foregroundColor: UIColor(hex: "243C47")
     ]
-
-    //
-    // Labels
-    //
-
-    //
-    //  Header Label
-    //
 
     /// The position of the header label
     private let titleLabelFontName = Fonts.bold
@@ -47,10 +31,6 @@ class OnboardingViewController: PresentationController {
         Constants.Onboarding.favorites,
         Constants.Onboarding.bestFeatures
     ]
-
-    //
-    // Detail Label
-    //
 
     /// The position of the main label
     private let detailLabelPosition = Position(left: 0.5, top: 0.35)
@@ -73,10 +53,6 @@ class OnboardingViewController: PresentationController {
         ""
     ]
 
-    //
-    // Assets
-    //
-
     /// Set the asset type, position, and speed.
     private let backgroundImages = [
         BackgroundImage(name: "treesnroad", left: -2.7, top: 0.71, speed: -1.3),
@@ -86,10 +62,6 @@ class OnboardingViewController: PresentationController {
         BackgroundImage(name: "cloud", left: -2.0, top: 0.10, speed: -0.1)
     ]
 
-    //
-    // Ground View
-    //
-
     /// The size of the ground view
     private let groundViewSize = CGSize(width: 1024, height: 60)
 
@@ -98,10 +70,6 @@ class OnboardingViewController: PresentationController {
 
     /// The background color of the ground view
     private let groundViewBackgroundColor = UIColor(hex: "243C47")
-
-    //
-    // MARK: Implementation
-    //
 
     /// Used to determine what context this view is being shown in
     private var isInitialViewing: Bool = true
@@ -130,7 +98,6 @@ class OnboardingViewController: PresentationController {
 
             return position
         }
-
     }
 
     private lazy var dismissButton: UIBarButtonItem = { [unowned self] in
@@ -140,14 +107,12 @@ class OnboardingViewController: PresentationController {
             target: self,
             action: #selector(dismissView)
         )
-
         dismissButton.setTitleTextAttributes(navigationAttributes, for: .normal)
 
         return dismissButton
     }()
 
-    @objc func dismissView() {
-
+    @objc private func dismissView() {
         if isInitialViewing {
 
             let rootVC = HomeMapViewController()
@@ -170,7 +135,6 @@ class OnboardingViewController: PresentationController {
         } else {
             dismiss(animated: true)
         }
-
     }
 
     init(initialViewing: Bool) {
@@ -187,7 +151,6 @@ class OnboardingViewController: PresentationController {
 
         setNavigationTitle = false
         navigationItem.leftBarButtonItem = isInitialViewing ? nil : dismissButton
-
         view.backgroundColor = backgroundColor
 
         configureSlides()
@@ -218,7 +181,8 @@ class OnboardingViewController: PresentationController {
         ]
 
         let detailTitles = detailLabelMessages.map { title -> Content in
-            let label = UILabel(frame: CGRect(x: 0, y: 0, width: width * detailWidth, height: height * detailHeight))
+            let label = UILabel()
+            label.frame.size = CGSize(width: width * detailWidth, height: height * detailHeight)
             label.numberOfLines = 5
             label.attributedText = NSAttributedString(string: title, attributes: attributes)
             return Content(view: label, position: detailLabelPosition)
@@ -239,7 +203,8 @@ class OnboardingViewController: PresentationController {
         ]
 
         let headerTitles = titleLabelMessages.map { title -> Content in
-            let label = UILabel(frame: CGRect(x: 0, y: 0, width: width * headerWidth, height: height * headerHeight))
+            let label = UILabel()
+            label.frame.size = CGSize(width: width * headerWidth, height: height * headerHeight)
             label.numberOfLines = 5
             label.attributedText = NSAttributedString(string: title, attributes: headerAttributes)
             return Content(view: label, position: titleLabelPosition)
@@ -248,7 +213,7 @@ class OnboardingViewController: PresentationController {
         // Button
 
         let button = UIButton()
-        button.frame = CGRect(x: 0, y: 0, width: 160, height: 60)
+        button.frame.size = CGSize(width: 160, height: 60)
         button.layer.shadowOffset = CGSize(width: 0, height: 4)
         button.layer.shadowColor = Colors.metadataIcon.cgColor
         button.layer.shadowOpacity = 0.5
@@ -262,11 +227,9 @@ class OnboardingViewController: PresentationController {
         let startButton = Content(view: button, position: buttonPosition, centered: true)
 
         // Slides
-
         var slides = [SlideController]()
 
         for index in 0..<detailLabelMessages.count {
-
             var contents: [Content] = [detailTitles[index], headerTitles[index]]
 
             // Go Button
@@ -289,15 +252,11 @@ class OnboardingViewController: PresentationController {
             controller.add(animation: Content.centerTransition(forSlideContent: startButton))
 
             slides.append(controller)
-
         }
-
         add(slides)
-
     }
 
     private func configureBackground() {
-
         var contents = [Content]()
 
         for backgroundImage in backgroundImages {
@@ -309,9 +268,9 @@ class OnboardingViewController: PresentationController {
 
         addToBackground(contents)
 
-        for row in 1...4 {
+        (1...4).forEach { row in
             for (column, backgroundImage) in backgroundImages.enumerated() {
-                if let position = backgroundImage.positionAt(row), let content = contents.at(column) {
+                if let position = backgroundImage.positionAt(row), let content = contents[optional: column] {
                     addAnimation(TransitionAnimation(content: content, destination: position,
                                                      duration: 2.0, damping: 1.0), forPage: row)
                 }
@@ -329,18 +288,5 @@ class OnboardingViewController: PresentationController {
 
         contents.append(groundContent)
         addToBackground([groundContent])
-
-    }
-
-}
-
-private extension Array {
-    func at(_ index: Int?) -> Element? {
-        var object: Element?
-        if let index = index, index >= 0 && index < endIndex {
-            object = self[index]
-        }
-
-        return object
     }
 }

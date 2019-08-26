@@ -90,7 +90,10 @@ class Route: NSObject, Codable {
 
     /// The number of minutes the route will take. Returns 0 in case of error.
     var totalDuration: Int {
-        return Time.dateComponents(from: departureTime, to: arrivalTime).minute ?? 0
+        let duration = Time.dateComponents(from: departureTime, to: arrivalTime)
+        let minutes = duration.minute ?? 0
+        let hours = duration.hour ?? 0
+        return minutes + hours * 60
     }
 
     private enum CodingKeys: String, CodingKey {

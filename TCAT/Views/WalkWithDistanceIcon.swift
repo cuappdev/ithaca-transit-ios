@@ -10,55 +10,58 @@ import UIKit
 
 class WalkWithDistanceIcon: UIView {
 
-    // MARK: Size vars
-
-    let height: CGFloat
-    let width: CGFloat
-
     // MARK: View vars
 
-    var travelDistanceLabel: UILabel
-    var walkIcon: UIImageView
+    private let travelDistanceLabel = UILabel()
+    private let walkIcon = UIImageView(image: #imageLiteral(resourceName: "walk"))
 
     // MARK: Spacing vars
 
     let walkIconAndDistanceLabelVerticalSpace: CGFloat = 2.0
 
-    // MARK: Constraint var
-
-    override var intrinsicContentSize: CGSize {
-        return CGSize(width: width, height: height)
-    }
-
     // MARK: Init
 
     init(withDistance distance: Double) {
-        travelDistanceLabel = UILabel()
+        super.init(frame: .zero)
+
         travelDistanceLabel.font = .getFont(.regular, size: 12.0)
         travelDistanceLabel.textColor = Colors.metadataIcon
 
         if distance > 0 {
             travelDistanceLabel.text = "\(distance.roundedString)"
-            travelDistanceLabel.sizeToFit()
         }
 
-        walkIcon = UIImageView(image: #imageLiteral(resourceName: "walk"))
         walkIcon.contentMode = .scaleAspectFit
         walkIcon.tintColor = Colors.metadataIcon
 
-        width = travelDistanceLabel.frame.width > 0 ? travelDistanceLabel.frame.width : 34.0
-        height = walkIcon.frame.height + walkIconAndDistanceLabelVerticalSpace + travelDistanceLabel.frame.height
-
-        super.init(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: height)))
-
-        walkIcon.center.x = center.x
-        travelDistanceLabel.center.x = center.x
-
-        let oldFrame = travelDistanceLabel.frame
-        travelDistanceLabel.frame = CGRect(x: oldFrame.minX, y: walkIcon.frame.maxY + walkIconAndDistanceLabelVerticalSpace, width: oldFrame.width, height: oldFrame.height)
-
         addSubview(walkIcon)
         addSubview(travelDistanceLabel)
+
+        setupConstraints()
+    }
+
+    private func setupConstraints() {
+        walkIcon.snp.makeConstraints { make in
+            make.top.centerX.equalToSuperview()
+            make.size.equalTo(walkIcon.intrinsicContentSize)
+        }
+
+        travelDistanceLabel.snp.makeConstraints { make in
+            make.top.equalTo(walkIcon.snp.bottom).offset(walkIconAndDistanceLabelVerticalSpace)
+            make.centerX.bottom.equalToSuperview()
+            make.size.equalTo(travelDistanceLabel.intrinsicContentSize)
+
+        }
+
+        if travelDistanceLabel.text == nil {
+            walkIcon.snp.makeConstraints { make in
+                make.leading.trailing.equalToSuperview()
+            }
+        } else {
+            travelDistanceLabel.snp.makeConstraints { make in
+                make.leading.trailing.equalToSuperview()
+            }
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {

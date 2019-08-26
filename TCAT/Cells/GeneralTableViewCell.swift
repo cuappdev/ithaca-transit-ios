@@ -23,7 +23,7 @@ class GeneralTableViewCell: UITableViewCell {
         setupConstraints()
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         let iconLeadingInset = 16
         let iconSize = CGSize(width: 20, height: 20)
         let titleLabelHeight: CGFloat = 17
@@ -44,7 +44,7 @@ class GeneralTableViewCell: UITableViewCell {
         }
     }
 
-    func configure(for type: SectionType) {
+    func configure(for type: Section) {
         switch type {
         case .seeAllStops:
             titleLabel.text = Constants.General.seeAllStops

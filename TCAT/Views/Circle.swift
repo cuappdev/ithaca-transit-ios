@@ -17,64 +17,62 @@ enum CircleStyle {
 }
 
 enum CircleSize: Int {
-    case large = 18
-    case medium = 16
-    case small = 12
+    case large = 9
+    case medium = 8
+    case small = 6
 }
 
 class Circle: UIView {
 
     // MARK: Data vars
 
-    let diameter: CGFloat
+    private let radius: CGFloat
 
     // MARK: Constraint vars
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: diameter, height: diameter)
+        return CGSize(width: radius * 2, height: radius * 2)
     }
 
     // MARK: Init
 
     init(size: CircleSize, style: CircleStyle, color: UIColor) {
-        diameter = CGFloat(size.rawValue)
-        super.init(frame: CGRect(x: 0, y: 0, width: diameter, height: diameter))
+        radius = CGFloat(size.rawValue)
+        super.init(frame: .zero)
 
-        layer.cornerRadius = frame.width / 2
+        layer.cornerRadius = radius
         clipsToBounds = true
 
         switch style {
-
         case .solid:
-
             backgroundColor = color
-
         case .bordered:
-
             backgroundColor = Colors.white
             layer.borderColor = color.cgColor
             layer.borderWidth = 2.0
 
-            let solidCircle = CALayer()
+            let solidCircle = UIView()
             let solidCircleDiameter: CGFloat = size == .medium ? 6 : 8
-            solidCircle.frame = CGRect(x: 0, y: 0, width: solidCircleDiameter, height: solidCircleDiameter)
 
-            solidCircle.position = center
-            solidCircle.cornerRadius = solidCircle.frame.height / 2
-            solidCircle.backgroundColor = color.cgColor
-            layer.addSublayer(solidCircle)
+            solidCircle.layer.cornerRadius = solidCircleDiameter / 2
+            solidCircle.clipsToBounds = true
+            solidCircle.backgroundColor = color
 
+            addSubview(solidCircle)
+
+            solidCircle.snp.makeConstraints { make in
+                make.centerX.centerY.equalToSuperview()
+                make.size.equalTo(CGSize(width: solidCircleDiameter, height: solidCircleDiameter))
+            }
         case .outline:
-
             backgroundColor = Colors.white
             layer.borderColor = color.cgColor
             layer.borderWidth = 2.0
-
         }
     }
 
     required init?(coder aDecoder: NSCoder) {
-        diameter = CGFloat(CircleSize.small.rawValue)
+        radius = CGFloat(CircleSize.small.rawValue)
         super.init(coder: aDecoder)
     }
 }

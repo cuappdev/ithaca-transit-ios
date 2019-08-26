@@ -14,6 +14,7 @@ class BusStopTableViewCell: UITableViewCell {
     private let connectorTop = UIView()
     private let statusCircle = Circle(size: .small, style: .outline, color: Colors.tcatBlue)
     private let titleLabel = UILabel()
+    private let hairline = UIView()
 
     private let linePosition: CGFloat = DetailIconView.width - 16 // max of DetailIconView (114) - constant (16) = 98
 
@@ -37,7 +38,7 @@ class BusStopTableViewCell: UITableViewCell {
         setupConstraints()
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
         let cellWidth: CGFloat = RouteDetailCellSize.indentedWidth
         let connectorSize = CGSize(width: 4, height: cellHeight / 2)
@@ -69,12 +70,24 @@ class BusStopTableViewCell: UITableViewCell {
         }
     }
 
+    private func setupConfigDependentConstraints() {
+        hairline.snp.makeConstraints { make in
+            make.leading.equalTo(titleLabel)
+            make.bottom.trailing.equalToSuperview()
+            make.height.equalTo(0.5)
+        }
+    }
+
     func configure(for name: String) {
         titleLabel.text = name
+
+        hairline.backgroundColor = Colors.tableViewSeparator
+        contentView.addSubview(hairline)
+
+        setupConfigDependentConstraints()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
 }

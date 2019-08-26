@@ -10,8 +10,18 @@ import UIKit
 
 class CustomNavigationController: UINavigationController, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
 
+    /// Attributed string details for the back button text of a navigation controller
+    static let buttonTitleTextAttributes: [NSAttributedString.Key: Any] = [
+        .font: UIFont.getFont(.regular, size: 14)
+    ]
+
     private let additionalWidth: CGFloat = 30
     private let additionalHeight: CGFloat = 100
+    /// Attributed string details for the title text of a navigation controller
+    private let titleTextAttributes: [NSAttributedString.Key: Any] = [
+        .font: UIFont.getFont(.regular, size: 18),
+        .foregroundColor: Colors.black
+    ]
 
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
@@ -32,7 +42,6 @@ class CustomNavigationController: UINavigationController, UINavigationController
     }
 
     override func viewDidLoad() {
-
         super.viewDidLoad()
 
         if responds(to: #selector(getter: interactivePopGestureRecognizer)) {
@@ -47,22 +56,9 @@ class CustomNavigationController: UINavigationController, UINavigationController
             let payload = ScreenshotTakenPayload(location: "\(type(of: currentViewController))")
             Analytics.shared.log(payload)
         }
-
     }
 
-    /// Attributed string details for the title text of a navigation controller
-    let titleTextAttributes: [NSAttributedString.Key: Any] = [
-        .font: UIFont.getFont(.regular, size: 18),
-        .foregroundColor: Colors.black
-    ]
-
-    /// Attributed string details for the back button text of a navigation controller
-    static let buttonTitleTextAttributes: [NSAttributedString.Key: Any] = [
-        .font: UIFont.getFont(.regular, size: 14)
-    ]
-
-    func customizeAppearance() {
-
+    private func customizeAppearance() {
         navigationBar.backgroundColor = Colors.white
         navigationBar.barTintColor = Colors.white
         navigationBar.tintColor = Colors.primaryText
@@ -70,12 +66,6 @@ class CustomNavigationController: UINavigationController, UINavigationController
         navigationItem.backBarButtonItem?.setTitleTextAttributes(
             CustomNavigationController.buttonTitleTextAttributes, for: .normal
         )
-
-        // Saved from other view controllers in case needed
-        // navigationBar.isTranslucent = false
-        // navigationBar.setBackgroundImage(UIImage(), for: .default)
-        // navigationBar.shadowImage = UIImage()
-
     }
 
     /// Return an instance of custom back button
@@ -104,7 +94,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
     }
 
     /** Move back one view controller in navigationController stack */
-    @objc func backAction() {
+    @objc private func backAction() {
         _ = popViewController(animated: true)
     }
 
@@ -119,18 +109,14 @@ class CustomNavigationController: UINavigationController, UINavigationController
         super.pushViewController(viewController, animated: animated)
 
         if viewControllers.count > 1 {
-
             navigationBar.titleTextAttributes = titleTextAttributes
 
             // Add back button for non-modal non-peeked screens
-
             if !viewController.isModal {
                 viewController.navigationItem.hidesBackButton = true
                 viewController.navigationItem.setLeftBarButton(customBackButton(), animated: true)
             }
-
         }
-
     }
 
     override func popViewController(animated: Bool) -> UIViewController? {
@@ -140,7 +126,6 @@ class CustomNavigationController: UINavigationController, UINavigationController
             lastViewController.navigationItem.leftBarButtonItem = nil
         }
         return viewController
-
     }
 
     // MARK: UINavigationControllerDelegate Functions
@@ -148,7 +133,6 @@ class CustomNavigationController: UINavigationController, UINavigationController
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
         interactivePopGestureRecognizer?.isEnabled = (responds(to: #selector(getter: interactivePopGestureRecognizer)) && viewControllers.count > 1)
     }
-
 }
 
 class OnboardingNavigationController: UINavigationController {
@@ -172,5 +156,4 @@ class OnboardingNavigationController: UINavigationController {
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
-
 }

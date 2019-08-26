@@ -75,11 +75,7 @@ class ServiceAlertsViewController: UIViewController {
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
 
-            if #available(iOS 11.0, *) {
-                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            } else {
-                make.top.equalToSuperview().offset(view.layoutMargins.top)
-            }
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
     }
 

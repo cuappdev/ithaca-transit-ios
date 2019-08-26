@@ -15,22 +15,20 @@ class FavoritesTableViewController: UIViewController {
     private var searchBar = UISearchBar()
     private var tableView: UITableView!
 
-    private var fromOnboarding = false
     private var timer: Timer?
-    private var resultsSection = Section(type: .searchResults, items: [Place]()) {
+    private let networking: Networking = URLSession.shared.request
+    private var resultsSection = Section.searchResults(items: []) {
         didSet {
             tableView.reloadData()
         }
     }
 
-    private let networking: Networking = URLSession.shared.request
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = Colors.white
-        title = fromOnboarding ? Constants.Titles.favorites : Constants.Titles.favorite
-        let systemItem: UIBarButtonItem.SystemItem = fromOnboarding ? .done : .cancel
+        title = Constants.Titles.favorite
+        let systemItem: UIBarButtonItem.SystemItem = .cancel
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem,
                                                             target: self,
                                                             action: #selector(dismissVC))
@@ -42,7 +40,7 @@ class FavoritesTableViewController: UIViewController {
         setupConstraints()
     }
 
-    func setupTableView() {
+    private func setupTableView() {
         tableView = UITableView(frame: .zero)
         tableView.delegate = self
         tableView.dataSource = self
@@ -53,20 +51,11 @@ class FavoritesTableViewController: UIViewController {
         view.addSubview(tableView)
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
-            if #available(iOS 11.0, *) {
-                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            } else {
-                make.top.equalTo(self.topLayoutGuide.snp.bottom)
-            }
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -84,41 +73,22 @@ class FavoritesTableViewController: UIViewController {
         return networking(Endpoint.getSearchResults(searchText: searchText)).decode()
     }
 
-    @objc func dismissVC() {
-        if fromOnboarding {
-            let rootVC = HomeMapViewController()
-            let desiredViewController = CustomNavigationController(rootViewController: rootVC)
-
-            if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-                let window = appDelegate.window,
-                let snapshot = window.snapshotView(afterScreenUpdates: true) {
-                    desiredViewController.view.addSubview(snapshot)
-
-                    appDelegate.window?.rootViewController = desiredViewController
-                    userDefaults.setValue(true, forKey: Constants.UserDefaults.onboardingShown)
-
-                    UIView.animate(withDuration: 0.5, animations: {
-                        snapshot.layer.opacity = 0
-                        snapshot.layer.transform = CATransform3DMakeScale(1.5, 1.5, 1.5)
-                    }, completion: { _ in
-                        snapshot.removeFromSuperview()
-                    })
-                }
-        } else {
-            dismiss(animated: true)
-        }
+    @objc private func dismissVC() {
+        dismiss(animated: true)
     }
 }
 
 // MARK: - Table view data source
 extension FavoritesTableViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return resultsSection.items.count
+        return resultsSection.getItems().count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as! PlaceTableViewCell
-        cell.configure(for: resultsSection.items[indexPath.row])
+        if let place = resultsSection.getItem(at: indexPath.row) {
+            cell.configure(for: place)
+        }
         return cell
     }
 }
@@ -149,12 +119,12 @@ extension FavoritesTableViewController: UITableViewDelegate {
         let cell = tableView.cellForRow(at: indexPath)
         cell?.accessoryView = UIActivityIndicatorView()
         tableView.deselectRow(at: indexPath, animated: true)
-        let place = resultsSection.items[indexPath.row]
-
-        if place.type == .busStop {
-            SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
-            dismissVC()
-        } else {
+        if let place = resultsSection.getItem(at: indexPath.row) {
+            if place.type == .busStop {
+                Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
+                dismissVC()
+                return
+            }
             // Fetch coordinates and store
             CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
                 if error != nil {
@@ -169,7 +139,7 @@ extension FavoritesTableViewController: UITableViewDelegate {
                 } else {
                     place.latitude = latitude
                     place.longitude = longitude
-                    SearchTableViewManager.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
+                    Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
                     self.dismissVC()
                 }
             }
@@ -214,21 +184,20 @@ extension FavoritesTableViewController: UISearchBarDelegate {
                     switch result {
                     case .value(let response):
                         if response.success {
-                            self.resultsSection = Section(type: .searchResults, items: response.data)
-                            self.tableView.contentOffset = .zero
+                            self.resultsSection = Section.searchResults(items: [])
                         } else {
-                            print("[FavoritesTableViewController] success:", response.success)
-                            self.resultsSection = Section(type: .searchResults, items: [Place]())
+                            print("[FavoritesTableViewController] success: false")
+                            self.resultsSection = Section.searchResults(items: [])
                         }
                     case .error(let error):
                         print("[FavoritesTableViewController] getSearchResults Error: \(error.localizedDescription)")
-                        self.resultsSection = Section(type: .searchResults, items: [Place]())
+                        self.resultsSection = Section.recentSearches(items: [])
 
                     }
                 }
             }
         } else {
-            resultsSection = Section(type: .searchResults, items: [Place]())
+            resultsSection = Section.searchResults(items: [])
         }
     }
 

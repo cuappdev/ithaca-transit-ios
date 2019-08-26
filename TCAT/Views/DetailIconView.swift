@@ -7,46 +7,31 @@
 //
 
 import UIKit
+import SnapKit
 
 class DetailIconView: UIView {
 
-    private let constant: CGFloat = 16
-    private let timeLabelConstant: CGFloat = 8
-    private var shouldAddSubviews: Bool = true
+    private let labelLeadingInset: CGFloat = 16
+    private let labelInsetFromCenterY: CGFloat = 1
 
     static let width: CGFloat = 114
-
-    var direction: Direction!
+    private var scheduledLabelCentered: Constraint?
+    private var scheduledLabelOffsetFromCenter: Constraint?
+    private var isSet: Bool = false
 
     var delayedTimeLabel = UILabel()
     var scheduledTimeLabel = UILabel()
-
-    var connectorBottom: UIView!
-    var connectorTop: UIView!
+    var connectorBottom = UIView()
+    var connectorTop = UIView()
     var statusCircle: Circle!
 
-    init(direction: Direction, height: CGFloat, isFirstStep: Bool, isLastStep: Bool) {
-
-        self.direction = direction
-
-        let frame = CGRect(x: 0, y: 0, width: DetailIconView.width, height: height)
-        super.init(frame: frame)
+    init(for direction: Direction, isFirstStep: Bool, isLastStep: Bool) {
+        super.init(frame: .zero)
 
         // Format and place time labels
         scheduledTimeLabel.font = .getFont(.regular, size: 14)
-        scheduledTimeLabel.textColor = Colors.primaryText
         delayedTimeLabel.font = .getFont(.regular, size: 14)
         delayedTimeLabel.textColor = Colors.lateRed
-
-        updateScheduledTime()
-        updateDelayedTime()
-
-        let linePosition = frame.maxX - constant
-
-        connectorTop = UIView(frame: CGRect(x: linePosition, y: 0, width: 4, height: self.frame.height / 2))
-        connectorTop.frame.origin.x -= connectorTop.frame.width / 2
-        connectorBottom = UIView(frame: CGRect(x: linePosition, y: self.frame.height / 2, width: 4, height: self.frame.height / 2))
-        connectorBottom.frame.origin.x -= connectorBottom.frame.width / 2
 
         if direction.type == .walk {
             if isLastStep {
@@ -89,99 +74,127 @@ class DetailIconView: UIView {
             connectorBottom.backgroundColor = .clear
         }
 
-        statusCircle.center = self.center
-        statusCircle.frame.origin.x = linePosition - (statusCircle.frame.width / 2)
+        addSubview(scheduledTimeLabel)
+        addSubview(delayedTimeLabel)
+        addSubview(connectorTop)
+        addSubview(connectorBottom)
+        addSubview(statusCircle)
 
-        if shouldAddSubviews {
-            addSubview(scheduledTimeLabel)
-            addSubview(delayedTimeLabel)
-            addSubview(connectorTop)
-            addSubview(connectorBottom)
-            addSubview(statusCircle)
-            shouldAddSubviews = false
+        setupConstraints()
+
+        updateTimes(with: direction, isLast: isLastStep)
+    }
+
+    private func setupConstraints() {
+        let connectorTrailingInset = 14
+        let connectorWidth = 4
+
+        connectorTop.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(connectorTrailingInset)
+            make.top.equalToSuperview()
+            make.bottom.equalTo(snp.centerY)
+            make.width.equalTo(connectorWidth)
         }
 
+        connectorBottom.snp.makeConstraints { make in
+            make.trailing.equalTo(connectorTop)
+            make.bottom.equalToSuperview()
+            make.top.equalTo(snp.centerY)
+            make.width.equalTo(connectorWidth)
+        }
+
+        statusCircle.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.size.equalTo(statusCircle.intrinsicContentSize)
+            make.centerX.equalTo(connectorTop)
+        }
+
+        scheduledTimeLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(labelLeadingInset)
+            make.size.greaterThanOrEqualTo(scheduledTimeLabel.intrinsicContentSize)
+            scheduledLabelOffsetFromCenter = make.bottom.equalTo(snp.centerY).offset(-labelInsetFromCenterY).constraint
+        }
+        scheduledLabelOffsetFromCenter?.deactivate()
+        scheduledTimeLabel.snp.makeConstraints { make in
+            scheduledLabelCentered = make.centerY.equalToSuperview().constraint
+        }
+
+        delayedTimeLabel.snp.makeConstraints { make in
+            make.top.equalTo(snp.centerY).offset(labelInsetFromCenterY)
+            make.size.greaterThanOrEqualTo(delayedTimeLabel.intrinsicContentSize)
+            make.leading.equalToSuperview().inset(labelLeadingInset)
+        }
+    }
+
+    private func setTimeLabelTexts(for direction: Direction, isLastStep: Bool) {
+        var scheduledTimeString: String {
+            if direction.type == .walk {
+                return isLastStep ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
+            } else {
+                return isLastStep ? direction.endTimeDescription : direction.startTimeDescription
+            }
+        }
+        let delayedTimeString = isLastStep ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
+
+        scheduledTimeLabel.text = scheduledTimeString
+        delayedTimeLabel.text = delayedTimeString
     }
 
     // MARK: Utility Functions
 
     public func updateTimes(with newDirection: Direction, isLast: Bool = false) {
-        DispatchQueue.main.async {
-            self.updateScheduledTime(with: newDirection, isLast: isLast)
-            self.updateDelayedTime(with: newDirection, isLast: isLast)
-            self.setNeedsDisplay()
-        }
+        updateTimeLabels(with: newDirection, isLast: isLast)
     }
 
     /// Update scheduled label with direction's delay description. Use self.direction by default.
-    func updateScheduledTime(with newDirection: Direction? = nil, isLast: Bool = false) {
+    func updateTimeLabels(with direction: Direction, isLast: Bool = false) {
 
-        let direction: Direction = newDirection != nil ? newDirection! : self.direction
-        var timeString: String
-
-        if direction.type == .walk {
-            timeString = isLast ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
-        } else {
-            timeString = isLast ? direction.endTimeDescription : direction.startTimeDescription
-        }
-
-        scheduledTimeLabel.text = timeString
-        scheduledTimeLabel.sizeToFit()
-        scheduledTimeLabel.center = center
-        scheduledTimeLabel.frame.origin.x = constant
+        setTimeLabelTexts(for: direction, isLastStep: isLast)
 
         if direction.type == .walk {
             scheduledTimeLabel.textColor = Colors.primaryText
+            centerScheduledLabel()
             hideDelayedLabel()
         } else {
-            if let delay = direction.delay, delay < 60 {
-                scheduledTimeLabel.textColor = Colors.liveGreen
-                hideDelayedLabel()
+            if let delay = direction.delay {
+                if delay < 60 {
+                    scheduledTimeLabel.textColor = Colors.liveGreen
+                    centerScheduledLabel()
+                    hideDelayedLabel()
+                } else {
+                    scheduledTimeLabel.textColor = Colors.primaryText
+                    showDelayedLabel()
+                    offsetScheduledLabel()
+                }
             } else {
                 scheduledTimeLabel.textColor = Colors.primaryText
-                scheduledTimeLabel.center.y -= timeLabelConstant
+                hideDelayedLabel()
+                centerScheduledLabel()
             }
         }
 
     }
 
-    /// Update delayed label with direction's delay description. Use self.direction by default.
-    func updateDelayedTime(with newDirection: Direction? = nil, isLast: Bool = false) {
+    private func offsetScheduledLabel() {
+        scheduledLabelCentered?.deactivate()
+        scheduledLabelOffsetFromCenter?.activate()
+    }
 
-        let direction: Direction = newDirection != nil ? newDirection! : self.direction
-        let timeString = isLast ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
-
-        delayedTimeLabel.text = timeString
-        delayedTimeLabel.sizeToFit()
-        delayedTimeLabel.center.y = center.y + timeLabelConstant
-        delayedTimeLabel.frame.origin.x = constant
-
-        if let delay = direction.delay, delay >= 60, direction.type != .walk {
-            delayedTimeLabel.isHidden = false
-            delayedTimeLabel.textColor = Colors.lateRed
-        } else {
-            hideDelayedLabel()
-        }
-
+    private func centerScheduledLabel() {
+        scheduledLabelOffsetFromCenter?.deactivate()
+        scheduledLabelCentered?.activate()
     }
 
     func hideDelayedLabel() {
         delayedTimeLabel.isHidden = true
-        scheduledTimeLabel.center = center
-        scheduledTimeLabel.frame.origin.x = constant
     }
 
-    // MARK: Other
+    func showDelayedLabel() {
+        delayedTimeLabel.isHidden = false
+    }
 
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        fatalError("init(coder:) has not been implemented")
     }
-
-//    func prepareForReuse() {
-//        scheduledTimeLabel.removeFromSuperview()
-//        connectorTop.removeFromSuperview()
-//        connectorBottom.removeFromSuperview()
-//        statusCircle.removeFromSuperview()
-//    }
 
 }

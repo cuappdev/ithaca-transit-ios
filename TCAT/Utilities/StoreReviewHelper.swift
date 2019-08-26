@@ -66,9 +66,7 @@ class StoreReviewHelper {
     }
 
     private func requestReview() {
-        if #available(iOS 10.3, *) {
-            SKStoreReviewController.requestReview()
-        }
+        SKStoreReviewController.requestReview()
     }
 
 }
