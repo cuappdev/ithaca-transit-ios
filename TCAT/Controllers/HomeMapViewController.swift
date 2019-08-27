@@ -13,7 +13,7 @@ import NotificationBannerSwift
 import SnapKit
 import UIKit
 
-protocol HomeMapViewDelegate {
+protocol HomeMapViewDelegate: class {
     func mapViewWillMove()
     func reachabilityChanged(connection: Reachability.Connection)
 }
@@ -27,7 +27,7 @@ class HomeMapViewController: UIViewController {
 
     private var bounds = GMSCoordinateBounds()
     private var currentLocation: CLLocation?
-    private var delegate: HomeMapViewDelegate?
+    private weak var delegate: HomeMapViewDelegate?
     private var locationManager = CLLocationManager()
     private var optionsCardVC: HomeOptionsCardViewController!
     private var banner: StatusBarNotificationBanner? {
@@ -131,9 +131,8 @@ class HomeMapViewController: UIViewController {
     }
 
     func setupOptionsCard() {
-        optionsCardVC = HomeOptionsCardViewController()
+        optionsCardVC = HomeOptionsCardViewController(delegate: self)
         add(optionsCardVC)
-        optionsCardVC.delegate = self
         delegate = optionsCardVC
     }
 

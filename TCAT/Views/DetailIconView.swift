@@ -19,11 +19,11 @@ class DetailIconView: UIView {
     private var scheduledLabelOffsetFromCenter: Constraint?
     private var isSet: Bool = false
 
-    var delayedTimeLabel = UILabel()
-    var scheduledTimeLabel = UILabel()
-    var connectorBottom = UIView()
-    var connectorTop = UIView()
-    var statusCircle: Circle!
+    private var delayedTimeLabel = UILabel()
+    private var scheduledTimeLabel = UILabel()
+    private var connectorBottom = UIView()
+    private var connectorTop = UIView()
+    private var statusCircle: Circle!
 
     init(for direction: Direction, isFirstStep: Bool, isLastStep: Bool) {
         super.init(frame: .zero)

@@ -11,7 +11,7 @@ import SnapKit
 
 class PhraseLabelFooterView: UITableViewHeaderFooterView {
 
-    var label: UILabel!
+    private var label: UILabel!
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -21,10 +21,6 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
 
         setupLabel()
         setupConstraints()
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
     }
 
     func setupLabel() {
@@ -48,6 +44,10 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
 
     func setView(with message: String) {
         label.text = message
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
 
 }

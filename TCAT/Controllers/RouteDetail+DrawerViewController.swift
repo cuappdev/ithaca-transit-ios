@@ -53,14 +53,13 @@ class RouteDetailDrawerViewController: UIViewController {
     /// Returns the currently expanded cell, if any
     var expandedCell: LargeDetailTableViewCell? {
         var firstExpandedCell: LargeDetailTableViewCell?
-        (0..<tableView.numberOfRows(inSection: 0))
-            .forEach { index in
-                let indexPath = IndexPath(row: index, section: 0)
-                if firstExpandedCell == nil,
-                    let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell,
-                    cell.isExpanded {
-                    firstExpandedCell = cell
-                }
+        (0..<tableView.numberOfRows(inSection: 0)).forEach { index in
+            let indexPath = IndexPath(row: index, section: 0)
+            if firstExpandedCell == nil,
+                let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell,
+                cell.getIsExpanded() {
+                firstExpandedCell = cell
+            }
         }
         return firstExpandedCell
     }
@@ -220,35 +219,20 @@ class RouteDetailDrawerViewController: UIViewController {
         guard let indexPath = tableView.indexPath(for: cell),
             let direction = directionsAndVisibleStops[indexPath.row].getDirection() else { return }
 
-        // Flip arrow
-        cell.chevron.layer.removeAllAnimations()
-        cell.isExpanded.toggle()
-
-        let transitionOptionsOne: UIView.AnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
-        UIView.transition(with: cell.chevron, duration: chevronFlipDurationTime, options: transitionOptionsOne, animations: {
-            cell.chevron.isHidden = true
-        })
-
-        cell.chevron.transform = cell.chevron.transform.rotated(by: CGFloat.pi)
-        let transitionOptionsTwo: UIView.AnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
-        UIView.transition(with: cell.chevron, duration: chevronFlipDurationTime, options: transitionOptionsTwo, animations: {
-            cell.chevron.isHidden = false
-        })
-
         // Prepare bus stop data to be inserted / deleted into Directions array
         let busStops = direction.stops.map { return RouteDetailItem.busStop($0) }
-        let busStopRange = (indexPath.row + 1)..<(indexPath.row + 1) + busStops.count
+        let busStopRange = (indexPath.row + 1)..<((indexPath.row + 1) + busStops.count)
         let indexPathArray = busStopRange.map { return IndexPath(row: $0, section: 0) }
 
         tableView.beginUpdates()
 
         // Insert or remove bus stop data based on selection
-        if cell.isExpanded {
-            directionsAndVisibleStops.insert(contentsOf: busStops, at: indexPath.row + 1)
-            tableView.insertRows(at: indexPathArray, with: .middle)
-        } else {
+        if cell.getIsExpanded() {
             directionsAndVisibleStops.removeSubrange(busStopRange)
             tableView.deleteRows(at: indexPathArray, with: .middle)
+        } else {
+            directionsAndVisibleStops.insert(contentsOf: busStops, at: indexPath.row + 1)
+            tableView.insertRows(at: indexPathArray, with: .middle)
         }
 
         tableView.endUpdates()

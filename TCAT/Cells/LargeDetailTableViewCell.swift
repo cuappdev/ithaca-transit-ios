@@ -15,15 +15,15 @@ protocol LargeDetailTableViewDelegate: class {
 
 class LargeDetailTableViewCell: UITableViewCell {
 
-    var chevron: LargeTapTargetButton!
+    private weak var delegate: LargeDetailTableViewDelegate?
 
-    weak var delegate: LargeDetailTableViewDelegate?
-    var isExpanded: Bool = false
-
+    private let chevron = LargeTapTargetButton(extendBy: 15)
     private let detailLabel = UILabel()
     private var iconView: DetailIconView!
     private let titleLabel = UILabel()
     private let hairline = UIView()
+
+    private var isExpanded: Bool = false
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -35,7 +35,6 @@ class LargeDetailTableViewCell: UITableViewCell {
     }
 
     private func setupChevron() {
-        chevron = LargeTapTargetButton(extendBy: 15)
         chevron.setImage(UIImage(named: "arrow"), for: .normal)
         chevron.tintColor = Colors.metadataIcon
         chevron.addTarget(self, action: #selector(chevronButtonPressed), for: .touchUpInside)
@@ -109,7 +108,8 @@ class LargeDetailTableViewCell: UITableViewCell {
     }
 
     /** Precondition: Direction is BoardDirection */
-    func configure(for direction: Direction, isFirstStep: Bool) {
+    func configure(for direction: Direction, isFirstStep: Bool, delegate: LargeDetailTableViewDelegate? = nil) {
+        self.delegate = delegate
         setupHairline()
 
         formatTitleLabel(for: direction)
@@ -186,12 +186,38 @@ class LargeDetailTableViewCell: UITableViewCell {
         detailLabel.text = "\(detailLabelText) • \(timeString)"
     }
 
+    func getIsExpanded() -> Bool {
+        return isExpanded
+    }
+
+    private func flipChevron() {
+        let chevronFlipDurationTime = 0.25
+
+        // Flip arrow
+        chevron.layer.removeAllAnimations()
+
+        let transitionOptionsOne: UIView.AnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
+        UIView.transition(with: chevron, duration: chevronFlipDurationTime, options: transitionOptionsOne, animations: {
+            self.chevron.isHidden = true
+        })
+
+        chevron.transform = chevron.transform.rotated(by: CGFloat.pi)
+        let transitionOptionsTwo: UIView.AnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
+        UIView.transition(with: chevron, duration: chevronFlipDurationTime, options: transitionOptionsTwo, animations: {
+            self.chevron.isHidden = false
+        })
+    }
+
      @objc private func chevronButtonPressed() {
+        flipChevron()
+
         if isExpanded {
             delegate?.collapseCells(on: self)
         } else {
             delegate?.expandCells(on: self)
         }
+
+        isExpanded.toggle()
     }
 
     override func prepareForReuse() {

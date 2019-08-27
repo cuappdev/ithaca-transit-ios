@@ -117,8 +117,7 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                 return format(cell)
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
-                cell.configure(for: direction, isFirstStep: indexPath.row == 0)
-                cell.delegate = self
+                cell.configure(for: direction, isFirstStep: indexPath.row == 0, delegate: self)
                 return format(cell)
             }
         }

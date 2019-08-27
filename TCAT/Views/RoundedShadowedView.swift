@@ -10,7 +10,7 @@ import UIKit
 
 class RoundShadowedView: UIView {
 
-    var containerView: UIView!
+    private var containerView: UIView!
 
     func addRoundedCornersAndShadow() {
         backgroundColor = .clear

@@ -17,7 +17,7 @@ class WalkWithDistanceIcon: UIView {
 
     // MARK: Spacing vars
 
-    let walkIconAndDistanceLabelVerticalSpace: CGFloat = 2.0
+    private let walkIconAndDistanceLabelVerticalSpace: CGFloat = 2.0
 
     // MARK: Init
 

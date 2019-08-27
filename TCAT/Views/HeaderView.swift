@@ -21,12 +21,12 @@ enum buttonOption {
 }
 class HeaderView: UITableViewHeaderFooterView {
 
-    weak var headerViewDelegate: HeaderViewDelegate?
+    private weak var headerViewDelegate: HeaderViewDelegate?
 
     static let separatorViewHeight: CGFloat = 1
 
-    var button: UIButton?
-    var label: UILabel!
+    private var button: UIButton?
+    private var label: UILabel!
 
     @objc func addNewFavorite(sender: UIButton) {
         headerViewDelegate?.displayFavoritesTVC()
@@ -36,7 +36,11 @@ class HeaderView: UITableViewHeaderFooterView {
         headerViewDelegate?.clearRecentSearches()
     }
 
-    func setupView(labelText: String? = nil, buttonType: buttonOption = .none, separatorVisible: Bool = false) {
+    init(labelText: String? = nil, buttonType: buttonOption = .none, separatorVisible: Bool = false, delegate: HeaderViewDelegate? = nil) {
+        super.init(reuseIdentifier: nil)
+
+        self.headerViewDelegate = delegate
+
         if labelText != nil {
             label = UILabel()
             label.font = .getFont(.regular, size: 14)
@@ -85,5 +89,9 @@ class HeaderView: UITableViewHeaderFooterView {
                 make.trailing.equalToSuperview().offset(-12)
             }
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

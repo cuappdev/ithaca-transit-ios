@@ -11,6 +11,32 @@ import UIKit
 
 class OnboardingViewController: PresentationController {
 
+    struct BackgroundImage {
+
+        let name: String
+        let left: CGFloat
+        let top: CGFloat
+        let speed: CGFloat
+
+        init(name: String, left: CGFloat, top: CGFloat, speed: CGFloat) {
+            self.name = name
+            self.left = left
+            self.top = top
+            self.speed = speed
+        }
+
+        func positionAt(_ index: Int) -> Position? {
+            var position: Position?
+
+            if index == 0 || speed != 0.0 {
+                let currentLeft = left + CGFloat(index) * speed
+                position = Position(left: currentLeft, top: top)
+            }
+
+            return position
+        }
+    }
+
     /// Change the main view's background color
     private let backgroundColor = UIColor(hex: "C0DDEB")
 
@@ -73,32 +99,6 @@ class OnboardingViewController: PresentationController {
 
     /// Used to determine what context this view is being shown in
     private var isInitialViewing: Bool = true
-
-    struct BackgroundImage {
-
-        let name: String
-        let left: CGFloat
-        let top: CGFloat
-        let speed: CGFloat
-
-        init(name: String, left: CGFloat, top: CGFloat, speed: CGFloat) {
-            self.name = name
-            self.left = left
-            self.top = top
-            self.speed = speed
-        }
-
-        func positionAt(_ index: Int) -> Position? {
-            var position: Position?
-
-            if index == 0 || speed != 0.0 {
-                let currentLeft = left + CGFloat(index) * speed
-                position = Position(left: currentLeft, top: top)
-            }
-
-            return position
-        }
-    }
 
     private lazy var dismissButton: UIBarButtonItem = { [unowned self] in
         let dismissButton = UIBarButtonItem(

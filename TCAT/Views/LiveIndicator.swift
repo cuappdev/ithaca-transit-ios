@@ -21,15 +21,15 @@ class LiveIndicator: UIView {
 
     // MARK: View vars
 
-    var circleLayer: CAShapeLayer!
-    var largeArcLayer: CAShapeLayer!
-    var smallArcLayer: CAShapeLayer!
+    private var circleLayer: CAShapeLayer!
+    private var largeArcLayer: CAShapeLayer!
+    private var smallArcLayer: CAShapeLayer!
 
     // MARK: Animation vars
 
-    let DIM_OPACITY: CGFloat = 0.5
-    let END_DELAY: TimeInterval = 0.0
-    let START_DELAY: TimeInterval = 0.0
+    private let DIM_OPACITY: CGFloat = 0.5
+    private let END_DELAY: TimeInterval = 0.0
+    private let START_DELAY: TimeInterval = 0.0
     static let DURATION: TimeInterval = 0.2
     static let INTERVAL: TimeInterval = 4.0
 

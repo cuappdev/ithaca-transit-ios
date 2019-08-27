@@ -10,11 +10,11 @@ import UIKit
 
 class RouteDiagramSegment: UIView {
 
-    var stopDot: Circle!
-    var stopLabel: UILabel!
-    var icon: UIView?
-    var routeLine: RouteLine?
-    var stayOnBusCoverUpView: UIView?
+    private var stopDot: Circle!
+    private var stopLabel: UILabel!
+    private var icon: UIView?
+    private var routeLine: RouteLine?
+    private var stayOnBusCoverUpView: UIView?
 
     private let busIconType: BusIconType = .directionSmall
     private let busIconCornerRadius: CGFloat = BusIconType.directionSmall.cornerRadius
@@ -241,7 +241,7 @@ class RouteDiagramSegment: UIView {
 
     func calculateHeight() -> CGFloat {
         if let routeLine = routeLine {
-            return routeLine.height + stopDot.intrinsicContentSize.height
+            return routeLine.intrinsicContentSize.height + stopDot.intrinsicContentSize.height
         } else {
             return stopLabel.intrinsicContentSize.height
         }
