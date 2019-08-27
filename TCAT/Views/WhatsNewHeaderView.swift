@@ -16,21 +16,20 @@ protocol WhatsNewDelegate: class {
 
 class WhatsNewHeaderView: UIView {
 
-    var card: WhatsNewCard
-    weak var whatsNewDelegate: WhatsNewDelegate?
+    private var card: WhatsNewCard
+    private weak var whatsNewDelegate: WhatsNewDelegate?
 
     /// Whether a promotion is being used for the card
     var isPromotion: Bool
 
     // e.g. "New In Ithaca Transit" blue label
-    var descriptionLabel: UILabel!
-    var smallHeaderLabel: UILabel!
-    var titleLabel: UILabel!
-
-    var buttonContainerView: UIView!
-    var dismissButton: UIButton!
-    var primaryButton: UIButton?
-    var secondaryButton: UIButton?
+    private var descriptionLabel: UILabel!
+    private var smallHeaderLabel: UILabel!
+    private var titleLabel: UILabel!
+    private var buttonContainerView: UIView!
+    private var dismissButton: UIButton!
+    private var primaryButton: UIButton?
+    private var secondaryButton: UIButton?
 
     private var buttonToBottom: Constraint?
     private var buttonToUpdateDesc: Constraint?
@@ -39,7 +38,7 @@ class WhatsNewHeaderView: UIView {
     private var updateDescriptionHeight: Constraint?
     private var updateNameToTitle: Constraint?
 
-    let containerPadding = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
+    private let containerPadding = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
 
     init(card: WhatsNewCard, isPromotion: Bool = false) {
         self.card = card

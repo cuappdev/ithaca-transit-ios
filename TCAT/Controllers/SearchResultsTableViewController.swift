@@ -26,9 +26,8 @@ class SearchResultsTableViewController: UITableViewController {
     var searchBar: UISearchBar?
 
     var currentLocation: Place?
-    weak var destinationDelegate: DestinationDelegate?
-    weak var searchBarCancelDelegate: SearchBarCancelDelegate?
-    var shouldShowCurrentLocation = true
+    private weak var destinationDelegate: DestinationDelegate?
+    private weak var searchBarCancelDelegate: SearchBarCancelDelegate?
 
     private var favorites: [Place] = []
     private var favoritesSection: Section!
@@ -49,8 +48,11 @@ class SearchResultsTableViewController: UITableViewController {
         }
     }
 
-    convenience init() {
+    convenience init(searchBarCancelDelegate: SearchBarCancelDelegate? = nil, destinationDelegate: DestinationDelegate? = nil) {
         self.init(style: .grouped)
+
+        self.searchBarCancelDelegate = searchBarCancelDelegate
+        self.destinationDelegate = destinationDelegate
     }
 
     override func viewDidLoad() {
@@ -93,9 +95,7 @@ class SearchResultsTableViewController: UITableViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if shouldShowCurrentLocation {
-            locationManager.requestLocation()
-        }
+        locationManager.requestLocation()
     }
 
     private func createDefaultSections() {
@@ -193,13 +193,13 @@ extension SearchResultsTableViewController {
 extension SearchResultsTableViewController {
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = HeaderView()
+        var header: HeaderView!
 
         switch sections[section] {
         case .recentSearches:
-            header.setupView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear)
+            header = HeaderView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear)
         case .favorites:
-            header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, buttonType: .add)
+            header = HeaderView(labelText: Constants.TableHeaders.favoriteDestinations, buttonType: .add)
         case .seeAllStops, .searchResults:
             return nil
         default:
@@ -226,11 +226,10 @@ extension SearchResultsTableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var didSelectAllStops = false
-        let allStopsTVC = AllStopsTableViewController()
+        let allStopsTVC = AllStopsTableViewController(delegate: self)
 
         if sections[indexPath.section] == .seeAllStops {
             didSelectAllStops = true
-            allStopsTVC.unwindAllStopsTVCDelegate = self
         } else {
             let place = sections[indexPath.section].getItems()[indexPath.row]
             if place.latitude == 0.0 && place.longitude == 0.0 {

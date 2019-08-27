@@ -18,7 +18,7 @@ protocol RouteTableViewCellDelegate: class {
 class RouteTableViewCell: UITableViewCell {
 
     // MARK: Data vars
-    weak var delegate: RouteTableViewCellDelegate?
+    private weak var delegate: RouteTableViewCellDelegate?
 
     // MARK: View vars
     private let arrowImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
@@ -159,8 +159,7 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     // MARK: Set Data
-    func configure(for route: Route, delegate: RouteTableViewCellDelegate?) {
-
+    func configure(for route: Route, delegate: RouteTableViewCellDelegate? = nil) {
         self.delegate = delegate
 
         timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay(sender:)), userInfo: ["route": route], repeats: true)

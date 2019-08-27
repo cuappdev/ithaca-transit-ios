@@ -12,8 +12,8 @@ class RouteLine: UIView {
 
     // MARK: Size vars
 
-    let width: CGFloat = 4
-    var height: CGFloat = 20
+    fileprivate let width: CGFloat = 4
+    fileprivate var height: CGFloat = 20
 
     static let extendedHeight: CGFloat = 28
 

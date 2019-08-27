@@ -13,18 +13,17 @@ import GoogleMaps
 import SnapKit
 import UIKit
 
-protocol HomeOptionsCardDelegate {
+protocol HomeOptionsCardDelegate: class {
     func updateSize()
     func getCurrentLocation() -> CLLocation?
 }
 
 class HomeOptionsCardViewController: UIViewController {
 
-    var searchBar: UISearchBar!
-
-    var delegate: HomeOptionsCardDelegate?
+    private weak var delegate: HomeOptionsCardDelegate?
 
     private let infoButton = UIButton(type: .infoLight)
+    private var searchBar: UISearchBar!
     private var searchBarSeparator: UIView!
     private var tableView: UITableView!
 
@@ -98,6 +97,11 @@ class HomeOptionsCardViewController: UIViewController {
                 self.delegate?.updateSize()
             }
         }
+    }
+
+    init(delegate: HomeOptionsCardDelegate? = nil) {
+        super.init(nibName: nil, bundle: nil)
+        self.delegate = delegate
     }
 
     override func viewDidLoad() {
@@ -307,6 +311,10 @@ class HomeOptionsCardViewController: UIViewController {
     @objc private func keyboardWillHide(notification: NSNotification) {
         keyboardHeight = 0
     }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 // MARK: VC Life Cycle setup
@@ -510,17 +518,15 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = HeaderView()
+        var header: HeaderView!
 
         switch sections[section] {
         case .recentSearches:
-            header.setupView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear, separatorVisible: true)
-            header.headerViewDelegate = self
+            header = HeaderView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear, separatorVisible: true, delegate: self)
         case .favorites:
-            header.setupView(labelText: Constants.TableHeaders.favoriteDestinations, buttonType: .add)
-            header.headerViewDelegate = self
+            header = HeaderView(labelText: Constants.TableHeaders.favoriteDestinations, buttonType: .add, delegate: self)
         case .seeAllStops:
-            header.setupView(separatorVisible: true)
+            header = HeaderView(separatorVisible: true)
         case .searchResults:
             return nil
         default: break
@@ -578,7 +584,6 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
             } else {
                 routeOptionsViewController.searchTo = place
                 Global.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
-                routeOptionsViewController.didSelectPlace(place: place)
             }
         }
 

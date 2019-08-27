@@ -22,24 +22,25 @@ class DatePickerView: UIView {
 
     // MARK: Data vars
 
-    weak var delegate: DatePickerViewDelegate?
-    let leaveNowElement = SegmentControlElement(title: Constants.General.datepickerLeaveNow, index: 0)
-    let leaveAtElement = SegmentControlElement(title: Constants.General.datepickerLeaveAt, index: 0)
-    let arriveByElement = SegmentControlElement(title: Constants.General.datepickerArriveBy, index: 1)
+    private weak var delegate: DatePickerViewDelegate?
+    private let leaveNowElement = SegmentControlElement(title: Constants.General.datepickerLeaveNow, index: 0)
+    private let leaveAtElement = SegmentControlElement(title: Constants.General.datepickerLeaveAt, index: 0)
+    private let arriveByElement = SegmentControlElement(title: Constants.General.datepickerArriveBy, index: 1)
 
     // MARK: View vars
 
-    var cancelButton: UIButton = UIButton()
-    var datepicker: UIDatePicker = UIDatePicker()
-    var doneButton: UIButton = UIButton()
-    var leaveNowSegmentedControl: UISegmentedControl = UISegmentedControl()
-    var timeTypeSegmentedControl: UISegmentedControl = UISegmentedControl()
+    private var cancelButton: UIButton = UIButton()
+    private var datepicker: UIDatePicker = UIDatePicker()
+    private var doneButton: UIButton = UIButton()
+    private var leaveNowSegmentedControl: UISegmentedControl = UISegmentedControl()
+    private var timeTypeSegmentedControl: UISegmentedControl = UISegmentedControl()
 
     // MARK: Init
 
-    init() {
+    init(delegate: DatePickerViewDelegate? = nil) {
         super.init(frame: .zero)
 
+        self.delegate = delegate
         backgroundColor = Colors.white
         layer.cornerRadius = 8
         clipsToBounds = true
@@ -115,28 +116,6 @@ class DatePickerView: UIView {
         addSubview(doneButton)
     }
 
-    // MARK: Setters
-
-    func setDatepickerDate(date: Date) {
-        datepicker.date = date
-        datepickerValueChanged(datepicker: datepicker)
-    }
-
-    func setDatepickerTimeType(searchTimeType: SearchType) {
-        switch searchTimeType {
-        case .leaveAt, .leaveNow:
-            timeTypeSegmentedControl.selectedSegmentIndex = leaveAtElement.index
-        case .arriveBy:
-            timeTypeSegmentedControl.selectedSegmentIndex = arriveByElement.index
-        }
-    }
-
-    // MARK: Getters
-
-    func getDate() -> Date {
-        return datepicker.date
-    }
-
     private func setupConstraints() {
         let buttonHeight = 20
         let datePickerHeight = 164.5
@@ -184,6 +163,22 @@ class DatePickerView: UIView {
         }
     }
 
+    // MARK: Setters
+
+    func setDatepickerDate(date: Date) {
+        datepicker.date = date
+        datepickerValueChanged(datepicker: datepicker)
+    }
+
+    func setDatepickerTimeType(searchTimeType: SearchType) {
+        switch searchTimeType {
+        case .leaveAt, .leaveNow:
+            timeTypeSegmentedControl.selectedSegmentIndex = leaveAtElement.index
+        case .arriveBy:
+            timeTypeSegmentedControl.selectedSegmentIndex = arriveByElement.index
+        }
+    }
+
     // MARK: Buttons
 
     @objc private func doneButtonPressed() {
@@ -197,7 +192,7 @@ class DatePickerView: UIView {
             searchTimeType = .leaveAt
         }
 
-        delegate?.saveDatePickerDate(for: getDate(), searchType: searchTimeType)
+        delegate?.saveDatePickerDate(for: datepicker.date, searchType: searchTimeType)
     }
 
     @objc private func cancelButtonPressed() {

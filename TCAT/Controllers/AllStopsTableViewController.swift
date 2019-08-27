@@ -16,16 +16,22 @@ protocol UnwindAllStopsTVCDelegate: class {
 
 class AllStopsTableViewController: UIViewController {
 
+    private weak var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
+
     private var tableView = UITableView(frame: .zero)
 
     private var allStops: [Place] = []
-    weak var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
     private var isLoading: Bool { return loadingIndicator != nil }
     private var loadingIndicator: LoadingIndicator?
     private let networking: Networking = URLSession.shared.request
     private var sectionIndexes: [String: [Place]] = [:]
     private var sortedKeys: [String] = []
     private var height: CGFloat?
+
+    init(delegate: UnwindAllStopsTVCDelegate? = nil) {
+        super.init(nibName: nil, bundle: nil)
+        self.unwindAllStopsTVCDelegate = delegate
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -178,6 +184,10 @@ class AllStopsTableViewController: UIViewController {
                 self.tableView.reloadData()
             }
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

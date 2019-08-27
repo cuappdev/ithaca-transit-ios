@@ -32,16 +32,14 @@ enum RequestAction {
 }
 
 class RouteOptionsViewController: UIViewController {
-
     let datePickerOverlay = UIView()
-    let datePickerView = DatePickerView()
+    var datePickerView: DatePickerView!
     let routeResults = UITableView(frame: .zero, style: .grouped)
     let routeSelection = RouteSelectionView()
-    let searchBarView = SearchBarView()
+    var searchBarView: SearchBarView!
 
     var cellUserInteraction = true
     var currentLocation: CLLocationCoordinate2D?
-    let fileName: String = "RouteOptionsVC"
     var locationManager: CLLocationManager!
     var routes: [[Route]] = []
     var searchFrom: Place?
@@ -82,12 +80,12 @@ class RouteOptionsViewController: UIViewController {
 
         title = Constants.Titles.routeOptions
 
-        setupRouteSelection()
+        setupRouteSelection(destination: searchTo)
         setupSearchBar()
         setupDatePicker()
         setupRouteResultsTableView()
 
-        setRouteSelectionView(withDestination: searchTo)
+        setupRouteSelection(destination: searchTo)
         setupLocationManager()
 
         // assume user wants to find routes that leave at current time and set datepicker accordingly
@@ -136,13 +134,10 @@ class RouteOptionsViewController: UIViewController {
         return banner != nil ? .lightContent : .default
     }
 
-    // MARK: Route Selection view
-
-    private func setupRouteSelection() {
-        routeSelection.toSearchbar.addTarget(self, action: #selector(self.searchingTo), for: .touchUpInside)
-        routeSelection.fromSearchbar.addTarget(self, action: #selector(self.searchingFrom), for: .touchUpInside)
-        routeSelection.datepickerButton.addTarget(self, action: #selector(self.showDatePicker), for: .touchUpInside)
-        routeSelection.swapButton.addTarget(self, action: #selector(self.swapFromAndTo), for: .touchUpInside)
+    private func setupRouteSelection(destination: Place?) {
+        routeSelection.configure(delegate: self,
+                                 from: Constants.General.fromSearchBarPlaceholder,
+                                 to: destination?.name ?? "")
 
         view.addSubview(routeSelection)
     }
@@ -176,18 +171,13 @@ class RouteOptionsViewController: UIViewController {
         locationManager.startUpdatingLocation()
     }
 
-    private func setRouteSelectionView(withDestination destination: Place?) {
-        routeSelection.fromSearchbar.setTitle(Constants.General.fromSearchBarPlaceholder, for: .normal)
-        routeSelection.toSearchbar.setTitle(destination?.name ?? "", for: .normal)
-    }
-
     private func setupDatePicker() {
         setupDatePickerView()
         setupDatePickerOverlay()
     }
 
     private func setupDatePickerView() {
-        datePickerView.delegate = self
+        datePickerView = DatePickerView(delegate: self)
         view.addSubview(datePickerView) // so datePicker can go ontop of other views
     }
 
@@ -200,8 +190,7 @@ class RouteOptionsViewController: UIViewController {
     }
 
     private func setupSearchBar() {
-        searchBarView.resultsViewController?.destinationDelegate = self
-        searchBarView.resultsViewController?.searchBarCancelDelegate = self
+        searchBarView = SearchBarView(searchBarCancelDelegate: self, destinationDelegate: self)
         self.definesPresentationContext = true
         hideSearchBar()
     }
@@ -244,24 +233,6 @@ class RouteOptionsViewController: UIViewController {
         }
     }
 
-    @objc private func swapFromAndTo(sender: UIButton) {
-        //Swap data
-        let searchFromOld = searchFrom
-        searchFrom = searchTo
-        searchTo = searchFromOld
-
-        //Update UI
-        routeSelection.fromSearchbar.setTitle(searchFrom?.name ?? "", for: .normal)
-        routeSelection.toSearchbar.setTitle(searchTo?.name ?? "", for: .normal)
-
-        searchForRoutes()
-
-        // Analytics
-        let payload = RouteOptionsSettingsPayload(description: "Swapped To and From")
-        Analytics.shared.log(payload)
-
-    }
-
     // MARK: Search bar
 
     @objc private func searchingTo(sender: UIButton? = nil) {
@@ -273,13 +244,12 @@ class RouteOptionsViewController: UIViewController {
 
     @objc private func searchingFrom(sender: UIButton? = nil) {
         searchType = .from
-        searchBarView.resultsViewController?.shouldShowCurrentLocation = true
         presentSearchBar()
         let payload = RouteOptionsSettingsPayload(description: "Searching From Tapped")
         Analytics.shared.log(payload)
     }
 
-    private func presentSearchBar() {
+    func presentSearchBar() {
         var placeholder = ""
         var searchBarText = ""
 
@@ -379,9 +349,9 @@ class RouteOptionsViewController: UIViewController {
 
             switch searchType {
             case .from:
-                routeSelection.fromSearchbar.setTitle(searchFrom.name, for: .normal)
+                routeSelection.updateSearchBarTitles(from: searchFrom.name)
             case .to:
-                routeSelection.toSearchbar.setTitle(searchTo.name, for: .normal)
+                routeSelection.updateSearchBarTitles(to: searchTo.name)
             }
 
             // If don't have coordinates, fetch and restart process
@@ -634,7 +604,7 @@ class RouteOptionsViewController: UIViewController {
         do {
             try reachability?.startNotifier()
         } catch {
-            print("\(fileName) \(#function): Could not start reachability notifier")
+            print("\(#file) \(#function): Could not start reachability notifier")
         }
     }
 
@@ -713,7 +683,7 @@ class RouteOptionsViewController: UIViewController {
                                                                      currentLocation: routeDetailCurrentLocation,
                                                                      routeOptionsCell: routeOptionsCell)
 
-        guard let drawerViewController = contentViewController.drawerDisplayController else {
+        guard let drawerViewController = contentViewController.getDrawerDisplayController() else {
             return nil
         }
         return RouteDetailViewController(contentViewController: contentViewController,

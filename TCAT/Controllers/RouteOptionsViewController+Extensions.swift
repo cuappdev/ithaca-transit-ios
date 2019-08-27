@@ -35,7 +35,6 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
         }
 
         routeDetailViewController.preferredContentSize = .zero
-        routeDetailViewController.isPeeking = true
         cell.transform = .identity
         previewingContext.sourceRect = routeResults.convert(cell.frame, to: view)
 
@@ -46,7 +45,6 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
     }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        (viewControllerToCommit as? RouteDetailViewController)?.isPeeking = false
         navigationController?.pushViewController(viewControllerToCommit, animated: true)
     }
 }
@@ -97,28 +95,17 @@ extension RouteOptionsViewController: DatePickerViewDelegate {
     }
 
     func saveDatePickerDate(for date: Date, searchType: SearchType) {
-
-        let date = datePickerView.getDate()
         searchTime = date
 
-        let timeTypeSegmentControl = datePickerView.timeTypeSegmentedControl
-        let leaveNowSegmentControl = datePickerView.leaveNowSegmentedControl
+        routeSelection.setDatepickerTitle(withDate: date, withSearchTimeType: searchTimeType)
 
         var buttonTapped = ""
 
-        // Get selected time type
-        if leaveNowSegmentControl.selectedSegmentIndex == datePickerView.leaveNowElement.index {
-            searchTimeType = .leaveNow
-            buttonTapped = "Leave Now Tapped"
-        } else if timeTypeSegmentControl.selectedSegmentIndex == datePickerView.arriveByElement.index {
-            searchTimeType = .arriveBy
-            buttonTapped = "Arrive By Tapped"
-        } else {
-            searchTimeType = .leaveAt
-            buttonTapped = "Leave At Tapped"
+        switch searchType {
+        case .leaveNow: buttonTapped = "Leave Now Tapped"
+        case .arriveBy: buttonTapped = "Arrive By Tapped"
+        case .leaveAt: buttonTapped = "Leave At Tapped"
         }
-
-        routeSelection.setDatepickerTitle(withDate: date, withSearchTimeType: searchTimeType)
 
         dismissDatePicker()
 
@@ -134,7 +121,7 @@ extension RouteOptionsViewController: DatePickerViewDelegate {
 extension RouteOptionsViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-        print("\(fileName) \(#function): \(error.localizedDescription)")
+        print("\(#file) \(#function): \(error.localizedDescription)")
 
         if error._code == CLError.denied.rawValue {
             locationManager.stopUpdatingLocation()
@@ -181,29 +168,29 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
     }
 
     func didReceiveCurrentLocation(_ location: CLLocation?) {
-        currentLocation = location?.coordinate
+        guard let currentLocation = location else { return }
 
-        searchBarView.resultsViewController?.currentLocation?.latitude = currentLocation?.latitude
-        searchBarView.resultsViewController?.currentLocation?.longitude = currentLocation?.longitude
+        searchBarView.resultsViewController?.currentLocation?.latitude = currentLocation.coordinate.latitude
+        searchBarView.resultsViewController?.currentLocation?.longitude = currentLocation.coordinate.longitude
 
         if searchFrom?.name == Constants.General.currentLocation {
-            searchFrom?.latitude = currentLocation?.latitude
-            searchFrom?.longitude = currentLocation?.longitude
+            searchFrom?.latitude = currentLocation.coordinate.latitude
+            searchFrom?.longitude = currentLocation.coordinate.longitude
         }
 
         if searchTo?.name == Constants.General.currentLocation {
-            searchTo?.latitude = currentLocation?.latitude
-            searchTo?.longitude = currentLocation?.longitude
+            searchTo?.latitude = currentLocation.coordinate.latitude
+            searchTo?.longitude = currentLocation.coordinate.longitude
         }
 
         // If haven't selected start location, set to current location
-        if let coordinates = currentLocation, searchFrom == nil {
+        if searchFrom == nil {
             let currentLocation = Place(name: Constants.General.currentLocation,
-                                        latitude: coordinates.latitude,
-                                        longitude: coordinates.longitude)
+                                        latitude: currentLocation.coordinate.latitude,
+                                        longitude: currentLocation.coordinate.longitude)
             searchFrom = currentLocation
             searchBarView.resultsViewController?.currentLocation = currentLocation
-            routeSelection.fromSearchbar.setTitle(currentLocation.name, for: .normal)
+            routeSelection.updateSearchBarTitles(from: currentLocation.name)
             searchForRoutes()
         }
     }
@@ -406,5 +393,61 @@ extension RouteOptionsViewController: RouteTableViewCellDelegate {
         routeResults.beginUpdates()
         fun()
         routeResults.endUpdates()
+    }
+}
+
+extension RouteOptionsViewController: RouteSelectionViewDelegate {
+    func swapFromAndTo() {
+        //Swap data
+        let searchFromOld = searchFrom
+        searchFrom = searchTo
+        searchTo = searchFromOld
+
+        //Update UI
+        routeSelection.updateSearchBarTitles(from: searchFrom?.name ?? "",
+                                             to: searchTo?.name ?? "")
+
+        searchForRoutes()
+
+        // Analytics
+        let payload = RouteOptionsSettingsPayload(description: "Swapped To and From")
+        Analytics.shared.log(payload)
+
+    }
+
+    func showDatePicker() {
+
+        view.bringSubviewToFront(datePickerOverlay)
+        view.bringSubviewToFront(datePickerView)
+
+        // set up date on datepicker view
+        if let time = searchTime {
+            datePickerView.setDatepickerDate(date: time)
+        }
+
+        datePickerView.setDatepickerTimeType(searchTimeType: searchTimeType)
+
+        UIView.animate(withDuration: 0.5) {
+            self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
+            self.datePickerOverlay.alpha = 0.6 // darken screen when pull up datepicker
+        }
+
+        let payload = RouteOptionsSettingsPayload(description: "Date Picker Accessed")
+        Analytics.shared.log(payload)
+
+    }
+
+    func searchingFrom() {
+        searchType = .from
+        presentSearchBar()
+        let payload = RouteOptionsSettingsPayload(description: "Searching From Tapped")
+        Analytics.shared.log(payload)
+    }
+
+    func searchingTo() {
+        searchType = .to
+        presentSearchBar()
+        let payload = RouteOptionsSettingsPayload(description: "Searching To Tapped")
+        Analytics.shared.log(payload)
     }
 }

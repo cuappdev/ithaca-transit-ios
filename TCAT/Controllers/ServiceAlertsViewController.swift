@@ -13,7 +13,7 @@ import UIKit
 
 class ServiceAlertsViewController: UIViewController {
 
-    private var tableView: UITableView!
+    private let tableView = UITableView(frame: .zero, style: .grouped)
 
     private var isLoading: Bool { return loadingIndicator != nil }
     private var loadingIndicator: LoadingIndicator?
@@ -45,7 +45,6 @@ class ServiceAlertsViewController: UIViewController {
         title = Constants.Titles.serviceAlerts
 
         view.backgroundColor = Colors.backgroundWash
-        tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = view.backgroundColor
         tableView.dataSource = self
         tableView.delegate = self
@@ -62,16 +61,15 @@ class ServiceAlertsViewController: UIViewController {
         tableView.rowHeight = UITableView.automaticDimension
         view.addSubview(tableView)
 
-        updateConstraints()
+        setupConstraints()
 
         getServiceAlerts()
 
-        // Uncomment when not on What's New card anymore.
-//        let payload = ServiceAlertsPayload()
-//        Analytics.shared.log(payload)
+        let payload = ServiceAlertsPayload(didTapWhatsNew: false)
+        Analytics.shared.log(payload)
     }
 
-    func updateConstraints() {
+    func setupConstraints() {
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
 
@@ -191,20 +189,16 @@ class ServiceAlertsViewController: UIViewController {
 extension ServiceAlertsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = HeaderView()
-
         switch priorities[section] {
         case 0:
-            headerView.setupView(labelText: Constants.TableHeaders.highPriority)
+            return HeaderView(labelText: Constants.TableHeaders.highPriority)
         case 1:
-            headerView.setupView(labelText: Constants.TableHeaders.mediumPriority)
+            return HeaderView(labelText: Constants.TableHeaders.mediumPriority)
         case 2:
-            headerView.setupView(labelText: Constants.TableHeaders.lowPriority)
+            return HeaderView(labelText: Constants.TableHeaders.lowPriority)
         default:
-            headerView.setupView(labelText: Constants.TableHeaders.noPriority)
+            return HeaderView(labelText: Constants.TableHeaders.noPriority)
         }
-
-        return headerView
     }
 }
 

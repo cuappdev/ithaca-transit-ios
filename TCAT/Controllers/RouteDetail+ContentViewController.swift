@@ -17,7 +17,7 @@ import UIKit
 
 class RouteDetailContentViewController: UIViewController {
 
-    var drawerDisplayController: RouteDetailDrawerViewController?
+    private var drawerDisplayController: RouteDetailDrawerViewController?
 
     // Keep track of statuses of bus routes throughout view life cycle
     var noDataRouteList: [Int] = []
@@ -494,6 +494,10 @@ class RouteDetailContentViewController: UIViewController {
             drawMapRoute()
             centerMapOnOverview(drawerPreviewing: true)
         }
+    }
+
+    func getDrawerDisplayController() -> RouteDetailDrawerViewController? {
+        return drawerDisplayController
     }
 
     required convenience init(coder aDecoder: NSCoder) {

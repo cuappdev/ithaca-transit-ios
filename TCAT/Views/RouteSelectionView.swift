@@ -8,20 +8,29 @@
 
 import UIKit
 
+@objc protocol RouteSelectionViewDelegate: class {
+    @objc func swapFromAndTo()
+    @objc func showDatePicker()
+    @objc func searchingFrom()
+    @objc func searchingTo()
+}
+
 class RouteSelectionView: UIView {
 
+    private weak var delegate: RouteSelectionViewDelegate?
+
     // MARK: View vars
-    var borderedCircle: Circle!
-    var bottomSeparator: UIView = UIView()
-    var datepickerButton: UIButton = UIButton()
-    var fromLabel: UILabel = UILabel()
-    var fromSearchbar: UIButton = UIButton()
-    var line: SolidLine!
-    var solidCircle: Circle!
-    var swapButton: UIButton = UIButton()
-    var toLabel: UILabel = UILabel()
-    var toSearchbar: UIButton = UIButton()
-    var topSeparator: UIView = UIView()
+    private var borderedCircle: Circle!
+    private var bottomSeparator: UIView = UIView()
+    private var datepickerButton: UIButton = UIButton()
+    private var fromLabel: UILabel = UILabel()
+    private var fromSearchbar: UIButton = UIButton()
+    private var line: SolidLine!
+    private var solidCircle: Circle!
+    private var swapButton: UIButton = UIButton()
+    private var toLabel: UILabel = UILabel()
+    private var toSearchbar: UIButton = UIButton()
+    private var topSeparator: UIView = UIView()
 
     private let searchbarHeight: CGFloat = 28
 
@@ -201,6 +210,27 @@ class RouteSelectionView: UIView {
             make.top.equalTo(datepickerButton.snp.bottom)
             make.height.equalTo(separatorHeight)
             make.bottom.equalToSuperview().inset(superviewInsets.bottom)
+        }
+    }
+
+    func configure(delegate: RouteSelectionViewDelegate?, from: String, to: String) {
+        self.delegate = delegate
+
+        toSearchbar.addTarget(self, action: #selector(delegate?.searchingTo), for: .touchUpInside)
+        fromSearchbar.addTarget(self, action: #selector(delegate?.searchingFrom), for: .touchUpInside)
+        datepickerButton.addTarget(self, action: #selector(delegate?.showDatePicker), for: .touchUpInside)
+        swapButton.addTarget(self, action: #selector(delegate?.swapFromAndTo), for: .touchUpInside)
+
+        updateSearchBarTitles(from: from, to: to)
+    }
+
+    func updateSearchBarTitles(from: String? = nil, to: String? = nil) {
+        if let from = from {
+            fromSearchbar.setTitle(from, for: .normal)
+        }
+
+        if let to = to {
+            toSearchbar.setTitle(to, for: .normal)
         }
     }
 
