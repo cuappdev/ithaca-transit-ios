@@ -69,7 +69,7 @@ class ServiceAlertsViewController: UIViewController {
         Analytics.shared.log(payload)
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
 
@@ -77,7 +77,7 @@ class ServiceAlertsViewController: UIViewController {
         }
     }
 
-    func setUpLoadingIndicator() {
+    private func setUpLoadingIndicator() {
         loadingIndicator = LoadingIndicator()
         if let loadingIndicator = loadingIndicator {
             view.addSubview(loadingIndicator)
@@ -88,7 +88,7 @@ class ServiceAlertsViewController: UIViewController {
         }
     }
 
-    func removeLoadingIndicator() {
+    private func removeLoadingIndicator() {
         if isLoading {
             loadingIndicator?.removeFromSuperview()
             loadingIndicator = nil
@@ -99,7 +99,7 @@ class ServiceAlertsViewController: UIViewController {
         return networking(Endpoint.getAlerts()).decode()
     }
 
-    func getServiceAlerts() {
+    private func getServiceAlerts() {
         getAlerts().observe(with: { [weak self] result in
             guard let `self` = self else { return }
             DispatchQueue.main.async {
@@ -119,7 +119,7 @@ class ServiceAlertsViewController: UIViewController {
         })
     }
 
-    func sortedAlerts(alertsList: [ServiceAlert]) -> [Int: [ServiceAlert]] {
+    private func sortedAlerts(alertsList: [ServiceAlert]) -> [Int: [ServiceAlert]] {
         var sortedAlerts = [Int: [ServiceAlert]]()
         for alert in alertsList {
             if var alertsAtPriority = sortedAlerts[alert.priority] {
@@ -140,7 +140,7 @@ class ServiceAlertsViewController: UIViewController {
         return sortedAlerts
     }
 
-    func combineAlertsByTimeSpan(alertsList: [ServiceAlert]) -> [ServiceAlert] {
+    private func combineAlertsByTimeSpan(alertsList: [ServiceAlert]) -> [ServiceAlert] {
         var combinedAlerts = [ServiceAlert]()
         var mappedByTimeSpan: [String: ServiceAlert] = [:]
         for alert in alertsList {

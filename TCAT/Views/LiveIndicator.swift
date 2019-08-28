@@ -123,7 +123,7 @@ class LiveIndicator: UIView {
 
     // MARK: Animate
 
-    func startAnimation() {
+    private func startAnimation() {
         var timeInterval: TimeInterval = 0
 
         for layer in [circleLayer, smallArcLayer, largeArcLayer] {
@@ -131,17 +131,6 @@ class LiveIndicator: UIView {
                               selector: #selector(self.animateLayer), userInfo: layer, repeats: true)
             RunLoop.main.add(timer, forMode: RunLoop.Mode.common)
             timeInterval += LiveIndicator.DURATION
-        }
-    }
-
-    func stopAnimation() {
-        for element: Any in [circleLayer, smallArcLayer, largeArcLayer] {
-            if let view = element as? UIView {
-                view.layer.removeAllAnimations()
-            }
-            if let layer = element as? CAShapeLayer {
-                layer.removeAllAnimations()
-            }
         }
     }
 

@@ -151,7 +151,7 @@ extension UIView {
         }
     }
 
-    func configureAndAddAnimationToGradient(_ gradient: CAGradientLayer) {
+    private func configureAndAddAnimationToGradient(_ gradient: CAGradientLayer) {
         gradient.startPoint = CGPoint(x: -1.0 + CGFloat(gradientWidth), y: 0)
         gradient.endPoint = CGPoint(x: 1.0 + CGFloat(gradientWidth), y: 0)
 
@@ -188,7 +188,7 @@ extension UIView {
 
     }
 
-    func addCutoutView() {
+    private func addCutoutView() {
         let cutout = CutoutView()
         cutout.frame = self.bounds
         cutout.backgroundColor = UIColor.clear

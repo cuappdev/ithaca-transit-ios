@@ -320,9 +320,7 @@ class HomeOptionsCardViewController: UIViewController {
 // MARK: VC Life Cycle setup
 extension HomeOptionsCardViewController {
     override func loadView() {
-        let customView = RoundShadowedView()
-        customView.addRoundedCornersAndShadow()
-        view = customView
+        view = RoundShadowedView(cornerRadius: 10)
     }
 
     override func viewWillAppear(_ animated: Bool) {

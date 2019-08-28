@@ -102,7 +102,7 @@ class HomeMapViewController: UIViewController {
         banner = nil
     }
 
-    func setupMapView() {
+    private func setupMapView() {
         // Set mapView with settings
         let camera = GMSCameraPosition.camera(withLatitude: Constants.Map.startingLat, longitude: Constants.Map.startingLong, zoom: 15.5)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
@@ -130,13 +130,13 @@ class HomeMapViewController: UIViewController {
         }
     }
 
-    func setupOptionsCard() {
+    private func setupOptionsCard() {
         optionsCardVC = HomeOptionsCardViewController(delegate: self)
         add(optionsCardVC)
         delegate = optionsCardVC
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         optionsCardVC.view.snp.makeConstraints { make in
             make.leading.top.trailing.equalToSuperview().inset(HomeMapViewController.optionsCardInset)
             make.height.equalTo(optionsCardVC.calculateCardHeight())
@@ -166,7 +166,7 @@ class HomeMapViewController: UIViewController {
         checkReviewAndRequestLocation()
     }
 
-    func checkReviewAndRequestLocation() {
+    private func checkReviewAndRequestLocation() {
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         StoreReviewHelper.checkAndAskForReview()

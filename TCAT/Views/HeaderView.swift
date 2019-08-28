@@ -28,11 +28,11 @@ class HeaderView: UITableViewHeaderFooterView {
     private var button: UIButton?
     private var label: UILabel!
 
-    @objc func addNewFavorite(sender: UIButton) {
+    @objc private func addNewFavorite(sender: UIButton) {
         headerViewDelegate?.displayFavoritesTVC()
     }
 
-    @objc func clearRecentSearches(sender: UIButton) {
+    @objc private func clearRecentSearches(sender: UIButton) {
         headerViewDelegate?.clearRecentSearches()
     }
 
@@ -68,7 +68,7 @@ class HeaderView: UITableViewHeaderFooterView {
         }
     }
 
-    func createButton(type: buttonOption) {
+    private func createButton(type: buttonOption) {
         button = UIButton(type: .system)
         button?.setTitleColor(Colors.tcatBlue, for: .normal)
 

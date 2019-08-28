@@ -12,18 +12,20 @@ class RoundShadowedView: UIView {
 
     private var containerView: UIView!
 
-    func addRoundedCornersAndShadow() {
+    init(cornerRadius: CGFloat) {
+        super.init(frame: .zero)
+
         backgroundColor = .clear
 
         layer.shadowColor = Colors.secondaryText.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 2.5)
+        layer.shadowOffset = CGSize(width: 0, height: cornerRadius / 4)
         layer.shadowOpacity = 0.4
-        layer.shadowRadius = 2.5
+        layer.shadowRadius = cornerRadius / 4
 
         containerView = UIView()
         containerView.backgroundColor = .white
 
-        containerView.layer.cornerRadius = 10
+        containerView.layer.cornerRadius = cornerRadius
         containerView.layer.masksToBounds = true
 
         addSubview(containerView)
@@ -39,5 +41,9 @@ class RoundShadowedView: UIView {
         } else {
             containerView.addSubview(view)
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

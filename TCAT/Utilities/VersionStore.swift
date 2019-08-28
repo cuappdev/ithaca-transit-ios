@@ -27,24 +27,4 @@ class VersionStore: WhatsNewVersionStore {
     func set(version: WhatsNew.Version) {
         userDefaults.set(Constants.App.version, forKey: Constants.UserDefaults.version)
     }
-
-    func isNewCardAvailable() -> Bool {
-        guard
-            let whatsNewData = userDefaults.data(forKey: Constants.UserDefaults.whatsNewCardVersion),
-            let storedWhatsNew = try? JSONDecoder().decode(WhatsNewCard.self, from: whatsNewData)
-            else {
-                return false
-        }
-        return !WhatsNewCard.newFeature.isEqual(to: storedWhatsNew)
-    }
-
-    func storeShownCard(card: WhatsNewCard) {
-        guard !card.isEqual(to: WhatsNewCard.promotion) else { return }
-        if let encodedData = try? JSONEncoder().encode(card) {
-            userDefaults.set(encodedData, forKey: Constants.UserDefaults.whatsNewCardVersion)
-        } else {
-            print("[VersionStore] Encoding Error")
-        }
-    }
-
 }
