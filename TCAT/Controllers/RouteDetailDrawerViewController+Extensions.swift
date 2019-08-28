@@ -166,7 +166,7 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
         if let message = message {
             let phraseLabelFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.phraseLabelFooterView)
                 as? PhraseLabelFooterView ?? PhraseLabelFooterView(reuseIdentifier: Constants.Footers.phraseLabelFooterView)
-            phraseLabelFooterView.setView(with: message)
+            phraseLabelFooterView.configure(with: message)
             return phraseLabelFooterView
         }
 

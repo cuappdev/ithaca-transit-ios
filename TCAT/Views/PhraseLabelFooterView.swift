@@ -23,7 +23,7 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
         setupConstraints()
     }
 
-    func setupLabel() {
+    private func setupLabel() {
         label = UILabel()
         label.font = .getFont(.regular, size: 12)
         label.textColor = Colors.metadataIcon
@@ -34,7 +34,7 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
         addSubview(label)
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         let topPadding: CGFloat = 20
         label.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
@@ -42,7 +42,7 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
         }
     }
 
-    func setView(with message: String) {
+    func configure(with message: String) {
         label.text = message
     }
 

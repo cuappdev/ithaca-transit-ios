@@ -1,6 +1,5 @@
 //
 //  Personality.swift
-//  Brella, I mean, TCAT
 //
 //  Created by Matthew Barker on 04/15/18
 //  Copyright © 2018 cuappdev. All rights reserved.

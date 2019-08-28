@@ -61,7 +61,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
     }
 
     /// Return an instance of custom back button
-    func customBackButton() -> UIBarButtonItem {
+    private func customBackButton() -> UIBarButtonItem {
 
         let backButton = UIButton()
         backButton.setImage(#imageLiteral(resourceName: "back"), for: .normal)

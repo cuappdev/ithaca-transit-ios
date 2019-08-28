@@ -19,7 +19,7 @@
 		22A83FD4228B85CE005DE4EB /* RouteDetailDrawerViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A83FD3228B85CE005DE4EB /* RouteDetailDrawerViewController+Extensions.swift */; };
 		22D76E8E2263E21F00FA21B9 /* HomeMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D76E8C2263E21F00FA21B9 /* HomeMapViewController.swift */; };
 		22D76E8F2263E21F00FA21B9 /* HomeOptionsCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D76E8D2263E21F00FA21B9 /* HomeOptionsCardViewController.swift */; };
-		22D76E912266CCC000FA21B9 /* RoundedShadowedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D76E902266CCC000FA21B9 /* RoundedShadowedView.swift */; };
+		22D76E912266CCC000FA21B9 /* RoundShadowedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D76E902266CCC000FA21B9 /* RoundShadowedView.swift */; };
 		22D9599F2269AB1700D115EC /* ServiceAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D9599E2269AB1700D115EC /* ServiceAlert.swift */; };
 		22FD6E8922925EDA0053A174 /* InformationTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FD6E8822925EDA0053A174 /* InformationTableHeaderView.swift */; };
 		371F7516EDE896E8F926165F /* Pods_Today_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE1A6AF335384977A983BFF1 /* Pods_Today_Extension.framework */; };
@@ -211,7 +211,7 @@
 		22A83FD3228B85CE005DE4EB /* RouteDetailDrawerViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RouteDetailDrawerViewController+Extensions.swift"; path = "Controllers/RouteDetailDrawerViewController+Extensions.swift"; sourceTree = "<group>"; };
 		22D76E8C2263E21F00FA21B9 /* HomeMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HomeMapViewController.swift; path = Controllers/HomeMapViewController.swift; sourceTree = "<group>"; };
 		22D76E8D2263E21F00FA21B9 /* HomeOptionsCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HomeOptionsCardViewController.swift; path = Controllers/HomeOptionsCardViewController.swift; sourceTree = "<group>"; };
-		22D76E902266CCC000FA21B9 /* RoundedShadowedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RoundedShadowedView.swift; path = Views/RoundedShadowedView.swift; sourceTree = "<group>"; };
+		22D76E902266CCC000FA21B9 /* RoundShadowedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RoundShadowedView.swift; path = Views/RoundShadowedView.swift; sourceTree = "<group>"; };
 		22D9599E2269AB1700D115EC /* ServiceAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlert.swift; path = Model/ServiceAlert.swift; sourceTree = "<group>"; };
 		22FD6E8822925EDA0053A174 /* InformationTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InformationTableHeaderView.swift; path = Views/InformationTableHeaderView.swift; sourceTree = "<group>"; };
 		2F4B7F4D04B5E76C3C373607 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
@@ -615,7 +615,7 @@
 				BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */,
 				BF0002211FB37D0A00773109 /* LoadingIndicator.swift */,
 				BF316CAF2096352B005A14EF /* PhraseLabelFooterView.swift */,
-				22D76E902266CCC000FA21B9 /* RoundedShadowedView.swift */,
+				22D76E902266CCC000FA21B9 /* RoundShadowedView.swift */,
 				BF2DA890224539DD006E527D /* RouteDiagram.swift */,
 				229BD4E6229792A90042D9D3 /* RouteDiagramSegment.swift */,
 				DDA134441EC6A8CB00460B18 /* RouteLine.swift */,
@@ -1134,7 +1134,7 @@
 				7EBD9D92222630DE008BF900 /* EventPayload.swift in Sources */,
 				BF5CBAD11FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift in Sources */,
 				7EBD9D8A22263094008BF900 /* LocationObject.swift in Sources */,
-				22D76E912266CCC000FA21B9 /* RoundedShadowedView.swift in Sources */,
+				22D76E912266CCC000FA21B9 /* RoundShadowedView.swift in Sources */,
 				7E155FD82231DAAE00FE7A9B /* Direction.swift in Sources */,
 				DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */,
 				7EBD9D8B22263096008BF900 /* Place.swift in Sources */,
