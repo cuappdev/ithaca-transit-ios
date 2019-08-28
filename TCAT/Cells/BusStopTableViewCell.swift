@@ -40,7 +40,7 @@ class BusStopTableViewCell: UITableViewCell {
         let cellHeight: CGFloat = RouteDetailCellSize.smallHeight
         let cellWidth: CGFloat = RouteDetailCellSize.indentedWidth
         let connectorSize = CGSize(width: 4, height: cellHeight / 2)
-        let statusCircleLeadingInset = DetailIconView.width - 16 - (statusCircle.frame.width / 2)
+        let statusCircleLeadingInset = DetailIconView.width - 22 - (statusCircle.frame.width / 2)
         let titleLabelSize = CGSize(width: UIScreen.main.bounds.width - cellWidth - 20, height: 20)
 
         titleLabel.snp.makeConstraints { make in
