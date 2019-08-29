@@ -23,6 +23,8 @@ class CustomNavigationController: UINavigationController, UINavigationController
         .foregroundColor: Colors.black
     ]
 
+    private var screenshotObserver: NSObjectProtocol?
+
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
         view.backgroundColor = Colors.white
@@ -43,10 +45,18 @@ class CustomNavigationController: UINavigationController, UINavigationController
 
         // Add screenshot listener, log view controller name
         let notifName = UIApplication.userDidTakeScreenshotNotification
-        NotificationCenter.default.addObserver(forName: notifName, object: nil, queue: .main) { _ in
+        screenshotObserver = NotificationCenter.default.addObserver(forName: notifName, object: nil, queue: .main) { _ in
             guard let currentViewController = self.visibleViewController else { return }
             let payload = ScreenshotTakenPayload(location: "\(type(of: currentViewController))")
             Analytics.shared.log(payload)
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        if let screenshotObserver = screenshotObserver {
+            NotificationCenter.default.removeObserver(screenshotObserver)
         }
     }
 

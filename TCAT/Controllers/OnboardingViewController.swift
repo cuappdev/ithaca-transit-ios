@@ -112,26 +112,29 @@ class OnboardingViewController: PresentationController {
         return dismissButton
     }()
 
+    let width = UIScreen.main.bounds.width < 550 ? UIScreen.main.bounds.width : 550
+    let height: CGFloat = 200
+
     @objc private func dismissView() {
         if isInitialViewing {
 
             let rootVC = HomeMapViewController()
             let desiredViewController = CustomNavigationController(rootViewController: rootVC)
 
-            let appDelegate = UIApplication.shared.delegate as! AppDelegate
-            let snapshot: UIView = appDelegate.window!.snapshotView(afterScreenUpdates: true)!
-            desiredViewController.view.addSubview(snapshot)
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+                let window = appDelegate.window,
+                let snapshot = window.snapshotView(afterScreenUpdates: true) {
 
-            appDelegate.window?.rootViewController = desiredViewController
+                desiredViewController.view.addSubview(snapshot)
+                window.rootViewController = desiredViewController
+                UIView.animate(withDuration: 0.5, animations: {
+                    snapshot.layer.opacity = 0
+                    snapshot.layer.transform = CATransform3DMakeScale(1.5, 1.5, 1.5)
+                }, completion: { _ in
+                    snapshot.removeFromSuperview()
+                })
+            }
             userDefaults.setValue(true, forKey: Constants.UserDefaults.onboardingShown)
-
-            UIView.animate(withDuration: 0.5, animations: {
-                snapshot.layer.opacity = 0
-                snapshot.layer.transform = CATransform3DMakeScale(1.5, 1.5, 1.5)
-            }, completion: { _ in
-                snapshot.removeFromSuperview()
-            })
-
         } else {
             dismiss(animated: true)
         }
@@ -163,73 +166,14 @@ class OnboardingViewController: PresentationController {
 
     private func configureSlides() {
 
-        let width = UIScreen.main.bounds.width < 550 ? UIScreen.main.bounds.width : 550
-        let height: CGFloat = 200
-
-        // Detail Labels
-
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-
-        let detailWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.8
-        let detailHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
-
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.getFont(detailLabelFontName, size: detailLabelFontSize * detailHeight),
-            .foregroundColor: detailLabelTextColor,
-            .paragraphStyle: paragraphStyle
-        ]
-
-        let detailTitles = detailLabelMessages.map { title -> Content in
-            let label = UILabel()
-            label.frame.size = CGSize(width: width * detailWidth, height: height * detailHeight)
-            label.numberOfLines = 5
-            label.attributedText = NSAttributedString(string: title, attributes: attributes)
-            return Content(view: label, position: detailLabelPosition)
-        }
-
-        // Title Labels
-
-        let headerParagraphStyle = NSMutableParagraphStyle()
-        headerParagraphStyle.alignment = .center
-
-        let headerWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.9
-        let headerHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
-
-        let headerAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.getFont(titleLabelFontName, size: titleLabelFontSize * headerHeight),
-            .foregroundColor: titleLabelTextColor,
-            .paragraphStyle: headerParagraphStyle
-        ]
-
-        let headerTitles = titleLabelMessages.map { title -> Content in
-            let label = UILabel()
-            label.frame.size = CGSize(width: width * headerWidth, height: height * headerHeight)
-            label.numberOfLines = 5
-            label.attributedText = NSAttributedString(string: title, attributes: headerAttributes)
-            return Content(view: label, position: titleLabelPosition)
-        }
-
-        // Button
-
-        let button = UIButton()
-        button.frame.size = CGSize(width: 160, height: 60)
-        button.layer.shadowOffset = CGSize(width: 0, height: 4)
-        button.layer.shadowColor = Colors.metadataIcon.cgColor
-        button.layer.shadowOpacity = 0.5
-        button.setTitle(Constants.Onboarding.begin, for: .normal)
-        button.setTitleColor(Colors.white, for: .normal)
-        button.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
-        button.titleLabel?.font = .getFont(.medium, size: 22)
-        button.backgroundColor = Colors.tcatBlue // UIColor(hex: "D65851")
-        button.layer.cornerRadius = 4
-        let buttonPosition = Position(left: 0.5, top: 0.5)
-        let startButton = Content(view: button, position: buttonPosition, centered: true)
+        let detailTitles = getDetailLabelTitles()
+        let headerTitles = getHeaderLabelTitles()
+        let startButton = Content(view: getBeginButton(), position: Position(left: 0.5, top: 0.5), centered: true)
 
         // Slides
         var slides = [SlideController]()
 
-        for index in 0..<detailLabelMessages.count {
+        (0..<detailLabelMessages.count).forEach { index in
             var contents: [Content] = [detailTitles[index], headerTitles[index]]
 
             // Go Button
@@ -254,6 +198,66 @@ class OnboardingViewController: PresentationController {
             slides.append(controller)
         }
         add(slides)
+    }
+
+    private func getHeaderLabelTitles() -> [Content] {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+
+        let headerWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.9
+        let headerHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
+
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.getFont(titleLabelFontName, size: titleLabelFontSize * headerHeight),
+            .foregroundColor: titleLabelTextColor,
+            .paragraphStyle: paragraphStyle
+        ]
+
+        return titleLabelMessages.map { title -> Content in
+            let label = UILabel()
+            label.frame.size = CGSize(width: width * headerWidth, height: height * headerHeight)
+            label.numberOfLines = 5
+            label.attributedText = NSAttributedString(string: title, attributes: attributes)
+            return Content(view: label, position: titleLabelPosition)
+        }
+    }
+
+    private func getDetailLabelTitles() -> [Content] {
+        let detailWidth: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.8
+        let detailHeight: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 1 : 0.6
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.getFont(detailLabelFontName, size: detailLabelFontSize * detailHeight),
+            .foregroundColor: detailLabelTextColor,
+            .paragraphStyle: paragraphStyle
+        ]
+
+        return detailLabelMessages.map { title -> Content in
+            let label = UILabel()
+            label.frame.size = CGSize(width: width * detailWidth, height: height * detailHeight)
+            label.numberOfLines = 5
+            label.attributedText = NSAttributedString(string: title, attributes: attributes)
+            return Content(view: label, position: detailLabelPosition)
+        }
+    }
+
+    private func getBeginButton() -> UIButton {
+        let button = UIButton()
+        button.frame.size = CGSize(width: 160, height: 60)
+        button.layer.shadowOffset = CGSize(width: 0, height: 4)
+        button.layer.shadowColor = Colors.metadataIcon.cgColor
+        button.layer.shadowOpacity = 0.5
+        button.setTitle(Constants.Onboarding.begin, for: .normal)
+        button.setTitleColor(Colors.white, for: .normal)
+        button.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
+        button.titleLabel?.font = .getFont(.medium, size: 22)
+        button.backgroundColor = Colors.tcatBlue // UIColor(hex: "D65851")
+        button.layer.cornerRadius = 4
+
+        return button
     }
 
     private func configureBackground() {

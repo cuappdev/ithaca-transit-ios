@@ -209,7 +209,8 @@ extension RouteOptionsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.routeOptionsCellIdentifier, for: indexPath) as! RouteTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.routeOptionsCellIdentifier, for: indexPath) as? RouteTableViewCell
+            else { return UITableViewCell() }
 
         cell.configure(for: routes[indexPath.section][indexPath.row], delegate: self)
 
@@ -227,6 +228,18 @@ extension RouteOptionsViewController: UITableViewDataSource {
 // MARK: TableView Delegate
 extension RouteOptionsViewController: UITableViewDelegate {
 
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if refreshControl.isRefreshing {
+            // Update leave now time in pull to refresh
+            if searchTimeType == .leaveNow {
+                let now = Date()
+                searchTime = now
+                routeSelection.setDatepickerTitle(withDate: now, withSearchTimeType: searchTimeType)
+            }
+            searchForRoutes()
+        }
+    }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         locationManager.stopUpdatingLocation()
         if let routeDetailViewController = createRouteDetailViewController(from: indexPath) {
@@ -243,7 +256,7 @@ extension RouteOptionsViewController: UITableViewDelegate {
         if routes.count == 3 {
             switch section {
             case 1:
-                if (routes.first?.isEmpty ?? false) {
+                if routes.first?.isEmpty ?? false {
                     return Constants.TableHeaders.boardingSoon
                 } else {
                     return Constants.TableHeaders.boardingSoonFromNearby

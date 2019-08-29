@@ -93,21 +93,21 @@ class Direction: NSObject, NSCopying, Codable {
 
     // MARK: Initalizers
 
-    required init (from decoder: Decoder) {
-        let container = try! decoder.container(keyedBy: CodingKeys.self)
-        type = try! container.decode(DirectionType.self, forKey: .type)
-        name = try! container.decode(String.self, forKey: .name)
-        startLocation = try! container.decode(CLLocationCoordinate2D.self, forKey: .startLocation)
-        endLocation = try! container.decode(CLLocationCoordinate2D.self, forKey: .endLocation)
-        startTime = Date.parseDate(try! container.decode(String.self, forKey: .startTime))
-        endTime = Date.parseDate(try! container.decode(String.self, forKey: .endTime))
-        path = try! container.decode([CLLocationCoordinate2D].self, forKey: .path)
+    required init (from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decode(DirectionType.self, forKey: .type)
+        name = try container.decode(String.self, forKey: .name)
+        startLocation = try container.decode(CLLocationCoordinate2D.self, forKey: .startLocation)
+        endLocation = try container.decode(CLLocationCoordinate2D.self, forKey: .endLocation)
+        startTime = Date.parseDate(try container.decode(String.self, forKey: .startTime))
+        endTime = Date.parseDate(try container.decode(String.self, forKey: .endTime))
+        path = try container.decode([CLLocationCoordinate2D].self, forKey: .path)
         do { routeNumber = try container.decode(Int.self, forKey: .routeNumber) } catch { routeNumber = -1 }
-        stops = try! container.decode([LocationObject].self, forKey: .stops)
+        stops = try container.decode([LocationObject].self, forKey: .stops)
         do { stayOnBusForTransfer = try container.decode(Bool.self, forKey: .stayOnBusForTransfer) } catch { stayOnBusForTransfer = false }
-        tripIdentifiers = try? container.decode([String].self, forKey: .tripIdentifiers)
-        delay = try? container.decode(Int.self, forKey: .delay)
-        travelDistance = try! container.decode(Double.self, forKey: .travelDistance)
+        tripIdentifiers = try container.decode([String].self, forKey: .tripIdentifiers)
+        delay = try container.decode(Int.self, forKey: .delay)
+        travelDistance = try container.decode(Double.self, forKey: .travelDistance)
         super.init()
     }
 

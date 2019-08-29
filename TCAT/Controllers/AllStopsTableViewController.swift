@@ -244,7 +244,8 @@ extension AllStopsTableViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
+            else { return UITableViewCell() }
 
         guard let section = sectionIndexes[sortedKeys[indexPath.section]] else { return cell }
         cell.configure(for: section[indexPath.row])

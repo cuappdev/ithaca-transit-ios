@@ -85,7 +85,8 @@ extension FavoritesTableViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as! PlaceTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as? PlaceTableViewCell
+            else { return UITableViewCell()}
         if let place = resultsSection.getItem(at: indexPath.row) {
             cell.configure(for: place)
         }
@@ -176,8 +177,9 @@ extension FavoritesTableViewController: UISearchBarDelegate {
 
     /* Get Search Results */
     @objc func getPlaces(timer: Timer) {
-        let searchText = (timer.userInfo as! [String: String])["searchText"]!
-        if !searchText.isEmpty {
+        if let userInfo = timer.userInfo as? [String: String],
+            let searchText = userInfo["searchText"],
+            !searchText.isEmpty {
             getSearchResults(searchText: searchText).observe { [weak self] result in
                 guard let `self` = self else { return }
                 DispatchQueue.main.async {
@@ -192,7 +194,6 @@ extension FavoritesTableViewController: UISearchBarDelegate {
                     case .error(let error):
                         print("[FavoritesTableViewController] getSearchResults Error: \(error.localizedDescription)")
                         self.resultsSection = Section.recentSearches(items: [])
-
                     }
                 }
             }

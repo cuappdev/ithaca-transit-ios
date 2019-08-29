@@ -51,7 +51,7 @@ class RouteOptionsViewController: UIViewController {
 
     // Variable to remember back button when hiding
     private var backButton: UIBarButtonItem?
-    private var refreshControl: UIRefreshControl!
+    var refreshControl: UIRefreshControl!
 
     private let estimatedRowHeight: CGFloat = 115
     private let mediumTapticGenerator = UIImpactFeedbackGenerator(style: .medium)
@@ -233,22 +233,6 @@ class RouteOptionsViewController: UIViewController {
         }
     }
 
-    // MARK: Search bar
-
-    @objc private func searchingTo(sender: UIButton? = nil) {
-        searchType = .to
-        presentSearchBar()
-        let payload = RouteOptionsSettingsPayload(description: "Searching To Tapped")
-        Analytics.shared.log(payload)
-    }
-
-    @objc private func searchingFrom(sender: UIButton? = nil) {
-        searchType = .from
-        presentSearchBar()
-        let payload = RouteOptionsSettingsPayload(description: "Searching From Tapped")
-        Analytics.shared.log(payload)
-    }
-
     func presentSearchBar() {
         var placeholder = ""
         var searchBarText = ""
@@ -338,13 +322,9 @@ class RouteOptionsViewController: UIViewController {
     }
 
     func searchForRoutes() {
-
-        if
-            let searchFrom = searchFrom,
+        if let searchFrom = searchFrom,
             let searchTo = searchTo,
-            let time = searchTime
-        {
-
+            let time = searchTime {
             resetAndShowCurrentlyLoading()
 
             switch searchType {
@@ -437,9 +417,7 @@ class RouteOptionsViewController: UIViewController {
                     print("Intent Donation Error: \(error.localizedDescription)")
                 })
             }
-
         }
-
     }
 
     private func getRoutes(start: Place,
@@ -649,18 +627,6 @@ class RouteOptionsViewController: UIViewController {
         refreshControl.isHidden = true
 
         routeResults.refreshControl = refreshControl
-    }
-
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if refreshControl.isRefreshing {
-            // Update leave now time in pull to refresh
-            if searchTimeType == .leaveNow {
-                let now = Date()
-                searchTime = now
-                routeSelection.setDatepickerTitle(withDate: now, withSearchTimeType: searchTimeType)
-            }
-            searchForRoutes()
-        }
     }
 
     private func hideRefreshControl() {

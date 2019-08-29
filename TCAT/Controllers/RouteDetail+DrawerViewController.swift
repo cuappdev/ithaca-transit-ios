@@ -75,7 +75,8 @@ class RouteDetailDrawerViewController: UIViewController {
     }
 
     required convenience init(coder aDecoder: NSCoder) {
-        let route = aDecoder.decodeObject(forKey: "route") as! Route
+        guard let route = aDecoder.decodeObject(forKey: "route") as? Route
+            else { fatalError("init(coder:) has not been implemented") }
         self.init(route: route)
     }
 

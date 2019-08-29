@@ -36,7 +36,7 @@ class BusStop: NSObject, NSCoding {
 
     // MARK: NSCoding
     required init(coder aDecoder: NSCoder) {
-        name = aDecoder.decodeObject(forKey: nameKey) as! String
+        name = aDecoder.decodeObject(forKey: nameKey) as? String ?? ""
         lat = aDecoder.decodeDouble(forKey: latKey)
         long = aDecoder.decodeDouble(forKey: longKey)
     }

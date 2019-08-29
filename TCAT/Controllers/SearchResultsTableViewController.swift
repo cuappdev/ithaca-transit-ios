@@ -135,8 +135,9 @@ class SearchResultsTableViewController: UITableViewController {
     }
 
     @objc private func getPlaces(timer: Timer) {
-        let searchText = (timer.userInfo as! [String: String])["searchText"]!
-        if !searchText.isEmpty {
+        if let userInfo = timer.userInfo as? [String: String],
+            let searchText = userInfo["searchText"],
+            !searchText.isEmpty {
             getSearchResults(searchText: searchText).observe { [weak self] result in
                 guard let `self` = self else { return }
                 DispatchQueue.main.async {
@@ -178,11 +179,13 @@ extension SearchResultsTableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch sections[indexPath.section] {
         case .currentLocation, .seeAllStops:
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier) as! GeneralTableViewCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier) as? GeneralTableViewCell
+                else { return UITableViewCell() }
             cell.configure(for: sections[indexPath.section])
             return cell
         default:
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
+                else { return UITableViewCell() }
             cell.configure(for: sections[indexPath.section].getItems()[indexPath.row])
             return cell
         }

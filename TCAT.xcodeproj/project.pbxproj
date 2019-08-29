@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		222BDE16215C1CEE0040DD93 /* WhatsNewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */; };
+		22443222231871CD00987417 /* RouteDetailContentViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22443221231871CD00987417 /* RouteDetailContentViewController+Extensions.swift */; };
+		224432242318741500987417 /* HomeOptionsCardViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224432232318741500987417 /* HomeOptionsCardViewController+Extensions.swift */; };
 		224D8A5B229F5E3000C5D86A /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224D8A5A229F5E3000C5D86A /* Section.swift */; };
 		224EB5A5214F2F01008232C2 /* AppShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224EB5A4214F2F01008232C2 /* AppShortcuts.swift */; };
 		226C8D762173AF69009985E3 /* VersionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226C8D752173AF69009985E3 /* VersionStore.swift */; };
@@ -200,6 +202,8 @@
 /* Begin PBXFileReference section */
 		1DD024FEFC067440B1903BA7 /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
 		222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WhatsNewHeaderView.swift; path = Views/WhatsNewHeaderView.swift; sourceTree = "<group>"; };
+		22443221231871CD00987417 /* RouteDetailContentViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RouteDetailContentViewController+Extensions.swift"; path = "Controllers/RouteDetailContentViewController+Extensions.swift"; sourceTree = "<group>"; };
+		224432232318741500987417 /* HomeOptionsCardViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "HomeOptionsCardViewController+Extensions.swift"; path = "Controllers/HomeOptionsCardViewController+Extensions.swift"; sourceTree = "<group>"; };
 		224D8A5A229F5E3000C5D86A /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Section.swift; path = Model/Section.swift; sourceTree = "<group>"; };
 		224EB5A4214F2F01008232C2 /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppShortcuts.swift; path = Utilities/AppShortcuts.swift; sourceTree = "<group>"; };
 		226C8D752173AF69009985E3 /* VersionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VersionStore.swift; path = Utilities/VersionStore.swift; sourceTree = "<group>"; };
@@ -638,10 +642,12 @@
 				DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */,
 				22D76E8C2263E21F00FA21B9 /* HomeMapViewController.swift */,
 				22D76E8D2263E21F00FA21B9 /* HomeOptionsCardViewController.swift */,
+				224432232318741500987417 /* HomeOptionsCardViewController+Extensions.swift */,
 				E337970C1FC1606D00BCB28F /* InformationViewController.swift */,
 				BFB86A06205C614C000794B2 /* OnboardingViewController.swift */,
 				BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */,
 				DDB49C921E8857D000A99C35 /* RouteDetail+ContentViewController.swift */,
+				22443221231871CD00987417 /* RouteDetailContentViewController+Extensions.swift */,
 				BF5CBAD01FCE6CCE00478C6F /* RouteDetail+DrawerViewController.swift */,
 				22A83FD3228B85CE005DE4EB /* RouteDetailDrawerViewController+Extensions.swift */,
 				DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */,
@@ -910,7 +916,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint autocorrect; swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 		7A284AEEB17AB8B60847C27E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1095,6 +1101,7 @@
 				BFCA712D206AC69000E4CCE5 /* Keys.swift in Sources */,
 				22D76E8F2263E21F00FA21B9 /* HomeOptionsCardViewController.swift in Sources */,
 				BF40D7652230385B000ED7D8 /* WhatsNewCard.swift in Sources */,
+				224432242318741500987417 /* HomeOptionsCardViewController+Extensions.swift in Sources */,
 				DDB49C9D1E8857FC00A99C35 /* BusPath.swift in Sources */,
 				BFF41EB2204365E800E0696B /* SummaryView.swift in Sources */,
 				DDB49CA21E88584B00A99C35 /* DetailIconView.swift in Sources */,
@@ -1136,6 +1143,7 @@
 				7EBD9D8A22263094008BF900 /* LocationObject.swift in Sources */,
 				22D76E912266CCC000FA21B9 /* RoundShadowedView.swift in Sources */,
 				7E155FD82231DAAE00FE7A9B /* Direction.swift in Sources */,
+				22443222231871CD00987417 /* RouteDetailContentViewController+Extensions.swift in Sources */,
 				DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */,
 				7EBD9D8B22263096008BF900 /* Place.swift in Sources */,
 				DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */,

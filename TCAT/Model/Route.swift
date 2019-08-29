@@ -92,7 +92,7 @@ class Route: NSObject, Codable {
     var totalDuration: Int {
         let duration = Time.dateComponents(from: departureTime, to: arrivalTime)
         let minutes = duration.minute ?? 0
-        let hours = duration.hour ?? 0
+        let hours = duration.hour ?? 0e
         return minutes + hours * 60
     }
 
@@ -122,86 +122,83 @@ class Route: NSObject, Codable {
         endName = Constants.General.destination
     }
 
-        func formatDirections(start: String?, end: String?) {
-            startName = start ?? Constants.General.currentLocation
-            endName = end ?? Constants.General.destination
+    func formatDirections(start: String?, end: String?) {
+        startName = start ?? Constants.General.currentLocation
+        endName = end ?? Constants.General.destination
 
-            let first = 0
-            for (index, direction) in rawDirections.enumerated() where direction.type == .walk {
-                // Change walking direction name to name of location walking from
-                if index == first {
-                    direction.name = startName
-                } else {
-                    direction.name = rawDirections[index - 1].stops.last?.name ?? rawDirections[index - 1].name
-                }
-            }
-
-            // Append extra direction for ending location with ending destination name
-            if let direction = rawDirections.last {
-                // Set stayOnBusForTransfer to false b/c ending location can never have transfer
-                if direction.type == .walk || direction.type == .depart {
-                    let newDirection = direction.copy() as! Direction
-                    newDirection.type = newDirection.type == .depart ? .arrive : .walk
-                    newDirection.stayOnBusForTransfer = false
-                    rawDirections.append(newDirection)
-                }
-            }
-
-            // Change all walking directions, except for first and last direction, to arrive
-            let last = rawDirections.count - 1
-            for (index, direction) in rawDirections.enumerated() {
-                if index != last && index != first && direction.type == .walk {
-                    direction.type = .arrive
-                    direction.name = rawDirections[index - 1].stops.last?.name ?? "Bus Stop"
-                }
-            }
-
-            calculateTravelDistance(fromRawDirections: rawDirections)
-
-            // Parse and format directions
-            // Variable to keep track of additions to direction list (Arrival Directions)
-            var offset = 0
-
-            for (index, direction) in directions.enumerated() {
-
-                if direction.type == .depart {
-
-                    let beyondRange = index + 1 > directions.count - 1
-                    let isLastDepart = index == directions.count - 1
-
-                    if direction.stayOnBusForTransfer {
-                        direction.type = .transfer
-                    }
-
-                    // If this direction doesn't have a transfer afterwards, or is depart and last
-                    if (!beyondRange && !directions[index+1].stayOnBusForTransfer) || isLastDepart {
-
-                        // Create Arrival Direction
-                        let arriveDirection = direction.copy() as! Direction
-                        arriveDirection.type = .arrive
-                        arriveDirection.startTime = arriveDirection.endTime
-                        arriveDirection.startLocation = arriveDirection.endLocation
-                        arriveDirection.stops = []
-                        arriveDirection.name = direction.stops.last?.name ?? "Bus Stop"
-                        directions.insert(arriveDirection, at: index + offset + 1)
-                        offset += 1
-
-                    }
-
-                    // Remove inital bus stop and departure bus stop
-                    if direction.stops.count >= 2 {
-                        direction.stops.removeFirst()
-                        direction.stops.removeLast()
-                    }
-                }
-
-                // Change name of last direction to be endName
-                if direction == directions.last {
-                    direction.name = endName
-                }
-
+        let first = 0
+        for (index, direction) in rawDirections.enumerated() where direction.type == .walk {
+            // Change walking direction name to name of location walking from
+            if index == first {
+                direction.name = startName
+            } else {
+                direction.name = rawDirections[index - 1].stops.last?.name ?? rawDirections[index - 1].name
             }
         }
+
+        // Append extra direction for ending location with ending destination name
+        if let direction = rawDirections.last {
+            // Set stayOnBusForTransfer to false b/c ending location can never have transfer
+            if direction.type == .walk || direction.type == .depart,
+                let newDirection = direction.copy() as? Direction {
+                newDirection.type = newDirection.type == .depart ? .arrive : .walk
+                newDirection.stayOnBusForTransfer = false
+                rawDirections.append(newDirection)
+            }
+        }
+
+        // Change all walking directions, except for first and last direction, to arrive
+        let last = rawDirections.count - 1
+        rawDirections.enumerated().forEach { (index, direction) in
+            if index != last && index != first && direction.type == .walk {
+                direction.type = .arrive
+                direction.name = rawDirections[index - 1].stops.last?.name ?? "Bus Stop"
+            }
+        }
+
+        calculateTravelDistance(fromRawDirections: rawDirections)
+        parseAndFormatDirections()
+    }
+
+    private func parseAndFormatDirections() {
+        // Variable to keep track of additions to direction list (Arrival Directions)
+        var offset = 0
+
+        directions.enumerated().forEach { (index, direction) in
+            if direction.type == .depart {
+                let beyondRange = index + 1 > directions.count - 1
+                let isLastDepart = index == directions.count - 1
+
+                if direction.stayOnBusForTransfer {
+                    direction.type = .transfer
+                }
+
+                // If this direction doesn't have a transfer afterwards, or is depart and last
+                if (!beyondRange && !directions[index+1].stayOnBusForTransfer) || isLastDepart,
+                    let arriveDirection = direction.copy() as? Direction {
+                    // Create Arrival Direction
+                    arriveDirection.type = .arrive
+                    arriveDirection.startTime = arriveDirection.endTime
+                    arriveDirection.startLocation = arriveDirection.endLocation
+                    arriveDirection.stops = []
+                    arriveDirection.name = direction.stops.last?.name ?? "Bus Stop"
+                    directions.insert(arriveDirection, at: index + offset + 1)
+                    offset += 1
+                }
+
+                // Remove inital bus stop and departure bus stop
+                if direction.stops.count >= 2 {
+                    direction.stops.removeFirst()
+                    direction.stops.removeLast()
+                }
+            }
+
+            // Change name of last direction to be endName
+            if direction == directions.last {
+                direction.name = endName
+            }
+        }
+    }
 
     // MARK: Process routes
 
