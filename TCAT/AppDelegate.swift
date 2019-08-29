@@ -11,7 +11,6 @@ import Fabric
 import Firebase
 import FutureNova
 import GoogleMaps
-import GooglePlaces
 import Intents
 import SafariServices
 import SwiftyJSON
@@ -41,8 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Set Up Google Services
         FirebaseApp.configure()
         GMSServices.provideAPIKey(Keys.googleMaps.value)
-        GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
-        
+
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
 
@@ -59,7 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         for (key, defaultValue) in userDataInits {
             if userDefaults.value(forKey: key) == nil {
-                if key == Constants.UserDefaults.favorites {
+                if key == Constants.UserDefaults.favorites && sharedUserDefaults?.value(forKey: key) == nil {
                     sharedUserDefaults?.set(defaultValue, forKey: key)
                 } else {
                     userDefaults.set(defaultValue, forKey: key)
@@ -95,7 +93,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func patchFunctions(rootVC: UIViewController) {
-        
         if
             VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1),
             let homeViewController = rootVC as? HomeMapViewController
@@ -109,7 +106,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Analytics.shared.log(payload)
             }
         }
-        
+
         // v1.4.1 Delete Corrupted Shortcut Donations
         if VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 4, patch: 0) {
             print("Begin Deleting Corrupt Shortcut Donations")
@@ -168,7 +165,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let storedPlaces = userDefaults.value(forKey: favoritesKey) as? Data,
             let favorites = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any]
         {
-            // This will only fire on legacy verisions and models
+            // This will only fire on legacy versions and models
             dispatchGroup.enter()
             convertDataToPlaces(data: favorites) { (places, error) in
                 if let encodedObject = try? self.encoder.encode(places), error == nil {
@@ -181,7 +178,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 dispatchGroup.leave()
             }
         }
-        
+
         // Recent Searches Data
         let recentSearchesKey = Constants.UserDefaults.recentSearch
         
