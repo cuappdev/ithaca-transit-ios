@@ -11,7 +11,6 @@ import Fabric
 import Firebase
 import FutureNova
 import GoogleMaps
-import GooglePlaces
 import Intents
 import SafariServices
 import SwiftyJSON
@@ -41,8 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Set Up Google Services
         FirebaseApp.configure()
         GMSServices.provideAPIKey(Keys.googleMaps.value)
-        GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
-        
+
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
 
@@ -192,10 +190,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 dispatchGroup.leave()
             }
-        } else {
-            print("here")
         }
-        
+
         // Recent Searches Data
         let recentSearchesKey = Constants.UserDefaults.recentSearch
         

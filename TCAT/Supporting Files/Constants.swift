@@ -166,6 +166,7 @@ struct Constants {
         static let delay = "/delay"
         static let getRoutes = "/route"
         static let multiRoute = "/multiroute"
+        static let placeIDCoordinates = "/placeIDCoordinates"
         static let routeSelected = "/routeSelected"
         static let searchResults = "/search"
     }
