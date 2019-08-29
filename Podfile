@@ -11,7 +11,6 @@ target 'TCAT' do
     
     # Location
     pod 'GoogleMaps', '~> 3.1'
-    pod 'GooglePlaces', '~>  3.1'
     
     # Networking + Data
     pod 'SwiftyJSON', '~> 5.0'

@@ -94,6 +94,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func patchFunctions(rootVC: UIViewController) {
         if
+            VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1),
             let homeViewController = rootVC as? HomeMapViewController
         {
             print("Begin Data Migration")
@@ -105,20 +106,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Analytics.shared.log(payload)
             }
         }
-        
-//        if
-//            VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1),
-//            let homeViewController = rootVC as? HomeMapViewController
-//        {
-//            print("Begin Data Migration")
-//            homeViewController.showLoadingScreen()
-//            migrationToNewPlacesModel { (success, errorDescription) in
-//                homeViewController.removeLoadingScreen()
-//                print("Data Migration Complete - Success: \(success), Error: \(errorDescription ?? "n/a")")
-//                let payload = DataMigrationOnePointThreePayload(success: success, errorDescription: errorDescription)
-//                Analytics.shared.log(payload)
-//            }
-//        }
 
         // v1.4.1 Delete Corrupted Shortcut Donations
         if VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 4, patch: 0) {
