@@ -195,7 +195,7 @@ class RouteOptionsViewController: UIViewController {
         hideSearchBar()
     }
 
-    private func setupConstraintsForVisibleDatePickerView() {
+    func setupConstraintsForVisibleDatePickerView() {
         datePickerView.snp.remakeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
             make.height.equalTo(self.datePickerView.frame.height)
@@ -234,20 +234,6 @@ class RouteOptionsViewController: UIViewController {
     }
 
     // MARK: Search bar
-
-    @objc private func searchingTo(sender: UIButton? = nil) {
-        searchType = .to
-        presentSearchBar()
-        let payload = RouteOptionsSettingsPayload(description: "Searching To Tapped")
-        Analytics.shared.log(payload)
-    }
-
-    @objc private func searchingFrom(sender: UIButton? = nil) {
-        searchType = .from
-        presentSearchBar()
-        let payload = RouteOptionsSettingsPayload(description: "Searching From Tapped")
-        Analytics.shared.log(payload)
-    }
 
     func presentSearchBar() {
         var placeholder = ""
@@ -570,31 +556,6 @@ class RouteOptionsViewController: UIViewController {
 
         showRouteSearchingLoader = false
         routeResults.reloadData()
-    }
-
-    // MARK: Date Picker
-    @objc private func showDatePicker(sender: UIButton) {
-
-        view.bringSubviewToFront(datePickerOverlay)
-        view.bringSubviewToFront(datePickerView)
-
-        // set up date on datepicker view
-        if let time = searchTime {
-            datePickerView.setDatepickerDate(date: time)
-        }
-
-        datePickerView.setDatepickerTimeType(searchTimeType: searchTimeType)
-
-        UIView.animate(withDuration: 0.5) {
-            self.setupConstraintsForVisibleDatePickerView()
-            self.datePickerOverlay.alpha = 0.6 // darken screen when pull up datepicker
-
-            self.view.layoutIfNeeded()
-        }
-
-        let payload = RouteOptionsSettingsPayload(description: "Date Picker Accessed")
-        Analytics.shared.log(payload)
-
     }
 
     // MARK: Reachability
