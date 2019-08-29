@@ -184,7 +184,7 @@ extension FavoritesTableViewController: UISearchBarDelegate {
                     switch result {
                     case .value(let response):
                         if response.success {
-                            self.resultsSection = Section.searchResults(items: [])
+                            self.resultsSection = Section.searchResults(items: response.data)
                         } else {
                             print("[FavoritesTableViewController] success: false")
                             self.resultsSection = Section.searchResults(items: [])
