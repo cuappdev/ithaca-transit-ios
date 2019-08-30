@@ -575,7 +575,6 @@ extension RouteDetailContentViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let newCoord = locations.last?.coordinate {
-            bounds = bounds.includingCoordinate(newCoord)
             currentLocation = newCoord
         }
         didUpdateLocation()
