@@ -18,9 +18,9 @@ sudo gem install cocoapods // can skip if already installed
 pod install
 ```
 
-3. Go to pinned messages in `#transit-ios` in Slack and download `Keys.plist` and `GoogleServiceInfo.plist`. Within the root directory, place these files in `~/TCAT/Supporting Files/`. 
+3. Go to pinned messages in `#transit-ios` in Slack and download `Keys.plist` and the two `GoogleService-Info.plist` files. Within the root directory, place `Keys.plist`  in `~/TCAT/Supporting Files/`.  Within the `TCAT` folder, create a new folder named `Firebase` so that the path from the root directory is `~/TCAT/Firebase`.  Inside this new folder, create two new folders named `Dev` and `Prod`. Place the respective `GoogleService-Info.plist` file in each folder.
 
->If you aren't an AppDev member, you can plug in your own API keys! View the `Sample Keys.plist` file in the root directory, and refer to instructions [here](https://support.google.com/firebase/answer/7015592?hl=en) on generating a `GoogleServiceInfo.plist`. For the latter step, you will need to create a project within Firebase. Let us know if you have any trouble with this, we're happy to help!
+>If you aren't an AppDev member, you can plug in your own API keys! View the `Sample Keys.plist` file in the root directory, and refer to instructions [here](https://support.google.com/firebase/answer/7015592?hl=en) on generating a `GoogleService-Info.plist`. For the latter step, you will need to create a project within Firebase. Let us know if you have any trouble with this, we're happy to help!
 
 4. Open the `.xcworkspace` file.
 

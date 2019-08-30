@@ -40,8 +40,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Set Up Google Services
         FirebaseApp.configure()
-        GMSServices.provideAPIKey(Keys.googleMaps.value)
-        GMSPlacesClient.provideAPIKey(Keys.googlePlaces.value)
+        
+        #if DEBUG
+            GMSServices.provideAPIKey(Keys.googleMapsDebug.value)
+            GMSPlacesClient.provideAPIKey(Keys.googlePlacesDebug.value)
+        #else
+            GMSServices.provideAPIKey(Keys.googleMapsRelease.value)
+            GMSPlacesClient.provideAPIKey(Keys.googlePlacesRelease.value)
+        #endif
         
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
