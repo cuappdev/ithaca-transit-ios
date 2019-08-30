@@ -15,8 +15,6 @@ enum Keys: String {
 
     case googleMapsDebug = "google-maps-debug"
     case googleMapsRelease = "google-maps-release"
-    case googlePlacesDebug = "google-places-debug"
-    case googlePlacesRelease = "google-places-release"
 
     case registerSecret = "register-secret"
 
