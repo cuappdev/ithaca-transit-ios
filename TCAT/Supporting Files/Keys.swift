@@ -13,8 +13,8 @@ enum Keys: String {
     case fabricAPIKey = "fabric-api-key"
     case fabricBuildSecret = "fabric-build-secret"
 
-    case googleMaps = "google-maps"
-    case googlePlaces = "google-places"
+    case googleMapsDebug = "google-maps-debug"
+    case googleMapsRelease = "google-maps-release"
 
     case registerSecret = "register-secret"
 
