@@ -41,7 +41,7 @@ class RouteDetailDrawerViewController: UIViewController {
 
     let safeAreaCover = UIView()
     var summaryView: SummaryView!
-    let tableView = UITableView()
+    let tableView = UITableView(frame: .zero, style: .grouped)
 
     var directionsAndVisibleStops: [RouteDetailItem] = []
     var selectedDirection: Direction?
@@ -129,6 +129,8 @@ class RouteDetailDrawerViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
+        tableView.contentInset = UIEdgeInsets(top: -34, left: 0.0, bottom: 34, right: 0.0)
+        tableView.backgroundColor = Colors.white
         view.addSubview(tableView)
     }
 
