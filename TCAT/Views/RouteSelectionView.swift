@@ -8,139 +8,114 @@
 
 import UIKit
 
+protocol RouteSelectionViewDelegate: class {
+    func swapFromAndTo()
+    func showDatePicker()
+    func searchingFrom()
+    func searchingTo()
+}
+
 class RouteSelectionView: UIView {
 
+    private weak var delegate: RouteSelectionViewDelegate?
+
     // MARK: View vars
+    private var borderedCircle: Circle!
+    private var bottomSeparator: UIView = UIView()
+    private var datepickerButton: UIButton = UIButton()
+    private var fromLabel: UILabel = UILabel()
+    private var fromSearchbar: UIButton = UIButton()
+    private var line: SolidLine!
+    private var solidCircle: Circle!
+    private var swapButton: UIButton = UIButton()
+    private var toLabel: UILabel = UILabel()
+    private var toSearchbar: UIButton = UIButton()
+    private var topSeparator: UIView = UIView()
 
-    var borderedCircle: Circle!
-    var bottomLine: UIView = UIView()
-    var datepickerButton: UIButton = UIButton()
-    var fromLabel: UILabel = UILabel()
-    var fromSearchbar: UIButton = UIButton()
-    var line: SolidLine!
-    var searcbarView: UIView = UIView()
-    var solidCircle: Circle!
-    var swapButton: UIButton = UIButton()
-    var toLabel: UILabel = UILabel()
-    var toSearchbar: UIButton = UIButton()
-    var topLine: UIView = UIView()
-
-    // MARK: Spacing vars
-
-    let datepickerButtonHeight: CGFloat = 40.0
-    let datepickerImageWidth: CGFloat = 1.5
-    let datepickerTitleLeadingSpace: CGFloat = 12.0
-    let leadingSpace: CGFloat = 16.0
-    let lineWidth: CGFloat = 1.0
-    let searchbarHeight: CGFloat = 28
-    let searchbarTextSpaceFromLeft: CGFloat = 12.0
-    let solidCircleLeftSpace: CGFloat = 11.0
-    let solidCircleRightSpace: CGFloat = 14.0
-    let swapPadding: CGFloat = 16.0
-    let topSpace: CGFloat = 21.5
+    private let searchbarHeight: CGFloat = 28
 
     // MARK: Init
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        styleSearchbarView()
-        styleLabel(fromLabel)
-        styleSearchbar(fromSearchbar)
-        styleLabel(toLabel)
-        styleSearchbar(toSearchbar)
-        styleRouteLine()
-        styleSwapButton()
-        styleLine(topLine)
-        styleDatepickerButton()
-        styleLine(bottomLine)
+        backgroundColor = Colors.white
 
-        setLabel(fromLabel, withText: "From")
-        setLabel(toLabel, withText: "To")
-        setSwapButton(withImage: #imageLiteral(resourceName: "swap"))
-        setDatpickerButton(withImage: #imageLiteral(resourceName: "clock"))
+        setupLabel(label: fromLabel, text: "From")
+        setupLabel(label: toLabel, text: "To")
+        setupSearchbar(fromSearchbar)
+        setupSearchbar(toSearchbar)
+        setupRouteLine()
+        setupSwapButton()
+        setupSeparator(topSeparator)
+        setupDatepickerButton()
+        setupSeparator(bottomSeparator)
 
-        positionSubviews()
-        addSubviews()
+        setupConstraints()
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    // MARK: Style
-
-    private func styleSearchbarView() {
-        searcbarView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: 103)
-        searcbarView.backgroundColor = Colors.white
-    }
-
-    private func styleLabel(_ label: UILabel) {
-        fromLabel.frame = CGRect(x: 0, y: 0, width: 40, height: 20)
+    private func setupLabel(label: UILabel, text: String) {
+        label.text = text
         label.font = .getFont(.regular, size: 14.0)
         label.textColor = Colors.primaryText
+
+        addSubview(label)
     }
 
-    private func styleSearchbar(_ searchbar: UIButton) {
-        searchbar.frame = CGRect(x: 0, y: 0, width: 243, height: searchbarHeight)
+    private func setupSearchbar(_ searchbar: UIButton) {
         searchbar.backgroundColor = Colors.backgroundWash
         searchbar.setTitleColor(Colors.primaryText, for: .normal)
         searchbar.titleLabel?.font = .getFont(.regular, size: 14.0)
         searchbar.contentHorizontalAlignment = .left
-        searchbar.contentEdgeInsets = UIEdgeInsets.init(top: 0, left: searchbarTextSpaceFromLeft, bottom: 0, right: 0)
+        searchbar.contentEdgeInsets.left = 12
         searchbar.layer.cornerRadius = searchbarHeight/4
         searchbar.layer.masksToBounds = true
+
+        addSubview(searchbar)
     }
 
-    private func styleRouteLine() {
+    private func setupRouteLine() {
         solidCircle = Circle(size: .small, style: .solid, color: Colors.metadataIcon)
-        line = SolidLine(height: 27.0, color: Colors.metadataIcon)
+        line = SolidLine(color: Colors.metadataIcon)
         borderedCircle = Circle(size: .medium, style: .bordered, color: Colors.metadataIcon)
+
+        addSubview(solidCircle)
+        addSubview(line)
+        addSubview(borderedCircle)
     }
 
-    private func styleSwapButton() {
-        swapButton.frame = CGRect(x: 0, y: 0, width: 20, height: 25)
+    private func setupSwapButton() {
+        swapButton.setImage(#imageLiteral(resourceName: "swap"), for: .normal)
+        swapButton.tintColor = Colors.metadataIcon
         swapButton.imageView?.contentMode = .scaleAspectFit
+
+        addSubview(swapButton)
     }
 
-    private func styleDatepickerButton() {
-        datepickerButton.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: datepickerButtonHeight)
+    private func setupDatepickerButton() {
+        let datepickerImageWidth: CGFloat = 1.5
+        let datepickerTitleLeadingSpace: CGFloat = 12
 
+        datepickerButton.setImage(#imageLiteral(resourceName: "clock"), for: .normal)
         datepickerButton.contentMode = .scaleAspectFit
-
         datepickerButton.tintColor = Colors.metadataIcon
         datepickerButton.setTitleColor(Colors.metadataIcon, for: .normal)
         datepickerButton.titleLabel?.font = .getFont(.regular, size: 14.0)
-
         datepickerButton.backgroundColor = Colors.white
-
         datepickerButton.contentHorizontalAlignment = .left
-        datepickerButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: leadingSpace, bottom: 0, right: 0)
-        datepickerButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: leadingSpace + datepickerImageWidth + datepickerTitleLeadingSpace, bottom: 0, right: 0)
+        datepickerButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+        datepickerButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: datepickerButton.imageEdgeInsets.left + datepickerImageWidth + datepickerTitleLeadingSpace, bottom: 0, right: 0)
+
+        addSubview(datepickerButton)
     }
 
-    private func styleLine(_ line: UIView) {
-        line.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: lineWidth)
-        line.backgroundColor = Colors.dividerTextField
+    private func setupSeparator(_ separator: UIView) {
+        separator.backgroundColor = Colors.dividerTextField
+
+        addSubview(separator)
     }
 
-    // MARK: Set data
-
-    private func setLabel(_ label: UILabel, withText text: String) {
-        label.text = text
-        label.sizeToFit()
-    }
-
-    private func setSwapButton(withImage image: UIImage) {
-        swapButton.setImage(image, for: .normal)
-        swapButton.tintColor = Colors.metadataIcon
-    }
-
-    private func setDatpickerButton(withImage image: UIImage) {
-        datepickerButton.setImage(image, for: .normal)
-    }
-
-    func setDatepicker(withDate date: Date, withSearchTimeType searchTimeType: SearchType) {
+    func setDatepickerTitle(withDate date: Date, withSearchTimeType searchTimeType: SearchType) {
         let dateString = Time.dateString(from: date)
         var title = ""
 
@@ -156,139 +131,126 @@ class RouteSelectionView: UIView {
         datepickerButton.setTitle(title, for: .normal)
     }
 
-    // MARK: Position
+    private func setupConstraints() {
+        let datePickerButtonHeight = 40
+        let fromSearchbarToSolidCircleSpacing = 20
+        let fromSearchbarToSwapButtonSpacing = 16
+        let routeLineToCircleInsets = UIEdgeInsets(top: 1, left: 0, bottom: 1, right: 0) // To remove empty space from curve of circle
+        let searchbarSpacing = 12
+        let separatorHeight = 1
+        let solidCircleToFromLabelSpacing = 17
+        let superviewInsets = UIEdgeInsets(top: 10, left: 24, bottom: 0, right: 16)
+        let swapButtonSize = CGSize(width: 20, height: 25)
+        let topSeparatorToToSearchbarSpacing = 10
 
-    func positionSubviews() {
-        positionLabelHorizontally(fromLabel)
-        positionLabelHorizontally(toLabel)
-        postionSolidCircleHorizontally(usingFromLabel: fromLabel)
+        swapButton.snp.makeConstraints { make in
+            make.size.equalTo(swapButtonSize)
+            make.centerY.equalTo(line)
+            make.trailing.equalToSuperview().inset(superviewInsets.right)
+        }
 
-        positionFromSearchbar(usingSolidCircle: solidCircle)
-        positionToSearchbar(usingFromSearchbar: fromSearchbar)
+        fromSearchbar.snp.makeConstraints { make in
+            make.trailing.equalTo(swapButton.snp.leading).offset(-fromSearchbarToSwapButtonSpacing)
+            make.top.equalToSuperview().inset(superviewInsets.top)
+            make.leading.equalTo(solidCircle.snp.trailing).offset(fromSearchbarToSolidCircleSpacing)
+            make.height.equalTo(searchbarHeight)
+        }
 
-        positionSolidCircleVertically(usingFromSearchbar: fromSearchbar)
-        positionBorderedCircle(usingSolidCircle: solidCircle, usingToSearchbar: toSearchbar)
-        positionLine(usingSolidCircle: solidCircle, usingBorderedCircle: borderedCircle)
+        toSearchbar.snp.makeConstraints { make in
+            make.height.leading.trailing.equalTo(fromSearchbar)
+            make.top.equalTo(fromSearchbar.snp.bottom).offset(searchbarSpacing)
+            make.height.equalTo(searchbarHeight)
+        }
 
-        positionLabelVertically(fromLabel, usingSearchbar: fromSearchbar)
-        positionLabelVertically(toLabel, usingSearchbar: toSearchbar)
+        fromLabel.snp.makeConstraints { make in
+            make.size.equalTo(fromLabel.intrinsicContentSize)
+            make.leading.equalToSuperview().inset(superviewInsets.left)
+            make.centerY.equalTo(fromSearchbar)
+        }
 
-        positionSearchbarView(usingFromSearchbar: fromSearchbar, usingToSearchbar: toSearchbar)
-        positionDatepickerButton(usingSearchbarView: searcbarView)
-        positionTopLine(usingDatepickerButton: datepickerButton)
-        positionBottomLine(usingDatepickerButton: datepickerButton)
+        toLabel.snp.makeConstraints { make in
+            make.size.equalTo(toLabel.intrinsicContentSize)
+            make.leading.equalTo(fromLabel)
+            make.centerY.equalTo(borderedCircle)
+        }
 
-        resizeSearchbar(fromSearchbar, usingSwapButton: swapButton)
-        resizeSearchbar(toSearchbar, usingSwapButton: swapButton)
+        solidCircle.snp.makeConstraints { make in
+            make.leading.equalTo(fromLabel.snp.trailing).offset(solidCircleToFromLabelSpacing)
+            make.centerY.equalTo(fromLabel)
+            make.size.equalTo(solidCircle.intrinsicContentSize)
+        }
 
-        positionSwapButton(usingFromSearchBar: fromSearchbar, usingLine: line)
+        line.snp.makeConstraints { make in
+            make.centerX.equalTo(solidCircle)
+            make.top.equalTo(solidCircle.snp.bottom).inset(routeLineToCircleInsets.top)
+            make.bottom.equalTo(borderedCircle.snp.top).inset(routeLineToCircleInsets.bottom)
+            make.width.equalTo(line.intrinsicContentSize.width)
+        }
+
+        borderedCircle.snp.makeConstraints { make in
+            make.centerX.equalTo(solidCircle)
+            make.centerY.equalTo(toSearchbar)
+            make.size.equalTo(borderedCircle.intrinsicContentSize)
+        }
+
+        topSeparator.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.top.equalTo(toSearchbar.snp.bottom).offset(topSeparatorToToSearchbarSpacing)
+            make.height.equalTo(separatorHeight)
+        }
+
+        datepickerButton.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.top.equalTo(topSeparator.snp.bottom)
+            make.height.equalTo(datePickerButtonHeight)
+        }
+
+        bottomSeparator.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.top.equalTo(datepickerButton.snp.bottom)
+            make.height.equalTo(separatorHeight)
+            make.bottom.equalToSuperview().inset(superviewInsets.bottom)
+        }
     }
 
-    private func positionLabelHorizontally(_ label: UILabel) {
-        let oldFrame = label.frame
-        let newFrame = CGRect(x: leadingSpace, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height)
+    func configure(delegate: RouteSelectionViewDelegate?, from: String, to: String) {
+        self.delegate = delegate
 
-        label.frame = newFrame
+        toSearchbar.addTarget(self, action: #selector(forwardSearchingTo), for: .touchUpInside)
+        fromSearchbar.addTarget(self, action: #selector(forwardSearchingFrom), for: .touchUpInside)
+        datepickerButton.addTarget(self, action: #selector(forwardShowDatePicker), for: .touchUpInside)
+        swapButton.addTarget(self, action: #selector(forwardSwapFromAndTo), for: .touchUpInside)
+
+        updateSearchBarTitles(from: from, to: to)
     }
 
-    private func postionSolidCircleHorizontally(usingFromLabel fromLabel: UILabel) {
-        solidCircle.center.x = fromLabel.frame.maxX + solidCircleLeftSpace + (solidCircle.frame.width/2)
+    func updateSearchBarTitles(from: String? = nil, to: String? = nil) {
+        if let from = from {
+            fromSearchbar.setTitle(from, for: .normal)
+        }
+
+        if let to = to {
+            toSearchbar.setTitle(to, for: .normal)
+        }
     }
 
-    private func positionFromSearchbar(usingSolidCircle solidCircle: Circle) {
-        let oldFrame = fromSearchbar.frame
-        let newFrame = CGRect(x: solidCircle.frame.maxX + solidCircleRightSpace, y: topSpace, width: oldFrame.width, height: oldFrame.height)
-
-        fromSearchbar.frame = newFrame
+    @objc private func forwardSearchingTo() {
+        delegate?.searchingTo()
     }
 
-    private func positionToSearchbar(usingFromSearchbar fromSearchbar: UIButton) {
-        let oldFrame = toSearchbar.frame
-        let newFrame = CGRect(x: fromSearchbar.frame.minX, y: fromSearchbar.frame.maxY + leadingSpace, width: oldFrame.width, height: oldFrame.height)
-
-         toSearchbar.frame = newFrame
+    @objc private func forwardSearchingFrom() {
+        delegate?.searchingFrom()
     }
 
-    private func positionSolidCircleVertically(usingFromSearchbar fromSearchbar: UIButton) {
-        solidCircle.center.y = fromSearchbar.center.y
+    @objc private func forwardShowDatePicker() {
+        delegate?.showDatePicker()
     }
 
-    private func positionBorderedCircle(usingSolidCircle solidCircle: Circle, usingToSearchbar toSearchbar: UIButton) {
-        borderedCircle.center.x = solidCircle.center.x
-        borderedCircle.center.y = toSearchbar.center.y
+    @objc private func forwardSwapFromAndTo() {
+        delegate?.swapFromAndTo()
     }
 
-    private func positionLine(usingSolidCircle solidCircle: Circle, usingBorderedCircle borderedCircle: Circle) {
-        line.center.x = solidCircle.center.x
-
-        let oldFrame = line.frame
-        let newFrame = CGRect(x: oldFrame.minX, y: solidCircle.center.y, width: oldFrame.width, height: 1 + borderedCircle.frame.minY - solidCircle.center.y)
-
-        line.frame = newFrame
-    }
-
-    private func positionLabelVertically(_ label: UILabel, usingSearchbar searchbar: UIButton) {
-        label.center.y = searchbar.center.y
-    }
-
-    private func positionSearchbarView(usingFromSearchbar fromSearchbar: UIButton, usingToSearchbar toSearchbar: UIButton) {
-        let oldFrame = searcbarView.frame
-        let newFrame = CGRect(x: 0, y: lineWidth, width: oldFrame.width, height: topSpace + fromSearchbar.frame.height + leadingSpace + toSearchbar.frame.height + (3*topSpace/4))
-
-        searcbarView.frame = newFrame
-    }
-
-    private func positionDatepickerButton(usingSearchbarView searchbarView: UIView) {
-        let oldFrame = datepickerButton.frame
-        let newFrame = CGRect(x: 0, y: searchbarView.frame.maxY + lineWidth, width: oldFrame.width, height: oldFrame.height)
-
-        datepickerButton.frame = newFrame
-    }
-
-    private func positionTopLine(usingDatepickerButton datepickerButton: UIButton) {
-        let oldFrame = topLine.frame
-        let newFrame = CGRect(x: 0, y: datepickerButton.frame.minY - lineWidth, width: oldFrame.width, height: oldFrame.height)
-
-        topLine.frame = newFrame
-    }
-
-    private func positionBottomLine(usingDatepickerButton datepickerButton: UIButton) {
-        let oldFrame = bottomLine.frame
-        let newFrame = CGRect(x: 0, y: datepickerButton.frame.maxY - lineWidth, width: oldFrame.width, height: oldFrame.height)
-
-        bottomLine.frame = newFrame
-    }
-
-    private func resizeSearchbar(_ searchbar: UIButton, usingSwapButton swapButton: UIButton) {
-        var resizedSearchbarFrame = searchbar.frame
-        resizedSearchbarFrame.size.width = self.frame.width - searchbar.frame.minX - swapButton.frame.width - 2*swapPadding
-
-        searchbar.frame = resizedSearchbarFrame
-    }
-
-    private func positionSwapButton(usingFromSearchBar fromSearchbar: UIButton, usingLine line: UIView) {
-        let oldFrame = swapButton.frame
-        let newFrame = CGRect(x: fromSearchbar.frame.maxX + swapPadding, y: oldFrame.minY, width: oldFrame.width, height: oldFrame.height)
-
-        swapButton.frame = newFrame
-
-        swapButton.center.y = line.center.y
-    }
-
-    // MARK: Add subviews
-
-    func addSubviews() {
-        addSubview(searcbarView)
-        searcbarView.addSubview(fromSearchbar)
-        searcbarView.addSubview(fromLabel)
-        searcbarView.addSubview(solidCircle)
-        searcbarView.addSubview(line)
-        searcbarView.addSubview(borderedCircle)
-        searcbarView.addSubview(swapButton)
-        searcbarView.addSubview(toSearchbar)
-        searcbarView.addSubview(toLabel)
-        addSubview(topLine)
-        addSubview(datepickerButton)
-        addSubview(bottomLine)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

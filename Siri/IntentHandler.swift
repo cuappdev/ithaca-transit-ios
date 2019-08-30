@@ -11,16 +11,10 @@ import Intents
 class IntentHandler: INExtension {
 
     override func handler(for intent: INIntent) -> Any {
-        if #available(iOS 12.0, *) {
-            switch intent {
-            case is GetRoutesIntent:
-                return GetRoutesIntentHandler()
-            default:
-                return self
-            }
-        } else {
-            return self
+        if #available(iOS 12.0, *), intent is GetRoutesIntent {
+            return GetRoutesIntentHandler()
         }
+        return self
     }
 }
 

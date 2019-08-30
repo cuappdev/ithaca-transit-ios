@@ -11,7 +11,7 @@ import SnapKit
 
 class PhraseLabelFooterView: UITableViewHeaderFooterView {
 
-    var label: UILabel!
+    private var label: UILabel!
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -23,11 +23,7 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
         setupConstraints()
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-
-    func setupLabel() {
+    private func setupLabel() {
         label = UILabel()
         label.font = .getFont(.regular, size: 12)
         label.textColor = Colors.metadataIcon
@@ -38,7 +34,7 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
         addSubview(label)
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         let topPadding: CGFloat = 20
         label.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
@@ -46,8 +42,12 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
         }
     }
 
-    func setView(with message: String) {
+    func configure(with message: String) {
         label.text = message
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
 
 }

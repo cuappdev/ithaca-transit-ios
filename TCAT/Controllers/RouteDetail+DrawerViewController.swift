@@ -39,18 +39,30 @@ enum RouteDetailItem {
 
 class RouteDetailDrawerViewController: UIViewController {
 
-    var safeAreaCover: UIView?
-    var summaryView = SummaryView()
-    var tableView: UITableView!
+    let safeAreaCover = UIView()
+    var summaryView: SummaryView!
+    let tableView = UITableView()
 
     var directionsAndVisibleStops: [RouteDetailItem] = []
     var selectedDirection: Direction?
-    var visible: Bool = false
 
     /// Number of seconds to wait before auto-refreshing bus delay network call.
     private var busDelayNetworkRefreshRate: Double = 10
     private var busDelayNetworkTimer: Timer?
     private let chevronFlipDurationTime = 0.25
+    /// Returns the currently expanded cell, if any
+    var expandedCell: LargeDetailTableViewCell? {
+        var firstExpandedCell: LargeDetailTableViewCell?
+        (0..<tableView.numberOfRows(inSection: 0)).forEach { index in
+            let indexPath = IndexPath(row: index, section: 0)
+            if firstExpandedCell == nil,
+                let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell,
+                cell.getIsExpanded() {
+                firstExpandedCell = cell
+            }
+        }
+        return firstExpandedCell
+    }
     private let networking: Networking = URLSession.shared.request
     private var route: Route!
 
@@ -58,13 +70,8 @@ class RouteDetailDrawerViewController: UIViewController {
     init(route: Route) {
         super.init(nibName: nil, bundle: nil)
         self.route = route
+        summaryView = SummaryView(route: route)
         self.directionsAndVisibleStops = route.directions.map({ RouteDetailItem.direction($0) })
-    }
-
-    func update(with route: Route) {
-        self.route = route
-        self.directionsAndVisibleStops = route.directions.map({ RouteDetailItem.direction($0) })
-        tableView.reloadData()
     }
 
     required convenience init(coder aDecoder: NSCoder) {
@@ -74,12 +81,18 @@ class RouteDetailDrawerViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        initializeDetailView()
-        initializeCover()
+
+        view.backgroundColor = Colors.white
+
+        setupSummaryView()
+        setupTableView()
+        setupSafeAreaCoverView()
+
         if let drawer = self.parent as? RouteDetailViewController {
             drawer.initialDrawerPosition = .partiallyRevealed
         }
-        summaryView.setRoute()
+
+        setupConstraints()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -98,29 +111,14 @@ class RouteDetailDrawerViewController: UIViewController {
         busDelayNetworkTimer?.invalidate()
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
-        removeCover()
-    }
-
-    // MARK: UIView Functions
-
-    /** Create and configure detailView, summaryView, tableView */
-    func initializeDetailView() {
-
-        view.backgroundColor = Colors.white
-
-        // Create summaryView
-
-        summaryView.route = route
+    private func setupSummaryView() {
         let summaryTapGesture = UITapGestureRecognizer(target: self, action: #selector(summaryTapped))
         summaryTapGesture.delegate = self
         summaryView.addGestureRecognizer(summaryTapGesture)
         view.addSubview(summaryView)
+    }
 
-        // Create Detail Table View
-        tableView = UITableView()
-        tableView.frame.origin = CGPoint(x: 0, y: summaryView.frame.height)
-        tableView.frame.size = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - summaryView.frame.height)
+    private func setupTableView() {
         tableView.bounces = false
         tableView.estimatedRowHeight = RouteDetailCellSize.smallHeight
         tableView.rowHeight = UITableView.automaticDimension
@@ -130,45 +128,35 @@ class RouteDetailDrawerViewController: UIViewController {
         tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.emptyFooterView)
         tableView.dataSource = self
         tableView.delegate = self
-
+        tableView.separatorStyle = .none
         view.addSubview(tableView)
-
-    }
-
-    /// Returns the currently expanded cell, if any
-    var expandedCell: LargeDetailTableViewCell? {
-
-        for index in 0..<tableView.numberOfRows(inSection: 0) {
-            let indexPath = IndexPath(row: index, section: 0)
-            if let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell {
-                if cell.isExpanded {
-                    return cell
-                }
-            }
-
-        }
-        return nil
     }
 
     /// Creates a temporary view to cover the drawer contents when collapsed. Hidden by default.
-    func initializeCover() {
-        if #available(iOS 11.0, *) {
-            let bottom = UIApplication.shared.keyWindow?.rootViewController?.view.safeAreaInsets.bottom ?? 34
-            safeAreaCover = UIView(frame: CGRect(x: 0, y: summaryView.frame.height, width: UIScreen.main.bounds.width, height: bottom))
-            safeAreaCover!.backgroundColor = Colors.backgroundWash
-            safeAreaCover!.alpha = 0
-            view.addSubview(safeAreaCover!)
+    private func setupSafeAreaCoverView() {
+        safeAreaCover.backgroundColor = Colors.backgroundWash
+        safeAreaCover.alpha = 0
+        view.addSubview(safeAreaCover)
+    }
+
+    private func setupConstraints() {
+        summaryView.snp.makeConstraints { make in
+            make.leading.trailing.top.equalToSuperview()
+        }
+
+        tableView.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo(summaryView.snp.bottom)
+        }
+
+        safeAreaCover.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo(summaryView.snp.bottom)
         }
     }
 
-    /// Remove cover view
-    func removeCover() {
-        safeAreaCover?.removeFromSuperview()
-        safeAreaCover = nil
-    }
-
     /// Fetch delay information and update table view cells.
-    @objc func getDelays() {
+    @objc private func getDelays() {
 
         // First depart direction(s)
         guard let delayDirection = route.getFirstDepartRawDirection() else {
@@ -209,7 +197,7 @@ class RouteDetailDrawerViewController: UIViewController {
                             }
 
                             self.tableView.reloadData()
-                            self.summaryView.setRoute()
+                            self.summaryView.updateTimes(for: self.route)
                         } else {
                             print("getDelays success: false")
                         }
@@ -231,35 +219,20 @@ class RouteDetailDrawerViewController: UIViewController {
         guard let indexPath = tableView.indexPath(for: cell),
             let direction = directionsAndVisibleStops[indexPath.row].getDirection() else { return }
 
-        // Flip arrow
-        cell.chevron.layer.removeAllAnimations()
-        cell.isExpanded.toggle()
-
-        let transitionOptionsOne: UIView.AnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
-        UIView.transition(with: cell.chevron, duration: chevronFlipDurationTime, options: transitionOptionsOne, animations: {
-            cell.chevron.isHidden = true
-        })
-
-        cell.chevron.transform = cell.chevron.transform.rotated(by: CGFloat.pi)
-        let transitionOptionsTwo: UIView.AnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
-        UIView.transition(with: cell.chevron, duration: chevronFlipDurationTime, options: transitionOptionsTwo, animations: {
-            cell.chevron.isHidden = false
-        })
-
         // Prepare bus stop data to be inserted / deleted into Directions array
         let busStops = direction.stops.map { return RouteDetailItem.busStop($0) }
-        let busStopRange = (indexPath.row + 1)..<(indexPath.row + 1) + busStops.count
+        let busStopRange = (indexPath.row + 1)..<((indexPath.row + 1) + busStops.count)
         let indexPathArray = busStopRange.map { return IndexPath(row: $0, section: 0) }
 
         tableView.beginUpdates()
 
         // Insert or remove bus stop data based on selection
-        if cell.isExpanded {
-            directionsAndVisibleStops.insert(contentsOf: busStops, at: indexPath.row + 1)
-            tableView.insertRows(at: indexPathArray, with: .middle)
-        } else {
+        if cell.getIsExpanded() {
             directionsAndVisibleStops.removeSubrange(busStopRange)
             tableView.deleteRows(at: indexPathArray, with: .middle)
+        } else {
+            directionsAndVisibleStops.insert(contentsOf: busStops, at: indexPath.row + 1)
+            tableView.insertRows(at: indexPathArray, with: .middle)
         }
 
         tableView.endUpdates()

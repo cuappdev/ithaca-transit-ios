@@ -11,9 +11,6 @@ import UIKit
 
 class RouteDetailViewController: PulleyViewController {
 
-    /// True if view is being peeked from Route Options
-    var isPeeking: Bool = false
-
     override func viewDidLoad() {
 
         super.viewDidLoad()

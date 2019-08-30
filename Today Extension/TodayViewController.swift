@@ -37,8 +37,6 @@ import UIKit
 
         if #available(iOSApplicationExtension 10.0, *) {
             extensionContext?.widgetLargestAvailableDisplayMode = .compact
-        } else {
-            // Fallback on earlier versions
         }
 
         setUpLocation()
@@ -69,8 +67,6 @@ import UIKit
                             self.didFetchRoutes = true
                             if #available(iOSApplicationExtension 10.0, *) {
                                 self.extensionContext?.widgetLargestAvailableDisplayMode = .expanded
-                            } else {
-                                // Fallback on earlier versions
                             }
                             self.routesTable.reloadData()
                         case .error(let error):
@@ -170,7 +166,6 @@ extension TodayViewController: UITableViewDataSource, UITableViewDelegate {
                 return numberOfFavorites
             }
         } else {
-            // Fallback on earlier versions
             return 0
         }
 

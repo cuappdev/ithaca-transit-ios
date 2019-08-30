@@ -74,15 +74,12 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
 
     func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
         // Manage cover view hiding drawer when collapsed
-        let isCollapsed = distance - bottomSafeArea == summaryView.frame.height
-        if isCollapsed {
-            safeAreaCover?.alpha = 1.0
-            visible = true
+        if distance == collapsedDrawerHeight(bottomSafeArea: bottomSafeArea) {
+            safeAreaCover.alpha = 1.0
         } else {
-            if visible {
+            if safeAreaCover.alpha == 1 {
                 UIView.animate(withDuration: 0.25, animations: {
-                    self.safeAreaCover?.alpha = 0.0
-                    self.visible = false
+                    self.safeAreaCover.alpha = 0.0
                 })
             }
         }
@@ -103,20 +100,13 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
         /// Formatting, including selectionStyle, and seperator line fixes
         func format(_ cell: UITableViewCell) -> UITableViewCell {
             cell.selectionStyle = .none
-            if indexPath.row == directionsAndVisibleStops.count - 1 {
-                // Remove seperator at end of table
-                cell.layoutMargins = UIEdgeInsets(top: 0, left: UIScreen.main.bounds.width, bottom: 0, right: 0)
-            }
             return cell
         }
-
-        let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
 
         switch directionsAndVisibleStops[indexPath.row] {
         case .busStop(let busStop):
             let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as! BusStopTableViewCell
             cell.configure(for: busStop.name)
-            cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth + 20, bottom: 0, right: 0)
             return format(cell)
         case .direction(let direction):
             if direction.type == .walk || direction.type == .arrive {
@@ -124,13 +114,10 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                 cell.configure(for: direction,
                                isFirstStep: indexPath.row == 0,
                                isLastStep: indexPath.row == directionsAndVisibleStops.count - 1)
-                cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
                 return format(cell)
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
-                cell.configure(for: direction, isFirstStep: indexPath.row == 0)
-                cell.delegate = self
-                cell.layoutMargins = UIEdgeInsets(top: 0, left: cellWidth, bottom: 0, right: 0)
+                cell.configure(for: direction, isFirstStep: indexPath.row == 0, delegate: self)
                 return format(cell)
             }
         }
@@ -141,12 +128,11 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let direction = directionsAndVisibleStops[indexPath.row].getDirection(),
-            direction.type == .depart || direction.type == .transfer {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as? LargeDetailTableViewCell
-            cell?.configure(for: direction, isFirstStep: indexPath.row == 0)
-            return cell?.height() ?? RouteDetailCellSize.largeHeight
+                direction.type == .depart || direction.type == .transfer {
+            return UITableView.automaticDimension
+        } else {
+            return RouteDetailCellSize.smallHeight
         }
-        return RouteDetailCellSize.smallHeight
     }
 
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -154,19 +140,7 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
         let emptyFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.emptyFooterView) ??
             UITableViewHeaderFooterView(reuseIdentifier: Constants.Footers.emptyFooterView)
 
-        let lastCellIndexPath = IndexPath(row: tableView.numberOfRows(inSection: 0) - 1, section: 0)
-        var screenBottom = UIScreen.main.bounds.height
-        if #available(iOS 11.0, *) {
-            screenBottom -= view.safeAreaInsets.bottom
-        }
-
-        // Calculate height of space between last cell and the bottom of the screen, also accounting for summary
-        var footerHeight = screenBottom - (tableView.cellForRow(at: lastCellIndexPath)?.frame.maxY ?? screenBottom) - summaryView.frame.height
-        footerHeight = expandedCell != nil ? 0 : footerHeight
-
-        emptyFooterView.frame.size = CGSize(width: view.frame.width, height: footerHeight)
         emptyFooterView.contentView.backgroundColor = Colors.white
-        emptyFooterView.layoutIfNeeded()
 
         // Create Footer for No Data from Live Tracking Footer, if needed
         guard
@@ -192,7 +166,7 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
         if let message = message {
             let phraseLabelFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.phraseLabelFooterView)
                 as? PhraseLabelFooterView ?? PhraseLabelFooterView(reuseIdentifier: Constants.Footers.phraseLabelFooterView)
-            phraseLabelFooterView.setView(with: message)
+            phraseLabelFooterView.configure(with: message)
             return phraseLabelFooterView
         }
 

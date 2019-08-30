@@ -14,12 +14,10 @@ class LoadingIndicator: RPCircularProgress {
 
     required init() {
         super.init()
-
         enableIndeterminate()
         trackTintColor = Colors.metadataIcon
         progressTintColor = Colors.dividerTextField
         thicknessRatio = 0.25
-
     }
 
     required public init?(coder aDecoder: NSCoder) {

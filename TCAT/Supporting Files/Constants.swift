@@ -100,9 +100,6 @@ struct Constants {
 
         // Twitter screen name
         static let twitterHandle = "IthacaTransit"
-
-        /// Link to Google Forms for Feedback
-        // static let feedbackLink = "https://goo.gl/forms/jYejUtVccVQ3UHH12"
     }
 
     /// Banner titles
@@ -136,14 +133,14 @@ struct Constants {
     /// Cell identifiers
     struct Cells {
         static let placeIdentifier = "PlaceTableViewCell"
+        static let routeOptionsCellIdentifier = "routeCell"
 
         static let addFavoriteIdentifier = "AddFavorite"
-        static let seeAllStopsIdentifier = "SeeAllStops"
 
         static let busStopDetailCellIdentifier = "BusStopCell"
-        static let currentLocationIdentifier = "CurrentLocation"
         static let largeDetailCellIdentifier = "LargeCell"
         static let smallDetailCellIdentifier = "SmallCell"
+        static let generalCellIdentifier = "GeneralCell"
 
         static let informationCellIdentifier = "InformationCell"
     }
@@ -169,6 +166,7 @@ struct Constants {
         static let delay = "/delay"
         static let getRoutes = "/route"
         static let multiRoute = "/multiroute"
+        static let placeIDCoordinates = "/placeIDCoordinates"
         static let routeSelected = "/routeSelected"
         static let searchResults = "/search"
     }
@@ -214,6 +212,8 @@ struct Constants {
     struct General {
         static let affectedRoutes = "Affected Routes"
         static let currentLocation = "Current Location"
+        static let datepickerArriveBy = "Arrive By"
+        static let datepickerLeaveAt = "Leave At"
         static let datepickerLeaveNow = "Leave Now"
         static let destination = "your destination"
         static let favoritesPlaceholder = "Search any destination"

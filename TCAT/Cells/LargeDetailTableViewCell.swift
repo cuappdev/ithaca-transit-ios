@@ -15,214 +15,213 @@ protocol LargeDetailTableViewDelegate: class {
 
 class LargeDetailTableViewCell: UITableViewCell {
 
-    var chevron: IncreasedTapSizeButton!
+    private weak var delegate: LargeDetailTableViewDelegate?
 
-    weak var delegate: LargeDetailTableViewDelegate?
-    var isExpanded: Bool = false
-
-    private var busIconView: BusIcon!
-    private var detailLabel: UILabel!
+    private let chevron = LargeTapTargetButton(extendBy: 15)
+    private let detailLabel = UILabel()
     private var iconView: DetailIconView!
-    private var titleLabel: UILabel!
+    private let titleLabel = UILabel()
+    private let hairline = UIView()
 
-    private let cellWidth: CGFloat = RouteDetailCellSize.regularWidth
-    private let edgeSpacing: CGFloat = 16
-    private let labelSpacing: CGFloat = 4
-    private let paragraphStyle = NSMutableParagraphStyle()
-    private var cellHeight: CGFloat = RouteDetailCellSize.largeHeight
-    private var direction: Direction!
+    private var isExpanded: Bool = false
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupChevron()
         setupTitleLabel()
         setupDetailLabel()
+
+        setupConstraints()
     }
 
-    func getTitleLabel() -> UILabel {
-        let titleLabel = UILabel()
-        titleLabel.frame = CGRect(x: cellWidth, y: 0, width: chevron.frame.minX - cellWidth, height: 20)
-        titleLabel.font = .getFont(.regular, size: 14)
-        titleLabel.lineBreakMode = .byWordWrapping
-        titleLabel.textColor = Colors.primaryText
-        titleLabel.text = direction != nil && direction.type == .transfer ? "Bus becomes" : "Board"
-        titleLabel.sizeToFit()
-        return titleLabel
-    }
-
-    func getDetailLabel() -> UILabel {
-        let detailLabel = UILabel()
-        detailLabel.frame = CGRect(x: cellWidth, y: 0, width: 20, height: 20)
-        detailLabel.font = .getFont(.regular, size: 14)
-        detailLabel.textColor = Colors.metadataIcon
-        detailLabel.text = "Detail Label"
-        detailLabel.lineBreakMode = .byWordWrapping
-        detailLabel.sizeToFit()
-        return detailLabel
-    }
-
-    func setupChevron() {
-        chevron = IncreasedTapSizeButton(frame: .zero, sizeIncrease: .init(width: 30, height: 30))
-        chevron.frame.size = CGSize(width: 13.5, height: 8)
-        chevron.frame.origin = CGPoint(x: UIScreen.main.bounds.width - 20 - chevron.frame.width, y: 0)
+    private func setupChevron() {
         chevron.setImage(UIImage(named: "arrow"), for: .normal)
         chevron.tintColor = Colors.metadataIcon
         chevron.addTarget(self, action: #selector(chevronButtonPressed), for: .touchUpInside)
         contentView.addSubview(chevron)
     }
 
-    func setupTitleLabel() {
-        titleLabel = getTitleLabel()
+    private func setupTitleLabel() {
+        titleLabel.font = .getFont(.regular, size: 14)
+        titleLabel.lineBreakMode = .byWordWrapping
+        titleLabel.textColor = Colors.primaryText
+        titleLabel.numberOfLines = 0
         contentView.addSubview(titleLabel)
     }
 
-    func setupDetailLabel() {
-        detailLabel = getDetailLabel()
+    private func setupDetailLabel() {
+        detailLabel.font = .getFont(.regular, size: 14)
+        detailLabel.lineBreakMode = .byWordWrapping
+        detailLabel.textColor = Colors.metadataIcon
         contentView.addSubview(detailLabel)
     }
 
-    /** Precondition: Direction is BoardDirection */
-    func configure(for direction: Direction, isFirstStep: Bool) {
+    private func setupHairline() {
+        hairline.backgroundColor = Colors.tableViewSeparator
+        contentView.addSubview(hairline)
+    }
 
-        self.direction = direction
-        cellHeight = height()
+    private func setupConstraints() {
+        let chevronSize = CGSize(width: 13.5, height: 8)
+        let chevronTrailingInset = 20
+        let labelSpacing: CGFloat = 4
+        let labelInset: CGFloat = 12
+        let titleLabelTrailingInset = 12
 
-        let shouldAddViews = iconView == nil || busIconView == nil ||
-            titleLabel == nil || detailLabel == nil
-
-        if shouldAddViews {
-
-            iconView = DetailIconView(direction: direction, height: cellHeight, isFirstStep: isFirstStep, isLastStep: false)
-            contentView.addSubview(iconView!)
-
-            titleLabel = formatTitleLabel(titleLabel)
-
-            busIconView = BusIcon(type: .directionSmall, number: direction.routeNumber)
-            busIconView = formatBusIconView(busIconView, titleLabel)
-            contentView.addSubview(busIconView)
-
-            detailLabel = formatDetailLabel(detailLabel, titleLabel)
-
-            // Place bus icon and chevron accordingly
-            chevron.center.y = cellHeight / 2
-
-        } else {
-            iconView?.updateTimes(with: direction)
+        chevron.snp.makeConstraints { make in
+            make.size.equalTo(chevronSize)
+            make.trailing.equalToSuperview().inset(chevronTrailingInset)
+            make.centerY.equalToSuperview()
         }
 
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(labelInset)
+            make.trailing.equalTo(chevron.snp.leading).offset(-titleLabelTrailingInset)
+            make.bottom.equalTo(detailLabel.snp.top).offset(-labelSpacing)
+        }
+
+        detailLabel.snp.makeConstraints { make in
+            make.leading.trailing.equalTo(titleLabel)
+            make.top.equalTo(titleLabel.snp.bottom).offset(labelSpacing)
+            make.bottom.equalToSuperview().inset(labelInset)
+        }
+    }
+
+    private func setupConfigDependentConstraints() {
+        let detailIconViewWidth = 114
+        let titleLabelLeadingOffset = 6
+
+        iconView.snp.makeConstraints { make in
+            make.leading.top.bottom.equalToSuperview()
+            make.width.equalTo(detailIconViewWidth)
+        }
+
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(iconView.snp.trailing).offset(titleLabelLeadingOffset)
+        }
+
+        hairline.snp.makeConstraints { make in
+            make.leading.equalTo(titleLabel)
+            make.bottom.trailing.equalToSuperview()
+            make.height.equalTo(0.5)
+        }
+    }
+
+    /** Precondition: Direction is BoardDirection */
+    func configure(for direction: Direction, isFirstStep: Bool, delegate: LargeDetailTableViewDelegate? = nil) {
+        self.delegate = delegate
+        setupHairline()
+
+        formatTitleLabel(for: direction)
+        formatDetailLabel(for: direction)
+        iconView = DetailIconView(for: direction, isFirstStep: isFirstStep, isLastStep: false)
         if direction.stops.isEmpty {
             chevron.alpha = 0 // .hidden attribute used for animation
         }
+        contentView.addSubview(iconView)
 
+        setupConfigDependentConstraints()
     }
 
-    /** Abstracted formatting of content for titleLabel */
-    func formatTitleLabel(_ label: UILabel) -> UILabel {
+    private func getBusIconImageAsTextAttachment(for direction: Direction) -> NSTextAttachment {
+        let busIconSpacingBetweenText: CGFloat = 5
 
-        // Set inital text in label
-        label.text = direction.type == .transfer ? "Bus becomes" : "Board"
+        // Instantiate busIconView offScreen to later turn into UIImage
+        let busIconView = BusIcon(type: .directionSmall, number: direction.routeNumber)
+        let busIconFrame = CGRect(x: -busIconView.intrinsicContentSize.width, y: 0, width: busIconView.intrinsicContentSize.width + busIconSpacingBetweenText * 2, height: busIconView.intrinsicContentSize.height)
 
-        // Add correct amount of spacing to create a gap for the busIcon
-        // Using constant always returned from
-        //      while label.frame.maxX < busIconView.frame.maxX + 8 {
-        // because it will occasionally run infinitely because of format func calls
-        // TODO: Do this better!
-        var accum = 0
-        while accum <= (21) {
-            accum += 1
-            label.text! += " "
-            label.sizeToFit()
+        // Create container to add padding on sides
+        let containerView = UIView(frame: busIconFrame)
+        containerView.isOpaque = false
+        containerView.addSubview(busIconView)
+        busIconView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(5)
+            make.top.bottom.equalToSuperview()
         }
+        contentView.addSubview(containerView)
 
-        // Format and place labels
+        // Create NSTextAttachment with the busIcon as a UIImage
+        let iconAttachment = NSTextAttachment()
+        iconAttachment.image = containerView.getImage()
 
-        let content = label.text! + direction.locationNameDescription
-        let labelBoldFont: UIFont = .getFont(.semibold, size: 14)
-        let attributedString = direction.name.bold(in: content, from: label.font, to: labelBoldFont)
-        label.attributedText = attributedString
+        // Lower the textAttachment to be centered within the text
+        var frame = containerView.frame
+        frame.origin.y -= 7
+        iconAttachment.bounds = frame
+
+        // Remove the container as it is no longer needed
+        containerView.removeFromSuperview()
+
+        return iconAttachment
+    }
+
+    private func formatTitleLabel(for direction: Direction) {
+        let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 4
 
-        label.numberOfLines = 0
-        label.sizeToFit()
-        label.frame.size.width = (chevron.frame.minX - 12) - cellWidth
-        label.frame.origin.y = edgeSpacing // - paragraphStyle.lineSpacing
+        // Beginning of string
+        let titleLabelText = NSMutableAttributedString(string: direction.type == .transfer ? "Bus becomes" : "Board")
 
-        attributedString.addAttribute(.paragraphStyle, value: paragraphStyle,
-                                      range: NSRange(location: 0, length: label.attributedText!.length))
-        label.attributedText = attributedString
+        titleLabelText.append(NSAttributedString(attachment: getBusIconImageAsTextAttachment(for: direction)))
 
-        return label
+        // Append rest of string
+        let content = direction.locationNameDescription
+        let labelBoldFont: UIFont = .getFont(.semibold, size: 14)
+        let attributedString = direction.name.bold(in: content, from: titleLabel.font, to: labelBoldFont)
+        titleLabelText.append(attributedString)
+        titleLabelText.addAttribute(.paragraphStyle,
+                                    value: paragraphStyle,
+                                    range: NSRange(location: 0, length: titleLabelText.length))
+        titleLabel.attributedText = titleLabelText
     }
 
-    /** Abstracted formatting of content for detailLabel. Needs titleLabel */
-    func formatDetailLabel(_ label: UILabel, _ titleLabel: UILabel) -> UILabel {
+    private func formatDetailLabel(for direction: Direction) {
+        let totalStopCount = direction.stops.count + 1
 
-        label.text = "\(direction.stops.count + 1) stop\(direction.stops.count + 1 == 1 ? "" : "s")"
+        let detailLabelText = "\(totalStopCount) stop\(totalStopCount == 1 ? "" : "s")"
 
         // Number of minutes for the bus direction
         var timeString = Time.timeString(from: direction.startTime, to: direction.endTime)
         if timeString == "0 min" {  timeString = "1 min" }
-        label.text = label.text! +  " • \(timeString)"
-
-        label.sizeToFit()
-        label.frame.origin.y = titleLabel.frame.maxY + labelSpacing
-        return label
+        detailLabel.text = "\(detailLabelText) • \(timeString)"
     }
 
-    /** Abstracted formatting of content for busIconView. Needs initialized titleLabel */
-    func formatBusIconView(_ icon: BusIcon, _ titleLabel: UILabel) -> BusIcon {
-
-        let plainLabel = getTitleLabel()
-        let originX = titleLabel.frame.minX + plainLabel.frame.size.width + 8
-        var originY = titleLabel.frame.minY
-
-        originY += titleLabel.font.lineHeight - icon.frame.size.height / 2 - CGFloat(titleLabel.numberOfLines() * 2)
-
-        icon.frame.origin = CGPoint(x: originX, y: originY)
-        return icon
+    func getIsExpanded() -> Bool {
+        return isExpanded
     }
 
-    /** Precondition: setCell must be called before using this function */
-    func height() -> CGFloat {
-        let titleLabel = formatTitleLabel(getTitleLabel())
-        let detailLabel = formatDetailLabel(getDetailLabel(), titleLabel)
-        return titleLabel.frame.height + detailLabel.frame.height + labelSpacing + (edgeSpacing * 2)
+    private func flipChevron() {
+        let chevronFlipDurationTime = 0.25
+
+        // Flip arrow
+        chevron.layer.removeAllAnimations()
+
+        let transitionOptionsOne: UIView.AnimationOptions = [.transitionFlipFromTop, .showHideTransitionViews]
+        UIView.transition(with: chevron, duration: chevronFlipDurationTime, options: transitionOptionsOne, animations: {
+            self.chevron.isHidden = true
+        })
+
+        chevron.transform = chevron.transform.rotated(by: CGFloat.pi)
+        let transitionOptionsTwo: UIView.AnimationOptions = [.transitionFlipFromBottom, .showHideTransitionViews]
+        UIView.transition(with: chevron, duration: chevronFlipDurationTime, options: transitionOptionsTwo, animations: {
+            self.chevron.isHidden = false
+        })
     }
 
-    @objc func chevronButtonPressed() {
+     @objc private func chevronButtonPressed() {
+        flipChevron()
+
         if isExpanded {
             delegate?.collapseCells(on: self)
         } else {
             delegate?.expandCells(on: self)
         }
+
+        isExpanded.toggle()
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class IncreasedTapSizeButton: UIButton {
-
-    private var horizontalInset: CGFloat
-    private var verticalInset: CGFloat
-
-    init(frame: CGRect, sizeIncrease: CGSize) {
-        horizontalInset = sizeIncrease.width / 2
-        verticalInset = sizeIncrease.height / 2
-        super.init(frame: frame)
-    }
-
-    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-
-        let largerArea = CGRect(
-            x: self.bounds.origin.x - horizontalInset,
-            y: self.bounds.origin.y - verticalInset,
-            width: self.bounds.size.width + horizontalInset * 2,
-            height: self.bounds.size.height + verticalInset * 2
-        )
-
-        return largerArea.contains(point)
+    override func prepareForReuse() {
+        iconView.removeFromSuperview()
     }
 
     required init?(coder aDecoder: NSCoder) {

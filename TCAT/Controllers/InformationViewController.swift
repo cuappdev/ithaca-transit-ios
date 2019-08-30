@@ -12,9 +12,6 @@ import UIKit
 
 class InformationViewController: UIViewController {
 
-    private let dismissButton = UIButton(type: .system)
-    private let tableView = UITableView(frame: .zero, style: .grouped)
-
     private var content: [[(name: String, action: Selector)]] = [
 
         [ // Section 0
@@ -32,6 +29,7 @@ class InformationViewController: UIViewController {
         ]
 
     ]
+    private let tableView = UITableView(frame: .zero, style: .grouped)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,7 +48,7 @@ class InformationViewController: UIViewController {
         setupConstraints()
     }
 
-    func setupTableView() {
+    private func setupTableView() {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Cells.informationCellIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
@@ -64,7 +62,8 @@ class InformationViewController: UIViewController {
         view.addSubview(tableView)
     }
 
-    func setupDismissButton() {
+    private func setupDismissButton() {
+        let dismissButton = UIButton(type: .system)
         dismissButton.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
         dismissButton.setTitle(Constants.Buttons.done, for: .normal)
         navigationItem.rightBarButtonItem?.setTitleTextAttributes(
@@ -74,7 +73,7 @@ class InformationViewController: UIViewController {
         navigationItem.setRightBarButton(backButtonItem, animated: false)
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.leading.trailing.bottom.equalToSuperview()
@@ -83,27 +82,20 @@ class InformationViewController: UIViewController {
 
     // MARK: Functions
 
-    @objc func dismissTapped() {
+    @objc private func dismissTapped() {
         dismiss(animated: true)
     }
 
     // MARK: Cell Actions
 
-    @objc func presentOnboarding() {
+    @objc private func presentOnboarding() {
         let onboardingViewController = OnboardingViewController(initialViewing: false)
         let navigationController = OnboardingNavigationController(rootViewController: onboardingViewController)
         present(navigationController, animated: true)
     }
 
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Swift.Error?) {
-        controller.dismiss(animated: true)
-        if let error = error {
-            print("Mail Error:", error)
-        }
-    }
-
     /// Retrieve
-    func retrieveLogs() -> Data? {
+    private func retrieveLogs() -> Data? {
         if let fileURL = JSONFileManager.shared.getZipURL() {
             return try? Data(contentsOf: fileURL)
         }
@@ -111,7 +103,7 @@ class InformationViewController: UIViewController {
     }
 
     /// Message body of HTML email message
-    func createMessageBody(didRetrieveLog: Bool) -> String {
+    private func createMessageBody(didRetrieveLog: Bool) -> String {
 
         var html = ""
         html += "<!DOCTYPE html>"
@@ -130,22 +122,70 @@ class InformationViewController: UIViewController {
 
     }
 
-    @objc func showMoreApps() {
+    @objc private func showMoreApps() {
         let appStorePage = "https://itunes.apple.com/us/developer/walker-white/id1089672961"
         open(appStorePage, inApp: false)
     }
 
-    @objc func openTeamWebsite() {
+    @objc private func openTeamWebsite() {
         let homePage = "http://www.cornellappdev.com"
         open(homePage)
     }
 
-    @objc func showServiceAlerts() {
+    @objc private func showServiceAlerts() {
         let serviceAlertsVC = ServiceAlertsViewController()
         navigationController?.pushViewController(serviceAlertsVC, animated: true)
     }
 
-    func open(_ url: String, inApp: Bool = true) {
+    @objc private func sendFeedback() {
+        let emailAddress = Constants.App.contactEmailAddress
+        if MFMailComposeViewController.canSendMail() {
+            let mailComposerVC = MFMailComposeViewController()
+            mailComposerVC.mailComposeDelegate = self
+            var didRetrieveLog = false
+
+            if let logs = retrieveLogs() {
+                mailComposerVC.addAttachmentData(logs, mimeType: "application/zip", fileName: "Logs.zip")
+                didRetrieveLog = true
+                JSONFileManager.shared.deleteZip()
+            }
+
+            let subject = "Ithaca Transit Feedback v\(Constants.App.version)"
+            let body = createMessageBody(didRetrieveLog: didRetrieveLog)
+
+            mailComposerVC.setToRecipients([emailAddress])
+            mailComposerVC.setSubject(subject)
+            mailComposerVC.setMessageBody(body, isHTML: true)
+
+            present(mailComposerVC, animated: true)
+        } else {
+            let title = Constants.Alerts.EmailFailure.title
+            let message = Constants.Alerts.EmailFailure.message
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.emailSettings, style: .default, handler: { (_) in
+                let path = "App-Prefs:"
+                if let url = URL(string: path), UIApplication.shared.canOpenURL(url) {
+                    self.open(path, inApp: false)
+                } else {
+                    self.open(UIApplication.openSettingsURLString)
+                }
+                let payload = FeedbackErrorPayload(description: "Opened Email Settings")
+                Analytics.shared.log(payload)
+            }))
+            alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.copyEmail, style: .default, handler: { (_) in
+                UIPasteboard.general.string = Constants.App.contactEmailAddress
+                let payload = FeedbackErrorPayload(description: "Copy Address to Clipboard")
+                Analytics.shared.log(payload)
+            }))
+            alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.cancel, style: .default, handler: { (_) in
+                let payload = FeedbackErrorPayload(description: "Cancelled")
+                Analytics.shared.log(payload)
+            }))
+            present(alertController, animated: true)
+        }
+    }
+
+    private func open(_ url: String, inApp: Bool = true) {
 
         guard let URL = URL(string: url) else {
             return
@@ -205,54 +245,12 @@ extension InformationViewController: UITableViewDelegate {
 
 extension InformationViewController: MFMailComposeViewControllerDelegate {
 
-    @objc func sendFeedback() {
-        let emailAddress = Constants.App.contactEmailAddress
-        if MFMailComposeViewController.canSendMail() {
-            let mailComposerVC = MFMailComposeViewController()
-            mailComposerVC.mailComposeDelegate = self
-            var didRetrieveLog = false
-
-            if let logs = retrieveLogs() {
-                mailComposerVC.addAttachmentData(logs, mimeType: "application/zip", fileName: "Logs.zip")
-                didRetrieveLog = true
-                JSONFileManager.shared.deleteZip()
-            }
-
-            let subject = "Ithaca Transit Feedback v\(Constants.App.version)"
-            let body = createMessageBody(didRetrieveLog: didRetrieveLog)
-
-            mailComposerVC.setToRecipients([emailAddress])
-            mailComposerVC.setSubject(subject)
-            mailComposerVC.setMessageBody(body, isHTML: true)
-
-            present(mailComposerVC, animated: true)
-        } else {
-            let title = Constants.Alerts.EmailFailure.title
-            let message = Constants.Alerts.EmailFailure.message
-            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.emailSettings, style: .default, handler: { (_) in
-                let path = "App-Prefs:"
-                if let url = URL(string: path), UIApplication.shared.canOpenURL(url) {
-                    self.open(path, inApp: false)
-                } else {
-                    self.open(UIApplication.openSettingsURLString)
-                }
-                let payload = FeedbackErrorPayload(description: "Opened Email Settings")
-                Analytics.shared.log(payload)
-            }))
-            alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.copyEmail, style: .default, handler: { (_) in
-                UIPasteboard.general.string = Constants.App.contactEmailAddress
-                let payload = FeedbackErrorPayload(description: "Copy Address to Clipboard")
-                Analytics.shared.log(payload)
-            }))
-            alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.cancel, style: .default, handler: { (_) in
-                let payload = FeedbackErrorPayload(description: "Cancelled")
-                Analytics.shared.log(payload)
-            }))
-            present(alertController, animated: true)
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Swift.Error?) {
+        controller.dismiss(animated: true)
+        if let error = error {
+            print("Mail Error:", error)
         }
     }
-
 }
 
 extension InformationViewController: InfoHeaderViewDelegate {

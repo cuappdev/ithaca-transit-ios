@@ -13,7 +13,7 @@ import NotificationBannerSwift
 import SnapKit
 import UIKit
 
-protocol HomeMapViewDelegate {
+protocol HomeMapViewDelegate: class {
     func mapViewWillMove()
     func reachabilityChanged(connection: Reachability.Connection)
 }
@@ -27,7 +27,7 @@ class HomeMapViewController: UIViewController {
 
     private var bounds = GMSCoordinateBounds()
     private var currentLocation: CLLocation?
-    private var delegate: HomeMapViewDelegate?
+    private weak var delegate: HomeMapViewDelegate?
     private var locationManager = CLLocationManager()
     private var optionsCardVC: HomeOptionsCardViewController!
     private var banner: StatusBarNotificationBanner? {
@@ -51,7 +51,7 @@ class HomeMapViewController: UIViewController {
         setupConstraints()
     }
 
-    @objc func reachabilityChanged(_ notification: Notification) {
+    @objc private func reachabilityChanged(_ notification: Notification) {
         guard let reachability = notification.object as? Reachability else {
             return
         }
@@ -102,7 +102,7 @@ class HomeMapViewController: UIViewController {
         banner = nil
     }
 
-    func setupMapView() {
+    private func setupMapView() {
         // Set mapView with settings
         let camera = GMSCameraPosition.camera(withLatitude: Constants.Map.startingLat, longitude: Constants.Map.startingLong, zoom: 15.5)
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
@@ -130,14 +130,13 @@ class HomeMapViewController: UIViewController {
         }
     }
 
-    func setupOptionsCard() {
-        optionsCardVC = HomeOptionsCardViewController()
+    private func setupOptionsCard() {
+        optionsCardVC = HomeOptionsCardViewController(delegate: self)
         add(optionsCardVC)
-        optionsCardVC.delegate = self
         delegate = optionsCardVC
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         optionsCardVC.view.snp.makeConstraints { make in
             make.leading.top.trailing.equalToSuperview().inset(HomeMapViewController.optionsCardInset)
             make.height.equalTo(optionsCardVC.calculateCardHeight())
@@ -167,7 +166,7 @@ class HomeMapViewController: UIViewController {
         checkReviewAndRequestLocation()
     }
 
-    func checkReviewAndRequestLocation() {
+    private func checkReviewAndRequestLocation() {
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         StoreReviewHelper.checkAndAskForReview()
