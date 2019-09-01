@@ -14,7 +14,7 @@ protocol HeaderViewDelegate: class {
     func displayFavoritesTVC()
 }
 
-enum buttonOption {
+enum ButtonOption {
     case add
     case clear
     case none
@@ -36,7 +36,7 @@ class HeaderView: UITableViewHeaderFooterView {
         headerViewDelegate?.clearRecentSearches()
     }
 
-    init(labelText: String? = nil, buttonType: buttonOption = .none, separatorVisible: Bool = false, delegate: HeaderViewDelegate? = nil) {
+    init(labelText: String? = nil, buttonType: ButtonOption = .none, separatorVisible: Bool = false, delegate: HeaderViewDelegate? = nil) {
         super.init(reuseIdentifier: nil)
 
         self.headerViewDelegate = delegate
@@ -68,7 +68,7 @@ class HeaderView: UITableViewHeaderFooterView {
         }
     }
 
-    private func createButton(type: buttonOption) {
+    private func createButton(type: ButtonOption) {
         button = UIButton(type: .system)
         button?.setTitleColor(Colors.tcatBlue, for: .normal)
 

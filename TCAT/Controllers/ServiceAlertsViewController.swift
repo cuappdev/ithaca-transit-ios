@@ -217,8 +217,8 @@ extension ServiceAlertsViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-        let cell = tableView.dequeueReusableCell(withIdentifier: ServiceAlertTableViewCell.identifier) as! ServiceAlertTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ServiceAlertTableViewCell.identifier) as? ServiceAlertTableViewCell
+            else { return UITableViewCell() }
 
         if let alertList = alerts[priorities[indexPath.section]] {
             cell.configure(for: alertList[indexPath.row], isNotFirstRow: indexPath.row > 0)

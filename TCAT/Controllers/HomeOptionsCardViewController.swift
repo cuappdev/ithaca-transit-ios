@@ -7,7 +7,6 @@
 //
 
 import CoreLocation
-import DZNEmptyDataSet
 import FutureNova
 import GoogleMaps
 import SnapKit
@@ -20,23 +19,21 @@ protocol HomeOptionsCardDelegate: class {
 
 class HomeOptionsCardViewController: UIViewController {
 
-    private weak var delegate: HomeOptionsCardDelegate?
+    weak var delegate: HomeOptionsCardDelegate?
 
     private let infoButton = UIButton(type: .infoLight)
-    private var searchBar: UISearchBar!
+    var searchBar: UISearchBar!
     private var searchBarSeparator: UIView!
-    private var tableView: UITableView!
+    var tableView: UITableView!
 
-    private var currentLocation: CLLocation? { return delegate?.getCurrentLocation() }
+    var currentLocation: CLLocation? { return delegate?.getCurrentLocation() }
     private let networking: Networking = URLSession.shared.request
     private var searchResultsSection: Section!
-    private var timer: Timer?
+    var timer: Timer?
 
-    private let headerHeight: CGFloat = 42
+    let headerHeight: CGFloat = 42
     private let infoButtonAnimationDuration = 0.1
-    private var isLoading: Bool { return loadingIndicator != nil }
-    private var isNetworkDown = false
-    private var loadingIndicator: LoadingIndicator?
+    var isNetworkDown = false
     private var keyboardHeight: CGFloat = 0
     private let maxFavoritesCount = 2
     private let maxHeaderCount: CGFloat = 2
@@ -50,7 +47,7 @@ class HomeOptionsCardViewController: UIViewController {
     private let tableViewRowHeight: CGFloat = 50
 
     /** Height of the card when collapsed. This includes just searchbar height and any extra padding/spacing */
-    private var collapsedHeight: CGFloat {
+    var collapsedHeight: CGFloat {
         return searchBarHeight + searchBarSeparatorHeight + searchBarTopOffset
     }
 
@@ -70,7 +67,7 @@ class HomeOptionsCardViewController: UIViewController {
         return min(maxCardHeight, openScreenSpace)
     }
 
-    private var recentLocations: [Place] = [] {
+    var recentLocations: [Place] = [] {
         didSet {
             if recentLocations.count > maxRecentsCount {
                 recentLocations = Array(recentLocations.prefix(maxRecentsCount))
@@ -80,7 +77,7 @@ class HomeOptionsCardViewController: UIViewController {
             }
         }
     }
-    private var favorites: [Place] = [] {
+    var favorites: [Place] = [] {
         didSet {
             if favorites.count > maxFavoritesCount {
                 favorites = Array(favorites.prefix(maxFavoritesCount))
@@ -90,7 +87,7 @@ class HomeOptionsCardViewController: UIViewController {
             }
         }
     }
-    private var sections: [Section] = [] {
+    var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
             DispatchQueue.main.async {
@@ -194,7 +191,7 @@ class HomeOptionsCardViewController: UIViewController {
         }
     }
 
-    private func createDefaultSections() {
+    func createDefaultSections() {
         var allSections: [Section] = []
         let recentSearchesSection = Section.recentSearches(items: recentLocations)
         var favoritesSection = Section.favorites(items: favorites)
@@ -232,12 +229,12 @@ class HomeOptionsCardViewController: UIViewController {
         } else { return collapsedHeight }
     }
 
-    private func updatePlaces() {
+    func updatePlaces() {
         recentLocations = Global.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
         favorites = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
     }
 
-    private func animateInInfoButton() {
+    func animateInInfoButton() {
         UIView.animate(withDuration: infoButtonAnimationDuration) {
             self.infoButton.alpha = 1
 
@@ -251,7 +248,7 @@ class HomeOptionsCardViewController: UIViewController {
         }
     }
 
-    private func animateOutInfoButton() {
+    func animateOutInfoButton() {
         UIView.animate(withDuration: infoButtonAnimationDuration) {
             self.infoButton.alpha = 0
             self.searchBar.snp.remakeConstraints { (make) in
@@ -268,7 +265,7 @@ class HomeOptionsCardViewController: UIViewController {
         return networking(Endpoint.getSearchResults(searchText: searchText)).decode()
     }
 
-    @objc private func presentFavoritesTVC(sender: UIButton? = nil) {
+    @objc func presentFavoritesTVC(sender: UIButton? = nil) {
         let favoritesTVC = FavoritesTableViewController()
         let navController = CustomNavigationController(rootViewController: favoritesTVC)
         present(navController, animated: true, completion: nil)
@@ -282,9 +279,10 @@ class HomeOptionsCardViewController: UIViewController {
     }
 
     /* Get Search Results */
-    @objc private func getPlaces(timer: Timer) {
-        let searchText = (timer.userInfo as! [String: String])["searchText"]!
-        if !searchText.isEmpty {
+    @objc func getPlaces(timer: Timer) {
+        if let userInfo = timer.userInfo as? [String: String],
+            let searchText = userInfo["searchText"],
+            !searchText.isEmpty {
             getSearchResults(searchText: searchText).observe { [weak self] result in
                 guard let `self` = self else { return }
                 DispatchQueue.main.async {
@@ -302,358 +300,17 @@ class HomeOptionsCardViewController: UIViewController {
         }
     }
 
-    @objc private func keyboardWillShow(notification: NSNotification) {
+    @objc func keyboardWillShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
             keyboardHeight = keyboardSize.height
         }
     }
 
-    @objc private func keyboardWillHide(notification: NSNotification) {
+    @objc func keyboardWillHide(notification: NSNotification) {
         keyboardHeight = 0
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-}
-
-// MARK: VC Life Cycle setup
-extension HomeOptionsCardViewController {
-    override func loadView() {
-        view = RoundShadowedView(cornerRadius: 10)
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        // Update searchbar attributes
-        if let textFieldInsideSearchBar = searchBar.value(forKey: Constants.SearchBar.searchField) as? UITextField,
-            let searchView = textFieldInsideSearchBar.leftView as? UIImageView {
-            textFieldInsideSearchBar.backgroundColor = Colors.white
-            searchView.image = #imageLiteral(resourceName: "search-large")
-        }
-        searchBar.placeholder = Constants.General.searchPlaceholder
-        searchBar.text = nil
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillShow),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-        )
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillHide),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
-
-        updatePlaces()
-        createDefaultSections()
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-        removeLoadingIndicator()
-    }
-}
-
-// MARK: Search Bar Delegate
-extension HomeOptionsCardViewController: UISearchBarDelegate {
-
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.placeholder = Constants.General.searchPlaceholder
-        searchBar.setShowsCancelButton(false, animated: true)
-        searchBar.endEditing(true)
-        searchBar.text = nil
-        animateInInfoButton()
-        createDefaultSections()
-    }
-
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        searchBar.returnKeyType = searchText.isEmpty ? .default : .search
-        searchBar.setShowsCancelButton(true, animated: true)
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
-    }
-
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.endEditing(true)
-    }
-
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        searchBar.setShowsCancelButton(true, animated: true)
-        if let cancelButton = searchBar.value(forKey: Constants.SearchBar.cancelButton) as? UIButton {
-            cancelButton.setTitleColor(Colors.tcatBlue, for: .normal)
-        }
-
-        searchBar.placeholder = nil
-        animateOutInfoButton()
-        if view.frame.height == collapsedHeight {
-            if let searchText = searchBar.text,
-                searchText.isEmpty {
-                createDefaultSections()
-            } else {
-                tableView.reloadData()
-                DispatchQueue.main.async {
-                    self.delegate?.updateSize()
-                }
-            }
-        }
-    }
-}
-
-// MARK: HeaderView Delegate
-extension HomeOptionsCardViewController: HeaderViewDelegate {
-    func displayFavoritesTVC() {
-        if favorites.count < 2 {
-            presentFavoritesTVC()
-        } else {
-            let title = Constants.Alerts.MaxFavorites.title
-            let message = Constants.Alerts.MaxFavorites.message
-            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            let done = UIAlertAction(title: Constants.Alerts.MaxFavorites.action, style: .default)
-            alertController.addAction(done)
-            present(alertController, animated: true, completion: nil)
-        }
-    }
-
-    func clearRecentSearches() {
-        Global.shared.deleteAllRecents()
-        recentLocations = []
-        createDefaultSections()
-    }
-}
-
-// MARK: MapView Delegate
-extension HomeOptionsCardViewController: HomeMapViewDelegate {
-    func reachabilityChanged(connection: Reachability.Connection) {
-        switch connection {
-        case .none:
-            isNetworkDown = true
-            searchBar.isUserInteractionEnabled = false
-            sections = []
-        case .cellular, .wifi:
-            isNetworkDown = false
-            createDefaultSections()
-            searchBar.isUserInteractionEnabled = true
-        }
-    }
-
-    func mapViewWillMove() {
-        if let searchBarText = searchBar.text,
-            searchBarText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            self.searchBarCancelButtonClicked(self.searchBar)
-        } else {
-            searchBar.resignFirstResponder()
-            DispatchQueue.main.async {
-                self.delegate?.updateSize()
-            }
-        }
-    }
-}
-
-// MARK: TableView DataSource
-extension HomeOptionsCardViewController: UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch sections[section] {
-        case .seeAllStops: return 1
-        case .recentSearches: return recentLocations.count
-        case .favorites: return favorites.isEmpty ? 1 : favorites.count
-        case .searchResults: return sections[section].getItems().count
-        default: return 0
-        }
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if sections[indexPath.section] == .seeAllStops {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier) as! GeneralTableViewCell
-            cell.configure(for: .seeAllStops)
-            return cell
-        }
-            // Favorites (including Add First Favorite!), Recent Searches
-        else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as! PlaceTableViewCell
-            cell.configure(for: sections[indexPath.section].getItems()[indexPath.row])
-            return cell
-        }
-    }
-}
-
-// MARK: TableView Delegate
-extension HomeOptionsCardViewController: UITableViewDelegate {
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        if let searchBarText = searchBar.text,
-            searchBarText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            searchBar.placeholder = Constants.General.searchPlaceholder
-            searchBar.endEditing(true)
-            searchBar.text = nil
-        }
-        searchBar.setShowsCancelButton(false, animated: true)
-        animateInInfoButton()
-    }
-
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 0
-    }
-
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return nil
-    }
-
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        switch sections[section] {
-        case .favorites, .recentSearches: return headerHeight
-        case .seeAllStops: return HeaderView.separatorViewHeight
-        default: return 0
-        }
-    }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        var header: HeaderView!
-
-        switch sections[section] {
-        case .recentSearches:
-            header = HeaderView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear, separatorVisible: true, delegate: self)
-        case .favorites:
-            header = HeaderView(labelText: Constants.TableHeaders.favoriteDestinations, buttonType: .add, delegate: self)
-        case .seeAllStops:
-            header = HeaderView(separatorVisible: true)
-        case .searchResults:
-            return nil
-        default: break
-        }
-
-        return header
-    }
-
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        let section = sections[indexPath.section]
-        switch section {
-        case .favorites:
-            if !section.isEmpty, section.getItems()[0].name != Constants.General.firstFavorite {
-                return .delete
-            } else {
-                return .none
-            }
-        case .recentSearches: return .delete
-        default: return .none
-        }
-    }
-
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            switch sections[indexPath.section] {
-            case .favorites:
-                let place = sections[indexPath.section].getItems()[indexPath.row]
-                favorites = Global.shared.deleteFavorite(favorite: place, allFavorites: favorites)
-                createDefaultSections()
-            case .recentSearches:
-                let place = sections[indexPath.section].getItems()[indexPath.row]
-                recentLocations = Global.shared.deleteRecent(recent: place, allRecents: recentLocations)
-                createDefaultSections()
-            default: break
-            }
-
-        }
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
-        let routeOptionsViewController = RouteOptionsViewController()
-        routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
-        let allStopsTableViewConroller = AllStopsTableViewController()
-        var didSelectAllStops = false
-        var shouldPushViewController = true
-
-        if sections[indexPath.section] == .seeAllStops {
-            didSelectAllStops = true
-        } else {
-            let place = sections[indexPath.section].getItems()[indexPath.row]
-            if place.name == Constants.General.firstFavorite {
-                shouldPushViewController = false
-                presentFavoritesTVC()
-            } else {
-                routeOptionsViewController.searchTo = place
-                Global.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
-            }
-        }
-
-        tableView.deselectRow(at: indexPath, animated: true)
-        searchBar.endEditing(true)
-
-        let vcToPush = didSelectAllStops ? allStopsTableViewConroller : routeOptionsViewController
-        if shouldPushViewController {
-            navigationController?.pushViewController(vcToPush, animated: true)
-        }
-    }
-}
-
-// MARK: DZN Empty Data Set Source
-extension HomeOptionsCardViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
-        // If tableview header is hidden, increase offset to center EmptyDataSet view
-        return tableView.tableHeaderView == nil ? -80 : (-80 - tableView.contentInset.top)
-    }
-
-    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
-        // If loading indicator is being shown, don't display image
-        if isLoading { return nil }
-        return isNetworkDown ? #imageLiteral(resourceName: "noWifi") : #imageLiteral(resourceName: "noRoutes")
-    }
-
-    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        // If loading indicator is being shown, don't display description
-        if isLoading { return nil }
-        let title = isNetworkDown ? Constants.EmptyStateMessages.noNetworkConnection: Constants.EmptyStateMessages.locationNotFound
-        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.metadataIcon])
-    }
-
-    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
-        // If loading indicator is being shown, don't display button
-        if isLoading { return nil }
-        let title = Constants.Buttons.retry
-        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.tcatBlue])
-    }
-
-    func setupLoadingIndicator() {
-        loadingIndicator = LoadingIndicator()
-        if let loadingIndicator = loadingIndicator {
-            view.addSubview(loadingIndicator)
-            loadingIndicator.snp.makeConstraints { (make) in
-                make.center.equalToSuperview()
-                make.width.height.equalTo(40)
-            }
-        }
-    }
-
-    func removeLoadingIndicator() {
-        loadingIndicator?.removeFromSuperview()
-        loadingIndicator = nil
-    }
-
-    func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
-        setupLoadingIndicator()
-        if isLoading {
-            tableView.reloadData()
-
-            // Have loading indicator time out after one second
-            let delay = 1
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)) {
-                // if the empty state is the "Location Not Found" state, clear the text in the search bar
-                if !self.isNetworkDown {
-                    self.searchBar.text = nil
-                    self.searchBar.placeholder = Constants.General.searchPlaceholder
-                }
-                self.removeLoadingIndicator()
-                self.tableView.reloadData()
-            }
-        }
     }
 }

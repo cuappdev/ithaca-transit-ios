@@ -98,12 +98,14 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
 
         switch directionsAndVisibleStops[indexPath.row] {
         case .busStop(let busStop):
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as! BusStopTableViewCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as? BusStopTableViewCell
+                else { return UITableViewCell ()}
             cell.configure(for: busStop.name)
             return format(cell)
         case .direction(let direction):
             if direction.type == .walk || direction.type == .arrive {
-                let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as! SmallDetailTableViewCell
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as? SmallDetailTableViewCell
+                    else { return UITableViewCell() }
                 cell.configure(for: direction,
                                isFirstStep: indexPath.row == 0,
                                isLastStep: indexPath.row == directionsAndVisibleStops.count - 1)
