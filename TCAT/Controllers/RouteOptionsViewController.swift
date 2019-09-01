@@ -36,7 +36,7 @@ class RouteOptionsViewController: UIViewController {
     var datePickerView: DatePickerView!
     let routeResults = UITableView(frame: .zero, style: .grouped)
     let routeSelection = RouteSelectionView()
-    var searchBarView: SearchBarView!
+    var searchBarView = SearchBarView()
 
     var cellUserInteraction = true
     var currentLocation: CLLocationCoordinate2D?
