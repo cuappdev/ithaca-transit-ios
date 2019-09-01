@@ -92,7 +92,7 @@ class Route: NSObject, Codable {
     var totalDuration: Int {
         let duration = Time.dateComponents(from: departureTime, to: arrivalTime)
         let minutes = duration.minute ?? 0
-        let hours = duration.hour ?? 0e
+        let hours = duration.hour ?? 0
         return minutes + hours * 60
     }
 
