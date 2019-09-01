@@ -41,28 +41,16 @@ class RouteDetailDrawerViewController: UIViewController {
 
     let safeAreaCover = UIView()
     var summaryView: SummaryView!
-    let tableView = UITableView()
+    let tableView = UITableView(frame: .zero, style: .grouped)
 
     var directionsAndVisibleStops: [RouteDetailItem] = []
+    var expandedDirections: Set<Direction> = []
     var selectedDirection: Direction?
 
     /// Number of seconds to wait before auto-refreshing bus delay network call.
     private var busDelayNetworkRefreshRate: Double = 10
     private var busDelayNetworkTimer: Timer?
     private let chevronFlipDurationTime = 0.25
-    /// Returns the currently expanded cell, if any
-    var expandedCell: LargeDetailTableViewCell? {
-        var firstExpandedCell: LargeDetailTableViewCell?
-        (0..<tableView.numberOfRows(inSection: 0)).forEach { index in
-            let indexPath = IndexPath(row: index, section: 0)
-            if firstExpandedCell == nil,
-                let cell = tableView.cellForRow(at: indexPath) as? LargeDetailTableViewCell,
-                cell.getIsExpanded() {
-                firstExpandedCell = cell
-            }
-        }
-        return firstExpandedCell
-    }
     private let networking: Networking = URLSession.shared.request
     private var route: Route!
 
@@ -130,6 +118,8 @@ class RouteDetailDrawerViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
+        tableView.contentInset = UIEdgeInsets(top: -34, left: 0.0, bottom: 34, right: 0.0)
+        tableView.backgroundColor = Colors.white
         view.addSubview(tableView)
     }
 
@@ -228,10 +218,12 @@ class RouteDetailDrawerViewController: UIViewController {
         tableView.beginUpdates()
 
         // Insert or remove bus stop data based on selection
-        if cell.getIsExpanded() {
+        if expandedDirections.contains(direction) {
+            expandedDirections.remove(direction)
             directionsAndVisibleStops.removeSubrange(busStopRange)
             tableView.deleteRows(at: indexPathArray, with: .middle)
         } else {
+            expandedDirections.insert(direction)
             directionsAndVisibleStops.insert(contentsOf: busStops, at: indexPath.row + 1)
             tableView.insertRows(at: indexPathArray, with: .middle)
         }

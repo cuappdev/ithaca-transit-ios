@@ -429,7 +429,6 @@ extension RouteOptionsViewController: RouteSelectionViewDelegate {
     }
 
     func showDatePicker() {
-
         view.bringSubviewToFront(datePickerOverlay)
         view.bringSubviewToFront(datePickerView)
 
@@ -441,8 +440,10 @@ extension RouteOptionsViewController: RouteSelectionViewDelegate {
         datePickerView.setDatepickerTimeType(searchTimeType: searchTimeType)
 
         UIView.animate(withDuration: 0.5) {
-            self.datePickerView.center.y = self.view.frame.height - (self.datePickerView.frame.height/2)
+            self.setupConstraintsForVisibleDatePickerView()
             self.datePickerOverlay.alpha = 0.6 // darken screen when pull up datepicker
+
+            self.view.layoutIfNeeded()
         }
 
         let payload = RouteOptionsSettingsPayload(description: "Date Picker Accessed")

@@ -28,6 +28,10 @@ internal struct MultiRoutesBody: Codable {
     let destinationNames: [String]
 }
 
+internal struct PlaceIDCoordinatesBody: Codable {
+    let placeID: String
+}
+
 internal struct SearchResultsBody: Codable {
     let query: String
 }

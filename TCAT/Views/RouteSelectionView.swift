@@ -8,11 +8,11 @@
 
 import UIKit
 
-@objc protocol RouteSelectionViewDelegate: class {
-    @objc func swapFromAndTo()
-    @objc func showDatePicker()
-    @objc func searchingFrom()
-    @objc func searchingTo()
+protocol RouteSelectionViewDelegate: class {
+    func swapFromAndTo()
+    func showDatePicker()
+    func searchingFrom()
+    func searchingTo()
 }
 
 class RouteSelectionView: UIView {
@@ -216,10 +216,10 @@ class RouteSelectionView: UIView {
     func configure(delegate: RouteSelectionViewDelegate?, from: String, to: String) {
         self.delegate = delegate
 
-        toSearchbar.addTarget(self, action: #selector(delegate?.searchingTo), for: .touchUpInside)
-        fromSearchbar.addTarget(self, action: #selector(delegate?.searchingFrom), for: .touchUpInside)
-        datepickerButton.addTarget(self, action: #selector(delegate?.showDatePicker), for: .touchUpInside)
-        swapButton.addTarget(self, action: #selector(delegate?.swapFromAndTo), for: .touchUpInside)
+        toSearchbar.addTarget(self, action: #selector(forwardSearchingTo), for: .touchUpInside)
+        fromSearchbar.addTarget(self, action: #selector(forwardSearchingFrom), for: .touchUpInside)
+        datepickerButton.addTarget(self, action: #selector(forwardShowDatePicker), for: .touchUpInside)
+        swapButton.addTarget(self, action: #selector(forwardSwapFromAndTo), for: .touchUpInside)
 
         updateSearchBarTitles(from: from, to: to)
     }
@@ -232,6 +232,22 @@ class RouteSelectionView: UIView {
         if let to = to {
             toSearchbar.setTitle(to, for: .normal)
         }
+    }
+
+    @objc private func forwardSearchingTo() {
+        delegate?.searchingTo()
+    }
+
+    @objc private func forwardSearchingFrom() {
+        delegate?.searchingFrom()
+    }
+
+    @objc private func forwardShowDatePicker() {
+        delegate?.showDatePicker()
+    }
+
+    @objc private func forwardSwapFromAndTo() {
+        delegate?.swapFromAndTo()
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -31,15 +31,8 @@ extension RouteDetailDrawerViewController: UIGestureRecognizerDelegate {
 }
 
 extension RouteDetailDrawerViewController: LargeDetailTableViewDelegate {
-    func collapseCells(on cell: LargeDetailTableViewCell) {
+    func toggleCellExpansion(on cell: LargeDetailTableViewCell) {
         toggleCellExpansion(for: cell)
-    }
-
-    func expandCells(on cell: LargeDetailTableViewCell) {
-        toggleCellExpansion(for: cell)
-
-        tableView.layoutIfNeeded()
-        tableView.layoutSubviews()
     }
 }
 
@@ -118,9 +111,11 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                                isLastStep: indexPath.row == directionsAndVisibleStops.count - 1)
                 return format(cell)
             } else {
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as? LargeDetailTableViewCell
-                    else { return UITableViewCell() }
-                cell.configure(for: direction, isFirstStep: indexPath.row == 0, delegate: self)
+                let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
+                cell.configure(for: direction,
+                               isFirstStep: indexPath.row == 0,
+                               isExpanded: expandedDirections.contains(direction),
+                               delegate: self)
                 return format(cell)
             }
         }

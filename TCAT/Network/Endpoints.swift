@@ -78,6 +78,11 @@ extension Endpoint {
 
     }
 
+    static func getPlaceIDCoordinates(placeID: String) -> Endpoint {
+        let body = PlaceIDCoordinatesBody(placeID: placeID)
+        return Endpoint(path: Constants.Endpoints.placeIDCoordinates, body: body)
+    }
+
     static func getSearchResults(searchText: String) -> Endpoint {
         let body = SearchResultsBody(query: searchText)
         return Endpoint(path: Constants.Endpoints.searchResults, body: body)

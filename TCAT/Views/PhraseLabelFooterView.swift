@@ -35,10 +35,10 @@ class PhraseLabelFooterView: UITableViewHeaderFooterView {
     }
 
     private func setupConstraints() {
-        let topPadding: CGFloat = 20
+        let topAndBottomPadding: CGFloat = 20
         label.snp.makeConstraints { (make) in
-            make.leading.trailing.bottom.equalToSuperview()
-            make.top.equalToSuperview().offset(topPadding)
+            make.leading.trailing.equalToSuperview()
+            make.top.bottom.equalToSuperview().inset(topAndBottomPadding).priority(.high)
         }
     }
 

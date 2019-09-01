@@ -143,6 +143,7 @@ class Route: NSObject, Codable {
                 let newDirection = direction.copy() as? Direction {
                 newDirection.type = newDirection.type == .depart ? .arrive : .walk
                 newDirection.stayOnBusForTransfer = false
+                newDirection.name = endName
                 rawDirections.append(newDirection)
             }
         }
