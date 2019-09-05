@@ -105,8 +105,8 @@ class Direction: NSObject, NSCopying, Codable {
         do { routeNumber = try container.decode(Int.self, forKey: .routeNumber) } catch { routeNumber = -1 }
         stops = try container.decode([LocationObject].self, forKey: .stops)
         do { stayOnBusForTransfer = try container.decode(Bool.self, forKey: .stayOnBusForTransfer) } catch { stayOnBusForTransfer = false }
-        tripIdentifiers = try container.decode([String].self, forKey: .tripIdentifiers)
-        delay = try container.decode(Int.self, forKey: .delay)
+        tripIdentifiers = try container.decode([String]?.self, forKey: .tripIdentifiers)
+        delay = try container.decode(Int?.self, forKey: .delay)
         travelDistance = try container.decode(Double.self, forKey: .travelDistance)
         super.init()
     }
