@@ -47,6 +47,7 @@ class RouteOptionsViewController: UIViewController {
     var searchTimeType: SearchType = .leaveNow
     var searchTo: Place?
     var searchType: SearchBarType = .to
+    var lastRouteRefreshDate = Date()
     var showRouteSearchingLoader: Bool = false
 
     // Variable to remember back button when hiding
@@ -90,9 +91,7 @@ class RouteOptionsViewController: UIViewController {
 
         // assume user wants to find routes that leave at current time and set datepicker accordingly
         searchTime = Date()
-        if let searchTime = searchTime {
-            routeSelection.setDatepickerTitle(withDate: searchTime, withSearchTimeType: searchTimeType)
-        }
+        routeSelection.setDatepickerTitle(withDate: searchTime!, withSearchTimeType: searchTimeType)
 
         searchForRoutes()
 
@@ -107,11 +106,13 @@ class RouteOptionsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupReachability()
-
+        
         // Reload data to activate timers again
         if !routes.isEmpty {
             routeResults.reloadData()
         }
+    
+        setUpRouteRefreshing()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -128,6 +129,8 @@ class RouteOptionsViewController: UIViewController {
                 cell.invalidateTimer()
             }
         }
+        
+        NotificationCenter.default.removeObserver(self)
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -193,6 +196,19 @@ class RouteOptionsViewController: UIViewController {
         searchBarView = SearchBarView(searchBarCancelDelegate: self, destinationDelegate: self)
         self.definesPresentationContext = true
         hideSearchBar()
+    }
+    
+    private func setUpRouteRefreshing() {
+        let now = Date()
+        let hourMinuteComponents: Set<Calendar.Component> = [.hour, .minute]
+        let nowTime = Calendar.current.dateComponents(hourMinuteComponents, from: now)
+        let lastRefreshTime = Calendar.current.dateComponents(hourMinuteComponents, from: lastRouteRefreshDate)
+        if nowTime != lastRefreshTime {
+            refreshRoutesAndTime()
+        }
+        
+        let appBecameActiveNotification = UIApplication.didBecomeActiveNotification
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshRoutesAndTime), name: appBecameActiveNotification, object: nil)
     }
 
     func setupConstraintsForVisibleDatePickerView() {
@@ -310,6 +326,22 @@ class RouteOptionsViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    @objc private func refreshRoutesAndTime() {
+        let now = Date()
+        lastRouteRefreshDate = now
+        if searchTimeType != .leaveNow {
+            if let leaveDate = searchTime,
+                leaveDate.compare(now) == .orderedDescending {
+                return
+            }
+        }
+        
+        searchTime = now
+        searchTimeType = .leaveNow
+        routeSelection.setDatepickerTitle(withDate: now, withSearchTimeType: searchTimeType)
+        searchForRoutes()
     }
 
     private func resetAndShowCurrentlyLoading() {
