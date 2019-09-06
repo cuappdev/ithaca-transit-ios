@@ -91,7 +91,9 @@ class RouteOptionsViewController: UIViewController {
 
         // assume user wants to find routes that leave at current time and set datepicker accordingly
         searchTime = Date()
-        routeSelection.setDatepickerTitle(withDate: searchTime!, withSearchTimeType: searchTimeType)
+        if let searchTime = searchTime {
+            routeSelection.setDatepickerTitle(withDate: searchTime, withSearchTimeType: searchTimeType)
+        }
 
         searchForRoutes()
 
@@ -106,7 +108,6 @@ class RouteOptionsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupReachability()
-        
         // Reload data to activate timers again
         if !routes.isEmpty {
             routeResults.reloadData()
@@ -330,12 +331,10 @@ class RouteOptionsViewController: UIViewController {
     
     @objc private func refreshRoutesAndTime() {
         let now = Date()
-        lastRouteRefreshDate = now
-        if searchTimeType != .leaveNow {
-            if let leaveDate = searchTime,
-                leaveDate.compare(now) == .orderedDescending {
-                return
-            }
+        if let leaveDate = searchTime,
+            searchTimeType != .leaveNow,
+            leaveDate.compare(now) == .orderedDescending {
+            return
         }
         
         searchTime = now
@@ -357,6 +356,8 @@ class RouteOptionsViewController: UIViewController {
         if let searchFrom = searchFrom,
             let searchTo = searchTo,
             let time = searchTime {
+            let now = Date()
+            lastRouteRefreshDate = now
             resetAndShowCurrentlyLoading()
 
             switch searchType {
@@ -387,7 +388,7 @@ class RouteOptionsViewController: UIViewController {
             // Prepare feedback on Network request
             mediumTapticGenerator.prepare()
 
-            JSONFileManager.shared.logSearchParameters(timestamp: Date(), startPlace: searchFrom, endPlace: searchTo, searchTime: time, searchTimeType: searchTimeType)
+            JSONFileManager.shared.logSearchParameters(timestamp: now, startPlace: searchFrom, endPlace: searchTo, searchTime: time, searchTimeType: searchTimeType)
 
             // MARK: Search For Routes Errors
 
