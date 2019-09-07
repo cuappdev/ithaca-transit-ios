@@ -40,6 +40,7 @@ class RouteOptionsViewController: UIViewController {
 
     var cellUserInteraction = true
     var currentLocation: CLLocationCoordinate2D?
+    var lastRouteRefreshDate = Date()
     var locationManager: CLLocationManager!
     var routes: [[Route]] = []
     var searchFrom: Place?
@@ -47,7 +48,6 @@ class RouteOptionsViewController: UIViewController {
     var searchTimeType: SearchType = .leaveNow
     var searchTo: Place?
     var searchType: SearchBarType = .to
-    var lastRouteRefreshDate = Date()
     var showRouteSearchingLoader: Bool = false
 
     // Variable to remember back button when hiding
@@ -130,7 +130,7 @@ class RouteOptionsViewController: UIViewController {
                 cell.invalidateTimer()
             }
         }
-        
+        // Stop observing when app becomes active 
         NotificationCenter.default.removeObserver(self)
     }
 
