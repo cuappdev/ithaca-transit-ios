@@ -40,6 +40,7 @@ class RouteOptionsViewController: UIViewController {
 
     var cellUserInteraction = true
     var currentLocation: CLLocationCoordinate2D?
+    var lastRouteRefreshDate = Date()
     var locationManager: CLLocationManager!
     var routes: [[Route]] = []
     var searchFrom: Place?
@@ -107,11 +108,12 @@ class RouteOptionsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupReachability()
-
         // Reload data to activate timers again
         if !routes.isEmpty {
             routeResults.reloadData()
         }
+    
+        setUpRouteRefreshing()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -128,6 +130,8 @@ class RouteOptionsViewController: UIViewController {
                 cell.invalidateTimer()
             }
         }
+        // Stop observing when app becomes active 
+        NotificationCenter.default.removeObserver(self)
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -193,6 +197,19 @@ class RouteOptionsViewController: UIViewController {
         searchBarView = SearchBarView(searchBarCancelDelegate: self, destinationDelegate: self)
         self.definesPresentationContext = true
         hideSearchBar()
+    }
+    
+    private func setUpRouteRefreshing() {
+        let now = Date()
+        let hourMinuteComponents: Set<Calendar.Component> = [.hour, .minute]
+        let nowTime = Calendar.current.dateComponents(hourMinuteComponents, from: now)
+        let lastRefreshTime = Calendar.current.dateComponents(hourMinuteComponents, from: lastRouteRefreshDate)
+        if nowTime != lastRefreshTime {
+            refreshRoutesAndTime()
+        }
+        
+        let appBecameActiveNotification = UIApplication.didBecomeActiveNotification
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshRoutesAndTime), name: appBecameActiveNotification, object: nil)
     }
 
     func setupConstraintsForVisibleDatePickerView() {
@@ -311,6 +328,20 @@ class RouteOptionsViewController: UIViewController {
             }
         }
     }
+    
+    @objc private func refreshRoutesAndTime() {
+        let now = Date()
+        if let leaveDate = searchTime,
+            searchTimeType != .leaveNow,
+            leaveDate.compare(now) == .orderedDescending {
+            return
+        }
+        
+        searchTime = now
+        searchTimeType = .leaveNow
+        routeSelection.setDatepickerTitle(withDate: now, withSearchTimeType: searchTimeType)
+        searchForRoutes()
+    }
 
     private func resetAndShowCurrentlyLoading() {
         showRouteSearchingLoader = true
@@ -325,6 +356,8 @@ class RouteOptionsViewController: UIViewController {
         if let searchFrom = searchFrom,
             let searchTo = searchTo,
             let time = searchTime {
+            let now = Date()
+            lastRouteRefreshDate = now
             resetAndShowCurrentlyLoading()
 
             switch searchType {
@@ -355,7 +388,7 @@ class RouteOptionsViewController: UIViewController {
             // Prepare feedback on Network request
             mediumTapticGenerator.prepare()
 
-            JSONFileManager.shared.logSearchParameters(timestamp: Date(), startPlace: searchFrom, endPlace: searchTo, searchTime: time, searchTimeType: searchTimeType)
+            JSONFileManager.shared.logSearchParameters(timestamp: now, startPlace: searchFrom, endPlace: searchTo, searchTime: time, searchTimeType: searchTimeType)
 
             // MARK: Search For Routes Errors
 
