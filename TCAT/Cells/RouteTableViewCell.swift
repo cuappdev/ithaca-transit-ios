@@ -218,11 +218,12 @@ class RouteTableViewCell: UITableViewCell {
         if isWalkingRoute {
             setDepartureTimeToWalking()
             return
+        } else {
+            let delayState = getDelayState(fromRoute: route)
+            setDepartureTime(withStartTime: Date(), withDelayState: delayState)
+            setLiveElements(withDelayState: delayState)
         }
 
-        let delayState = getDelayState(fromRoute: route)
-        setDepartureTime(withStartTime: Date(), withDelayState: delayState)
-        setLiveElements(withDelayState: delayState)
     }
 
     @objc private func updateLiveElementsWithDelay(sender: Timer) {
