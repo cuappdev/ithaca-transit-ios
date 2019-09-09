@@ -183,13 +183,14 @@ class DatePickerView: UIView {
 
     @objc private func doneButtonPressed() {
         var searchTimeType: SearchType = .leaveNow
-        switch leaveNowSegmentedControl.selectedSegmentIndex {
-        case leaveNowElement.index:
+        if leaveNowSegmentedControl.selectedSegmentIndex == leaveNowElement.index {
             searchTimeType = .leaveNow
-        case arriveByElement.index:
-            searchTimeType = .arriveBy
-        default:
+        } else if timeTypeSegmentedControl.selectedSegmentIndex == leaveAtElement.index {
             searchTimeType = .leaveAt
+        } else if timeTypeSegmentedControl.selectedSegmentIndex == arriveByElement.index {
+            searchTimeType = .arriveBy
+        } else {
+            searchTimeType = .leaveNow
         }
 
         delegate?.saveDatePickerDate(for: datepicker.date, searchType: searchTimeType)

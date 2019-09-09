@@ -96,24 +96,21 @@ extension RouteOptionsViewController: DatePickerViewDelegate {
 
     func saveDatePickerDate(for date: Date, searchType: SearchType) {
         searchTime = date
+        searchTimeType = searchType
 
         routeSelection.setDatepickerTitle(withDate: date, withSearchTimeType: searchTimeType)
-
         var buttonTapped = ""
-
         switch searchType {
         case .leaveNow: buttonTapped = "Leave Now Tapped"
         case .arriveBy: buttonTapped = "Arrive By Tapped"
         case .leaveAt: buttonTapped = "Leave At Tapped"
         }
-
         dismissDatePicker()
 
         searchForRoutes()
 
         let payload = RouteOptionsSettingsPayload(description: buttonTapped)
         Analytics.shared.log(payload)
-
     }
 }
 
