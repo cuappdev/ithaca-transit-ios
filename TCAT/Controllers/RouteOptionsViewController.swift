@@ -277,10 +277,8 @@ class RouteOptionsViewController: UIViewController {
             placeholder = Constants.General.fromSearchBarPlaceholder
 
         case .to:
-
-            if
-                let endingDestinationName = searchTo?.name,
-                endingDestinationName != Constants.General.currentLocation
+            let endingDestinationName = searchTo.name
+            if endingDestinationName != Constants.General.currentLocation
             {
                 searchBarText = endingDestinationName
             }
@@ -502,7 +500,7 @@ class RouteOptionsViewController: UIViewController {
             [response.data.fromStop, response.data.boardingSoon, response.data.walking]
                 .forEach { (routeSection) in
                     routeSection.forEach { (route) in
-                        route.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
+                        route.formatDirections(start: self.searchFrom?.name, end: self.searchTo.name)
                     }
                     // Allow for custom display in search results for fromStop.
                     // We want to display a [] if a bus stop is the origin and doesn't exist
