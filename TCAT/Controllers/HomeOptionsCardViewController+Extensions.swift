@@ -262,7 +262,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         let allStopsTableViewController = AllStopsTableViewController()
         var didSelectAllStops = false
         var shouldPushViewController = true
-        
+
         if sections[indexPath.section] == .seeAllStops {
             didSelectAllStops = true
         } else {
@@ -281,8 +281,11 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         searchBar.endEditing(true)
         
         if shouldPushViewController {
-            let vcToPush = didSelectAllStops ? allStopsTableViewController : routeOptionsViewController
-            navigationController?.pushViewController(vcToPush!, animated: true)
+            guard let vcToPush = didSelectAllStops ? allStopsTableViewController : routeOptionsViewController else {
+                print("view controller not instantiated")
+                return
+            }
+            navigationController?.pushViewController(vcToPush, animated: true)
         }
     }
 }
