@@ -258,12 +258,18 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        let routeOptionsViewController = RouteOptionsViewController()
-        routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
-        let allStopsTableViewConroller = AllStopsTableViewController()
+        var routeOptionsViewController: RouteOptionsViewController!
+//        routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
+        let allStopsTableViewController = AllStopsTableViewController()
         var didSelectAllStops = false
         var shouldPushViewController = true
-
+       
+        if !(sections[indexPath.section] == .seeAllStops) {
+            let place = sections[indexPath.section].getItems()[indexPath.row]
+            let routeOptionsViewController = RouteOptionsViewController(searchTo: place)
+            routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
+        }
+        
         if sections[indexPath.section] == .seeAllStops {
             didSelectAllStops = true
         } else {
@@ -272,17 +278,18 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
                 shouldPushViewController = false
                 presentFavoritesTVC()
             } else {
-                routeOptionsViewController.searchTo = place
+                routeOptionsViewController = RouteOptionsViewController(searchTo: place)
+                routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
                 Global.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
             }
+        }
+        
+        if shouldPushViewController {
+            let vcToPush = didSelectAllStops ? allStopsTableViewController : routeOptionsViewController
+            navigationController?.pushViewController(vcToPush!, animated: true)
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
-
-        if shouldPushViewController {
-            let vcToPush = didSelectAllStops ? allStopsTableViewConroller : routeOptionsViewController
-            navigationController?.pushViewController(vcToPush, animated: true)
-        }
     }
 }

@@ -46,7 +46,7 @@ class RouteOptionsViewController: UIViewController {
     var searchFrom: Place?
     var searchTime: Date?
     var searchTimeType: SearchType = .leaveNow
-    var searchTo: Place?
+    var searchTo: Place!
     var searchType: SearchBarType = .to
     var showRouteSearchingLoader: Bool = false
 
@@ -70,7 +70,16 @@ class RouteOptionsViewController: UIViewController {
             setNeedsStatusBarAppearanceUpdate()
         }
     }
-
+    
+    init(searchTo: Place) {
+        super.init(nibName: nil, bundle: nil)
+        self.searchTo = searchTo
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: View Lifecycle
 
     override func viewDidLoad() {
