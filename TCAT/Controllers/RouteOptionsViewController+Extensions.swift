@@ -175,9 +175,9 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
             searchFrom?.longitude = currentLocation.coordinate.longitude
         }
 
-        if searchTo?.name == Constants.General.currentLocation {
-            searchTo?.latitude = currentLocation.coordinate.latitude
-            searchTo?.longitude = currentLocation.coordinate.longitude
+        if searchTo.name == Constants.General.currentLocation {
+            searchTo.latitude = currentLocation.coordinate.latitude
+            searchTo.longitude = currentLocation.coordinate.longitude
         }
 
         // If haven't selected start location, set to current location
@@ -415,7 +415,7 @@ extension RouteOptionsViewController: RouteSelectionViewDelegate {
 
         //Update UI
         routeSelection.updateSearchBarTitles(from: searchFrom?.name ?? "",
-                                             to: searchTo?.name ?? "")
+                                             to: searchTo.name)
 
         searchForRoutes()
 

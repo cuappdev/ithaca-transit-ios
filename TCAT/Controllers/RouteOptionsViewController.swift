@@ -656,7 +656,7 @@ class RouteOptionsViewController: UIViewController {
 
         let route = routes[indexPath.section][indexPath.row]
         var routeDetailCurrentLocation = currentLocation
-        if searchTo?.name != Constants.General.currentLocation && searchFrom?.name != Constants.General.currentLocation {
+        if searchTo.name != Constants.General.currentLocation && searchFrom?.name != Constants.General.currentLocation {
             routeDetailCurrentLocation = nil // If route doesn't involve current location, don't pass along for view.
         }
 
