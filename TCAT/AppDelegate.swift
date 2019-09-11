@@ -354,7 +354,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             var latitude: CLLocationDegrees?
             var longitude: CLLocationDegrees?
             var stopName: String?
-//            let optionsVC = RouteOptionsViewController()
 
             if
                 let lat = items?.filter({ $0.name == "lat" }).first?.value,
