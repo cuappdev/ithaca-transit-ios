@@ -279,12 +279,8 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
 
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
-        
-        if shouldPushViewController {
-            guard let vcToPush = didSelectAllStops ? allStopsTableViewController : routeOptionsViewController else {
-                print("view controller not instantiated")
-                return
-            }
+
+        if shouldPushViewController, let vcToPush = didSelectAllStops ? allStopsTableViewController : routeOptionsViewController {
             navigationController?.pushViewController(vcToPush, animated: true)
         }
     }
