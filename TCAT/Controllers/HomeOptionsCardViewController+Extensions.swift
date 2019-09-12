@@ -258,9 +258,8 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        let routeOptionsViewController = RouteOptionsViewController()
-        routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
-        let allStopsTableViewConroller = AllStopsTableViewController()
+        var routeOptionsViewController: RouteOptionsViewController!
+        let allStopsTableViewController = AllStopsTableViewController()
         var didSelectAllStops = false
         var shouldPushViewController = true
 
@@ -272,7 +271,8 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
                 shouldPushViewController = false
                 presentFavoritesTVC()
             } else {
-                routeOptionsViewController.searchTo = place
+                routeOptionsViewController = RouteOptionsViewController(searchTo: place)
+                routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
                 Global.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
             }
         }
@@ -280,8 +280,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
 
-        if shouldPushViewController {
-            let vcToPush = didSelectAllStops ? allStopsTableViewConroller : routeOptionsViewController
+        if shouldPushViewController, let vcToPush = didSelectAllStops ? allStopsTableViewController : routeOptionsViewController {
             navigationController?.pushViewController(vcToPush, animated: true)
         }
     }

@@ -254,12 +254,11 @@ extension AllStopsTableViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let section = sectionIndexes[sortedKeys[indexPath.section]]
-        let optionsVC = RouteOptionsViewController()
         guard let place = section?[indexPath.row] else {
             print("Could not find bus stop")
             return
         }
-        optionsVC.didSelectPlace(place: place)
+        let optionsVC = RouteOptionsViewController(searchTo: place)
 
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)

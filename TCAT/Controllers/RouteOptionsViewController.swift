@@ -46,7 +46,7 @@ class RouteOptionsViewController: UIViewController {
     var searchFrom: Place?
     var searchTime: Date?
     var searchTimeType: SearchType = .leaveNow
-    var searchTo: Place?
+    var searchTo: Place!
     var searchType: SearchBarType = .to
     var showRouteSearchingLoader: Bool = false
 
@@ -70,7 +70,16 @@ class RouteOptionsViewController: UIViewController {
             setNeedsStatusBarAppearanceUpdate()
         }
     }
-
+    
+    init(searchTo: Place) {
+        super.init(nibName: nil, bundle: nil)
+        self.searchTo = searchTo
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: View Lifecycle
 
     override func viewDidLoad() {
@@ -268,10 +277,8 @@ class RouteOptionsViewController: UIViewController {
             placeholder = Constants.General.fromSearchBarPlaceholder
 
         case .to:
-
-            if
-                let endingDestinationName = searchTo?.name,
-                endingDestinationName != Constants.General.currentLocation
+            let endingDestinationName = searchTo.name
+            if endingDestinationName != Constants.General.currentLocation
             {
                 searchBarText = endingDestinationName
             }
@@ -493,7 +500,7 @@ class RouteOptionsViewController: UIViewController {
             [response.data.fromStop, response.data.boardingSoon, response.data.walking]
                 .forEach { (routeSection) in
                     routeSection.forEach { (route) in
-                        route.formatDirections(start: self.searchFrom?.name, end: self.searchTo?.name)
+                        route.formatDirections(start: self.searchFrom?.name, end: self.searchTo.name)
                     }
                     // Allow for custom display in search results for fromStop.
                     // We want to display a [] if a bus stop is the origin and doesn't exist
@@ -647,7 +654,7 @@ class RouteOptionsViewController: UIViewController {
 
         let route = routes[indexPath.section][indexPath.row]
         var routeDetailCurrentLocation = currentLocation
-        if searchTo?.name != Constants.General.currentLocation && searchFrom?.name != Constants.General.currentLocation {
+        if searchTo.name != Constants.General.currentLocation && searchFrom?.name != Constants.General.currentLocation {
             routeDetailCurrentLocation = nil // If route doesn't involve current location, don't pass along for view.
         }
 

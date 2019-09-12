@@ -270,7 +270,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func handleShortcut(item: UIApplicationShortcutItem) {
-        let optionsVC = RouteOptionsViewController()
         if let shortcutData = item.userInfo as? [String: Data] {
             guard
                 let place = shortcutData["place"],
@@ -279,7 +278,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("[AppDelegate] Unable to access shortcutData['place']")
                 return
             }
-            optionsVC.searchTo = destination
+            let optionsVC = RouteOptionsViewController(searchTo: destination)
             if let navController = window?.rootViewController as? CustomNavigationController {
                 navController.pushViewController(optionsVC, animated: false)
             }
@@ -355,7 +354,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             var latitude: CLLocationDegrees?
             var longitude: CLLocationDegrees?
             var stopName: String?
-            let optionsVC = RouteOptionsViewController()
 
             if
                 let lat = items?.filter({ $0.name == "lat" }).first?.value,
@@ -368,7 +366,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
             if let latitude = latitude, let longitude = longitude, let stopName = stopName {
                 let place = Place(name: stopName, latitude: latitude, longitude: longitude)
-                optionsVC.searchTo = place
+                let optionsVC = RouteOptionsViewController(searchTo: place)
                 navigationController.pushViewController(optionsVC, animated: false)
                 return true
             }
