@@ -199,8 +199,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		05362765A3FFE8B3AC21E499 /* Pods-TCATUITests.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.local.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.local.xcconfig"; sourceTree = "<group>"; };
 		1DD024FEFC067440B1903BA7 /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
 		222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WhatsNewHeaderView.swift; path = Views/WhatsNewHeaderView.swift; sourceTree = "<group>"; };
+		222D50AA32DFD72AAFF22E78 /* Pods-TCATTests.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.local.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.local.xcconfig"; sourceTree = "<group>"; };
 		22443221231871CD00987417 /* RouteDetailContentViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RouteDetailContentViewController+Extensions.swift"; path = "Controllers/RouteDetailContentViewController+Extensions.swift"; sourceTree = "<group>"; };
 		224432232318741500987417 /* HomeOptionsCardViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "HomeOptionsCardViewController+Extensions.swift"; path = "Controllers/HomeOptionsCardViewController+Extensions.swift"; sourceTree = "<group>"; };
 		224D8A5A229F5E3000C5D86A /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Section.swift; path = Model/Section.swift; sourceTree = "<group>"; };
@@ -256,7 +258,9 @@
 		7EFDB7F62243009A006D5126 /* TodayExtensionErrorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodayExtensionErrorCell.swift; sourceTree = "<group>"; };
 		8A2E117F9926062BFA4524F0 /* Pods-Today Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.debug.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.debug.xcconfig"; sourceTree = "<group>"; };
 		8FE444491ABFAAD81EF7AC44 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		97EDE9962FD1276E1860CB00 /* Pods-TCAT.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.local.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.local.xcconfig"; sourceTree = "<group>"; };
 		9F442757DE5FC60C8503AD59 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
+		A7D92882EC47B11C442F68BC /* Pods-Today Extension.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.local.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.local.xcconfig"; sourceTree = "<group>"; };
 		BA18532E609F6EBE6371896C /* Pods-TCATUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.debug.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BDC1610962A12E65217852F0 /* Pods-Today Extension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.release.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.release.xcconfig"; sourceTree = "<group>"; };
 		BF0002211FB37D0A00773109 /* LoadingIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoadingIndicator.swift; path = Views/LoadingIndicator.swift; sourceTree = "<group>"; };
@@ -486,6 +490,10 @@
 				411FF1B280B230ABFD3ED4AD /* Pods-TCATUITests.release.xcconfig */,
 				8A2E117F9926062BFA4524F0 /* Pods-Today Extension.debug.xcconfig */,
 				BDC1610962A12E65217852F0 /* Pods-Today Extension.release.xcconfig */,
+				97EDE9962FD1276E1860CB00 /* Pods-TCAT.local.xcconfig */,
+				222D50AA32DFD72AAFF22E78 /* Pods-TCATTests.local.xcconfig */,
+				05362765A3FFE8B3AC21E499 /* Pods-TCATUITests.local.xcconfig */,
+				A7D92882EC47B11C442F68BC /* Pods-Today Extension.local.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1700,6 +1708,194 @@
 			};
 			name = Debug;
 		};
+		C27549D4233491FA00D5A754 /* Local */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 47;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Local;
+		};
+		C27549D5233491FA00D5A754 /* Local */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 97EDE9962FD1276E1860CB00 /* Pods-TCAT.local.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BUNDLE_APP_DISPLAY_NAME = "Ithaca Transit Local";
+				CODE_SIGN_ENTITLEMENTS = "TCAT/Supporting Files/TCAT.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 47;
+				DEVELOPMENT_TEAM = ZGMCXU7X3U;
+				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/GoogleMaps/Base/Frameworks",
+					"$(PROJECT_DIR)/Pods/GoogleMaps/Maps/Frameworks",
+				);
+				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DLOCAL";
+				"OTHER_SWIFT_FLAGS[arch=*]" = "$(inherited) \"-D\" \"COCOAPODS\"";
+				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SERVER_URL = localhost;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Local;
+		};
+		C27549D6233491FA00D5A754 /* Local */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 222D50AA32DFD72AAFF22E78 /* Pods-TCATTests.local.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CURRENT_PROJECT_VERSION = 47;
+				INFOPLIST_FILE = TCATTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCATTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TCAT.app/TCAT";
+			};
+			name = Local;
+		};
+		C27549D7233491FA00D5A754 /* Local */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 05362765A3FFE8B3AC21E499 /* Pods-TCATUITests.local.xcconfig */;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 47;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				INFOPLIST_FILE = TCATUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCATUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TEST_TARGET_NAME = TCAT;
+			};
+			name = Local;
+		};
+		C27549D8233491FA00D5A754 /* Local */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Siri/Siri.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZGMCXU7X3U;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = Siri/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug.Siri;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Local;
+		};
+		C27549D9233491FA00D5A754 /* Local */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A7D92882EC47B11C442F68BC /* Pods-Today Extension.local.xcconfig */;
+			buildSettings = {
+				BUNDLE_APP_DISPLAY_NAME = "Ithaca Transit Beta";
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Today Extension/Today Extension.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZGMCXU7X3U;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "$(SRCROOT)/Today Extension/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug.TodayExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SERVER_URL = "transit-testflight.cornellappdev.com";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Local;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1707,6 +1903,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BFF7E5EE223BFDF0001C6032 /* Debug */,
+				C27549D4233491FA00D5A754 /* Local */,
 				449A7C9C1D80D0E80019300C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1716,6 +1913,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BFF7E5EF223BFDF0001C6032 /* Debug */,
+				C27549D5233491FA00D5A754 /* Local */,
 				449A7C9F1D80D0E80019300C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1725,6 +1923,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BFF7E5F0223BFDF0001C6032 /* Debug */,
+				C27549D6233491FA00D5A754 /* Local */,
 				449A7CA21D80D0E80019300C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1734,6 +1933,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BFF7E5F1223BFDF0001C6032 /* Debug */,
+				C27549D7233491FA00D5A754 /* Local */,
 				449A7CA51D80D0E80019300C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1743,6 +1943,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BFF7E5F2223BFDF0001C6032 /* Debug */,
+				C27549D8233491FA00D5A754 /* Local */,
 				7E14AEF72177E884006A344D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1752,6 +1953,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7EEF18A821B39C6300343FFD /* Debug */,
+				C27549D9233491FA00D5A754 /* Local */,
 				7EEF18A921B39C6300343FFD /* Release */,
 				7EF8DCD722470DD20052D522 /* Debug */,
 				7EF8DCD822470DD20052D522 /* Release */,

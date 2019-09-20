@@ -24,7 +24,12 @@ extension Endpoint {
         guard let baseURL = Bundle.main.object(forInfoDictionaryKey: "SERVER_URL") as? String else {
             fatalError("Could not find SERVER_URL in Info.plist!")
         }
-        Endpoint.config.scheme = "https"
+        #if LOCAL
+            Endpoint.config.scheme = "http"
+            Endpoint.config.port = 3000
+        #else
+            Endpoint.config.scheme = "https"
+        #endif
         Endpoint.config.host = baseURL
         Endpoint.config.commonPath = "/api/v2"
     }
