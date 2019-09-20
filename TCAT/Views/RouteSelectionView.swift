@@ -18,7 +18,7 @@ protocol RouteSelectionViewDelegate: class {
 class RouteSelectionView: UIView {
 
     private weak var delegate: RouteSelectionViewDelegate?
-        
+
     // MARK: View vars
     private var borderedCircle: Circle!
     private var bottomSeparator: UIView = UIView()
