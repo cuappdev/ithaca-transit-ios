@@ -70,16 +70,16 @@ class RouteOptionsViewController: UIViewController {
             setNeedsStatusBarAppearanceUpdate()
         }
     }
-    
+
     init(searchTo: Place) {
         super.init(nibName: nil, bundle: nil)
         self.searchTo = searchTo
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: View Lifecycle
 
     override func viewDidLoad() {
@@ -121,7 +121,7 @@ class RouteOptionsViewController: UIViewController {
         if !routes.isEmpty {
             routeResults.reloadData()
         }
-    
+
         setUpRouteRefreshing()
     }
 
@@ -207,7 +207,7 @@ class RouteOptionsViewController: UIViewController {
         self.definesPresentationContext = true
         hideSearchBar()
     }
-    
+
     private func setUpRouteRefreshing() {
         let now = Date()
         let hourMinuteComponents: Set<Calendar.Component> = [.hour, .minute]
@@ -216,7 +216,7 @@ class RouteOptionsViewController: UIViewController {
         if nowTime != lastRefreshTime {
             refreshRoutesAndTime()
         }
-        
+
         let appBecameActiveNotification = UIApplication.didBecomeActiveNotification
         NotificationCenter.default.addObserver(self, selector: #selector(refreshRoutesAndTime), name: appBecameActiveNotification, object: nil)
     }
@@ -278,8 +278,7 @@ class RouteOptionsViewController: UIViewController {
 
         case .to:
             let endingDestinationName = searchTo.name
-            if endingDestinationName != Constants.General.currentLocation
-            {
+            if endingDestinationName != Constants.General.currentLocation {
                 searchBarText = endingDestinationName
             }
             placeholder = Constants.General.toSearchBarPlaceholder
@@ -335,7 +334,7 @@ class RouteOptionsViewController: UIViewController {
             }
         }
     }
-    
+
     @objc private func refreshRoutesAndTime() {
         let now = Date()
         if let leaveDate = searchTime,
@@ -343,7 +342,7 @@ class RouteOptionsViewController: UIViewController {
             leaveDate.compare(now) == .orderedDescending {
             return
         }
-        
+
         searchTime = now
         searchTimeType = .leaveNow
         routeSelection.setDatepickerTitle(withDate: now, withSearchTimeType: searchTimeType)
