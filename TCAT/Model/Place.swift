@@ -10,7 +10,7 @@ import CoreLocation
 import UIKit
 
 enum PlaceType: String, Codable {
-    case busStop, googlePlace, unknown
+    case applePlace, busStop, googlePlace, unknown
 }
 
 @objc(Place) class Place: NSObject, Codable {

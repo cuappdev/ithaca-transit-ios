@@ -10,6 +10,7 @@ import CoreLocation
 import Crashlytics
 import DZNEmptyDataSet
 import FutureNova
+import MapKit
 import SwiftyJSON
 import UIKit
 
@@ -26,6 +27,8 @@ class SearchResultsTableViewController: UITableViewController {
     var searchBar: UISearchBar?
 
     var currentLocation: Place?
+    var searchCompleter = MKLocalSearchCompleter()
+    var searchResults = [MKLocalSearchCompletion]()
     private weak var destinationDelegate: DestinationDelegate?
     private weak var searchBarCancelDelegate: SearchBarCancelDelegate?
 
@@ -72,6 +75,9 @@ class SearchResultsTableViewController: UITableViewController {
 
         // Set Up LocationManager
         locationManager.delegate = self
+
+        // Set Up MKSearchCompleter
+        searchCompleter.delegate = self
 
         // Fetch RecentLocation and Favorites
         recentLocations = Global.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
@@ -138,23 +144,71 @@ class SearchResultsTableViewController: UITableViewController {
         if let userInfo = timer.userInfo as? [String: String],
             let searchText = userInfo["searchText"],
             !searchText.isEmpty {
-            getSearchResults(searchText: searchText).observe { [weak self] result in
-                guard let `self` = self else { return }
-                DispatchQueue.main.async {
-                    switch result {
-                    case .value(let response):
-                        self.searchResultsSection = Section.searchResults(items: response.data)
-                        self.sections = self.searchResultsSection.isEmpty ? [] : [self.searchResultsSection]
-                        if !self.sections.isEmpty {
-                            self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
-                        }
-                    default: break
-                    }
-                }
-            }
+//            getSearchResults(searchText: searchText).observe { [weak self] result in
+//                guard let `self` = self else { return }
+//                DispatchQueue.main.async {
+//                    switch result {
+//                    case .value(let response):
+//                        self.searchResultsSection = Section.searchResults(items: response.data)
+//                        self.sections = self.searchResultsSection.isEmpty ? [] : [self.searchResultsSection]
+//                        if !self.sections.isEmpty {
+//                            self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+//                        }
+//                    default: break
+//                    }
+//                }
+//            }
+            getAppleSearchText(for: searchText)
         } else {
             createDefaultSections()
         }
+    }
+}
+
+extension SearchResultsTableViewController: MKLocalSearchCompleterDelegate {
+    func getAppleSearchText(for searchText: String) {
+        if let places = SearchPlacesCache.shared.get(query: searchText) {
+            print("Retrieved cached places")
+            self.searchResultsSection = Section.searchResults(items: places)
+            self.sections = self.searchResultsSection.isEmpty ? [] : [self.searchResultsSection]
+        } else {
+            searchCompleter.queryFragment = searchText
+        }
+    }
+
+    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        print("MKLocalSearch got results: \(completer.results)")
+        var places = [Place]()
+        let dispatchGroup = DispatchGroup()
+        searchResults = completer.results
+        searchResults.forEach { (completion) -> Void in
+            let searchRequest = MKLocalSearch.Request(completion: completion)
+            let search = MKLocalSearch(request: searchRequest)
+            dispatchGroup.enter()
+            search.start(completionHandler: { (response, error) in
+                if error != nil {
+                    print("Search Result Error: \(error)")
+                }
+                if let mapItem = response?.mapItems.first,
+                    let name = mapItem.name {
+                    print("Search Result Name: \(name)")
+                    let lat = mapItem.placemark.coordinate.latitude
+                    let long = mapItem.placemark.coordinate.longitude
+                    let place = Place(name: name, latitude: lat, longitude: long)
+                    places.append(place)
+                    dispatchGroup.leave()
+                }
+            })
+        }
+        dispatchGroup.notify(queue: .main) {
+            SearchPlacesCache.shared.put(query: completer.queryFragment, places: places)
+            self.searchResultsSection = Section.searchResults(items: places)
+            self.sections = self.searchResultsSection.isEmpty ? [] : [self.searchResultsSection]
+        }
+    }
+
+    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        print("MKLocalSearch failed for error: \(error)")
     }
 }
 
@@ -286,7 +340,7 @@ extension SearchResultsTableViewController: UISearchBarDelegate, UISearchResults
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(timeInterval: 0.2,
+        timer = Timer.scheduledTimer(timeInterval: 0.75,
                                      target: self,
                                      selector: #selector(getPlaces),
                                      userInfo: ["searchText": searchText],
@@ -306,8 +360,11 @@ extension SearchResultsTableViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             currentLocation = Place(name: Constants.General.currentLocation,
-                                             latitude: location.coordinate.latitude,
-                                             longitude: location.coordinate.longitude)
+                                    latitude: location.coordinate.latitude,
+                                    longitude: location.coordinate.longitude)
+            if let searchRadius = CLLocationDistance(exactly: 2000) {
+                searchCompleter.region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: searchRadius, longitudinalMeters: searchRadius)
+            }
             createDefaultSections()
         }
     }
@@ -351,5 +408,5 @@ extension SearchResultsTableViewController: DZNEmptyDataSetSource {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }
