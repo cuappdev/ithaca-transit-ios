@@ -167,31 +167,19 @@ class SearchResultsTableViewController: UITableViewController {
                     switch result {
                     case .value(let response):
                         self.busStops = response.data.busStops
+                        // If applePlaces already exist in server cache, we can just
+                        // display those places
                         if let applePlaces = response.data.applePlaces {
                             let searchResults = applePlaces + self.busStops
                             self.updateSearchResultsSection(with: searchResults)
                         } else {
+                            // Otherwise, we need to perform the Apple Places lookup locally
                             self.searchCompleter.queryFragment = searchText
                         }
                     default: break
                     }
                 }
             }
-            //            getSearchResults(searchText: searchText).observe { [weak self] result in
-            //                guard let `self` = self else { return }
-            //                DispatchQueue.main.async {
-            //                    switch result {
-            //                    case .value(let response):
-            //                        self.searchResultsSection = Section.searchResults(items: response.data)
-            //                        self.sections = self.searchResultsSection.isEmpty ? [] : [self.searchResultsSection]
-            //                        if !self.sections.isEmpty {
-            //                            self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
-            //                        }
-            //                    default: break
-            //                    }
-            //                }
-            //            }
-//            getAppleSearchText(for: searchText)
         } else {
             createDefaultSections()
         }
@@ -210,7 +198,7 @@ class SearchResultsTableViewController: UITableViewController {
 extension SearchResultsTableViewController: MKLocalSearchCompleterDelegate {
 
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        print("MKLocalSearch got results: \(completer.results)")
+        // Search list of ApplePlaces for this search query, i.e. completer.queryFragment
         var places = [Place]()
         let dispatchGroup = DispatchGroup()
         searchResults = completer.results
@@ -219,8 +207,9 @@ extension SearchResultsTableViewController: MKLocalSearchCompleterDelegate {
             let search = MKLocalSearch(request: searchRequest)
             dispatchGroup.enter()
             search.start(completionHandler: { (response, error) in
-                if error != nil {
-                    print("Search Result Error: \(error)")
+                guard error == nil else {
+                    print("Apple Places Search Result Error: \(error)")
+                    return
                 }
                 if let mapItem = response?.mapItems.first,
                     let name = mapItem.name,
@@ -240,11 +229,13 @@ extension SearchResultsTableViewController: MKLocalSearchCompleterDelegate {
         dispatchGroup.notify(queue: .main) {
             let searchResults = places + self.busStops
             self.updateSearchResultsSection(with: searchResults)
+
+            // Update server cache of Apple Places for this search query
             self.updateApplePlacesCache(searchText: completer.queryFragment, places: places).observe { [weak self] result in
                 guard self != nil else { return }
                 switch result {
                 case .value(let response):
-                    print("Succeeded in updating cache BOOL: \(response.data)")
+                    print("Succeeded in updating apple places cache: \(response.data)")
                 default: break
                 }
             }
