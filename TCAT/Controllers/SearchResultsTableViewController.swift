@@ -27,8 +27,6 @@ class SearchResultsTableViewController: UITableViewController {
     var searchBar: UISearchBar?
 
     var currentLocation: Place?
-    var searchCompleter = MKLocalSearchCompleter()
-    var searchResults = [MKLocalSearchCompletion]()
     private weak var destinationDelegate: DestinationDelegate?
     private weak var searchBarCancelDelegate: SearchBarCancelDelegate?
 
@@ -42,6 +40,8 @@ class SearchResultsTableViewController: UITableViewController {
     private var recentSearchesSection: Section!
     private var returningFromAllStopsBusStop: Place?
     private var returningFromAllStopsTVC = false
+    private let searchCompleter = MKLocalSearchCompleter()
+    private var searchResults = [MKLocalSearchCompletion]()
     private var searchResultsSection: Section!
     private var seeAllStopsSection: Section!
     private var timer: Timer?
@@ -167,13 +167,14 @@ class SearchResultsTableViewController: UITableViewController {
                     switch result {
                     case .value(let response):
                         self.busStops = response.data.busStops
-                        // If applePlaces already exist in server cache, we can just
-                        // display those places
+                        // If the list of Apple Places for this searchText already exists in
+                        // server cache, no further work is needed
                         if let applePlaces = response.data.applePlaces {
                             let searchResults = applePlaces + self.busStops
                             self.updateSearchResultsSection(with: searchResults)
                         } else {
                             // Otherwise, we need to perform the Apple Places lookup locally
+                            // and only display results after this lookup is done
                             self.searchCompleter.queryFragment = searchText
                         }
                     default: break
@@ -198,7 +199,7 @@ class SearchResultsTableViewController: UITableViewController {
 extension SearchResultsTableViewController: MKLocalSearchCompleterDelegate {
 
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        // Search list of ApplePlaces for this search query, i.e. completer.queryFragment
+        // Get list of ApplePlaces for this search query, i.e. completer.queryFragment
         var places = [Place]()
         let dispatchGroup = DispatchGroup()
         searchResults = completer.results
@@ -354,9 +355,6 @@ extension SearchResultsTableViewController {
             let cancelButton = object_getIvar(searchBar, cancelButtonIVar) as? UIButton {
             cancelButton.isEnabled = true
         }
-        //        if let cancelButton = searchBar?.value(forKey: "_cancelButton") as? UIButton {
-        //            cancelButton.isEnabled = true
-        //        }
     }
 }
 

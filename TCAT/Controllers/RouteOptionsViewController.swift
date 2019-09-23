@@ -295,7 +295,6 @@ class RouteOptionsViewController: UIViewController {
 
     func dismissSearchBar() {
         searchBarView.searchController?.dismiss(animated: true, completion: nil)
-        print("dismissed searchbar")
     }
 
     func hideSearchBar() {
@@ -305,7 +304,6 @@ class RouteOptionsViewController: UIViewController {
         }
         navigationItem.hidesBackButton = false
         searchBarView.searchController?.isActive = false
-        print("hide searchbar")
     }
 
     private func showSearchBar() {
