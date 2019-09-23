@@ -162,6 +162,8 @@ struct Constants {
     struct Endpoints {
         static let alerts = "/alerts"
         static let allStops = "/allStops"
+        static let applePlaces = "/applePlaces"
+        static let appleSearch = "/appleSearch"
         static let busLocations = "/tracking"
         static let delay = "/delay"
         static let getRoutes = "/route"
@@ -233,6 +235,7 @@ struct Constants {
         static let startingLong = -76.485070 // Longitude of the center point of TCAT's range which it services
         static let defaultZoom: Float = 15.5 // Use as initial zoom on homeMapVC
         static let maxZoom: Float = 25
+        static let searchRadius = 24140
     }
 
     struct SearchBar {

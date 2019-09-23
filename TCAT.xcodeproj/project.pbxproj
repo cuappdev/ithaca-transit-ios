@@ -130,6 +130,7 @@
 		BFEDB85B2232F22100052D49 /* GeneralTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEDB85A2232F22100052D49 /* GeneralTableViewCell.swift */; };
 		BFF41EB2204365E800E0696B /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF41EB1204365E800E0696B /* SummaryView.swift */; };
 		C2240435231838C300095C5C /* PlaceCoordinates.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2240434231838C300095C5C /* PlaceCoordinates.swift */; };
+		C2AAAF6C23392F790025C640 /* AppleSearchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2AAAF6B23392F790025C640 /* AppleSearchResponse.swift */; };
 		C2B407022335C970007C768A /* SearchPlacesCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B407012335C970007C768A /* SearchPlacesCache.swift */; };
 		D183AA021E6CB092006A9A15 /* Extensions+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* Extensions+App.swift */; };
 		DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */; };
@@ -299,6 +300,7 @@
 		BFEDB85A2232F22100052D49 /* GeneralTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GeneralTableViewCell.swift; path = Cells/GeneralTableViewCell.swift; sourceTree = "<group>"; };
 		BFF41EB1204365E800E0696B /* SummaryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SummaryView.swift; path = Views/SummaryView.swift; sourceTree = "<group>"; };
 		C2240434231838C300095C5C /* PlaceCoordinates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceCoordinates.swift; sourceTree = "<group>"; };
+		C2AAAF6B23392F790025C640 /* AppleSearchResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSearchResponse.swift; sourceTree = "<group>"; };
 		C2B407012335C970007C768A /* SearchPlacesCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPlacesCache.swift; sourceTree = "<group>"; };
 		CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Analytics.swift; path = Utilities/Analytics.swift; sourceTree = "<group>"; };
 		D183AA011E6CB092006A9A15 /* Extensions+App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Extensions+App.swift"; path = "Utilities/Extensions+App.swift"; sourceTree = "<group>"; };
@@ -593,6 +595,7 @@
 				BF40D7642230385B000ED7D8 /* WhatsNewCard.swift */,
 				C2240434231838C300095C5C /* PlaceCoordinates.swift */,
 				C2B407012335C970007C768A /* SearchPlacesCache.swift */,
+				C2AAAF6B23392F790025C640 /* AppleSearchResponse.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -1147,6 +1150,7 @@
 				DD3D9C211F94297100B164D4 /* Reachability.swift in Sources */,
 				DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */,
 				222BDE16215C1CEE0040DD93 /* WhatsNewHeaderView.swift in Sources */,
+				C2AAAF6C23392F790025C640 /* AppleSearchResponse.swift in Sources */,
 				BF250D7F222FB12400E7F271 /* Endpoints.swift in Sources */,
 				7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */,
 				DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */,

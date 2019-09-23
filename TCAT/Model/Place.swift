@@ -55,11 +55,20 @@ enum PlaceType: String, Codable {
         self.longitude = longitude
     }
 
+    /// Initializer for Apple Places
+    convenience init(name: String, latitude: Double, longitude: Double, placeDescription: String) {
+        self.init(name: name)
+        self.type = .applePlace
+        self.placeDescription = placeDescription
+        self.latitude = latitude
+        self.longitude = longitude
+    }
+
     // MARK: Functions
 
     override var description: String {
         let exception = name == Constants.General.firstFavorite
-        return (type == .googlePlace || exception) ? (placeDescription ?? "") : ("Bus Stop")
+        return (type == .googlePlace || exception || type == .applePlace) ? (placeDescription ?? "") : ("Bus Stop")
     }
 
     override func isEqual(_ object: Any?) -> Bool {

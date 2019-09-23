@@ -11,6 +11,11 @@ import Foundation
 import SwiftyJSON
 
 // MARK: Request Bodies
+internal struct ApplePlacesBody: Codable {
+    let query: String
+    let places: [Place]
+}
+
 internal struct GetRoutesBody: Codable {
     let arriveBy: Bool
     let end: String

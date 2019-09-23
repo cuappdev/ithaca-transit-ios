@@ -88,6 +88,16 @@ extension Endpoint {
         return Endpoint(path: Constants.Endpoints.placeIDCoordinates, body: body)
     }
 
+    static func getAppleSearchResults(searchText: String) -> Endpoint {
+        let body = SearchResultsBody(query: searchText)
+        return Endpoint(path: Constants.Endpoints.appleSearch, body: body)
+    }
+
+    static func updateApplePlacesCache(searchText: String, places: [Place]) -> Endpoint {
+        let body = ApplePlacesBody(query: searchText, places: places)
+        return Endpoint(path: Constants.Endpoints.applePlaces, body: body)
+    }
+
     static func getSearchResults(searchText: String) -> Endpoint {
         let body = SearchResultsBody(query: searchText)
         return Endpoint(path: Constants.Endpoints.searchResults, body: body)

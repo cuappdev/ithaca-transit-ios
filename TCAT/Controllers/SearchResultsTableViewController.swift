@@ -32,6 +32,7 @@ class SearchResultsTableViewController: UITableViewController {
     private weak var destinationDelegate: DestinationDelegate?
     private weak var searchBarCancelDelegate: SearchBarCancelDelegate?
 
+    private var busStops: [Place] = []
     private var favorites: [Place] = []
     private var favoritesSection: Section!
     private var initialTableViewIndexMinY: CGFloat!
@@ -78,6 +79,14 @@ class SearchResultsTableViewController: UITableViewController {
 
         // Set Up MKSearchCompleter
         searchCompleter.delegate = self
+        if let searchRadius = CLLocationDistance(exactly: Constants.Map.searchRadius) {
+            let center = CLLocationCoordinate2D(latitude: Constants.Map.startingLat, longitude: Constants.Map.startingLong)
+            searchCompleter.region = MKCoordinateRegion(
+                center: center,
+                latitudinalMeters: searchRadius,
+                longitudinalMeters: searchRadius
+            )
+        }
 
         // Fetch RecentLocation and Favorites
         recentLocations = Global.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
@@ -117,6 +126,14 @@ class SearchResultsTableViewController: UITableViewController {
         self.sections = sections
     }
 
+    private func updateSearchResultsSection(with searchResults: [Place]) {
+        searchResultsSection = Section.searchResults(items: searchResults)
+        sections = searchResultsSection.isEmpty ? [] : [self.searchResultsSection]
+        if !sections.isEmpty {
+            tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        }
+    }
+
     private func showLocationDeniedAlert() {
         let alertController = UIAlertController(title: Constants.Alerts.LocationEnable.title,
                                                 message: Constants.Alerts.LocationEnable.message,
@@ -144,37 +161,53 @@ class SearchResultsTableViewController: UITableViewController {
         if let userInfo = timer.userInfo as? [String: String],
             let searchText = userInfo["searchText"],
             !searchText.isEmpty {
-//            getSearchResults(searchText: searchText).observe { [weak self] result in
-//                guard let `self` = self else { return }
-//                DispatchQueue.main.async {
-//                    switch result {
-//                    case .value(let response):
-//                        self.searchResultsSection = Section.searchResults(items: response.data)
-//                        self.sections = self.searchResultsSection.isEmpty ? [] : [self.searchResultsSection]
-//                        if !self.sections.isEmpty {
-//                            self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
-//                        }
-//                    default: break
-//                    }
-//                }
-//            }
-            getAppleSearchText(for: searchText)
+            getAppleSearchResults(searchText: searchText).observe { [weak self] result in
+                guard let `self` = self else { return }
+                DispatchQueue.main.async {
+                    switch result {
+                    case .value(let response):
+                        self.busStops = response.data.busStops
+                        if let applePlaces = response.data.applePlaces {
+                            let searchResults = applePlaces + self.busStops
+                            self.updateSearchResultsSection(with: searchResults)
+                        } else {
+                            self.searchCompleter.queryFragment = searchText
+                        }
+                    default: break
+                    }
+                }
+            }
+            //            getSearchResults(searchText: searchText).observe { [weak self] result in
+            //                guard let `self` = self else { return }
+            //                DispatchQueue.main.async {
+            //                    switch result {
+            //                    case .value(let response):
+            //                        self.searchResultsSection = Section.searchResults(items: response.data)
+            //                        self.sections = self.searchResultsSection.isEmpty ? [] : [self.searchResultsSection]
+            //                        if !self.sections.isEmpty {
+            //                            self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+            //                        }
+            //                    default: break
+            //                    }
+            //                }
+            //            }
+//            getAppleSearchText(for: searchText)
         } else {
             createDefaultSections()
         }
     }
+
+    private func getAppleSearchResults(searchText: String) -> Future<Response<AppleSearchResponse>> {
+        return networking(Endpoint.getAppleSearchResults(searchText: searchText)).decode()
+    }
+
+    private func updateApplePlacesCache(searchText: String, places: [Place]) -> Future<Response<Bool>> {
+        return networking(Endpoint.updateApplePlacesCache(searchText: searchText, places: places)).decode()
+    }
+
 }
 
 extension SearchResultsTableViewController: MKLocalSearchCompleterDelegate {
-    func getAppleSearchText(for searchText: String) {
-        if let places = SearchPlacesCache.shared.get(query: searchText) {
-            print("Retrieved cached places")
-            self.searchResultsSection = Section.searchResults(items: places)
-            self.sections = self.searchResultsSection.isEmpty ? [] : [self.searchResultsSection]
-        } else {
-            searchCompleter.queryFragment = searchText
-        }
-    }
 
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         print("MKLocalSearch got results: \(completer.results)")
@@ -190,26 +223,38 @@ extension SearchResultsTableViewController: MKLocalSearchCompleterDelegate {
                     print("Search Result Error: \(error)")
                 }
                 if let mapItem = response?.mapItems.first,
-                    let name = mapItem.name {
-                    print("Search Result Name: \(name)")
+                    let name = mapItem.name,
+                    let address = mapItem.placemark.thoroughfare,
+                    let city = mapItem.placemark.locality,
+                    let state = mapItem.placemark.administrativeArea,
+                    let country = mapItem.placemark.country {
                     let lat = mapItem.placemark.coordinate.latitude
                     let long = mapItem.placemark.coordinate.longitude
-                    let place = Place(name: name, latitude: lat, longitude: long)
+                    let description = [address, city, state, country].joined(separator: ", ")
+                    let place = Place(name: name, latitude: lat, longitude: long, placeDescription: description)
                     places.append(place)
-                    dispatchGroup.leave()
                 }
+                dispatchGroup.leave()
             })
         }
         dispatchGroup.notify(queue: .main) {
-            SearchPlacesCache.shared.put(query: completer.queryFragment, places: places)
-            self.searchResultsSection = Section.searchResults(items: places)
-            self.sections = self.searchResultsSection.isEmpty ? [] : [self.searchResultsSection]
+            let searchResults = places + self.busStops
+            self.updateSearchResultsSection(with: searchResults)
+            self.updateApplePlacesCache(searchText: completer.queryFragment, places: places).observe { [weak self] result in
+                guard self != nil else { return }
+                switch result {
+                case .value(let response):
+                    print("Succeeded in updating cache BOOL: \(response.data)")
+                default: break
+                }
+            }
         }
     }
 
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
         print("MKLocalSearch failed for error: \(error)")
     }
+
 }
 
 // MARK: TableView Data Source
@@ -314,9 +359,13 @@ extension SearchResultsTableViewController {
 extension SearchResultsTableViewController {
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if let cancelButton = searchBar?.value(forKey: "_cancelButton") as? UIButton {
+        if let cancelButtonIVar = class_getInstanceVariable(UIButton.self, "_cancelButton"),
+            let cancelButton = object_getIvar(searchBar, cancelButtonIVar) as? UIButton {
             cancelButton.isEnabled = true
         }
+        //        if let cancelButton = searchBar?.value(forKey: "_cancelButton") as? UIButton {
+        //            cancelButton.isEnabled = true
+        //        }
     }
 }
 
@@ -362,9 +411,6 @@ extension SearchResultsTableViewController: CLLocationManagerDelegate {
             currentLocation = Place(name: Constants.General.currentLocation,
                                     latitude: location.coordinate.latitude,
                                     longitude: location.coordinate.longitude)
-            if let searchRadius = CLLocationDistance(exactly: 2000) {
-                searchCompleter.region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: searchRadius, longitudinalMeters: searchRadius)
-            }
             createDefaultSections()
         }
     }
