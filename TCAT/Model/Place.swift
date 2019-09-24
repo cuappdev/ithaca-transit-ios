@@ -10,7 +10,7 @@ import CoreLocation
 import UIKit
 
 enum PlaceType: String, Codable {
-    case applePlace, busStop, googlePlace, unknown
+    case applePlace, busStop, unknown
 }
 
 @objc(Place) class Place: NSObject, Codable {
@@ -21,9 +21,6 @@ enum PlaceType: String, Codable {
     // Additional description of the place (e.g. address, "Bus Stop")
     private var placeDescription: String?
 
-    // Metadata related to the place (e.g. Google Place ID)
-    var placeIdentifier: String?
-
     var latitude: Double?
     var longitude: Double?
 
@@ -32,7 +29,6 @@ enum PlaceType: String, Codable {
         case longitude = "long"
         case name
         case placeDescription = "detail"
-        case placeIdentifier = "placeID"
         case type
     }
 
@@ -40,11 +36,11 @@ enum PlaceType: String, Codable {
         self.name = name
         self.type = .unknown
     }
+
     /// Initializer for Google Places
-    convenience init(name: String, placeDescription: String = "", placeIdentifier: String = "") {
+    convenience init(name: String, placeDescription: String = "") {
         self.init(name: name)
         self.placeDescription = placeDescription
-        self.placeIdentifier = placeIdentifier
     }
 
     /// Initializer for any type of location.
@@ -68,15 +64,12 @@ enum PlaceType: String, Codable {
 
     override var description: String {
         let exception = name == Constants.General.firstFavorite
-        return (type == .googlePlace || exception || type == .applePlace) ? (placeDescription ?? "") : ("Bus Stop")
+        return (type == .applePlace || exception) ? (placeDescription ?? "") : ("Bus Stop")
     }
 
     override func isEqual(_ object: Any?) -> Bool {
         guard let object = object as? Place else {
             return false
-        }
-        if let identifier = object.placeIdentifier {
-            return identifier == placeIdentifier
         }
         return object.name == name
     }

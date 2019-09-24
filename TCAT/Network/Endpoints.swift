@@ -98,11 +98,6 @@ extension Endpoint {
         return Endpoint(path: Constants.Endpoints.applePlaces, body: body)
     }
 
-    static func getSearchResults(searchText: String) -> Endpoint {
-        let body = SearchResultsBody(query: searchText)
-        return Endpoint(path: Constants.Endpoints.searchResults, body: body)
-    }
-
     static func routeSelected(routeId: String) -> Endpoint {
         // Add unique identifier to request
         let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid)

@@ -170,7 +170,6 @@ struct Constants {
         static let multiRoute = "/multiroute"
         static let placeIDCoordinates = "/placeIDCoordinates"
         static let routeSelected = "/routeSelected"
-        static let searchResults = "/search"
     }
 
     struct Footers {
