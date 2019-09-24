@@ -261,10 +261,6 @@ class HomeOptionsCardViewController: UIViewController {
         }
     }
 
-    private func getSearchResults(searchText: String) -> Future<Response<[Place]>> {
-        return networking(Endpoint.getSearchResults(searchText: searchText)).decode()
-    }
-
     @objc func presentFavoritesTVC(sender: UIButton? = nil) {
         let favoritesTVC = FavoritesTableViewController()
         let navController = CustomNavigationController(rootViewController: favoritesTVC)
@@ -283,16 +279,16 @@ class HomeOptionsCardViewController: UIViewController {
         if let userInfo = timer.userInfo as? [String: String],
             let searchText = userInfo["searchText"],
             !searchText.isEmpty {
-            getSearchResults(searchText: searchText).observe { [weak self] result in
+            SearchManager.shared.performLookup(for: searchText) { [weak self] (searchResults, error) in
                 guard let `self` = self else { return }
+                if let error = error {
+                    print("[HomeOptionsCardViewController] SearchManager lookup Error: \(error.localizedDescription)")
+                    return
+                }
                 DispatchQueue.main.async {
-                    switch result {
-                    case .value(let response):
-                        self.searchResultsSection = Section.searchResults(items: response.data)
-                        self.tableView.contentOffset = .zero
-                        self.sections = [self.searchResultsSection]
-                    default: break
-                    }
+                    self.searchResultsSection = Section.searchResults(items: searchResults)
+                    self.tableView.contentOffset = .zero
+                    self.sections = [self.searchResultsSection]
                 }
             }
         } else {

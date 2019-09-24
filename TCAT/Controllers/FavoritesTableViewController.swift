@@ -69,10 +69,6 @@ class FavoritesTableViewController: UIViewController {
         searchBar.endEditing(true)
     }
 
-    private func getSearchResults (searchText: String) -> Future<Response<[Place]>> {
-        return networking(Endpoint.getSearchResults(searchText: searchText)).decode()
-    }
-
     @objc private func dismissVC() {
         dismiss(animated: true)
     }
@@ -121,29 +117,8 @@ extension FavoritesTableViewController: UITableViewDelegate {
         cell?.accessoryView = UIActivityIndicatorView()
         tableView.deselectRow(at: indexPath, animated: true)
         if let place = resultsSection.getItem(at: indexPath.row) {
-            if place.type == .busStop {
-                Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
-                dismissVC()
-                return
-            }
-            // Fetch coordinates and store
-            CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
-                if error != nil {
-                    print("Unable to get coordinates to save favorite.")
-                    cell?.accessoryView = nil
-                    let title = Constants.Alerts.PlacesFailure.title
-                    let message = Constants.Alerts.PlacesFailure.message
-                    let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-                    let done = UIAlertAction(title: Constants.Alerts.PlacesFailure.action, style: .default)
-                    alertController.addAction(done)
-                    self.present(alertController, animated: true, completion: nil)
-                } else {
-                    place.latitude = latitude
-                    place.longitude = longitude
-                    Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
-                    self.dismissVC()
-                }
-            }
+            Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
+            dismissVC()
         }
     }
 }
@@ -180,21 +155,15 @@ extension FavoritesTableViewController: UISearchBarDelegate {
         if let userInfo = timer.userInfo as? [String: String],
             let searchText = userInfo["searchText"],
             !searchText.isEmpty {
-            getSearchResults(searchText: searchText).observe { [weak self] result in
+            SearchManager.shared.performLookup(for: searchText) { [weak self] (searchResults, error) in
                 guard let `self` = self else { return }
                 DispatchQueue.main.async {
-                    switch result {
-                    case .value(let response):
-                        if response.success {
-                            self.resultsSection = Section.searchResults(items: response.data)
-                        } else {
-                            print("[FavoritesTableViewController] success: false")
-                            self.resultsSection = Section.searchResults(items: [])
-                        }
-                    case .error(let error):
-                        print("[FavoritesTableViewController] getSearchResults Error: \(error.localizedDescription)")
+                    if let error = error {
+                        print("[FavoritesTableViewController] SearchManager lookup Error: \(error.localizedDescription)")
                         self.resultsSection = Section.recentSearches(items: [])
+                        return
                     }
+                    self.resultsSection = Section.searchResults(items: searchResults)
                 }
             }
         } else {

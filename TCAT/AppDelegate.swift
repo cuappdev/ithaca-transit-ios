@@ -226,35 +226,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             
             if let placeResult = item as? PlaceResult {
-                optionalPlace = Place(name: placeResult.name, placeDescription: placeResult.detail, placeIdentifier: placeResult.placeID)
-                optionalPlace?.type = .googlePlace
+                optionalPlace = Place(name: placeResult.name, placeDescription: placeResult.detail)
             }
             
             guard let place = optionalPlace else {
                 completion(places, "Unable to retrieve busStop or placeResult data.")
                 return
             }
-            
-            if place.type == .googlePlace {
-                CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
-                    if error != nil {
-                        completion(places, "\(place.name): Unable to get Google Place coordinates")
-                    } else {
-                        place.latitude = latitude
-                        place.longitude = longitude
-                        places.append(place)
-                    }
-                    if places.count == data.count {
-                        completion(places, nil)
-                    }
-                }
-            } else {
-                places.append(place)
-                if places.count == data.count {
-                    completion(places, nil)
-                }
+
+            places.append(place)
+            if places.count == data.count {
+                completion(places, nil)
             }
-            
         } // end for loop
         
     }

@@ -10,6 +10,7 @@ import CoreLocation
 import Crashlytics
 import DZNEmptyDataSet
 import FutureNova
+import MapKit
 import SwiftyJSON
 import UIKit
 
@@ -111,6 +112,14 @@ class SearchResultsTableViewController: UITableViewController {
         self.sections = sections
     }
 
+    private func updateSearchResultsSection(with searchResults: [Place]) {
+        searchResultsSection = Section.searchResults(items: searchResults)
+        sections = searchResultsSection.isEmpty ? [] : [self.searchResultsSection]
+        if !sections.isEmpty {
+            tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        }
+    }
+
     private func showLocationDeniedAlert() {
         let alertController = UIAlertController(title: Constants.Alerts.LocationEnable.title,
                                                 message: Constants.Alerts.LocationEnable.message,
@@ -130,32 +139,25 @@ class SearchResultsTableViewController: UITableViewController {
         })
     }
 
-    private func getSearchResults (searchText: String) -> Future<Response<[Place]>> {
-        return networking(Endpoint.getSearchResults(searchText: searchText)).decode()
-    }
-
     @objc private func getPlaces(timer: Timer) {
         if let userInfo = timer.userInfo as? [String: String],
             let searchText = userInfo["searchText"],
             !searchText.isEmpty {
-            getSearchResults(searchText: searchText).observe { [weak self] result in
+            SearchManager.shared.performLookup(for: searchText) { [weak self] (searchResults, error) in
                 guard let `self` = self else { return }
+                if let error = error {
+                    print("[SearchResultsTableViewController] SearchManager lookup Error: \(error.localizedDescription)")
+                    return
+                }
                 DispatchQueue.main.async {
-                    switch result {
-                    case .value(let response):
-                        self.searchResultsSection = Section.searchResults(items: response.data)
-                        self.sections = self.searchResultsSection.isEmpty ? [] : [self.searchResultsSection]
-                        if !self.sections.isEmpty {
-                            self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
-                        }
-                    default: break
-                    }
+                    self.updateSearchResultsSection(with: searchResults)
                 }
             }
         } else {
             createDefaultSections()
         }
     }
+
 }
 
 // MARK: TableView Data Source
@@ -260,7 +262,8 @@ extension SearchResultsTableViewController {
 extension SearchResultsTableViewController {
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if let cancelButton = searchBar?.value(forKey: "_cancelButton") as? UIButton {
+        if let cancelButtonIVar = class_getInstanceVariable(UIButton.self, "_cancelButton"),
+            let cancelButton = object_getIvar(searchBar, cancelButtonIVar) as? UIButton {
             cancelButton.isEnabled = true
         }
     }
@@ -286,7 +289,7 @@ extension SearchResultsTableViewController: UISearchBarDelegate, UISearchResults
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(timeInterval: 0.2,
+        timer = Timer.scheduledTimer(timeInterval: 0.75,
                                      target: self,
                                      selector: #selector(getPlaces),
                                      userInfo: ["searchText": searchText],
@@ -306,8 +309,8 @@ extension SearchResultsTableViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             currentLocation = Place(name: Constants.General.currentLocation,
-                                             latitude: location.coordinate.latitude,
-                                             longitude: location.coordinate.longitude)
+                                    latitude: location.coordinate.latitude,
+                                    longitude: location.coordinate.longitude)
             createDefaultSections()
         }
     }
@@ -351,5 +354,5 @@ extension SearchResultsTableViewController: DZNEmptyDataSetSource {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

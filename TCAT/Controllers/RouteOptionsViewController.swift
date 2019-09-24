@@ -314,27 +314,6 @@ class RouteOptionsViewController: UIViewController {
         searchBarView.searchController?.isActive = true
     }
 
-    /// Fetch coordinates, store in place, return updated place
-    private func fetchCoordinates(place: Place, completion: @escaping (_ place: Place?) -> Void) {
-        if place.latitude == nil || place.longitude == nil {
-            CoordinateVisitor.getCoordinates(for: place) { (latitude, longitude, error) in
-                if error != nil {
-                    self.requestDidFinish(perform: [
-                        .showError(bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .danger),
-                                   payload: GetRoutesErrorPayload(type: "Nil Place Coordinates",
-                                                                  description: "Place(s) don't have coordinates. (didSelectPlace)",
-                                                                  url: nil))
-                        ])
-                    completion(nil)
-                } else {
-                    place.latitude = latitude
-                    place.longitude = longitude
-                    completion(place)
-                }
-            }
-        }
-    }
-
     @objc private func refreshRoutesAndTime() {
         let now = Date()
         if let leaveDate = searchTime,
@@ -371,24 +350,6 @@ class RouteOptionsViewController: UIViewController {
                 routeSelection.updateSearchBarTitles(from: searchFrom.name)
             case .to:
                 routeSelection.updateSearchBarTitles(to: searchTo.name)
-            }
-
-            // If don't have coordinates, fetch and restart process
-            if searchFrom.latitude == nil || searchFrom.longitude == nil {
-                fetchCoordinates(place: searchFrom) { (optionalPlace) in
-                    guard let place = optionalPlace else { return }
-                    self.searchFrom = place
-                    self.searchForRoutes()
-                }
-                return
-            }
-            if searchTo.latitude == nil || searchTo.longitude == nil {
-                fetchCoordinates(place: searchTo) { (optionalPlace) in
-                    guard let place = optionalPlace else { return }
-                    self.searchTo = place
-                    self.searchForRoutes()
-                }
-                return
             }
 
             // Prepare feedback on Network request
