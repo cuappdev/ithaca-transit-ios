@@ -90,12 +90,17 @@ class RouteDiagramSegment: UIView {
     // MARK: Get data from route ojbect
 
     private func getStopLabel(withName name: String, withStayOnBusForTranfer stayOnBusForTranfer: Bool, withDistance distance: Double?) -> UILabel {
+        
+        let labelPadding: CGFloat = 12
+        let rightPadding: CGFloat = 40
+        let xPos: CGFloat = 96
+        let width: CGFloat = UIScreen.main.bounds.width - xPos - rightPadding - labelPadding
 
         let stopLabel = UILabel()
         // allow for multi-line label for long stop names
         stopLabel.allowsDefaultTighteningForTruncation = true
         stopLabel.lineBreakMode = .byWordWrapping
-        stopLabel.preferredMaxLayoutWidth = 266
+        stopLabel.preferredMaxLayoutWidth = width
         stopLabel.numberOfLines = 0
 
         let stopNameAttrs: [NSAttributedString.Key: Any] = [
@@ -110,8 +115,10 @@ class RouteDiagramSegment: UIView {
                 .font: UIFont.getFont(.regular, size: 12.0),
                 .foregroundColor: Colors.metadataIcon
             ]
+            
+            let addLineBreak = getStopLabelWidth(withName: name, withDistance: distance) > width
 
-            let travelDistance = NSMutableAttributedString(string: " \(distance.roundedString) away", attributes: travelDistanceAttrs)
+            let travelDistance = NSMutableAttributedString(string: addLineBreak ? "\n\(distance.roundedString) away" : " \(distance.roundedString) away", attributes: travelDistanceAttrs)
             stopName.append(travelDistance)
         }
 
@@ -127,6 +134,14 @@ class RouteDiagramSegment: UIView {
         stopLabel.attributedText = stopName
 
         return stopLabel
+    }
+    
+    private func getStopLabelWidth(withName name: String, withDistance distance: Double) -> CGFloat {
+        let testStopLabel = UILabel()
+        testStopLabel.font = .getFont(.regular, size: 14.0)
+        testStopLabel.text = "\(name) \(distance.roundedString) away"
+        testStopLabel.sizeToFit()
+        return testStopLabel.frame.width
     }
 
     private func isStopLabelOneLine(_ stopLabel: UILabel) -> Bool {
