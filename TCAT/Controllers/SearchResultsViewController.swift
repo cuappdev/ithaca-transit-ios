@@ -1,5 +1,5 @@
 //
-//  SearchResultsTableViewController.swift
+//  SearchResultsViewController.swift
 //  TCAT
 //
 //  Created by Austin Astorga on 3/5/17.
@@ -22,9 +22,10 @@ protocol SearchBarCancelDelegate: class {
     func didCancel()
 }
 
-class SearchResultsTableViewController: UITableViewController {
+class SearchResultsViewController: UIViewController {
 
     var searchBar: UISearchBar?
+    var tableView: UITableView!
 
     var currentLocation: Place?
     private weak var destinationDelegate: DestinationDelegate?
@@ -49,17 +50,21 @@ class SearchResultsTableViewController: UITableViewController {
         }
     }
 
-    convenience init(searchBarCancelDelegate: SearchBarCancelDelegate? = nil, destinationDelegate: DestinationDelegate? = nil) {
-        self.init(style: .grouped)
-
+    init(searchBarCancelDelegate: SearchBarCancelDelegate? = nil, destinationDelegate: DestinationDelegate? = nil) {
+        super.init(nibName: nil, bundle: nil)
         self.searchBarCancelDelegate = searchBarCancelDelegate
         self.destinationDelegate = destinationDelegate
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Set Up TableView
+        tableView = UITableView(frame: .zero, style: .grouped)
         tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.generalCellIdentifier)
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
         tableView.emptyDataSetSource = self
@@ -69,7 +74,16 @@ class SearchResultsTableViewController: UITableViewController {
         tableView.keyboardDismissMode = .onDrag
         tableView.backgroundColor = Colors.backgroundWash
         tableView.showsVerticalScrollIndicator = false
+        tableView.delegate = self
+        tableView.dataSource = self
         tableView.reloadData()
+        view.addSubview(tableView)
+
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            make.leading.trailing.equalToSuperview()
+        }
 
         // Set Up LocationManager
         locationManager.delegate = self
@@ -146,7 +160,7 @@ class SearchResultsTableViewController: UITableViewController {
             SearchManager.shared.performLookup(for: searchText) { [weak self] (searchResults, error) in
                 guard let `self` = self else { return }
                 if let error = error {
-                    print("[SearchResultsTableViewController] SearchManager lookup Error: \(error.localizedDescription)")
+                    print("[SearchResultsViewController] SearchManager lookup Error: \(error.localizedDescription)")
                     return
                 }
                 DispatchQueue.main.async {
@@ -161,13 +175,13 @@ class SearchResultsTableViewController: UITableViewController {
 }
 
 // MARK: TableView Data Source
-extension SearchResultsTableViewController {
+extension SearchResultsViewController: UITableViewDataSource {
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch sections[section] {
         case .recentSearches:
             return recentLocations.count
@@ -178,7 +192,7 @@ extension SearchResultsTableViewController {
         }
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch sections[indexPath.section] {
         case .currentLocation, .seeAllStops:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier) as? GeneralTableViewCell
@@ -195,9 +209,9 @@ extension SearchResultsTableViewController {
 }
 
 // MARK: TableView Delegate
-extension SearchResultsTableViewController {
+extension SearchResultsViewController: UITableViewDelegate {
 
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         var header: HeaderView!
 
         switch sections[section] {
@@ -214,22 +228,22 @@ extension SearchResultsTableViewController {
         return header
     }
 
-    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0
     }
 
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch sections[section] {
         case .favorites, .recentSearches: return 50
         default: return 24
         }
     }
 
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50.0
     }
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var didSelectAllStops = false
         let allStopsTVC = AllStopsTableViewController(delegate: self)
 
@@ -259,9 +273,9 @@ extension SearchResultsTableViewController {
 }
 
 // MARK: ScrollView Delegate
-extension SearchResultsTableViewController {
+extension SearchResultsViewController {
 
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if let cancelButtonIVar = class_getInstanceVariable(UIButton.self, "_cancelButton"),
             let cancelButton = object_getIvar(searchBar, cancelButtonIVar) as? UIButton {
             cancelButton.isEnabled = true
@@ -270,7 +284,7 @@ extension SearchResultsTableViewController {
 }
 
 // MARK: Search Bar Delegate
-extension SearchResultsTableViewController: UISearchBarDelegate, UISearchResultsUpdating {
+extension SearchResultsViewController: UISearchBarDelegate, UISearchResultsUpdating {
 
     func updateSearchResults(for searchController: UISearchController) {
         if !sections.isEmpty && tableView.numberOfRows(inSection: 0) > 0 {
@@ -297,7 +311,7 @@ extension SearchResultsTableViewController: UISearchBarDelegate, UISearchResults
     }
 }
 
-extension SearchResultsTableViewController: UnwindAllStopsTVCDelegate {
+extension SearchResultsViewController: UnwindAllStopsTVCDelegate {
     func dismissSearchResultsVC(place: Place) {
         returningFromAllStopsBusStop = place
         returningFromAllStopsTVC = true
@@ -305,7 +319,7 @@ extension SearchResultsTableViewController: UnwindAllStopsTVCDelegate {
 }
 
 // MARK: - Location Manager Delegates
-extension SearchResultsTableViewController: CLLocationManagerDelegate {
+extension SearchResultsViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             currentLocation = Place(name: Constants.General.currentLocation,
@@ -326,7 +340,7 @@ extension SearchResultsTableViewController: CLLocationManagerDelegate {
 }
 
 // MARK: Navigation Controller Delegate
-extension SearchResultsTableViewController: UINavigationControllerDelegate {
+extension SearchResultsViewController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
         if returningFromAllStopsTVC, let place = returningFromAllStopsBusStop {
             destinationDelegate?.didSelectPlace(place: place)
@@ -337,7 +351,7 @@ extension SearchResultsTableViewController: UINavigationControllerDelegate {
 /// MARK: DZNEmptyDataSet DataSource
 
 // To be eventually removed and replaced with recent searches
-extension SearchResultsTableViewController: DZNEmptyDataSetSource {
+extension SearchResultsViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
         return -80
     }
