@@ -16,11 +16,6 @@ extension HomeOptionsCardViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         // Update searchbar attributes
-        if let textFieldInsideSearchBar = searchBar.value(forKey: Constants.SearchBar.searchField) as? UITextField,
-            let searchView = textFieldInsideSearchBar.leftView as? UIImageView {
-            textFieldInsideSearchBar.backgroundColor = Colors.white
-            searchView.image = #imageLiteral(resourceName: "search-large")
-        }
         searchBar.placeholder = Constants.General.searchPlaceholder
         searchBar.text = nil
 
