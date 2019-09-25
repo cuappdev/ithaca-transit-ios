@@ -17,7 +17,6 @@ class SearchBarView: UIView, UISearchControllerDelegate {
         super.init(frame: .zero)
 
         //Search Bar Customization
-        UISearchBar.appearance().setImage(UIImage(named: "search"), for: .search, state: .normal)
         UIBarButtonItem.appearance().setTitleTextAttributes([.foregroundColor: Colors.black], for: .normal)
 
         resultsViewController = SearchResultsTableViewController(searchBarCancelDelegate: searchBarCancelDelegate, destinationDelegate: destinationDelegate)
