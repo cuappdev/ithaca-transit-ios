@@ -90,15 +90,12 @@ class RouteDiagramSegment: UIView {
     // MARK: Get data from route ojbect
 
     private func getStopLabel(withName name: String, withStayOnBusForTranfer stayOnBusForTranfer: Bool, withDistance distance: Double?) -> UILabel {
-        let labelPadding: CGFloat = 12
-        let rightPadding: CGFloat = 16
-        let xPos: CGFloat = 101
-        let width: CGFloat = UIScreen.main.bounds.width - xPos - rightPadding - labelPadding
 
         let stopLabel = UILabel()
         // allow for multi-line label for long stop names
         stopLabel.allowsDefaultTighteningForTruncation = true
         stopLabel.lineBreakMode = .byWordWrapping
+        stopLabel.preferredMaxLayoutWidth = 266
         stopLabel.numberOfLines = 0
 
         let stopNameAttrs: [NSAttributedString.Key: Any] = [
@@ -109,20 +106,12 @@ class RouteDiagramSegment: UIView {
 
         if let distance = distance {
 
-            let testStopLabel = getTestStopLabel(withName: name)
-            let testDistanceLabel = getTestDistanceLabel(withDistance: distance)
-
-            var addLinebreak = false
-            if testStopLabel.frame.width + testDistanceLabel.frame.width > width {
-                addLinebreak = true
-            }
-
             let travelDistanceAttrs: [NSAttributedString.Key: Any] = [
                 .font: UIFont.getFont(.regular, size: 12.0),
                 .foregroundColor: Colors.metadataIcon
             ]
 
-            let travelDistance = NSMutableAttributedString(string: addLinebreak ? "\n\(distance.roundedString) away" : " \(distance.roundedString) away", attributes: travelDistanceAttrs)
+            let travelDistance = NSMutableAttributedString(string: " \(distance.roundedString) away", attributes: travelDistanceAttrs)
             stopName.append(travelDistance)
         }
 
@@ -138,25 +127,6 @@ class RouteDiagramSegment: UIView {
         stopLabel.attributedText = stopName
 
         return stopLabel
-    }
-
-    private func getTestStopLabel(withName name: String) -> UILabel {
-        let testStopLabel = UILabel()
-        testStopLabel.font = .getFont(.regular, size: 14.0)
-        testStopLabel.textColor = Colors.primaryText
-        testStopLabel.text = name
-        testStopLabel.sizeToFit()
-        return testStopLabel
-    }
-
-    private func getTestDistanceLabel(withDistance distance: Double) -> UILabel {
-        let testDistanceLabel = UILabel()
-        testDistanceLabel.font = .getFont(.regular, size: 12.0)
-        testDistanceLabel.textColor = Colors.metadataIcon
-        testDistanceLabel.text = " \(distance.roundedString) away"
-        testDistanceLabel.sizeToFit()
-
-        return testDistanceLabel
     }
 
     private func isStopLabelOneLine(_ stopLabel: UILabel) -> Bool {
