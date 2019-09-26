@@ -273,7 +273,7 @@ extension SearchResultsTableViewController {
 extension SearchResultsTableViewController: UISearchBarDelegate, UISearchResultsUpdating {
 
     func updateSearchResults(for searchController: UISearchController) {
-        if !sections.isEmpty {
+        if !sections.isEmpty && tableView.numberOfRows(inSection: 0) > 0 {
             tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
         }
         searchController.searchResultsController?.view.isHidden = false
