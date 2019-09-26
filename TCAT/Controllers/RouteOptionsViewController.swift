@@ -299,6 +299,9 @@ class RouteOptionsViewController: UIViewController {
 
     func hideSearchBar() {
         navigationItem.searchController = nil
+        // After removing searchController from navigation bar, we need to call
+        // setNeedsLayout in order to restore the navigation bar to its original height
+        navigationController?.view.setNeedsLayout()
         if let backButton = backButton {
             navigationItem.setLeftBarButton(backButton, animated: false)
         }
@@ -308,6 +311,10 @@ class RouteOptionsViewController: UIViewController {
 
     private func showSearchBar() {
         navigationItem.searchController = searchBarView.searchController
+        // After adding searchController to navigation bar, we need to call
+        // setNeedsLayout in order to for the navigation bar to increase its height
+        // to account for the search bar
+        navigationController?.view.setNeedsLayout()
         backButton = navigationItem.leftBarButtonItem
         navigationItem.setLeftBarButton(nil, animated: false)
         navigationItem.hidesBackButton = true

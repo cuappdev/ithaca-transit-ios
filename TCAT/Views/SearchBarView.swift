@@ -10,17 +10,16 @@ import UIKit
 
 class SearchBarView: UIView, UISearchControllerDelegate {
 
-    var resultsViewController: SearchResultsTableViewController?
+    var resultsViewController: SearchResultsViewController?
     var searchController: UISearchController?
 
     init(searchBarCancelDelegate: SearchBarCancelDelegate? = nil, destinationDelegate: DestinationDelegate? = nil) {
         super.init(frame: .zero)
 
         //Search Bar Customization
-        UISearchBar.appearance().setImage(UIImage(named: "search"), for: .search, state: .normal)
         UIBarButtonItem.appearance().setTitleTextAttributes([.foregroundColor: Colors.black], for: .normal)
 
-        resultsViewController = SearchResultsTableViewController(searchBarCancelDelegate: searchBarCancelDelegate, destinationDelegate: destinationDelegate)
+        resultsViewController = SearchResultsViewController(searchBarCancelDelegate: searchBarCancelDelegate, destinationDelegate: destinationDelegate)
         searchController = UISearchController(searchResultsController: resultsViewController)
         searchController?.searchResultsUpdater = resultsViewController
         searchController?.searchBar.delegate = resultsViewController
