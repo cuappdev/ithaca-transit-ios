@@ -365,7 +365,7 @@ class RouteOptionsViewController: UIViewController {
             JSONFileManager.shared.logSearchParameters(timestamp: now, startPlace: searchFrom, endPlace: searchTo, searchTime: time, searchTimeType: searchTimeType)
 
             // MARK: Search For Routes Errors
-
+            
             guard let areValidCoordinates = self.checkPlaceCoordinates(startPlace: searchFrom, endPlace: searchTo) else {
                 // Place(s) don't have coordinates assigned
                 self.requestDidFinish(perform: [
