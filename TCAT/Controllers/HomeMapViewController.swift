@@ -70,7 +70,6 @@ class HomeMapViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        navigationController?.isNavigationBarHidden = true
 
         // Add Notification Observers
         NotificationCenter.default.addObserver(self,
@@ -91,7 +90,6 @@ class HomeMapViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        navigationController?.isNavigationBarHidden = false
         reachability?.stopNotifier()
 
         // Remove Notification Observers
