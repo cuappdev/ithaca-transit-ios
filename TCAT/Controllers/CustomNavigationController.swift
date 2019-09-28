@@ -132,6 +132,10 @@ class CustomNavigationController: UINavigationController, UINavigationController
 
     // MARK: UINavigationControllerDelegate Functions
 
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        setNavigationBarHidden(viewController is HomeMapViewController, animated: animated)
+    }
+
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
         interactivePopGestureRecognizer?.isEnabled = (responds(to: #selector(getter: interactivePopGestureRecognizer)) && viewControllers.count > 1)
     }
