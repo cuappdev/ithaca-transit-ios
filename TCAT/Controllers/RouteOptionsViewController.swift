@@ -42,7 +42,7 @@ class RouteOptionsViewController: UIViewController {
     var currentLocation: CLLocationCoordinate2D?
     var lastRouteRefreshDate = Date()
     var locationManager: CLLocationManager!
-    var routes: [[Route]] = []
+    var routes: [[Route]] = [] // Lucy - Array of all the routes
     var searchFrom: Place?
     var searchTime: Date?
     var searchTimeType: SearchType = .leaveNow

@@ -189,6 +189,9 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Get Data
 
     private func getDelayState(fromRoute route: Route) -> DelayState {
+        
+        print("Getting delay state")
+        
         if let firstDepartDirection = route.getFirstDepartRawDirection() {
 
             let departTime = firstDepartDirection.startTime
