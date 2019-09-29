@@ -62,6 +62,8 @@ class RouteOptionsViewController: UIViewController {
 
     /// Returns routes from each section in order
     private var allRoutes: [Route] {
+        print(routes)
+        print("Getting all the routes")
         return routes.flatMap { $0 }
     }
 
@@ -134,11 +136,11 @@ class RouteOptionsViewController: UIViewController {
         banner?.dismiss()
         banner = nil
         // Deactivate and remove timers
-        routeResults.visibleCells.forEach {
-            if let cell = $0 as? RouteTableViewCell {
-                cell.invalidateTimer()
-            }
-        }
+//        routeResults.visibleCells.forEach {
+//            if let cell = $0 as? RouteTableViewCell {
+//                cell.invalidateTimer()
+//            }
+//        }
         // Stop observing when app becomes active 
         NotificationCenter.default.removeObserver(self)
     }
@@ -417,6 +419,10 @@ class RouteOptionsViewController: UIViewController {
                 })
             }
         }
+    }
+    
+    func updateRoutes() {
+        print(routes)
     }
 
     private func getRoutes(start: Place,
