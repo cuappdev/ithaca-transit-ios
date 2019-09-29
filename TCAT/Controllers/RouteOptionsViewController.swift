@@ -42,7 +42,7 @@ class RouteOptionsViewController: UIViewController {
     var currentLocation: CLLocationCoordinate2D?
     var lastRouteRefreshDate = Date()
     var locationManager: CLLocationManager!
-    var routes: [[Route]] = [] // Lucy - Array of all the routes
+    var routes: [[Route]] = []
     var searchFrom: Place?
     var searchTime: Date?
     var searchTimeType: SearchType = .leaveNow
@@ -59,11 +59,12 @@ class RouteOptionsViewController: UIViewController {
     private let networking: Networking = URLSession.shared.request
     private let reachability: Reachability? = Reachability(hostname: Endpoint.config.host ?? "")
     private let routeResultsTitle: String = Constants.Titles.routeResults
-
+    
+    // Timer for route live tracking
+    private var routeTimer: Timer?
+    
     /// Returns routes from each section in order
     private var allRoutes: [Route] {
-        print(routes)
-        print("Getting all the routes")
         return routes.flatMap { $0 }
     }
 
@@ -107,6 +108,8 @@ class RouteOptionsViewController: UIViewController {
         }
 
         searchForRoutes()
+        
+        routeTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveTracking), userInfo: nil, repeats: true)
 
         // Check for 3D Touch availability
         if traitCollection.forceTouchCapability == .available {
@@ -120,9 +123,9 @@ class RouteOptionsViewController: UIViewController {
         super.viewWillAppear(animated)
         setupReachability()
         // Reload data to activate timers again
-        if !routes.isEmpty {
-            routeResults.reloadData()
-        }
+//        if !routes.isEmpty {
+//            routeResults.reloadData()
+//        }
 
         setUpRouteRefreshing()
     }
@@ -323,6 +326,11 @@ class RouteOptionsViewController: UIViewController {
         searchBarView.searchController?.isActive = true
     }
 
+    @objc func updateLiveTracking() {
+        print(routes)
+        print("Update Live Tracking")
+    }
+    
     @objc private func refreshRoutesAndTime() {
         let now = Date()
         if let leaveDate = searchTime,

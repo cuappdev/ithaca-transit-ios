@@ -34,7 +34,7 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Data vars
     private let containerViewLayoutInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 12)
     private let networking: Networking = URLSession.shared.request
-    private var timer: Timer?
+//    private var timer: Timer?
 
     // MARK: Init
 
