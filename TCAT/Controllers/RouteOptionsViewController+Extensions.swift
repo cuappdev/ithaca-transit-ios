@@ -214,10 +214,8 @@ extension RouteOptionsViewController: UITableViewDataSource {
         if let delay = delayDictionary[id] {
             cell.delay = delay
         }
-        
-        print("configure")
-        
-        cell.configure(for: routes[indexPath.section][indexPath.row], delegate: self)
+            
+        cell.configure(for: routes[indexPath.section][indexPath.row], delegate: self, delayState: delayDictionary[id] )
 
         // Add share action for long press gestures on non 3D Touch devices
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))

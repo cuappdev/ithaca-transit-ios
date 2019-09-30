@@ -48,7 +48,6 @@ class RouteTableViewCell: UITableViewCell {
         setupDepartureStackView()
         setupTravelTimeLabel()
         setupLiveContainerView()
-        setLiveElements()
 
         setupConstraints()
     }
@@ -161,10 +160,14 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     // MARK: Set Data
-    func configure(for route: Route, delegate: RouteTableViewCellDelegate? = nil) {
+    func configure(for route: Route, delegate: RouteTableViewCellDelegate? = nil, delayState: DelayState? = nil) {
         self.delegate = delegate
 
 //        timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay(sender:)), userInfo: ["route": route], repeats: true)
+        
+        if let delay = delayState {
+            setLiveElements(withDelayState: delay)
+        }
 
         setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
 
@@ -297,9 +300,12 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     // Update all of the live elements based on the delay state.
-    private func setLiveElements() {
+    private func setLiveElements(withDelayState: DelayState) {
         
         if let delayState = delay {
+            
+            print("Yes delay")
+            print(delayState)
             
             switch delayState {
             case .late(date: let delayedDepartureTime):

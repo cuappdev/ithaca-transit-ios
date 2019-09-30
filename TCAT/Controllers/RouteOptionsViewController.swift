@@ -331,6 +331,7 @@ class RouteOptionsViewController: UIViewController {
     }
     
     @objc func rerenderLiveTracking(sender: Timer) {
+        print(dump(delayDictionary))
         routeResults.reloadData()
     }
     
