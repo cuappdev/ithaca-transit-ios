@@ -62,6 +62,9 @@ class RouteOptionsViewController: UIViewController {
     
     // Timer for route live tracking
     private var routeTimer: Timer?
+    private var updateTimer: Timer?
+    
+    var delayDictionary: [String: DelayState] = [:]
     
     /// Returns routes from each section in order
     private var allRoutes: [Route] {
@@ -110,6 +113,7 @@ class RouteOptionsViewController: UIViewController {
         searchForRoutes()
         
         routeTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveTracking(sender:)), userInfo: nil, repeats: true)
+        updateTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(rerenderLiveTracking(sender:)), userInfo: nil, repeats: true)
 
         // Check for 3D Touch availability
         if traitCollection.forceTouchCapability == .available {
@@ -326,64 +330,47 @@ class RouteOptionsViewController: UIViewController {
         searchBarView.searchController?.isActive = true
     }
     
+    @objc func rerenderLiveTracking(sender: Timer) {
+        routeResults.reloadData()
+    }
+    
     private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
         return networking(Endpoint.getDelay(tripID: tripId, stopID: stopId)).decode()
     }
 
     @objc func updateLiveTracking(sender: Timer) {
-//        print(routes)
-        if (routes.count > 0) {
-            for route in routes[0] {
+        for routesArray in routes {
+            for route in routesArray {
                 if !route.isRawWalkingRoute(),
                     let direction = route.getFirstDepartRawDirection(),
                     let tripId = direction.tripIdentifiers?.first,
                     let stopId = direction.stops.first?.id {
-                    getDelay(tripId: tripId, stopId: stopId).observe(with: { [weak self] result in
-//                        guard let `self` = self else { return }
-                        let fileName = "RouteTableViewCell"
+                    getDelay(tripId: tripId, stopId: stopId).observe(with: { result in
                         DispatchQueue.main.async {
-                           switch result {
-                           case .value (let delayResponse):
-                               guard (delayResponse.data != nil), let delay = delayResponse.data else {
-                                   return
-                               }
-       
-                               let isNewDelayValue = (route.getFirstDepartRawDirection()?.delay != delay)
-                               if isNewDelayValue {
-                                   JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
-                                   JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
-//                                   if let data = try? JSONEncoder().encode(delayResponse) {
-//                                       do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: self.delegate?.getRowNum(for: self) ?? -1)) } catch let error {
-//                                           let line = "\(fileName) \(#function): \(error.localizedDescription)"
-//                                           print(line)
-//                                       }
-//                                   }
-                               }
-       
-                               let departTime = direction.startTime
-                               let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
-       
-                               let isLateDelay = (Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending)
-                               if isLateDelay {
-                                   let delayState = DelayState.late(date: delayedDepartTime)
-//                                   self.setDepartureTime(withStartTime: Date(), withDelayState: delayState)
-//                                   self.setLiveElements(withDelayState: delayState)
-                                    print(delayState)
-                               } else {
-                                   let delayState = DelayState.onTime(date: departTime)
-//                                   self.setDepartureTime(withStartTime: Date(), withDelayState: delayState)
-//                                   self.setLiveElements(withDelayState: delayState)
-                                    print(delayState)
-                               }
-       
-                               route.getFirstDepartRawDirection()?.delay = delay
-       
-                           case .error(let error):
-                               print("\(fileName) \(#function) error: \(error.localizedDescription)")
-//                               self.setDepartureTimeAndLiveElements(withRoute: route)
-                           }
-                       }
-                   })
+                            switch result {
+                            case .value (let delayResponse):
+                                guard (delayResponse.data != nil), let delay = delayResponse.data else {
+                                    return
+                                }
+                                let departTime = direction.startTime
+                                let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
+                                let isLateDelay = (Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending)
+                                if isLateDelay {
+                                    let delayState = DelayState.late(date: delayedDepartTime)
+//                                    print("isLateDelay for route \(route.routeId) \(delayState)")
+                                    self.delayDictionary[route.routeId] = delayState
+                                } else {
+                                    let delayState = DelayState.onTime(date: departTime)
+//                                    print("not isLateDelay for route \(route.routeId) \(route.routeId)\(delayState)")
+                                    self.delayDictionary[route.routeId] = delayState
+                                }
+//                                route.getFirstDepartRawDirection()?.delay = delay
+                            
+                            case .error(let error):
+                                print(error)
+                            }
+                        }
+                    })
                 }
             }
         }

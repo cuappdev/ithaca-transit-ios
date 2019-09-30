@@ -30,11 +30,12 @@ class RouteTableViewCell: UITableViewCell {
     private let liveLabel = UILabel()
     private var routeDiagram: RouteDiagram!
     private let travelTimeLabel = UILabel()
+    
+    var delay: DelayState?
 
     // MARK: Data vars
     private let containerViewLayoutInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 12)
     private let networking: Networking = URLSession.shared.request
-//    private var timer: Timer?
 
     // MARK: Init
 
@@ -47,6 +48,7 @@ class RouteTableViewCell: UITableViewCell {
         setupDepartureStackView()
         setupTravelTimeLabel()
         setupLiveContainerView()
+        setLiveElements()
 
         setupConstraints()
     }
@@ -295,43 +297,45 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     // Update all of the live elements based on the delay state.
-//    private func setLiveElements(withDelayState delayState: DelayState) {
+    private func setLiveElements() {
+        
+        if let delayState = delay {
+            
+            switch delayState {
+            case .late(date: let delayedDepartureTime):
+                liveLabel.textColor = Colors.lateRed
+                liveLabel.text = "Late - \(Time.timeString(from: delayedDepartureTime))"
+                liveIndicatorView.setColor(to: Colors.lateRed)
+                showLiveElements()
 
-//        switch delayState {
-//
-//        case .late(date: let delayedDepartureTime):
-//            liveLabel.textColor = Colors.lateRed
-//            liveLabel.text = "Late - \(Time.timeString(from: delayedDepartureTime))"
-//            liveIndicatorView.setColor(to: Colors.lateRed)
-//            showLiveElements()
+            case .onTime(date: _):
+                liveLabel.textColor = Colors.liveGreen
+                liveLabel.text = "On Time"
+                liveIndicatorView.setColor(to: Colors.liveGreen)
+                showLiveElements()
 
-//        case .onTime(date: _):
-//            liveLabel.textColor = Colors.liveGreen
-//            liveLabel.text = "On Time"
-//            liveIndicatorView.setColor(to: Colors.liveGreen)
-//            showLiveElements()
+            case .noDelay(date: _):
+                hideLiveElements()
+            }
+        }
 
-//        case .noDelay(date: _):
-//            hideLiveElements()
-//        }
-//
-//    }
+    }
 
-//    private func showLiveElements() {
-//        delegate?.updateLiveElements {
-//            liveContainerView.addSubview(liveIndicatorView)
-//            liveContainerView.addSubview(liveLabel)
-//            setLiveIndicatorViewsConstraints()
-//            layoutIfNeeded()
-//        }
-//    }
+    private func showLiveElements() {
+        delegate?.updateLiveElements {
+            liveContainerView.addSubview(liveIndicatorView)
+            liveContainerView.addSubview(liveLabel)
+            setLiveIndicatorViewsConstraints()
+            layoutIfNeeded()
+        }
+    }
 
-//    private func hideLiveElements() {
-//        delegate?.updateLiveElements {
-//            liveLabel.removeFromSuperview()
-//            liveIndicatorView.removeFromSuperview()
-//        }
-//    }
+    private func hideLiveElements() {
+        delegate?.updateLiveElements {
+            liveLabel.removeFromSuperview()
+            liveIndicatorView.removeFromSuperview()
+        }
+    }
     
     // Lucy - Based on the delay state, change the boarding time and also the departure label
     private func setDepartureTime(withStartTime startTime: Date, withDelayState delayState: DelayState) {

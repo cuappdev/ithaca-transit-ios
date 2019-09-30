@@ -208,7 +208,15 @@ extension RouteOptionsViewController: UITableViewDataSource {
 
         guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.routeOptionsCellIdentifier, for: indexPath) as? RouteTableViewCell
             else { return UITableViewCell() }
-
+        
+        let id = routes[indexPath.section][indexPath.row].routeId
+        
+        if let delay = delayDictionary[id] {
+            cell.delay = delay
+        }
+        
+        print("configure")
+        
         cell.configure(for: routes[indexPath.section][indexPath.row], delegate: self)
 
         // Add share action for long press gestures on non 3D Touch devices
