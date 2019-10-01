@@ -64,45 +64,24 @@ class AllStopsTableViewController: UIViewController {
     }
 
     private func createSectionIndexesForBusStop() {
-        var currentChar: Character?
         var sectionIndexDictionary: [String: [Place]] = [:]
-        var currBusStopArray: [Place] = []
+        var numberBusStops: [Place] = []
 
-        currentChar = allStops.first?.name.capitalized.first
-
-        var numberBusStops: [Place] = {
-            if let firstStop = allStops.first {
-                return [firstStop]
-            }
-            return []
-        }()
-
-        if currentChar != nil {
+        if !allStops.isEmpty {
             for busStop in allStops {
-                if let firstChar = busStop.name.capitalized.first {
-                    if currentChar != firstChar {
-                        if CharacterSet.decimalDigits.contains(firstChar.unicodeScalars.first!) {
-                            numberBusStops.append(busStop)
-                        }
-                        if !CharacterSet.decimalDigits.contains(currentChar!.unicodeScalars.first!) {
-                            sectionIndexDictionary["\(currentChar!)"] = currBusStopArray
-                        }
-                        currentChar = firstChar
-                        currBusStopArray = []
-                        currBusStopArray.append(busStop)
+                if let firstChar = busStop.name.capitalized.first, let firstScalar = firstChar.unicodeScalars.first {
+                    if CharacterSet.decimalDigits.contains(firstScalar) {
+                        numberBusStops.append(busStop)
                     } else {
-                        if CharacterSet.decimalDigits.contains(currentChar!.unicodeScalars.first!) {
-                            numberBusStops.append(busStop)
+                        if sectionIndexDictionary["\(firstChar)"] == nil {
+                            sectionIndexDictionary["\(firstChar)"] = [busStop]
                         } else {
-                            currBusStopArray.append(busStop)
+                            sectionIndexDictionary["\(firstChar)"]?.append(busStop)
                         }
                     }
                 }
             }
-        }
-
-        // Adding "#" to section indexes for bus stops that start with a number
-        if !allStops.isEmpty {
+            // Adding "#" to section indexes for bus stops that start with a number
             sectionIndexDictionary["#"] = numberBusStops
         }
 
