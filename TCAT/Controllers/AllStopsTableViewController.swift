@@ -81,11 +81,14 @@ class AllStopsTableViewController: UIViewController {
             for busStop in allStops {
                 if let firstChar = busStop.name.capitalized.first {
                     if currentChar != firstChar {
+                        if CharacterSet.decimalDigits.contains(firstChar.unicodeScalars.first!) {
+                            numberBusStops.append(busStop)
+                        }
                         if !CharacterSet.decimalDigits.contains(currentChar!.unicodeScalars.first!) {
                             sectionIndexDictionary["\(currentChar!)"] = currBusStopArray
-                            currBusStopArray = []
                         }
                         currentChar = firstChar
+                        currBusStopArray = []
                         currBusStopArray.append(busStop)
                     } else {
                         if CharacterSet.decimalDigits.contains(currentChar!.unicodeScalars.first!) {
