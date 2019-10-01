@@ -331,7 +331,6 @@ class RouteOptionsViewController: UIViewController {
     }
     
     @objc func rerenderLiveTracking(sender: Timer) {
-        print(dump(delayDictionary))
         routeResults.reloadData()
     }
     
@@ -358,11 +357,9 @@ class RouteOptionsViewController: UIViewController {
                                 let isLateDelay = (Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending)
                                 if isLateDelay {
                                     let delayState = DelayState.late(date: delayedDepartTime)
-//                                    print("isLateDelay for route \(route.routeId) \(delayState)")
                                     self.delayDictionary[route.routeId] = delayState
                                 } else {
                                     let delayState = DelayState.onTime(date: departTime)
-//                                    print("not isLateDelay for route \(route.routeId) \(route.routeId)\(delayState)")
                                     self.delayDictionary[route.routeId] = delayState
                                 }
 //                                route.getFirstDepartRawDirection()?.delay = delay
@@ -473,10 +470,6 @@ class RouteOptionsViewController: UIViewController {
                 })
             }
         }
-    }
-    
-    func updateRoutes() {
-        print(routes)
     }
 
     private func getRoutes(start: Place,

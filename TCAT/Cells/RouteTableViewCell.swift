@@ -31,8 +31,6 @@ class RouteTableViewCell: UITableViewCell {
     private var routeDiagram: RouteDiagram!
     private let travelTimeLabel = UILabel()
     
-    var delay: DelayState?
-
     // MARK: Data vars
     private let containerViewLayoutInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 12)
     private let networking: Networking = URLSession.shared.request
@@ -160,14 +158,18 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     // MARK: Set Data
-    func configure(for route: Route, delegate: RouteTableViewCellDelegate? = nil, delayState: DelayState? = nil) {
+    func configure(for route: Route, delegate: RouteTableViewCellDelegate? = nil) {
         self.delegate = delegate
 
 //        timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay(sender:)), userInfo: ["route": route], repeats: true)
         
-        if let delay = delayState {
-            setLiveElements(withDelayState: delay)
-        }
+//        if let delay = delayState {
+////            setLiveElements(withDelayState: delay)
+////            setDepartureTime(withStartTime: Date(), withDelayState: delay)
+//            setDepartureTimeAndLiveElements(withRoute: route, withDelay: delay)
+//        } else {
+//            setDepartureTimeAndLiveElements(withRoute: route, withDelay: DelayState.onTime(date: Date()))
+//        }
 
         setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
 
@@ -193,15 +195,12 @@ class RouteTableViewCell: UITableViewCell {
 
     // MARK: Get Data
 
-    // Lucy - Getting if there is a delay
     private func getDelayState(fromRoute route: Route) -> DelayState {
-        
-        print("Getting delay state for \(route.endName)")
-        
+
         if let firstDepartDirection = route.getFirstDepartRawDirection() {
 
             let departTime = firstDepartDirection.startTime
-
+        
             if let delay = firstDepartDirection.delay {
                 let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
                 // Our live tracking only updates once every 30 seconds, so we want to show buses that are delayed by < 120 as on time in order to be more accurate about the status of slightly delayed buses. This way riders get to a bus stop earlier rather than later when trying to catch such buses.
@@ -229,12 +228,13 @@ class RouteTableViewCell: UITableViewCell {
             return
         }
 
-        //let delayState = getDelayState(fromRoute: route)
+        let delayState = getDelayState(fromRoute: route)
         
-        // Lucy - Update the view based on the delay state
-        //setDepartureTime(withStartTime: Date(), withDelayState: delayState)
-        //setLiveElements(withDelayState: delayState)
+        setDepartureTime(withStartTime: Date(), withDelayState: delayState)
+        setLiveElements(withDelayState: delayState)
     }
+    
+    // Note for Lucy: "route.getFirstDepartRawDirection()?.delay = delay" missing!
 
 //    @objc private func updateLiveElementsWithDelay(sender: Timer) {
 //        guard let userInfo = sender.userInfo as? [String: Route],
@@ -300,31 +300,25 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     // Update all of the live elements based on the delay state.
-    private func setLiveElements(withDelayState: DelayState) {
+    private func setLiveElements(withDelayState delayState: DelayState) {
         
-        if let delayState = delay {
-            
-            print("Yes delay")
-            print(delayState)
-            
-            switch delayState {
-            case .late(date: let delayedDepartureTime):
-                liveLabel.textColor = Colors.lateRed
-                liveLabel.text = "Late - \(Time.timeString(from: delayedDepartureTime))"
-                liveIndicatorView.setColor(to: Colors.lateRed)
-                showLiveElements()
+        switch delayState {
+        case .late(date: let delayedDepartureTime):
+            liveLabel.textColor = Colors.lateRed
+            liveLabel.text = "Late - \(Time.timeString(from: delayedDepartureTime))"
+            liveIndicatorView.setColor(to: Colors.lateRed)
+            showLiveElements()
 
-            case .onTime(date: _):
-                liveLabel.textColor = Colors.liveGreen
-                liveLabel.text = "On Time"
-                liveIndicatorView.setColor(to: Colors.liveGreen)
-                showLiveElements()
+        case .onTime(date: _):
+            liveLabel.textColor = Colors.liveGreen
+            liveLabel.text = "On Time"
+            liveIndicatorView.setColor(to: Colors.liveGreen)
+            showLiveElements()
 
-            case .noDelay(date: _):
-                hideLiveElements()
-            }
+        case .noDelay(date: _):
+            hideLiveElements()
         }
-
+        
     }
 
     private func showLiveElements() {

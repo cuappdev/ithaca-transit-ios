@@ -209,14 +209,11 @@ extension RouteOptionsViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.routeOptionsCellIdentifier, for: indexPath) as? RouteTableViewCell
             else { return UITableViewCell() }
         
-        let id = routes[indexPath.section][indexPath.row].routeId
+        let route_id = routes[indexPath.section][indexPath.row].routeId
+        print("Route ID: \(route_id)")
         
-        if let delay = delayDictionary[id] {
-            cell.delay = delay
-        }
-            
-        cell.configure(for: routes[indexPath.section][indexPath.row], delegate: self, delayState: delayDictionary[id] )
-
+        cell.configure(for: routes[indexPath.section][indexPath.row], delegate: self)
+        
         // Add share action for long press gestures on non 3D Touch devices
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
         cell.addGestureRecognizer(longPressGestureRecognizer)
