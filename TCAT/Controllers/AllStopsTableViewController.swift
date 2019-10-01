@@ -68,15 +68,17 @@ class AllStopsTableViewController: UIViewController {
         var numberBusStops: [Place] = []
 
         if !allStops.isEmpty {
-            for busStop in allStops {
-                if let firstChar = busStop.name.capitalized.first, let firstScalar = firstChar.unicodeScalars.first {
+            allStops.forEach { busStop in
+                if let firstChar = busStop.name.capitalized.first,
+                    let firstScalar = firstChar.unicodeScalars.first {
                     if CharacterSet.decimalDigits.contains(firstScalar) {
                         numberBusStops.append(busStop)
                     } else {
-                        if sectionIndexDictionary["\(firstChar)"] == nil {
-                            sectionIndexDictionary["\(firstChar)"] = [busStop]
+                        if var stops = sectionIndexDictionary["\(firstChar)"] {
+                            stops.append(busStop)
+                            sectionIndexDictionary["\(firstChar)"] = stops
                         } else {
-                            sectionIndexDictionary["\(firstChar)"]?.append(busStop)
+                            sectionIndexDictionary["\(firstChar)"] = [busStop]
                         }
                     }
                 }
