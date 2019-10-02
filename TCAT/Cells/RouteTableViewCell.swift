@@ -11,7 +11,6 @@ import SwiftyJSON
 import UIKit
 
 protocol RouteTableViewCellDelegate: class {
-    func updateLiveElements(fun: () -> Void)
     func getRowNum(for cell: RouteTableViewCell) -> Int?
 }
 
@@ -169,10 +168,6 @@ class RouteTableViewCell: UITableViewCell {
             setLiveElements(withDelayState: delay)
             setDepartureTime(withStartTime: Date(), withDelayState: delay)
         }
-        
-//        if route.isRawWalkingRoute() {
-//            hideLiveElements()
-//        }
 
         /*
          TODO #266: Find fix for updating tableview when delays occur. We currently just update the tableview but because
@@ -308,42 +303,42 @@ class RouteTableViewCell: UITableViewCell {
             liveLabel.textColor = Colors.lateRed
             liveLabel.text = "Late - \(Time.timeString(from: delayedDepartureTime))"
             liveIndicatorView.setColor(to: Colors.lateRed)
-            showLiveElements()
+            liveContainerView.addSubview(liveIndicatorView)
+            liveContainerView.addSubview(liveLabel)
+            setLiveIndicatorViewsConstraints()
 
         case .onTime(date: _):
             liveLabel.textColor = Colors.liveGreen
             liveLabel.text = "On Time"
             liveIndicatorView.setColor(to: Colors.liveGreen)
-            showLiveElements()
-
-        case .noDelay(date: _):
-            hideLiveElements()
-        }
-
-    }
-
-    private func showLiveElements() {
-        liveContainerView.addSubview(liveIndicatorView)
-        liveContainerView.addSubview(liveLabel)
-        setLiveIndicatorViewsConstraints()
-
-        // layoutIfNeeded()
-        delegate?.updateLiveElements {
             liveContainerView.addSubview(liveIndicatorView)
             liveContainerView.addSubview(liveLabel)
             setLiveIndicatorViewsConstraints()
-            // layoutIfNeeded()
-        }
-    }
-        
-    private func hideLiveElements() {
-        delegate?.updateLiveElements {
+
+        case .noDelay(date: _):
             liveLabel.removeFromSuperview()
             liveIndicatorView.removeFromSuperview()
         }
+
     }
+
+//    private func showLiveElements() {
+//        layoutIfNeeded()
+//        delegate?.updateLiveElements {
+//            liveContainerView.addSubview(liveIndicatorView)
+//            liveContainerView.addSubview(liveLabel)
+//            setLiveIndicatorViewsConstraints()
+//            layoutIfNeeded()
+//        }
+//    }
+        
+//    private func hideLiveElements() {
+//        delegate?.updateLiveElements {
+//            liveLabel.removeFromSuperview()
+//            liveIndicatorView.removeFromSuperview()
+//        }
+//    }
     
-    // Lucy - Based on the delay state, change the boarding time and also the departure label
     private func setDepartureTime(withStartTime startTime: Date, withDelayState delayState: DelayState) {
 
         switch delayState {
@@ -386,7 +381,8 @@ class RouteTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         routeDiagram.removeFromSuperview()
         routeDiagram.snp.removeConstraints()
-        hideLiveElements()
+        liveLabel.removeFromSuperview()
+        liveIndicatorView.removeFromSuperview()
     }
 
     required init?(coder aDecoder: NSCoder) {

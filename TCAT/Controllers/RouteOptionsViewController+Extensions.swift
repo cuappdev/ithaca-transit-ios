@@ -400,10 +400,6 @@ extension RouteOptionsViewController: RouteTableViewCellDelegate {
     func getRowNum(for cell: RouteTableViewCell) -> Int? {
         return routeResults.indexPath(for: cell)?.row
     }
-
-    func updateLiveElements(fun: () -> Void) {
-        routeResults.performBatchUpdates({fun()}, completion: nil)
-    }
 }
 
 extension RouteOptionsViewController: RouteSelectionViewDelegate {
