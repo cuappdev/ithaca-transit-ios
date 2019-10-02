@@ -210,9 +210,9 @@ extension RouteOptionsViewController: UITableViewDataSource {
             else { return UITableViewCell() }
         
         let route_id = routes[indexPath.section][indexPath.row].routeId
-        print("Route ID: \(route_id)")
+//        print("Route ID: \(route_id)")
         
-        cell.configure(for: routes[indexPath.section][indexPath.row], delegate: self)
+        cell.configure(for: routes[indexPath.section][indexPath.row], delegate: self, delayState: delayDictionary[route_id])
         
         // Add share action for long press gestures on non 3D Touch devices
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
@@ -403,9 +403,7 @@ extension RouteOptionsViewController: RouteTableViewCellDelegate {
     }
 
     func updateLiveElements(fun: () -> Void) {
-        routeResults.beginUpdates()
-        fun()
-        routeResults.endUpdates()
+        routeResults.performBatchUpdates({fun()}, completion: nil)
     }
 }
 

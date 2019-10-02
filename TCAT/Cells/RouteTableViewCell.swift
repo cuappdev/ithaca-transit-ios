@@ -158,22 +158,21 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     // MARK: Set Data
-    func configure(for route: Route, delegate: RouteTableViewCellDelegate? = nil) {
+    func configure(for route: Route, delegate: RouteTableViewCellDelegate? = nil, delayState: DelayState? = nil) {
         self.delegate = delegate
 
-//        timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay(sender:)), userInfo: ["route": route], repeats: true)
-        
-//        if let delay = delayState {
-////            setLiveElements(withDelayState: delay)
-////            setDepartureTime(withStartTime: Date(), withDelayState: delay)
-//            setDepartureTimeAndLiveElements(withRoute: route, withDelay: delay)
-//        } else {
-//            setDepartureTimeAndLiveElements(withRoute: route, withDelay: DelayState.onTime(date: Date()))
-//        }
-
         setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
-
+        
         setDepartureTimeAndLiveElements(withRoute: route)
+        
+        if let delay = delayState {
+            setLiveElements(withDelayState: delay)
+            setDepartureTime(withStartTime: Date(), withDelayState: delay)
+        }
+        
+        if route.isRawWalkingRoute() {
+            hideLiveElements()
+        }
 
         /*
          TODO #266: Find fix for updating tableview when delays occur. We currently just update the tableview but because
@@ -221,17 +220,19 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     private func setDepartureTimeAndLiveElements(withRoute route: Route) {
+        
         let isWalkingRoute = route.isRawWalkingRoute()
 
         if isWalkingRoute {
             setDepartureTimeToWalking()
             return
         }
+        else {
+            let delayState = getDelayState(fromRoute: route)
+            setDepartureTime(withStartTime: Date(), withDelayState: delayState)
+            setLiveElements(withDelayState: delayState)
+        }
 
-        let delayState = getDelayState(fromRoute: route)
-        
-        setDepartureTime(withStartTime: Date(), withDelayState: delayState)
-        setLiveElements(withDelayState: delayState)
     }
     
     // Note for Lucy: "route.getFirstDepartRawDirection()?.delay = delay" missing!
@@ -295,9 +296,9 @@ class RouteTableViewCell: UITableViewCell {
 //        }
 //    }
 
-    private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
-        return networking(Endpoint.getDelay(tripID: tripId, stopID: stopId)).decode()
-    }
+//    private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
+//        return networking(Endpoint.getDelay(tripID: tripId, stopID: stopId)).decode()
+//    }
 
     // Update all of the live elements based on the delay state.
     private func setLiveElements(withDelayState delayState: DelayState) {
@@ -307,29 +308,42 @@ class RouteTableViewCell: UITableViewCell {
             liveLabel.textColor = Colors.lateRed
             liveLabel.text = "Late - \(Time.timeString(from: delayedDepartureTime))"
             liveIndicatorView.setColor(to: Colors.lateRed)
+            liveContainerView.addSubview(liveIndicatorView)
+            liveContainerView.addSubview(liveLabel)
+            setLiveIndicatorViewsConstraints()
             showLiveElements()
 
         case .onTime(date: _):
             liveLabel.textColor = Colors.liveGreen
             liveLabel.text = "On Time"
             liveIndicatorView.setColor(to: Colors.liveGreen)
+            liveContainerView.addSubview(liveIndicatorView)
+            liveContainerView.addSubview(liveLabel)
+            setLiveIndicatorViewsConstraints()
             showLiveElements()
 
         case .noDelay(date: _):
+            liveLabel.removeFromSuperview()
+            liveIndicatorView.removeFromSuperview()
             hideLiveElements()
         }
         
     }
 
     private func showLiveElements() {
+        liveContainerView.addSubview(liveIndicatorView)
+        liveContainerView.addSubview(liveLabel)
+        setLiveIndicatorViewsConstraints()
+
+//        layoutIfNeeded()
         delegate?.updateLiveElements {
             liveContainerView.addSubview(liveIndicatorView)
             liveContainerView.addSubview(liveLabel)
             setLiveIndicatorViewsConstraints()
-            layoutIfNeeded()
+//            layoutIfNeeded()
         }
     }
-
+        
     private func hideLiveElements() {
         delegate?.updateLiveElements {
             liveLabel.removeFromSuperview()
@@ -375,18 +389,12 @@ class RouteTableViewCell: UITableViewCell {
         arrowImageView.tintColor = Colors.metadataIcon
     }
 
-//    func invalidateTimer() {
-//        timer?.invalidate()
-//    }
-
     // MARK: Reuse
 
     override func prepareForReuse() {
         routeDiagram.removeFromSuperview()
         routeDiagram.snp.removeConstraints()
-
-//        timer?.invalidate()
-
+        
 //        hideLiveElements()
     }
 

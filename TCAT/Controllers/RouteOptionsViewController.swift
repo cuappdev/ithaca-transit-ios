@@ -60,10 +60,11 @@ class RouteOptionsViewController: UIViewController {
     private let reachability: Reachability? = Reachability(hostname: Endpoint.config.host ?? "")
     private let routeResultsTitle: String = Constants.Titles.routeResults
     
-    // Timer for route live tracking
+    // Timer for route live tracking and cell updates
     private var routeTimer: Timer?
     private var updateTimer: Timer?
     
+    // Dictionary to map delays to a route
     var delayDictionary: [String: DelayState] = [:]
     
     /// Returns routes from each section in order
@@ -126,11 +127,6 @@ class RouteOptionsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupReachability()
-        // Reload data to activate timers again
-//        if !routes.isEmpty {
-//            routeResults.reloadData()
-//        }
-
         setUpRouteRefreshing()
     }
 
@@ -142,12 +138,8 @@ class RouteOptionsViewController: UIViewController {
         // Remove banner
         banner?.dismiss()
         banner = nil
-        // Deactivate and remove timers
-//        routeResults.visibleCells.forEach {
-//            if let cell = $0 as? RouteTableViewCell {
-//                cell.invalidateTimer()
-//            }
-//        }
+        routeTimer?.invalidate()
+        updateTimer?.invalidate()
         // Stop observing when app becomes active 
         NotificationCenter.default.removeObserver(self)
     }
@@ -331,6 +323,7 @@ class RouteOptionsViewController: UIViewController {
     }
     
     @objc func rerenderLiveTracking(sender: Timer) {
+        // Reload table every time update timer is fired
         routeResults.reloadData()
     }
     
@@ -362,8 +355,8 @@ class RouteOptionsViewController: UIViewController {
                                     let delayState = DelayState.onTime(date: departTime)
                                     self.delayDictionary[route.routeId] = delayState
                                 }
-//                                route.getFirstDepartRawDirection()?.delay = delay
-                            
+                                route.getFirstDepartRawDirection()?.delay = delay // what does this actually do?
+
                             case .error(let error):
                                 print(error)
                             }
