@@ -210,7 +210,6 @@ extension RouteOptionsViewController: UITableViewDataSource {
             else { return UITableViewCell() }
         
         let route_id = routes[indexPath.section][indexPath.row].routeId
-//        print("Route ID: \(route_id)")
         
         cell.configure(for: routes[indexPath.section][indexPath.row], delegate: self, delayState: delayDictionary[route_id])
         

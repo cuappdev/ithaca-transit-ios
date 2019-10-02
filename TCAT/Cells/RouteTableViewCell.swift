@@ -30,7 +30,7 @@ class RouteTableViewCell: UITableViewCell {
     private let liveLabel = UILabel()
     private var routeDiagram: RouteDiagram!
     private let travelTimeLabel = UILabel()
-    
+
     // MARK: Data vars
     private let containerViewLayoutInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 12)
     private let networking: Networking = URLSession.shared.request
@@ -162,7 +162,7 @@ class RouteTableViewCell: UITableViewCell {
         self.delegate = delegate
 
         setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
-        
+
         setDepartureTimeAndLiveElements(withRoute: route)
         
         if let delay = delayState {
@@ -170,9 +170,9 @@ class RouteTableViewCell: UITableViewCell {
             setDepartureTime(withStartTime: Date(), withDelayState: delay)
         }
         
-        if route.isRawWalkingRoute() {
-            hideLiveElements()
-        }
+//        if route.isRawWalkingRoute() {
+//            hideLiveElements()
+//        }
 
         /*
          TODO #266: Find fix for updating tableview when delays occur. We currently just update the tableview but because
@@ -199,7 +199,7 @@ class RouteTableViewCell: UITableViewCell {
         if let firstDepartDirection = route.getFirstDepartRawDirection() {
 
             let departTime = firstDepartDirection.startTime
-        
+
             if let delay = firstDepartDirection.delay {
                 let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
                 // Our live tracking only updates once every 30 seconds, so we want to show buses that are delayed by < 120 as on time in order to be more accurate about the status of slightly delayed buses. This way riders get to a bus stop earlier rather than later when trying to catch such buses.
@@ -227,11 +227,11 @@ class RouteTableViewCell: UITableViewCell {
             setDepartureTimeToWalking()
             return
         }
-        else {
-            let delayState = getDelayState(fromRoute: route)
-            setDepartureTime(withStartTime: Date(), withDelayState: delayState)
-            setLiveElements(withDelayState: delayState)
-        }
+
+        let delayState = getDelayState(fromRoute: route)
+        setDepartureTime(withStartTime: Date(), withDelayState: delayState)
+        setLiveElements(withDelayState: delayState)
+
 
     }
     
@@ -302,32 +302,24 @@ class RouteTableViewCell: UITableViewCell {
 
     // Update all of the live elements based on the delay state.
     private func setLiveElements(withDelayState delayState: DelayState) {
-        
+
         switch delayState {
         case .late(date: let delayedDepartureTime):
             liveLabel.textColor = Colors.lateRed
             liveLabel.text = "Late - \(Time.timeString(from: delayedDepartureTime))"
             liveIndicatorView.setColor(to: Colors.lateRed)
-            liveContainerView.addSubview(liveIndicatorView)
-            liveContainerView.addSubview(liveLabel)
-            setLiveIndicatorViewsConstraints()
             showLiveElements()
 
         case .onTime(date: _):
             liveLabel.textColor = Colors.liveGreen
             liveLabel.text = "On Time"
             liveIndicatorView.setColor(to: Colors.liveGreen)
-            liveContainerView.addSubview(liveIndicatorView)
-            liveContainerView.addSubview(liveLabel)
-            setLiveIndicatorViewsConstraints()
             showLiveElements()
 
         case .noDelay(date: _):
-            liveLabel.removeFromSuperview()
-            liveIndicatorView.removeFromSuperview()
             hideLiveElements()
         }
-        
+
     }
 
     private func showLiveElements() {
@@ -335,12 +327,12 @@ class RouteTableViewCell: UITableViewCell {
         liveContainerView.addSubview(liveLabel)
         setLiveIndicatorViewsConstraints()
 
-//        layoutIfNeeded()
+        // layoutIfNeeded()
         delegate?.updateLiveElements {
             liveContainerView.addSubview(liveIndicatorView)
             liveContainerView.addSubview(liveLabel)
             setLiveIndicatorViewsConstraints()
-//            layoutIfNeeded()
+            // layoutIfNeeded()
         }
     }
         
@@ -394,8 +386,7 @@ class RouteTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         routeDiagram.removeFromSuperview()
         routeDiagram.snp.removeConstraints()
-        
-//        hideLiveElements()
+        hideLiveElements()
     }
 
     required init?(coder aDecoder: NSCoder) {
