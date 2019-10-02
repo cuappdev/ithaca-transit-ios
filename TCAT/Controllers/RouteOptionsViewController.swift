@@ -355,7 +355,8 @@ class RouteOptionsViewController: UIViewController {
                                     let delayState = DelayState.onTime(date: departTime)
                                     self.delayDictionary[route.routeId] = delayState
                                 }
-                                route.getFirstDepartRawDirection()?.delay = delay // what does this actually do?
+                                // LUCY - Check what this does.
+                                route.getFirstDepartRawDirection()?.delay = delay
 
                             case .error(let error):
                                 print(error)

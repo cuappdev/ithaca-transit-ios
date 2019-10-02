@@ -291,11 +291,6 @@ class RouteTableViewCell: UITableViewCell {
 //        }
 //    }
 
-//    private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
-//        return networking(Endpoint.getDelay(tripID: tripId, stopID: stopId)).decode()
-//    }
-
-    // Update all of the live elements based on the delay state.
     private func setLiveElements(withDelayState delayState: DelayState) {
 
         switch delayState {
@@ -321,23 +316,6 @@ class RouteTableViewCell: UITableViewCell {
         }
 
     }
-
-//    private func showLiveElements() {
-//        layoutIfNeeded()
-//        delegate?.updateLiveElements {
-//            liveContainerView.addSubview(liveIndicatorView)
-//            liveContainerView.addSubview(liveLabel)
-//            setLiveIndicatorViewsConstraints()
-//            layoutIfNeeded()
-//        }
-//    }
-        
-//    private func hideLiveElements() {
-//        delegate?.updateLiveElements {
-//            liveLabel.removeFromSuperview()
-//            liveIndicatorView.removeFromSuperview()
-//        }
-//    }
     
     private func setDepartureTime(withStartTime startTime: Date, withDelayState delayState: DelayState) {
 
