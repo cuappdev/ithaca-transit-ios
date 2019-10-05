@@ -333,17 +333,30 @@ class RouteOptionsViewController: UIViewController {
 
     @objc func updateLiveTracking(sender: Timer) {
         for routesArray in routes {
-            for route in routesArray {
+            for (index, route) in routesArray.enumerated() {
                 if !route.isRawWalkingRoute(),
                     let direction = route.getFirstDepartRawDirection(),
                     let tripId = direction.tripIdentifiers?.first,
                     let stopId = direction.stops.first?.id {
                     getDelay(tripId: tripId, stopId: stopId).observe(with: { result in
+                        let fileName = "RouteTableViewCell"
                         DispatchQueue.main.async {
                             switch result {
                             case .value (let delayResponse):
                                 guard (delayResponse.data != nil), let delay = delayResponse.data else {
                                     return
+                                }
+                                // LUCY - Check
+                                let isNewDelayValue = (route.getFirstDepartRawDirection()?.delay != delay)
+                                if isNewDelayValue {
+                                    JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
+                                    JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
+                                    if let data = try? JSONEncoder().encode(delayResponse) {
+                                        do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: index)) } catch let error {
+                                            let line = "\(fileName) \(#function): \(error.localizedDescription)"
+                                            print(line)
+                                        }
+                                    }
                                 }
                                 let departTime = direction.startTime
                                 let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
@@ -355,8 +368,7 @@ class RouteOptionsViewController: UIViewController {
                                     let delayState = DelayState.onTime(date: departTime)
                                     self.delayDictionary[route.routeId] = delayState
                                 }
-                                // LUCY - Check what this does.
-                                route.getFirstDepartRawDirection()?.delay = delay
+                                route.getFirstDepartRawDirection()?.delay = delay // LUCY - Check
 
                             case .error(let error):
                                 print(error)
