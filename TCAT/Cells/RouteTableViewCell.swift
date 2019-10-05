@@ -182,7 +182,6 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Get Data
 
     private func getDelayState(fromRoute route: Route) -> DelayState {
-
         if let firstDepartDirection = route.getFirstDepartRawDirection() {
 
             let departTime = firstDepartDirection.startTime
@@ -207,7 +206,6 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     private func setDepartureTimeAndLiveElements(withRoute route: Route) {
-        
         let isWalkingRoute = route.isRawWalkingRoute()
 
         if isWalkingRoute {
