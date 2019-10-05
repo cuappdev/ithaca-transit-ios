@@ -211,7 +211,7 @@ extension RouteOptionsViewController: UITableViewDataSource {
         
         let route_id = routes[indexPath.section][indexPath.row].routeId
         
-        cell.configure(for: routes[indexPath.section][indexPath.row], delegate: self, delayState: delayDictionary[route_id])
+        cell.configure(for: routes[indexPath.section][indexPath.row], delayState: delayDictionary[route_id])
         
         // Add share action for long press gestures on non 3D Touch devices
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
@@ -393,13 +393,6 @@ extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDele
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
     return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
-}
-
-extension RouteOptionsViewController: RouteTableViewCellDelegate {
-
-    func getRowNum(for cell: RouteTableViewCell) -> Int? {
-        return routeResults.indexPath(for: cell)?.row
-    }
 }
 
 extension RouteOptionsViewController: RouteSelectionViewDelegate {
