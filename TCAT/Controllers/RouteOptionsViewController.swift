@@ -365,26 +365,12 @@ class RouteOptionsViewController: UIViewController {
                                 let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
                                 let isLateDelay = (Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending)
                                 if isLateDelay {
-                                    print("late")
-                                    print(delay)
-                                    print(route.arrivalTime)
                                     let delayState = DelayState.late(date: delayedDepartTime)
                                     self.delayDictionary[route.routeId] = delayState
                                 } else {
-                                    print("on time")
-                                    print(delay)
-                                    print(route.arrivalTime)
                                     let delayState = DelayState.onTime(date: departTime)
                                     self.delayDictionary[route.routeId] = delayState
                                 }
-//                                if delay > 0 {
-//                                    let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
-//                                    let delayState = DelayState.late(date: delayedDepartTime)
-//                                    self.delayDictionary[route.routeId] = delayState
-//                                } else {
-//                                    let delayState = DelayState.onTime(date: departTime)
-//                                    self.delayDictionary[route.routeId] = delayState
-//                                }
                                 route.getFirstDepartRawDirection()?.delay = delay // LUCY - Check
 
                             case .error(let error):
