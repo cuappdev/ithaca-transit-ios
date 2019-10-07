@@ -71,6 +71,21 @@ internal struct GetDelayBody: Codable {
     }
 }
 
+internal struct Trip: Codable {
+    let stopID: String
+    let tripID: String
+}
+
+internal struct TripBody: Codable {
+    var data: [Trip]
+}
+
+internal struct Delay: Codable {
+    let stopID: String
+    let tripID: String
+    let delay: Int?
+}
+
 // Response
 struct Response<T: Codable>: Codable {
     var success: Bool

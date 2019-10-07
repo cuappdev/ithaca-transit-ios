@@ -49,6 +49,7 @@ class RouteOptionsViewController: UIViewController {
     var searchTo: Place!
     var searchType: SearchBarType = .to
     var showRouteSearchingLoader: Bool = false
+    var trips: [Trip] = []
 
     // Variable to remember back button when hiding
     private var backButton: UIBarButtonItem?
@@ -330,11 +331,51 @@ class RouteOptionsViewController: UIViewController {
     private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
         return networking(Endpoint.getDelay(tripID: tripId, stopID: stopId)).decode()
     }
+    
+    private func getAllDelays(trips: [Trip]) -> Future<Response<[Delay]>> {
+        return networking(Endpoint.getAllDelays(trips: trips)).decode()
+    }
+    
+//    private func busLocations(_ directions: [Direction]) -> Future<Response<[BusLocation]>> {
+//        return networking(Endpoint.getBusLocations(directions)).decode()
+//    }
+    
+    @objc func updateAllRoutesLiveTracking() {
+        var trips: [Trip] = []
+        for routesArray in routes {
+            for (index, route) in routesArray.enumerated() {
+                if !route.isRawWalkingRoute() {
+                    guard let direction = route.getFirstDepartRawDirection(),
+                        let tripId = direction.tripIdentifiers?.first,
+                        let stopId = direction.stops.first?.id else {
+                            return
+                    }
+                    let trip = Trip(stopID: stopId, tripID: tripId)
+                    trips.append(trip)
+                }
+            }
+        }
+        getAllDelays(trips: trips).observe(with: { result in
+            DispatchQueue.main.async {
+                print("got result back")
+                switch result {
+                    case .value(let response):
+                        print("value")
+                        print(response)
+                    case .error(let error):
+                        print("error")
+                        print(error)
+                    }
+                }
+            })
+    }
+
 
     @objc func updateLiveTracking(sender: Timer) {
         // For each route in each route array inside of the 'routes' array,
         // retrieve its delay. Use index of route to save delay for route to
         // JSON file.
+        updateAllRoutesLiveTracking()
         for routesArray in routes {
             for (index, route) in routesArray.enumerated() {
                 if route.isRawWalkingRoute() { return }
@@ -359,19 +400,18 @@ class RouteOptionsViewController: UIViewController {
                                         self.printClass(context: "\(#function) delayResponse error", message: error.localizedDescription)
                                     }
                                 }
+                                let departTime = direction.startTime
+                                let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
+                                var delayState: DelayState!
+                                let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
+                                if isLateDelay {
+                                    delayState = DelayState.late(date: delayedDepartTime)
+                                } else {
+                                    delayState = DelayState.onTime(date: departTime)
+                                }
+                                self.delayDictionary[route.routeId] = delayState
+                                route.getFirstDepartRawDirection()?.delay = delay
                             }
-                            let departTime = direction.startTime
-                            let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
-                            var delayState: DelayState!
-                            let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
-                            if isLateDelay {
-                                delayState = DelayState.late(date: delayedDepartTime)
-                            } else {
-                                delayState = DelayState.onTime(date: departTime)
-                            }
-                            self.delayDictionary[route.routeId] = delayState
-                            route.getFirstDepartRawDirection()?.delay = delay
-
                         case .error (let error):
                             self.printClass(context: "\(#function) error", message: error.localizedDescription)
                         }
