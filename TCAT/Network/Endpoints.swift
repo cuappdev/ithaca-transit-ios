@@ -117,13 +117,11 @@ extension Endpoint {
         }
 
         let body = GetBusLocationsBody(data: locationsInfo)
-        print(body)
         return Endpoint(path: Constants.Endpoints.busLocations, body: body)
     }
 
     static func getDelay(tripID: String, stopID: String) -> Endpoint {
         let queryItems = GetDelayBody(stopID: stopID, tripID: tripID).toQueryItems()
-        print(queryItems)
         return Endpoint(path: Constants.Endpoints.delay, queryItems: queryItems)
     }
     

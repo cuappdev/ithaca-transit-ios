@@ -343,7 +343,7 @@ class RouteOptionsViewController: UIViewController {
     @objc func updateAllRoutesLiveTracking() {
         var trips: [Trip] = []
         for routesArray in routes {
-            for (index, route) in routesArray.enumerated() {
+            for route in routesArray {
                 if !route.isRawWalkingRoute() {
                     guard let direction = route.getFirstDepartRawDirection(),
                         let tripId = direction.tripIdentifiers?.first,
