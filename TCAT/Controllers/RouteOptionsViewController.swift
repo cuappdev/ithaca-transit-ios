@@ -59,7 +59,14 @@ class RouteOptionsViewController: UIViewController {
     private let networking: Networking = URLSession.shared.request
     private let reachability: Reachability? = Reachability(hostname: Endpoint.config.host ?? "")
     private let routeResultsTitle: String = Constants.Titles.routeResults
-
+    
+    // Timer for route live tracking and cell updates
+    private var routeTimer: Timer?
+    private var updateTimer: Timer?
+    
+    // Dictionary to map delays to a route
+    var delayDictionary: [String: DelayState] = [:]
+    
     /// Returns routes from each section in order
     private var allRoutes: [Route] {
         return routes.flatMap { $0 }
@@ -105,6 +112,9 @@ class RouteOptionsViewController: UIViewController {
         }
 
         searchForRoutes()
+        
+        routeTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveTracking(sender:)), userInfo: nil, repeats: true)
+        updateTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(rerenderLiveTracking(sender:)), userInfo: nil, repeats: true)
 
         // Check for 3D Touch availability
         if traitCollection.forceTouchCapability == .available {
@@ -117,11 +127,6 @@ class RouteOptionsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupReachability()
-        // Reload data to activate timers again
-        if !routes.isEmpty {
-            routeResults.reloadData()
-        }
-
         setUpRouteRefreshing()
     }
 
@@ -133,12 +138,8 @@ class RouteOptionsViewController: UIViewController {
         // Remove banner
         banner?.dismiss()
         banner = nil
-        // Deactivate and remove timers
-        routeResults.visibleCells.forEach {
-            if let cell = $0 as? RouteTableViewCell {
-                cell.invalidateTimer()
-            }
-        }
+        routeTimer?.invalidate()
+        updateTimer?.invalidate()
         // Stop observing when app becomes active 
         NotificationCenter.default.removeObserver(self)
     }
@@ -320,7 +321,68 @@ class RouteOptionsViewController: UIViewController {
         navigationItem.hidesBackButton = true
         searchBarView.searchController?.isActive = true
     }
+    
+    @objc func rerenderLiveTracking(sender: Timer) {
+        // Reload table every time update timer is fired
+        routeResults.reloadData()
+    }
+    
+    private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
+        return networking(Endpoint.getDelay(tripID: tripId, stopID: stopId)).decode()
+    }
 
+    @objc func updateLiveTracking(sender: Timer) {
+        // For each route in each route array inside of the 'routes' array,
+        // retrieve its delay. Use index of route to save delay for route to
+        // JSON file.
+        for routesArray in routes {
+            for (index, route) in routesArray.enumerated() {
+                if route.isRawWalkingRoute() { return }
+                guard let direction = route.getFirstDepartRawDirection(),
+                    let tripId = direction.tripIdentifiers?.first,
+                    let stopId = direction.stops.first?.id else {
+                        return
+                }
+                getDelay(tripId: tripId, stopId: stopId).observe(with: { result in
+                    let fileName = "RouteTableViewCell"
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .value (let delayResponse):
+                            guard delayResponse.data != nil, let delay = delayResponse.data else {
+                                return
+                            }
+                            let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delay
+                            if isNewDelayValue {
+                                JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
+                                JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
+                                if let data = try? JSONEncoder().encode(delayResponse) {
+                                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: index)) } catch let error {
+                                        let line = "\(fileName) \(#function): \(error.localizedDescription)"
+                                        print(line)
+                                    }
+                                }
+                            }
+                            let departTime = direction.startTime
+                            let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
+                            var delayState: DelayState!
+                            let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
+                            if isLateDelay {
+                                delayState = DelayState.late(date: delayedDepartTime)
+                            } else {
+                                delayState = DelayState.onTime(date: departTime)
+                            }
+                            self.delayDictionary[route.routeId] = delayState
+                            route.getFirstDepartRawDirection()?.delay = delay
+
+                        case .error (let error):
+                            print(error)
+                        }
+                    }
+                })
+            }
+        }
+    }
+    
     @objc private func refreshRoutesAndTime() {
         let now = Date()
         if let leaveDate = searchTime,

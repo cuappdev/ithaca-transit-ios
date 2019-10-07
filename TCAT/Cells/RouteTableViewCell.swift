@@ -10,15 +10,7 @@ import FutureNova
 import SwiftyJSON
 import UIKit
 
-protocol RouteTableViewCellDelegate: class {
-    func updateLiveElements(fun: () -> Void)
-    func getRowNum(for cell: RouteTableViewCell) -> Int?
-}
-
 class RouteTableViewCell: UITableViewCell {
-
-    // MARK: Data vars
-    private weak var delegate: RouteTableViewCellDelegate?
 
     // MARK: View vars
     private let arrowImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
@@ -34,7 +26,6 @@ class RouteTableViewCell: UITableViewCell {
     // MARK: Data vars
     private let containerViewLayoutInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 12)
     private let networking: Networking = URLSession.shared.request
-    private var timer: Timer?
 
     // MARK: Init
 
@@ -159,14 +150,16 @@ class RouteTableViewCell: UITableViewCell {
     }
 
     // MARK: Set Data
-    func configure(for route: Route, delegate: RouteTableViewCellDelegate? = nil) {
-        self.delegate = delegate
-
-        timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveElementsWithDelay(sender:)), userInfo: ["route": route], repeats: true)
+    func configure(for route: Route, delayState: DelayState? = nil) {
 
         setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
 
         setDepartureTimeAndLiveElements(withRoute: route)
+        
+        if let delay = delayState {
+            setLiveElements(withDelayState: delay)
+            setDepartureTime(withStartTime: Date(), withDelayState: delay)
+        }
 
         /*
          TODO #266: Find fix for updating tableview when delays occur. We currently just update the tableview but because
@@ -223,109 +216,35 @@ class RouteTableViewCell: UITableViewCell {
         let delayState = getDelayState(fromRoute: route)
         setDepartureTime(withStartTime: Date(), withDelayState: delayState)
         setLiveElements(withDelayState: delayState)
-    }
 
-    @objc private func updateLiveElementsWithDelay(sender: Timer) {
-        guard let userInfo = sender.userInfo as? [String: Route],
-            let route = userInfo["route"] else { return }
-
-        if !route.isRawWalkingRoute(),
-            let direction = route.getFirstDepartRawDirection(),
-            let tripId = direction.tripIdentifiers?.first,
-            let stopId = direction.stops.first?.id {
-
-            getDelay(tripId: tripId, stopId: stopId).observe(with: { [weak self] result in
-                guard let `self` = self else { return }
-                let fileName = "RouteTableViewCell"
-                DispatchQueue.main.async {
-                    switch result {
-                    case .value (let delayResponse):
-                        guard (delayResponse.data != nil), let delay = delayResponse.data else {
-                            self.setDepartureTimeAndLiveElements(withRoute: route)
-                            return
-                        }
-
-                        let isNewDelayValue = (route.getFirstDepartRawDirection()?.delay != delay)
-                        if isNewDelayValue {
-                            JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
-                            JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
-                            if let data = try? JSONEncoder().encode(delayResponse) {
-                                do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: self.delegate?.getRowNum(for: self) ?? -1)) } catch let error {
-                                    let line = "\(fileName) \(#function): \(error.localizedDescription)"
-                                    print(line)
-                                }
-                            }
-                        }
-
-                        let departTime = direction.startTime
-                        let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
-
-                        let isLateDelay = (Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending)
-                        if isLateDelay {
-                            let delayState = DelayState.late(date: delayedDepartTime)
-                            self.setDepartureTime(withStartTime: Date(), withDelayState: delayState)
-                            self.setLiveElements(withDelayState: delayState)
-                        } else {
-                            let delayState = DelayState.onTime(date: departTime)
-                            self.setDepartureTime(withStartTime: Date(), withDelayState: delayState)
-                            self.setLiveElements(withDelayState: delayState)
-                        }
-
-                        route.getFirstDepartRawDirection()?.delay = delay
-
-                    case .error(let error):
-                        print("\(fileName) \(#function) error: \(error.localizedDescription)")
-                        self.setDepartureTimeAndLiveElements(withRoute: route)
-                    }
-                }
-            })
-        } else {
-            setDepartureTimeAndLiveElements(withRoute: route)
-        }
-    }
-
-    private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
-        return networking(Endpoint.getDelay(tripID: tripId, stopID: stopId)).decode()
     }
 
     private func setLiveElements(withDelayState delayState: DelayState) {
 
         switch delayState {
-
         case .late(date: let delayedDepartureTime):
             liveLabel.textColor = Colors.lateRed
             liveLabel.text = "Late - \(Time.timeString(from: delayedDepartureTime))"
             liveIndicatorView.setColor(to: Colors.lateRed)
-            showLiveElements()
+            liveContainerView.addSubview(liveIndicatorView)
+            liveContainerView.addSubview(liveLabel)
+            setLiveIndicatorViewsConstraints()
 
         case .onTime(date: _):
             liveLabel.textColor = Colors.liveGreen
             liveLabel.text = "On Time"
             liveIndicatorView.setColor(to: Colors.liveGreen)
-            showLiveElements()
-
-        case .noDelay(date: _):
-            hideLiveElements()
-        }
-
-    }
-
-    private func showLiveElements() {
-        delegate?.updateLiveElements {
             liveContainerView.addSubview(liveIndicatorView)
             liveContainerView.addSubview(liveLabel)
             setLiveIndicatorViewsConstraints()
-            layoutIfNeeded()
-        }
-    }
 
-    private func hideLiveElements() {
-        delegate?.updateLiveElements {
+        case .noDelay(date: _):
             liveLabel.removeFromSuperview()
             liveIndicatorView.removeFromSuperview()
         }
-    }
 
+    }
+    
     private func setDepartureTime(withStartTime startTime: Date, withDelayState delayState: DelayState) {
 
         switch delayState {
@@ -363,19 +282,13 @@ class RouteTableViewCell: UITableViewCell {
         arrowImageView.tintColor = Colors.metadataIcon
     }
 
-    func invalidateTimer() {
-        timer?.invalidate()
-    }
-
     // MARK: Reuse
 
     override func prepareForReuse() {
         routeDiagram.removeFromSuperview()
         routeDiagram.snp.removeConstraints()
-
-        timer?.invalidate()
-
-        hideLiveElements()
+        liveLabel.removeFromSuperview()
+        liveIndicatorView.removeFromSuperview()
     }
 
     required init?(coder aDecoder: NSCoder) {
