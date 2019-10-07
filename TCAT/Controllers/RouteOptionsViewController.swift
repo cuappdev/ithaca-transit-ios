@@ -348,7 +348,7 @@ class RouteOptionsViewController: UIViewController {
                     DispatchQueue.main.async {
                         switch result {
                         case .value (let delayResponse):
-                            guard (delayResponse.data != nil), let delay = delayResponse.data else {
+                            guard delayResponse.data != nil, let delay = delayResponse.data else {
                                 return
                             }
                             let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delay
@@ -365,7 +365,7 @@ class RouteOptionsViewController: UIViewController {
                             let departTime = direction.startTime
                             let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
                             var delayState: DelayState!
-                            let isLateDelay = (Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending)
+                            let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
                             if isLateDelay {
                                 delayState = DelayState.late(date: delayedDepartTime)
                             } else {
