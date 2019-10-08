@@ -127,7 +127,6 @@ extension Endpoint {
     
     static func getAllDelays(trips: [Trip]) -> Endpoint {
         let body = TripBody(data: trips)
-        print(body)
         return Endpoint(path: Constants.Endpoints.delays, body: body)
     }
     

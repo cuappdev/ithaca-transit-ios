@@ -67,6 +67,7 @@ class RouteOptionsViewController: UIViewController {
     
     // Dictionary to map delays to a route
     var delayDictionary: [String: DelayState] = [:]
+    var tripDictionary: [String: Route] = [:]
     
     /// Returns routes from each section in order
     private var allRoutes: [Route] {
@@ -114,14 +115,14 @@ class RouteOptionsViewController: UIViewController {
 
         searchForRoutes()
         
-        routeTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveTracking(sender:)), userInfo: nil, repeats: true)
+        routeTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateAllRoutesLiveTracking(sender:)), userInfo: nil, repeats: true)
         updateTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(rerenderLiveTracking(sender:)), userInfo: nil, repeats: true)
 
         // Check for 3D Touch availability
         if traitCollection.forceTouchCapability == .available {
             registerForPreviewing(with: self, sourceView: view)
         }
-
+ 
         setupConstraints()
     }
 
@@ -336,11 +337,7 @@ class RouteOptionsViewController: UIViewController {
         return networking(Endpoint.getAllDelays(trips: trips)).decode()
     }
     
-//    private func busLocations(_ directions: [Direction]) -> Future<Response<[BusLocation]>> {
-//        return networking(Endpoint.getBusLocations(directions)).decode()
-//    }
-    
-    @objc func updateAllRoutesLiveTracking() {
+    @objc func updateAllRoutesLiveTracking(sender: Timer) {
         var trips: [Trip] = []
         for routesArray in routes {
             for route in routesArray {
@@ -350,6 +347,7 @@ class RouteOptionsViewController: UIViewController {
                         let stopId = direction.stops.first?.id else {
                             return
                     }
+                    tripDictionary[tripId] = route
                     let trip = Trip(stopID: stopId, tripID: tripId)
                     trips.append(trip)
                 }
@@ -357,7 +355,6 @@ class RouteOptionsViewController: UIViewController {
         }
         getAllDelays(trips: trips).observe(with: { result in
             DispatchQueue.main.async {
-                print("got result back")
                 switch result {
                     case .value(let response):
                         print("value")
@@ -371,55 +368,133 @@ class RouteOptionsViewController: UIViewController {
     }
 
 
-    @objc func updateLiveTracking(sender: Timer) {
+//    @objc func updateLiveTracking(sender: Timer) {
+//        // For each route in each route array inside of the 'routes' array,
+//        // retrieve its delay. Use index of route to save delay for route to
+//        // JSON file.
+//        updateAllRoutesLiveTracking()
+//        for routesArray in routes {
+//            for (index, route) in routesArray.enumerated() {
+//                if route.isRawWalkingRoute() { return }
+//                guard let direction = route.getFirstDepartRawDirection(),
+//                    let tripId = direction.tripIdentifiers?.first,
+//                    let stopId = direction.stops.first?.id else {
+//                        return
+//                }
+//                getDelay(tripId: tripId, stopId: stopId).observe(with: { result in
+//                    DispatchQueue.main.async {
+//                        switch result {
+//                        case .value (let delayResponse):
+//                            guard delayResponse.data != nil, let delay = delayResponse.data else {
+//                                return
+//                            }
+//                            let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delay
+//                            if isNewDelayValue {
+//                                JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
+//                                JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
+//                                if let data = try? JSONEncoder().encode(delayResponse) {
+//                                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: index)) } catch let error {
+//                                        self.printClass(context: "\(#function) delayResponse error", message: error.localizedDescription)
+//                                    }
+//=======
+//                    case .value(let delaysResponse):
+//                        if (delaysResponse.success) {
+//                            print(delaysResponse.data)
+//                            for delay in delaysResponse.data {
+//                                print(delay)
+//                                let tripRoute = self.tripDictionary[delay.tripID]
+//                                guard let route = tripRoute,
+//                                    let direction = route.getFirstDepartRawDirection(),
+//                                    let delayVal = delay.delay else {
+//                                        return
+//>>>>>>> Update live tracking data structures
+//                                }
+//                                let departTime = direction.startTime
+//                                let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delayVal))
+//                                var delayState: DelayState!
+//                                let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
+//                                if isLateDelay {
+//                                    delayState = DelayState.late(date: delayedDepartTime)
+//                                } else {
+//                                    delayState = DelayState.onTime(date: departTime)
+//                                }
+//                                self.delayDictionary[route.routeId] = delayState
+//<<<<<<< HEAD
+//                                route.getFirstDepartRawDirection()?.delay = delay
+//=======
+//                                route.getFirstDepartRawDirection()?.delay = delayVal
+//ter
+//>>>>>>> Update live tracking data structures
+//                            }
+//                        case .error (let error):
+//                            self.printClass(context: "\(#function) error", message: error.localizedDescription)
+//                        }
+//<<<<<<< HEAD
+//                    }
+//                })
+//=======
+//                    case .error(let error):
+//                        print(error)
+//                }
+//>>>>>>> Update live tracking data structures
+//            }
+//        })
+//    }
+
+
+//    @objc func updateLiveTracking(sender: Timer) {
         // For each route in each route array inside of the 'routes' array,
         // retrieve its delay. Use index of route to save delay for route to
         // JSON file.
-        updateAllRoutesLiveTracking()
-        for routesArray in routes {
-            for (index, route) in routesArray.enumerated() {
-                if route.isRawWalkingRoute() { return }
-                guard let direction = route.getFirstDepartRawDirection(),
-                    let tripId = direction.tripIdentifiers?.first,
-                    let stopId = direction.stops.first?.id else {
-                        return
-                }
-                getDelay(tripId: tripId, stopId: stopId).observe(with: { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .value (let delayResponse):
-                            guard delayResponse.data != nil, let delay = delayResponse.data else {
-                                return
-                            }
-                            let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delay
-                            if isNewDelayValue {
-                                JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
-                                JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
-                                if let data = try? JSONEncoder().encode(delayResponse) {
-                                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: index)) } catch let error {
-                                        self.printClass(context: "\(#function) delayResponse error", message: error.localizedDescription)
-                                    }
-                                }
-                                let departTime = direction.startTime
-                                let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
-                                var delayState: DelayState!
-                                let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
-                                if isLateDelay {
-                                    delayState = DelayState.late(date: delayedDepartTime)
-                                } else {
-                                    delayState = DelayState.onTime(date: departTime)
-                                }
-                                self.delayDictionary[route.routeId] = delayState
-                                route.getFirstDepartRawDirection()?.delay = delay
-                            }
-                        case .error (let error):
-                            self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                        }
-                    }
-                })
-            }
-        }
-    }
+//        updateAllRoutesLiveTracking()
+//        for routesArray in routes {
+//            for (index, route) in routesArray.enumerated() {
+//                if !route.isRawWalkingRoute() {
+//                    guard let direction = route.getFirstDepartRawDirection(),
+//                        let tripId = direction.tripIdentifiers?.first,
+//                        let stopId = direction.stops.first?.id else {
+//                            return
+//                    }
+//                    getDelay(tripId: tripId, stopId: stopId).observe(with: { result in
+//                        let fileName = "RouteTableViewCell"
+//                        DispatchQueue.main.async {
+//                            switch result {
+//                            case .value (let delayResponse):
+//                                guard delayResponse.data != nil, let delay = delayResponse.data else {
+//                                    return
+//                                }
+//                                let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delay
+//                                if isNewDelayValue {
+//                                    JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
+//                                    JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
+//                                    if let data = try? JSONEncoder().encode(delayResponse) {
+//                                        do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: index)) } catch let error {
+//                                            let line = "\(fileName) \(#function): \(error.localizedDescription)"
+//                                            print(line)
+//                                        }
+//                                    }
+//                                }
+//                                let departTime = direction.startTime
+//                                let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
+//                                var delayState: DelayState!
+//                                let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
+//                                if isLateDelay {
+//                                    delayState = DelayState.late(date: delayedDepartTime)
+//                                } else {
+//                                    delayState = DelayState.onTime(date: departTime)
+//                                }
+//                                self.delayDictionary[route.routeId] = delayState
+//                                route.getFirstDepartRawDirection()?.delay = delay
+//
+//                            case .error (let error):
+//                                print(error)
+//                            }
+//                        }
+//                    })
+//                }
+//            }
+//        }
+//    }
     
     @objc private func refreshRoutesAndTime() {
         let now = Date()
