@@ -358,26 +358,27 @@ class RouteOptionsViewController: UIViewController {
                         if !delaysResponse.success { return }
                         let allDelays = delaysResponse.data
                         for delay in allDelays {
-                            // let fileName = "RouteTableViewCell"
-//                            let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delay
-//                            if isNewDelayValue {
-//                                JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
-//                                JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
-//                                if let data = try? JSONEncoder().encode(delayResponse) {
-//                                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: index)) } catch let error {
-//                                        let line = "\(fileName) \(#function): \(error.localizedDescription)"
-//                                        print(line)
-//                                    }
-//                                }
-//                            }
                             let tripRoute = self.tripDictionary[delay.tripID]
                             guard let route = tripRoute,
                                 let direction = route.getFirstDepartRawDirection(),
-                                let delayVal = delay.delay else {
+                                let delayValue = delay.delay else {
                                     return
                             }
+                            // LUCY - Double Check JSON File outputs
+                            let fileName = "RouteTableViewCell"
+                            let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delayValue
+                            if isNewDelayValue {
+                                JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: delay.stopID, tripId: delay.tripID)
+                                JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: delay.tripID, stopId: delay.stopID))
+                                if let data = try? JSONEncoder().encode(delay) {
+                                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: -1)) } catch let error {
+                                        let line = "\(fileName) \(#function): \(error.localizedDescription)"
+                                        print(line)
+                                    }
+                                }
+                            }
                             let departTime = direction.startTime
-                            let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delayVal))
+                            let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delayValue))
                             var delayState: DelayState!
                             let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
                             if isLateDelay {
@@ -386,7 +387,7 @@ class RouteOptionsViewController: UIViewController {
                                 delayState = DelayState.onTime(date: departTime)
                             }
                             self.delayDictionary[route.routeId] = delayState
-                            route.getFirstDepartRawDirection()?.delay = delayVal
+                            route.getFirstDepartRawDirection()?.delay = delayValue
                         }
                     case .error(let error):
                         print(error)
