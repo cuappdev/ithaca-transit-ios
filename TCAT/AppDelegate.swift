@@ -15,7 +15,6 @@ import Intents
 import SafariServices
 import SwiftyJSON
 import UIKit
-import WhatsNewKit
 
 // This is used for app-specific preferences
 let userDefaults = UserDefaults.standard

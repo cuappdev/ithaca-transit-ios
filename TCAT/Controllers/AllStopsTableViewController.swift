@@ -258,7 +258,6 @@ extension AllStopsTableViewController: UITableViewDelegate {
 extension AllStopsTableViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return sectionIndexes.count
     }
 
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
