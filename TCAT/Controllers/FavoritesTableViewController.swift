@@ -10,6 +10,11 @@ import UIKit
 import DZNEmptyDataSet
 import FutureNova
 
+protocol FavoritesSelectionDelegate: class {
+    /** Indicates to `HomeMapViewController` that it should reload its table. */
+    func didAddNewFavorite()
+}
+
 class FavoritesTableViewController: UIViewController {
 
     private var searchBar = UISearchBar()
@@ -174,9 +179,4 @@ extension FavoritesTableViewController: UISearchBarDelegate {
         }
     }
 
-}
-
-protocol FavoritesSelectionDelegate: class {
-    /** Indicates to `HomeMapViewController` that it should reload its table. */
-    func didAddNewFavorite()
 }
