@@ -263,6 +263,7 @@ class HomeOptionsCardViewController: UIViewController {
 
     @objc func presentFavoritesTVC(sender: UIButton? = nil) {
         let favoritesTVC = FavoritesTableViewController()
+        favoritesTVC.selectionDelegate = self
         let navController = CustomNavigationController(rootViewController: favoritesTVC)
         present(navController, animated: true, completion: nil)
     }

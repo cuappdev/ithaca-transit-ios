@@ -22,7 +22,9 @@ class FavoritesTableViewController: UIViewController {
             tableView.reloadData()
         }
     }
-
+    
+    weak var selectionDelegate: FavoritesSelectionDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -118,6 +120,7 @@ extension FavoritesTableViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         if let place = resultsSection.getItem(at: indexPath.row) {
             Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
+            selectionDelegate?.didAddNewFavorite()
             dismissVC()
         }
     }
@@ -171,4 +174,9 @@ extension FavoritesTableViewController: UISearchBarDelegate {
         }
     }
 
+}
+
+protocol FavoritesSelectionDelegate: class {
+    /** Indicates to `HomeMapViewController` that it should reload its table. */
+    func didAddNewFavorite()
 }
