@@ -337,6 +337,8 @@ class RouteOptionsViewController: UIViewController {
     
     @objc func updateAllRoutesLiveTracking(sender: Timer) {
         var trips: [Trip] = []
+        // For each route in each route array inside of the 'routes' array, get its
+        // tripId and stopId to create trip array for request to get all delays.
         for routesArray in routes {
             for route in routesArray {
                 if !route.isRawWalkingRoute() {
@@ -357,21 +359,21 @@ class RouteOptionsViewController: UIViewController {
                     case .value(let delaysResponse):
                         if !delaysResponse.success { return }
                         let allDelays = delaysResponse.data
-                        for delay in allDelays {
-                            let tripRoute = self.tripDictionary[delay.tripID]
+                        for delayResponse in allDelays {
+                            let tripRoute = self.tripDictionary[delayResponse.tripID]
                             guard let route = tripRoute,
                                 let routeId = tripRoute?.routeId,
                                 let direction = route.getFirstDepartRawDirection(),
-                                let delayValue = delay.delay else {
+                                let delay = delayResponse.delay else {
                                     return
                             }
                             // LUCY - Double Check JSON File outputs
                             let fileName = "RouteTableViewCell"
-                            let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delayValue
+                            let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delay
                             if isNewDelayValue {
-                                JSONFileManager.shared.logDelayParameters(timestamp: Date(), stopId: delay.stopID, tripId: delay.tripID)
-                                JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: delay.tripID, stopId: delay.stopID))
-                                if let data = try? JSONEncoder().encode(delay) {
+                                JSONFileManager.shared.logDelayParameters(timestamp: Date(), stopId: delayResponse.stopID, tripId: delayResponse.tripID)
+                                JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: delayResponse.tripID, stopId: delayResponse.stopID))
+                                if let data = try? JSONEncoder().encode(delayResponse) {
                                     do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(routeId: routeId)) } catch let error {
                                         let line = "\(fileName) \(#function): \(error.localizedDescription)"
                                         print(line)
@@ -379,7 +381,7 @@ class RouteOptionsViewController: UIViewController {
                                 }
                             }
                             let departTime = direction.startTime
-                            let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delayValue))
+                            let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
                             var delayState: DelayState!
                             let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
                             if isLateDelay {
@@ -388,7 +390,7 @@ class RouteOptionsViewController: UIViewController {
                                 delayState = DelayState.onTime(date: departTime)
                             }
                             self.delayDictionary[routeId] = delayState
-                            route.getFirstDepartRawDirection()?.delay = delayValue
+                            route.getFirstDepartRawDirection()?.delay = delay
                         }
                     case .error(let error):
                         print(error)
