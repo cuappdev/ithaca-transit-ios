@@ -12,7 +12,7 @@ import Zip
 
 enum JSONType {
     case routeJSON
-    case delayJSON(rowNum: Int)
+    case delayJSON(routeId: String)
 
     func rawValue() -> String {
         switch self {
@@ -182,7 +182,7 @@ class JSONFileManager {
         logLine(timestamp: timestamp, line: "Search parameters: startPlace: \(startPlace). endPlace: \(endPlace). searchTime: \(Time.dateString(from: searchTime)). searchTimeType: \(searchTimeType)")
     }
 
-    func logDelayParemeters(timestamp: Date, stopId: String, tripId: String) {
+    func logDelayParameters(timestamp: Date, stopId: String, tripId: String) {
         logLine(timestamp: timestamp, line: "Delay parameters: stopId: \(stopId). tripId: \(tripId).")
     }
 
@@ -245,8 +245,8 @@ class JSONFileManager {
         switch type {
         case .routeJSON:
             return "\(dateString) \(jsonString)"
-        case .delayJSON(rowNum: let num):
-            return "\(dateString) \(jsonString) \(num)"
+        case .delayJSON(routeId: let routeId):
+            return "\(dateString) \(jsonString) \(routeId)"
         }
     }
 

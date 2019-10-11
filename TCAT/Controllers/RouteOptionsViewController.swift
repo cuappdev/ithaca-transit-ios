@@ -360,6 +360,7 @@ class RouteOptionsViewController: UIViewController {
                         for delay in allDelays {
                             let tripRoute = self.tripDictionary[delay.tripID]
                             guard let route = tripRoute,
+                                let routeId = tripRoute?.routeId,
                                 let direction = route.getFirstDepartRawDirection(),
                                 let delayValue = delay.delay else {
                                     return
@@ -368,10 +369,10 @@ class RouteOptionsViewController: UIViewController {
                             let fileName = "RouteTableViewCell"
                             let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delayValue
                             if isNewDelayValue {
-                                JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: delay.stopID, tripId: delay.tripID)
+                                JSONFileManager.shared.logDelayParameters(timestamp: Date(), stopId: delay.stopID, tripId: delay.tripID)
                                 JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: delay.tripID, stopId: delay.stopID))
                                 if let data = try? JSONEncoder().encode(delay) {
-                                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: -1)) } catch let error {
+                                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(routeId: routeId)) } catch let error {
                                         let line = "\(fileName) \(#function): \(error.localizedDescription)"
                                         print(line)
                                     }
@@ -386,7 +387,7 @@ class RouteOptionsViewController: UIViewController {
                             } else {
                                 delayState = DelayState.onTime(date: departTime)
                             }
-                            self.delayDictionary[route.routeId] = delayState
+                            self.delayDictionary[routeId] = delayState
                             route.getFirstDepartRawDirection()?.delay = delayValue
                         }
                     case .error(let error):
