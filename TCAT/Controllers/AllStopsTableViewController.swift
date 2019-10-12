@@ -41,7 +41,6 @@ class AllStopsTableViewController: UIViewController {
         setupConstraints()
 
         refreshAllStops()
-        Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) error", message: "some error")
     }
 
     private func setupTableView() {
