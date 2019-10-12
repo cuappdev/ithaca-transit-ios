@@ -248,7 +248,7 @@ extension InformationViewController: MFMailComposeViewControllerDelegate {
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Swift.Error?) {
         controller.dismiss(animated: true)
         if let error = error {
-            print("Mail Error:", error)
+            Analytics.shared.logWithPrintStatement(currentClass: self, context: "Mail error", message: error.localizedDescription)
         }
     }
 }

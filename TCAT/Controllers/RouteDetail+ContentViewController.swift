@@ -180,7 +180,7 @@ class RouteDetailContentViewController: UIViewController {
             }
         }
         if !directionsAreValid {
-            print("getBusLocations - Directions are not valid")
+            Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function)", message: "Directions are not valid")
             return
         }
 
@@ -195,7 +195,7 @@ class RouteDetailContentViewController: UIViewController {
                     }
                     self.parseBusLocationsData(data: response.data)
                 case .error(let error):
-                    print("RouteDetailVC getBusLocations Error:", error.localizedDescription)
+                    Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) error", message: error.localizedDescription)
                     if let banner = self.banner, !banner.isDisplaying {
                         self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
                     }

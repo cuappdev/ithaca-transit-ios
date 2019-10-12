@@ -118,7 +118,7 @@ extension RouteOptionsViewController: DatePickerViewDelegate {
 extension RouteOptionsViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-        print("\(#file) \(#function): \(error.localizedDescription)")
+        Analytics.shared.logWithPrintStatement(currentClass: self, context: ("CLLocationManager didFailWithError"), message: error.localizedDescription)
 
         if error._code == CLError.denied.rawValue {
             locationManager.stopUpdatingLocation()

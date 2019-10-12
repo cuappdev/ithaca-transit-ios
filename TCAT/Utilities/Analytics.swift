@@ -20,6 +20,11 @@ class Analytics {
             Answers.logCustomEvent(withName: fabricEvent.name, customAttributes: fabricEvent.attributes)
         #endif
     }
+    
+    func logWithPrintStatement(currentClass: Any, context: String, message: String) {
+        let className = String(describing: currentClass)
+        print("[\(className)] \(context): \(message)")
+    }
 }
 
 extension Payload {

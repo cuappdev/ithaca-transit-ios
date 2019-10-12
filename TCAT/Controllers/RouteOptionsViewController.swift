@@ -344,7 +344,6 @@ class RouteOptionsViewController: UIViewController {
                         return
                 }
                 getDelay(tripId: tripId, stopId: stopId).observe(with: { result in
-                    let fileName = "RouteTableViewCell"
                     DispatchQueue.main.async {
                         switch result {
                         case .value (let delayResponse):
@@ -357,8 +356,7 @@ class RouteOptionsViewController: UIViewController {
                                 JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
                                 if let data = try? JSONEncoder().encode(delayResponse) {
                                     do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: index)) } catch let error {
-                                        let line = "\(fileName) \(#function): \(error.localizedDescription)"
-                                        print(line)
+                                        Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) delayResponse error", message: error.localizedDescription)
                                     }
                                 }
                             }
@@ -375,7 +373,7 @@ class RouteOptionsViewController: UIViewController {
                             route.getFirstDepartRawDirection()?.delay = delay
 
                         case .error (let error):
-                            print(error)
+                            Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) error", message: error.localizedDescription)
                         }
                     }
                 })
@@ -492,13 +490,13 @@ class RouteOptionsViewController: UIViewController {
 
     func routeSelected(routeId: String) {
         networking(Endpoint.routeSelected(routeId: routeId)).observe { [weak self] result in
-            guard self != nil else { return }
+            guard let `self` = self else { return }
             DispatchQueue.main.async {
                 switch result {
                 case .value:
-                    print("[RouteOptionsViewController] Route Selected - Success")
+                    Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function)", message: "success")
                 case .error(let error):
-                    print("[RouteOptionsViewController] Route Selected - Error:", error)
+                    Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) error", message: error.localizedDescription)
                 }
             }
         }
@@ -512,9 +510,7 @@ class RouteOptionsViewController: UIViewController {
             // Save to JSONFileManager
             if let data = try? JSONEncoder().encode(response) {
                 do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) } catch let error {
-                    let fileName = "RouteOptionsViewController"
-                    let line = "\(fileName) \(#function): \(error.localizedDescription)"
-                    print(line)
+                    Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) error", message: error.localizedDescription)
                 }
             }
             // Parse sections of routes
@@ -618,7 +614,7 @@ class RouteOptionsViewController: UIViewController {
         do {
             try reachability?.startNotifier()
         } catch {
-            print("\(#file) \(#function): Could not start reachability notifier")
+            Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function)", message: "Could not start reachability notifier")
         }
     }
 
