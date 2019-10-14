@@ -27,7 +27,7 @@ class RouteDetailContentViewController: UIViewController {
     var buses = [GMSMarker]()
     var currentLocation: CLLocationCoordinate2D?
     var directions: [Direction] = []
-    private var initalUpdate: Bool = true
+    private(set) var isInitalUpdate: Bool = true
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
     var liveTrackingNetworkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
     var liveTrackingNetworkTimer: Timer?
@@ -459,8 +459,8 @@ class RouteDetailContentViewController: UIViewController {
     /// Completion after locationManager functions return
     func didUpdateLocation() {
         // TODO #267: Find better way to cut down on didUpdateLocation calls
-        if initalUpdate {
-            initalUpdate = false
+        if isInitalUpdate {
+            isInitalUpdate = false
             drawMapRoute()
             centerMapOnOverview(drawerPreviewing: true)
         }
