@@ -561,8 +561,8 @@ class RouteOptionsViewController: UIViewController {
         // tripId and stopId to create trip array for request to get all delays.
         for routesArray in routes {
             for route in routesArray {
-                guard (!route.isRawWalkingRoute()) else { continue }
-                guard let direction = route.getFirstDepartRawDirection(),
+                guard !route.isRawWalkingRoute(),
+                    let direction = route.getFirstDepartRawDirection(),
                     let tripId = direction.tripIdentifiers?.first,
                     let stopId = direction.stops.first?.id else {
                         continue
