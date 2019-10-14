@@ -124,7 +124,7 @@ class RouteOptionsViewController: UIViewController {
         if traitCollection.forceTouchCapability == .available {
             registerForPreviewing(with: self, sourceView: view)
         }
- 
+
         setupConstraints()
     }
 
@@ -336,23 +336,6 @@ class RouteOptionsViewController: UIViewController {
     }
     
     @objc func updateAllRoutesLiveTracking(sender: Timer) {
-        var trips: [Trip] = []
-        // For each route in each route array inside of the 'routes' array, get its
-        // tripId and stopId to create trip array for request to get all delays.
-        for routesArray in routes {
-            for route in routesArray {
-                if !route.isRawWalkingRoute() {
-                    guard let direction = route.getFirstDepartRawDirection(),
-                        let tripId = direction.tripIdentifiers?.first,
-                        let stopId = direction.stops.first?.id else {
-                            return
-                    }
-                    tripDictionary[tripId] = route
-                    let trip = Trip(stopID: stopId, tripID: tripId)
-                    trips.append(trip)
-                }
-            }
-        }
         getAllDelays(trips: trips).observe(with: { result in
             DispatchQueue.main.async {
                 switch result {
@@ -365,9 +348,8 @@ class RouteOptionsViewController: UIViewController {
                                 let routeId = tripRoute?.routeId,
                                 let direction = route.getFirstDepartRawDirection(),
                                 let delay = delayResponse.delay else {
-                                    return
+                                    continue
                             }
-                            // LUCY - Double Check JSON File outputs
                             let fileName = "RouteTableViewCell"
                             let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delay
                             if isNewDelayValue {
@@ -573,6 +555,26 @@ class RouteOptionsViewController: UIViewController {
             }
         }
     }
+    
+    private func getRoutesTrips() {
+        // For each route in each route array inside of the 'routes' array, get its
+        // tripId and stopId to create trip array for request to get all delays.
+        for routesArray in routes {
+            for route in routesArray {
+                if !route.isRawWalkingRoute() {
+                    guard let direction = route.getFirstDepartRawDirection(),
+                        let tripId = direction.tripIdentifiers?.first,
+                        let stopId = direction.stops.first?.id else {
+                            return
+                    }
+                    tripDictionary[tripId] = route
+                    let trip = Trip(stopID: stopId, tripID: tripId)
+                    trips.append(trip)
+                }
+            }
+        }
+    }
+    
     private func processRequest(result: Result<Response<RouteSectionsObject>>, requestURL: String, endPlace: Place) {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
 
@@ -598,6 +600,7 @@ class RouteOptionsViewController: UIViewController {
                     }
 
             }
+            self.getRoutesTrips()
             self.requestDidFinish(perform: [.hideBanner])
         case .error(let error):
             self.processRequestError(error: error, requestURL: requestURL)
