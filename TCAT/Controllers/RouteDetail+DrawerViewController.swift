@@ -190,10 +190,10 @@ class RouteDetailDrawerViewController: UIViewController {
                             self.tableView.reloadData()
                             self.summaryView.updateTimes(for: self.route)
                         } else {
-                            Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) success", message: "false")
+                            self.printClass(context: "\(#function) success", message: "false")
                         }
                     case .error(let error):
-                        Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) error", message: error.localizedDescription)
+                        self.printClass(context: "\(#function) error", message: error.localizedDescription)
                     }
                 }
             })

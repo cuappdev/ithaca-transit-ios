@@ -87,7 +87,7 @@ extension RouteDetailContentViewController: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-        Analytics.shared.logWithPrintStatement(currentClass: self, context: "CLLocationManager didFailWithError", message: error.localizedDescription)
+        printClass(context: "CLLocationManager didFailWithError", message: error.localizedDescription)
         didUpdateLocation()
     }
 }

@@ -151,14 +151,14 @@ class AllStopsTableViewController: UIViewController {
                             let encodedObject = try JSONEncoder().encode(response.data)
                             userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
                         } catch let error {
-                            Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) error", message: error.localizedDescription)
+                            self.printClass(context: "\(#function) error", message: error.localizedDescription)
                         }
                         let collegetownStop = Place(name: "Collegetown", latitude: 42.442558, longitude: -76.485336)
                         response.data.append(collegetownStop)
                         self.allStops = response.data
                     }
                 case .error(let error):
-                    Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) error", message: error.localizedDescription)
+                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
                 }
                 self.loadingIndicator?.removeFromSuperview()
                 self.loadingIndicator = nil

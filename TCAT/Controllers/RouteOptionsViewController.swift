@@ -356,7 +356,7 @@ class RouteOptionsViewController: UIViewController {
                                 JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
                                 if let data = try? JSONEncoder().encode(delayResponse) {
                                     do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: index)) } catch let error {
-                                        Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) delayResponse error", message: error.localizedDescription)
+                                        self.printClass(context: "\(#function) delayResponse error", message: error.localizedDescription)
                                     }
                                 }
                             }
@@ -373,7 +373,7 @@ class RouteOptionsViewController: UIViewController {
                             route.getFirstDepartRawDirection()?.delay = delay
 
                         case .error (let error):
-                            Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) error", message: error.localizedDescription)
+                            self.printClass(context: "\(#function) error", message: error.localizedDescription)
                         }
                     }
                 })
@@ -494,9 +494,9 @@ class RouteOptionsViewController: UIViewController {
             DispatchQueue.main.async {
                 switch result {
                 case .value:
-                    Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function)", message: "success")
+                    self.printClass(context: "\(#function)", message: "success")
                 case .error(let error):
-                    Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) error", message: error.localizedDescription)
+                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
                 }
             }
         }
@@ -510,7 +510,7 @@ class RouteOptionsViewController: UIViewController {
             // Save to JSONFileManager
             if let data = try? JSONEncoder().encode(response) {
                 do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) } catch let error {
-                    Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) error", message: error.localizedDescription)
+                    printClass(context: "\(#function) error", message: error.localizedDescription)
                 }
             }
             // Parse sections of routes
@@ -614,7 +614,7 @@ class RouteOptionsViewController: UIViewController {
         do {
             try reachability?.startNotifier()
         } catch {
-            Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function)", message: "Could not start reachability notifier")
+            printClass(context: "\(#function)", message: "Could not start reachability notifier")
         }
     }
 

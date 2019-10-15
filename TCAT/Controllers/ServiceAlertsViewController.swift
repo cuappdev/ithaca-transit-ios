@@ -114,7 +114,7 @@ class ServiceAlertsViewController: UIViewController {
                     self.removeLoadingIndicator()
                     self.networkError = true
                     self.alerts = [:]
-                    Analytics.shared.logWithPrintStatement(currentClass: self, context: "\(#function) error", message: error.localizedDescription)
+                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
                 }
             }
         })
