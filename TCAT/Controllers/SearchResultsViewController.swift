@@ -159,7 +159,7 @@ class SearchResultsViewController: UIViewController {
             SearchManager.shared.performLookup(for: searchText) { [weak self] (searchResults, error) in
                 guard let `self` = self else { return }
                 if let error = error {
-                    print("[SearchResultsViewController] SearchManager lookup Error: \(error.localizedDescription)")
+                    self.printClass(context: "SearchManager lookup error", message: error.localizedDescription)
                     return
                 }
                 DispatchQueue.main.async {
@@ -329,7 +329,7 @@ extension SearchResultsViewController: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
-        print("SearchResultsTableVC CLLocationManager didFailWithError: \(error)")
+        printClass(context: "CLLocationManager didFailWithError", message: error.localizedDescription)
         // This means they dont have location services enabled. We catch this.
         if error._code == CLError.denied.rawValue {
             currentLocation = nil

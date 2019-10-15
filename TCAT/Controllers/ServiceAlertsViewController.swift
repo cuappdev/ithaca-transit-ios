@@ -110,10 +110,11 @@ class ServiceAlertsViewController: UIViewController {
                         self.networkError = false
                         self.alerts = self.sortedAlerts(alertsList: response.data)
                     }
-                case .error:
+                case .error (let error):
                     self.removeLoadingIndicator()
                     self.networkError = true
                     self.alerts = [:]
+                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
                 }
             }
         })

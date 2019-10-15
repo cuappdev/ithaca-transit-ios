@@ -283,7 +283,7 @@ class HomeOptionsCardViewController: UIViewController {
             SearchManager.shared.performLookup(for: searchText) { [weak self] (searchResults, error) in
                 guard let `self` = self else { return }
                 if let error = error {
-                    print("[HomeOptionsCardViewController] SearchManager lookup Error: \(error.localizedDescription)")
+                    self.printClass(context: "SearchManager lookup error", message: error.localizedDescription)
                     return
                 }
                 DispatchQueue.main.async {

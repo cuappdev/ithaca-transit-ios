@@ -167,7 +167,7 @@ extension FavoritesTableViewController: UISearchBarDelegate {
                 guard let `self` = self else { return }
                 DispatchQueue.main.async {
                     if let error = error {
-                        print("[FavoritesTableViewController] SearchManager lookup Error: \(error.localizedDescription)")
+                        self.printClass(context: "SearchManager lookup error", message: error.localizedDescription)
                         self.resultsSection = Section.recentSearches(items: [])
                         return
                     }

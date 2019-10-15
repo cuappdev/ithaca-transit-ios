@@ -190,10 +190,10 @@ class RouteDetailDrawerViewController: UIViewController {
                             self.tableView.reloadData()
                             self.summaryView.updateTimes(for: self.route)
                         } else {
-                            print("getDelays success: false")
+                            self.printClass(context: "\(#function) success", message: "false")
                         }
                     case .error(let error):
-                        print("getDelays error: \(error.localizedDescription)")
+                        self.printClass(context: "\(#function) error", message: error.localizedDescription)
                     }
                 }
             })
