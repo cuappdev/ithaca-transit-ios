@@ -10,8 +10,7 @@ import UIKit
 import DZNEmptyDataSet
 import FutureNova
 
-protocol FavoritesSelectionDelegate: class {
-    /// Indicates to `HomeMapViewController` that it should reload its table. 
+protocol FavoritesSelectionDelegate: class { 
     func didAddNewFavorite()
 }
 
