@@ -458,7 +458,6 @@ class RouteDetailContentViewController: UIViewController {
 
     /// Completion after locationManager functions return
     func didUpdateLocation() {
-        // TODO #267: Find better way to cut down on didUpdateLocation calls
         if isInitalUpdate {
             isInitalUpdate = false
             drawMapRoute()

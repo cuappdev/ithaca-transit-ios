@@ -282,7 +282,9 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
 }
 
 extension HomeOptionsCardViewController: FavoritesSelectionDelegate {
+    
     func didAddNewFavorite() {
         updatePlaces()
     }
+    
 }
