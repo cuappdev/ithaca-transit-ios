@@ -350,15 +350,13 @@ class RouteOptionsViewController: UIViewController {
                                 let delay = delayResponse.delay else {
                                     continue
                             }
-                            let fileName = "RouteTableViewCell"
                             let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delay
                             if isNewDelayValue {
                                 JSONFileManager.shared.logDelayParameters(timestamp: Date(), stopId: delayResponse.stopID, tripId: delayResponse.tripID)
                                 JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: delayResponse.tripID, stopId: delayResponse.stopID))
                                 if let data = try? JSONEncoder().encode(delayResponse) {
                                     do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(routeId: routeId)) } catch let error {
-                                        let line = "\(fileName) \(#function): \(error.localizedDescription)"
-                                        print(line)
+                                        self.printClass(context: "\(#function) error", message: error.localizedDescription)
                                     }
                                 }
                             }
@@ -376,6 +374,8 @@ class RouteOptionsViewController: UIViewController {
                         }
                     case .error(let error):
                         self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                        let payload = NetworkErrorPayload(location: "\(self) \(#function)", type: "\((error as NSError).domain)", description: error.localizedDescription)
+                        Analytics.shared.log(payload)
                     }
                 }
             })
@@ -497,6 +497,8 @@ class RouteOptionsViewController: UIViewController {
                     self.printClass(context: "\(#function)", message: "success")
                 case .error(let error):
                     self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                    let payload = NetworkErrorPayload(location: "\(self) \(#function)", type: "\((error as NSError).domain)", description: error.localizedDescription)
+                    Analytics.shared.log(payload)
                 }
             }
         }

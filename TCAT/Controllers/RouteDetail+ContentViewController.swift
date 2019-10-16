@@ -199,6 +199,8 @@ class RouteDetailContentViewController: UIViewController {
                     if let banner = self.banner, !banner.isDisplaying {
                         self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
                     }
+                    let payload = NetworkErrorPayload(location: "\(self) \(#function)", type: "\((error as NSError).domain)", description: error.localizedDescription)
+                    Analytics.shared.log(payload)
                 }
             }
         }

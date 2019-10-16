@@ -218,3 +218,13 @@ struct WhatsNewCardDismissedPayload: Payload {
 
     let actionDescription: String
 }
+
+/// Log any networking error
+struct NetworkErrorPayload: Payload {
+    static let eventName: String = "Network Error"
+    let deviceInfo = DeviceInfo()
+    
+    let location: String
+    let type: String 
+    let description: String
+}
