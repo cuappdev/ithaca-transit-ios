@@ -79,7 +79,7 @@ class HomeMapViewController: UIViewController {
         do {
             try reachability?.startNotifier()
         } catch {
-            print("HomeVC viewDidLayoutSubviews: Could not start reachability notifier")
+            printClass(context: "\(#function)", message: "Could not start reachability notifier")
         }
     }
 

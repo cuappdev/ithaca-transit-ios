@@ -192,3 +192,10 @@ extension Date {
         return Time.truncateSeconds(from: date)
     }
 }
+
+extension NSObject {
+    func printClass(context: String, message: String) {
+        let className = String(describing: self)
+        print("[\(className)] \(context): \(message)") 
+    }
+}

@@ -124,7 +124,12 @@ extension Endpoint {
         let queryItems = GetDelayBody(stopID: stopID, tripID: tripID).toQueryItems()
         return Endpoint(path: Constants.Endpoints.delay, queryItems: queryItems)
     }
-
+    
+    static func getAllDelays(trips: [Trip]) -> Endpoint {
+        let body = TripBody(data: trips)
+        return Endpoint(path: Constants.Endpoints.delays, body: body)
+    }
+    
     static func getDelayUrl(tripId: String, stopId: String) -> String {
         let path = "delay"
 

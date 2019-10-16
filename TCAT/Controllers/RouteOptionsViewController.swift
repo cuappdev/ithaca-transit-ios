@@ -49,6 +49,7 @@ class RouteOptionsViewController: UIViewController {
     var searchTo: Place!
     var searchType: SearchBarType = .to
     var showRouteSearchingLoader: Bool = false
+    var trips: [Trip] = []
 
     // Variable to remember back button when hiding
     private var backButton: UIBarButtonItem?
@@ -60,12 +61,15 @@ class RouteOptionsViewController: UIViewController {
     private let reachability: Reachability? = Reachability(hostname: Endpoint.config.host ?? "")
     private let routeResultsTitle: String = Constants.Titles.routeResults
     
-    // Timer for route live tracking and cell updates
+    // Timer to retrieve route delays and update route cells
     private var routeTimer: Timer?
     private var updateTimer: Timer?
     
-    // Dictionary to map delays to a route
+    // Dictionary to map route id to delay
     var delayDictionary: [String: DelayState] = [:]
+    
+    // Dictionary to map tripId to route
+    var tripDictionary: [String: Route] = [:]
     
     /// Returns routes from each section in order
     private var allRoutes: [Route] {
@@ -113,7 +117,7 @@ class RouteOptionsViewController: UIViewController {
 
         searchForRoutes()
         
-        routeTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateLiveTracking(sender:)), userInfo: nil, repeats: true)
+        routeTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateAllRoutesLiveTracking(sender:)), userInfo: nil, repeats: true)
         updateTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(rerenderLiveTracking(sender:)), userInfo: nil, repeats: true)
 
         // Check for 3D Touch availability
@@ -327,36 +331,32 @@ class RouteOptionsViewController: UIViewController {
         routeResults.reloadData()
     }
     
-    private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
-        return networking(Endpoint.getDelay(tripID: tripId, stopID: stopId)).decode()
+    private func getAllDelays(trips: [Trip]) -> Future<Response<[Delay]>> {
+        return networking(Endpoint.getAllDelays(trips: trips)).decode()
     }
-
-    @objc func updateLiveTracking(sender: Timer) {
-        // For each route in each route array inside of the 'routes' array,
-        // retrieve its delay. Use index of route to save delay for route to
-        // JSON file.
-        for routesArray in routes {
-            for (index, route) in routesArray.enumerated() {
-                if route.isRawWalkingRoute() { return }
-                guard let direction = route.getFirstDepartRawDirection(),
-                    let tripId = direction.tripIdentifiers?.first,
-                    let stopId = direction.stops.first?.id else {
-                        return
-                }
-                getDelay(tripId: tripId, stopId: stopId).observe(with: { result in
-                    let fileName = "RouteTableViewCell"
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .value (let delayResponse):
-                            guard delayResponse.data != nil, let delay = delayResponse.data else {
-                                return
+    
+    @objc func updateAllRoutesLiveTracking(sender: Timer) {
+        getAllDelays(trips: trips).observe(with: { result in
+            DispatchQueue.main.async {
+                switch result {
+                    case .value(let delaysResponse):
+                        if !delaysResponse.success { return }
+                        let allDelays = delaysResponse.data
+                        for delayResponse in allDelays {
+                            let tripRoute = self.tripDictionary[delayResponse.tripID]
+                            guard let route = tripRoute,
+                                let routeId = tripRoute?.routeId,
+                                let direction = route.getFirstDepartRawDirection(),
+                                let delay = delayResponse.delay else {
+                                    continue
                             }
+                            let fileName = "RouteTableViewCell"
                             let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delay
                             if isNewDelayValue {
-                                JSONFileManager.shared.logDelayParemeters(timestamp: Date(), stopId: stopId, tripId: tripId)
-                                JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: tripId, stopId: stopId))
+                                JSONFileManager.shared.logDelayParameters(timestamp: Date(), stopId: delayResponse.stopID, tripId: delayResponse.tripID)
+                                JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: delayResponse.tripID, stopId: delayResponse.stopID))
                                 if let data = try? JSONEncoder().encode(delayResponse) {
-                                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(rowNum: index)) } catch let error {
+                                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(routeId: routeId)) } catch let error {
                                         let line = "\(fileName) \(#function): \(error.localizedDescription)"
                                         print(line)
                                     }
@@ -371,16 +371,14 @@ class RouteOptionsViewController: UIViewController {
                             } else {
                                 delayState = DelayState.onTime(date: departTime)
                             }
-                            self.delayDictionary[route.routeId] = delayState
+                            self.delayDictionary[routeId] = delayState
                             route.getFirstDepartRawDirection()?.delay = delay
-
-                        case .error (let error):
-                            print(error)
                         }
+                    case .error(let error):
+                        self.printClass(context: "\(#function) error", message: error.localizedDescription)
                     }
-                })
-            }
-        }
+                }
+            })
     }
     
     @objc private func refreshRoutesAndTime() {
@@ -492,17 +490,36 @@ class RouteOptionsViewController: UIViewController {
 
     func routeSelected(routeId: String) {
         networking(Endpoint.routeSelected(routeId: routeId)).observe { [weak self] result in
-            guard self != nil else { return }
+            guard let `self` = self else { return }
             DispatchQueue.main.async {
                 switch result {
                 case .value:
-                    print("[RouteOptionsViewController] Route Selected - Success")
+                    self.printClass(context: "\(#function)", message: "success")
                 case .error(let error):
-                    print("[RouteOptionsViewController] Route Selected - Error:", error)
+                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
                 }
             }
         }
     }
+    
+    private func getRoutesTrips() {
+        // For each route in each route array inside of the 'routes' array, get its
+        // tripId and stopId to create trip array for request to get all delays.
+        for routesArray in routes {
+            for route in routesArray {
+                guard !route.isRawWalkingRoute(),
+                    let direction = route.getFirstDepartRawDirection(),
+                    let tripId = direction.tripIdentifiers?.first,
+                    let stopId = direction.stops.first?.id else {
+                        continue
+                }
+                tripDictionary[tripId] = route
+                let trip = Trip(stopID: stopId, tripID: tripId)
+                trips.append(trip)
+            }
+        }
+    }
+    
     private func processRequest(result: Result<Response<RouteSectionsObject>>, requestURL: String, endPlace: Place) {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
 
@@ -512,9 +529,7 @@ class RouteOptionsViewController: UIViewController {
             // Save to JSONFileManager
             if let data = try? JSONEncoder().encode(response) {
                 do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) } catch let error {
-                    let fileName = "RouteOptionsViewController"
-                    let line = "\(fileName) \(#function): \(error.localizedDescription)"
-                    print(line)
+                    printClass(context: "\(#function) error", message: error.localizedDescription)
                 }
             }
             // Parse sections of routes
@@ -530,6 +545,7 @@ class RouteOptionsViewController: UIViewController {
                     }
 
             }
+            self.getRoutesTrips()
             self.requestDidFinish(perform: [.hideBanner])
         case .error(let error):
             self.processRequestError(error: error, requestURL: requestURL)
@@ -618,7 +634,7 @@ class RouteOptionsViewController: UIViewController {
         do {
             try reachability?.startNotifier()
         } catch {
-            print("\(#file) \(#function): Could not start reachability notifier")
+            printClass(context: "\(#function)", message: "Could not start reachability notifier")
         }
     }
 

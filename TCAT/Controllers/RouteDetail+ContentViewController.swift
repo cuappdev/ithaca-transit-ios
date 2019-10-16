@@ -27,7 +27,7 @@ class RouteDetailContentViewController: UIViewController {
     var buses = [GMSMarker]()
     var currentLocation: CLLocationCoordinate2D?
     var directions: [Direction] = []
-    private(set) var isInitalUpdate: Bool = true
+    private(set) var isInitialUpdate: Bool = true
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
     var liveTrackingNetworkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
     var liveTrackingNetworkTimer: Timer?
@@ -180,7 +180,7 @@ class RouteDetailContentViewController: UIViewController {
             }
         }
         if !directionsAreValid {
-            print("getBusLocations - Directions are not valid")
+            printClass(context: "\(#function)", message: "Directions are not valid")
             return
         }
 
@@ -195,7 +195,7 @@ class RouteDetailContentViewController: UIViewController {
                     }
                     self.parseBusLocationsData(data: response.data)
                 case .error(let error):
-                    print("RouteDetailVC getBusLocations Error:", error.localizedDescription)
+                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
                     if let banner = self.banner, !banner.isDisplaying {
                         self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
                     }
@@ -458,8 +458,8 @@ class RouteDetailContentViewController: UIViewController {
 
     /// Completion after locationManager functions return
     func didUpdateLocation() {
-        if isInitalUpdate {
-            isInitalUpdate = false
+        if isInitialUpdate {
+            isInitialUpdate = false
             drawMapRoute()
             centerMapOnOverview(drawerPreviewing: true)
         }
