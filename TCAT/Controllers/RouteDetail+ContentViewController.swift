@@ -88,45 +88,39 @@ class RouteDetailContentViewController: UIViewController {
 
         let isWalkingRoute = directions.reduce(true) { $0 && $1.type == .walk }
         // Plot the paths of all directions
-        for (arrayIndex, direction) in directions.enumerated() {
+        for (directionIndex, direction) in directions.enumerated() {
             var waypoints: [Waypoint] = []
             for (pathIndex, point) in direction.path.enumerated() {
                 let isStop: Bool = direction.type != .walk
-                var typeNotSet = true
-                var type: WaypointType = .none {
-                    didSet {
-                        typeNotSet = false
-                    }
-                }
+                var isTypeSet = false
+                var type: WaypointType = .none
 
                 // First Direction
-                if arrayIndex == 0 {
-                    // First Waypoint
-                    if pathIndex == 0 && (currentLocation == nil || isWalkingRoute) {
+                if directionIndex == 0 {
+                    if pathIndex == 0 && (currentLocation == nil || isWalkingRoute) { // First Waypoint
                         type = .origin
-                    }
-                    // Last Waypoint
-                    else if pathIndex == direction.path.count - 1 {
-                        // Handle when first == last
+                        isTypeSet = true
+                    } else if pathIndex == direction.path.count - 1 { // Fast waypoint
                         type = directions.count == 1 ? .destination : (isStop ? .bus : .none)
+                        isTypeSet = true
                     }
                 }
 
                 // Last Direction
-                if typeNotSet && arrayIndex == directions.count - 1 {
-                    // First Waypoint
-                    if pathIndex == 0 {
+                if !isTypeSet && directionIndex == directions.count - 1 {
+                    if pathIndex == 0 { // First Waypoint
                         type = isStop ? .bus : .none
-                    }
-                    // Last Waypoint
-                    else if pathIndex == direction.path.count - 1 {
+                        isTypeSet = true
+                    } else if pathIndex == direction.path.count - 1 { // Last Waypoint
                         type = .destination
+                        isTypeSet = true
                     }
                 }
 
                 // First & Last Bus Segments
-                if typeNotSet && direction.type == .depart && (pathIndex == 0 || pathIndex == direction.path.count - 1) {
+                if !isTypeSet && direction.type == .depart && (pathIndex == 0 || pathIndex == direction.path.count - 1) {
                     type = .bus
+                    isTypeSet = true
                 }
 
                 let waypoint = Waypoint(lat: point.latitude, long: point.longitude, wpType: type, isStop: isStop)
