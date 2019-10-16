@@ -27,7 +27,6 @@ class RouteDetailContentViewController: UIViewController {
     var buses = [GMSMarker]()
     var currentLocation: CLLocationCoordinate2D?
     var directions: [Direction] = []
-    private(set) var isInitialUpdate: Bool = true
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
     var liveTrackingNetworkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
     var liveTrackingNetworkTimer: Timer?
