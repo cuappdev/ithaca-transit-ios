@@ -74,6 +74,10 @@ class RouteDetailContentViewController: UIViewController {
 
         // Debug Function
 //        createDebugBusIcon()
+        
+        // Draw route
+        drawMapRoute()
+        centerMapOnOverview(drawerPreviewing: true)
     }
 
     /** Construct Directions based on Route and parse Waypoint / Path data */
@@ -453,15 +457,6 @@ class RouteDetailContentViewController: UIViewController {
                 setIndex(of: marker, with: waypoint.wpType)
                 bounds = bounds.includingCoordinate(waypoint.coordinate)
             }
-        }
-    }
-
-    /// Completion after locationManager functions return
-    func didUpdateLocation() {
-        if isInitialUpdate {
-            isInitialUpdate = false
-            drawMapRoute()
-            centerMapOnOverview(drawerPreviewing: true)
         }
     }
 

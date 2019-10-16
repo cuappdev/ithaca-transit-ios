@@ -83,18 +83,10 @@ extension RouteDetailContentViewController: CLLocationManagerDelegate {
             bounds = bounds.includingCoordinate(newCoord)
             currentLocation = newCoord
         }
-        
-        if isInitialUpdate {
-            didUpdateLocation()
-        }
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         printClass(context: "CLLocationManager didFailWithError", message: error.localizedDescription)
-        
-        if isInitialUpdate {
-            didUpdateLocation()
-        }
     }
 }
 
