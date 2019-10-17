@@ -41,7 +41,6 @@ class AllStopsTableViewController: UIViewController {
         setupConstraints()
 
         refreshAllStops()
-        print("\(self)")
     }
 
     private func setupTableView() {
@@ -153,6 +152,8 @@ class AllStopsTableViewController: UIViewController {
                             userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
                         } catch let error {
                             self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                            let payload = GetErrorPayload(location: "\(self) Get All Stops", type: "\((error as NSError).domain)", description: error.localizedDescription, url: nil)
+                            Analytics.shared.log(payload)
                         }
                         let collegetownStop = Place(name: "Collegetown", latitude: 42.442558, longitude: -76.485336)
                         response.data.append(collegetownStop)
@@ -160,7 +161,7 @@ class AllStopsTableViewController: UIViewController {
                     }
                 case .error(let error):
                     self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                    let payload = NetworkErrorPayload(location: "\(self) \(#function)", type: "\((error as NSError).domain)", description: error.localizedDescription)
+                    let payload = GetErrorPayload(location: "\(self) Get All Stops", type: "\((error as NSError).domain)", description: error.localizedDescription, url: nil)
                     Analytics.shared.log(payload)
                 }
                 self.loadingIndicator?.removeFromSuperview()
