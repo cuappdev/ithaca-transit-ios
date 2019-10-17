@@ -196,6 +196,6 @@ extension Date {
 extension NSObject {
     func printClass(context: String, message: String) {
         let className = String(describing: self)
-        print("[\(className)] \(context): \(message)") 
+        print("[\(className)] \(context): \(message)")
     }
 }

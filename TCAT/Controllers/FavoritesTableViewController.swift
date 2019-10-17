@@ -27,9 +27,9 @@ class FavoritesTableViewController: UIViewController {
             tableView.reloadData()
         }
     }
-    
+
     weak var selectionDelegate: FavoritesSelectionDelegate?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 

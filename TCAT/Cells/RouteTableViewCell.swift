@@ -155,7 +155,7 @@ class RouteTableViewCell: UITableViewCell {
         setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
 
         setDepartureTimeAndLiveElements(withRoute: route)
-        
+
         if let delay = delayState {
             setLiveElements(withDelayState: delay)
             setDepartureTime(withStartTime: Date(), withDelayState: delay)
@@ -244,7 +244,7 @@ class RouteTableViewCell: UITableViewCell {
         }
 
     }
-    
+
     private func setDepartureTime(withStartTime startTime: Date, withDelayState delayState: DelayState) {
 
         switch delayState {
