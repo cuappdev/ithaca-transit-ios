@@ -132,16 +132,6 @@ struct RouteSharedEventPayload: Payload {
     let error: String?
 }
 
-/// Log any errors when calculating routes
-struct GetRoutesErrorPayload: Payload {
-    static let eventName: String = "Get Routes Error"
-    let deviceInfo = DeviceInfo()
-
-    let type: String
-    let description: String
-    let url: String?
-}
-
 /// Log any errors when sending feedback
 struct FeedbackErrorPayload: Payload {
     static let eventName: String = "Feedback Error"
@@ -217,4 +207,14 @@ struct WhatsNewCardDismissedPayload: Payload {
     let deviceInfo = DeviceInfo()
 
     let actionDescription: String
+}
+
+/// Log any network error
+struct NetworkErrorPayload: Payload {
+    static let eventName: String = "Network Error"
+    let deviceInfo = DeviceInfo()
+    
+    let location: String
+    let type: String 
+    let description: String
 }
