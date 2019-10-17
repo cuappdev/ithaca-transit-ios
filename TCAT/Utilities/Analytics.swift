@@ -217,5 +217,4 @@ struct GetErrorPayload: Payload {
     let location: String
     let type: String 
     let description: String
-    let url: String?
 }

@@ -357,7 +357,10 @@ class RouteOptionsViewController: UIViewController {
                                 if let data = try? JSONEncoder().encode(delayResponse) {
                                     do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(routeId: routeId)) } catch let error {
                                         self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                                        let payload = GetErrorPayload(location: "\(self) Get All Delays", type: "\((error as NSError).domain)", description: error.localizedDescription, url: nil)
+                                        let payload = GetErrorPayload(
+                                            location: "\(self) Get All Delays",
+                                            type: "\((error as NSError).domain)",
+                                            description: error.localizedDescription)
                                         Analytics.shared.log(payload)
                                     }
                                 }
@@ -376,7 +379,10 @@ class RouteOptionsViewController: UIViewController {
                         }
                     case .error(let error):
                         self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                        let payload = GetErrorPayload(location: "\(self) Get All Delays", type: "\((error as NSError).domain)", description: error.localizedDescription, url: nil)
+                        let payload = GetErrorPayload(
+                            location: "\(self) Get All Delays",
+                            type: "\((error as NSError).domain)",
+                            description: error.localizedDescription)
                         Analytics.shared.log(payload)
                     }
                 }
@@ -432,8 +438,10 @@ class RouteOptionsViewController: UIViewController {
                 // Place(s) don't have coordinates assigned
                 self.requestDidFinish(perform: [
                     .showError(bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .danger),
-                               payload: GetErrorPayload(location: "\(self) Get Routes", type: "Nil Place Coordinates",
-                                                              description: "Place(s) don't have coordinates. (areValidCoordinates)", url: nil)
+                               payload: GetErrorPayload(
+                                location: "\(self) Get Routes",
+                                type: "Nil Place Coordinates",
+                                description: "Place(s) don't have coordinates. (areValidCoordinates)")
                     )
                     ])
                 return
@@ -448,7 +456,10 @@ class RouteOptionsViewController: UIViewController {
                 self.requestDidFinish(perform: [
                     .showAlert(title: title, message: message, actionTitle: actionTitle),
                     .showError(bannerInfo: BannerInfo(title: title, style: .warning),
-                               payload: GetErrorPayload(location: "\(self) Get Routes", type: title, description: message, url: nil))
+                               payload: GetErrorPayload(
+                                location: "\(self) Get Routes",
+                                type: title,
+                                description: message))
                     ])
                 return
             }
@@ -500,7 +511,10 @@ class RouteOptionsViewController: UIViewController {
                     self.printClass(context: "\(#function)", message: "success")
                 case .error(let error):
                     self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                    let payload = GetErrorPayload(location: "\(self) Get Route Selected", type: "\((error as NSError).domain)", description: error.localizedDescription, url: nil)
+                    let payload = GetErrorPayload(
+                        location: "\(self) Get Route Selected",
+                        type: "\((error as NSError).domain)",
+                        description: error.localizedDescription)
                     Analytics.shared.log(payload)
                 }
             }
@@ -566,7 +580,10 @@ class RouteOptionsViewController: UIViewController {
         routes = []
         requestDidFinish(perform: [
             .showError(bannerInfo: BannerInfo(title: Constants.Banner.cantConnectServer, style: .danger),
-                       payload: GetErrorPayload(location: "\(self) Get Routes", type: title, description: description, url: requestURL))
+                       payload: GetErrorPayload(
+                        location: "\(self) Get Routes",
+                        type: title,
+                        description: description))
         ])
     }
 

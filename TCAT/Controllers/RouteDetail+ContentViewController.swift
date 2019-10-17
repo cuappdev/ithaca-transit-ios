@@ -181,7 +181,10 @@ class RouteDetailContentViewController: UIViewController {
         }
         if !directionsAreValid {
             printClass(context: "\(#function)", message: "Directions are not valid")
-            let payload = GetErrorPayload(location: "\(self) Get Bus Locations", type: "Invalid Directions", description: "Directions are not valid", url: nil)
+            let payload = GetErrorPayload(
+                location: "\(self) Get Bus Locations",
+                type: "Invalid Directions",
+                description: "Directions are not valid")
             Analytics.shared.log(payload)  
             return
         }
@@ -201,7 +204,10 @@ class RouteDetailContentViewController: UIViewController {
                     if let banner = self.banner, !banner.isDisplaying {
                         self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
                     }
-                    let payload = GetErrorPayload(location: "\(self) Get Bus Locations", type: "\((error as NSError).domain)", description: error.localizedDescription, url: nil)
+                    let payload = GetErrorPayload(
+                        location: "\(self) Get Bus Locations",
+                        type: "\((error as NSError).domain)",
+                        description: error.localizedDescription)
                     Analytics.shared.log(payload)
                 }
             }
