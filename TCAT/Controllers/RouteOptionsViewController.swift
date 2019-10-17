@@ -60,17 +60,17 @@ class RouteOptionsViewController: UIViewController {
     private let networking: Networking = URLSession.shared.request
     private let reachability: Reachability? = Reachability(hostname: Endpoint.config.host ?? "")
     private let routeResultsTitle: String = Constants.Titles.routeResults
-    
+
     // Timer to retrieve route delays and update route cells
     private var routeTimer: Timer?
     private var updateTimer: Timer?
-    
+
     // Dictionary to map route id to delay
     var delayDictionary: [String: DelayState] = [:]
-    
+
     // Dictionary to map tripId to route
     var tripDictionary: [String: Route] = [:]
-    
+
     /// Returns routes from each section in order
     private var allRoutes: [Route] {
         return routes.flatMap { $0 }
@@ -116,7 +116,7 @@ class RouteOptionsViewController: UIViewController {
         }
 
         searchForRoutes()
-        
+
         routeTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateAllRoutesLiveTracking(sender:)), userInfo: nil, repeats: true)
         updateTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(rerenderLiveTracking(sender:)), userInfo: nil, repeats: true)
 
@@ -325,16 +325,16 @@ class RouteOptionsViewController: UIViewController {
         navigationItem.hidesBackButton = true
         searchBarView.searchController?.isActive = true
     }
-    
+
     @objc func rerenderLiveTracking(sender: Timer) {
         // Reload table every time update timer is fired
         routeResults.reloadData()
     }
-    
+
     private func getAllDelays(trips: [Trip]) -> Future<Response<[Delay]>> {
         return networking(Endpoint.getAllDelays(trips: trips)).decode()
     }
-    
+
     @objc func updateAllRoutesLiveTracking(sender: Timer) {
         getAllDelays(trips: trips).observe(with: { result in
             DispatchQueue.main.async {
@@ -380,7 +380,7 @@ class RouteOptionsViewController: UIViewController {
                 }
             })
     }
-    
+
     @objc private func refreshRoutesAndTime() {
         let now = Date()
         if let leaveDate = searchTime,
@@ -425,7 +425,7 @@ class RouteOptionsViewController: UIViewController {
             JSONFileManager.shared.logSearchParameters(timestamp: now, startPlace: searchFrom, endPlace: searchTo, searchTime: time, searchTimeType: searchTimeType)
 
             // MARK: Search For Routes Errors
-            
+
             guard let areValidCoordinates = self.checkPlaceCoordinates(startPlace: searchFrom, endPlace: searchTo) else {
                 // Place(s) don't have coordinates assigned
                 self.requestDidFinish(perform: [
@@ -501,7 +501,7 @@ class RouteOptionsViewController: UIViewController {
             }
         }
     }
-    
+
     private func getRoutesTrips() {
         // For each route in each route array inside of the 'routes' array, get its
         // tripId and stopId to create trip array for request to get all delays.
@@ -519,7 +519,7 @@ class RouteOptionsViewController: UIViewController {
             }
         }
     }
-    
+
     private func processRequest(result: Result<Response<RouteSectionsObject>>, requestURL: String, endPlace: Place) {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
 
