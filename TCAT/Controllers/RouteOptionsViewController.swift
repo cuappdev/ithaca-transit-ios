@@ -28,7 +28,7 @@ struct BannerInfo {
 enum RequestAction {
     case hideBanner
     case showAlert(title: String, message: String, actionTitle: String)
-    case showError(bannerInfo: BannerInfo, payload: GetErrorPayload)
+    case showError(bannerInfo: BannerInfo, payload: NetworkErrorPayload)
 }
 
 class RouteOptionsViewController: UIViewController {
@@ -357,7 +357,7 @@ class RouteOptionsViewController: UIViewController {
                                 if let data = try? JSONEncoder().encode(delayResponse) {
                                     do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(routeId: routeId)) } catch let error {
                                         self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                                        let payload = GetErrorPayload(
+                                        let payload = NetworkErrorPayload(
                                             location: "\(self) Get All Delays",
                                             type: "\((error as NSError).domain)",
                                             description: error.localizedDescription)
@@ -379,7 +379,7 @@ class RouteOptionsViewController: UIViewController {
                         }
                     case .error(let error):
                         self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                        let payload = GetErrorPayload(
+                        let payload = NetworkErrorPayload(
                             location: "\(self) Get All Delays",
                             type: "\((error as NSError).domain)",
                             description: error.localizedDescription)
@@ -438,7 +438,7 @@ class RouteOptionsViewController: UIViewController {
                 // Place(s) don't have coordinates assigned
                 self.requestDidFinish(perform: [
                     .showError(bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .danger),
-                               payload: GetErrorPayload(
+                               payload: NetworkErrorPayload(
                                 location: "\(self) Get Routes",
                                 type: "Nil Place Coordinates",
                                 description: "Place(s) don't have coordinates. (areValidCoordinates)")
@@ -456,7 +456,7 @@ class RouteOptionsViewController: UIViewController {
                 self.requestDidFinish(perform: [
                     .showAlert(title: title, message: message, actionTitle: actionTitle),
                     .showError(bannerInfo: BannerInfo(title: title, style: .warning),
-                               payload: GetErrorPayload(
+                               payload: NetworkErrorPayload(
                                 location: "\(self) Get Routes",
                                 type: title,
                                 description: message))
@@ -511,7 +511,7 @@ class RouteOptionsViewController: UIViewController {
                     self.printClass(context: "\(#function)", message: "success")
                 case .error(let error):
                     self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                    let payload = GetErrorPayload(
+                    let payload = NetworkErrorPayload(
                         location: "\(self) Get Route Selected",
                         type: "\((error as NSError).domain)",
                         description: error.localizedDescription)
@@ -580,7 +580,7 @@ class RouteOptionsViewController: UIViewController {
         routes = []
         requestDidFinish(perform: [
             .showError(bannerInfo: BannerInfo(title: Constants.Banner.cantConnectServer, style: .danger),
-                       payload: GetErrorPayload(
+                       payload: NetworkErrorPayload(
                         location: "\(self) Get Routes",
                         type: title,
                         description: description))

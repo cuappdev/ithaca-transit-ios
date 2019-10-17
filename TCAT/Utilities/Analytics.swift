@@ -209,9 +209,9 @@ struct WhatsNewCardDismissedPayload: Payload {
     let actionDescription: String
 }
 
-/// Log get errors
-struct GetErrorPayload: Payload {
-    static let eventName: String = "Get Error"
+/// Log any network error
+struct NetworkErrorPayload: Payload {
+    static let eventName: String = "Network Error"
     let deviceInfo = DeviceInfo()
     
     let location: String

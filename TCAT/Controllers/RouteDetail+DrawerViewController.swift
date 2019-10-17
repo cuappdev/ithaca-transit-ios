@@ -191,7 +191,7 @@ class RouteDetailDrawerViewController: UIViewController {
                             self.summaryView.updateTimes(for: self.route)
                         } else {
                             self.printClass(context: "\(#function) success", message: "false")
-                            let payload = GetErrorPayload(
+                            let payload = NetworkErrorPayload(
                                 location: "\(self) Get Delay",
                                 type: "Response Failure",
                                 description: "Response Failure")
@@ -199,7 +199,7 @@ class RouteDetailDrawerViewController: UIViewController {
                         }
                     case .error(let error):
                         self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                        let payload = GetErrorPayload(
+                        let payload = NetworkErrorPayload(
                             location: "\(self) Get Delay",
                             type: "\((error as NSError).domain)",
                             description: error.localizedDescription)

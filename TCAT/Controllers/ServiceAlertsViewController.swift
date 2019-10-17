@@ -115,7 +115,7 @@ class ServiceAlertsViewController: UIViewController {
                     self.networkError = true
                     self.alerts = [:]
                     self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                    let payload = GetErrorPayload(
+                    let payload = NetworkErrorPayload(
                         location: "\(self) Get Alerts",
                         type: "\((error as NSError).domain)",
                         description: error.localizedDescription)
