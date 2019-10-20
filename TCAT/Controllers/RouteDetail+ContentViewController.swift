@@ -76,6 +76,10 @@ class RouteDetailContentViewController: UIViewController {
         
         // Draw route
         drawMapRoute()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         centerMapOnOverview(drawerPreviewing: true)
     }
 
@@ -237,19 +241,15 @@ class RouteDetailContentViewController: UIViewController {
      are also animated
      */
     private func setBusLocation(_ bus: BusLocation) {
-
         /// New bus coordinates
         let busCoords = CLLocationCoordinate2D(latitude: bus.latitude, longitude: bus.longitude)
         let existingBus = buses.first(where: {
             return getUserData(for: $0, key: Constants.BusUserData.vehicleID) as? Int == bus.vehicleID
         })
-
-        // If bus is already on map, update and animate change
-        if let newBus = existingBus {
-
-            /// Allow time to receive new live bus request
-            let latencyConstant = 0.25
-
+        
+        if let newBus = existingBus { // If bus is already on map, update and animate change
+            let latencyConstant = 0.25 // Allow time to receive new live bus request
+            
             CATransaction.begin()
             CATransaction.setAnimationDuration(liveTrackingNetworkRefreshRate + latencyConstant)
 
@@ -264,12 +264,7 @@ class RouteDetailContentViewController: UIViewController {
             newBus.position = busCoords
 
             CATransaction.commit()
-
-        }
-
-            // Otherwise, add bus to map
-        else {
-
+        } else { // Otherwise, add bus to map
             guard let iconView = bus.iconView as? BusLocationView else { return }
             let marker = GMSMarker(position: busCoords)
             marker.appearAnimation = .pop
@@ -288,7 +283,6 @@ class RouteDetailContentViewController: UIViewController {
 
         // Update bus indicators (if map not moved)
         mapView.delegate?.mapView?(mapView, didChange: mapView.camera)
-
     }
 
     /// Animate any visible indicators
@@ -390,24 +384,19 @@ class RouteDetailContentViewController: UIViewController {
 
     /** Centers map around all waypoints in routePaths, and animates the map */
     func centerMapOnOverview(drawerPreviewing: Bool = false) {
-
-        var bottomOffset: CGFloat = (UIScreen.main.bounds.height / 2) - (mapPadding / 2)
-
-        bottomOffset -= view.safeAreaInsets.bottom
-
+        var update: GMSCameraUpdate
         if drawerPreviewing {
+            let bottomOffset: CGFloat = (UIScreen.main.bounds.height / 2) - (mapPadding / 2) - view.safeAreaInsets.bottom
             let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: mapPadding / 2, bottom: bottomOffset, right: mapPadding / 2)
-            let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
-            mapView.animate(with: update)
+            update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
         } else {
-            let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
-            mapView.animate(with: update)
+            update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
         }
 
+        mapView.animate(with: update)
     }
 
     func centerMap(on direction: Direction, isOverviewOfPath: Bool = false, drawerPreviewing: Bool = false) {
-
         let path = GMSMutablePath()
         if isOverviewOfPath {
             direction.path.forEach { loc in path.add(loc) }
@@ -439,7 +428,7 @@ class RouteDetailContentViewController: UIViewController {
     }
 
     /** Draw all waypoints initially for all paths in [Path] or [[CLLocationCoordinate2D]], plus fill bounds */
-    private func drawMapRoute() {
+    func drawMapRoute() {
         for path in paths {
             path.traveledPolyline.map = mapView
             path.map = mapView
