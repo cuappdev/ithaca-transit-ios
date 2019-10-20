@@ -76,7 +76,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
         do {
             try reach.startNotifier()
         } catch {
-            print("could not start reachability notifier")
+            printClass(context: "\(#function)", message: "Could not start reachability notifier.")
         }
     }
 
@@ -170,8 +170,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
         
         if let homeMapVC = viewController as? HomeMapViewController {
             reachabilityDelegate = homeMapVC
-        }
-        if let routeOptionsVC = viewController as? RouteOptionsViewController {
+        } else if let routeOptionsVC = viewController as? RouteOptionsViewController {
             reachabilityDelegate = routeOptionsVC
         }
     }
@@ -182,8 +181,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
         if let homeMapVC = viewControllers.last as? HomeMapViewController {
             homeMapVC.navigationItem.leftBarButtonItem = nil
             reachabilityDelegate = homeMapVC
-        }
-        if let routeOptionsVC = viewControllers.last as? RouteOptionsViewController {
+        } else if let routeOptionsVC = viewControllers.last as? RouteOptionsViewController {
             reachabilityDelegate = routeOptionsVC
         }
         return viewController
