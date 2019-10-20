@@ -90,7 +90,7 @@ class RouteDiagramSegment: UIView {
     // MARK: Get data from route ojbect
 
     private func getStopLabel(withName name: String, withStayOnBusForTranfer stayOnBusForTranfer: Bool, withDistance distance: Double?) -> UILabel {
-        
+
         let labelPadding: CGFloat = 12
         let rightPadding: CGFloat = 40
         let xPos: CGFloat = 96
@@ -115,7 +115,7 @@ class RouteDiagramSegment: UIView {
                 .font: UIFont.getFont(.regular, size: 12.0),
                 .foregroundColor: Colors.metadataIcon
             ]
-            
+
             let addLineBreak = getStopLabelWidth(withName: name, withDistance: distance) > width
 
             let travelDistance = NSMutableAttributedString(string: addLineBreak ? "\n\(distance.roundedString) away" : " \(distance.roundedString) away", attributes: travelDistanceAttrs)
@@ -135,7 +135,7 @@ class RouteDiagramSegment: UIView {
 
         return stopLabel
     }
-    
+
     private func getStopLabelWidth(withName name: String, withDistance distance: Double) -> CGFloat {
         let testStopLabel = UILabel()
         testStopLabel.font = .getFont(.regular, size: 14.0)
