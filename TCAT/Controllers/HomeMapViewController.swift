@@ -9,7 +9,6 @@
 import CoreLocation
 import FutureNova
 import GoogleMaps
-import NotificationBannerSwift
 import SnapKit
 import UIKit
 
@@ -30,19 +29,9 @@ class HomeMapViewController: UIViewController {
     private weak var delegate: HomeMapViewDelegate?
     private var locationManager = CLLocationManager()
     private var optionsCardVC: HomeOptionsCardViewController!
-    private var banner: StatusBarNotificationBanner? {
-        didSet {
-            setNeedsStatusBarAppearanceUpdate()
-        }
-    }
 
     private let loadingIndicatorSize = CGSize.init(width: 40, height: 40)
-    private let reachability = Reachability(hostname: Endpoint.config.host ?? "")
     private let userDefaults = UserDefaults.standard
-
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return banner != nil ? .lightContent : .default
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,36 +40,8 @@ class HomeMapViewController: UIViewController {
         setupConstraints()
     }
 
-    @objc private func reachabilityChanged(_ notification: Notification) {
-        guard let reachability = notification.object as? Reachability else {
-            return
-        }
-
-        // Dismiss current banner or loading indicator, if any
-        banner?.dismiss()
-        banner = nil
-
-        delegate?.reachabilityChanged(connection: reachability.connection)
-
-        if reachability.connection == .none {
-            banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
-            banner?.autoDismiss = false
-            banner?.show(queuePosition: .front, on: navigationController)
-        }
-    }
-
     override func viewWillAppear(_ animated: Bool) {
-
-        // Add Notification Observers
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(reachabilityChanged(_:)),
-                                               name: .reachabilityChanged,
-                                               object: reachability)
-        do {
-            try reachability?.startNotifier()
-        } catch {
-            printClass(context: "\(#function)", message: "Could not start reachability notifier")
-        }
+        navigationController?.navigationBar.alpha = 0
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -90,14 +51,7 @@ class HomeMapViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        reachability?.stopNotifier()
-
-        // Remove Notification Observers
-        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
-
-        // Remove banner and loading indicator
-        banner?.dismiss()
-        banner = nil
+        navigationController?.navigationBar.alpha = 1
     }
 
     private func setupMapView() {
@@ -236,6 +190,12 @@ extension HomeMapViewController: HomeOptionsCardDelegate {
                 self.view.layoutIfNeeded()
             }
         }
+    }
+}
+
+extension HomeMapViewController: ReachabilityDelegate {
+    func reachabilityChanged(connection: Reachability.Connection) {
+        delegate?.reachabilityChanged(connection: connection)
     }
 }
 
