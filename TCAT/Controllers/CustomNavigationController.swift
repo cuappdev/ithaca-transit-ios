@@ -64,7 +64,9 @@ class CustomNavigationController: UINavigationController, UINavigationController
         }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
+        
+        // Add Notification Observers
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(reachabilityChanged(notif:)),
                                                name: .reachabilityChanged,
@@ -83,9 +85,9 @@ class CustomNavigationController: UINavigationController, UINavigationController
             NotificationCenter.default.removeObserver(screenshotObserver)
         }
         
-        banner.dismiss()
+        // Remove Notification Observers
         reachability.stopNotifier()
-        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability) 
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
 
     private func customizeAppearance() {
