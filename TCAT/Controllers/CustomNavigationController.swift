@@ -28,8 +28,8 @@ class CustomNavigationController: UINavigationController, UINavigationController
         .foregroundColor: Colors.black
     ]
 
-    private var banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
-    private let reachability = Reachability()!
+    private let banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
+    private let reachability = Reachability()
     private weak var reachabilityDelegate: ReachabilityDelegate?
     private var screenshotObserver: NSObjectProtocol?
 
@@ -65,14 +65,16 @@ class CustomNavigationController: UINavigationController, UINavigationController
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         // Add Notification Observers
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(reachabilityChanged(notif:)),
                                                name: .reachabilityChanged,
                                                object: reachability)
+        guard let reach = reachability else {return}
         do {
-            try reachability.startNotifier()
+            try reach.startNotifier()
         } catch {
             print("could not start reachability notifier")
         }
@@ -86,7 +88,8 @@ class CustomNavigationController: UINavigationController, UINavigationController
         }
         
         // Remove Notification Observers
-        reachability.stopNotifier()
+        guard let reach = reachability else {return}
+        reach.stopNotifier()
         NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
 
@@ -131,7 +134,6 @@ class CustomNavigationController: UINavigationController, UINavigationController
     }
     
     @objc func reachabilityChanged(notif: Notification) {
-        
         if let reachability = notif.object as? Reachability {
             switch reachability.connection {
             case .wifi, .cellular:

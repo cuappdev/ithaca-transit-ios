@@ -452,6 +452,7 @@ extension RouteOptionsViewController: RouteSelectionViewDelegate {
 }
 
 extension RouteOptionsViewController: ReachabilityDelegate {
+    
     func reachabilityChanged(connection: Reachability.Connection) {
         switch connection {
         case .none:
@@ -460,4 +461,5 @@ extension RouteOptionsViewController: ReachabilityDelegate {
             setUserInteraction(to: true)
         }
     }
+    
 }

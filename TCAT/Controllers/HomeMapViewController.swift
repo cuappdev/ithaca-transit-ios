@@ -194,9 +194,11 @@ extension HomeMapViewController: HomeOptionsCardDelegate {
 }
 
 extension HomeMapViewController: ReachabilityDelegate {
+    
     func reachabilityChanged(connection: Reachability.Connection) {
         delegate?.reachabilityChanged(connection: connection)
     }
+    
 }
 
 // Helper function inserted by Swift 4.2 migrator.
