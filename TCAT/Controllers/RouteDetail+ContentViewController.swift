@@ -72,7 +72,7 @@ class RouteDetailContentViewController: UIViewController {
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
 
         // Debug Function
-//        createDebugBusIcon()
+        // createDebugBusIcon()
         
         // Draw route
         drawMapRoute()
