@@ -18,7 +18,7 @@ class SearchBarView: UIView, UISearchControllerDelegate {
 
         //Search Bar Customization
         UIBarButtonItem.appearance().setTitleTextAttributes([.foregroundColor: Colors.black], for: .normal)
-
+        
         resultsViewController = SearchResultsViewController(searchBarCancelDelegate: searchBarCancelDelegate, destinationDelegate: destinationDelegate)
         searchController = UISearchController(searchResultsController: resultsViewController)
         searchController?.searchResultsUpdater = resultsViewController
@@ -41,4 +41,5 @@ class SearchBarView: UIView, UISearchControllerDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
 }
