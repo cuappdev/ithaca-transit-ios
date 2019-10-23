@@ -19,6 +19,7 @@ struct RouteDetailCellSize {
 }
 
 enum RouteDetailItem {
+
     case direction (Direction)
     case busStop (LocationObject)
 
@@ -35,6 +36,7 @@ enum RouteDetailItem {
         default: return nil
         }
     }
+
 }
 
 class RouteDetailDrawerViewController: UIViewController {
@@ -54,7 +56,7 @@ class RouteDetailDrawerViewController: UIViewController {
     private let networking: Networking = URLSession.shared.request
     private var route: Route!
 
-    // MARK: Initalization
+    // MARK: - Initalization
     init(route: Route) {
         super.init(nibName: nil, bundle: nil)
         self.route = route
@@ -89,8 +91,13 @@ class RouteDetailDrawerViewController: UIViewController {
 
         // Bus Delay Network Timer
         busDelayNetworkTimer?.invalidate()
-        busDelayNetworkTimer = Timer.scheduledTimer(timeInterval: busDelayNetworkRefreshRate, target: self, selector: #selector(getDelays),
-                                                    userInfo: nil, repeats: true)
+        busDelayNetworkTimer = Timer.scheduledTimer(
+            timeInterval: busDelayNetworkRefreshRate, 
+            target: self, 
+            selector: #selector(getDelays),
+            userInfo: nil, 
+            repeats: true
+        )
         busDelayNetworkTimer?.fire()
 
     }
@@ -177,14 +184,12 @@ class RouteDetailDrawerViewController: UIViewController {
                             directions.filter {
                                 let isAfter = directions.firstIndex(of: firstDepartDirection)! < directions.firstIndex(of: $0)!
                                 return isAfter && $0.type != .depart
+                            }.forEach { direction in
+                                if direction.delay != nil {
+                                    direction.delay! += delayDirection.delay ?? 0
+                                } else {
+                                    direction.delay = delayDirection.delay
                                 }
-
-                                .forEach { direction in
-                                    if direction.delay != nil {
-                                        direction.delay! += delayDirection.delay ?? 0
-                                    } else {
-                                        direction.delay = delayDirection.delay
-                                    }
                             }
 
                             self.tableView.reloadData()
@@ -240,4 +245,5 @@ class RouteDetailDrawerViewController: UIViewController {
 
         tableView.endUpdates()
     }
+
 }

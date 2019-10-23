@@ -12,6 +12,7 @@ import Foundation
 import SwiftyJSON
 
 class Analytics {
+
     static let shared = Analytics()
 
     func log(_ payload: Payload) {
@@ -20,6 +21,7 @@ class Analytics {
             Answers.logCustomEvent(withName: fabricEvent.name, customAttributes: fabricEvent.attributes)
         #endif
     }
+
 }
 
 extension Payload {
@@ -64,9 +66,9 @@ struct DeviceInfo: Codable {
 
 }
 
-// MARK: Event Payloads
+// MARK: - Event Payloads
 
-// MARK: Important
+// MARK: - Important
 /// Log app launch with device info
 struct AppLaunchedPayload: Payload {
     static let eventName: String = "App Launched"

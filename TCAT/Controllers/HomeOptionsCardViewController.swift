@@ -46,12 +46,12 @@ class HomeOptionsCardViewController: UIViewController {
     private let searchBarTopOffset: CGFloat = 3 // Add top offset to search bar so that the search bar text is vertically centered.
     private let tableViewRowHeight: CGFloat = 50
 
-    /** Height of the card when collapsed. This includes just searchbar height and any extra padding/spacing */
+    /// Height of the card when collapsed. This includes just searchbar height and any extra padding/spacing
     var collapsedHeight: CGFloat {
         return searchBarHeight + searchBarSeparatorHeight + searchBarTopOffset
     }
 
-    /** Returns the height of a card that would contain two favorites and two recent searches. */
+    /// Returns the height of a card that would contain two favorites and two recent searches.
     private var maxCardHeight: CGFloat {
         let totalRowHeight = tableViewRowHeight * maxRowCount
         let totalHeaderHeight = headerHeight * maxHeaderCount
@@ -59,9 +59,9 @@ class HomeOptionsCardViewController: UIViewController {
         return totalRowHeight + totalHeaderHeight + totalSeparatorHeight + collapsedHeight
     }
 
-    /** Returns the maximum height of the options card given the size of the phone. If the usual
-     max height would make the card get covered by the keyboard, then we adjust it to be smaller.
-     Otherwise, we keep it at the maximum height. */
+    /// Returns the maximum height of the options card given the size of the phone. If the usual
+    /// max height would make the card get covered by the keyboard, then we adjust it to be smaller.
+    /// Otherwise, we keep it at the maximum height.
     private var adjustedMaxCardHeight: CGFloat {
         let openScreenSpace = UIScreen.main.bounds.height - HomeMapViewController.optionsCardInset.top - keyboardHeight - 20
         return min(maxCardHeight, openScreenSpace)
@@ -226,7 +226,9 @@ class HomeOptionsCardViewController: UIViewController {
         if searchBar.isFirstResponder {
             let contentHeight = tableViewContentHeight() + collapsedHeight
             return min(contentHeight, adjustedMaxCardHeight)
-        } else { return collapsedHeight }
+        } else { 
+            return collapsedHeight 
+        }
     }
 
     func updatePlaces() {
@@ -251,7 +253,7 @@ class HomeOptionsCardViewController: UIViewController {
     func animateOutInfoButton() {
         UIView.animate(withDuration: infoButtonAnimationDuration) {
             self.infoButton.alpha = 0
-            self.searchBar.snp.remakeConstraints { (make) in
+            self.searchBar.snp.remakeConstraints { make in
                 make.leading.equalToSuperview()
                 make.top.equalToSuperview().inset(self.searchBarTopOffset)
                 make.trailing.equalTo(self.infoButton.snp.trailing)
@@ -268,14 +270,14 @@ class HomeOptionsCardViewController: UIViewController {
         present(navController, animated: true, completion: nil)
     }
 
-    /* Open information screen */
+    /// Open information screen
     @objc private func openInformationScreen() {
         let informationViewController = InformationViewController()
         let navigationVC = CustomNavigationController(rootViewController: informationViewController)
         present(navigationVC, animated: true)
     }
 
-    /* Get Search Results */
+    /// Get Search Results
     @objc func getPlaces(timer: Timer) {
         if let userInfo = timer.userInfo as? [String: String],
             let searchText = userInfo["searchText"],
@@ -310,4 +312,5 @@ class HomeOptionsCardViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
 }

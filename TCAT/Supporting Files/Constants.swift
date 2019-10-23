@@ -98,7 +98,7 @@ struct Constants {
         /// Developer email address to direct contact inquiries and emails toward
         static let contactEmailAddress = "ithacatransit@cornellappdev.com"
 
-        // Twitter screen name
+        /// Twitter screen name
         static let twitterHandle = "IthacaTransit"
     }
 
@@ -147,14 +147,14 @@ struct Constants {
 
     /// The empty state messages
     struct EmptyStateMessages {
-        // Error messages
+        /// Error messages
         static let couldntGetStops = "Couldn't Get Stops"
         static let locationNotFound = "Location Not Found"
         static let noActiveAlerts = "No Active Service Alerts"
         static let noNetworkConnection = "No Network Connection"
         static let noRoutesFound = "No Routes Found"
 
-        // Other empty state messages
+        /// Other empty state messages
         static let lookingForRoutes = "Looking For Routes..."
     }
 
@@ -192,20 +192,20 @@ struct Constants {
 
     /// The phrases used in onboarding
     struct Onboarding {
-        // Title label phrases
+        /// Title label phrases
         static let bestFeatures = "All the best features. All in one app."
         static let favorites = "Your Favorites."
         static let liveTracking = "Live Tracking."
         static let searchAnywhere = "Search Anywhere."
         static let welcome = "Welcome to Ithaca Transit."
 
-        // Detail label messages
+        /// Detail label messages
         static let favoritesMessage = "All of your favorite destinations are just one tap away."
         static let liveTrackingMessage = "Know exactly where your bus is and when it will be there."
         static let searchAnywhereMessage = "From Ithaca Mall to Taughannock Falls, search any location and get there fast."
         static let welcomeMessage = "A beautiful and simple end-to-end navigation app for TCAT. Made by AppDev."
 
-        // Button labels
+        /// Button labels
         static let begin = "BEGIN"
         static let dismiss = "Dismiss"
     }
@@ -271,12 +271,12 @@ struct Constants {
     }
 
     struct TodayExtension {
-        // cell identifiers
+        /// cell identifiers
         static let contentCellIdentifier = "todayExtensionCell"
         static let errorCellIdentifier = "errorCell"
         static let loadingCellIdentifier = "loadingCell"
 
-        // cell strings
+        /// cell strings
         static let locationOutOfRange = "Location Out of Range"
         static let noRoutesAvailable = "No routes available to "
         static let openIthacaTransit = "Open Ithaca Transit to view favorite shortcuts."
@@ -307,7 +307,6 @@ struct Constants {
 
         /// The most extreme points of TCAT Routes
         struct RouteMaxima {
-
             /// Max Latitude Value
             static let north: Double = 42.61321283145329
             /// Max Longitude Value
@@ -320,13 +319,13 @@ struct Constants {
 
         /// The borders to use for valid TCAT bus service area
         struct RouteBorders {
-            // Calculated by converting latitudeMidpoint to radians and multuplying by oneLatDegree
-            // https://gis.stackexchange.com/questions/142326/calculating-longitude-length-in-miles
-            // let oneLatDegree = 69.172
-            // let latitudeMidpoint = 42.470588059
-            // let oneMileInLatitude = 1 / 69.172
-            // let oneMileInLongitude = 1 / 51.2738554594
-            // Conversion: 1º / x mi
+            /// Calculated by converting latitudeMidpoint to radians and multuplying by oneLatDegree
+            /// https://gis.stackexchange.com/questions/142326/calculating-longitude-length-in-miles
+            /// let oneLatDegree = 69.172
+            /// let latitudeMidpoint = 42.470588059
+            /// let oneMileInLatitude = 1 / 69.172
+            /// let oneMileInLongitude = 1 / 51.2738554594
+            /// Conversion: 1º / x mi
 
             /// Max Latitude Value
             static let northBorder: Double = 42.61321283145329 + (1 / 69.172)

@@ -13,19 +13,19 @@ import UIKit
 }
 
 extension UITableView: ListLoadable {
+
     public func ld_visibleContentViews() -> [UIView] {
-
         return (self.visibleCells as NSArray).value(forKey: "contentView") as? [UIView] ?? []
-
     }
+
 }
 
 extension UICollectionView: ListLoadable {
+
     public func ld_visibleContentViews() -> [UIView] {
-
         return (self.visibleCells as NSArray).value(forKey: "contentView") as? [UIView] ?? []
-
     }
+
 }
 
 extension UIColor {
@@ -41,20 +41,21 @@ extension UIColor {
     static func gradientSecondStop() -> UIColor {
         return UIColor(red: (221.0/255.0), green: (221.0/255.0), blue: (221.0/255.0), alpha: 1.0)
     }
+
 }
 
 extension UIView {
 
     func boundInside(_ superView: UIView) {
-
         self.translatesAutoresizingMaskIntoConstraints = false
         superView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[subview]-0-|", options: NSLayoutConstraint.FormatOptions(), metrics: nil, views: ["subview": self]))
         superView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[subview]-0-|", options: NSLayoutConstraint.FormatOptions(), metrics: nil, views: ["subview": self]))
-
     }
+
 }
 
 open class Loader {
+
     static func addLoaderToViews(_ views: [UIView]) {
         CATransaction.begin()
         views.forEach { $0.ld_addLoader() }
@@ -80,7 +81,6 @@ open class Loader {
 class CutoutView: UIView {
 
     override func draw(_ rect: CGRect) {
-
         super.draw(rect)
         let context = UIGraphicsGetCurrentContext()
         context?.setFillColor(Colors.white.cgColor)
@@ -94,13 +94,13 @@ class CutoutView: UIView {
     }
 
     override func layoutSubviews() {
-
         self.setNeedsDisplay()
         self.superview?.ld_getGradient()?.frame = (self.superview?.bounds)!
     }
+
 }
 
-// TODO :- Allow caller to tweak these
+// TODO: Allow caller to tweak these
 
 var cutoutHandle: UInt8         = 0
 var gradientHandle: UInt8       = 0
@@ -109,6 +109,7 @@ var gradientWidth               = 0.17
 var gradientFirstStop           = 0.1
 
 extension CGFloat {
+
     func doubleValue() -> Double {
         return Double(self)
     }
@@ -116,6 +117,7 @@ extension CGFloat {
 }
 
 extension UIView {
+
     public func ld_getCutoutView() -> UIView? {
         return objc_getAssociatedObject(self, &cutoutHandle) as? UIView
     }
@@ -185,7 +187,6 @@ extension UIView {
         gradient.add(gradientAnimation, forKey: "locations")
 
         self.ld_setGradient(gradient)
-
     }
 
     private func addCutoutView() {
@@ -203,4 +204,5 @@ extension UIView {
 
         self.ld_setCutoutView(cutout)
     }
+
 }

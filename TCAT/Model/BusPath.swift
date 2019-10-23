@@ -30,9 +30,9 @@ class Path: GMSPolyline {
 
 class BusPath: Path {
 
-    // To be initialized with dash colors
+    /// To be initialized with dash colors
     var dashColors = [UIColor]()
-    // Length of dash corresponding to position in dashColors
+    /// Length of dash corresponding to position in dashColors
     var dashLengths: [NSNumber] = [6, 4]
 
     var polylineWidth: CGFloat!
@@ -40,7 +40,6 @@ class BusPath: Path {
     var untraveledPath: GMSMutablePath?
 
     init(_ waypoints: [Waypoint]) {
-
         super.init(waypoints: waypoints)
         self.color = Colors.tcatBlue
 
@@ -53,7 +52,6 @@ class BusPath: Path {
         self.path = untraveledPath
         self.strokeColor = color
         self.strokeWidth = polylineWidth
-
     }
 
     func createPathFromWaypoints(waypoints: [Waypoint]) -> GMSMutablePath {

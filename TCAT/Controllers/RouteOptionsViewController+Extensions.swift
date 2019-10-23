@@ -10,7 +10,7 @@ import UIKit
 import CoreLocation
 import DZNEmptyDataSet
 
-// MARK: Previewing Delegate
+// MARK: - Previewing Delegate
 extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
 
     @objc func handleLongPressGesture(_ sender: UILongPressGestureRecognizer) {
@@ -49,11 +49,13 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
     }
 }
 
-// MARK: SearchBarCancelDelegate
+// MARK: - SearchBarCancelDelegate
 extension RouteOptionsViewController: SearchBarCancelDelegate {
+
     func didCancel() {
         hideSearchBar()
     }
+
 }
 
 // MARK: Destination Delegate

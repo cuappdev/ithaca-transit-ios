@@ -11,7 +11,7 @@ import GoogleMaps
 import MapKit
 import UIKit
 
-// MARK: View Life Cycle
+// MARK: - View Life Cycle
 extension RouteDetailContentViewController {
 
     override func viewSafeAreaInsetsDidChange() {
@@ -30,11 +30,13 @@ extension RouteDetailContentViewController {
         // Live Tracking Network Timer
         liveTrackingNetworkTimer?.invalidate()
         if directions.contains(where: { $0.type != .walk }) {
-            liveTrackingNetworkTimer = Timer.scheduledTimer(timeInterval: liveTrackingNetworkRefreshRate,
-                                                            target: self,
-                                                            selector: #selector(getBusLocations),
-                                                            userInfo: nil,
-                                                            repeats: true)
+            liveTrackingNetworkTimer = Timer.scheduledTimer(
+                timeInterval: liveTrackingNetworkRefreshRate,
+                target: self,
+                selector: #selector(getBusLocations),
+                userInfo: nil,
+                repeats: true
+            )
             liveTrackingNetworkTimer?.fire()
         }
     }
@@ -47,7 +49,11 @@ extension RouteDetailContentViewController {
 
     override func loadView() {
         // Set mapView with settings
-        let camera = GMSCameraPosition.camera(withLatitude: Constants.Map.startingLat, longitude: Constants.Map.startingLong, zoom: Constants.Map.defaultZoom)
+        let camera = GMSCameraPosition.camera(
+            withLatitude: Constants.Map.startingLat, 
+            longitude: Constants.Map.startingLong, 
+            zoom: Constants.Map.defaultZoom
+        )
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
@@ -75,7 +81,7 @@ extension RouteDetailContentViewController {
     }
 }
 
-// MARK: Location Manager Functions
+// MARK: - Location Manager Functions
 extension RouteDetailContentViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -92,7 +98,7 @@ extension RouteDetailContentViewController: CLLocationManagerDelegate {
     }
 }
 
-// MARK: Google Map View Delegate Functions
+// MARK: - Google Map View Delegate Functions
 extension RouteDetailContentViewController: GMSMapViewDelegate {
 
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
@@ -132,8 +138,8 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
                 return markerID == busID
             }) { // Update Indicator
                 if let placement = calculatePlacement(position: bus.position, view: bearingView) {
-
-                    // existingIndicator.map = nil // Uncomment to avoid animation
+                    // Uncomment to avoid animation
+                    // existingIndicator.map = nil 
                     existingIndicator.position = placement
                     existingIndicator.rotation = calculateBearing(from: placement, to: bus.position)
 
@@ -143,7 +149,8 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
                         ])
 
                     existingIndicator.appearAnimation = .none
-                    // existingIndicator.map = mapView // Uncomment to avoid animation
+                    // Uncomment to avoid animation
+                    // existingIndicator.map = mapView
                 } else {
                     existingIndicator.map = nil
                     busIndicators.remove(at: busIndicators.firstIndex(of: existingIndicator)!)
@@ -158,11 +165,14 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
                 indicator.iconView = bearingView
                 setIndex(of: indicator, with: .bussing)
 
-                updateUserData(for: indicator, with: [
+                updateUserData(
+                    for: indicator, 
+                    with: [
                     Constants.BusUserData.actualCoordinates: bus.position,
                     Constants.BusUserData.indicatorCoordinates: placement,
                     Constants.BusUserData.vehicleID: getUserData(for: bus, key: Constants.BusUserData.vehicleID) as? Int ?? -1
-                    ])
+                    ]
+                )
 
                 indicator.map = mapView
                 busIndicators.append(indicator)
@@ -171,38 +181,44 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
     }
 }
 
-// MARK: Debug
+// MARK: - Debug
 extension RouteDetailContentViewController {
+
     /// Create fake bus for debugging and testing bus indicators
     private func createDebugBusIcon() {
-        let bus = BusLocation(dataType: .validData,
-                              destination: "",
-                              deviation: 0,
-                              delay: 0,
-                              direction: "",
-                              displayStatus: "",
-                              gpsStatus: 0,
-                              heading: 0,
-                              lastStop: "",
-                              lastUpdated: Date(),
-                              latitude: 42.4491411,
-                              longitude: -76.4836815,
-                              name: "16",
-                              opStatus: "",
-                              routeID: 10,
-                              runID: 0,
-                              speed: 0,
-                              tripID: 0,
-                              vehicleID: 0)
+        let bus = BusLocation(
+            dataType: .validData,
+            destination: "",
+            deviation: 0,
+            delay: 0,
+            direction: "",
+            displayStatus: "",
+            gpsStatus: 0,
+            heading: 0,
+            lastStop: "",
+            lastUpdated: Date(),
+            latitude: 42.4491411,
+            longitude: -76.4836815,
+            name: "16",
+            opStatus: "",
+            routeID: 10,
+            runID: 0,
+            speed: 0,
+            tripID: 0,
+            vehicleID: 0
+        )
         let coords = CLLocationCoordinate2D(latitude: 42.4491411, longitude: -76.4836815)
         let marker = GMSMarker(position: coords)
         marker.iconView = bus.iconView
         marker.appearAnimation = .pop
         setIndex(of: marker, with: .bussing)
-        updateUserData(for: marker, with: [
+        updateUserData(
+            for: marker, 
+            with: [
             Constants.BusUserData.actualCoordinates: coords,
             Constants.BusUserData.vehicleID: 123456789
-            ])
+            ]
+        )
         marker.map = mapView
         buses.append(marker)
     }

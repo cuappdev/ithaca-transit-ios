@@ -35,6 +35,7 @@ class OnboardingViewController: PresentationController {
 
             return position
         }
+
     }
 
     /// Change the main view's background color
@@ -293,4 +294,5 @@ class OnboardingViewController: PresentationController {
         contents.append(groundContent)
         addToBackground([groundContent])
     }
+
 }
