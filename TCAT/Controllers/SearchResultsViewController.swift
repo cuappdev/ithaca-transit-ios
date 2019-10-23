@@ -99,6 +99,7 @@ class SearchResultsViewController: UIViewController {
 
         createDefaultSections()
         searchBar?.becomeFirstResponder()
+        
         searchBar?.tintColor = Colors.black
     }
 

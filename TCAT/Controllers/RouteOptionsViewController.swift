@@ -296,7 +296,6 @@ class RouteOptionsViewController: UIViewController {
         }
 
         showSearchBar()
-        
     }
 
     func dismissSearchBar() {
