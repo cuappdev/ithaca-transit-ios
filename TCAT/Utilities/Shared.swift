@@ -8,9 +8,9 @@
 
 import Foundation
 
-// This class is for shared enums between TCAT and the Today Extension.
+/// This class is for shared enums between TCAT and the Today Extension.
 
-// This is used for favorites between targets (e.g. TCAT.app, Today Extension)
+/// This is used for favorites between targets (e.g. TCAT.app, Today Extension)
 let sharedUserDefaults = UserDefaults.init(suiteName: Constants.UserDefaults.group)
 
 enum SearchType: String {

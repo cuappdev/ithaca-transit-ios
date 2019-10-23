@@ -18,7 +18,7 @@ enum PlaceType: String, Codable {
     var name: String
     var type: PlaceType
 
-    // Additional description of the place (e.g. address, "Bus Stop")
+    /// Additional description of the place (e.g. address, "Bus Stop")
     private var placeDescription: String?
 
     var latitude: Double?
@@ -60,7 +60,7 @@ enum PlaceType: String, Codable {
         self.longitude = longitude
     }
 
-    // MARK: Functions
+    // MARK: - Functions
 
     override var description: String {
         let exception = name == Constants.General.firstFavorite
@@ -73,4 +73,5 @@ enum PlaceType: String, Codable {
         }
         return object.name == name
     }
+
 }

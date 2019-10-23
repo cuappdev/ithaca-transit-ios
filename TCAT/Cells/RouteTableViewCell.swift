@@ -12,7 +12,7 @@ import UIKit
 
 class RouteTableViewCell: UITableViewCell {
 
-    // MARK: View vars
+    // MARK: - View vars
     private let arrowImageView = UIImageView(image: #imageLiteral(resourceName: "side-arrow"))
     private let containerView = UIView()
     private var departureStackView: UIStackView!
@@ -23,11 +23,11 @@ class RouteTableViewCell: UITableViewCell {
     private var routeDiagram: RouteDiagram!
     private let travelTimeLabel = UILabel()
 
-    // MARK: Data vars
+    // MARK: - Data vars
     private let containerViewLayoutInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 12)
     private let networking: Networking = URLSession.shared.request
 
-    // MARK: Init
+    // MARK: - Init
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -42,7 +42,7 @@ class RouteTableViewCell: UITableViewCell {
         setupConstraints()
     }
 
-    // MARK: Style
+    // MARK: - Style
 
     private func setupCellBackground() {
         let cornerRadius: CGFloat = 16
@@ -149,7 +149,8 @@ class RouteTableViewCell: UITableViewCell {
         }
     }
 
-    // MARK: Set Data
+    // MARK: - Set Data
+
     func configure(for route: Route, delayState: DelayState? = nil) {
 
         setTravelTime(withDepartureTime: route.departureTime, withArrivalTime: route.arrivalTime)
@@ -161,12 +162,10 @@ class RouteTableViewCell: UITableViewCell {
             setDepartureTime(withStartTime: Date(), withDelayState: delay)
         }
 
-        /*
-         TODO #266: Find fix for updating tableview when delays occur. We currently just update the tableview but because
-         it's an asynchronous call and is run for each cell, we update the tableview way more often than we need
-         to and prepareForResuse doesn't seem to get called as often. This causes overlaps in the routeDiagram and
-         sometimes makes it impossible to read.
-        */
+        // TODO #266: Find fix for updating tableview when delays occur. We currently just update the tableview but because
+        // it's an asynchronous call and is run for each cell, we update the tableview way more often than we need
+        // to and prepareForResuse doesn't seem to get called as often. This causes overlaps in the routeDiagram and
+        // sometimes makes it impossible to read.
         if routeDiagram != nil {
             routeDiagram.removeFromSuperview()
             routeDiagram.snp.removeConstraints()
@@ -179,7 +178,7 @@ class RouteTableViewCell: UITableViewCell {
         setupDataDependentConstraints()
     }
 
-    // MARK: Get Data
+    // MARK: - Get Data
 
     private func getDelayState(fromRoute route: Route) -> DelayState {
         if let firstDepartDirection = route.getFirstDepartRawDirection() {
@@ -188,7 +187,10 @@ class RouteTableViewCell: UITableViewCell {
 
             if let delay = firstDepartDirection.delay {
                 let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
-                // Our live tracking only updates once every 30 seconds, so we want to show buses that are delayed by < 120 as on time in order to be more accurate about the status of slightly delayed buses. This way riders get to a bus stop earlier rather than later when trying to catch such buses.
+                // Our live tracking only updates once every 30 seconds, so we want to show 
+                // buses that are delayed by < 120 as on time in order to be more accurate 
+                // about the status of slightly delayed buses. This way riders get to a bus 
+                // stop earlier rather than later when trying to catch such buses.
                 if Time.compare(date1: departTime, date2: delayedDepartTime) == .orderedAscending { // bus is delayed
                     if delayedDepartTime >= Date() || delay >= 120 {
                         return .late(date: delayedDepartTime)
@@ -216,11 +218,9 @@ class RouteTableViewCell: UITableViewCell {
         let delayState = getDelayState(fromRoute: route)
         setDepartureTime(withStartTime: Date(), withDelayState: delayState)
         setLiveElements(withDelayState: delayState)
-
     }
 
     private func setLiveElements(withDelayState delayState: DelayState) {
-
         switch delayState {
         case .late(date: let delayedDepartureTime):
             liveLabel.textColor = Colors.lateRed
@@ -242,11 +242,9 @@ class RouteTableViewCell: UITableViewCell {
             liveLabel.removeFromSuperview()
             liveIndicatorView.removeFromSuperview()
         }
-
     }
 
     private func setDepartureTime(withStartTime startTime: Date, withDelayState delayState: DelayState) {
-
         switch delayState {
 
         case .late(date: let departureTime):
@@ -266,7 +264,6 @@ class RouteTableViewCell: UITableViewCell {
             departureTimeLabel.text = boardTime == "0 min" ? "Board now" : "Board in \(boardTime)"
 
             departureTimeLabel.textColor = Colors.primaryText
-
         }
 
         arrowImageView.tintColor = Colors.primaryText
@@ -282,7 +279,7 @@ class RouteTableViewCell: UITableViewCell {
         arrowImageView.tintColor = Colors.metadataIcon
     }
 
-    // MARK: Reuse
+    // MARK: - Reuse
 
     override func prepareForReuse() {
         routeDiagram.removeFromSuperview()

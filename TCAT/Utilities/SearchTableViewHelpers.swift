@@ -32,7 +32,7 @@ class Global {
         return [Place]()
     }
 
-    // Returns the rest so we don't have to re-unarchive it
+    /// Returns the rest so we don't have to re-unarchive it
     func deleteFavorite(favorite: Place, allFavorites: [Place]) -> [Place] {
         let newFavoritesList = allFavorites.filter { !favorite.isEqual($0) }
         do {
@@ -45,7 +45,7 @@ class Global {
         return newFavoritesList
     }
 
-    // Returns the rest so we don't have to re-unarchive it
+    /// Returns the rest so we don't have to re-unarchive it
     func deleteRecent(recent: Place, allRecents: [Place]) -> [Place] {
         let newRecentsList = allRecents.filter { !recent.isEqual($0) }
         do {
@@ -58,7 +58,7 @@ class Global {
         return newRecentsList
     }
 
-    // Clears recent searches
+    /// Clears recent searches
     func deleteAllRecents() {
         let newRecents = [Place]()
         do {
@@ -101,4 +101,5 @@ class Global {
             Analytics.shared.log(payload)
         }
     }
+
 }

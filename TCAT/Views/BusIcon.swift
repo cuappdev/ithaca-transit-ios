@@ -8,6 +8,7 @@
 import UIKit
 
 enum BusIconType: String {
+
     case directionSmall, directionLarge, liveTracking
 
     /// Return BusIcon's frame width
@@ -43,6 +44,7 @@ enum BusIconType: String {
             return 4
         }
     }
+
 }
 
 class BusIcon: UIView {
@@ -58,18 +60,17 @@ class BusIcon: UIView {
         return CGSize(width: type.width, height: type.height)
     }
 
-    // MARK: Init
+    // MARK: - Init
 
     init(type: BusIconType, number: Int) {
         self.type = type
         super.init(frame: .zero)
 
-        var fontSize: CGFloat {
-            switch type {
-            case .directionSmall: return 14
-            case .directionLarge: return 20
-            case .liveTracking: return 16
-            }
+        var fontSize: CGFloat
+        switch type {
+        case .directionSmall: fontSize = 14
+        case .directionLarge: fontSize = 20
+        case .liveTracking: fontSize = 16
         }
 
         backgroundColor = .clear
@@ -98,17 +99,18 @@ class BusIcon: UIView {
 
     private func setupConstraints(for type: BusIconType) {
         let imageLeadingOffset: CGFloat = type == .directionLarge ? 12 : 8
-        var imageSize: CGSize {
-            var constant: CGFloat {
-                switch type {
-                case .liveTracking: return 0.87
-                case .directionSmall: return 0.75
-                case .directionLarge: return 1
-                }
-            }
-            return CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
+
+        var constant: CGFloat
+        switch type {
+        case .liveTracking: constant = 0.87
+        case .directionSmall: constant = 0.75
+        case .directionLarge: constant = 1
         }
-        let labelLeadingOffset: CGFloat = type == .liveTracking ? 4 : (type.width - imageSize.width - imageLeadingOffset - label.intrinsicContentSize.width) / 2
+        let imageSize = CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
+
+        let labelLeadingOffset: CGFloat = type == .liveTracking
+            ? 4
+            : (type.width - imageSize.width - imageLeadingOffset - label.intrinsicContentSize.width) / 2
         let liveIndicatorLeadingOffset = 4
 
         baseView.snp.makeConstraints { make in
@@ -141,4 +143,5 @@ class BusIcon: UIView {
         type = .directionSmall
         super.init(coder: aDecoder)
     }
+
 }

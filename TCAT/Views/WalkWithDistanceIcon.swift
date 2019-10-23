@@ -10,16 +10,16 @@ import UIKit
 
 class WalkWithDistanceIcon: UIView {
 
-    // MARK: View vars
+    // MARK: - View vars
 
     private let travelDistanceLabel = UILabel()
     private let walkIcon = UIImageView(image: #imageLiteral(resourceName: "walk"))
 
-    // MARK: Spacing vars
+    // MARK: - Spacing vars
 
     private let walkIconAndDistanceLabelVerticalSpace: CGFloat = 2.0
 
-    // MARK: Init
+    // MARK: - Init
 
     init(withDistance distance: Double) {
         super.init(frame: .zero)

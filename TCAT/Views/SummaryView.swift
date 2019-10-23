@@ -27,13 +27,11 @@ class SummaryView: UIView {
         // View Initialization
         super.init(frame: .zero)
 
-        /*
-         TODO:
-         This value ends up getting overwritten by constraints, which is what we want,
-         but for some reason if it is not set prior to writing the constraints, the
-         entire view comes out blank. I'm still investigating but it seems to be an,
-         issue with the Pulley Pod that we're using.
-        */
+        // TODO:
+        // This value ends up getting overwritten by constraints, which is what we want,
+        // but for some reason if it is not set prior to writing the constraints, the
+        // entire view comes out blank. I'm still investigating but it seems to be an,
+        // issue with the Pulley Pod that we're using.
         frame.size = CGSize(width: UIScreen.main.bounds.width, height: 100)
         backgroundColor = Colors.backgroundWash
         roundCorners(corners: [.topLeft, .topRight], radius: 16)
@@ -193,4 +191,5 @@ class SummaryView: UIView {
             addSubview(iconView)
         }
     }
+
 }

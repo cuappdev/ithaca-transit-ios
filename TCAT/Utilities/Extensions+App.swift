@@ -14,6 +14,7 @@ import UIKit
 let increaseTapTargetTag: Int = 1865
 
 extension MKPolyline {
+
     public var coordinates: [CLLocationCoordinate2D] {
         var coords = [CLLocationCoordinate2D](repeating: kCLLocationCoordinate2DInvalid,
                                               count: self.pointCount)
@@ -22,11 +23,14 @@ extension MKPolyline {
 
         return coords
     }
+
 }
 
 extension UIView {
 
-    /** Round specific corners of UIView */
+    static let zero = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: CGFloat.leastNormalMagnitude))
+
+    /// Round specific corners of UIView
     func roundCorners(corners: UIRectCorner, radius: CGFloat) {
         let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
         let mask = CAShapeLayer()
@@ -42,8 +46,6 @@ extension UIView {
         UIGraphicsEndImageContext()
         return img
     }
-
-    static let zero = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: CGFloat.leastNormalMagnitude))
 
 }
 
@@ -116,6 +118,7 @@ extension UIViewController {
         removeFromParent()
         view.removeFromSuperview()
     }
+
 }
 
 extension String {
@@ -140,38 +143,37 @@ extension String {
                                             attributes: [.font: font], context: nil)
         return boundingBox.height
     }
-    /** Bold a phrase that appears in a string, and return the attributed string. Only shows the last bolded phrase.
+    /// Bold a phrase that appears in a string, and return the attributed string. Only shows the last bolded phrase.
 
-        - Parameter containerText: The string to scan through and make `self` bold inside.
-        - Parameter originalFont: The initial font of the containerText.
-        - Parameter boldFont: The font to make the bold string.
-     */
+    /// - Parameter containerText: The string to scan through and make `self` bold inside.
+    /// - Parameter originalFont: The initial font of the containerText.
+    /// - Parameter boldFont: The font to make the bold string.
+    ///
     func bold(in containerText: String, from originalFont: UIFont, to boldFont: UIFont) -> NSMutableAttributedString {
         let attributedString = NSMutableAttributedString(string: containerText, attributes: [.font: originalFont])
         return self.bold(in: attributedString, to: boldFont)
     }
 
-    /** Bold a phrase that appears in an attributed string, and return the attributed string */
+    /// Bold a phrase that appears in an attributed string, and return the attributed string
     func bold(in containerText: NSMutableAttributedString, to boldFont: UIFont) -> NSMutableAttributedString {
 
         let pattern = self
         let attributedString: NSMutableAttributedString = containerText
         let newAttributedString = attributedString
-        let plain_string: String = attributedString.string
+        let plainString: String = attributedString.string
 
         do {
             let regex = try NSRegularExpression(pattern: pattern, options: [])
-            let ranges = regex.matches(in: plain_string, options: [], range: NSRange(location: 0, length: plain_string.count)).map { $0.range }
+            let ranges = regex.matches(in: plainString, options: [], range: NSRange(location: 0, length: plainString.count)).map { $0.range }
             for range in ranges { newAttributedString.addAttributes([.font: boldFont], range: range) }
         } catch {
             print("bold NSRegularExpression failed")
         }
 
         return newAttributedString
-
     }
 
-    /** Return a list of all lone-standing integers in a list */
+    /// Return a list of all lone-standing integers in a list
     func intsFromString() -> [Int] {
         var intList = [Int]()
         let stringArray = self.components(separatedBy: CharacterSet.decimalDigits.inverted)
@@ -182,19 +184,24 @@ extension String {
         }
         return intList
     }
+
 }
 
 extension Array where Element: UIView {
+
     /// Remove each view from its superview.
     func removeViewsFromSuperview() {
         self.forEach { $0.removeFromSuperview() }
     }
+
 }
 
 extension Array where Element: Comparable {
+
     func containsSameElements(as other: [Element]) -> Bool {
         return self.count == other.count && self.sorted() == other.sorted()
     }
+
 }
 
 /// Present a share sheet for a route in any context.
@@ -238,9 +245,11 @@ public func ???<T> (optional: T?, defaultValue: @autoclosure () -> String) -> St
 }
 
 extension Collection {
+
     subscript(optional i: Index) -> Iterator.Element? {
         return self.indices.contains(i) ? self[i] : nil
     }
+
 }
 
 class LargeTapTargetButton: UIButton {

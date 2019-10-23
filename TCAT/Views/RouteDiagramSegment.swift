@@ -19,10 +19,21 @@ class RouteDiagramSegment: UIView {
     private let busIconType: BusIconType = .directionSmall
     private let busIconCornerRadius: CGFloat = BusIconType.directionSmall.cornerRadius
 
-    init(for direction: Direction, prev: RouteDiagramSegment?, isWalkingRoute: Bool, index: Int, isDestination: Bool, travelDistance: Double) {
+    init(
+        for direction: Direction,
+        prev: RouteDiagramSegment?,
+        isWalkingRoute: Bool,
+        index: Int,
+        isDestination: Bool,
+        travelDistance: Double
+    ) {
         super.init(frame: .zero)
-        // if route is not walking route and if on first stop in route, will have travel distance in stop label
-        stopLabel = getStopLabel(withName: direction.name, withStayOnBusForTranfer: direction.stayOnBusForTransfer, withDistance: !isWalkingRoute && index == 0 ? travelDistance : nil)
+        // If route is not walking route and if on first stop in route, will have travel distance in stop label
+        stopLabel = getStopLabel(
+            withName: direction.name,
+            withStayOnBusForTranfer: direction.stayOnBusForTransfer,
+            withDistance: !isWalkingRoute && index == 0 ? travelDistance : nil
+        )
         stopDot = getStopDot(fromDirection: direction, withWalkingRoute: isWalkingRoute, isDestination: isDestination)
         if !isDestination {
             icon = getIcon(fromDirection: direction, withDistance: isWalkingRoute && index == 0 ? travelDistance : nil)
@@ -38,18 +49,19 @@ class RouteDiagramSegment: UIView {
 
     func setupConstraints(prev: RouteDiagramSegment?, isLastDirection: Bool) {
         let circleCenterXLeadingInset: CGFloat = 69.5
-        var spaceBtnIconAndRouteLine: CGFloat {
-            let spaceBtnBusIconAndRouteLine: CGFloat = 19.5
-            let spaceBtnWalkIconAndRouteLine: CGFloat = 38
-            let spaceBtnWalkWithDistanceIconAndRouteLine: CGFloat = 24
 
-            return self.icon is UIImageView ? spaceBtnWalkIconAndRouteLine : (self.icon is WalkWithDistanceIcon ? spaceBtnWalkWithDistanceIconAndRouteLine : spaceBtnBusIconAndRouteLine)
-        }
-        var spaceBtnIconAndSuperview: CGFloat {
-            let spaceBtnWalkIconAndSuperview: CGFloat = 20
+        let spaceBtnBusIconAndRouteLine: CGFloat = 19.5
+        let spaceBtnWalkIconAndRouteLine: CGFloat = 38
+        let spaceBtnWalkWithDistanceIconAndRouteLine: CGFloat = 24
+        let spaceBtnIconAndRouteLine: CGFloat = self.icon is UIImageView
+            ? spaceBtnWalkIconAndRouteLine
+            : (self.icon is WalkWithDistanceIcon ? spaceBtnWalkWithDistanceIconAndRouteLine : spaceBtnBusIconAndRouteLine)
 
-            return self.icon is UIImageView ? spaceBtnWalkIconAndSuperview : (self.icon is BusIcon ? 0 : 8.5)
-        }
+        let spaceBtnWalkIconAndSuperview: CGFloat = 20
+        let spaceBtnIconAndSuperview: CGFloat = self.icon is UIImageView
+            ? spaceBtnWalkIconAndSuperview
+            : (self.icon is BusIcon ? 0 : 8.5)
+
         let spaceBtnStopDotCenterXAndStopLabel: CGFloat = 26
 
         if let icon = icon, let routeLine = routeLine {
@@ -87,17 +99,20 @@ class RouteDiagramSegment: UIView {
         }
     }
 
-    // MARK: Get data from route ojbect
+    // MARK: - Get data from route ojbect
 
-    private func getStopLabel(withName name: String, withStayOnBusForTranfer stayOnBusForTranfer: Bool, withDistance distance: Double?) -> UILabel {
-
+    private func getStopLabel(
+        withName name: String,
+        withStayOnBusForTranfer stayOnBusForTranfer: Bool,
+        withDistance distance: Double?
+    ) -> UILabel {
         let labelPadding: CGFloat = 12
         let rightPadding: CGFloat = 40
         let xPos: CGFloat = 96
         let width: CGFloat = UIScreen.main.bounds.width - xPos - rightPadding - labelPadding
 
         let stopLabel = UILabel()
-        // allow for multi-line label for long stop names
+        // Allow for multi-line label for long stop names
         stopLabel.allowsDefaultTighteningForTruncation = true
         stopLabel.lineBreakMode = .byWordWrapping
         stopLabel.preferredMaxLayoutWidth = width
@@ -150,7 +165,11 @@ class RouteDiagramSegment: UIView {
         return stopLabel.intrinsicContentSize.height <= oneLineStopLabel.intrinsicContentSize.height
     }
 
-    private func getStopDot(fromDirection direction: Direction, withWalkingRoute isWalkingRoute: Bool, isDestination: Bool) -> Circle {
+    private func getStopDot(
+        fromDirection direction: Direction,
+        withWalkingRoute isWalkingRoute: Bool,
+        isDestination: Bool
+    ) -> Circle {
         var pin: Circle
 
         if direction.type == .walk {
@@ -204,7 +223,6 @@ class RouteDiagramSegment: UIView {
     }
 
     private func getRouteLine(fromDirection direction: Direction, withWalkingRoute isWalkingRoute: Bool) -> RouteLine {
-
         let isStopLabelSingleLine = isStopLabelOneLine(stopLabel)
 
         if isWalkingRoute {
@@ -215,12 +233,16 @@ class RouteDiagramSegment: UIView {
 
         switch direction.type {
         case .depart:
-            let solidBlueRouteLine = isStopLabelSingleLine ? SolidLine(color: Colors.tcatBlue) : SolidLine(overrideHeight: RouteLine.extendedHeight, color: Colors.tcatBlue)
+            let solidBlueRouteLine = isStopLabelSingleLine
+                ? SolidLine(color: Colors.tcatBlue)
+                : SolidLine(overrideHeight: RouteLine.extendedHeight, color: Colors.tcatBlue)
 
             return solidBlueRouteLine
 
         default:
-            let dashedGreyRouteLine = isStopLabelSingleLine ? DottedLine(color: Colors.metadataIcon) : DottedLine(overrideHeight: RouteLine.extendedHeight, color: Colors.metadataIcon)
+            let dashedGreyRouteLine = isStopLabelSingleLine
+                ? DottedLine(color: Colors.metadataIcon)
+                : DottedLine(overrideHeight: RouteLine.extendedHeight, color: Colors.metadataIcon)
 
             return dashedGreyRouteLine
         }
@@ -237,4 +259,5 @@ class RouteDiagramSegment: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
 }

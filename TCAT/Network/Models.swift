@@ -10,7 +10,7 @@ import CoreLocation
 import Foundation
 import SwiftyJSON
 
-// MARK: Request Bodies
+// MARK: - Request Bodies
 internal struct ApplePlacesBody: Codable {
     let query: String
     let places: [Place]
@@ -63,12 +63,14 @@ class RouteSectionsObject: Codable {
 }
 
 internal struct GetDelayBody: Codable {
+
     let stopID: String
     let tripID: String
 
     func toQueryItems() -> [URLQueryItem] {
         return [URLQueryItem(name: "stopID", value: stopID), URLQueryItem(name: "tripID", value: tripID)]
     }
+
 }
 
 internal struct Trip: Codable {

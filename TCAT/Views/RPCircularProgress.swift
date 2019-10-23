@@ -18,9 +18,7 @@ open class RPCircularProgress: UIView {
 
     // MARK: - Public API
 
-    /**
-      The color of the empty progress track (gets drawn over)
-    */
+    ///  The color of the empty progress track (gets drawn over)
     @IBInspectable open var trackTintColor: UIColor {
         get {
             return progressLayer.trackTintColor
@@ -31,9 +29,7 @@ open class RPCircularProgress: UIView {
         }
     }
 
-    /**
-      The color of the progress bar
-     */
+    ///  The color of the progress bar
     @IBInspectable open var progressTintColor: UIColor {
         get {
             return progressLayer.progressTintColor
@@ -44,9 +40,7 @@ open class RPCircularProgress: UIView {
         }
     }
 
-    /**
-      The color the notched out circle within the progress area (if there is one)
-     */
+    ///  The color the notched out circle within the progress area (if there is one)
     @IBInspectable open var innerTintColor: UIColor? {
         get {
             return progressLayer.innerTintColor
@@ -57,9 +51,7 @@ open class RPCircularProgress: UIView {
         }
     }
 
-    /**
-      Sets whether or not the corners of the progress bar should be rounded
-     */
+    ///  Sets whether or not the corners of the progress bar should be rounded
     @IBInspectable open var roundedCorners: Bool {
         get {
             return progressLayer.roundedCorners
@@ -70,9 +62,7 @@ open class RPCircularProgress: UIView {
         }
     }
 
-    /**
-      Sets how thick the progress bar should be (pinned between `0.01` and `1`)
-     */
+    ///  Sets how thick the progress bar should be (pinned between `0.01` and `1`)
     @IBInspectable open var thicknessRatio: CGFloat {
         get {
             return progressLayer.thicknessRatio
@@ -83,9 +73,7 @@ open class RPCircularProgress: UIView {
         }
     }
 
-    /**
-      Sets whether or not the animation should be clockwise
-     */
+    ///  Sets whether or not the animation should be clockwise
     @IBInspectable open var clockwiseProgress: Bool {
         get {
             return progressLayer.clockwiseProgress
@@ -96,21 +84,15 @@ open class RPCircularProgress: UIView {
         }
     }
 
-    /**
-      A timing function defining the pacing of the animation. Defaults to ease in, ease out.
-     */
+    ///  A timing function defining the pacing of the animation. Defaults to ease in, ease out.
     open var timingFunction: CAMediaTimingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
 
-    /**
-      Getter for the current progress (not observed from any active animations)
-     */
+    ///  Getter for the current progress (not observed from any active animations)
     @IBInspectable open var progress: CGFloat { return progressLayer.progress }
 
-    /**
-      Sets how much of the progress bar should be filled during an indeterminate animation, pinned between `0.05` and `0.9`
-     
-      **Note:** This can be overriden / animated from by using updateProgress(...)
-     */
+    ///  Sets how much of the progress bar should be filled during an indeterminate animation, pinned between `0.05` and `0.9`
+    /// 
+    ///  **Note:** This can be overriden / animated from by using updateProgress(...)
     @IBInspectable open var indeterminateProgress: CGFloat {
         get {
             return progressLayer.indeterminateProgress
@@ -120,9 +102,7 @@ open class RPCircularProgress: UIView {
         }
     }
 
-    /**
-      Controls the speed at which the indeterminate progress bar animates
-     */
+    ///  Controls the speed at which the indeterminate progress bar animates
     @IBInspectable open var indeterminateDuration: CFTimeInterval = Defaults.indeterminateDuration
 
     // MARK: - Custom Base Layer
@@ -135,11 +115,9 @@ open class RPCircularProgress: UIView {
 
     // Lifecycle
 
-    /**
-     Default initializer for the class
-
-     - returns: A configured instance of self
-     */
+    /// Default initializer for the class
+    ///
+    /// - returns: A configured instance of self
     required public init() {
         super.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
 
@@ -163,12 +141,10 @@ open class RPCircularProgress: UIView {
 
     // MARK: - Indeterminate
 
-    /**
-     Enables or disables the indeterminate (spinning) animation
+    /// Enables or disables the indeterminate (spinning) animation
 
-     - parameter enabled:    Whether or not to enable the animation (defaults to `true`)
-     - parameter completion: An optional closure to execute after the animation completes
-     */
+    /// - parameter enabled:    Whether or not to enable the animation (defaults to `true`)
+    /// - parameter completion: An optional closure to execute after the animation completes
     open func enableIndeterminate(_ enabled: Bool = true, completion: CompletionBlock? = nil) {
         if let animation = progressLayer.animation(forKey: AnimationKeys.indeterminate) {
             // Check if there are any closures to execute on the existing animation
@@ -188,16 +164,20 @@ open class RPCircularProgress: UIView {
 
     // MARK: - Progress
 
-    /**
-     Updates the progress bar to the given value with the optional properties
+    /// Updates the progress bar to the given value with the optional properties
 
-     - parameter progress:     The progress to update to, pinned between `0` and `1`
-     - parameter animated:     Whether or not the update should be animated (defaults to `true`)
-     - parameter initialDelay: Sets an initial delay before the animation begins
-     - parameter duration:     Sets the overal duration that the animation should complete within
-     - parameter completion:   An optional closure to execute after the animation completes
-     */
-    open func updateProgress(_ progress: CGFloat, animated: Bool = true, initialDelay: CFTimeInterval = 0, duration: CFTimeInterval? = nil, completion: CompletionBlock? = nil) {
+    /// - parameter progress:     The progress to update to, pinned between `0` and `1`
+    /// - parameter animated:     Whether or not the update should be animated (defaults to `true`)
+    /// - parameter initialDelay: Sets an initial delay before the animation begins
+    /// - parameter duration:     Sets the overal duration that the animation should complete within
+    /// - parameter completion:   An optional closure to execute after the animation completes
+    open func updateProgress(
+        _ progress: CGFloat, 
+        animated: Bool = true, 
+        initialDelay: CFTimeInterval = 0, 
+        duration: CFTimeInterval? = nil, 
+        completion: CompletionBlock? = nil
+    ) {
         let pinnedProgress = pin(progress)
         if animated {
 
@@ -252,12 +232,18 @@ private extension RPCircularProgress {
 
     // MARK: - Progress
 
-    // Pin certain values between 0.0 and 1.0
+    /// Pin certain values between 0.0 and 1.0
     func pin(_ value: CGFloat, minValue: CGFloat = 0, maxValue: CGFloat = 1) -> CGFloat {
         return min(max(value, minValue), maxValue)
     }
 
-    func animate(_ pinnedProgress: CGFloat, currentProgress: CGFloat, initialDelay: CFTimeInterval, duration: CFTimeInterval, completion: CompletionBlock?) {
+    func animate(
+        _ pinnedProgress: CGFloat, 
+        currentProgress: CGFloat, 
+        initialDelay: CFTimeInterval, 
+        duration: CFTimeInterval, 
+        completion: CompletionBlock?
+    ) {
         let animation = CABasicAnimation(keyPath: AnimationKeys.progress)
         animation.duration = duration
         animation.timingFunction = timingFunction
@@ -292,8 +278,7 @@ private extension RPCircularProgress {
         progressLayer.add(animation, forKey: AnimationKeys.indeterminate)
     }
 
-    // Completion
-
+    /// Completion
     class CompletionBlockObject: NSObject {
         var action: CompletionBlock
 
@@ -314,7 +299,7 @@ private extension RPCircularProgress {
         @NSManaged var thicknessRatio: CGFloat
 
         @NSManaged var indeterminateProgress: CGFloat
-        // This needs to have a setter/getter for it to work with CoreAnimation
+        /// This needs to have a setter/getter for it to work with CoreAnimation
         @NSManaged var progress: CGFloat
 
         override class func needsDisplay(forKey key: String) -> Bool {

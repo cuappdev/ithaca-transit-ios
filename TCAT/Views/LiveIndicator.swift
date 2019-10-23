@@ -14,32 +14,32 @@ enum LiveIndicatorSize: CGFloat {
 
 class LiveIndicator: UIView {
 
-    // MARK: State vars
+    // MARK: - State vars
 
     private var lineWidth: CGFloat
     private var size: LiveIndicatorSize
 
-    // MARK: View vars
+    // MARK: - View vars
 
     private var circleLayer: CAShapeLayer!
     private var largeArcLayer: CAShapeLayer!
     private var smallArcLayer: CAShapeLayer!
 
-    // MARK: Animation vars
+    // MARK: - Animation vars
 
-    private let DIM_OPACITY: CGFloat = 0.5
-    private let END_DELAY: TimeInterval = 0.0
-    private let START_DELAY: TimeInterval = 0.0
-    static let DURATION: TimeInterval = 0.2
-    static let INTERVAL: TimeInterval = 4.0
+    private let dimOpacity: CGFloat = 0.5
+    private let endDelay: TimeInterval = 0.0
+    private let startDelay: TimeInterval = 0.0
+    static let duration: TimeInterval = 0.2
+    static let interval: TimeInterval = 4.0
 
-    // MARK: Constraint vars
+    // MARK: - Constraint vars
 
     override var intrinsicContentSize: CGSize {
         return CGSize(width: CGFloat(size.rawValue) + lineWidth, height: CGFloat(size.rawValue) + lineWidth)
     }
 
-    // MARK: Init
+    // MARK: - Init
 
     required init?(coder aDecoder: NSCoder) {
         size = .small
@@ -63,10 +63,9 @@ class LiveIndicator: UIView {
         layer.addSublayer(smallArcLayer)
 
         startAnimation()
-
     }
 
-    // MARK: Create views
+    // MARK: - Create views
 
     private func getCircleLayer(color: UIColor) -> CAShapeLayer {
         let diameter = intrinsicContentSize.height / 5
@@ -80,11 +79,13 @@ class LiveIndicator: UIView {
     }
 
     private func drawBezierPath(radius: CGFloat, lineWidth: CGFloat) -> UIBezierPath {
-        return UIBezierPath(arcCenter: CGPoint(x: 0, y: intrinsicContentSize.height),
-                            radius: radius,
-                            startAngle: .pi * (3/2) + asin((lineWidth / 2) / (radius + (lineWidth / 2))),
-                            endAngle: -asin((lineWidth / 2) / (radius + (lineWidth / 2))),
-                            clockwise: true)
+        return UIBezierPath(
+            arcCenter: CGPoint(x: 0, y: intrinsicContentSize.height),
+            radius: radius,
+            startAngle: .pi * (3/2) + asin((lineWidth / 2) / (radius + (lineWidth / 2))),
+            endAngle: -asin((lineWidth / 2) / (radius + (lineWidth / 2))),
+            clockwise: true
+        )
     }
 
     private func getLargeArcLayer(color: UIColor, lineWidth: CGFloat) -> CAShapeLayer {
@@ -113,7 +114,7 @@ class LiveIndicator: UIView {
         return smallArcLayer
     }
 
-    // MARK: Set
+    // MARK: - Set
 
     func setColor(to color: UIColor) {
         circleLayer.fillColor = color.cgColor
@@ -121,16 +122,16 @@ class LiveIndicator: UIView {
         largeArcLayer.strokeColor = color.cgColor
     }
 
-    // MARK: Animate
+    // MARK: - Animate
 
     private func startAnimation() {
         var timeInterval: TimeInterval = 0
 
         for layer in [circleLayer, smallArcLayer, largeArcLayer] {
-            let timer = Timer(fireAt: Date().addingTimeInterval(timeInterval), interval: LiveIndicator.INTERVAL, target: self,
+            let timer = Timer(fireAt: Date().addingTimeInterval(timeInterval), interval: LiveIndicator.interval, target: self,
                               selector: #selector(self.animateLayer), userInfo: layer, repeats: true)
             RunLoop.main.add(timer, forMode: RunLoop.Mode.common)
-            timeInterval += LiveIndicator.DURATION
+            timeInterval += LiveIndicator.duration
         }
     }
 
@@ -141,10 +142,10 @@ class LiveIndicator: UIView {
         }
 
         let fadeOutAnimation = CAKeyframeAnimation(keyPath: "opacity")
-        fadeOutAnimation.beginTime = START_DELAY
-        fadeOutAnimation.duration = LiveIndicator.DURATION
+        fadeOutAnimation.beginTime = startDelay
+        fadeOutAnimation.duration = LiveIndicator.duration
         fadeOutAnimation.keyTimes = [0, 1]
-        fadeOutAnimation.values = [1.0, DIM_OPACITY]
+        fadeOutAnimation.values = [1.0, dimOpacity]
         fadeOutAnimation.autoreverses = true
         fadeOutAnimation.fillMode = CAMediaTimingFillMode.forwards
         fadeOutAnimation.isRemovedOnCompletion = true
