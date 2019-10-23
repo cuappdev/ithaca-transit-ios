@@ -131,9 +131,9 @@ class LargeDetailTableViewCell: UITableViewCell {
         // Instantiate busIconView offScreen to later turn into UIImage
         let busIconView = BusIcon(type: .directionSmall, number: direction.routeNumber)
         let busIconFrame = CGRect(
-            x: -busIconView.intrinsicContentSize.width, 
-            y: 0, 
-            width: busIconView.intrinsicContentSize.width + busIconSpacingBetweenText * 2, 
+            x: -busIconView.intrinsicContentSize.width,
+            y: 0,
+            width: busIconView.intrinsicContentSize.width + busIconSpacingBetweenText * 2,
             height: busIconView.intrinsicContentSize.height
         )
 

@@ -104,8 +104,8 @@ class HomeMapViewController: UIViewController {
     private func setupMapView() {
         // Set mapView with settings
         let camera = GMSCameraPosition.camera(
-            withLatitude: Constants.Map.startingLat, 
-            longitude: Constants.Map.startingLong, 
+            withLatitude: Constants.Map.startingLat,
+            longitude: Constants.Map.startingLong,
             zoom: 15.5
         )
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
@@ -245,7 +245,7 @@ extension HomeMapViewController: HomeOptionsCardDelegate {
 
 /// Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in 
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in
         (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)
     })
 }

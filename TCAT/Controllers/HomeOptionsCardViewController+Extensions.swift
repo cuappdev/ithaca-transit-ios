@@ -216,15 +216,15 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         switch sections[section] {
         case .recentSearches:
             header = HeaderView(
-                labelText: Constants.TableHeaders.recentSearches, 
-                buttonType: .clear, 
-                separatorVisible: true, 
+                labelText: Constants.TableHeaders.recentSearches,
+                buttonType: .clear,
+                separatorVisible: true,
                 delegate: self
             )
         case .favorites:
             header = HeaderView(
-                labelText: Constants.TableHeaders.favoriteDestinations, 
-                buttonType: .add, 
+                labelText: Constants.TableHeaders.favoriteDestinations,
+                buttonType: .add,
                 delegate: self
             )
         case .seeAllStops:

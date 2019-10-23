@@ -92,10 +92,10 @@ class RouteDetailDrawerViewController: UIViewController {
         // Bus Delay Network Timer
         busDelayNetworkTimer?.invalidate()
         busDelayNetworkTimer = Timer.scheduledTimer(
-            timeInterval: busDelayNetworkRefreshRate, 
-            target: self, 
+            timeInterval: busDelayNetworkRefreshRate,
+            target: self,
             selector: #selector(getDelays),
-            userInfo: nil, 
+            userInfo: nil,
             repeats: true
         )
         busDelayNetworkTimer?.fire()

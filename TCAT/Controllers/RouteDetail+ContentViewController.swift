@@ -29,7 +29,7 @@ class RouteDetailContentViewController: UIViewController {
     var directions: [Direction] = []
     private var initalUpdate: Bool = true
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
-    var liveTrackingNetworkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
+    var liveTrackingNetworkRefreshRate: Double = LiveIndicator.interval * 1.0
     var liveTrackingNetworkTimer: Timer?
     private var locationManager = CLLocationManager()
     var mapView: GMSMapView!
@@ -185,7 +185,7 @@ class RouteDetailContentViewController: UIViewController {
                 location: "\(self) Get Bus Locations",
                 type: "Invalid Directions",
                 description: "Directions are not valid")
-            Analytics.shared.log(payload)  
+            Analytics.shared.log(payload)
             return
         }
 
@@ -303,7 +303,7 @@ class RouteDetailContentViewController: UIViewController {
             guard let originalTransform = indicator.iconView?.transform else { continue }
             let insetValue = originalFrame.size.width / 24
             indicator.iconView?.transform = CGAffineTransform(scaleX: insetValue, y: insetValue)
-            UIView.animate(withDuration: LiveIndicator.DURATION * 2, delay: 0, usingSpringWithDamping: 1,
+            UIView.animate(withDuration: LiveIndicator.duration * 2, delay: 0, usingSpringWithDamping: 1,
                            initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
                             indicator.iconView?.transform = originalTransform
             })

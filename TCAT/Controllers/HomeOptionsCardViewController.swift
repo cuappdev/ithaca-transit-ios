@@ -226,8 +226,8 @@ class HomeOptionsCardViewController: UIViewController {
         if searchBar.isFirstResponder {
             let contentHeight = tableViewContentHeight() + collapsedHeight
             return min(contentHeight, adjustedMaxCardHeight)
-        } else { 
-            return collapsedHeight 
+        } else {
+            return collapsedHeight
         }
     }
 

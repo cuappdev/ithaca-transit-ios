@@ -164,7 +164,7 @@ extension String {
 
         do {
             let regex = try NSRegularExpression(pattern: pattern, options: [])
-            let ranges = regex.matches(in: plain_string, options: [], range: NSRange(location: 0, length: plainString.count)).map { $0.range }
+            let ranges = regex.matches(in: plainString, options: [], range: NSRange(location: 0, length: plainString.count)).map { $0.range }
             for range in ranges { newAttributedString.addAttributes([.font: boldFont], range: range) }
         } catch {
             print("bold NSRegularExpression failed")

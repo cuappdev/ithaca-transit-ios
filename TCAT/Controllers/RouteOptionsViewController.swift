@@ -119,17 +119,17 @@ class RouteOptionsViewController: UIViewController {
         searchForRoutes()
 
         routeTimer = Timer.scheduledTimer(
-            timeInterval: 5.0, 
-            target: self, 
-            selector: #selector(updateAllRoutesLiveTracking(sender:)), 
-            userInfo: nil, 
+            timeInterval: 5.0,
+            target: self,
+            selector: #selector(updateAllRoutesLiveTracking(sender:)),
+            userInfo: nil,
             repeats: true
         )
         updateTimer = Timer.scheduledTimer(
-            timeInterval: 20.0, 
-            target: self, 
-            selector: #selector(rerenderLiveTracking(sender:)), 
-            userInfo: nil, 
+            timeInterval: 20.0,
+            target: self,
+            selector: #selector(rerenderLiveTracking(sender:)),
+            userInfo: nil,
             repeats: true
         )
 
@@ -238,9 +238,9 @@ class RouteOptionsViewController: UIViewController {
 
         let appBecameActiveNotification = UIApplication.didBecomeActiveNotification
         NotificationCenter.default.addObserver(
-            self, 
-            selector: #selector(refreshRoutesAndTime), 
-            name: appBecameActiveNotification, 
+            self,
+            selector: #selector(refreshRoutesAndTime),
+            name: appBecameActiveNotification,
             object: nil
         )
     }
@@ -520,8 +520,8 @@ class RouteOptionsViewController: UIViewController {
     ) -> Future<Response<RouteSectionsObject>>? {
         if let endpoint = Endpoint.getRoutes(start: start, end: end, time: time, type: type) {
             return networking(endpoint).decode()
-        } else { 
-            return nil 
+        } else {
+            return nil
         }
     }
 
@@ -672,9 +672,9 @@ class RouteOptionsViewController: UIViewController {
 
     private func setupReachability() {
         NotificationCenter.default.addObserver(
-            self, 
-            selector: #selector(reachabilityChanged(notification:)), 
-            name: .reachabilityChanged, 
+            self,
+            selector: #selector(reachabilityChanged(notification:)),
+            name: .reachabilityChanged,
             object: reachability
         )
         do {

@@ -58,12 +58,12 @@ extension Endpoint {
         }
         let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid)
         let body = GetRoutesBody(
-            arriveBy: type == .arriveBy, 
-            end: "\(endLat),\(endLong)", 
-            start: "\(startLat),\(startLong)", 
-            time: time.timeIntervalSince1970, 
-            destinationName: end.name, 
-            originName: start.name, 
+            arriveBy: type == .arriveBy,
+            end: "\(endLat),\(endLong)",
+            start: "\(startLat),\(startLong)",
+            time: time.timeIntervalSince1970,
+            destinationName: end.name,
+            originName: start.name,
             uid: uid
         )
 
@@ -92,9 +92,9 @@ extension Endpoint {
         endPlaceNames: [String]
     ) -> Endpoint {
         let body = MultiRoutesBody(
-            start: "\(startCoord.latitude),\(startCoord.longitude)", 
-            time: time.timeIntervalSince1970, 
-            end: endCoords, 
+            start: "\(startCoord.latitude),\(startCoord.longitude)",
+            time: time.timeIntervalSince1970,
+            end: endCoords,
             destinationNames: endPlaceNames
         )
         return Endpoint(path: Constants.Endpoints.multiRoute, body: body)

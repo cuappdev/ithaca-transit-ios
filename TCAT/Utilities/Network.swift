@@ -67,9 +67,9 @@ class Network {
     }
 
     class func getCoordinates(
-        start: CoordinateAcceptor, 
+        start: CoordinateAcceptor,
         end: CoordinateAcceptor,
-        callback: @escaping (_ startCoord: CLLocationCoordinate2D?, _ endCoord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void 
+        callback: @escaping (_ startCoord: CLLocationCoordinate2D?, _ endCoord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void
     ) {
         let visitor = CoordinateVisitor()
         start.accept(visitor: visitor) { (startCoord, error) in
@@ -88,7 +88,7 @@ class Network {
     }
 
     class func getRoutes(
-        startCoord: CLLocationCoordinate2D, 
+        startCoord: CLLocationCoordinate2D,
         endCoord: CLLocationCoordinate2D, startPlaceName: String, endPlaceName: String, time: Date, type: SearchType,
         callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void
     ) {
@@ -112,11 +112,11 @@ class Network {
     }
 
     class func getRequestUrl(
-        startCoord: CLLocationCoordinate2D, 
+        startCoord: CLLocationCoordinate2D,
         endCoord: CLLocationCoordinate2D,
-        originName: String, 
-        destinationName: String, 
-        time: Date, 
+        originName: String,
+        destinationName: String,
+        time: Date,
         type: SearchType
     ) -> String {
         let path = "route"
@@ -129,9 +129,9 @@ class Network {
     }
 
     class func getMultiRoutes(
-        startCoord: CLLocationCoordinate2D, 
-        time: Date, 
-        endCoords: [String], 
+        startCoord: CLLocationCoordinate2D,
+        time: Date,
+        endCoords: [String],
         endPlaceNames: [String],
         callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void
     ) {

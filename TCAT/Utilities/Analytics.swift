@@ -215,8 +215,8 @@ struct WhatsNewCardDismissedPayload: Payload {
 struct NetworkErrorPayload: Payload {
     static let eventName: String = "Network Error"
     let deviceInfo = DeviceInfo()
-    
+
     let location: String
-    let type: String 
+    let type: String
     let description: String
 }

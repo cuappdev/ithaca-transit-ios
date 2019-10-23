@@ -50,8 +50,8 @@ extension RouteDetailContentViewController {
     override func loadView() {
         // Set mapView with settings
         let camera = GMSCameraPosition.camera(
-            withLatitude: Constants.Map.startingLat, 
-            longitude: Constants.Map.startingLong, 
+            withLatitude: Constants.Map.startingLat,
+            longitude: Constants.Map.startingLong,
             zoom: Constants.Map.defaultZoom
         )
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
@@ -166,7 +166,7 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
                 setIndex(of: indicator, with: .bussing)
 
                 updateUserData(
-                    for: indicator, 
+                    for: indicator,
                     with: [
                     Constants.BusUserData.actualCoordinates: bus.position,
                     Constants.BusUserData.indicatorCoordinates: placement,
@@ -213,7 +213,7 @@ extension RouteDetailContentViewController {
         marker.appearAnimation = .pop
         setIndex(of: marker, with: .bussing)
         updateUserData(
-            for: marker, 
+            for: marker,
             with: [
             Constants.BusUserData.actualCoordinates: coords,
             Constants.BusUserData.vehicleID: 123456789
