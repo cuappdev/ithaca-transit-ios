@@ -438,7 +438,7 @@ class RouteDetailContentViewController: UIViewController {
     }
 
     /** Draw all waypoints initially for all paths in [Path] or [[CLLocationCoordinate2D]], plus fill bounds */
-    func drawMapRoute() {
+    private func drawMapRoute() {
         for path in paths {
             path.traveledPolyline.map = mapView
             path.map = mapView
