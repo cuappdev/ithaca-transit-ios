@@ -323,7 +323,7 @@ class RouteOptionsViewController: UIViewController {
         backButton = navigationItem.leftBarButtonItem
         navigationItem.setLeftBarButton(nil, animated: false)
         navigationItem.hidesBackButton = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             self.searchBarView.searchController?.isActive = true
         }
     }
