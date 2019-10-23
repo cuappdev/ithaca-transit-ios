@@ -18,7 +18,7 @@ class SearchBarView: UIView, UISearchControllerDelegate {
 
         //Search Bar Customization
         UIBarButtonItem.appearance().setTitleTextAttributes([.foregroundColor: Colors.black], for: .normal)
-        
+
         resultsViewController = SearchResultsViewController(searchBarCancelDelegate: searchBarCancelDelegate, destinationDelegate: destinationDelegate)
         searchController = UISearchController(searchResultsController: resultsViewController)
         searchController?.searchResultsUpdater = resultsViewController
