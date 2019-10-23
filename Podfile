@@ -35,7 +35,6 @@ target 'TCAT' do
 
     # Other
     pod 'SwiftLint'
-    pod 'FLEX'
     
     target 'TCATTests' do
         inherit! :search_paths

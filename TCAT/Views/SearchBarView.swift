@@ -23,7 +23,6 @@ class SearchBarView: UIView, UISearchControllerDelegate {
         searchController = UISearchController(searchResultsController: resultsViewController)
         searchController?.searchResultsUpdater = resultsViewController
         searchController?.searchBar.delegate = resultsViewController
-//        searchController?.isActive = true
         resultsViewController?.searchBar = searchController?.searchBar
 
         let textFieldInsideSearchBar = searchController?.searchBar.value(forKey: "searchField") as? UITextField
