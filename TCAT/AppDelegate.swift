@@ -17,7 +17,7 @@ import SwiftyJSON
 import UIKit
 import WhatsNewKit
 
-// This is used for app-specific preferences
+/// This is used for app-specific preferences
 let userDefaults = UserDefaults.standard
 
 @UIApplicationMain
@@ -151,7 +151,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
-    // MARK: Helper Functions
+    // MARK: - Helper Functions
     
     /// Convert BusStop and PlaceResult models to new unified Place model.
     func migrationToNewPlacesModel(completion: @escaping (_ success: Bool, _ errorDescription: String?) -> Void) {
@@ -238,8 +238,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if places.count == data.count {
                 completion(places, nil)
             }
-        } // end for loop
-        
+        }
+ 
     }
     
     /// Creates and sets a unique identifier. If the device identifier changes, updates it.
@@ -254,10 +254,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func handleShortcut(item: UIApplicationShortcutItem) {
         if let shortcutData = item.userInfo as? [String: Data] {
-            guard
-                let place = shortcutData["place"],
-                let destination = try? decoder.decode(Place.self, from: place)
-            else {
+            guard let place = shortcutData["place"],
+                let destination = try? decoder.decode(Place.self, from: place) else {
                 print("[AppDelegate] Unable to access shortcutData['place']")
                 return
             }
@@ -274,7 +272,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return networking(Endpoint.getAllStops()).decode()
     }
 
-    /* Get all bus stops and store in userDefaults */
+    /// Get all bus stops and store in userDefaults 
     func getBusStops() {
         getAllStops().observe { [weak self] result in
             guard let `self` = self else { return }
@@ -362,19 +360,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
 
         if #available(iOS 12.0, *) {
-            if
-                let intent = userActivity.interaction?.intent as? GetRoutesIntent,
+            if let intent = userActivity.interaction?.intent as? GetRoutesIntent,
                 let latitude = intent.latitude,
                 let longitude = intent.longitude,
                 let searchTo = intent.searchTo,
                 let stopName = searchTo.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed),
-                let url = URL(string: "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(stopName)")
-            {
-                UIApplication.shared.open(url, options: [:]) { (didComplete) in
+                let url = URL(string: "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(stopName)") {
+                UIApplication.shared.open(url, options: [:]) { didComplete in
                     let intentDescription = userActivity.interaction?.intent.intentDescription ?? "No Intent Description"
-                    let payload = SiriShortcutUsedPayload(didComplete: didComplete,
-                                                               intentDescription: intentDescription,
-                                                               locationName: stopName)
+                    let payload = SiriShortcutUsedPayload(
+                        didComplete: didComplete,
+                        intentDescription: intentDescription,
+                        locationName: stopName
+                    )
                     Analytics.shared.log(payload)
                 }
                 return true

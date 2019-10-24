@@ -38,25 +38,20 @@ class RouteDetailViewController: PulleyViewController {
 
     /// 3D Touch Peep Pop Action(s)
     override var previewActionItems: [UIPreviewActionItem] {
-
         let shareAction = UIPreviewAction(title: Constants.Buttons.share, style: .default, handler: { (_, viewController) -> Void in
-
-            guard
-                let routeDetailViewController = viewController as? RouteDetailViewController,
-                let contentViewController = routeDetailViewController.primaryContentViewController as? RouteDetailContentViewController
-            else {
+            guard let routeDetailViewController = viewController as? RouteDetailViewController,
+                let contentViewController = routeDetailViewController.primaryContentViewController as? RouteDetailContentViewController else {
                 return
             }
 
             contentViewController.shareRoute()
-
         })
 
         return [shareAction]
 
     }
 
-    // MARK: Initializers
+    // MARK: - Initializers
 
     required init(contentViewController: UIViewController, drawerViewController: UIViewController) {
         super.init(contentViewController: contentViewController, drawerViewController: drawerViewController)

@@ -133,7 +133,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
         return UIBarButtonItem(customView: backButton)
     }
 
-    /** Move back one view controller in navigationController stack */
+    /// Move back one view controller in navigationController stack
     @objc private func backAction() {
         _ = popViewController(animated: true)
     }
@@ -153,7 +153,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
         }
     }
 
-    // MARK: UINavigationController Functions
+    // MARK: - UINavigationController Functions
 
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
 
@@ -195,7 +195,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
         banner.dismiss()
     }
 
-    // MARK: UINavigationControllerDelegate Functions
+    // MARK: - UINavigationControllerDelegate Functions
 
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         setNavigationBarHidden(viewController is HomeMapViewController, animated: animated)
@@ -235,4 +235,5 @@ class OnboardingNavigationController: UINavigationController {
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
+
 }

@@ -12,7 +12,7 @@ import UIKit
 
 extension UIColor {
 
-    // Use six-character string of a hex color for initialization
+    /// Use six-character string of a hex color for initialization
     convenience init(hex: String) {
         let hex = Int(hex, radix: 16)!
         self.init(red: (hex >> 16) & 0xff, green: (hex >> 8) & 0xff, blue: hex & 0xff)
@@ -26,13 +26,13 @@ extension UIColor {
 
 extension Double {
 
-    /** Convert distance from meters to proper unit (based on size)
-     
-     - Huge Distances: 16 mi
-     - Medium Distances: 3.2 mi
-     - Small Distances: 410 ft (412 ft -> 410 ft)
-     
-     */
+    /// Convert distance from meters to proper unit (based on size)
+    /// 
+    /// - Huge Distances: 16 mi
+    /// - Medium Distances: 3.2 mi
+    /// - Small Distances: 410 ft (412 ft -> 410 ft)
+    /// 
+    /// 
     var roundedString: String {
 
         let numberOfMetersInMile = 1609.34
@@ -66,8 +66,7 @@ extension Double {
 
 extension UIDevice {
 
-    // https://stackoverflow.com/questions/26028918/how-to-determine-the-current-iphone-device-model
-
+    /// https://stackoverflow.com/questions/26028918/how-to-determine-the-current-iphone-device-model
     var modelName: String {
 
         var systemInfo = utsname()
@@ -137,7 +136,8 @@ extension UIDevice {
 }
 
 extension CLLocationCoordinate2D: Codable {
-    // MARK: CLLocationCoordinate2D+MidPoint
+
+    // MARK: - CLLocationCoordinate2D+MidPoint
     func middleLocationWith(location: CLLocationCoordinate2D) -> CLLocationCoordinate2D {
 
         let lon1 = longitude * .pi / 180
@@ -174,28 +174,35 @@ extension CLLocationCoordinate2D: Codable {
         latitude = try container.decode(Double.self, forKey: .lat)
 
     }
+
 }
 
 extension DateFormatter {
+
     static let defaultParser: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
         return dateFormatter
     }()
+
 }
 
 extension Date {
+
     static func parseDate(_ dateString: String) -> Date {
         let dateFormatter = DateFormatter.defaultParser
         let date = dateFormatter.date(from: dateString) ?? Date.distantPast
         return Time.truncateSeconds(from: date)
     }
+
 }
 
 extension NSObject {
+
     func printClass(context: String, message: String) {
         let className = String(describing: self)
-        print("[\(className)] \(context): \(message)") 
+        print("[\(className)] \(context): \(message)")
     }
+
 }

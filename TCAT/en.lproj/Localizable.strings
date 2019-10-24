@@ -1,0 +1,17 @@
+/* 
+  Localizable.strings
+  TCAT
+
+  Created by HAIYING WENG on 10/2/19.
+  Copyright © 2019 cuappdev. All rights reserved.
+*/
+
+
+"Cancel" = "Cancel";
+"All Stops" = "All Stops";
+"Add Favorite" = "Add Favorite";
+"Add Favorites" = "Add Favorites";
+"Favorite Destinations" = "Favorite Destinations";
+"Recent Searches" = "Recent Searches";
+"Add Your First Favorite!" = "Add Your First Favorite!";
+"See All Stops" = "See All Stops"; 

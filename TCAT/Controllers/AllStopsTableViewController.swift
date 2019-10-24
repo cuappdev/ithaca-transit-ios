@@ -121,7 +121,7 @@ class AllStopsTableViewController: UIViewController {
         return networking(Endpoint.getAllStops()).decode()
     }
 
-    /* Get all bus stops and store in userDefaults */
+    /// Get all bus stops and store in userDefaults
     private func refreshAllStops() {
         setUpLoadingIndicator()
         if let allBusStops = userDefaults.value(forKey: Constants.UserDefaults.allBusStops) as? Data,
@@ -152,6 +152,11 @@ class AllStopsTableViewController: UIViewController {
                             userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
                         } catch let error {
                             self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                            let payload = NetworkErrorPayload(
+                                location: "\(self) Get All Stops",
+                                type: "\((error as NSError).domain)",
+                                description: error.localizedDescription)
+                            Analytics.shared.log(payload)
                         }
                         let collegetownStop = Place(name: "Collegetown", latitude: 42.442558, longitude: -76.485336)
                         response.data.append(collegetownStop)
@@ -159,6 +164,11 @@ class AllStopsTableViewController: UIViewController {
                     }
                 case .error(let error):
                     self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                    let payload = NetworkErrorPayload(
+                        location: "\(self) Get All Stops",
+                        type: "\((error as NSError).domain)",
+                        description: error.localizedDescription)
+                    Analytics.shared.log(payload)
                 }
                 self.loadingIndicator?.removeFromSuperview()
                 self.loadingIndicator = nil
@@ -173,7 +183,7 @@ class AllStopsTableViewController: UIViewController {
     }
 }
 
-// MARK: DZNEmptyDataSetSource
+// MARK: - DZNEmptyDataSetSource
 extension AllStopsTableViewController: DZNEmptyDataSetSource {
 
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
@@ -272,4 +282,5 @@ extension AllStopsTableViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sectionIndexes[sortedKeys[section]]?.count ?? 0
     }
+
 }

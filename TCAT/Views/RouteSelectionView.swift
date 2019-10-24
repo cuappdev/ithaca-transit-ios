@@ -19,7 +19,7 @@ class RouteSelectionView: UIView {
 
     private weak var delegate: RouteSelectionViewDelegate?
 
-    // MARK: View vars
+    // MARK: - View vars
     private var borderedCircle: Circle!
     private var bottomSeparator: UIView = UIView()
     private var datepickerButton: UIButton = UIButton()
@@ -34,7 +34,7 @@ class RouteSelectionView: UIView {
 
     private let searchbarHeight: CGFloat = 28
 
-    // MARK: Init
+    // MARK: - Init
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -104,7 +104,12 @@ class RouteSelectionView: UIView {
         datepickerButton.backgroundColor = Colors.white
         datepickerButton.contentHorizontalAlignment = .left
         datepickerButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
-        datepickerButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: datepickerButton.imageEdgeInsets.left + datepickerImageWidth + datepickerTitleLeadingSpace, bottom: 0, right: 0)
+        datepickerButton.titleEdgeInsets = UIEdgeInsets(
+            top: 0,
+            left: datepickerButton.imageEdgeInsets.left + datepickerImageWidth + datepickerTitleLeadingSpace,
+            bottom: 0,
+            right: 0
+        )
 
         addSubview(datepickerButton)
     }
@@ -120,11 +125,22 @@ class RouteSelectionView: UIView {
         var title = ""
 
         if Calendar.current.isDateInToday(date) || Calendar.current.isDateInTomorrow(date) {
-            let verb = (searchTimeType == .arriveBy) ? "Arrive" : (searchTimeType == .leaveNow) ? "Leave now" : "Leave" //Use simply,"arrive" or "leave"
-            let day = Calendar.current.isDateInToday(date) ? "" : "tomorrow " //if today don't put day
-            title = (searchTimeType == .leaveNow) ? "\(verb) (\(day.capitalizingFirstLetter())\(Time.timeString(from: date)))" : "\(verb) \(day)at \(Time.timeString(from: date))"
+            // Use simply,"arrive" or "leave"
+            let verb = (searchTimeType == .arriveBy)
+                ? "Arrive"
+                : (searchTimeType == .leaveNow) ? "Leave now" : "Leave"
+             // If today don't put day
+            let day = Calendar.current.isDateInToday(date)
+                ? ""
+                : "tomorrow " //if today don't put day
+            title = (searchTimeType == .leaveNow)
+                ? "\(verb) (\(day.capitalizingFirstLetter())\(Time.timeString(from: date)))"
+                : "\(verb) \(day)at \(Time.timeString(from: date))"
         } else {
-            let verb = (searchTimeType == .arriveBy) ? "Arrive by" : "Leave on" //Use "arrive by" or "leave on"
+            // Use "arrive by" or "leave on"
+            let verb = (searchTimeType == .arriveBy)
+                ? "Arrive by"
+                : "Leave on"
             title = "\(verb) \(dateString)"
         }
 
@@ -135,7 +151,8 @@ class RouteSelectionView: UIView {
         let datePickerButtonHeight = 40
         let fromSearchbarToSolidCircleSpacing = 20
         let fromSearchbarToSwapButtonSpacing = 16
-        let routeLineToCircleInsets = UIEdgeInsets(top: 1, left: 0, bottom: 1, right: 0) // To remove empty space from curve of circle
+        // To remove empty space from curve of circle
+        let routeLineToCircleInsets = UIEdgeInsets(top: 1, left: 0, bottom: 1, right: 0)
         let searchbarSpacing = 12
         let separatorHeight = 1
         let solidCircleToFromLabelSpacing = 17
@@ -253,4 +270,5 @@ class RouteSelectionView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
 }

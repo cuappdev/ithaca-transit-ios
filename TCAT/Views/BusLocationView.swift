@@ -66,4 +66,5 @@ class BusLocationView: UIView {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
+
 }

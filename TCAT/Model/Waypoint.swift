@@ -84,7 +84,7 @@ class Waypoint: NSObject {
         return drawCircle(radius: smallDiameter / 2, innerColor: Colors.metadataIcon)
     }
 
-    // Draw waypoint meant to be placed as an iconView on map
+    /// Draw waypoint meant to be placed as an iconView on map
     func drawCircle(radius: CGFloat, innerColor: UIColor, borderColor: UIColor? = nil) -> UIView {
 
         let constant: CGFloat = 1

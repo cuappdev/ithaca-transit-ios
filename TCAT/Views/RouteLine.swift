@@ -10,14 +10,14 @@ import UIKit
 
 class RouteLine: UIView {
 
-    // MARK: Size vars
+    // MARK: - Size vars
 
     fileprivate let width: CGFloat = 4
     fileprivate var height: CGFloat = 20
 
     static let extendedHeight: CGFloat = 28
 
-    // MARK: Constraint vars
+    // MARK: - Constraint vars
 
     override var intrinsicContentSize: CGSize {
         return CGSize(width: width, height: height)
@@ -52,7 +52,7 @@ class SolidLine: RouteLine {
 
 class DottedLine: RouteLine {
 
-    // MARK: Init
+    // MARK: - Init
     init(overrideHeight: CGFloat? = nil, color: UIColor) {
         super.init(overrideHeight: overrideHeight)
 

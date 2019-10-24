@@ -10,7 +10,7 @@ import UIKit
 import CoreLocation
 import DZNEmptyDataSet
 
-// MARK: Previewing Delegate
+// MARK: - Previewing Delegate
 extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
 
     @objc func handleLongPressGesture(_ sender: UILongPressGestureRecognizer) {
@@ -49,11 +49,13 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
     }
 }
 
-// MARK: SearchBarCancelDelegate
+// MARK: - SearchBarCancelDelegate
 extension RouteOptionsViewController: SearchBarCancelDelegate {
+
     func didCancel() {
         hideSearchBar()
     }
+
 }
 
 // MARK: Destination Delegate
@@ -208,10 +210,10 @@ extension RouteOptionsViewController: UITableViewDataSource {
 
         guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.routeOptionsCellIdentifier, for: indexPath) as? RouteTableViewCell
             else { return UITableViewCell() }
-        
+
         let route = routes[indexPath.section][indexPath.row]
         cell.configure(for: route, delayState: delayDictionary[route.routeId])
-        
+
         // Add share action for long press gestures on non 3D Touch devices
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
         cell.addGestureRecognizer(longPressGestureRecognizer)

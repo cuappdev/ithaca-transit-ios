@@ -22,7 +22,7 @@ class WhatsNewHeaderView: UIView {
     /// Whether a promotion is being used for the card
     var isPromotion: Bool
 
-    // e.g. "New In Ithaca Transit" blue label
+    /// e.g. "New In Ithaca Transit" blue label
     private var descriptionLabel: UILabel!
     private var smallHeaderLabel: UILabel!
     private var titleLabel: UILabel!
@@ -209,14 +209,12 @@ class WhatsNewHeaderView: UIView {
     }
 
     func calculateCardHeight() -> CGFloat {
-        guard
-            let titleToTop = titleToTop,
+        guard let titleToTop = titleToTop,
             let updateNameToTitle = updateNameToTitle,
             let updateDescToUpdateName = updateDescToUpdateName,
             let updateDescriptionHeight = updateDescriptionHeight,
             let actionButtonToUpdateDesc = buttonToUpdateDesc,
-            let actionButtonToBottom = buttonToBottom
-            else {
+            let actionButtonToBottom = buttonToBottom else {
                 return 0
         }
 
@@ -246,10 +244,8 @@ class WhatsNewHeaderView: UIView {
     }
 
     @objc func primaryButtonTapped() {
-        if
-            let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
-            let primaryAction = card.primaryActionHandler
-        {
+        if let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
+            let primaryAction = card.primaryActionHandler {
             primaryAction(homeViewController)
             let payload = PrimaryActionTappedPayload(actionDescription: card.title)
             Analytics.shared.log(payload)
@@ -260,10 +256,8 @@ class WhatsNewHeaderView: UIView {
     }
 
     @objc func secondaryButtonTapped() {
-        if
-            let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
-            let secondaryAction = card.secondaryActionHandler
-        {
+        if let homeViewController = whatsNewDelegate?.getCurrentHomeViewController(),
+            let secondaryAction = card.secondaryActionHandler {
             secondaryAction(homeViewController)
             let payload = SecondaryActionTappedPayload(actionDescription: card.title)
             Analytics.shared.log(payload)
@@ -274,11 +268,9 @@ class WhatsNewHeaderView: UIView {
     }
 
     func open(_ link: String, optionalAppLink: String?, linkOpened: @escaping (() -> Void)) {
-        if
-            let appLink = optionalAppLink,
+        if let appLink = optionalAppLink,
             let appURL = URL(string: appLink),
-            UIApplication.shared.canOpenURL(appURL)
-        {
+            UIApplication.shared.canOpenURL(appURL) {
             // Open link in an installed app.
             UIApplication.shared.open(appURL, options: [:]) { _ in
                 linkOpened()

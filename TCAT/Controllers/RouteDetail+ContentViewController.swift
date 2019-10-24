@@ -19,7 +19,7 @@ class RouteDetailContentViewController: UIViewController {
 
     var drawerDisplayController: RouteDetailDrawerViewController?
 
-    // Keep track of statuses of bus routes throughout view life cycle
+    /// Keep track of statuses of bus routes throughout view life cycle
     var noDataRouteList: [Int] = []
 
     var bounds = GMSCoordinateBounds()
@@ -29,7 +29,7 @@ class RouteDetailContentViewController: UIViewController {
     var directions: [Direction] = []
     private var initalUpdate: Bool = true
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
-    var liveTrackingNetworkRefreshRate: Double = LiveIndicator.INTERVAL * 1.0
+    var liveTrackingNetworkRefreshRate: Double = LiveIndicator.interval * 1.0
     var liveTrackingNetworkTimer: Timer?
     private var locationManager = CLLocationManager()
     var mapView: GMSMapView!
@@ -47,9 +47,9 @@ class RouteDetailContentViewController: UIViewController {
     private let mapPadding: CGFloat = 80
     private let markerRadius: CGFloat = 8
 
-    /** Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
-     * dummy data will be used. The directions parameter have logical assumptions,
-     * such as ArriveDirection always comes after DepartDirection. */
+    /// Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
+    /// dummy data will be used. The directions parameter have logical assumptions,
+    /// such as ArriveDirection always comes after DepartDirection.
     init(route: Route, currentLocation: CLLocationCoordinate2D?, routeOptionsCell: RouteTableViewCell?) {
         super.init(nibName: nil, bundle: nil)
         self.routeOptionsCell = routeOptionsCell
@@ -73,10 +73,10 @@ class RouteDetailContentViewController: UIViewController {
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
 
         // Debug Function
-//        createDebugBusIcon()
+        // createDebugBusIcon()
     }
 
-    /** Construct Directions based on Route and parse Waypoint / Path data */
+    /// Construct Directions based on Route and parse Waypoint / Path data
     func initializeRoute(_ route: Route, _ currentLocation: CLLocationCoordinate2D?) {
         self.route = route
         self.directions = route.directions
@@ -136,7 +136,7 @@ class RouteDetailContentViewController: UIViewController {
         drawerDisplayController = RouteDetailDrawerViewController(route: route)
     }
 
-    // MARK: Status Bar Functions
+    // MARK: - Status Bar Functions
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return banner != nil ? .lightContent : .default
@@ -163,14 +163,14 @@ class RouteDetailContentViewController: UIViewController {
         self.banner = nil
     }
 
-    // MARK: Network Calls
+    // MARK: - Network Calls
 
     private func busLocations(_ directions: [Direction]) -> Future<Response<[BusLocation]>> {
         return networking(Endpoint.getBusLocations(directions)).decode()
     }
 
-    /** Fetch live-tracking information for the first direction's bus route.
-     Handles connection issues with banners. Animated indicators */
+    /// Fetch live-tracking information for the first direction's bus route.
+    /// Handles connection issues with banners. Animated indicators. 
     @objc func getBusLocations() {
         let directionsAreValid = route.directions.reduce(true) { (result, direction) in
             if direction.type == .depart {
@@ -181,6 +181,11 @@ class RouteDetailContentViewController: UIViewController {
         }
         if !directionsAreValid {
             printClass(context: "\(#function)", message: "Directions are not valid")
+            let payload = NetworkErrorPayload(
+                location: "\(self) Get Bus Locations",
+                type: "Invalid Directions",
+                description: "Directions are not valid")
+            Analytics.shared.log(payload)
             return
         }
 
@@ -199,6 +204,11 @@ class RouteDetailContentViewController: UIViewController {
                     if let banner = self.banner, !banner.isDisplaying {
                         self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
                     }
+                    let payload = NetworkErrorPayload(
+                        location: "\(self) Get Bus Locations",
+                        type: "\((error as NSError).domain)",
+                        description: error.localizedDescription)
+                    Analytics.shared.log(payload)
                 }
             }
         }
@@ -234,14 +244,13 @@ class RouteDetailContentViewController: UIViewController {
         }
     }
 
-    /** Update the map with new busLocations, adding or replacing based on vehicleID.
-     If `validTripIDs` is passed in, only buses that match the tripID will be drawn.
-     The input includes every bus associated with a certain line. Any visible indicators
-     are also animated
-     */
+    /// Update the map with new busLocations, adding or replacing based on vehicleID.
+    /// If `validTripIDs` is passed in, only buses that match the tripID will be drawn.
+    /// The input includes every bus associated with a certain line. Any visible indicators
+    /// are also animated.
     private func setBusLocation(_ bus: BusLocation) {
 
-        /// New bus coordinates
+        // New bus coordinates
         let busCoords = CLLocationCoordinate2D(latitude: bus.latitude, longitude: bus.longitude)
         let existingBus = buses.first(where: {
             return getUserData(for: $0, key: Constants.BusUserData.vehicleID) as? Int == bus.vehicleID
@@ -249,8 +258,7 @@ class RouteDetailContentViewController: UIViewController {
 
         // If bus is already on map, update and animate change
         if let newBus = existingBus {
-
-            /// Allow time to receive new live bus request
+            // Allow time to receive new live bus request
             let latencyConstant = 0.25
 
             CATransaction.begin()
@@ -267,12 +275,7 @@ class RouteDetailContentViewController: UIViewController {
             newBus.position = busCoords
 
             CATransaction.commit()
-
-        }
-
-            // Otherwise, add bus to map
-        else {
-
+        } else { // Otherwise, add bus to map
             guard let iconView = bus.iconView as? BusLocationView else { return }
             let marker = GMSMarker(position: busCoords)
             marker.appearAnimation = .pop
@@ -286,7 +289,6 @@ class RouteDetailContentViewController: UIViewController {
             setIndex(of: marker, with: .bussing)
             marker.map = mapView
             buses.append(marker)
-
         }
 
         // Update bus indicators (if map not moved)
@@ -301,14 +303,14 @@ class RouteDetailContentViewController: UIViewController {
             guard let originalTransform = indicator.iconView?.transform else { continue }
             let insetValue = originalFrame.size.width / 24
             indicator.iconView?.transform = CGAffineTransform(scaleX: insetValue, y: insetValue)
-            UIView.animate(withDuration: LiveIndicator.DURATION * 2, delay: 0, usingSpringWithDamping: 1,
+            UIView.animate(withDuration: LiveIndicator.duration * 2, delay: 0, usingSpringWithDamping: 1,
                            initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
                             indicator.iconView?.transform = originalTransform
             })
         }
     }
 
-    // MARK: Share Function
+    // MARK: - Share Function
     @objc func shareRoute() {
         presentShareSheet(from: view, for: route, with: routeOptionsCell?.getImage())
     }
@@ -389,13 +391,11 @@ class RouteDetailContentViewController: UIViewController {
 
     }
 
-    // MARK: Map Functions
+    // MARK: - Map Functions
 
-    /** Centers map around all waypoints in routePaths, and animates the map */
+    /// Centers map around all waypoints in routePaths, and animates the map
     func centerMapOnOverview(drawerPreviewing: Bool = false) {
-
         var bottomOffset: CGFloat = (UIScreen.main.bounds.height / 2) - (mapPadding / 2)
-
         bottomOffset -= view.safeAreaInsets.bottom
 
         if drawerPreviewing {
@@ -406,11 +406,9 @@ class RouteDetailContentViewController: UIViewController {
             let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
             mapView.animate(with: update)
         }
-
     }
 
     func centerMap(on direction: Direction, isOverviewOfPath: Bool = false, drawerPreviewing: Bool = false) {
-
         let path = GMSMutablePath()
         if isOverviewOfPath {
             direction.path.forEach { loc in path.add(loc) }
@@ -441,7 +439,7 @@ class RouteDetailContentViewController: UIViewController {
         }()
     }
 
-    /** Draw all waypoints initially for all paths in [Path] or [[CLLocationCoordinate2D]], plus fill bounds */
+    /// Draw all waypoints initially for all paths in [Path] or [[CLLocationCoordinate2D]], plus fill bounds
     private func drawMapRoute() {
         for path in paths {
             path.traveledPolyline.map = mapView
@@ -476,4 +474,5 @@ class RouteDetailContentViewController: UIViewController {
 
         self.init(route: route, currentLocation: nil, routeOptionsCell: nil)
     }
+
 }

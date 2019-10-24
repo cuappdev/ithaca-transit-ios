@@ -15,9 +15,8 @@ class LocationObject: NSObject, Codable {
     /// The name of the location
     var name: String
 
-    /** The identifier associated with the location
-        Used mainly for stopID for bus stop locations.
-    */
+    /// The identifier associated with the location
+    /// Used mainly for stopID for bus stop locations.
     var id: String
 
     /// The latitude coordinate of the location
@@ -54,4 +53,5 @@ class LocationObject: NSObject, Codable {
     var coordinates: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
     }
+
 }

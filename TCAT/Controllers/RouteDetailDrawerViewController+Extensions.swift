@@ -9,9 +9,10 @@
 import Pulley
 import UIKit
 
-// MARK: Gesture Recognizers and Interaction-Related Functions
+// MARK: - Gesture Recognizers and Interaction-Related Functions
 extension RouteDetailDrawerViewController: UIGestureRecognizerDelegate {
-    /** Animate detailTableView depending on context, centering map */
+
+    /// Animate detailTableView depending on context, centering map
     @objc func summaryTapped(_ sender: UITapGestureRecognizer? = nil) {
 
         if let drawer = self.parent as? RouteDetailViewController {
@@ -28,15 +29,19 @@ extension RouteDetailDrawerViewController: UIGestureRecognizerDelegate {
             }
         }
     }
+
 }
 
 extension RouteDetailDrawerViewController: LargeDetailTableViewDelegate {
+
     func toggleCellExpansion(on cell: LargeDetailTableViewCell) {
         toggleCellExpansion(for: cell)
     }
+
 }
 
 extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
+
     func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
         return bottomSafeArea + summaryView.frame.height
     }
@@ -81,16 +86,17 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
     func supportedDrawerPositions() -> [PulleyPosition] {
         return [.collapsed, .partiallyRevealed, .open]
     }
+
 }
 
 extension RouteDetailDrawerViewController: UITableViewDataSource {
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return directionsAndVisibleStops.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-        /// Formatting, including selectionStyle, and seperator line fixes
+        // Formatting, including selectionStyle, and seperator line fixes
         func format(_ cell: UITableViewCell) -> UITableViewCell {
             cell.selectionStyle = .none
             return cell
@@ -112,10 +118,12 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                 return format(cell)
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
-                cell.configure(for: direction,
-                               isFirstStep: indexPath.row == 0,
-                               isExpanded: expandedDirections.contains(direction),
-                               delegate: self)
+                cell.configure(
+                    for: direction,
+                    isFirstStep: indexPath.row == 0,
+                    isExpanded: expandedDirections.contains(direction),
+                    delegate: self
+                )
                 return format(cell)
             }
         }

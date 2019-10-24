@@ -80,9 +80,8 @@ class Route: NSObject, Codable {
     /// Raw, untampered with directions (for RouteOptionsViewController)
     var rawDirections: [Direction]
 
-    /** A description of the starting location of the route (e.g. Current Location, Arts Quad)
-        Default assumption is Current Location.
-     */
+    /// A description of the starting location of the route (e.g. Current Location, Arts Quad)
+    /// Default assumption is Current Location.
     var startName: String
 
     /// A description of the final destination of the route (e.g. Chipotle Mexican Grill, The Shops at Ithaca Mall)
@@ -201,7 +200,7 @@ class Route: NSObject, Codable {
         }
     }
 
-    // MARK: Process routes
+    // MARK: - Process routes
 
     func isRawWalkingRoute() -> Bool {
         return rawDirections.reduce(true) { $0 && $1.type == .walk }
@@ -211,8 +210,7 @@ class Route: NSObject, Codable {
         return rawDirections.first { $0.type == .depart }
     }
 
-    /** Calculate travel distance from location passed in to first route summary object and updates travel distance of route
-     */
+    /// Calculate travel distance from location passed in to first route summary object and updates travel distance of route
     func calculateTravelDistance(fromRawDirections rawDirections: [Direction]) {
 
         // firstRouteOptionsStop = first bus stop in the route
@@ -236,11 +234,9 @@ class Route: NSObject, Codable {
 
     }
 
-    /** Used for sharing. Return a one sentence summary of the route, based on
-        the first depart or walking direction. Returns "" if no directions.
-     */
+    /// Used for sharing. Return a one sentence summary of the route, based on
+    /// the first depart or walking direction. Returns "" if no directions.
     var summaryDescription: String {
-
         var description = "To get from \(startName) to \(endName),"
         var noDepartDirection = true
 
@@ -251,7 +247,6 @@ class Route: NSObject, Codable {
         let busDirections = directions.filter { $0.type == .depart || $0.type == .transfer }
 
         for (index, direction) in busDirections.enumerated() {
-
             noDepartDirection = false
 
             let number = direction.routeNumber
@@ -268,7 +263,6 @@ class Route: NSObject, Codable {
             } else {
                 description += "Then, \(line)"
             }
-
         }
 
         description += "."
@@ -283,7 +277,6 @@ class Route: NSObject, Codable {
         }
 
         return description
-
     }
 
 }

@@ -1,0 +1,16 @@
+/* 
+  Localizable.strings
+  TCAT
+
+  Created by HAIYING WENG on 10/2/19.
+  Copyright © 2019 cuappdev. All rights reserved.
+*/
+
+"Cancel" = "取消";
+"All Stops" = "巴士站";
+"Add Favorite" = "添加收藏";
+"Add Favorites" = "添加收藏";
+"Favorite Destinations" = "收藏的目的地";
+"Recent Searches" = "最近搜索";
+"Add Your First Favorite!" = "添加第一个收藏";
+"See All Stops" = "查看所有巴士站"; 

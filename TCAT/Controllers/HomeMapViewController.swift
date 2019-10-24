@@ -41,6 +41,7 @@ class HomeMapViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         navigationController?.navigationBar.alpha = 0
     }
 
@@ -56,7 +57,11 @@ class HomeMapViewController: UIViewController {
 
     private func setupMapView() {
         // Set mapView with settings
-        let camera = GMSCameraPosition.camera(withLatitude: Constants.Map.startingLat, longitude: Constants.Map.startingLong, zoom: 15.5)
+        let camera = GMSCameraPosition.camera(
+            withLatitude: Constants.Map.startingLat,
+            longitude: Constants.Map.startingLong,
+            zoom: 15.5
+        )
         let mapView = GMSMapView.map(withFrame: .zero, camera: camera)
         mapView.delegate = self
         mapView.isMyLocationEnabled = true
@@ -125,11 +130,10 @@ class HomeMapViewController: UIViewController {
     }
 }
 
-// MARK: Location Delegate
+// MARK: - Location Delegate
 extension HomeMapViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-
         if status == .denied {
             let alertTitle = Constants.Alerts.LocationDisabled.title
             let alertMessage = Constants.Alerts.LocationDisabled.message
@@ -201,7 +205,9 @@ extension HomeMapViewController: ReachabilityDelegate {
     
 }
 
-// Helper function inserted by Swift 4.2 migrator.
+/// Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in
+        (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)
+    })
 }

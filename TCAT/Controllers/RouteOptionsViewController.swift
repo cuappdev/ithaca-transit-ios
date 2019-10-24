@@ -28,10 +28,11 @@ struct BannerInfo {
 enum RequestAction {
     case hideBanner
     case showAlert(title: String, message: String, actionTitle: String)
-    case showError(bannerInfo: BannerInfo, payload: GetRoutesErrorPayload)
+    case showError(bannerInfo: BannerInfo, payload: NetworkErrorPayload)
 }
 
 class RouteOptionsViewController: UIViewController {
+
     let datePickerOverlay = UIView()
     var datePickerView: DatePickerView!
     let routeResults = UITableView(frame: .zero, style: .grouped)
@@ -51,7 +52,7 @@ class RouteOptionsViewController: UIViewController {
     var showRouteSearchingLoader: Bool = false
     var trips: [Trip] = []
 
-    // Variable to remember back button when hiding
+    /// Variable to remember back button when hiding
     private var backButton: UIBarButtonItem?
     var refreshControl: UIRefreshControl!
 
@@ -59,17 +60,17 @@ class RouteOptionsViewController: UIViewController {
     private let mediumTapticGenerator = UIImpactFeedbackGenerator(style: .medium)
     private let networking: Networking = URLSession.shared.request
     private let routeResultsTitle: String = Constants.Titles.routeResults
-    
-    // Timer to retrieve route delays and update route cells
+
+    /// Timer to retrieve route delays and update route cells
     private var routeTimer: Timer?
     private var updateTimer: Timer?
-    
-    // Dictionary to map route id to delay
+
+    /// Dictionary to map route id to delay
     var delayDictionary: [String: DelayState] = [:]
-    
-    // Dictionary to map tripId to route
+
+    /// Dictionary to map tripId to route
     var tripDictionary: [String: Route] = [:]
-    
+
     /// Returns routes from each section in order
     private var allRoutes: [Route] {
         return routes.flatMap { $0 }
@@ -90,7 +91,7 @@ class RouteOptionsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: View Lifecycle
+    // MARK: - View Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,16 +109,28 @@ class RouteOptionsViewController: UIViewController {
         setupRouteSelection(destination: searchTo)
         setupLocationManager()
 
-        // assume user wants to find routes that leave at current time and set datepicker accordingly
+        // Assume user wants to find routes that leave at current time and set datepicker accordingly
         searchTime = Date()
         if let searchTime = searchTime {
             routeSelection.setDatepickerTitle(withDate: searchTime, withSearchTimeType: searchTimeType)
         }
 
         searchForRoutes()
-        
-        routeTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateAllRoutesLiveTracking(sender:)), userInfo: nil, repeats: true)
-        updateTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(rerenderLiveTracking(sender:)), userInfo: nil, repeats: true)
+
+        routeTimer = Timer.scheduledTimer(
+            timeInterval: 5.0,
+            target: self,
+            selector: #selector(updateAllRoutesLiveTracking(sender:)),
+            userInfo: nil,
+            repeats: true
+        )
+        updateTimer = Timer.scheduledTimer(
+            timeInterval: 20.0,
+            target: self,
+            selector: #selector(rerenderLiveTracking(sender:)),
+            userInfo: nil,
+            repeats: true
+        )
 
         // Check for 3D Touch availability
         if traitCollection.forceTouchCapability == .available {
@@ -148,10 +161,11 @@ class RouteOptionsViewController: UIViewController {
     }
 
     private func setupRouteSelection(destination: Place?) {
-        routeSelection.configure(delegate: self,
-                                 from: Constants.General.fromSearchBarPlaceholder,
-                                 to: destination?.name ?? "")
-
+        routeSelection.configure(
+            delegate: self,
+            from: Constants.General.fromSearchBarPlaceholder,
+            to: destination?.name ?? ""
+        )
         view.addSubview(routeSelection)
     }
 
@@ -218,7 +232,12 @@ class RouteOptionsViewController: UIViewController {
         }
 
         let appBecameActiveNotification = UIApplication.didBecomeActiveNotification
-        NotificationCenter.default.addObserver(self, selector: #selector(refreshRoutesAndTime), name: appBecameActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refreshRoutesAndTime),
+            name: appBecameActiveNotification,
+            object: nil
+        )
     }
 
     func setupConstraintsForVisibleDatePickerView() {
@@ -264,25 +283,19 @@ class RouteOptionsViewController: UIViewController {
         var searchBarText = ""
 
         switch searchType {
-
         case .from:
-
-            if
-                let startingDestinationName = searchFrom?.name,
+            if let startingDestinationName = searchFrom?.name,
                 startingDestinationName != Constants.General.currentLocation &&
-                startingDestinationName != Constants.General.fromSearchBarPlaceholder
-            {
+                startingDestinationName != Constants.General.fromSearchBarPlaceholder {
                 searchBarText = startingDestinationName
             }
             placeholder = Constants.General.fromSearchBarPlaceholder
-
         case .to:
             let endingDestinationName = searchTo.name
             if endingDestinationName != Constants.General.currentLocation {
                 searchBarText = endingDestinationName
             }
             placeholder = Constants.General.toSearchBarPlaceholder
-
         }
 
         if let textFieldInsideSearchBar = searchBarView.searchController?.searchBar.value(forKey: "searchField") as? UITextField {
@@ -320,16 +333,16 @@ class RouteOptionsViewController: UIViewController {
         navigationItem.hidesBackButton = true
         searchBarView.searchController?.isActive = true
     }
-    
+
     @objc func rerenderLiveTracking(sender: Timer) {
         // Reload table every time update timer is fired
         routeResults.reloadData()
     }
-    
+
     private func getAllDelays(trips: [Trip]) -> Future<Response<[Delay]>> {
         return networking(Endpoint.getAllDelays(trips: trips)).decode()
     }
-    
+
     @objc func updateAllRoutesLiveTracking(sender: Timer) {
         getAllDelays(trips: trips).observe(with: { result in
             DispatchQueue.main.async {
@@ -345,15 +358,19 @@ class RouteOptionsViewController: UIViewController {
                                 let delay = delayResponse.delay else {
                                     continue
                             }
-                            let fileName = "RouteTableViewCell"
                             let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delay
                             if isNewDelayValue {
                                 JSONFileManager.shared.logDelayParameters(timestamp: Date(), stopId: delayResponse.stopID, tripId: delayResponse.tripID)
                                 JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: delayResponse.tripID, stopId: delayResponse.stopID))
                                 if let data = try? JSONEncoder().encode(delayResponse) {
                                     do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(routeId: routeId)) } catch let error {
-                                        let line = "\(fileName) \(#function): \(error.localizedDescription)"
-                                        print(line)
+                                        self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                                        let payload = NetworkErrorPayload(
+                                            location: "\(self) Get All Delays",
+                                            type: "\((error as NSError).domain)",
+                                            description: error.localizedDescription
+                                        )
+                                        Analytics.shared.log(payload)
                                     }
                                 }
                             }
@@ -371,11 +388,17 @@ class RouteOptionsViewController: UIViewController {
                         }
                     case .error(let error):
                         self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                        let payload = NetworkErrorPayload(
+                            location: "\(self) Get All Delays",
+                            type: "\((error as NSError).domain)",
+                            description: error.localizedDescription
+                        )
+                        Analytics.shared.log(payload)
                     }
                 }
             })
     }
-    
+
     @objc private func refreshRoutesAndTime() {
         let now = Date()
         if let leaveDate = searchTime,
@@ -419,15 +442,20 @@ class RouteOptionsViewController: UIViewController {
 
             JSONFileManager.shared.logSearchParameters(timestamp: now, startPlace: searchFrom, endPlace: searchTo, searchTime: time, searchTimeType: searchTimeType)
 
-            // MARK: Search For Routes Errors
-            
+            // Search For Routes Errors
+
             guard let areValidCoordinates = self.checkPlaceCoordinates(startPlace: searchFrom, endPlace: searchTo) else {
                 // Place(s) don't have coordinates assigned
                 self.requestDidFinish(perform: [
-                    .showError(bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .danger),
-                               payload: GetRoutesErrorPayload(type: "Nil Place Coordinates",
-                                                              description: "Place(s) don't have coordinates. (areValidCoordinates)", url: nil))
-                    ])
+                    .showError(
+                        bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .danger),
+                        payload: NetworkErrorPayload(
+                            location: "\(self) Get Routes",
+                            type: "Nil Place Coordinates",
+                            description: "Place(s) don't have coordinates. (areValidCoordinates)"
+                        )
+                    )
+                ])
                 return
             }
 
@@ -439,13 +467,19 @@ class RouteOptionsViewController: UIViewController {
 
                 self.requestDidFinish(perform: [
                     .showAlert(title: title, message: message, actionTitle: actionTitle),
-                    .showError(bannerInfo: BannerInfo(title: title, style: .warning),
-                               payload: GetRoutesErrorPayload(type: title, description: message, url: nil))
-                    ])
+                    .showError(
+                        bannerInfo: BannerInfo(title: title, style: .warning),
+                        payload: NetworkErrorPayload(
+                            location: "\(self) Get Routes",
+                            type: title,
+                            description: message
+                        )
+                    )
+                ])
                 return
             }
 
-            // MARK: Search for Routes Data Request
+            // Search for Routes Data Request
             if let result =  getRoutes(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType) {
                 result.observe(with: { [weak self] result in
                     guard let `self` = self else { return }
@@ -474,13 +508,17 @@ class RouteOptionsViewController: UIViewController {
         }
     }
 
-    private func getRoutes(start: Place,
-                           end: Place,
-                           time: Date,
-                           type: SearchType) -> Future<Response<RouteSectionsObject>>? {
+    private func getRoutes(
+        start: Place,
+        end: Place,
+        time: Date,
+        type: SearchType
+    ) -> Future<Response<RouteSectionsObject>>? {
         if let endpoint = Endpoint.getRoutes(start: start, end: end, time: time, type: type) {
             return networking(endpoint).decode()
-        } else { return nil }
+        } else {
+            return nil
+        }
     }
 
     func routeSelected(routeId: String) {
@@ -492,11 +530,17 @@ class RouteOptionsViewController: UIViewController {
                     self.printClass(context: "\(#function)", message: "success")
                 case .error(let error):
                     self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                    let payload = NetworkErrorPayload(
+                        location: "\(self) Get Route Selected",
+                        type: "\((error as NSError).domain)",
+                        description: error.localizedDescription
+                    )
+                    Analytics.shared.log(payload)
                 }
             }
         }
     }
-    
+
     private func getRoutesTrips() {
         // For each route in each route array inside of the 'routes' array, get its
         // tripId and stopId to create trip array for request to get all delays.
@@ -514,7 +558,7 @@ class RouteOptionsViewController: UIViewController {
             }
         }
     }
-    
+
     private func processRequest(result: Result<Response<RouteSectionsObject>>, requestURL: String, endPlace: Place) {
         JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
 
@@ -556,20 +600,23 @@ class RouteOptionsViewController: UIViewController {
         routes = []
         requestDidFinish(perform: [
             .showError(bannerInfo: BannerInfo(title: Constants.Banner.cantConnectServer, style: .danger),
-                       payload: GetRoutesErrorPayload(type: title, description: description, url: requestURL))
+                       payload: NetworkErrorPayload(
+                        location: "\(self) Get Routes",
+                        type: title,
+                        description: description
+                )
+            )
         ])
     }
 
     /// Returns whether coordinates are valid, checking country extremes. Returns nil if places don't have coordinates.
     private func checkPlaceCoordinates(startPlace: Place, endPlace: Place) -> Bool? {
 
-        guard
-            let startCoordLatitude = startPlace.latitude,
+        guard let startCoordLatitude = startPlace.latitude,
             let startCoordLongitude = startPlace.longitude,
             let endCoordLatitude = endPlace.latitude,
-            let endCoordLongitude = endPlace.longitude
-            else {
-                return nil
+            let endCoordLongitude = endPlace.longitude else {
+            return nil
         }
 
         let latitudeValues = [startCoordLatitude, endCoordLatitude]
@@ -589,9 +636,7 @@ class RouteOptionsViewController: UIViewController {
     }
 
     private func requestDidFinish(perform actions: [RequestAction]) {
-
         for action in actions {
-
             switch action {
 
             case .showAlert(title: let title, message: let message, actionTitle: let actionTitle):
@@ -637,7 +682,7 @@ class RouteOptionsViewController: UIViewController {
         cell?.selectionStyle = .none // userInteraction ? .default : .none
     }
 
-    // MARK: Refresh Control
+    // MARK: - Refresh Control
 
     private func setupRefreshControl() {
         refreshControl = UIRefreshControl()
@@ -650,10 +695,9 @@ class RouteOptionsViewController: UIViewController {
         routeResults.refreshControl?.endRefreshing()
     }
 
-    // MARK: RouteDetailViewController
+    // MARK: - RouteDetailViewController
 
     func createRouteDetailViewController(from indexPath: IndexPath) -> RouteDetailViewController? {
-
         let route = routes[indexPath.section][indexPath.row]
         var routeDetailCurrentLocation = currentLocation
         if searchTo.name != Constants.General.currentLocation && searchFrom?.name != Constants.General.currentLocation {
@@ -669,7 +713,10 @@ class RouteOptionsViewController: UIViewController {
         guard let drawerViewController = contentViewController.getDrawerDisplayController() else {
             return nil
         }
-        return RouteDetailViewController(contentViewController: contentViewController,
-                                         drawerViewController: drawerViewController)
+        return RouteDetailViewController(
+            contentViewController: contentViewController,
+            drawerViewController: drawerViewController
+        )
     }
+
 }

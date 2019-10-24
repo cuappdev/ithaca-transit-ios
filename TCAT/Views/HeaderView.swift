@@ -19,6 +19,7 @@ enum ButtonOption {
     case clear
     case none
 }
+
 class HeaderView: UITableViewHeaderFooterView {
 
     private weak var headerViewDelegate: HeaderViewDelegate?
@@ -36,7 +37,12 @@ class HeaderView: UITableViewHeaderFooterView {
         headerViewDelegate?.clearRecentSearches()
     }
 
-    init(labelText: String? = nil, buttonType: ButtonOption = .none, separatorVisible: Bool = false, delegate: HeaderViewDelegate? = nil) {
+    init(
+        labelText: String? = nil,
+        buttonType: ButtonOption = .none,
+        separatorVisible: Bool = false,
+        delegate: HeaderViewDelegate? = nil
+    ) {
         super.init(reuseIdentifier: nil)
 
         self.headerViewDelegate = delegate
@@ -94,4 +100,5 @@ class HeaderView: UITableViewHeaderFooterView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
 }

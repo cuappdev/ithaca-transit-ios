@@ -52,9 +52,7 @@ class ServiceAlertsViewController: UIViewController {
         tableView.emptyDataSetDelegate = self
         tableView.register(ServiceAlertTableViewCell.self, forCellReuseIdentifier: ServiceAlertTableViewCell.identifier)
         tableView.allowsSelection = false
-
         tableView.contentInset = .init(top: 18, left: 0, bottom: -18, right: 0)
-
         tableView.separatorColor = Colors.dividerTextField
         tableView.showsVerticalScrollIndicator = false
         tableView.estimatedRowHeight = 100
@@ -72,7 +70,6 @@ class ServiceAlertsViewController: UIViewController {
     private func setupConstraints() {
         tableView.snp.makeConstraints { (make) in
             make.leading.trailing.bottom.equalToSuperview()
-
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
     }
@@ -115,6 +112,12 @@ class ServiceAlertsViewController: UIViewController {
                     self.networkError = true
                     self.alerts = [:]
                     self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                    let payload = NetworkErrorPayload(
+                        location: "\(self) Get Alerts",
+                        type: "\((error as NSError).domain)",
+                        description: error.localizedDescription
+                    )
+                    Analytics.shared.log(payload)
                 }
             }
         })
@@ -165,7 +168,6 @@ class ServiceAlertsViewController: UIViewController {
     }
 
     private func formatTimeString(_ fromDate: String, toDate: String) -> String {
-
         let newformatter = DateFormatter()
         newformatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.sZZZZ"
         newformatter.locale = Locale(identifier: "en_US_POSIX")
@@ -201,6 +203,7 @@ extension ServiceAlertsViewController: UITableViewDelegate {
             return HeaderView(labelText: Constants.TableHeaders.noPriority)
         }
     }
+
 }
 
 extension ServiceAlertsViewController: UITableViewDataSource {
@@ -228,9 +231,11 @@ extension ServiceAlertsViewController: UITableViewDataSource {
 
         return cell
     }
+
 }
 
 extension ServiceAlertsViewController: DZNEmptyDataSetSource {
+
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         // If loading indicator is being shown, don't display description
         if isLoading { return nil }
@@ -248,9 +253,11 @@ extension ServiceAlertsViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
         return networkError ? -80 : -60
     }
+
 }
 
 extension ServiceAlertsViewController: DZNEmptyDataSetDelegate {
+
     func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
         setUpLoadingIndicator()
         tableView.reloadData()
@@ -260,4 +267,5 @@ extension ServiceAlertsViewController: DZNEmptyDataSetDelegate {
             self.getServiceAlerts()
         }
     }
+
 }
