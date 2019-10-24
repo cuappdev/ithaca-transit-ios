@@ -93,7 +93,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
         if let _ = visibleViewController as? ReachabilityDelegate {
             guard let reachability = reachability else { return }
             reachability.stopNotifier()
-            // Remove notification observer for reachability
+            // Remove reachability notification observer
             NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
         }
     }
@@ -181,6 +181,9 @@ class CustomNavigationController: UINavigationController, UINavigationController
     override func popViewController(animated: Bool) -> UIViewController? {
 
         let viewController = super.popViewController(animated: animated)
+        if let homeMapVC = viewControllers.last as? HomeMapViewController {
+            homeMapVC.navigationItem.leftBarButtonItem = nil
+        }
         if let lastVC = viewControllers.last as? ReachabilityDelegate {
             reachabilityDelegate = lastVC
         }
