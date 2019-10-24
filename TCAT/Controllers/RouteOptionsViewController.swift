@@ -139,7 +139,7 @@ class RouteOptionsViewController: UIViewController {
         banner = nil
         routeTimer?.invalidate()
         updateTimer?.invalidate()
-        // Stop observing when app becomes active
+        // Remove notification observer
         NotificationCenter.default.removeObserver(self)
     }
 

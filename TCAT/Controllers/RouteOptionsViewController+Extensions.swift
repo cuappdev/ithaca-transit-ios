@@ -454,12 +454,7 @@ extension RouteOptionsViewController: RouteSelectionViewDelegate {
 extension RouteOptionsViewController: ReachabilityDelegate {
     
     func reachabilityChanged(connection: Reachability.Connection) {
-        switch connection {
-        case .none:
-            setUserInteraction(to: false)
-        case .cellular, .wifi:
-            setUserInteraction(to: true)
-        }
+        setUserInteraction(to: connection != .none)
     }
     
 }

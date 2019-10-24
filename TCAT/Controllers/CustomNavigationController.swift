@@ -67,16 +67,19 @@ class CustomNavigationController: UINavigationController, UINavigationController
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // Add Notification Observers
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(reachabilityChanged(notif:)),
-                                               name: .reachabilityChanged,
-                                               object: reachability)
-        guard let reach = reachability else {return}
-        do {
-            try reach.startNotifier()
-        } catch {
-            printClass(context: "\(#function)", message: "Could not start reachability notifier.")
+        // Add reachability notification observer for view controllers that conform to ReachabilityDelegate
+        if let _ = visibleViewController as? ReachabilityDelegate {
+            guard let reachability = reachability else { return }
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(reachabilityChanged(notif:)),
+                name: .reachabilityChanged,
+                object: reachability)
+            do {
+                try reachability.startNotifier()
+            } catch {
+                printClass(context: "\(#function)", message: "Could not start reachability notifier.")
+            }
         }
     }
 
@@ -87,10 +90,12 @@ class CustomNavigationController: UINavigationController, UINavigationController
             NotificationCenter.default.removeObserver(screenshotObserver)
         }
         
-        // Remove Notification Observers
-        guard let reach = reachability else {return}
-        reach.stopNotifier()
-        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+        if let _ = visibleViewController as? ReachabilityDelegate {
+            guard let reachability = reachability else { return }
+            reachability.stopNotifier()
+            // Remove notification observer for reachability
+            NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+        }
     }
 
     private func customizeAppearance() {
@@ -168,21 +173,16 @@ class CustomNavigationController: UINavigationController, UINavigationController
             }
         }
         
-        if let homeMapVC = viewController as? HomeMapViewController {
-            reachabilityDelegate = homeMapVC
-        } else if let routeOptionsVC = viewController as? RouteOptionsViewController {
-            reachabilityDelegate = routeOptionsVC
+        if let vc = viewController as? ReachabilityDelegate {
+            reachabilityDelegate = vc
         }
     }
 
     override func popViewController(animated: Bool) -> UIViewController? {
 
         let viewController = super.popViewController(animated: animated)
-        if let homeMapVC = viewControllers.last as? HomeMapViewController {
-            homeMapVC.navigationItem.leftBarButtonItem = nil
-            reachabilityDelegate = homeMapVC
-        } else if let routeOptionsVC = viewControllers.last as? RouteOptionsViewController {
-            reachabilityDelegate = routeOptionsVC
+        if let lastVC = viewControllers.last as? ReachabilityDelegate {
+            reachabilityDelegate = lastVC
         }
         return viewController
     }
