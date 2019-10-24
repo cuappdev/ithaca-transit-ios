@@ -74,7 +74,8 @@ class CustomNavigationController: UINavigationController, UINavigationController
                 self,
                 selector: #selector(reachabilityChanged(notif:)),
                 name: .reachabilityChanged,
-                object: reachability)
+                object: reachability
+            )
             do {
                 try reachability.startNotifier()
             } catch {
