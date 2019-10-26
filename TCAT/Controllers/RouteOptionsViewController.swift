@@ -358,22 +358,6 @@ class RouteOptionsViewController: UIViewController {
                                 let delay = delayResponse.delay else {
                                     continue
                             }
-                            let isNewDelayValue = route.getFirstDepartRawDirection()?.delay != delay
-                            if isNewDelayValue {
-                                JSONFileManager.shared.logDelayParameters(timestamp: Date(), stopId: delayResponse.stopID, tripId: delayResponse.tripID)
-                                JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Delay requestUrl", url: Endpoint.getDelayUrl(tripId: delayResponse.tripID, stopId: delayResponse.stopID))
-                                if let data = try? JSONEncoder().encode(delayResponse) {
-                                    do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .delayJSON(routeId: routeId)) } catch let error {
-                                        self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                                        let payload = NetworkErrorPayload(
-                                            location: "\(self) Get All Delays",
-                                            type: "\((error as NSError).domain)",
-                                            description: error.localizedDescription
-                                        )
-                                        Analytics.shared.log(payload)
-                                    }
-                                }
-                            }
                             let departTime = direction.startTime
                             let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
                             var delayState: DelayState!
@@ -439,8 +423,6 @@ class RouteOptionsViewController: UIViewController {
 
             // Prepare feedback on Network request
             mediumTapticGenerator.prepare()
-
-            JSONFileManager.shared.logSearchParameters(timestamp: now, startPlace: searchFrom, endPlace: searchTo, searchTime: time, searchTimeType: searchTimeType)
 
             // Search For Routes Errors
 
@@ -560,17 +542,10 @@ class RouteOptionsViewController: UIViewController {
     }
 
     private func processRequest(result: Result<Response<RouteSectionsObject>>, requestURL: String, endPlace: Place) {
-        JSONFileManager.shared.logURL(timestamp: Date(), urlName: "Route requestUrl", url: requestURL)
 
         switch result {
         case .value(let response):
 
-            // Save to JSONFileManager
-            if let data = try? JSONEncoder().encode(response) {
-                do { try JSONFileManager.shared.saveJSON(JSON.init(data: data), type: .routeJSON) } catch let error {
-                    printClass(context: "\(#function) error", message: error.localizedDescription)
-                }
-            }
             // Parse sections of routes
             [response.data.fromStop, response.data.boardingSoon, response.data.walking]
                 .forEach { (routeSection) in

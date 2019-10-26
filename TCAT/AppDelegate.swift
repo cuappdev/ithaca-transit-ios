@@ -58,7 +58,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let payload = AppLaunchedPayload()
         Analytics.shared.log(payload)
         setupUniqueIdentifier()
-        JSONFileManager.shared.deleteAllJSONs()
 
         for (key, defaultValue) in userDataInits {
             if userDefaults.value(forKey: key) == nil {

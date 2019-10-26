@@ -90,15 +90,8 @@ class InformationViewController: UIViewController {
         present(navigationController, animated: true)
     }
 
-    private func retrieveLogs() -> Data? {
-        if let fileURL = JSONFileManager.shared.getZipURL() {
-            return try? Data(contentsOf: fileURL)
-        }
-        return nil
-    }
-
     /// Message body of HTML email message
-    private func createMessageBody(didRetrieveLog: Bool) -> String {
+    private func createMessageBody() -> String {
         var html = ""
         html += "<!DOCTYPE html>"
         html += "<html>"
@@ -135,16 +128,9 @@ class InformationViewController: UIViewController {
         if MFMailComposeViewController.canSendMail() {
             let mailComposerVC = MFMailComposeViewController()
             mailComposerVC.mailComposeDelegate = self
-            var didRetrieveLog = false
-
-            if let logs = retrieveLogs() {
-                mailComposerVC.addAttachmentData(logs, mimeType: "application/zip", fileName: "Logs.zip")
-                didRetrieveLog = true
-                JSONFileManager.shared.deleteZip()
-            }
 
             let subject = "Ithaca Transit Feedback v\(Constants.App.version)"
-            let body = createMessageBody(didRetrieveLog: didRetrieveLog)
+            let body = createMessageBody()
 
             mailComposerVC.setToRecipients([emailAddress])
             mailComposerVC.setSubject(subject)

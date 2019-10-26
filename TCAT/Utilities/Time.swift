@@ -88,7 +88,7 @@ class Time {
         var dateComponents = Time.dateComponents(from: date!)
 
         // Modify date to have today's day, month & year
-        var todaysDateComponents = Time.dateComponents(from: Date())
+        let todaysDateComponents = Time.dateComponents(from: Date())
         dateComponents.year = todaysDateComponents.year
         dateComponents.month = todaysDateComponents.month
         dateComponents.day = todaysDateComponents.day
