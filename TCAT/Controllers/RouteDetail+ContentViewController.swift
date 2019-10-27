@@ -73,11 +73,11 @@ class RouteDetailContentViewController: UIViewController {
 
         // Debug Function
         // createDebugBusIcon()
-        
+
         // Draw route
         drawMapRoute()
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         centerMapOnOverview(drawerPreviewing: true)
@@ -255,7 +255,7 @@ class RouteDetailContentViewController: UIViewController {
         let existingBus = buses.first(where: {
             return getUserData(for: $0, key: Constants.BusUserData.vehicleID) as? Int == bus.vehicleID
         })
-        
+
         if let newBus = existingBus { // If bus is already on map, update and animate change
             let latencyConstant = 0.25 // Allow time to receive new live bus request
 
