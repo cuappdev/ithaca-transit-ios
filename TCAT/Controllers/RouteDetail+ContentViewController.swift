@@ -27,7 +27,6 @@ class RouteDetailContentViewController: UIViewController {
     var buses = [GMSMarker]()
     var currentLocation: CLLocationCoordinate2D?
     var directions: [Direction] = []
-    private var initalUpdate: Bool = true
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
     var liveTrackingNetworkRefreshRate: Double = LiveIndicator.interval * 1.0
     var liveTrackingNetworkTimer: Timer?
@@ -74,6 +73,14 @@ class RouteDetailContentViewController: UIViewController {
 
         // Debug Function
         // createDebugBusIcon()
+        
+        // Draw route
+        drawMapRoute()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        centerMapOnOverview(drawerPreviewing: true)
     }
 
     /// Construct Directions based on Route and parse Waypoint / Path data
@@ -84,45 +91,39 @@ class RouteDetailContentViewController: UIViewController {
 
         let isWalkingRoute = directions.reduce(true) { $0 && $1.type == .walk }
         // Plot the paths of all directions
-        for (arrayIndex, direction) in directions.enumerated() {
+        for (directionIndex, direction) in directions.enumerated() {
             var waypoints: [Waypoint] = []
             for (pathIndex, point) in direction.path.enumerated() {
                 let isStop: Bool = direction.type != .walk
-                var typeNotSet = true
-                var type: WaypointType = .none {
-                    didSet {
-                        typeNotSet = false
-                    }
-                }
+                var isTypeSet = false
+                var type: WaypointType = .none
 
                 // First Direction
-                if arrayIndex == 0 {
-                    // First Waypoint
-                    if pathIndex == 0 && (currentLocation == nil || isWalkingRoute) {
+                if directionIndex == 0 {
+                    if pathIndex == 0 && (currentLocation == nil || isWalkingRoute) { // First Waypoint
                         type = .origin
-                    }
-                    // Last Waypoint
-                    else if pathIndex == direction.path.count - 1 {
-                        // Handle when first == last
+                        isTypeSet = true
+                    } else if pathIndex == direction.path.count - 1 { // Fast waypoint
                         type = directions.count == 1 ? .destination : (isStop ? .bus : .none)
+                        isTypeSet = true
                     }
                 }
 
                 // Last Direction
-                if typeNotSet && arrayIndex == directions.count - 1 {
-                    // First Waypoint
-                    if pathIndex == 0 {
+                if !isTypeSet && directionIndex == directions.count - 1 {
+                    if pathIndex == 0 { // First Waypoint
                         type = isStop ? .bus : .none
-                    }
-                    // Last Waypoint
-                    else if pathIndex == direction.path.count - 1 {
+                        isTypeSet = true
+                    } else if pathIndex == direction.path.count - 1 { // Last Waypoint
                         type = .destination
+                        isTypeSet = true
                     }
                 }
 
                 // First & Last Bus Segments
-                if typeNotSet && direction.type == .depart && (pathIndex == 0 || pathIndex == direction.path.count - 1) {
+                if !isTypeSet && direction.type == .depart && (pathIndex == 0 || pathIndex == direction.path.count - 1) {
                     type = .bus
+                    isTypeSet = true
                 }
 
                 let waypoint = Waypoint(lat: point.latitude, long: point.longitude, wpType: type, isStop: isStop)
@@ -249,17 +250,14 @@ class RouteDetailContentViewController: UIViewController {
     /// The input includes every bus associated with a certain line. Any visible indicators
     /// are also animated.
     private func setBusLocation(_ bus: BusLocation) {
-
         // New bus coordinates
         let busCoords = CLLocationCoordinate2D(latitude: bus.latitude, longitude: bus.longitude)
         let existingBus = buses.first(where: {
             return getUserData(for: $0, key: Constants.BusUserData.vehicleID) as? Int == bus.vehicleID
         })
-
-        // If bus is already on map, update and animate change
-        if let newBus = existingBus {
-            // Allow time to receive new live bus request
-            let latencyConstant = 0.25
+        
+        if let newBus = existingBus { // If bus is already on map, update and animate change
+            let latencyConstant = 0.25 // Allow time to receive new live bus request
 
             CATransaction.begin()
             CATransaction.setAnimationDuration(liveTrackingNetworkRefreshRate + latencyConstant)
@@ -293,7 +291,6 @@ class RouteDetailContentViewController: UIViewController {
 
         // Update bus indicators (if map not moved)
         mapView.delegate?.mapView?(mapView, didChange: mapView.camera)
-
     }
 
     /// Animate any visible indicators
@@ -395,16 +392,12 @@ class RouteDetailContentViewController: UIViewController {
 
     /// Centers map around all waypoints in routePaths, and animates the map
     func centerMapOnOverview(drawerPreviewing: Bool = false) {
-        var bottomOffset: CGFloat = (UIScreen.main.bounds.height / 2) - (mapPadding / 2)
-        bottomOffset -= view.safeAreaInsets.bottom
-
         if drawerPreviewing {
+            let bottomOffset: CGFloat = (UIScreen.main.bounds.height / 2) - (mapPadding / 2) - view.safeAreaInsets.bottom
             let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: mapPadding / 2, bottom: bottomOffset, right: mapPadding / 2)
-            let update = GMSCameraUpdate.fit(bounds, with: edgeInsets)
-            mapView.animate(with: update)
+            mapView.animate(with: GMSCameraUpdate.fit(bounds, with: edgeInsets))
         } else {
-            let update = GMSCameraUpdate.fit(bounds, withPadding: mapPadding)
-            mapView.animate(with: update)
+            mapView.animate(with: GMSCameraUpdate.fit(bounds, withPadding: mapPadding))
         }
     }
 
@@ -451,16 +444,6 @@ class RouteDetailContentViewController: UIViewController {
                 setIndex(of: marker, with: waypoint.wpType)
                 bounds = bounds.includingCoordinate(waypoint.coordinate)
             }
-        }
-    }
-
-    /// Completion after locationManager functions return
-    func didUpdateLocation() {
-        // TODO #267: Find better way to cut down on didUpdateLocation calls
-        if initalUpdate {
-            initalUpdate = false
-            drawMapRoute()
-            centerMapOnOverview(drawerPreviewing: true)
         }
     }
 
