@@ -64,25 +64,26 @@ class BusLocation: NSObject, Codable {
         case vehicleID
     }
 
-    init(dataType: BusDataType,
-         destination: String,
-         deviation: Int,
-         delay: Int,
-         direction: String,
-         displayStatus: String,
-         gpsStatus: Int,
-         heading: Int,
-         lastStop: String,
-         lastUpdated: Date,
-         latitude: Double,
-         longitude: Double,
-         name: String,
-         opStatus: String,
-         routeID: Int,
-         runID: Int,
-         speed: Int,
-         tripID: Int,
-         vehicleID: Int
+    init(
+        dataType: BusDataType,
+        destination: String,
+        deviation: Int,
+        delay: Int,
+        direction: String,
+        displayStatus: String,
+        gpsStatus: Int,
+        heading: Int,
+        lastStop: String,
+        lastUpdated: Date,
+        latitude: Double,
+        longitude: Double,
+        name: String,
+        opStatus: String,
+        routeID: Int,
+        runID: Int,
+        speed: Int,
+        tripID: Int,
+        vehicleID: Int
     ) {
         self.dataType = dataType
         self.delay = delay
@@ -110,7 +111,6 @@ class BusLocation: NSObject, Codable {
     }
 
     var iconView: UIView {
-
         if let iconView = _iconView {
             return iconView
         } else {
@@ -118,7 +118,6 @@ class BusLocation: NSObject, Codable {
             _iconView = BusLocationView(number: routeNumber, bearing: heading, position: coordinates)
             return _iconView!
         }
-
     }
 
     /// The Int type of routeID. Defaults to 0 if can't cast to Int

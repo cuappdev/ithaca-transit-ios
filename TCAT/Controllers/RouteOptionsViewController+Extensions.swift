@@ -10,7 +10,7 @@ import UIKit
 import CoreLocation
 import DZNEmptyDataSet
 
-// MARK: Previewing Delegate
+// MARK: - Previewing Delegate
 extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
 
     @objc func handleLongPressGesture(_ sender: UILongPressGestureRecognizer) {
@@ -49,11 +49,13 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
     }
 }
 
-// MARK: SearchBarCancelDelegate
+// MARK: - SearchBarCancelDelegate
 extension RouteOptionsViewController: SearchBarCancelDelegate {
+
     func didCancel() {
         hideSearchBar()
     }
+
 }
 
 // MARK: Destination Delegate
@@ -449,4 +451,12 @@ extension RouteOptionsViewController: RouteSelectionViewDelegate {
         let payload = RouteOptionsSettingsPayload(description: "Searching To Tapped")
         Analytics.shared.log(payload)
     }
+}
+
+extension RouteOptionsViewController: ReachabilityDelegate {
+    
+    func reachabilityChanged(connection: Reachability.Connection) {
+        setUserInteraction(to: connection != .none)
+    }
+    
 }

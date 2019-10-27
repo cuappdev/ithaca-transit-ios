@@ -21,7 +21,7 @@ struct Messages {
         "Pro Tip: Never grocery shop on an empty stomach"
     ]
 
-    // MARK: Cornell
+    // MARK: - Cornell
 
     static let rpcc: [String] = [
         "In the kitchen, wrist twistin' like it's Mongo 🎵",
@@ -59,7 +59,7 @@ struct Messages {
         "Welcome to the hustle and bustle of Collegetown"
     ]
 
-    // MARK: Ithaca
+    // MARK: - Ithaca
 
     static let regalCinema: [String] = [
         "The trailers always take a half hour anyway...",
@@ -107,83 +107,94 @@ class Phrases {
 
 class LocationPhrases: Phrases {
 
-    // For new places, use: https://boundingbox.klokantech.com set to CSV.
+    /// For new places, use: https://boundingbox.klokantech.com set to CSV.
 
-    // For overlapping places, put the smaller one first
+    /// For overlapping places, put the smaller one first
     static let places: [CustomLocation] = [
-
-        CustomLocation(messages: Messages.rpcc,
-                       minimumLongitude: -76.4780073578,
-                       minimumLatitude: 42.4555571687,
-                       maximumLongitude: -76.4770239162,
-                       maximumLatitude: 42.4562933289),
-
-        CustomLocation(messages: Messages.bakerFlagpole,
-                       minimumLongitude: -76.4882680195,
-                       minimumLatitude: 42.447154511,
-                       maximumLongitude: -76.4869808879,
-                       maximumLatitude: 42.4482142506),
-
-        CustomLocation(messages: Messages.statler,
-                       minimumLongitude: -76.4826804461,
-                       minimumLatitude: 42.445607399,
-                       maximumLongitude: -76.4816523295,
-                       maximumLatitude: 42.4467569576),
-
-        CustomLocation(messages: Messages.rockefeller,
-                       minimumLongitude: -76.4828309704,
-                       minimumLatitude: 42.4493108267,
-                       maximumLongitude: -76.4824479047,
-                       maximumLatitude: 42.44969019),
-
-        CustomLocation(messages: Messages.balch,
-                       minimumLongitude: -76.4811291114,
-                       minimumLatitude: 42.4526837484,
-                       maximumLongitude: -76.4789034578,
-                       maximumLatitude: 42.4536103104),
-
-        CustomLocation(messages: Messages.schwartz,
-                       minimumLongitude: -76.4855623082,
-                       minimumLatitude: 42.4424106249,
-                       maximumLongitude: -76.4849883155,
-                       maximumLatitude: 42.4428654009),
-
-        CustomLocation(messages: Messages.target,
-                       minimumLongitude: -76.4927489222,
-                       minimumLatitude: 42.4847167857,
-                       maximumLongitude: -76.4889960764,
-                       maximumLatitude: 42.4858172457),
-
-        CustomLocation(messages: Messages.regalCinema,
-                       minimumLongitude: -76.493338437,
-                       minimumLatitude: 42.4838963076,
-                       maximumLongitude: -76.4914179754,
-                       maximumLatitude: 42.4846716949),
-
-        CustomLocation(messages: Messages.mall,
-                       minimumLongitude: -76.493291,
-                       minimumLatitude: 42.480977,
-                       maximumLongitude: -76.488651,
-                       maximumLatitude: 42.48597),
-
-        CustomLocation(messages: Messages.wegmans,
-                       minimumLongitude: -76.5114533069,
-                       minimumLatitude: 42.4336357432,
-                       maximumLongitude: -76.5093075397,
-                       maximumLatitude: 42.4362012905),
-
-        CustomLocation(messages: Messages.walmart,
-                       minimumLongitude: -76.5148997155,
-                       minimumLatitude: 42.4265752766,
-                       maximumLongitude: -76.511709343,
-                       maximumLatitude: 42.4284506244),
-
-        CustomLocation(messages: Messages.chipotle,
-                       minimumLongitude: -76.5082565033,
-                       minimumLatitude: 42.4297004932,
-                       maximumLongitude: -76.5080904931,
-                       maximumLatitude: 42.4302749214)
-
+        CustomLocation(
+            messages: Messages.rpcc,
+            minimumLongitude: -76.4780073578,
+            minimumLatitude: 42.4555571687,
+            maximumLongitude: -76.4770239162,
+            maximumLatitude: 42.4562933289
+        ),
+        CustomLocation(
+            messages: Messages.bakerFlagpole,
+            minimumLongitude: -76.4882680195,
+            minimumLatitude: 42.447154511,
+            maximumLongitude: -76.4869808879,
+            maximumLatitude: 42.4482142506
+        ),
+        CustomLocation(
+            messages: Messages.statler,
+            minimumLongitude: -76.4826804461,
+            minimumLatitude: 42.445607399,
+            maximumLongitude: -76.4816523295,
+            maximumLatitude: 42.4467569576
+        ),
+        CustomLocation(
+            messages: Messages.rockefeller,
+            minimumLongitude: -76.4828309704,
+            minimumLatitude: 42.4493108267,
+            maximumLongitude: -76.4824479047,
+            maximumLatitude: 42.44969019
+        ),
+        CustomLocation(
+            messages: Messages.balch,
+            minimumLongitude: -76.4811291114,
+            minimumLatitude: 42.4526837484,
+            maximumLongitude: -76.4789034578,
+            maximumLatitude: 42.4536103104
+        ),
+        CustomLocation(
+            messages: Messages.schwartz,
+            minimumLongitude: -76.4855623082,
+            minimumLatitude: 42.4424106249,
+            maximumLongitude: -76.4849883155,
+            maximumLatitude: 42.4428654009
+        ),
+        CustomLocation(
+            messages: Messages.target,
+            minimumLongitude: -76.4927489222,
+            minimumLatitude: 42.4847167857,
+            maximumLongitude: -76.4889960764,
+            maximumLatitude: 42.4858172457
+        ),
+        CustomLocation(
+            messages: Messages.regalCinema,
+            minimumLongitude: -76.493338437,
+            minimumLatitude: 42.4838963076,
+            maximumLongitude: -76.4914179754,
+            maximumLatitude: 42.4846716949
+        ),
+        CustomLocation(
+            messages: Messages.mall,
+            minimumLongitude: -76.493291,
+            minimumLatitude: 42.480977,
+            maximumLongitude: -76.488651,
+            maximumLatitude: 42.48597
+        ),
+        CustomLocation(
+            messages: Messages.wegmans,
+            minimumLongitude: -76.5114533069,
+            minimumLatitude: 42.4336357432,
+            maximumLongitude: -76.5093075397,
+            maximumLatitude: 42.4362012905
+        ),
+        CustomLocation(
+            messages: Messages.walmart,
+            minimumLongitude: -76.5148997155,
+            minimumLatitude: 42.4265752766,
+            maximumLongitude: -76.511709343,
+            maximumLatitude: 42.4284506244
+        ),
+        CustomLocation(
+            messages: Messages.chipotle,
+            minimumLongitude: -76.5082565033,
+            minimumLatitude: 42.4297004932,
+            maximumLongitude: -76.5080904931,
+            maximumLatitude: 42.4302749214
+        )
     ]
 
     /// Return a string from the first location within the range of coordinates. Otherwise, return nil.
@@ -208,7 +219,7 @@ class WalkingPhrases: Phrases {
 
 }
 
-// MARK: Utility Classes & Functions
+// MARK: - Utility Classes & Functions
 
 /// A custom location the a user searches for. Coordinates used for matching.
 struct CustomLocation: Equatable {
@@ -216,7 +227,7 @@ struct CustomLocation: Equatable {
     /// Messages related to location
     var messages: [String]
 
-    // MARK: Bounding Box Variables
+    // MARK: - Bounding Box Variables
 
     /// The bottom left corner longitude value for the location's bounding box
     var maximumLongitude: Double

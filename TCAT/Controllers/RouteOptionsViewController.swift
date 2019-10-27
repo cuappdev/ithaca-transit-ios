@@ -32,6 +32,7 @@ enum RequestAction {
 }
 
 class RouteOptionsViewController: UIViewController {
+
     let datePickerOverlay = UIView()
     var datePickerView: DatePickerView!
     let routeResults = UITableView(frame: .zero, style: .grouped)
@@ -51,24 +52,23 @@ class RouteOptionsViewController: UIViewController {
     var showRouteSearchingLoader: Bool = false
     var trips: [Trip] = []
 
-    // Variable to remember back button when hiding
+    /// Variable to remember back button when hiding
     private var backButton: UIBarButtonItem?
     var refreshControl: UIRefreshControl!
 
     private let estimatedRowHeight: CGFloat = 115
     private let mediumTapticGenerator = UIImpactFeedbackGenerator(style: .medium)
     private let networking: Networking = URLSession.shared.request
-    private let reachability: Reachability? = Reachability(hostname: Endpoint.config.host ?? "")
     private let routeResultsTitle: String = Constants.Titles.routeResults
 
-    // Timer to retrieve route delays and update route cells
+    /// Timer to retrieve route delays and update route cells
     private var routeTimer: Timer?
     private var updateTimer: Timer?
 
-    // Dictionary to map route id to delay
+    /// Dictionary to map route id to delay
     var delayDictionary: [String: DelayState] = [:]
 
-    // Dictionary to map tripId to route
+    /// Dictionary to map tripId to route
     var tripDictionary: [String: Route] = [:]
 
     /// Returns routes from each section in order
@@ -91,7 +91,7 @@ class RouteOptionsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: View Lifecycle
+    // MARK: - View Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -109,7 +109,7 @@ class RouteOptionsViewController: UIViewController {
         setupRouteSelection(destination: searchTo)
         setupLocationManager()
 
-        // assume user wants to find routes that leave at current time and set datepicker accordingly
+        // Assume user wants to find routes that leave at current time and set datepicker accordingly
         searchTime = Date()
         if let searchTime = searchTime {
             routeSelection.setDatepickerTitle(withDate: searchTime, withSearchTimeType: searchTimeType)
@@ -117,8 +117,20 @@ class RouteOptionsViewController: UIViewController {
 
         searchForRoutes()
 
-        routeTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateAllRoutesLiveTracking(sender:)), userInfo: nil, repeats: true)
-        updateTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(rerenderLiveTracking(sender:)), userInfo: nil, repeats: true)
+        routeTimer = Timer.scheduledTimer(
+            timeInterval: 5.0,
+            target: self,
+            selector: #selector(updateAllRoutesLiveTracking(sender:)),
+            userInfo: nil,
+            repeats: true
+        )
+        updateTimer = Timer.scheduledTimer(
+            timeInterval: 20.0,
+            target: self,
+            selector: #selector(rerenderLiveTracking(sender:)),
+            userInfo: nil,
+            repeats: true
+        )
 
         // Check for 3D Touch availability
         if traitCollection.forceTouchCapability == .available {
@@ -130,21 +142,17 @@ class RouteOptionsViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupReachability()
         setUpRouteRefreshing()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        // Takedown reachability
-        reachability?.stopNotifier()
-        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
         // Remove banner
         banner?.dismiss()
         banner = nil
         routeTimer?.invalidate()
         updateTimer?.invalidate()
-        // Stop observing when app becomes active 
+        // Remove notification observer
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -153,10 +161,11 @@ class RouteOptionsViewController: UIViewController {
     }
 
     private func setupRouteSelection(destination: Place?) {
-        routeSelection.configure(delegate: self,
-                                 from: Constants.General.fromSearchBarPlaceholder,
-                                 to: destination?.name ?? "")
-
+        routeSelection.configure(
+            delegate: self,
+            from: Constants.General.fromSearchBarPlaceholder,
+            to: destination?.name ?? ""
+        )
         view.addSubview(routeSelection)
     }
 
@@ -223,7 +232,12 @@ class RouteOptionsViewController: UIViewController {
         }
 
         let appBecameActiveNotification = UIApplication.didBecomeActiveNotification
-        NotificationCenter.default.addObserver(self, selector: #selector(refreshRoutesAndTime), name: appBecameActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refreshRoutesAndTime),
+            name: appBecameActiveNotification,
+            object: nil
+        )
     }
 
     func setupConstraintsForVisibleDatePickerView() {
@@ -269,25 +283,19 @@ class RouteOptionsViewController: UIViewController {
         var searchBarText = ""
 
         switch searchType {
-
         case .from:
-
-            if
-                let startingDestinationName = searchFrom?.name,
+            if let startingDestinationName = searchFrom?.name,
                 startingDestinationName != Constants.General.currentLocation &&
-                startingDestinationName != Constants.General.fromSearchBarPlaceholder
-            {
+                startingDestinationName != Constants.General.fromSearchBarPlaceholder {
                 searchBarText = startingDestinationName
             }
             placeholder = Constants.General.fromSearchBarPlaceholder
-
         case .to:
             let endingDestinationName = searchTo.name
             if endingDestinationName != Constants.General.currentLocation {
                 searchBarText = endingDestinationName
             }
             placeholder = Constants.General.toSearchBarPlaceholder
-
         }
 
         if let textFieldInsideSearchBar = searchBarView.searchController?.searchBar.value(forKey: "searchField") as? UITextField {
@@ -360,7 +368,8 @@ class RouteOptionsViewController: UIViewController {
                                         let payload = NetworkErrorPayload(
                                             location: "\(self) Get All Delays",
                                             type: "\((error as NSError).domain)",
-                                            description: error.localizedDescription)
+                                            description: error.localizedDescription
+                                        )
                                         Analytics.shared.log(payload)
                                     }
                                 }
@@ -382,7 +391,8 @@ class RouteOptionsViewController: UIViewController {
                         let payload = NetworkErrorPayload(
                             location: "\(self) Get All Delays",
                             type: "\((error as NSError).domain)",
-                            description: error.localizedDescription)
+                            description: error.localizedDescription
+                        )
                         Analytics.shared.log(payload)
                     }
                 }
@@ -432,18 +442,20 @@ class RouteOptionsViewController: UIViewController {
 
             JSONFileManager.shared.logSearchParameters(timestamp: now, startPlace: searchFrom, endPlace: searchTo, searchTime: time, searchTimeType: searchTimeType)
 
-            // MARK: Search For Routes Errors
+            // Search For Routes Errors
 
             guard let areValidCoordinates = self.checkPlaceCoordinates(startPlace: searchFrom, endPlace: searchTo) else {
                 // Place(s) don't have coordinates assigned
                 self.requestDidFinish(perform: [
-                    .showError(bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .danger),
-                               payload: NetworkErrorPayload(
-                                location: "\(self) Get Routes",
-                                type: "Nil Place Coordinates",
-                                description: "Place(s) don't have coordinates. (areValidCoordinates)")
+                    .showError(
+                        bannerInfo: BannerInfo(title: Constants.Banner.routeCalculationError, style: .danger),
+                        payload: NetworkErrorPayload(
+                            location: "\(self) Get Routes",
+                            type: "Nil Place Coordinates",
+                            description: "Place(s) don't have coordinates. (areValidCoordinates)"
+                        )
                     )
-                    ])
+                ])
                 return
             }
 
@@ -455,16 +467,19 @@ class RouteOptionsViewController: UIViewController {
 
                 self.requestDidFinish(perform: [
                     .showAlert(title: title, message: message, actionTitle: actionTitle),
-                    .showError(bannerInfo: BannerInfo(title: title, style: .warning),
-                               payload: NetworkErrorPayload(
-                                location: "\(self) Get Routes",
-                                type: title,
-                                description: message))
-                    ])
+                    .showError(
+                        bannerInfo: BannerInfo(title: title, style: .warning),
+                        payload: NetworkErrorPayload(
+                            location: "\(self) Get Routes",
+                            type: title,
+                            description: message
+                        )
+                    )
+                ])
                 return
             }
 
-            // MARK: Search for Routes Data Request
+            // Search for Routes Data Request
             if let result =  getRoutes(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType) {
                 result.observe(with: { [weak self] result in
                     guard let `self` = self else { return }
@@ -493,13 +508,17 @@ class RouteOptionsViewController: UIViewController {
         }
     }
 
-    private func getRoutes(start: Place,
-                           end: Place,
-                           time: Date,
-                           type: SearchType) -> Future<Response<RouteSectionsObject>>? {
+    private func getRoutes(
+        start: Place,
+        end: Place,
+        time: Date,
+        type: SearchType
+    ) -> Future<Response<RouteSectionsObject>>? {
         if let endpoint = Endpoint.getRoutes(start: start, end: end, time: time, type: type) {
             return networking(endpoint).decode()
-        } else { return nil }
+        } else {
+            return nil
+        }
     }
 
     func routeSelected(routeId: String) {
@@ -514,7 +533,8 @@ class RouteOptionsViewController: UIViewController {
                     let payload = NetworkErrorPayload(
                         location: "\(self) Get Route Selected",
                         type: "\((error as NSError).domain)",
-                        description: error.localizedDescription)
+                        description: error.localizedDescription
+                    )
                     Analytics.shared.log(payload)
                 }
             }
@@ -583,20 +603,20 @@ class RouteOptionsViewController: UIViewController {
                        payload: NetworkErrorPayload(
                         location: "\(self) Get Routes",
                         type: title,
-                        description: description))
+                        description: description
+                )
+            )
         ])
     }
 
     /// Returns whether coordinates are valid, checking country extremes. Returns nil if places don't have coordinates.
     private func checkPlaceCoordinates(startPlace: Place, endPlace: Place) -> Bool? {
 
-        guard
-            let startCoordLatitude = startPlace.latitude,
+        guard let startCoordLatitude = startPlace.latitude,
             let startCoordLongitude = startPlace.longitude,
             let endCoordLatitude = endPlace.latitude,
-            let endCoordLongitude = endPlace.longitude
-            else {
-                return nil
+            let endCoordLongitude = endPlace.longitude else {
+            return nil
         }
 
         let latitudeValues = [startCoordLatitude, endCoordLatitude]
@@ -616,9 +636,7 @@ class RouteOptionsViewController: UIViewController {
     }
 
     private func requestDidFinish(perform actions: [RequestAction]) {
-
         for action in actions {
-
             switch action {
 
             case .showAlert(title: let title, message: let message, actionTitle: let actionTitle):
@@ -649,37 +667,7 @@ class RouteOptionsViewController: UIViewController {
         routeResults.reloadData()
     }
 
-    // MARK: Reachability
-
-    private func setupReachability() {
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(notification:)), name: .reachabilityChanged, object: reachability)
-        do {
-            try reachability?.startNotifier()
-        } catch {
-            printClass(context: "\(#function)", message: "Could not start reachability notifier")
-        }
-    }
-
-    @objc private func reachabilityChanged(notification: Notification) {
-        if let reachability = notification.object as? Reachability {
-
-            // Dismiss current banner, if any
-            banner?.dismiss()
-            banner = nil
-
-            switch reachability.connection {
-            case .none:
-                banner = StatusBarNotificationBanner(title: Constants.Banner.noInternetConnection, style: .danger)
-                banner?.autoDismiss = false
-                banner?.show(queuePosition: .front, bannerPosition: .top, on: navigationController)
-                setUserInteraction(to: false)
-            case .cellular, .wifi:
-                setUserInteraction(to: true)
-            }
-        }
-    }
-
-    private func setUserInteraction(to userInteraction: Bool) {
+    func setUserInteraction(to userInteraction: Bool) {
         cellUserInteraction = userInteraction
 
         for cell in routeResults.visibleCells {
@@ -694,7 +682,7 @@ class RouteOptionsViewController: UIViewController {
         cell?.selectionStyle = .none // userInteraction ? .default : .none
     }
 
-    // MARK: Refresh Control
+    // MARK: - Refresh Control
 
     private func setupRefreshControl() {
         refreshControl = UIRefreshControl()
@@ -707,10 +695,9 @@ class RouteOptionsViewController: UIViewController {
         routeResults.refreshControl?.endRefreshing()
     }
 
-    // MARK: RouteDetailViewController
+    // MARK: - RouteDetailViewController
 
     func createRouteDetailViewController(from indexPath: IndexPath) -> RouteDetailViewController? {
-
         let route = routes[indexPath.section][indexPath.row]
         var routeDetailCurrentLocation = currentLocation
         if searchTo.name != Constants.General.currentLocation && searchFrom?.name != Constants.General.currentLocation {
@@ -726,7 +713,10 @@ class RouteOptionsViewController: UIViewController {
         guard let drawerViewController = contentViewController.getDrawerDisplayController() else {
             return nil
         }
-        return RouteDetailViewController(contentViewController: contentViewController,
-                                         drawerViewController: drawerViewController)
+        return RouteDetailViewController(
+            contentViewController: contentViewController,
+            drawerViewController: drawerViewController
+        )
     }
+
 }

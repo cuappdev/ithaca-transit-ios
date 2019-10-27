@@ -18,10 +18,11 @@ public extension Payload {
     }
 }
 
-/**Use JSONData for serialized JSON*/
+/// Use JSONData for serialized JSON
 public typealias JSONData = Data
 
 public class Event<TPayload: Payload>: Codable {
+
     public let payload: TPayload
     public var eventName: String {return TPayload.eventName}
 
@@ -51,6 +52,7 @@ public class Event<TPayload: Payload>: Codable {
     public func serializeJson() throws -> JSONData {
         return try JSONEncoder().encode(self)
     }
+
 }
 
 let dateFormatter: DateFormatter = {
@@ -61,6 +63,7 @@ let dateFormatter: DateFormatter = {
 }()
 
 public class TimestampedEvent<TPayload: Payload>: Event<TPayload> {
+
     public let timestamp: Date
 
     init(event: Event<TPayload>) {
@@ -88,4 +91,5 @@ public class TimestampedEvent<TPayload: Payload>: Event<TPayload> {
         var values = encoder.container(keyedBy: CodingKeys.self)
         try values.encode(dateFormatter.string(from: timestamp), forKey: .timestamp)
     }
+
 }

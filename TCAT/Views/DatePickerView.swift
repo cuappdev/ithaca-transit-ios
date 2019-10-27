@@ -20,14 +20,14 @@ protocol DatePickerViewDelegate: class {
 
 class DatePickerView: UIView {
 
-    // MARK: Data vars
+    // MARK: - Data vars
 
     private weak var delegate: DatePickerViewDelegate?
     private let leaveNowElement = SegmentControlElement(title: Constants.General.datepickerLeaveNow, index: 0)
     private let leaveAtElement = SegmentControlElement(title: Constants.General.datepickerLeaveAt, index: 0)
     private let arriveByElement = SegmentControlElement(title: Constants.General.datepickerArriveBy, index: 1)
 
-    // MARK: View vars
+    // MARK: - View vars
 
     private var cancelButton: UIButton = UIButton()
     private var datepicker: UIDatePicker = UIDatePicker()
@@ -35,7 +35,7 @@ class DatePickerView: UIView {
     private var leaveNowSegmentedControl: UISegmentedControl = UISegmentedControl()
     private var timeTypeSegmentedControl: UISegmentedControl = UISegmentedControl()
 
-    // MARK: Init
+    // MARK: - Init
 
     init(delegate: DatePickerViewDelegate? = nil) {
         super.init(frame: .zero)
@@ -54,7 +54,7 @@ class DatePickerView: UIView {
         setupConstraints()
     }
 
-    // MARK: View setup
+    // MARK: - View setup
 
     private func setupDatePicker() {
         let now = Date()
@@ -163,7 +163,7 @@ class DatePickerView: UIView {
         }
     }
 
-    // MARK: Setters
+    // MARK: - Setters
 
     func setDatepickerDate(date: Date) {
         datepicker.date = date
@@ -179,7 +179,7 @@ class DatePickerView: UIView {
         }
     }
 
-    // MARK: Buttons
+    // MARK: - Buttons
 
     @objc private func doneButtonPressed() {
         var searchTimeType: SearchType = .leaveNow
@@ -201,7 +201,7 @@ class DatePickerView: UIView {
         delegate?.dismissDatePicker()
     }
 
-    // MARK: Segment Controls
+    // MARK: - Segment Controls
 
     @objc private func timeTypeSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
         if timeTypeSegmentedControl.selectedSegmentIndex == arriveByElement.index {
@@ -213,7 +213,7 @@ class DatePickerView: UIView {
         datepicker.date = Date()
     }
 
-    // MARK: Datepicker
+    // MARK: - Datepicker
 
     @objc private func datepickerValueChanged(datepicker: UIDatePicker) {
         if Time.compare(date1: datepicker.date, date2: Date()) == ComparisonResult.orderedSame {
@@ -227,4 +227,5 @@ class DatePickerView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
 }

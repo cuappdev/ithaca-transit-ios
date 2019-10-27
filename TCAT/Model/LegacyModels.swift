@@ -34,7 +34,7 @@ class BusStop: NSObject, NSCoding {
         return object.lat == lat && object.long == long
     }
 
-    // MARK: NSCoding
+    // MARK: - NSCoding
     required init(coder aDecoder: NSCoder) {
         name = aDecoder.decodeObject(forKey: nameKey) as? String ?? ""
         lat = aDecoder.decodeDouble(forKey: latKey)
@@ -77,12 +77,12 @@ class PlaceResult: NSObject, NSCoding {
         return object.placeID == placeID
     }
 
-    // MARK: Print
+    // MARK: - Print
     override var description: String {
         return "PlaceResult(name: \(name), detail: \(detail), placeId: \(placeID))"
     }
 
-    // MARK: NSCoding
+    // MARK: - NSCoding
     required init(coder aDecoder: NSCoder) {
         detail = (aDecoder.decodeObject(forKey: detailKey) as? String) ?? ""
         placeID = (aDecoder.decodeObject(forKey: placeIDKey) as? String) ?? ""

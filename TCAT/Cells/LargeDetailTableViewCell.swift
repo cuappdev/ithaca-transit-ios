@@ -104,7 +104,7 @@ class LargeDetailTableViewCell: UITableViewCell {
         }
     }
 
-    /** Precondition: Direction is BoardDirection */
+    /// Precondition: Direction is BoardDirection
     func configure(for direction: Direction, isFirstStep: Bool, isExpanded: Bool, delegate: LargeDetailTableViewDelegate? = nil) {
         self.delegate = delegate
         setupHairline()
@@ -117,7 +117,8 @@ class LargeDetailTableViewCell: UITableViewCell {
         formatDetailLabel(for: direction)
         iconView = DetailIconView(for: direction, isFirstStep: isFirstStep, isLastStep: false)
         if direction.stops.isEmpty {
-            chevron.alpha = 0 // .hidden attribute used for animation
+            // .hidden attribute used for animation
+            chevron.alpha = 0
         }
         contentView.addSubview(iconView)
 
@@ -129,7 +130,12 @@ class LargeDetailTableViewCell: UITableViewCell {
 
         // Instantiate busIconView offScreen to later turn into UIImage
         let busIconView = BusIcon(type: .directionSmall, number: direction.routeNumber)
-        let busIconFrame = CGRect(x: -busIconView.intrinsicContentSize.width, y: 0, width: busIconView.intrinsicContentSize.width + busIconSpacingBetweenText * 2, height: busIconView.intrinsicContentSize.height)
+        let busIconFrame = CGRect(
+            x: -busIconView.intrinsicContentSize.width,
+            y: 0,
+            width: busIconView.intrinsicContentSize.width + busIconSpacingBetweenText * 2,
+            height: busIconView.intrinsicContentSize.height
+        )
 
         // Create container to add padding on sides
         let containerView = UIView(frame: busIconFrame)

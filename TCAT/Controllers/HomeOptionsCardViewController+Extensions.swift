@@ -8,8 +8,9 @@
 
 import UIKit
 
-// MARK: VC Life Cycle setup
+// MARK: - VC Life Cycle setup
 extension HomeOptionsCardViewController {
+
     override func loadView() {
         view = RoundShadowedView(cornerRadius: 10)
     }
@@ -45,7 +46,7 @@ extension HomeOptionsCardViewController {
     }
 }
 
-// MARK: Search Bar Delegate
+// MARK: - Search Bar Delegate
 extension HomeOptionsCardViewController: UISearchBarDelegate {
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -90,8 +91,9 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
     }
 }
 
-// MARK: HeaderView Delegate
+// MARK: - HeaderView Delegate
 extension HomeOptionsCardViewController: HeaderViewDelegate {
+
     func displayFavoritesTVC() {
         if favorites.count < 2 {
             presentFavoritesTVC()
@@ -110,10 +112,12 @@ extension HomeOptionsCardViewController: HeaderViewDelegate {
         recentLocations = []
         createDefaultSections()
     }
+
 }
 
-// MARK: MapView Delegate
+// MARK: - MapView Delegate
 extension HomeOptionsCardViewController: HomeMapViewDelegate {
+
     func reachabilityChanged(connection: Reachability.Connection) {
         switch connection {
         case .none:
@@ -138,10 +142,12 @@ extension HomeOptionsCardViewController: HomeMapViewDelegate {
             }
         }
     }
+
 }
 
-// MARK: TableView DataSource
+// MARK: - TableView DataSource
 extension HomeOptionsCardViewController: UITableViewDataSource {
+
     func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
     }
@@ -171,10 +177,12 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
             return cell
         }
     }
+
 }
 
-// MARK: TableView Delegate
+// MARK: - TableView Delegate
 extension HomeOptionsCardViewController: UITableViewDelegate {
+
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         if let searchBarText = searchBar.text,
             searchBarText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -207,9 +215,18 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
 
         switch sections[section] {
         case .recentSearches:
-            header = HeaderView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear, separatorVisible: true, delegate: self)
+            header = HeaderView(
+                labelText: Constants.TableHeaders.recentSearches,
+                buttonType: .clear,
+                separatorVisible: true,
+                delegate: self
+            )
         case .favorites:
-            header = HeaderView(labelText: Constants.TableHeaders.favoriteDestinations, buttonType: .add, delegate: self)
+            header = HeaderView(
+                labelText: Constants.TableHeaders.favoriteDestinations,
+                buttonType: .add,
+                delegate: self
+            )
         case .seeAllStops:
             header = HeaderView(separatorVisible: true)
         case .searchResults:
@@ -247,12 +264,10 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
                 createDefaultSections()
             default: break
             }
-
         }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
         var routeOptionsViewController: RouteOptionsViewController!
         let allStopsTableViewController = AllStopsTableViewController()
         var didSelectAllStops = false
@@ -282,9 +297,9 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
 }
 
 extension HomeOptionsCardViewController: FavoritesSelectionDelegate {
-    
+
     func didAddNewFavorite() {
         updatePlaces()
     }
-    
+
 }

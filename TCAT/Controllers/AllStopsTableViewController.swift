@@ -121,7 +121,7 @@ class AllStopsTableViewController: UIViewController {
         return networking(Endpoint.getAllStops()).decode()
     }
 
-    /* Get all bus stops and store in userDefaults */
+    /// Get all bus stops and store in userDefaults
     private func refreshAllStops() {
         setUpLoadingIndicator()
         if let allBusStops = userDefaults.value(forKey: Constants.UserDefaults.allBusStops) as? Data,
@@ -183,7 +183,7 @@ class AllStopsTableViewController: UIViewController {
     }
 }
 
-// MARK: DZNEmptyDataSetSource
+// MARK: - DZNEmptyDataSetSource
 extension AllStopsTableViewController: DZNEmptyDataSetSource {
 
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
@@ -282,4 +282,5 @@ extension AllStopsTableViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sectionIndexes[sortedKeys[section]]?.count ?? 0
     }
+
 }

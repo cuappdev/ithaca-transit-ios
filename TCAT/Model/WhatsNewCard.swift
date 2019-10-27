@@ -63,17 +63,7 @@ struct WhatsNewCard: Codable {
         return startDate < now && now < endDate
     }
 
-    // MARK: Upcoming Updates
-
-    // Twitter Update
-
-    // var title = "@IthacaTransit on Twitter"
-    // var description = "Follow our new Twitter account for schedule changes, app statuses, and promotions!",
-
-    // var appLink = "twitter://user?screen_name=IthacaTransit"
-    // var webLink = "https://twitter.com/IthacaTransit"
-
-    // MARK: Main Descriptions
+    // MARK: - Main Descriptions
 
     /// This is the small blue label above the main title. Will be entirely uppercased in UI.
     var label: String
@@ -84,7 +74,7 @@ struct WhatsNewCard: Codable {
     /// A succinct description of the update feature.
     var description: String
 
-    // MARK: Primary Button - Blue, Bolded
+    // MARK: - Primary Button - Blue, Bolded
 
     // IMPORTANT: At least ONE action title *must* be set to create a button. It can be either for primary or secondary.
 
@@ -123,11 +113,9 @@ struct WhatsNewCard: Codable {
 
     /// Helpfer function to open web or app links.
     private static func open(_ link: String, optionalAppLink: String?, linkOpened: @escaping () -> Void) {
-        if
-            let appLink = optionalAppLink,
+        if let appLink = optionalAppLink,
             let appURL = URL(string: appLink),
-            UIApplication.shared.canOpenURL(appURL)
-        {
+            UIApplication.shared.canOpenURL(appURL) {
             // Open link in an installed app.
             UIApplication.shared.open(appURL, options: [:]) { _ in
                 linkOpened()
@@ -143,4 +131,5 @@ struct WhatsNewCard: Codable {
     func isEqual(to compared: WhatsNewCard) -> Bool {
         return compared.title == self.title && compared.description == self.description
     }
+
 }
