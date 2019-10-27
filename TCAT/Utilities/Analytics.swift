@@ -220,3 +220,10 @@ struct NetworkErrorPayload: Payload {
     let type: String
     let description: String
 }
+
+/// Log selected place's index in search
+struct SearchResultSelectedPayload: Payload {
+    static let eventName: String = "Search Result Selected"
+    let searchText: String
+    let selectedIndex: Int
+}
