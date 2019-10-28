@@ -226,4 +226,5 @@ struct SearchResultSelectedPayload: Payload {
     static let eventName: String = "Search Result Selected"
     let searchText: String
     let selectedIndex: Int
+    let totalResults: Int
 }

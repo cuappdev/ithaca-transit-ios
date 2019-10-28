@@ -123,7 +123,11 @@ extension FavoritesTableViewController: UITableViewDelegate {
         cell?.accessoryView = UIActivityIndicatorView()
         tableView.deselectRow(at: indexPath, animated: true)
         if let searchText = searchBar.text {
-            let payload = SearchResultSelectedPayload(searchText: searchText, selectedIndex: indexPath.row)
+            let payload = SearchResultSelectedPayload(
+                searchText: searchText,
+                selectedIndex: indexPath.row,
+                totalResults: resultsSection.getItems().count
+            )
             Analytics.shared.log(payload)
         }
         if let place = resultsSection.getItem(at: indexPath.row) {
