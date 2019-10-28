@@ -10,7 +10,7 @@ import NotificationBannerSwift
 import UIKit
 
 protocol ReachabilityDelegate: class {
-    func reachabilityChanged(connection: Reachability.Connection) 
+    func reachabilityChanged(connection: Reachability.Connection)
 }
 
 class CustomNavigationController: UINavigationController, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
@@ -42,7 +42,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
     open override var childForStatusBarStyle: UIViewController? {
         return visibleViewController
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return banner.isDisplaying ? .lightContent : .default
     }
@@ -63,10 +63,10 @@ class CustomNavigationController: UINavigationController, UINavigationController
             Analytics.shared.log(payload)
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         // Add reachability notification observer for view controllers that conform to ReachabilityDelegate
         if let _ = visibleViewController as? ReachabilityDelegate {
             guard let reachability = reachability else { return }
@@ -90,7 +90,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
         if let screenshotObserver = screenshotObserver {
             NotificationCenter.default.removeObserver(screenshotObserver)
         }
-        
+
         if let _ = visibleViewController as? ReachabilityDelegate {
             guard let reachability = reachability else { return }
             reachability.stopNotifier()
@@ -138,7 +138,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
     @objc private func backAction() {
         _ = popViewController(animated: true)
     }
-    
+
     @objc func reachabilityChanged(notif: Notification) {
         if let reachability = notif.object as? Reachability {
             switch reachability.connection {
@@ -173,7 +173,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
                 viewController.navigationItem.setLeftBarButton(customBackButton(), animated: true)
             }
         }
-        
+
         if let vc = viewController as? ReachabilityDelegate {
             reachabilityDelegate = vc
         }
@@ -190,7 +190,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
         }
         return viewController
     }
-    
+
     override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
         super.present(viewControllerToPresent, animated: flag, completion: completion)
         banner.dismiss()

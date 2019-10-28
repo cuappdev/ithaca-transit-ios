@@ -125,15 +125,8 @@ class AllStopsTableViewController: UIViewController {
     private func refreshAllStops() {
         setUpLoadingIndicator()
         if let allBusStops = userDefaults.value(forKey: Constants.UserDefaults.allBusStops) as? Data,
-            var busStopArray = try? decoder.decode([Place].self, from: allBusStops) {
-            // Check if empty so that an empty array isn't returned
-            if !busStopArray.isEmpty {
-                // TODO: Move to backend
-                // Creating "fake" bus stop to remove Google Places central Collegetown location choice
-                let collegetownStop = Place(name: "Collegetown", latitude: 42.442558, longitude: -76.485336)
-                busStopArray.append(collegetownStop)
-                allStops = busStopArray
-            }
+            let busStopArray = try? decoder.decode([Place].self, from: allBusStops) {
+            allStops = busStopArray
             loadingIndicator?.removeFromSuperview()
             loadingIndicator = nil
             createSectionIndexesForBusStop()
@@ -144,7 +137,7 @@ class AllStopsTableViewController: UIViewController {
             guard let `self` = self else { return }
             DispatchQueue.main.async {
                 switch result {
-                case .value(var response):
+                case .value(let response):
                     if !response.data.isEmpty {
                         // Save bus stops in userDefaults
                         do {
@@ -158,8 +151,6 @@ class AllStopsTableViewController: UIViewController {
                                 description: error.localizedDescription)
                             Analytics.shared.log(payload)
                         }
-                        let collegetownStop = Place(name: "Collegetown", latitude: 42.442558, longitude: -76.485336)
-                        response.data.append(collegetownStop)
                         self.allStops = response.data
                     }
                 case .error(let error):

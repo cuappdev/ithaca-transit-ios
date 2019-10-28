@@ -1,5 +1,5 @@
 //
-//  PlaceTableViewCell.swift
+//  GeneralTableViewCell.swift
 //  TCAT
 //
 //  Created by Austin Astorga on 3/22/17.
