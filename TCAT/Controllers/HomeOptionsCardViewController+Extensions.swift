@@ -269,7 +269,12 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var routeOptionsViewController: RouteOptionsViewController!
-        let allStopsTableViewController = AllStopsTableViewController()
+        let stopPickerViewController = StopPickerViewController()
+        stopPickerViewController.onSelection = { place in
+            let optionsVC = RouteOptionsViewController(searchTo: place)
+            self.navigationController?.pushViewController(optionsVC, animated: true)
+        }
+
         var didSelectAllStops = false
         var shouldPushViewController = true
 
@@ -290,7 +295,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
 
-        if shouldPushViewController, let vcToPush = didSelectAllStops ? allStopsTableViewController : routeOptionsViewController {
+        if shouldPushViewController, let vcToPush = didSelectAllStops ? stopPickerViewController : routeOptionsViewController {
             navigationController?.pushViewController(vcToPush, animated: true)
         }
     }

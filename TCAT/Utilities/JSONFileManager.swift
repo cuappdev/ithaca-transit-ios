@@ -26,11 +26,11 @@ enum JSONType {
 
 class JSONFileManager {
 
-    // MARK: Singleton vars
+    // MARK: -Singleton vars
 
     static let shared = JSONFileManager()
 
-    // MARK: File vars
+    // MARK: -File vars
 
     private let documentsURL: URL
     private let logURL: URL
@@ -38,11 +38,11 @@ class JSONFileManager {
     private let logFileName = "log.txt"
     private let zipFileName = "log.zip"
 
-    // MARK: Print vars
+    // MARK: -Print vars
 
     private let fileName = "JSONFileManager"
 
-    // MARK: Initialization
+    // MARK: -Initialization
 
     private init() {
         documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -61,7 +61,7 @@ class JSONFileManager {
         }
     }
 
-    // MARK: Manage Zipping
+    // MARK: -Manage Zipping
 
     /// Get the zipped file containing all JSON logs on device
     func getZipURL() -> URL? {
@@ -89,7 +89,7 @@ class JSONFileManager {
         }
     }
 
-    // MARK: Manage Files
+    // MARK: -Manage Files
 
     private func getAllFileURLs() -> [URL] {
         return [logURL] + getAllJSONURLs()
@@ -118,7 +118,7 @@ class JSONFileManager {
         return documentsURL.appendingPathComponent("\(fileName).\(fileExtension)").path
     }
 
-    // MARK: Manage Jsons
+    // MARK: -Manage Jsons
 
     func saveJSON(_ json: JSON, type: JSONType) {
         do {
@@ -176,7 +176,7 @@ class JSONFileManager {
         return jsonURLs
     }
 
-    // MARK: Manage log
+    // MARK: -Manage log
 
     func logSearchParameters(timestamp: Date, startPlace: Place, endPlace: Place, searchTime: Date, searchTimeType: SearchType) {
         logLine(timestamp: timestamp, line: "Search parameters: startPlace: \(startPlace). endPlace: \(endPlace). searchTime: \(Time.dateString(from: searchTime)). searchTimeType: \(searchTimeType)")
@@ -211,7 +211,7 @@ class JSONFileManager {
         }
     }
 
-    // MARK: Print
+    // MARK: -Print
 
     func printAllJSONs() {
         let jsonURLs = getAllJSONURLs()
@@ -234,7 +234,7 @@ class JSONFileManager {
         print("\(fileName) \(#function): \(string!)")
     }
 
-    // MARK: Date Formatting
+    // MARK: -Date Formatting
 
     private func getFileNameString(date: Date, type: JSONType) -> String {
         let formatter = DateFormatter()

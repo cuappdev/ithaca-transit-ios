@@ -10,14 +10,7 @@ import DZNEmptyDataSet
 import FutureNova
 import UIKit
 
-protocol UnwindAllStopsTVCDelegate: class {
-    func dismissSearchResultsVC(place: Place)
-}
-
-class AllStopsTableViewController: UIViewController {
-
-    private weak var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
-
+class StopPickerViewController: UIViewController {
     private var tableView = UITableView()
     private typealias Section = (title: String, places: [Place])
     private var sections: [Section] = []
@@ -25,12 +18,14 @@ class AllStopsTableViewController: UIViewController {
     private var isLoading: Bool { return loadingIndicator != nil }
     private var loadingIndicator: LoadingIndicator?
 
-    init(delegate: UnwindAllStopsTVCDelegate? = nil) {
+    /// Handles a `Place` selection.
+    var onSelection: ((Place) -> ())?
+    
+    init() {
         super.init(nibName: nil, bundle: nil)
-        self.unwindAllStopsTVCDelegate = delegate
     }
 
-    // MARK: View setup
+    // MARK: -View setup
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,7 +62,7 @@ class AllStopsTableViewController: UIViewController {
         }
     }
     
-    // MARK: Refresh stops
+    // MARK: -Refresh stops
 
     private func getStopsFromServer() -> Future<Response<[Place]>> {
         return URLSession.shared.request(endpoint: Endpoint.getAllStops()).decode()
@@ -148,8 +143,8 @@ class AllStopsTableViewController: UIViewController {
     
 }
 
-// MARK: DZNEmptyDataSetSource
-extension AllStopsTableViewController: DZNEmptyDataSetSource {
+// MARK: -DZNEmptyDataSetSource
+extension StopPickerViewController: DZNEmptyDataSetSource {
 
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
         // If loading indicator is being shown, don't display image
@@ -175,8 +170,8 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource {
     }
 }
 
-// MARK: DZNEmptyDataSetDelegate
-extension AllStopsTableViewController: DZNEmptyDataSetDelegate {
+// MARK: -DZNEmptyDataSetDelegate
+extension StopPickerViewController: DZNEmptyDataSetDelegate {
     
     func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
         setUpLoadingIndicator()
@@ -185,8 +180,8 @@ extension AllStopsTableViewController: DZNEmptyDataSetDelegate {
     
 }
 
-// MARK: TableViewDelegate
-extension AllStopsTableViewController: UITableViewDelegate {
+// MARK: -TableViewDelegate
+extension StopPickerViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let inset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
@@ -203,24 +198,15 @@ extension AllStopsTableViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let place = sections[indexPath.section].places[indexPath.row]
-        let optionsVC = RouteOptionsViewController(searchTo: place)
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)
-
-        // TODO: CHECK THIS
-        
-        if let unwindDelegate = unwindAllStopsTVCDelegate {
-            unwindDelegate.dismissSearchResultsVC(place: place)
-            navigationController?.popViewController(animated: true)
-        } else {
-            navigationController?.pushViewController(optionsVC, animated: true)
-        }
+        onSelection?(place)
     }
     
 }
 
-// MARK: Table view data source
-extension AllStopsTableViewController: UITableViewDataSource {
+// MARK: -Table view data source
+extension StopPickerViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count

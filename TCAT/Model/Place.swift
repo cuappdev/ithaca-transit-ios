@@ -60,7 +60,7 @@ class Place: NSObject, Codable {
         self.longitude = longitude
     }
 
-    // MARK: Functions
+    // MARK: -Functions
 
     override var description: String {
         let exception = name == Constants.General.firstFavorite
