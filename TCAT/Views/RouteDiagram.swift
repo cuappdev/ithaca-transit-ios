@@ -10,7 +10,7 @@ import UIKit
 
 class RouteDiagram: UIView {
 
-    // MARK: -View vars
+    // MARK: - View vars
     private var routeDiagramSegments: [RouteDiagramSegment] = []
 
     init(withDirections directions: [Direction], withTravelDistance travelDistance: Double, withWalkingRoute isWalkingRoute: Bool) {

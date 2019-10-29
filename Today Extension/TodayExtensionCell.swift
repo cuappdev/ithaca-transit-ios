@@ -10,14 +10,14 @@ import UIKit
 
 class TodayExtensionCell: UITableViewCell {
 
-    // MARK: -Data vars
+    // MARK: - Data vars
 
     var busDirection: Direction?
     var destinationName: String = ""
     var route: Route?
     var showLiveElements: Bool = true
 
-    // MARK: -View vars
+    // MARK: - View vars
 
     var busIcon: BusIcon?
     var departureLabel = UILabel() // ex: To Baker Flagpole
@@ -26,7 +26,7 @@ class TodayExtensionCell: UITableViewCell {
     var liveIndicatorView = LiveIndicator(size: .small, color: .clear)
     var liveLabel = UILabel()
 
-    // MARK: -Spacing vars
+    // MARK: - Spacing vars
 
     let leftMargin: CGFloat =  12.0
     let rightMargin: CGFloat = 16.0

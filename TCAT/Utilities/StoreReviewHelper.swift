@@ -16,7 +16,7 @@ class StoreReviewHelper {
     /// Shared instance of class
     static let shared = StoreReviewHelper()
 
-    /// MARK: -Variables
+    /// MARK: - Variables
 
     private static let APP_OPENED_COUNT = Constants.UserDefaults.appLaunchCount
 

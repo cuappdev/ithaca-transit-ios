@@ -649,7 +649,6 @@
 		DD47EA501E50D77D009C68EB /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				DCB7170F1FB76EA600BE4D26 /* StopPickerViewController.swift */,
 				BF6095261FD7091B0013E538 /* CustomNavigationController.swift */,
 				DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */,
 				22D76E8C2263E21F00FA21B9 /* HomeMapViewController.swift */,
@@ -666,6 +665,7 @@
 				229BD4E8229947D80042D9D3 /* RouteOptionsViewController+Extensions.swift */,
 				503EC37E1E969B2100B3D4D4 /* SearchResultsViewController.swift */,
 				2292486B21B8ECB90004279C /* ServiceAlertsViewController.swift */,
+				DCB7170F1FB76EA600BE4D26 /* StopPickerViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";

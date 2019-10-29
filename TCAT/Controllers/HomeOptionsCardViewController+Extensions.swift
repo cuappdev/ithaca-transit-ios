@@ -295,7 +295,8 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
 
-        if shouldPushViewController, let vcToPush = didSelectAllStops ? stopPickerViewController : routeOptionsViewController {
+        if shouldPushViewController,
+            let vcToPush = didSelectAllStops ? stopPickerViewController : routeOptionsViewController {
             navigationController?.pushViewController(vcToPush, animated: true)
         }
     }

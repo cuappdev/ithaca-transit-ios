@@ -11,7 +11,8 @@ import FutureNova
 import UIKit
 
 class StopPickerViewController: UIViewController {
-    private var tableView = UITableView()
+    
+    private let tableView = UITableView()
     private typealias Section = (title: String, places: [Place])
     private var sections: [Section] = []
     
@@ -20,12 +21,8 @@ class StopPickerViewController: UIViewController {
 
     /// Handles a `Place` selection.
     var onSelection: ((Place) -> ())?
-    
-    init() {
-        super.init(nibName: nil, bundle: nil)
-    }
 
-    // MARK: -View setup
+    // MARK: - View setup
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,7 +59,7 @@ class StopPickerViewController: UIViewController {
         }
     }
     
-    // MARK: -Refresh stops
+    // MARK: - Refresh stops
 
     private func getStopsFromServer() -> Future<Response<[Place]>> {
         return URLSession.shared.request(endpoint: Endpoint.getAllStops()).decode()
@@ -136,14 +133,10 @@ class StopPickerViewController: UIViewController {
             description: error.localizedDescription)
         Analytics.shared.log(payload)
     }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
 }
 
-// MARK: -DZNEmptyDataSetSource
+// MARK: - DZNEmptyDataSetSource
 extension StopPickerViewController: DZNEmptyDataSetSource {
 
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
@@ -170,7 +163,7 @@ extension StopPickerViewController: DZNEmptyDataSetSource {
     }
 }
 
-// MARK: -DZNEmptyDataSetDelegate
+// MARK: - DZNEmptyDataSetDelegate
 extension StopPickerViewController: DZNEmptyDataSetDelegate {
     
     func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
@@ -180,7 +173,7 @@ extension StopPickerViewController: DZNEmptyDataSetDelegate {
     
 }
 
-// MARK: -TableViewDelegate
+// MARK: - TableViewDelegate
 extension StopPickerViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -205,7 +198,7 @@ extension StopPickerViewController: UITableViewDelegate {
     
 }
 
-// MARK: -Table view data source
+// MARK: - Table view data source
 extension StopPickerViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {

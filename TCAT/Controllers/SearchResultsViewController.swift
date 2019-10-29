@@ -177,7 +177,7 @@ class SearchResultsViewController: UIViewController {
 
 }
 
-// MARK: -TableView Data Source
+// MARK: - TableView Data Source
 extension SearchResultsViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -212,7 +212,7 @@ extension SearchResultsViewController: UITableViewDataSource {
 
 }
 
-// MARK: -TableView Delegate
+// MARK: - TableView Delegate
 extension SearchResultsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -281,7 +281,7 @@ extension SearchResultsViewController: UITableViewDelegate {
     }
 }
 
-// MARK: -ScrollView Delegate
+// MARK: - ScrollView Delegate
 extension SearchResultsViewController {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -293,7 +293,7 @@ extension SearchResultsViewController {
 
 }
 
-// MARK: -Search Bar Delegate
+// MARK: - Search Bar Delegate
 extension SearchResultsViewController: UISearchBarDelegate, UISearchResultsUpdating {
 
     func updateSearchResults(for searchController: UISearchController) {
@@ -320,7 +320,7 @@ extension SearchResultsViewController: UISearchBarDelegate, UISearchResultsUpdat
 
 }
 
-// MARK: -Location Manager Delegates
+// MARK: - Location Manager Delegates
 extension SearchResultsViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -345,7 +345,7 @@ extension SearchResultsViewController: CLLocationManagerDelegate {
 
 }
 
-// MARK: -Navigation Controller Delegate
+// MARK: - Navigation Controller Delegate
 extension SearchResultsViewController: UINavigationControllerDelegate {
 
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
@@ -356,7 +356,7 @@ extension SearchResultsViewController: UINavigationControllerDelegate {
 
 }
 
-// MARK: -DZNEmptyDataSet DataSource
+// MARK: - DZNEmptyDataSet DataSource
 // To be eventually removed and replaced with recent searches
 extension SearchResultsViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
