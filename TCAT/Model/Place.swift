@@ -13,7 +13,7 @@ enum PlaceType: String, Codable {
     case applePlace, busStop, unknown
 }
 
-@objc(Place) class Place: NSObject, Codable {
+class Place: NSObject, Codable {
 
     var name: String
     var type: PlaceType
@@ -60,7 +60,7 @@ enum PlaceType: String, Codable {
         self.longitude = longitude
     }
 
-    // MARK: - Functions
+    // MARK: Functions
 
     override var description: String {
         let exception = name == Constants.General.firstFavorite

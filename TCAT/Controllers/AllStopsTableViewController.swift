@@ -18,15 +18,17 @@ class AllStopsTableViewController: UIViewController {
 
     private weak var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
 
-    private var tableView = UITableView(frame: .zero)
-
-    private var allStops: [Place] = []
+    private var tableView = UITableView()
+    
+    private typealias Section = (title: String, places: [Place])
+    private var sections: [Section] = []
+    
+//    private var allStops: [Place] = []
     private var isLoading: Bool { return loadingIndicator != nil }
     private var loadingIndicator: LoadingIndicator?
     private let networking: Networking = URLSession.shared.request
-    private var sectionIndexes: [String: [Place]] = [:]
-    private var sortedKeys: [String] = []
-    private var height: CGFloat?
+//    private var sectionIndexes: [String: [Place]] = [:]
+//    private var sortedKeys: [String] = []
 
     init(delegate: UnwindAllStopsTVCDelegate? = nil) {
         super.init(nibName: nil, bundle: nil)
@@ -37,6 +39,7 @@ class AllStopsTableViewController: UIViewController {
         super.viewDidLoad()
 
         title = Constants.Titles.allStops
+        
         setupTableView()
         setupConstraints()
 
@@ -52,7 +55,6 @@ class AllStopsTableViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
-
         view.addSubview(tableView)
     }
 
@@ -63,67 +65,38 @@ class AllStopsTableViewController: UIViewController {
         }
     }
 
-    private func createSectionIndexesForBusStop() {
-        var sectionIndexDictionary: [String: [Place]] = [:]
-        var numberBusStops: [Place] = []
-
-        allStops.forEach { busStop in
-            if let firstChar = busStop.name.capitalized.first,
-                let firstScalar = firstChar.unicodeScalars.first {
-                if CharacterSet.decimalDigits.contains(firstScalar) {
-                    numberBusStops.append(busStop)
-                } else {
-                    if var stops = sectionIndexDictionary["\(firstChar)"] {
-                        stops.append(busStop)
-                        sectionIndexDictionary["\(firstChar)"] = stops
-                    } else {
-                        sectionIndexDictionary["\(firstChar)"] = [busStop]
-                    }
-                }
-            }
-            // Adding "#" to section indexes for bus stops that start with a number
-            sectionIndexDictionary["#"] = numberBusStops
-        }
-
-        sectionIndexes = sectionIndexDictionary
-        sortBusStopKeys()
-    }
-
-    /// Retrieves the keys from the sectionIndexDictionary
-    private func sortBusStopKeys() {
-        // Don't include key '#'
-        sortedKeys = Array(sectionIndexes.keys)
-            .sorted()
-            .filter { $0 != "#" }
-
-        if !allStops.isEmpty {
-            // Adding "#" to keys for bus stops that start with a number
-            sortedKeys.append("#")
-        }
-    }
-
-    @objc private func backAction() {
-        navigationController?.popViewController(animated: true)
-    }
-
     private func setUpLoadingIndicator() {
         loadingIndicator = LoadingIndicator()
-        if let loadingIndicator = loadingIndicator {
-            view.addSubview(loadingIndicator)
-            loadingIndicator.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-                make.width.height.equalTo(40)
-            }
+        guard let loadingIndicator = loadingIndicator else { return }
+        view.addSubview(loadingIndicator)
+        loadingIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(40)
         }
     }
 
-    private func getAllStops() -> Future<Response<[Place]>> {
+    private func getStopsFromServer() -> Future<Response<[Place]>> {
         return networking(Endpoint.getAllStops()).decode()
     }
 
-    /// Get all bus stops and store in userDefaults
-    private func refreshAllStops() {
+    /// Get all bus stops and store in UserDefaults
+    private func refreshStops() {
         setUpLoadingIndicator()
+        
+        if let busStopsData = userDefaults.data(forKey: Constants.UserDefaults.allBusStops),
+            let busStops = try? decoder.decode([Place].self, from: busStopsData) {
+            loadingIndicator?.removeFromSuperview()
+            loadingIndicator = nil
+            
+            guard !busStops.isEmpty else { return }
+            setupTableSections(busStops: busStops)
+            tableView.reloadData()
+        } else {
+            getStopsFromServer().observe { [weak self] result in
+                
+            }
+        }
+        
         if let allBusStops = userDefaults.value(forKey: Constants.UserDefaults.allBusStops) as? Data,
             var busStopArray = try? decoder.decode([Place].self, from: allBusStops) {
             // Check if empty so that an empty array isn't returned
@@ -177,13 +150,33 @@ class AllStopsTableViewController: UIViewController {
             }
         }
     }
+    
+    private func setupTableSections(busStops: [Place]) {
+        var sectionsDict: [String : [Place]] = [:]
+
+        // Sort into dict by first letter
+        for busStop in busStops {
+            if let firstChar = busStop.name.capitalized.first {
+                let section = firstChar.isNumber ? "#" : String(firstChar)
+                sectionsDict[section, default: []].append(busStop)
+            }
+        }
+        
+        // Sort titles, putting # in the end
+        let titles = sectionsDict.keys.sorted(by: { $0 == "#" ? false : $0 < $1 })
+        // Sort places once at the end and update global sections
+        sections = titles.map { title in
+            let places = sectionsDict[title]?.sorted(by: { $0.name < $1.name }) ?? []
+            return Section(title: title, places: places)
+        }
+    }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
 
-// MARK: - DZNEmptyDataSetSource
+// MARK: DZNEmptyDataSetSource
 extension AllStopsTableViewController: DZNEmptyDataSetSource {
 
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
@@ -212,49 +205,38 @@ extension AllStopsTableViewController: DZNEmptyDataSetSource {
 
 // MARK: DZNEmptyDataSetDelegate
 extension AllStopsTableViewController: DZNEmptyDataSetDelegate {
-
+    
     func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
         setUpLoadingIndicator()
         refreshAllStops()
     }
+    
 }
 
-// MARK: - TableView Delegate
+// MARK: TableViewDelegate
 extension AllStopsTableViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let inset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
-        if cell.responds(to: #selector(setter: UITableViewCell.separatorInset)) {
-            cell.separatorInset = inset
-        }
-        if cell.responds(to: #selector(setter: UIView.preservesSuperviewLayoutMargins)) {
-            cell.preservesSuperviewLayoutMargins = false
-        }
-        if cell.responds(to: #selector(setter: UIView.layoutMargins)) {
-            cell.layoutMargins = inset
-        }
+        cell.separatorInset = inset
+        cell.preservesSuperviewLayoutMargins = false
+        cell.layoutMargins = inset
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-            else { return UITableViewCell() }
-
-        guard let section = sectionIndexes[sortedKeys[indexPath.section]] else { return cell }
-        cell.configure(for: section[indexPath.row])
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as? PlaceTableViewCell else { return UITableViewCell() }
+        cell.configure(for: sections[indexPath.section].places[indexPath.row])
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let section = sectionIndexes[sortedKeys[indexPath.section]]
-        guard let place = section?[indexPath.row] else {
-            print("Could not find bus stop")
-            return
-        }
+        let place = sections[indexPath.section].places[indexPath.row]
         let optionsVC = RouteOptionsViewController(searchTo: place)
-
         definesPresentationContext = false
         tableView.deselectRow(at: indexPath, animated: true)
 
+        // TODO: CHECK THIS
+        
         if let unwindDelegate = unwindAllStopsTVCDelegate {
             unwindDelegate.dismissSearchResultsVC(place: place)
             navigationController?.popViewController(animated: true)
@@ -262,25 +244,22 @@ extension AllStopsTableViewController: UITableViewDelegate {
             navigationController?.pushViewController(optionsVC, animated: true)
         }
     }
+    
 }
 
-// MARK: - Table view data source
+// MARK: Table view data source
 extension AllStopsTableViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return sectionIndexes.count
-    }
-
-    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return sortedKeys
+        return sections.count
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sortedKeys[section]
+        return sections[section].title
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sectionIndexes[sortedKeys[section]]?.count ?? 0
+        return sections[section].places.count
     }
 
 }
