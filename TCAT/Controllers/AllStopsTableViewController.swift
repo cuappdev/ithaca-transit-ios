@@ -19,31 +19,25 @@ class AllStopsTableViewController: UIViewController {
     private weak var unwindAllStopsTVCDelegate: UnwindAllStopsTVCDelegate?
 
     private var tableView = UITableView()
-    
     private typealias Section = (title: String, places: [Place])
     private var sections: [Section] = []
     
-//    private var allStops: [Place] = []
     private var isLoading: Bool { return loadingIndicator != nil }
     private var loadingIndicator: LoadingIndicator?
-    private let networking: Networking = URLSession.shared.request
-//    private var sectionIndexes: [String: [Place]] = [:]
-//    private var sortedKeys: [String] = []
 
     init(delegate: UnwindAllStopsTVCDelegate? = nil) {
         super.init(nibName: nil, bundle: nil)
         self.unwindAllStopsTVCDelegate = delegate
     }
 
+    // MARK: View setup
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         title = Constants.Titles.allStops
-        
         setupTableView()
-        setupConstraints()
-
-        refreshAllStops()
+        refreshStops()
     }
 
     private func setupTableView() {
@@ -56,9 +50,7 @@ class AllStopsTableViewController: UIViewController {
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
         view.addSubview(tableView)
-    }
-
-    private func setupConstraints() {
+        
         tableView.snp.makeConstraints { make in
             make.leading.bottom.trailing.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide)
@@ -74,12 +66,14 @@ class AllStopsTableViewController: UIViewController {
             make.width.height.equalTo(40)
         }
     }
+    
+    // MARK: Refresh stops
 
     private func getStopsFromServer() -> Future<Response<[Place]>> {
-        return networking(Endpoint.getAllStops()).decode()
+        return URLSession.shared.request(endpoint: Endpoint.getAllStops()).decode()
     }
 
-    /// Get all bus stops and store in UserDefaults
+    /// Get all bus stops from the server, update UserDefaults, and refresh the table
     private func refreshStops() {
         setUpLoadingIndicator()
         
@@ -87,62 +81,38 @@ class AllStopsTableViewController: UIViewController {
             let busStops = try? decoder.decode([Place].self, from: busStopsData) {
             loadingIndicator?.removeFromSuperview()
             loadingIndicator = nil
-            
-            guard !busStops.isEmpty else { return }
-            setupTableSections(busStops: busStops)
+            sections = tableSections(for: busStops)
             tableView.reloadData()
         } else {
             getStopsFromServer().observe { [weak self] result in
+                guard let self = self else { return }
                 
-            }
-        }
-        
-        if let allBusStops = userDefaults.value(forKey: Constants.UserDefaults.allBusStops) as? Data,
-            let busStopArray = try? decoder.decode([Place].self, from: allBusStops) {
-            allStops = busStopArray
-            loadingIndicator?.removeFromSuperview()
-            loadingIndicator = nil
-            createSectionIndexesForBusStop()
-            tableView.reloadData()
-            return
-        }
-        getAllStops().observe { [weak self] result in
-            guard let `self` = self else { return }
-            DispatchQueue.main.async {
                 switch result {
                 case .value(let response):
-                    if !response.data.isEmpty {
-                        // Save bus stops in userDefaults
-                        do {
-                            let encodedObject = try JSONEncoder().encode(response.data)
-                            userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
-                        } catch let error {
-                            self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                            let payload = NetworkErrorPayload(
-                                location: "\(self) Get All Stops",
-                                type: "\((error as NSError).domain)",
-                                description: error.localizedDescription)
-                            Analytics.shared.log(payload)
-                        }
-                        self.allStops = response.data
+                    guard !response.data.isEmpty else { return } // ensure the response has stops
+                    
+                    do {
+                        let stopsData = try JSONEncoder().encode(response.data) // note: response.data is [Place], not Data
+                        userDefaults.set(stopsData, forKey: Constants.UserDefaults.allBusStops)
+                        self.sections = self.tableSections(for: response.data)
+                    } catch {
+                        self.logRefreshError(error)
                     }
                 case .error(let error):
-                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                    let payload = NetworkErrorPayload(
-                        location: "\(self) Get All Stops",
-                        type: "\((error as NSError).domain)",
-                        description: error.localizedDescription)
-                    Analytics.shared.log(payload)
+                    self.logRefreshError(error)
                 }
-                self.loadingIndicator?.removeFromSuperview()
-                self.loadingIndicator = nil
-                self.createSectionIndexesForBusStop()
-                self.tableView.reloadData()
+                
+                DispatchQueue.main.async {
+                    self.loadingIndicator?.removeFromSuperview()
+                    self.loadingIndicator = nil
+                    self.tableView.reloadData()
+                }
             }
         }
     }
     
-    private func setupTableSections(busStops: [Place]) {
+    /// Sorts `busStops` into table `Section`s in alphabetical order.
+    private func tableSections(for busStops: [Place]) -> [Section] {
         var sectionsDict: [String : [Place]] = [:]
 
         // Sort into dict by first letter
@@ -153,18 +123,29 @@ class AllStopsTableViewController: UIViewController {
             }
         }
         
-        // Sort titles, putting # in the end
+        // Sort titles, putting # at the end
         let titles = sectionsDict.keys.sorted(by: { $0 == "#" ? false : $0 < $1 })
-        // Sort places once at the end and update global sections
-        sections = titles.map { title in
+        // Sort places once at the end and return
+        return titles.map { title in
             let places = sectionsDict[title]?.sorted(by: { $0.name < $1.name }) ?? []
             return Section(title: title, places: places)
         }
+    }
+    
+    /// Logs an error that was thrown while attempting to refresh the bus stops.
+    private func logRefreshError(_ error: Error) {
+        self.printClass(context: "AllStopsTableViewController.refreshStops error", message: error.localizedDescription)
+        let payload = NetworkErrorPayload(
+            location: "\(self) Get All Stops",
+            type: "\((error as NSError).domain)",
+            description: error.localizedDescription)
+        Analytics.shared.log(payload)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
 }
 
 // MARK: DZNEmptyDataSetSource
@@ -199,7 +180,7 @@ extension AllStopsTableViewController: DZNEmptyDataSetDelegate {
     
     func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
         setUpLoadingIndicator()
-        refreshAllStops()
+        refreshStops()
     }
     
 }
