@@ -10,7 +10,7 @@ import UIKit
 import DZNEmptyDataSet
 import FutureNova
 
-protocol FavoritesSelectionDelegate: class { 
+protocol FavoritesSelectionDelegate: class {
     func didAddNewFavorite()
 }
 
