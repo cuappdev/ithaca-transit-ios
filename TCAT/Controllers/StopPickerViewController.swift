@@ -116,7 +116,15 @@ class StopPickerViewController: UIViewController {
         }
         
         // Sort titles, putting # at the end
-        let titles = sectionsDict.keys.sorted(by: { $0 == "#" ? false : $0 < $1 })
+        let titles = sectionsDict.keys.sorted { (a, b) -> Bool in
+            if a == "#" {
+                return false
+            } else if b == "#" {
+                return true
+            } else {
+                return a < b
+            }
+        }
         // Sort places once at the end and return
         return titles.map { title in
             let places = sectionsDict[title]?.sorted(by: { $0.name < $1.name }) ?? []
@@ -201,6 +209,10 @@ extension StopPickerViewController: UITableViewDelegate {
 // MARK: - Table view data source
 extension StopPickerViewController: UITableViewDataSource {
 
+    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        return sections.map { $0.title }
+    }
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
     }
