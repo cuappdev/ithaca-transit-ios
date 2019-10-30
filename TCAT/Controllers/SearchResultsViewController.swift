@@ -249,7 +249,12 @@ extension SearchResultsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var didSelectAllStops = false
-        let allStopsTVC = AllStopsTableViewController(delegate: self)
+        let stopPicker = StopPickerViewController()
+        stopPicker.onSelection = { place in
+            self.returningFromAllStopsBusStop = place
+            self.returningFromAllStopsTVC = true
+            self.navigationController?.popViewController(animated: true) // pop the StopPicker
+        }
 
         if sections[indexPath.section] == .seeAllStops {
             didSelectAllStops = true
@@ -279,7 +284,7 @@ extension SearchResultsViewController: UITableViewDelegate {
             if parent?.isKind(of: UISearchController.self) ?? false {
                 let navController = self.parent?.presentingViewController?.navigationController
                 navController?.delegate = self
-                navController?.pushViewController(allStopsTVC, animated: true)
+                navController?.pushViewController(stopPicker, animated: true)
             }
         }
     }
@@ -324,15 +329,6 @@ extension SearchResultsViewController: UISearchBarDelegate, UISearchResultsUpdat
 
 }
 
-extension SearchResultsViewController: UnwindAllStopsTVCDelegate {
-
-    func dismissSearchResultsVC(place: Place) {
-        returningFromAllStopsBusStop = place
-        returningFromAllStopsTVC = true
-    }
-
-}
-
 // MARK: - Location Manager Delegates
 extension SearchResultsViewController: CLLocationManagerDelegate {
 
@@ -369,8 +365,7 @@ extension SearchResultsViewController: UINavigationControllerDelegate {
 
 }
 
-/// MARK: DZNEmptyDataSet DataSource
-
+// MARK: - DZNEmptyDataSet DataSource
 // To be eventually removed and replaced with recent searches
 extension SearchResultsViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {

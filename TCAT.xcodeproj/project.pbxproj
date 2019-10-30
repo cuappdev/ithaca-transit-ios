@@ -134,7 +134,7 @@
 		D183AA021E6CB092006A9A15 /* Extensions+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* Extensions+App.swift */; };
 		DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */; };
 		DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96451FC21B29009955C6 /* HeaderView.swift */; };
-		DCB717101FB76EA600BE4D26 /* AllStopsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */; };
+		DCB717101FB76EA600BE4D26 /* StopPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7170F1FB76EA600BE4D26 /* StopPickerViewController.swift */; };
 		DD04B1AD208CC5E4006C1C23 /* JSONFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD04B1AC208CC5E4006C1C23 /* JSONFileManager.swift */; };
 		DD2F98A31E5150990005F6BC /* RouteOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F98A21E5150990005F6BC /* RouteOptionsViewController.swift */; };
 		DD3D9C211F94297100B164D4 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C201F94297100B164D4 /* Reachability.swift */; };
@@ -307,7 +307,7 @@
 		D94BD30021599E3200C9214E /* EventPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EventPayload.swift; path = Utilities/EventPayload.swift; sourceTree = "<group>"; };
 		DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FavoritesTableViewController.swift; path = Controllers/FavoritesTableViewController.swift; sourceTree = "<group>"; };
 		DC2E96451FC21B29009955C6 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeaderView.swift; path = Views/HeaderView.swift; sourceTree = "<group>"; };
-		DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AllStopsTableViewController.swift; path = Controllers/AllStopsTableViewController.swift; sourceTree = "<group>"; };
+		DCB7170F1FB76EA600BE4D26 /* StopPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StopPickerViewController.swift; path = Controllers/StopPickerViewController.swift; sourceTree = "<group>"; };
 		DD04B1AC208CC5E4006C1C23 /* JSONFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JSONFileManager.swift; path = Utilities/JSONFileManager.swift; sourceTree = "<group>"; };
 		DD16B8E41E7046390089B7B2 /* BusIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusIcon.swift; path = Views/BusIcon.swift; sourceTree = "<group>"; };
 		DD2F989A1E50F99A0005F6BC /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Route.swift; path = Model/Route.swift; sourceTree = "<group>"; };
@@ -649,7 +649,6 @@
 		DD47EA501E50D77D009C68EB /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				DCB7170F1FB76EA600BE4D26 /* AllStopsTableViewController.swift */,
 				BF6095261FD7091B0013E538 /* CustomNavigationController.swift */,
 				DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */,
 				22D76E8C2263E21F00FA21B9 /* HomeMapViewController.swift */,
@@ -666,6 +665,7 @@
 				229BD4E8229947D80042D9D3 /* RouteOptionsViewController+Extensions.swift */,
 				503EC37E1E969B2100B3D4D4 /* SearchResultsViewController.swift */,
 				2292486B21B8ECB90004279C /* ServiceAlertsViewController.swift */,
+				DCB7170F1FB76EA600BE4D26 /* StopPickerViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1172,7 +1172,7 @@
 				7EBD9D8B22263096008BF900 /* Place.swift in Sources */,
 				DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */,
 				DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */,
-				DCB717101FB76EA600BE4D26 /* AllStopsTableViewController.swift in Sources */,
+				DCB717101FB76EA600BE4D26 /* StopPickerViewController.swift in Sources */,
 				22D76E8E2263E21F00FA21B9 /* HomeMapViewController.swift in Sources */,
 				7EBD9D9E22263120008BF900 /* WalkWithDistanceIcon.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,
