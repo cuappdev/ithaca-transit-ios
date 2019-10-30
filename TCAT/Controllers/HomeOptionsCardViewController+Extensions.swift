@@ -281,6 +281,14 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
                 shouldPushViewController = false
                 presentFavoritesTVC()
             } else {
+                if let searchText = searchBar.text {
+                    let payload = SearchResultSelectedPayload(
+                        searchText: searchText,
+                        selectedIndex: indexPath.row,
+                        totalResults: sections[indexPath.section].getItems().count
+                    )
+                    Analytics.shared.log(payload)
+                }
                 routeOptionsViewController = RouteOptionsViewController(searchTo: place)
                 routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
                 Global.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)

@@ -254,6 +254,15 @@ extension SearchResultsViewController: UITableViewDelegate {
         if sections[indexPath.section] == .seeAllStops {
             didSelectAllStops = true
         } else {
+            if let searchBar = searchBar,
+                let searchText = searchBar.text {
+                let payload = SearchResultSelectedPayload(
+                    searchText: searchText,
+                    selectedIndex: indexPath.row,
+                    totalResults: sections[indexPath.section].getItems().count
+                )
+                Analytics.shared.log(payload)
+            }
             let place = sections[indexPath.section].getItems()[indexPath.row]
             if place.latitude == 0.0 && place.longitude == 0.0 {
                 showLocationDeniedAlert()

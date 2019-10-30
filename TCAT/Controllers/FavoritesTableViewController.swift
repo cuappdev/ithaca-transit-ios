@@ -122,6 +122,14 @@ extension FavoritesTableViewController: UITableViewDelegate {
         let cell = tableView.cellForRow(at: indexPath)
         cell?.accessoryView = UIActivityIndicatorView()
         tableView.deselectRow(at: indexPath, animated: true)
+        if let searchText = searchBar.text {
+            let payload = SearchResultSelectedPayload(
+                searchText: searchText,
+                selectedIndex: indexPath.row,
+                totalResults: resultsSection.getItems().count
+            )
+            Analytics.shared.log(payload)
+        }
         if let place = resultsSection.getItem(at: indexPath.row) {
             Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
             selectionDelegate?.didAddNewFavorite()
