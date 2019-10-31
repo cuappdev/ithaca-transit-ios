@@ -35,7 +35,7 @@ extension HomeOptionsCardViewController {
         )
 
         updatePlaces()
-        createDefaultSections()
+        updateSections()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -55,7 +55,7 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
         searchBar.endEditing(true)
         searchBar.text = nil
         animateInInfoButton()
-        createDefaultSections()
+        updateSections()
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -80,7 +80,7 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
         if view.frame.height == collapsedHeight {
             if let searchText = searchBar.text,
                 searchText.isEmpty {
-                createDefaultSections()
+                updateSections()
             } else {
                 tableView.reloadData()
                 DispatchQueue.main.async {
@@ -97,7 +97,9 @@ extension HomeOptionsCardViewController: HeaderViewDelegate {
     func presentFavoritePicker() {
         if favorites.count < 2 {
             let favoritesTVC = FavoritesTableViewController()
-            favoritesTVC.selectionDelegate = self
+            favoritesTVC.didAddFavorite = { 
+                self.updateSections()
+            }
             let navController = CustomNavigationController(rootViewController: favoritesTVC)
             present(navController, animated: true, completion: nil)
         } else {
@@ -113,26 +115,13 @@ extension HomeOptionsCardViewController: HeaderViewDelegate {
     func clearRecentSearches() {
         Global.shared.deleteAllRecents()
         recentLocations = []
-        createDefaultSections()
+        updateSections()
     }
 
 }
 
 // MARK: - MapView Delegate
 extension HomeOptionsCardViewController: HomeMapViewDelegate {
-
-    func reachabilityChanged(connection: Reachability.Connection) {
-        switch connection {
-        case .none:
-            isNetworkDown = true
-            searchBar.isUserInteractionEnabled = false
-            sections = []
-        case .cellular, .wifi:
-            isNetworkDown = false
-            createDefaultSections()
-            searchBar.isUserInteractionEnabled = true
-        }
-    }
 
     func mapViewWillMove() {
         if let searchBarText = searchBar.text,
@@ -178,7 +167,7 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
                     else { return UITableViewCell() }
                 cell.configure(for: favoritePlaces[indexPath.row])
                 return cell
-            } else {
+            } else { // if there are no favorites, show an AddFavorite cell
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.addFavoriteIdentifier) as? AddFavoriteTableViewCell
                     else { return UITableViewCell() }
                 return cell
@@ -268,11 +257,11 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
             case .favorites:
                 let place = sections[indexPath.section].getItems()[indexPath.row]
                 favorites = Global.shared.deleteFavorite(favorite: place, allFavorites: favorites)
-                createDefaultSections()
+                updateSections()
             case .recentSearches:
                 let place = sections[indexPath.section].getItems()[indexPath.row]
                 recentLocations = Global.shared.deleteRecent(recent: place, allRecents: recentLocations)
-                createDefaultSections()
+                updateSections()
             default: break
             }
         }
@@ -314,13 +303,4 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
     }
-}
-
-// MARK: - Favorites Selection Delegate
-extension HomeOptionsCardViewController: FavoritesSelectionDelegate {
-
-    func didAddNewFavorite() {
-        updatePlaces()
-    }
-
 }

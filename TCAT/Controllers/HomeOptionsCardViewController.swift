@@ -18,6 +18,7 @@ protocol HomeOptionsCardDelegate: class {
     func getCurrentLocation() -> CLLocation?
 }
 
+// MARK: - HomeOptionsCard VC
 class HomeOptionsCardViewController: UIViewController {
 
     weak var delegate: HomeOptionsCardDelegate?
@@ -67,29 +68,37 @@ class HomeOptionsCardViewController: UIViewController {
         let openScreenSpace = UIScreen.main.bounds.height - HomeMapViewController.optionsCardInset.top - keyboardHeight - 20
         return min(maxCardHeight, openScreenSpace)
     }
+    
+    // MARK: - Table Content Variables
 
+    /// Recent locations searched for. Up to `maxRecentsCount` are displayed in the table.
+    /// Updating this variable reloads the table.
     var recentLocations: [Place] = [] {
         didSet {
             if recentLocations.count > maxRecentsCount {
                 recentLocations = Array(recentLocations.prefix(maxRecentsCount))
             }
             if !isNetworkDown {
-                createDefaultSections()
+                updateSections()
             }
         }
     }
     
+    /// The user's favorited places. Up to `maxFavoritesCount` are displayed in the table.
+    /// Updating this variable reloads the table.
     var favorites: [Place] = [] {
         didSet {
             if favorites.count > maxFavoritesCount {
                 favorites = Array(favorites.prefix(maxFavoritesCount))
             }
             if !isNetworkDown {
-                createDefaultSections()
+                updateSections()
             }
         }
     }
     
+    /// The table sections.
+    /// Updating this variable reloads the table.
     var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
@@ -197,7 +206,8 @@ class HomeOptionsCardViewController: UIViewController {
         }
     }
 
-    func createDefaultSections() {
+    /// Updates the table sections to show favorites, recent searches, and all stops. Ultimately reloads the table.
+    func updateSections() {
         sections.removeAll()
         sections.append(Section.favorites(items: favorites))
         if recentLocations.count > 0 {
@@ -206,6 +216,7 @@ class HomeOptionsCardViewController: UIViewController {
         sections.append(Section.seeAllStops)
     }
     
+    /// Updates recent searches and favorites. Ultimately reloads the table.
     func updatePlaces() {
         recentLocations = Global.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
         favorites = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
@@ -295,7 +306,7 @@ class HomeOptionsCardViewController: UIViewController {
                 }
             }
         } else {
-            createDefaultSections()
+            updateSections()
         }
     }
     
