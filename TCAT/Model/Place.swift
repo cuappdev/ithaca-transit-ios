@@ -38,10 +38,10 @@ enum PlaceType: String, Codable {
     }
 
     /// Initializer for Google Places
-    convenience init(name: String, placeDescription: String = "") {
-        self.init(name: name)
-        self.placeDescription = placeDescription
-    }
+//    convenience init(name: String, placeDescription: String = "") {
+//        self.init(name: name)
+//        self.placeDescription = placeDescription
+//    }
 
     /// Initializer for any type of location.
     convenience init(name: String, latitude: Double, longitude: Double) {

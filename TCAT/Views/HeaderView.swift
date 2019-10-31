@@ -11,7 +11,7 @@ import UIKit
 
 protocol HeaderViewDelegate: class {
     func clearRecentSearches()
-    func displayFavoritesTVC()
+    func presentFavoritePicker()
 }
 
 enum ButtonOption {
@@ -30,7 +30,7 @@ class HeaderView: UITableViewHeaderFooterView {
     private var label: UILabel!
 
     @objc private func addNewFavorite(sender: UIButton) {
-        headerViewDelegate?.displayFavoritesTVC()
+        headerViewDelegate?.presentFavoritePicker()
     }
 
     @objc private func clearRecentSearches(sender: UIButton) {

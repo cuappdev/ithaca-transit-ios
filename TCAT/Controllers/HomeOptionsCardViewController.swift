@@ -12,6 +12,7 @@ import GoogleMaps
 import SnapKit
 import UIKit
 
+// MARK: - HomeOptionsCardDelegate
 protocol HomeOptionsCardDelegate: class {
     func updateSize()
     func getCurrentLocation() -> CLLocation?
@@ -22,18 +23,17 @@ class HomeOptionsCardViewController: UIViewController {
     weak var delegate: HomeOptionsCardDelegate?
 
     private let infoButton = UIButton(type: .infoLight)
-    var searchBar: UISearchBar!
     private var searchBarSeparator: UIView!
+    var searchBar: UISearchBar!
     var tableView: UITableView!
 
-    var currentLocation: CLLocation? { return delegate?.getCurrentLocation() }
     private let networking: Networking = URLSession.shared.request
     private var searchResultsSection: Section!
+    var currentLocation: CLLocation? { return delegate?.getCurrentLocation() }
     var timer: Timer?
-
-    let headerHeight: CGFloat = 42
-    private let infoButtonAnimationDuration = 0.1
     var isNetworkDown = false
+
+    private let infoButtonAnimationDuration = 0.1
     private var keyboardHeight: CGFloat = 0
     private let maxFavoritesCount = 2
     private let maxHeaderCount: CGFloat = 2
@@ -43,10 +43,11 @@ class HomeOptionsCardViewController: UIViewController {
     private let maxSeparatorCount: CGFloat = 1
     private let searchBarHeight: CGFloat = 54
     private let searchBarSeparatorHeight: CGFloat = 1
-    private let searchBarTopOffset: CGFloat = 3 // Add top offset to search bar so that the search bar text is vertically centered.
+    private let searchBarTopOffset: CGFloat = 3 // Add top offset to search bar so text is vertically centered
     private let tableViewRowHeight: CGFloat = 50
+    let headerHeight: CGFloat = 42
 
-    /// Height of the card when collapsed. This includes just searchbar height and any extra padding/spacing
+    /// Height of the card when collapsed. This includes just searchBar height and any extra padding/spacing
     var collapsedHeight: CGFloat {
         return searchBarHeight + searchBarSeparatorHeight + searchBarTopOffset
     }
@@ -77,6 +78,7 @@ class HomeOptionsCardViewController: UIViewController {
             }
         }
     }
+    
     var favorites: [Place] = [] {
         didSet {
             if favorites.count > maxFavoritesCount {
@@ -87,6 +89,7 @@ class HomeOptionsCardViewController: UIViewController {
             }
         }
     }
+    
     var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
@@ -96,6 +99,8 @@ class HomeOptionsCardViewController: UIViewController {
         }
     }
 
+    // MARK: - VC initializer and setup
+    
     init(delegate: HomeOptionsCardDelegate? = nil) {
         super.init(nibName: nil, bundle: nil)
         self.delegate = delegate
@@ -193,32 +198,34 @@ class HomeOptionsCardViewController: UIViewController {
     }
 
     func createDefaultSections() {
-        var allSections: [Section] = []
-        let recentSearchesSection = Section.recentSearches(items: recentLocations)
-        var favoritesSection = Section.favorites(items: favorites)
-        if favoritesSection.isEmpty {
-            let addFavorites = Place(
-                name: Constants.General.firstFavorite,
-                placeDescription: Constants.General.tapHere)
-            addFavorites.type = .busStop // Special exception to make pin blue for favorite!
-            favoritesSection = Section.favorites(items: [addFavorites])
+        sections.removeAll()
+        sections.append(Section.favorites(items: favorites))
+        if recentLocations.count > 0 {
+            sections.append(Section.recentSearches(items: recentLocations))
         }
-        allSections.append(favoritesSection)
-        allSections.append(recentSearchesSection)
-        allSections.append(Section.seeAllStops)
-        sections = allSections.filter { !$0.isEmpty || $0 == Section.seeAllStops }
+        sections.append(Section.seeAllStops)
+    }
+    
+    func updatePlaces() {
+        recentLocations = Global.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
+        favorites = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
     }
 
+    // MARK: - Table Calculations
+    
     private func tableViewContentHeight() -> CGFloat {
         return sections.reduce(0) { (result, section) -> CGFloat in
-            var sectionHeaderHeight: CGFloat = 0
             switch section {
-            case .favorites, .recentSearches: sectionHeaderHeight = headerHeight
-            case .seeAllStops: sectionHeaderHeight = HeaderView.separatorViewHeight
-            default: break
+            case .favorites:
+                let rows = CGFloat(max(1, section.getItems().count)) // at least the Add Favorites row if there are none
+                return headerHeight + tableViewRowHeight * rows + result
+            case .recentSearches:
+                return headerHeight + tableViewRowHeight * CGFloat(section.getItems().count) + result
+            case .seeAllStops:
+                return HeaderView.separatorViewHeight + tableViewRowHeight + result
+            default:
+                return tableViewRowHeight * CGFloat(section.getItems().count) + result
             }
-            let rowCount = section == .seeAllStops ? 1 : section.getItems().count // TODO: Find better way to represent sections
-            return sectionHeaderHeight + tableViewRowHeight * CGFloat(rowCount) + result
         }
     }
 
@@ -231,11 +238,8 @@ class HomeOptionsCardViewController: UIViewController {
             return collapsedHeight
         }
     }
-
-    func updatePlaces() {
-        recentLocations = Global.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
-        favorites = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
-    }
+    
+    // MARK: - infoButton Interactivity
 
     func animateInInfoButton() {
         UIView.animate(withDuration: infoButtonAnimationDuration) {
@@ -263,20 +267,15 @@ class HomeOptionsCardViewController: UIViewController {
             self.view.layoutIfNeeded()
         }
     }
-
-    @objc func presentFavoritesTVC(sender: UIButton? = nil) {
-        let favoritesTVC = FavoritesTableViewController()
-        favoritesTVC.selectionDelegate = self
-        let navController = CustomNavigationController(rootViewController: favoritesTVC)
-        present(navController, animated: true, completion: nil)
-    }
-
+    
     /// Open information screen
     @objc private func openInformationScreen() {
         let informationViewController = InformationViewController()
         let navigationVC = CustomNavigationController(rootViewController: informationViewController)
         present(navigationVC, animated: true)
     }
+    
+    // MARK: - Get Search Results
 
     /// Get Search Results
     @objc func getPlaces(timer: Timer) {
@@ -299,7 +298,9 @@ class HomeOptionsCardViewController: UIViewController {
             createDefaultSections()
         }
     }
-
+    
+    // MARK: - Keyboard
+    
     @objc func keyboardWillShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
             keyboardHeight = keyboardSize.height

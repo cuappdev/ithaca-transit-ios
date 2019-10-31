@@ -46,7 +46,7 @@ extension HomeOptionsCardViewController {
     }
 }
 
-// MARK: - Search Bar Delegate
+// MARK: - SearchBar Delegate
 extension HomeOptionsCardViewController: UISearchBarDelegate {
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -94,9 +94,12 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
 // MARK: - HeaderView Delegate
 extension HomeOptionsCardViewController: HeaderViewDelegate {
 
-    func displayFavoritesTVC() {
+    func presentFavoritePicker() {
         if favorites.count < 2 {
-            presentFavoritesTVC()
+            let favoritesTVC = FavoritesTableViewController()
+            favoritesTVC.selectionDelegate = self
+            let navController = CustomNavigationController(rootViewController: favoritesTVC)
+            present(navController, animated: true, completion: nil)
         } else {
             let title = Constants.Alerts.MaxFavorites.title
             let message = Constants.Alerts.MaxFavorites.message
@@ -214,50 +217,48 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch sections[section] {
-        case .favorites, .recentSearches: return headerHeight
-        case .seeAllStops: return HeaderView.separatorViewHeight
-        default: return 0
+        case .favorites, .recentSearches:
+            return headerHeight
+        case .seeAllStops:
+            return HeaderView.separatorViewHeight
+        default:
+            return 0
         }
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        var header: HeaderView!
-
         switch sections[section] {
         case .recentSearches:
-            header = HeaderView(
+            return HeaderView(
                 labelText: Constants.TableHeaders.recentSearches,
                 buttonType: .clear,
                 separatorVisible: true,
                 delegate: self
             )
         case .favorites:
-            header = HeaderView(
+            return HeaderView(
                 labelText: Constants.TableHeaders.favoriteDestinations,
                 buttonType: .add,
                 delegate: self
             )
         case .seeAllStops:
-            header = HeaderView(separatorVisible: true)
+            return HeaderView(separatorVisible: true)
         case .searchResults:
             return nil
-        default: break
+        default:
+            return nil
         }
-
-        return header
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         let section = sections[indexPath.section]
         switch section {
         case .favorites:
-            if !section.isEmpty, section.getItems()[0].name != Constants.General.firstFavorite {
-                return .delete
-            } else {
-                return .none
-            }
-        case .recentSearches: return .delete
-        default: return .none
+            return section.isEmpty ? .none : .delete
+        case .recentSearches:
+            return .delete
+        default:
+            return .none
         }
     }
 
@@ -288,9 +289,8 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
             navigationController?.pushViewController(stopPickerVC, animated: true)
         case .favorites(items: let places):
             if places.count == 0 {
-                presentFavoritesTVC()
+                presentFavoritePicker()
             } else {
-                print("*", places)
                 navigationController?.pushViewController(RouteOptionsViewController(searchTo: places[indexPath.row]), animated: true)
             }
         default:
@@ -316,6 +316,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
     }
 }
 
+// MARK: - Favorites Selection Delegate
 extension HomeOptionsCardViewController: FavoritesSelectionDelegate {
 
     func didAddNewFavorite() {
