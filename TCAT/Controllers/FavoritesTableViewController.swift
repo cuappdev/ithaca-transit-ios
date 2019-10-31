@@ -10,10 +10,6 @@ import UIKit
 import DZNEmptyDataSet
 import FutureNova
 
-protocol FavoritesSelectionDelegate: class {
-    func didAddNewFavorite()
-}
-
 class FavoritesTableViewController: UIViewController {
 
     private var searchBar = UISearchBar()

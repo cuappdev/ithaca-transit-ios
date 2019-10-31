@@ -35,7 +35,7 @@ extension HomeOptionsCardViewController {
         )
 
         updatePlaces()
-        updateSections()
+//        updateSections()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -97,8 +97,8 @@ extension HomeOptionsCardViewController: HeaderViewDelegate {
     func presentFavoritePicker() {
         if favorites.count < 2 {
             let favoritesTVC = FavoritesTableViewController()
-            favoritesTVC.didAddFavorite = { 
-                self.updateSections()
+            favoritesTVC.didAddFavorite = {
+                self.updatePlaces()
             }
             let navController = CustomNavigationController(rootViewController: favoritesTVC)
             present(navController, animated: true, completion: nil)
