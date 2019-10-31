@@ -98,7 +98,7 @@ extension HomeOptionsCardViewController: HeaderViewDelegate {
         if favorites.count < 2 {
             let favoritesTVC = FavoritesTableViewController()
             favoritesTVC.didAddFavorite = {
-                self.updatePlaces()
+                self.updatePlaces() 
             }
             let navController = CustomNavigationController(rootViewController: favoritesTVC)
             present(navController, animated: true, completion: nil)
