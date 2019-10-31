@@ -163,14 +163,24 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if sections[indexPath.section] == .seeAllStops {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier) as? GeneralTableViewCell
-                else { return UITableViewCell() }
+        let section = sections[indexPath.section]
+        switch section {
+        case .seeAllStops:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier, for: indexPath) as? GeneralTableViewCell else { return UITableViewCell() }
             cell.configure(for: .seeAllStops)
             return cell
-        }
-            // Favorites (including Add First Favorite!), Recent Searches
-        else {
+        case .favorites(items: let favoritePlaces):
+            if favoritePlaces.count > 0 {
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
+                    else { return UITableViewCell() }
+                cell.configure(for: favoritePlaces[indexPath.row])
+                return cell
+            } else {
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.addFavoriteIdentifier) as? AddFavoriteTableViewCell
+                    else { return UITableViewCell() }
+                return cell
+            }
+        default: // recent searches, etc.
             guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
                 else { return UITableViewCell() }
             cell.configure(for: sections[indexPath.section].getItems()[indexPath.row])
@@ -268,45 +278,41 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var routeOptionsViewController: RouteOptionsViewController!
-        let stopPickerViewController = StopPickerViewController()
-        stopPickerViewController.onSelection = { place in
-            let optionsVC = RouteOptionsViewController(searchTo: place)
-            self.navigationController?.pushViewController(optionsVC, animated: true)
-        }
-
-        var didSelectAllStops = false
-        var shouldPushViewController = true
-
-        if sections[indexPath.section] == .seeAllStops {
-            didSelectAllStops = true
-        } else {
-            let place = sections[indexPath.section].getItems()[indexPath.row]
-            if place.name == Constants.General.firstFavorite {
-                shouldPushViewController = false
+        switch sections[indexPath.section] {
+        case .seeAllStops:
+            let stopPickerVC = StopPickerViewController()
+            stopPickerVC.onSelection = { place in
+                let optionsVC = RouteOptionsViewController(searchTo: place)
+                self.navigationController?.pushViewController(optionsVC, animated: true)
+            }
+            navigationController?.pushViewController(stopPickerVC, animated: true)
+        case .favorites(items: let places):
+            if places.count == 0 {
                 presentFavoritesTVC()
             } else {
-                if let searchText = searchBar.text {
-                    let payload = SearchResultSelectedPayload(
-                        searchText: searchText,
-                        selectedIndex: indexPath.row,
-                        totalResults: sections[indexPath.section].getItems().count
-                    )
-                    Analytics.shared.log(payload)
-                }
-                routeOptionsViewController = RouteOptionsViewController(searchTo: place)
-                routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
-                Global.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
+                print("*", places)
+                navigationController?.pushViewController(RouteOptionsViewController(searchTo: places[indexPath.row]), animated: true)
             }
+        default:
+            if let searchText = searchBar.text {
+                let payload = SearchResultSelectedPayload(
+                    searchText: searchText,
+                    selectedIndex: indexPath.row,
+                    totalResults: sections[indexPath.section].getItems().count
+                )
+                Analytics.shared.log(payload)
+            }
+            
+            let place = sections[indexPath.section].getItems()[indexPath.row]
+            Global.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
+            
+            let routeOptionsVC = RouteOptionsViewController(searchTo: place)
+            routeOptionsVC.didReceiveCurrentLocation(currentLocation)
+            navigationController?.pushViewController(routeOptionsVC, animated: true)
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
-
-        if shouldPushViewController,
-            let vcToPush = didSelectAllStops ? stopPickerViewController : routeOptionsViewController {
-            navigationController?.pushViewController(vcToPush, animated: true)
-        }
     }
 }
 
