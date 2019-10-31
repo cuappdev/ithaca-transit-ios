@@ -101,7 +101,6 @@
 		7EFDB7F72243009A006D5126 /* TodayExtensionErrorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFDB7F62243009A006D5126 /* TodayExtensionErrorCell.swift */; };
 		A3FFFF9AF010F35B5260E8BE /* Pods_TCATUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8FC0E42324D82CCFEC7C05 /* Pods_TCATUITests.framework */; };
 		BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0002211FB37D0A00773109 /* LoadingIndicator.swift */; };
-		BF164D5F221DFCDE0069953E /* LegacyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF164D5E221DFCDE0069953E /* LegacyModels.swift */; };
 		BF18AE102083B7F6000C3D82 /* StoreReviewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18AE0F2083B7F6000C3D82 /* StoreReviewHelper.swift */; };
 		BF18AE122083B9B8000C3D82 /* Phrases.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18AE112083B9B8000C3D82 /* Phrases.swift */; };
 		BF250D7F222FB12400E7F271 /* Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF250D7E222FB12300E7F271 /* Endpoints.swift */; };
@@ -266,7 +265,6 @@
 		BDC1610962A12E65217852F0 /* Pods-Today Extension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.release.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.release.xcconfig"; sourceTree = "<group>"; };
 		BF0002211FB37D0A00773109 /* LoadingIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoadingIndicator.swift; path = Views/LoadingIndicator.swift; sourceTree = "<group>"; };
 		BF1209FA1F7759C200A7C930 /* BusLocationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocationView.swift; path = Views/BusLocationView.swift; sourceTree = "<group>"; };
-		BF164D5E221DFCDE0069953E /* LegacyModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LegacyModels.swift; path = Model/LegacyModels.swift; sourceTree = "<group>"; };
 		BF18AE0F2083B7F6000C3D82 /* StoreReviewHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StoreReviewHelper.swift; path = Utilities/StoreReviewHelper.swift; sourceTree = "<group>"; };
 		BF18AE112083B9B8000C3D82 /* Phrases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Phrases.swift; path = Utilities/Phrases.swift; sourceTree = "<group>"; };
 		BF250D7E222FB12300E7F271 /* Endpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endpoints.swift; sourceTree = "<group>"; };
@@ -582,7 +580,6 @@
 				BF456E0220489990005C611D /* BusLocation.swift */,
 				DDB49C9B1E8857FC00A99C35 /* BusPath.swift */,
 				DD36A7011F6637C900E4789E /* Direction.swift */,
-				BF164D5E221DFCDE0069953E /* LegacyModels.swift */,
 				BF73F0F21F60B0BD003B479D /* LocationObject.swift */,
 				DDE3BC221F5863D50014D2BB /* Place.swift */,
 				DD2F989A1E50F99A0005F6BC /* Route.swift */,
@@ -1193,7 +1190,6 @@
 				2292486E21BB82180004279C /* ServiceAlertTableViewCell.swift in Sources */,
 				2292486C21B8ECB90004279C /* ServiceAlertsViewController.swift in Sources */,
 				229BD4E9229947D80042D9D3 /* RouteOptionsViewController+Extensions.swift in Sources */,
-				BF164D5F221DFCDE0069953E /* LegacyModels.swift in Sources */,
 				DD3D9C361F945F2A00B164D4 /* RPCircularProgress.swift in Sources */,
 				BFC367F321B66E9A00ABD9AC /* Intents.intentdefinition in Sources */,
 				DD2F98A31E5150990005F6BC /* RouteOptionsViewController.swift in Sources */,
