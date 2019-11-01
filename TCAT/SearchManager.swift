@@ -41,7 +41,7 @@ class SearchManager: NSObject {
 
     func performLookup(for query: String, completionHandler: @escaping SearchManagerCallback) {
         getAppleSearchResults(searchText: query).observe { [weak self] result in
-            guard let `self` = self else {
+            guard let self = self else {
                 completionHandler([], SearchManagerError(description: "[SearchManager] self is nil"))
                 return
             }

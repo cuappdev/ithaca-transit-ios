@@ -171,7 +171,7 @@ class RouteDetailDrawerViewController: UIViewController {
             let stopId = delayDirection.stops.first?.id {
 
             getDelay(tripId: tripId, stopId: stopId).observe(with: { [weak self] result in
-                guard let `self` = self else { return }
+                guard let self = self else { return }
                 DispatchQueue.main.async {
                     switch result {
                     case .value(let response):

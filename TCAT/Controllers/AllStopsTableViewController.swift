@@ -141,7 +141,7 @@ class AllStopsTableViewController: UIViewController {
             return
         }
         getAllStops().observe { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self = self else { return }
             DispatchQueue.main.async {
                 switch result {
                 case .value(var response):

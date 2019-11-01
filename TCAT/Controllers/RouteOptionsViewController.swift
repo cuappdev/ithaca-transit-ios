@@ -497,7 +497,7 @@ class RouteOptionsViewController: UIViewController {
 
     func routeSelected(routeId: String) {
         networking(Endpoint.routeSelected(routeId: routeId)).observe { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self = self else { return }
             DispatchQueue.main.async {
                 switch result {
                 case .value:
@@ -536,7 +536,7 @@ class RouteOptionsViewController: UIViewController {
     private func processRequest(start: Place, end: Place, time: Date, type: SearchType) {
         if let result =  getRoutes(start: start, end: end, time: time, type: type) {
             result.observe(with: { [weak self] result in
-                guard let `self` = self else { return }
+                guard let self = self else { return }
                 DispatchQueue.main.async {
                     switch result {
                     case .value(let response):
