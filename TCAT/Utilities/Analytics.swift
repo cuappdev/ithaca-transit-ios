@@ -98,7 +98,6 @@ struct DestinationSearchedEventPayload: Payload {
     let deviceInfo = DeviceInfo()
 
     let destination: String
-    let requestUrl: String?
 }
 
 /// Log tap on route leading to Route Detail view

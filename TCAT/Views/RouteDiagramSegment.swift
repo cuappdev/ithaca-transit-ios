@@ -50,13 +50,6 @@ class RouteDiagramSegment: UIView {
     func setupConstraints(prev: RouteDiagramSegment?, isLastDirection: Bool) {
         let circleCenterXLeadingInset: CGFloat = 69.5
 
-        let spaceBtnBusIconAndRouteLine: CGFloat = 19.5
-        let spaceBtnWalkIconAndRouteLine: CGFloat = 38
-        let spaceBtnWalkWithDistanceIconAndRouteLine: CGFloat = 24
-        let spaceBtnIconAndRouteLine: CGFloat = self.icon is UIImageView
-            ? spaceBtnWalkIconAndRouteLine
-            : (self.icon is WalkWithDistanceIcon ? spaceBtnWalkWithDistanceIconAndRouteLine : spaceBtnBusIconAndRouteLine)
-
         let spaceBtnWalkIconAndSuperview: CGFloat = 20
         let spaceBtnIconAndSuperview: CGFloat = self.icon is UIImageView
             ? spaceBtnWalkIconAndSuperview

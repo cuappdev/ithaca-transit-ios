@@ -462,15 +462,7 @@ class RouteOptionsViewController: UIViewController {
             }
 
             // Search for Routes Data Request
-            if let result =  getRoutes(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType) {
-                result.observe(with: { [weak self] result in
-                    guard let `self` = self else { return }
-                    DispatchQueue.main.async {
-                        let requestURL = Endpoint.getRequestURL(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType)
-                        self.processRequest(result: result, requestURL: requestURL, endPlace: searchTo)
-                    }
-                })
-            }
+            processRequest(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType)
 
             // Donate GetRoutes intent
             if #available(iOS 12.0, *) {
@@ -541,34 +533,40 @@ class RouteOptionsViewController: UIViewController {
         }
     }
 
-    private func processRequest(result: Result<Response<RouteSectionsObject>>, requestURL: String, endPlace: Place) {
+    private func processRequest(start: Place, end: Place, time: Date, type: SearchType) {
+        if let result =  getRoutes(start: start, end: end, time: time, type: type) {
+            result.observe(with: { [weak self] result in
+                guard let `self` = self else { return }
+                DispatchQueue.main.async {
+                    switch result {
+                    case .value(let response):
 
-        switch result {
-        case .value(let response):
+                        // Parse sections of routes
+                        [response.data.fromStop, response.data.boardingSoon, response.data.walking]
+                            .forEach { (routeSection) in
+                                routeSection.forEach { (route) in
+                                    route.formatDirections(start: self.searchFrom?.name, end: self.searchTo.name)
+                                }
+                                // Allow for custom display in search results for fromStop.
+                                // We want to display a [] if a bus stop is the origin and doesn't exist
+                                if !routeSection.isEmpty || self.searchFrom?.type == .busStop {
+                                    self.routes.append(routeSection)
+                                }
 
-            // Parse sections of routes
-            [response.data.fromStop, response.data.boardingSoon, response.data.walking]
-                .forEach { (routeSection) in
-                    routeSection.forEach { (route) in
-                        route.formatDirections(start: self.searchFrom?.name, end: self.searchTo.name)
+                        }
+                        self.getRoutesTrips()
+                        self.requestDidFinish(perform: [.hideBanner])
+                    case .error(let error):
+                        self.processRequestError(error: error)
                     }
-                    // Allow for custom display in search results for fromStop.
-                    // We want to display a [] if a bus stop is the origin and doesn't exist
-                    if !routeSection.isEmpty || self.searchFrom?.type == .busStop {
-                        self.routes.append(routeSection)
-                    }
-
-            }
-            self.getRoutesTrips()
-            self.requestDidFinish(perform: [.hideBanner])
-        case .error(let error):
-            self.processRequestError(error: error, requestURL: requestURL)
+                    let payload = DestinationSearchedEventPayload(destination: end.name)
+                    Analytics.shared.log(payload)
+                }
+            })
         }
-        let payload = DestinationSearchedEventPayload(destination: endPlace.name, requestUrl: requestURL)
-        Analytics.shared.log(payload)
     }
 
-    private func processRequestError(error: Error, requestURL: String) {
+    private func processRequestError(error: Error) {
         let title = "Network Failure: \((error as NSError?)?.domain ?? "No Domain")"
         let description = (error.localizedDescription) + ", " + ((error as NSError?)?.description ?? "n/a")
 
