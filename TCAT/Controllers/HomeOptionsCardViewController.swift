@@ -97,8 +97,7 @@ class HomeOptionsCardViewController: UIViewController {
         }
     }
     
-    /// The table sections.
-    /// Updating this variable reloads the table.
+    /// The table sections. Updating this variable reloads the table.
     var sections: [Section] = [] {
         didSet {
             tableView.reloadData()
@@ -294,7 +293,7 @@ class HomeOptionsCardViewController: UIViewController {
             let searchText = userInfo["searchText"],
             !searchText.isEmpty {
             SearchManager.shared.performLookup(for: searchText) { [weak self] (searchResults, error) in
-                guard let `self` = self else { return }
+                guard let self = self else { return }
                 if let error = error {
                     self.printClass(context: "SearchManager lookup error", message: error.localizedDescription)
                     return
