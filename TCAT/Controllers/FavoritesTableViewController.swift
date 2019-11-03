@@ -11,7 +11,6 @@ import DZNEmptyDataSet
 import FutureNova
 
 protocol FavoritesSelectionDelegate: class {
-    /** Indicates to `HomeMapViewController` that it should reload its table. */
     func didAddNewFavorite()
 }
 
@@ -123,6 +122,14 @@ extension FavoritesTableViewController: UITableViewDelegate {
         let cell = tableView.cellForRow(at: indexPath)
         cell?.accessoryView = UIActivityIndicatorView()
         tableView.deselectRow(at: indexPath, animated: true)
+        if let searchText = searchBar.text {
+            let payload = SearchResultSelectedPayload(
+                searchText: searchText,
+                selectedIndex: indexPath.row,
+                totalResults: resultsSection.getItems().count
+            )
+            Analytics.shared.log(payload)
+        }
         if let place = resultsSection.getItem(at: indexPath.row) {
             Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
             selectionDelegate?.didAddNewFavorite()
@@ -131,7 +138,7 @@ extension FavoritesTableViewController: UITableViewDelegate {
     }
 }
 
-// MARK: Empty Data Set
+// MARK: - Empty Data Set
 extension FavoritesTableViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
         return -80
@@ -147,7 +154,7 @@ extension FavoritesTableViewController: DZNEmptyDataSetSource {
     }
 }
 
-// MARK: Search
+// MARK: - Search
 extension FavoritesTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         timer?.invalidate()
@@ -158,7 +165,7 @@ extension FavoritesTableViewController: UISearchBarDelegate {
                                      repeats: false)
     }
 
-    /* Get Search Results */
+    /// Get Search Results
     @objc func getPlaces(timer: Timer) {
         if let userInfo = timer.userInfo as? [String: String],
             let searchText = userInfo["searchText"],

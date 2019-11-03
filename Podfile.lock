@@ -103,7 +103,7 @@ DEPENDENCIES:
   - Zip (~> 1.1)
 
 SPEC REPOS:
-  trunk:
+  https://github.com/CocoaPods/Specs.git:
     - Crashlytics
     - Fabric
     - Firebase
@@ -181,4 +181,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: b7d70eb804b087e359ae71cece52dfdbdb17f69c
 
-COCOAPODS: 1.8.3
+COCOAPODS: 1.8.4

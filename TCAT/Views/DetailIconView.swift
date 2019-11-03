@@ -140,7 +140,7 @@ class DetailIconView: UIView {
         delayedTimeLabel.text = delayedTimeString
     }
 
-    // MARK: Utility Functions
+    // MARK: - Utility Functions
 
     public func updateTimes(with newDirection: Direction, isLast: Bool = false) {
         updateTimeLabels(with: newDirection, isLast: isLast)

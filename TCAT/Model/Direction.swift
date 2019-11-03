@@ -29,23 +29,21 @@ class Direction: NSObject, NSCopying, Codable {
     /// The type of the direction.
     var type: DirectionType
 
-    /**
-     General description for the direction.
-     
-     - walk: The description of the place / location the user is walking to
-     - depart: The name of the bus stop where the bus is departing from
-     - arrive: The name of the bus stop where the user gets off the bus
-     */
+    ///
+    /// General description for the direction.
+    /// 
+    /// - walk: The description of the place / location the user is walking to
+    /// - depart: The name of the bus stop where the bus is departing from
+    /// - arrive: The name of the bus stop where the user gets off the bus
+    /// 
     var name: String
 
-    /** The starting location object associated with the direction
-        If this is a bus stop, includes stopID as id.
-     */
+    /// The starting location object associated with the direction
+    /// If this is a bus stop, includes stopID as id.
     var startLocation: CLLocationCoordinate2D
 
-    /** The ending location object associated with the direction
-        If this is a bus stop, includes stopID as id.
-    */
+    /// The ending location object associated with the direction
+    /// If this is a bus stop, includes stopID as id.
     var endLocation: CLLocationCoordinate2D
 
     /// The starting time (UTC) associated with the direction. Format: `"yyyy-MM-dd'T'HH:mm:ssZZZZ"`
@@ -91,7 +89,7 @@ class Direction: NSObject, NSCopying, Codable {
         case type
     }
 
-    // MARK: Initalizers
+    // MARK: - Initalizers
 
     required init (from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -159,24 +157,19 @@ class Direction: NSObject, NSCopying, Codable {
         )
     }
 
-    // MARK: Descriptions
+    // MARK: - Descriptions
 
     /// Returns custom description for locationName based on DirectionType
     var locationNameDescription: String {
         switch type {
-
         case .depart:
             return "at \(name)"
-
         case .arrive:
             return "Get off at \(name)"
-
         case .walk:
             return "Walk to \(name)"
-
         case .transfer:
             return "at \(name). Stay on bus."
-
         }
     }
 
@@ -198,7 +191,7 @@ class Direction: NSObject, NSCopying, Codable {
         """
     }
 
-    // MARK: Complex Variables & Functions
+    // MARK: - Complex Variables & Functions
 
     /// Returns readable start time (e.g. 7:49 PM)
     var startTimeDescription: String {

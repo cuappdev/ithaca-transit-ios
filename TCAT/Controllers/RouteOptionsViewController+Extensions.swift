@@ -10,7 +10,7 @@ import UIKit
 import CoreLocation
 import DZNEmptyDataSet
 
-// MARK: Previewing Delegate
+// MARK: - Previewing Delegate
 extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
 
     @objc func handleLongPressGesture(_ sender: UILongPressGestureRecognizer) {
@@ -49,14 +49,16 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
     }
 }
 
-// MARK: SearchBarCancelDelegate
+// MARK: - SearchBarCancelDelegate
 extension RouteOptionsViewController: SearchBarCancelDelegate {
+
     func didCancel() {
         hideSearchBar()
     }
+
 }
 
-// MARK: Destination Delegate
+// MARK: - Destination Delegate
 extension RouteOptionsViewController: DestinationDelegate {
     func didSelectPlace(place: Place) {
 
@@ -80,7 +82,7 @@ extension RouteOptionsViewController: DestinationDelegate {
     }
 }
 
-// MARK: DatePickerViewDelegate
+// MARK: - DatePickerViewDelegate
 extension RouteOptionsViewController: DatePickerViewDelegate {
     @objc func dismissDatePicker() {
         UIView.animate(withDuration: 0.5, animations: {
@@ -114,7 +116,7 @@ extension RouteOptionsViewController: DatePickerViewDelegate {
     }
 }
 
-// MARK: Location Manager Delegate
+// MARK: - Location Manager Delegate
 extension RouteOptionsViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
@@ -194,7 +196,7 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
 
 }
 
-// MARK: TableView DataSource
+// MARK: - TableView DataSource
 extension RouteOptionsViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return routes.count
@@ -223,7 +225,7 @@ extension RouteOptionsViewController: UITableViewDataSource {
 
 }
 
-// MARK: TableView Delegate
+// MARK: - TableView Delegate
 extension RouteOptionsViewController: UITableViewDelegate {
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -312,7 +314,7 @@ extension RouteOptionsViewController: UITableViewDelegate {
     }
 }
 
-// MARK: DZNEmptyDataSet
+// MARK: - DZNEmptyDataSet
 extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
     func customView(forEmptyDataSet scrollView: UIScrollView) -> UIView? {
@@ -449,4 +451,12 @@ extension RouteOptionsViewController: RouteSelectionViewDelegate {
         let payload = RouteOptionsSettingsPayload(description: "Searching To Tapped")
         Analytics.shared.log(payload)
     }
+}
+
+extension RouteOptionsViewController: ReachabilityDelegate {
+
+    func reachabilityChanged(connection: Reachability.Connection) {
+        setUserInteraction(to: connection != .none)
+    }
+
 }

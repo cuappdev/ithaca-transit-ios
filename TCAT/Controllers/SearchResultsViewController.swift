@@ -117,7 +117,7 @@ class SearchResultsViewController: UIViewController {
             favoritesSection,
             recentSearchesSection,
             seeAllStopsSection
-            ].filter { !$0.isEmpty }
+        ].filter { !$0.isEmpty }
         if let currentLocation = currentLocation {
             sections.insert(Section.currentLocation(location: currentLocation), at: 0)
         }
@@ -134,14 +134,18 @@ class SearchResultsViewController: UIViewController {
     }
 
     private func showLocationDeniedAlert() {
-        let alertController = UIAlertController(title: Constants.Alerts.LocationEnable.title,
-                                                message: Constants.Alerts.LocationEnable.message,
-                                                preferredStyle: .alert)
+        let alertController = UIAlertController(
+            title: Constants.Alerts.LocationEnable.title,
+            message: Constants.Alerts.LocationEnable.message,
+            preferredStyle: .alert
+        )
 
         let settingsAction = UIAlertAction(title: Constants.Alerts.LocationEnable.settings, style: .default) { _ in
-            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
-                                      options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]),
-                                      completionHandler: nil)
+            UIApplication.shared.open(
+                URL(string: UIApplication.openSettingsURLString)!,
+                options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]),
+                completionHandler: nil
+            )
         }
         let cancelAction = UIAlertAction(title: Constants.Alerts.LocationEnable.cancel, style: .cancel, handler: nil)
         alertController.addAction(settingsAction)
@@ -173,7 +177,7 @@ class SearchResultsViewController: UIViewController {
 
 }
 
-// MARK: TableView Data Source
+// MARK: - TableView Data Source
 extension SearchResultsViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -205,13 +209,14 @@ extension SearchResultsViewController: UITableViewDataSource {
             return cell
         }
     }
+
 }
 
-// MARK: TableView Delegate
+// MARK: - TableView Delegate
 extension SearchResultsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        var header: HeaderView!
+        var header: HeaderView?
 
         switch sections[section] {
         case .recentSearches:
@@ -244,11 +249,25 @@ extension SearchResultsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var didSelectAllStops = false
-        let allStopsTVC = AllStopsTableViewController(delegate: self)
+        let stopPicker = StopPickerViewController()
+        stopPicker.onSelection = { place in
+            self.returningFromAllStopsBusStop = place
+            self.returningFromAllStopsTVC = true
+            self.navigationController?.popViewController(animated: true) // pop the StopPicker
+        }
 
         if sections[indexPath.section] == .seeAllStops {
             didSelectAllStops = true
         } else {
+            if let searchBar = searchBar,
+                let searchText = searchBar.text {
+                let payload = SearchResultSelectedPayload(
+                    searchText: searchText,
+                    selectedIndex: indexPath.row,
+                    totalResults: sections[indexPath.section].getItems().count
+                )
+                Analytics.shared.log(payload)
+            }
             let place = sections[indexPath.section].getItems()[indexPath.row]
             if place.latitude == 0.0 && place.longitude == 0.0 {
                 showLocationDeniedAlert()
@@ -265,13 +284,13 @@ extension SearchResultsViewController: UITableViewDelegate {
             if parent?.isKind(of: UISearchController.self) ?? false {
                 let navController = self.parent?.presentingViewController?.navigationController
                 navController?.delegate = self
-                navController?.pushViewController(allStopsTVC, animated: true)
+                navController?.pushViewController(stopPicker, animated: true)
             }
         }
     }
 }
 
-// MARK: ScrollView Delegate
+// MARK: - ScrollView Delegate
 extension SearchResultsViewController {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -280,9 +299,10 @@ extension SearchResultsViewController {
             cancelButton.isEnabled = true
         }
     }
+
 }
 
-// MARK: Search Bar Delegate
+// MARK: - Search Bar Delegate
 extension SearchResultsViewController: UISearchBarDelegate, UISearchResultsUpdating {
 
     func updateSearchResults(for searchController: UISearchController) {
@@ -292,38 +312,33 @@ extension SearchResultsViewController: UISearchBarDelegate, UISearchResultsUpdat
         searchController.searchResultsController?.view.isHidden = false
     }
 
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        // tableViewIndexController.setHidden(true, animated: false)
-    }
-
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBarCancelDelegate?.didCancel()
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(timeInterval: 0.75,
-                                     target: self,
-                                     selector: #selector(getPlaces),
-                                     userInfo: ["searchText": searchText],
-                                     repeats: false)
+        timer = Timer.scheduledTimer(
+            timeInterval: 0.75,
+            target: self,
+            selector: #selector(getPlaces),
+            userInfo: ["searchText": searchText],
+            repeats: false
+        )
     }
-}
 
-extension SearchResultsViewController: UnwindAllStopsTVCDelegate {
-    func dismissSearchResultsVC(place: Place) {
-        returningFromAllStopsBusStop = place
-        returningFromAllStopsTVC = true
-    }
 }
 
 // MARK: - Location Manager Delegates
 extension SearchResultsViewController: CLLocationManagerDelegate {
+
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
-            currentLocation = Place(name: Constants.General.currentLocation,
-                                    latitude: location.coordinate.latitude,
-                                    longitude: location.coordinate.longitude)
+            currentLocation = Place(
+                name: Constants.General.currentLocation,
+                latitude: location.coordinate.latitude,
+                longitude: location.coordinate.longitude
+            )
             createDefaultSections()
         }
     }
@@ -336,19 +351,21 @@ extension SearchResultsViewController: CLLocationManagerDelegate {
             createDefaultSections()
         }
     }
+
 }
 
-// MARK: Navigation Controller Delegate
+// MARK: - Navigation Controller Delegate
 extension SearchResultsViewController: UINavigationControllerDelegate {
+
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
         if returningFromAllStopsTVC, let place = returningFromAllStopsBusStop {
             destinationDelegate?.didSelectPlace(place: place)
         }
     }
+
 }
 
-/// MARK: DZNEmptyDataSet DataSource
-
+// MARK: - DZNEmptyDataSet DataSource
 // To be eventually removed and replaced with recent searches
 extension SearchResultsViewController: DZNEmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {

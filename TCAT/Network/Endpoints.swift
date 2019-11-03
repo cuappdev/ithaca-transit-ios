@@ -13,13 +13,12 @@ import FutureNova
 extension Endpoint {
 
     static func setupEndpointConfig() {
+        ///
+        /// Schemes
+        ///
 
-        //
-        // Schemes
-        //
-
-        // Release - Uses main production server for Network requests.
-        // Debug - Uses development server for Network requests.
+        /// Release - Uses main production server for Network requests.
+        /// Debug - Uses development server for Network requests.
 
         guard let baseURL = Bundle.main.object(forInfoDictionaryKey: "SERVER_URL") as? String else {
             fatalError("Could not find SERVER_URL in Info.plist!")
@@ -42,10 +41,12 @@ extension Endpoint {
         return Endpoint(path: Constants.Endpoints.alerts)
     }
 
-    static func getRoutes(start: Place,
-                          end: Place,
-                          time: Date,
-                          type: SearchType) -> Endpoint? {
+    static func getRoutes(
+        start: Place,
+        end: Place,
+        time: Date,
+        type: SearchType
+    ) -> Endpoint? {
         guard
             let startLat = start.latitude,
             let startLong = start.longitude,
@@ -56,15 +57,25 @@ extension Endpoint {
                 return nil
         }
         let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid)
-        let body = GetRoutesBody(arriveBy: type == .arriveBy, end: "\(endLat),\(endLong)", start: "\(startLat),\(startLong)", time: time.timeIntervalSince1970, destinationName: end.name, originName: start.name, uid: uid)
+        let body = GetRoutesBody(
+            arriveBy: type == .arriveBy,
+            end: "\(endLat),\(endLong)",
+            start: "\(startLat),\(startLong)",
+            time: time.timeIntervalSince1970,
+            destinationName: end.name,
+            originName: start.name,
+            uid: uid
+        )
 
         return Endpoint(path: Constants.Endpoints.getRoutes, body: body)
     }
 
-    static func getRequestURL(start: Place,
-                              end: Place,
-                              time: Date,
-                              type: SearchType) -> String {
+    static func getRequestURL(
+        start: Place,
+        end: Place,
+        time: Date,
+        type: SearchType
+    ) -> String {
         let path = "route"
         let arriveBy = (type == .arriveBy)
         let endStr = "\(String(describing: end.latitude)),\(String(describing: end.longitude))"
@@ -74,13 +85,19 @@ extension Endpoint {
         return  "\(String(describing: Endpoint.config.host))\(path)?arriveBy=\(arriveBy)&end=\(endStr)&start=\(startStr)&time=\(time)&destinationName=\(end.name)&originName=\(start.name)"
     }
 
-    static func getMultiRoutes(startCoord: CLLocationCoordinate2D,
-                               time: Date,
-                               endCoords: [String],
-                               endPlaceNames: [String]) -> Endpoint {
-        let body = MultiRoutesBody(start: "\(startCoord.latitude),\(startCoord.longitude)", time: time.timeIntervalSince1970, end: endCoords, destinationNames: endPlaceNames)
+    static func getMultiRoutes(
+        startCoord: CLLocationCoordinate2D,
+        time: Date,
+        endCoords: [String],
+        endPlaceNames: [String]
+    ) -> Endpoint {
+        let body = MultiRoutesBody(
+            start: "\(startCoord.latitude),\(startCoord.longitude)",
+            time: time.timeIntervalSince1970,
+            end: endCoords,
+            destinationNames: endPlaceNames
+        )
         return Endpoint(path: Constants.Endpoints.multiRoute, body: body)
-
     }
 
     static func getPlaceIDCoordinates(placeID: String) -> Endpoint {
@@ -111,7 +128,6 @@ extension Endpoint {
 
         let locationsInfo = departDirections.map { direction -> BusLocationsInfo in
             // The id of the location, or bus stop, the bus needs to get to
-
             let stopID = direction.stops.first?.id ?? "-1"
             return BusLocationsInfo(stopID: stopID, routeID: String(direction.routeNumber), tripIdentifiers: direction.tripIdentifiers!)
         }
@@ -132,7 +148,6 @@ extension Endpoint {
 
     static func getDelayUrl(tripId: String, stopId: String) -> String {
         let path = "delay"
-
         return "\(String(describing: Endpoint.config.host))\(path)?stopID=\(stopId)&tripID=\(tripId)"
     }
 
