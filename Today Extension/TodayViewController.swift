@@ -58,7 +58,7 @@ import UIKit
                 routesTable.reloadData()
             } else {
                 getMultiRoutes(startCoord: start, time: Date(), endCoords: coordinates, endPlaceNames: favorites).observe { [weak self] result in
-                    guard let `self` = self else { return }
+                    guard let self = self else { return }
                     DispatchQueue.main.async {
                         switch result {
                         case .value(let response):

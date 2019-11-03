@@ -70,21 +70,6 @@ extension Endpoint {
         return Endpoint(path: Constants.Endpoints.getRoutes, body: body)
     }
 
-    static func getRequestURL(
-        start: Place,
-        end: Place,
-        time: Date,
-        type: SearchType
-    ) -> String {
-        let path = "route"
-        let arriveBy = (type == .arriveBy)
-        let endStr = "\(String(describing: end.latitude)),\(String(describing: end.longitude))"
-        let startStr =  "\(String(describing: start.latitude)),\(String(describing: start.longitude))"
-        let time = time.timeIntervalSince1970
-
-        return  "\(String(describing: Endpoint.config.host))\(path)?arriveBy=\(arriveBy)&end=\(endStr)&start=\(startStr)&time=\(time)&destinationName=\(end.name)&originName=\(start.name)"
-    }
-
     static func getMultiRoutes(
         startCoord: CLLocationCoordinate2D,
         time: Date,

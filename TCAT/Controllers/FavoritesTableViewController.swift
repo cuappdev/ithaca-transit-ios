@@ -171,7 +171,7 @@ extension FavoritesTableViewController: UISearchBarDelegate {
             let searchText = userInfo["searchText"],
             !searchText.isEmpty {
             SearchManager.shared.performLookup(for: searchText) { [weak self] (searchResults, error) in
-                guard let `self` = self else { return }
+                guard let self = self else { return }
                 DispatchQueue.main.async {
                     if let error = error {
                         self.printClass(context: "SearchManager lookup error", message: error.localizedDescription)
