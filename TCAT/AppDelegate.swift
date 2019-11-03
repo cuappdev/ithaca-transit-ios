@@ -86,8 +86,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
         
-        patchFunctions(rootVC: rootVC)
-
         // Initalize window without storyboard
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = navigationController
@@ -95,158 +93,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
-    
-    func patchFunctions(rootVC: UIViewController) {
-        if
-            VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 2, patch: 1),
-            let homeViewController = rootVC as? HomeMapViewController
-        {
-            print("Begin Data Migration")
-            homeViewController.showLoadingScreen()
-            migrationToNewPlacesModel { (success, errorDescription) in
-                homeViewController.removeLoadingScreen()
-                print("Data Migration Complete - Success: \(success), Error: \(errorDescription ?? "n/a")")
-                let payload = DataMigrationOnePointThreePayload(success: success, errorDescription: errorDescription)
-                Analytics.shared.log(payload)
-            }
-        }
-
-        // v1.4.1 Delete Corrupted Shortcut Donations
-        if VersionStore.shared.savedAppVersion <= WhatsNew.Version(major: 1, minor: 4, patch: 0) {
-            print("Begin Deleting Corrupt Shortcut Donations")
-            INInteraction.deleteAll { (error) in
-                if let error = error {
-                    print("Failed to delete corrupt shortcut donations with error: \(error.localizedDescription )")
-                } else {
-                    print("Succesfully deleted corrupt shortcut donations")
-                }
-            }
-        }
-    }
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         handleShortcut(item: shortcutItem)
     }
-
-    func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-    }
-
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    }
-
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    }
     
     // MARK: - Helper Functions
     
-    /// Convert BusStop and PlaceResult models to new unified Place model.
-    func migrationToNewPlacesModel(completion: @escaping (_ success: Bool, _ errorDescription: String?) -> Void) {
-        
-        // "See All Stops" and App Shortcuts data is handled automatically
-    
-        let dispatchGroup = DispatchGroup()
-        
-        var success = true
-        var description: String?
-        
-        // Favorites Data
-        let favoritesKey = Constants.UserDefaults.favorites
-        
-        if
-            let storedPlaces = userDefaults.value(forKey: favoritesKey) as? Data,
-            let favorites = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any]
-        {
-            // This will only fire on legacy versions and models
-            dispatchGroup.enter()
-            convertDataToPlaces(data: favorites) { (places, error) in
-                if let encodedObject = try? self.encoder.encode(places), error == nil {
-                    userDefaults.set(encodedObject, forKey: favoritesKey)
-                } else {
-                    success = false
-                    description = "Favorites Conversion Failed: \(error ?? "Encoder")"
-                    print("[AppDelegate] dataMigration favorites", error ?? "Encoder")
-                }
-                dispatchGroup.leave()
-            }
-        }
-
-        // Recent Searches Data
-        let recentSearchesKey = Constants.UserDefaults.recentSearch
-        
-        if
-            let storedPlaces = userDefaults.value(forKey: recentSearchesKey) as? Data,
-            let recents = NSKeyedUnarchiver.unarchiveObject(with: storedPlaces) as? [Any]
-        {
-            //  This will only fire on legacy versions and models
-            dispatchGroup.enter()
-            convertDataToPlaces(data: recents) { (places, error) in
-                if let encodedObject = try? self.encoder.encode(places), error == nil {
-                    userDefaults.set(encodedObject, forKey: recentSearchesKey)
-                } else {
-                    success = false
-                    description = "Recent Searches Conversion Failed: \(error ?? "Encoder")"
-                    print("[AppDelegate] dataMigration recentSearches", error ?? "Encoder")
-                }
-                dispatchGroup.leave()
-            }
-        }
-        
-        // Could show loading UI / "Updating databse" while this happens
-        dispatchGroup.notify(queue: .main) {
-            completion(success, description)
-        }
-
-    }
-    
-    func convertDataToPlaces(data: [Any], completion: @escaping (_ places: [Place], _ error: String?) -> Void) {
-        var places = [Place]()
-        
-        for item in data {
-            
-            var optionalPlace: Place?
-            
-            // Unwrap `Any` to `BusStop` or `PlaceResult`
-            if let busStop = item as? BusStop {
-                optionalPlace = Place(name: busStop.name, latitude: busStop.lat, longitude: busStop.long)
-                optionalPlace?.type = .busStop
-            }
-            
-            if let placeResult = item as? PlaceResult {
-                optionalPlace = Place(name: placeResult.name, placeDescription: placeResult.detail)
-            }
-            
-            guard let place = optionalPlace else {
-                completion(places, "Unable to retrieve busStop or placeResult data.")
-                return
-            }
-
-            places.append(place)
-            if places.count == data.count {
-                completion(places, nil)
-            }
-        }
- 
-    }
-    
     /// Creates and sets a unique identifier. If the device identifier changes, updates it.
     func setupUniqueIdentifier() {
-        if
-            let uid = UIDevice.current.identifierForVendor?.uuidString,
-            uid != sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid)
-        {
+        if let uid = UIDevice.current.identifierForVendor?.uuidString,
+            uid != sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid) {
             sharedUserDefaults?.set(uid, forKey: Constants.UserDefaults.uid)
         }
     }

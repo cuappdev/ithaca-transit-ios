@@ -140,8 +140,8 @@ class RouteTableViewCell: UITableViewCell {
             make.bottom.equalTo(routeDiagram.snp.top).offset(-routeDiagramTopOffset)
         }
 
-        // Set trailing and bottom prioirites to 999 to surpress constraint errors
-        routeDiagram.snp.makeConstraints { make in
+        // Set trailing and bottom prioirites to .high to surpress constraint errors
+        routeDiagram.snp.remakeConstraints { make in
             make.top.equalTo(liveContainerView.snp.bottom).offset(routeDiagramTopOffset)
             make.leading.equalTo(travelTimeLabel)
             make.trailing.equalTo(departureStackView).priority(.high)
@@ -160,15 +160,6 @@ class RouteTableViewCell: UITableViewCell {
         if let delay = delayState {
             setLiveElements(withDelayState: delay)
             setDepartureTime(withStartTime: Date(), withDelayState: delay)
-        }
-
-        // TODO #266: Find fix for updating tableview when delays occur. We currently just update the tableview but because
-        // it's an asynchronous call and is run for each cell, we update the tableview way more often than we need
-        // to and prepareForResuse doesn't seem to get called as often. This causes overlaps in the routeDiagram and
-        // sometimes makes it impossible to read.
-        if routeDiagram != nil {
-            routeDiagram.removeFromSuperview()
-            routeDiagram.snp.removeConstraints()
         }
 
         routeDiagram = RouteDiagram(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
@@ -283,7 +274,6 @@ class RouteTableViewCell: UITableViewCell {
 
     override func prepareForReuse() {
         routeDiagram.removeFromSuperview()
-        routeDiagram.snp.removeConstraints()
         liveLabel.removeFromSuperview()
         liveIndicatorView.removeFromSuperview()
     }

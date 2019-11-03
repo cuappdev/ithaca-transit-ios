@@ -325,13 +325,15 @@ class RouteOptionsViewController: UIViewController {
     private func showSearchBar() {
         navigationItem.searchController = searchBarView.searchController
         // After adding searchController to navigation bar, we need to call
-        // setNeedsLayout in order to for the navigation bar to increase its height
+        // setNeedsLayout in order for the navigation bar to increase its height
         // to account for the search bar
         navigationController?.view.setNeedsLayout()
         backButton = navigationItem.leftBarButtonItem
         navigationItem.setLeftBarButton(nil, animated: false)
         navigationItem.hidesBackButton = true
-        searchBarView.searchController?.isActive = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            self.searchBarView.searchController?.isActive = true
+        }
     }
 
     @objc func rerenderLiveTracking(sender: Timer) {

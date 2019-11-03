@@ -269,7 +269,12 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var routeOptionsViewController: RouteOptionsViewController!
-        let allStopsTableViewController = AllStopsTableViewController()
+        let stopPickerViewController = StopPickerViewController()
+        stopPickerViewController.onSelection = { place in
+            let optionsVC = RouteOptionsViewController(searchTo: place)
+            self.navigationController?.pushViewController(optionsVC, animated: true)
+        }
+
         var didSelectAllStops = false
         var shouldPushViewController = true
 
@@ -281,6 +286,14 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
                 shouldPushViewController = false
                 presentFavoritesTVC()
             } else {
+                if let searchText = searchBar.text {
+                    let payload = SearchResultSelectedPayload(
+                        searchText: searchText,
+                        selectedIndex: indexPath.row,
+                        totalResults: sections[indexPath.section].getItems().count
+                    )
+                    Analytics.shared.log(payload)
+                }
                 routeOptionsViewController = RouteOptionsViewController(searchTo: place)
                 routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
                 Global.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
@@ -290,7 +303,8 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
 
-        if shouldPushViewController, let vcToPush = didSelectAllStops ? allStopsTableViewController : routeOptionsViewController {
+        if shouldPushViewController,
+            let vcToPush = didSelectAllStops ? stopPickerViewController : routeOptionsViewController {
             navigationController?.pushViewController(vcToPush, animated: true)
         }
     }

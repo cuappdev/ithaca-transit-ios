@@ -10,7 +10,7 @@ import UIKit
 
 struct WhatsNewCard: Codable {
 
-    // MARK: What's New Card Data
+    // MARK: - What's New Card Data
 
     static let newFeature = WhatsNewCard(
         label: "New in Ithaca Transit",
@@ -83,7 +83,7 @@ struct WhatsNewCard: Codable {
 
     /// The function to perform in the app when an action is selected.
     var primaryActionHandler: ((_: HomeMapViewController) -> Void)?
-    // MARK: Secondary Button - Gray, Regular
+    // MARK: - Secondary Button - Gray, Regular
 
     /// The title of the secondary button. If doesn't exist, make nil to hide button.
     var secondaryActionTitle: String?
@@ -98,7 +98,7 @@ struct WhatsNewCard: Codable {
         case description
     }
 
-    // MARK: Functions
+    // MARK: - Functions
 
     /// Open a website or app link if an action is selected.
     static func actionLinkHandler(webLink: String?, appLink: String?, completion: (() -> Void)?) {
