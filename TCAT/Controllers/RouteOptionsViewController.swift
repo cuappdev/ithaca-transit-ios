@@ -545,7 +545,7 @@ class RouteOptionsViewController: UIViewController {
 
                         // Parse sections of routes
                         [response.data.fromStop, response.data.boardingSoon, response.data.walking]
-                            .forEach { (routeSection) in
+                            .forEach { routeSection in
                                 routeSection.forEach { (route) in
                                     route.formatDirections(start: self.searchFrom?.name, end: self.searchTo.name)
                                 }
