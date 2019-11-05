@@ -44,7 +44,6 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
             make.left.right.equalToSuperview()
             make.top.equalTo(heartImageView.snp.bottom).offset(nameLabelTopPadding)
         }
-
     }
 
     required init?(coder aDecoder: NSCoder) {
