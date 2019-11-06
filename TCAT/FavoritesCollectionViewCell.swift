@@ -10,9 +10,8 @@ import UIKit
 
 class FavoritesCollectionViewCell: UICollectionViewCell {
 
-    var nameLabel: UILabel!
-    var favoritesCircle: UIView!
-    var heartImageView: UIImageView!
+    private var nameLabel: UILabel!
+    private var heartImageView: UIImageView!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -25,13 +24,7 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
         nameLabel.lineBreakMode = .byTruncatingTail
         contentView.addSubview(nameLabel)
 
-        favoritesCircle = UIView(frame: CGRect(x: 0, y: 0, width: 56, height: 56))
-        favoritesCircle.center = contentView.center
-        favoritesCircle.backgroundColor = Colors.tcatBlue
-        favoritesCircle.layer.cornerRadius = 28
-        contentView.addSubview(favoritesCircle)
-
-        heartImageView = UIImageView(image: UIImage(named: "heart"))
+        heartImageView = UIImageView(image: UIImage(named: "favorite"))
         heartImageView.contentMode = .scaleAspectFit
         contentView.addSubview(heartImageView)
     }
@@ -39,24 +32,20 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        favoritesCircle.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.height.equalTo(56)
-            make.width.equalTo(56)
+        let heartImageSize = 56
+        let nameLabelTopPadding = 11
+
+        heartImageView.snp.makeConstraints{ make in
             make.centerX.equalToSuperview()
+            make.top.equalToSuperview()
+            make.height.equalTo(heartImageSize)
+            make.width.equalTo(heartImageSize)
         }
 
         nameLabel.snp.makeConstraints { make in
             make.left.equalToSuperview()
             make.right.equalToSuperview()
-            make.top.equalTo(favoritesCircle.snp.bottom).offset(11)
-        }
-
-        heartImageView.snp.makeConstraints{ make in
-            make.centerX.equalTo(favoritesCircle.snp.centerX)
-            make.centerY.equalTo(favoritesCircle.snp.centerY)
-            make.height.equalTo(30)
-            make.width.equalTo(30)
+            make.top.equalTo(heartImageView.snp.bottom).offset(nameLabelTopPadding)
         }
 
     }

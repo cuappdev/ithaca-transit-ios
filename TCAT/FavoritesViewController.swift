@@ -12,15 +12,20 @@ import UIKit
 class FavoritesViewController: UIViewController {
 
 
-    let favoritesTitle = "Favorites"
-    let editTitle = "Edit"
-    let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
+    private let favoritesTitle = "Favorites"
+    private let editTitle = "Edit"
+    private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
 
-    var favorites: [String] = ["Collegetown Bagels", "Collegetown Bagels"]
+    private var favorites: [String] = ["Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels"]
 
-    var favoritesCollectionView: UICollectionView!
-    var favoritesTitleLabel: UILabel!
-    var editButton: UIButton!
+    private let favoritesBlueColor = UIColor(hex: "08A0E0")
+
+    private var favoritesCollectionView: UICollectionView!
+    private var favoritesTitleLabel: UILabel!
+    private var editButton: UIButton!
+
+    private let tab = UIView()
+    private let tabSize = CGSize(width: 32, height: 4)
 
     override func viewDidLoad() {
 
@@ -35,7 +40,7 @@ class FavoritesViewController: UIViewController {
         editButton = UIButton()
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.getFont(.regular, size: 14.0),
-            .foregroundColor: Colors.tcatBlue,
+            .foregroundColor: favoritesBlueColor,
         ]
         let attributedString = NSMutableAttributedString(string: editTitle, attributes: attributes)
         editButton.setAttributedTitle(attributedString, for: .normal)
@@ -49,31 +54,57 @@ class FavoritesViewController: UIViewController {
         favoritesCollectionView.delegate = self
         favoritesCollectionView.dataSource = self
         favoritesCollectionView.register(FavoritesCollectionViewCell.self, forCellWithReuseIdentifier: favoritesReuseIdentifier)
-        favoritesCollectionView.showsHorizontalScrollIndicator = false
         favoritesCollectionView.backgroundColor = .clear
         view.addSubview(favoritesCollectionView)
+
+        tab.backgroundColor = Colors.metadataIcon
+        tab.layer.cornerRadius = tabSize.height / 2
+        tab.clipsToBounds = true
+        view.addSubview(tab)
 
         setupConstraints()
 
     }
 
-    func setupConstraints() {
+    func setupTab() {
+        tab.backgroundColor = Colors.metadataIcon
+        tab.layer.cornerRadius = tabSize.height / 2
+        tab.clipsToBounds = true
+        view.addSubview(tab)
+    }
+
+    private func setupConstraints() {
+
+        let tabTopInset: CGFloat = 6
+        let horizontalPadding = 16
+        let titleBarTopPadding = 21
+        let favoritesTopPadding = 24
+        let bottomPadding = 18
+
+
         favoritesTitleLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(16)
-            make.top.equalToSuperview().inset(21)
+            make.leading.equalToSuperview().inset(horizontalPadding)
+            make.top.equalToSuperview().inset(titleBarTopPadding)
         }
 
         editButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(16)
-            make.top.equalToSuperview().inset(21)
+            make.trailing.equalToSuperview().inset(horizontalPadding)
+            make.top.equalToSuperview().inset(titleBarTopPadding)
         }
 
         favoritesCollectionView.snp.makeConstraints { make in
-            make.leading.equalTo(favoritesTitleLabel)
-            make.trailing.equalTo(editButton)
-            make.top.equalTo(favoritesTitleLabel.snp.bottom).offset(24)
-            make.height.equalTo(120)
+            make.leading.equalToSuperview().inset(horizontalPadding)
+            make.trailing.equalToSuperview().inset(horizontalPadding).priority(.high)
+            make.top.equalTo(favoritesTitleLabel.snp.bottom).offset(favoritesTopPadding)
+            make.bottom.equalToSuperview().offset(-bottomPadding).priority(.high)
         }
+
+        tab.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().inset(tabTopInset)
+            make.size.equalTo(tabSize)
+        }
+
 
     }
 
@@ -100,16 +131,13 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
 }
 
 extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 80, height: 120)
+        return CGSize(width: 80, height: 95)
     }
 }
 
 extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
-
-//    func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-//        return bottomSafeArea
-//    }
 
     func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
         return 200
