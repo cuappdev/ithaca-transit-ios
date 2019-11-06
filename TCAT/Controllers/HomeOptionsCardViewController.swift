@@ -164,11 +164,11 @@ class HomeOptionsCardViewController: UIViewController {
 
     private func setupConstraints() {
         let infoButtonSize = CGSize.init(width: 30, height: 38)
-        let infoButtonTrailinginset = 16
+        let infoButtonTrailingInset = 16
 
         infoButton.snp.makeConstraints { (make) in
             make.centerY.equalTo(searchBar).offset(-searchBarTopOffset / 2)
-            make.trailing.equalToSuperview().inset(infoButtonTrailinginset)
+            make.trailing.equalToSuperview().inset(infoButtonTrailingInset)
             make.size.equalTo(infoButtonSize)
         }
 
