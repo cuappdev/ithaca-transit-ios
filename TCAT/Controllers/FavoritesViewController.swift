@@ -12,7 +12,6 @@ import UIKit
 class FavoritesViewController: UIViewController {
 
     // MARK: - View vars
-
     private var editButton: UIButton!
     private let favoritesBlueColor = UIColor(hex: "08A0E0")
     private var favoritesCollectionView: UICollectionView!
@@ -24,8 +23,7 @@ class FavoritesViewController: UIViewController {
     private let editTitle = "Edit"
     private let favoritesTitle = "Favorites"
     private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
-    // Temporary Favorites Array
-    private var favorites: [String] = ["Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels"]
+    private var favorites: [String] = ["Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels"] // Temp
 
     override func viewDidLoad() {
 

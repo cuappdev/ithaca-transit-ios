@@ -10,37 +10,52 @@ import UIKit
 
 class FavoritesCollectionViewCell: UICollectionViewCell {
 
-    var nameLabel: UILabel!
+    private var nameLabel: UILabel!
+    private var heartImageView: UIImageView!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .black
-//        backgroundColor = .lightGray
-//        nameLabel = UILabel()
-//        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-//        nameLabel.font = .systemFont(ofSize: 16)
-//        nameLabel.numberOfLines = 2
-//        nameLabel.textColor = .white
-//        nameLabel.textAlignment = .center
-//        contentView.addSubview(nameLabel)
+
+        nameLabel = UILabel()
+        nameLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        nameLabel.textColor = .black
+        nameLabel.textAlignment = .center
+        nameLabel.numberOfLines = 2
+        nameLabel.lineBreakMode = .byTruncatingTail
+        contentView.addSubview(nameLabel)
+
+        heartImageView = UIImageView(image: UIImage(named: "favorite"))
+        heartImageView.contentMode = .scaleAspectFit
+        contentView.addSubview(heartImageView)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-//        nameLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
-//        nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-//        nameLabel.heightAnchor.constraint(equalTo: contentView.heightAnchor).isActive = true
-//        nameLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor).isActive = true
-//        nameLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-//        nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+
+        let heartImageSize = 56
+        let nameLabelTopPadding = 11
+
+        heartImageView.snp.makeConstraints{ make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview()
+            make.height.equalTo(heartImageSize)
+            make.width.equalTo(heartImageSize)
+        }
+
+        nameLabel.snp.makeConstraints { make in
+            make.left.equalToSuperview()
+            make.right.equalToSuperview()
+            make.top.equalTo(heartImageView.snp.bottom).offset(nameLabelTopPadding)
+        }
+
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure() {
-        print("In configure")
+    func configure(for name: String) {
+        nameLabel.text = name
     }
 
 }
