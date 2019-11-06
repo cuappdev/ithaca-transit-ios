@@ -16,22 +16,23 @@ class AddFavoriteTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
         iconView.contentMode = .scaleAspectFit
         contentView.addSubview(iconView)
 
         nameLabel.font = .getFont(.regular, size: 14) // has been size: 14 elsewhere
+        nameLabel.text = Constants.General.firstFavorite
         contentView.addSubview(nameLabel)
 
         descriptionLabel.textColor = Colors.metadataIcon
         descriptionLabel.font = .getFont(.regular, size: 12)
+        descriptionLabel.text = Constants.General.tapHere
         contentView.addSubview(descriptionLabel)
 
         setupConstraints()
         
         iconView.tintColor = Colors.tcatBlue
         iconView.image = UIImage(named: "bus-pin")
-        nameLabel.text = Constants.General.firstFavorite
-        descriptionLabel.text = Constants.General.tapHere
     }
 
     private func setupConstraints() {
@@ -66,4 +67,5 @@ class AddFavoriteTableViewCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
 }

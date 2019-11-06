@@ -35,7 +35,6 @@ extension HomeOptionsCardViewController {
         )
 
         updatePlaces()
-//        updateSections()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -123,6 +122,19 @@ extension HomeOptionsCardViewController: HeaderViewDelegate {
 // MARK: - MapView Delegate
 extension HomeOptionsCardViewController: HomeMapViewDelegate {
 
+    func reachabilityChanged(connection: Reachability.Connection) {
+        switch connection {
+        case .none:
+            isNetworkDown = true
+            searchBar.isUserInteractionEnabled = false
+            sections = []
+        case .cellular, .wifi:
+            isNetworkDown = false
+            updateSections()
+            searchBar.isUserInteractionEnabled = true
+        }
+    }
+    
     func mapViewWillMove() {
         if let searchBarText = searchBar.text,
             searchBarText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -167,12 +179,12 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
                     else { return UITableViewCell() }
                 cell.configure(for: favoritePlaces[indexPath.row])
                 return cell
-            } else { // if there are no favorites, show an AddFavorite cell
+            } else { // If there are no favorites, show an AddFavorite cell
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.addFavoriteIdentifier) as? AddFavoriteTableViewCell
                     else { return UITableViewCell() }
                 return cell
             }
-        default: // recent searches, etc.
+        default: // Recent searches, etc.
             guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
                 else { return UITableViewCell() }
             cell.configure(for: sections[indexPath.section].getItems()[indexPath.row])

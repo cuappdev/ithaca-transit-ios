@@ -14,6 +14,7 @@ import UIKit
 
 protocol HomeMapViewDelegate: class {
     func mapViewWillMove()
+    func reachabilityChanged(connection: Reachability.Connection)
 }
 
 class HomeMapViewController: UIViewController {
@@ -194,6 +195,14 @@ extension HomeMapViewController: HomeOptionsCardDelegate {
             }
         }
     }
+}
+
+extension HomeMapViewController: ReachabilityDelegate {
+
+    func reachabilityChanged(connection: Reachability.Connection) {
+       delegate?.reachabilityChanged(connection: connection)
+   }
+
 }
 
 /// Helper function inserted by Swift 4.2 migrator.

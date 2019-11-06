@@ -227,7 +227,8 @@ class HomeOptionsCardViewController: UIViewController {
         return sections.reduce(0) { (result, section) -> CGFloat in
             switch section {
             case .favorites:
-                let rows = CGFloat(max(1, section.getItems().count)) // at least the Add Favorites row if there are none
+                // We should always have the Add Favorites row
+                let rows = CGFloat(max(1, section.getItems().count))
                 return headerHeight + tableViewRowHeight * rows + result
             case .recentSearches:
                 return headerHeight + tableViewRowHeight * CGFloat(section.getItems().count) + result
