@@ -11,26 +11,33 @@ import UIKit
 
 class FavoritesViewController: UIViewController {
 
+    // MARK: - View vars
 
-    private let favoritesTitle = "Favorites"
-    private let editTitle = "Edit"
-    private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
-
-    private var favorites: [String] = ["Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels"]
-
+    private var editButton: UIButton!
     private let favoritesBlueColor = UIColor(hex: "08A0E0")
-
     private var favoritesCollectionView: UICollectionView!
     private var favoritesTitleLabel: UILabel!
-    private var editButton: UIButton!
-
     private let tab = UIView()
     private let tabSize = CGSize(width: 32, height: 4)
+
+    // MARK: - Data vars
+    private let editTitle = "Edit"
+    private let favoritesTitle = "Favorites"
+    private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
+    // Temporary Favorites Array
+    private var favorites: [String] = ["Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels"]
 
     override func viewDidLoad() {
 
         super.viewDidLoad()
+        setupLabels()
+        setupFavoritesCollectionView()
+        setupTab()
+        setupConstraints()
 
+    }
+
+    private func setupLabels() {
         favoritesTitleLabel = UILabel()
         favoritesTitleLabel.text = favoritesTitle
         favoritesTitleLabel.textColor = .black
@@ -45,7 +52,9 @@ class FavoritesViewController: UIViewController {
         let attributedString = NSMutableAttributedString(string: editTitle, attributes: attributes)
         editButton.setAttributedTitle(attributedString, for: .normal)
         view.addSubview(editButton)
+    }
 
+    private func setupFavoritesCollectionView() {
         let favoritesFlowLayout = UICollectionViewFlowLayout()
         favoritesFlowLayout.minimumLineSpacing = 12.0
         favoritesFlowLayout.minimumInteritemSpacing = 4.0
@@ -56,14 +65,6 @@ class FavoritesViewController: UIViewController {
         favoritesCollectionView.register(FavoritesCollectionViewCell.self, forCellWithReuseIdentifier: favoritesReuseIdentifier)
         favoritesCollectionView.backgroundColor = .clear
         view.addSubview(favoritesCollectionView)
-
-        tab.backgroundColor = Colors.metadataIcon
-        tab.layer.cornerRadius = tabSize.height / 2
-        tab.clipsToBounds = true
-        view.addSubview(tab)
-
-        setupConstraints()
-
     }
 
     func setupTab() {
