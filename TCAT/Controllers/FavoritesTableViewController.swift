@@ -10,10 +10,6 @@ import UIKit
 import DZNEmptyDataSet
 import FutureNova
 
-protocol FavoritesSelectionDelegate: class {
-    func didAddNewFavorite()
-}
-
 class FavoritesTableViewController: UIViewController {
 
     private var searchBar = UISearchBar()
@@ -27,7 +23,8 @@ class FavoritesTableViewController: UIViewController {
         }
     }
 
-    weak var selectionDelegate: FavoritesSelectionDelegate?
+    /// Handler for favorite selection
+    var didAddFavorite: (() -> ())?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -132,7 +129,7 @@ extension FavoritesTableViewController: UITableViewDelegate {
         }
         if let place = resultsSection.getItem(at: indexPath.row) {
             Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
-            selectionDelegate?.didAddNewFavorite()
+            didAddFavorite?()
             dismissVC()
         }
     }

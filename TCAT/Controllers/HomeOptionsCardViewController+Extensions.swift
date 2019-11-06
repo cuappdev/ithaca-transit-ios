@@ -35,7 +35,6 @@ extension HomeOptionsCardViewController {
         )
 
         updatePlaces()
-        createDefaultSections()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -46,7 +45,7 @@ extension HomeOptionsCardViewController {
     }
 }
 
-// MARK: - Search Bar Delegate
+// MARK: - SearchBar Delegate
 extension HomeOptionsCardViewController: UISearchBarDelegate {
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -55,7 +54,7 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
         searchBar.endEditing(true)
         searchBar.text = nil
         animateInInfoButton()
-        createDefaultSections()
+        updateSections()
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -80,7 +79,7 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
         if view.frame.height == collapsedHeight {
             if let searchText = searchBar.text,
                 searchText.isEmpty {
-                createDefaultSections()
+                updateSections()
             } else {
                 tableView.reloadData()
                 DispatchQueue.main.async {
@@ -94,9 +93,14 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
 // MARK: - HeaderView Delegate
 extension HomeOptionsCardViewController: HeaderViewDelegate {
 
-    func displayFavoritesTVC() {
+    func presentFavoritePicker() {
         if favorites.count < 2 {
-            presentFavoritesTVC()
+            let favoritesTVC = FavoritesTableViewController()
+            favoritesTVC.didAddFavorite = {
+                self.updatePlaces() 
+            }
+            let navController = CustomNavigationController(rootViewController: favoritesTVC)
+            present(navController, animated: true, completion: nil)
         } else {
             let title = Constants.Alerts.MaxFavorites.title
             let message = Constants.Alerts.MaxFavorites.message
@@ -110,7 +114,7 @@ extension HomeOptionsCardViewController: HeaderViewDelegate {
     func clearRecentSearches() {
         Global.shared.deleteAllRecents()
         recentLocations = []
-        createDefaultSections()
+        updateSections()
     }
 
 }
@@ -126,11 +130,11 @@ extension HomeOptionsCardViewController: HomeMapViewDelegate {
             sections = []
         case .cellular, .wifi:
             isNetworkDown = false
-            createDefaultSections()
+            updateSections()
             searchBar.isUserInteractionEnabled = true
         }
     }
-
+    
     func mapViewWillMove() {
         if let searchBarText = searchBar.text,
             searchBarText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -163,14 +167,24 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if sections[indexPath.section] == .seeAllStops {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier) as? GeneralTableViewCell
-                else { return UITableViewCell() }
+        let section = sections[indexPath.section]
+        switch section {
+        case .seeAllStops:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier, for: indexPath) as? GeneralTableViewCell else { return UITableViewCell() }
             cell.configure(for: .seeAllStops)
             return cell
-        }
-            // Favorites (including Add First Favorite!), Recent Searches
-        else {
+        case .favorites(items: let favoritePlaces):
+            if favoritePlaces.count > 0 {
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
+                    else { return UITableViewCell() }
+                cell.configure(for: favoritePlaces[indexPath.row])
+                return cell
+            } else { // If there are no favorites, show an AddFavorite cell
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.addFavoriteIdentifier) as? AddFavoriteTableViewCell
+                    else { return UITableViewCell() }
+                return cell
+            }
+        default: // Recent searches, etc.
             guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
                 else { return UITableViewCell() }
             cell.configure(for: sections[indexPath.section].getItems()[indexPath.row])
@@ -204,50 +218,48 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch sections[section] {
-        case .favorites, .recentSearches: return headerHeight
-        case .seeAllStops: return HeaderView.separatorViewHeight
-        default: return 0
+        case .favorites, .recentSearches:
+            return headerHeight
+        case .seeAllStops:
+            return HeaderView.separatorViewHeight
+        default:
+            return 0
         }
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        var header: HeaderView!
-
         switch sections[section] {
         case .recentSearches:
-            header = HeaderView(
+            return HeaderView(
                 labelText: Constants.TableHeaders.recentSearches,
                 buttonType: .clear,
                 separatorVisible: true,
                 delegate: self
             )
         case .favorites:
-            header = HeaderView(
+            return HeaderView(
                 labelText: Constants.TableHeaders.favoriteDestinations,
                 buttonType: .add,
                 delegate: self
             )
         case .seeAllStops:
-            header = HeaderView(separatorVisible: true)
+            return HeaderView(separatorVisible: true)
         case .searchResults:
             return nil
-        default: break
+        default:
+            return nil
         }
-
-        return header
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         let section = sections[indexPath.section]
         switch section {
         case .favorites:
-            if !section.isEmpty, section.getItems()[0].name != Constants.General.firstFavorite {
-                return .delete
-            } else {
-                return .none
-            }
-        case .recentSearches: return .delete
-        default: return .none
+            return section.isEmpty ? .none : .delete
+        case .recentSearches:
+            return .delete
+        default:
+            return .none
         }
     }
 
@@ -257,63 +269,50 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
             case .favorites:
                 let place = sections[indexPath.section].getItems()[indexPath.row]
                 favorites = Global.shared.deleteFavorite(favorite: place, allFavorites: favorites)
-                createDefaultSections()
+                updateSections()
             case .recentSearches:
                 let place = sections[indexPath.section].getItems()[indexPath.row]
                 recentLocations = Global.shared.deleteRecent(recent: place, allRecents: recentLocations)
-                createDefaultSections()
+                updateSections()
             default: break
             }
         }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var routeOptionsViewController: RouteOptionsViewController!
-        let stopPickerViewController = StopPickerViewController()
-        stopPickerViewController.onSelection = { place in
-            let optionsVC = RouteOptionsViewController(searchTo: place)
-            self.navigationController?.pushViewController(optionsVC, animated: true)
-        }
-
-        var didSelectAllStops = false
-        var shouldPushViewController = true
-
-        if sections[indexPath.section] == .seeAllStops {
-            didSelectAllStops = true
-        } else {
-            let place = sections[indexPath.section].getItems()[indexPath.row]
-            if place.name == Constants.General.firstFavorite {
-                shouldPushViewController = false
-                presentFavoritesTVC()
-            } else {
-                if let searchText = searchBar.text {
-                    let payload = SearchResultSelectedPayload(
-                        searchText: searchText,
-                        selectedIndex: indexPath.row,
-                        totalResults: sections[indexPath.section].getItems().count
-                    )
-                    Analytics.shared.log(payload)
-                }
-                routeOptionsViewController = RouteOptionsViewController(searchTo: place)
-                routeOptionsViewController.didReceiveCurrentLocation(currentLocation)
-                Global.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
+        switch sections[indexPath.section] {
+        case .seeAllStops:
+            let stopPickerVC = StopPickerViewController()
+            stopPickerVC.onSelection = { place in
+                let optionsVC = RouteOptionsViewController(searchTo: place)
+                self.navigationController?.pushViewController(optionsVC, animated: true)
             }
+            navigationController?.pushViewController(stopPickerVC, animated: true)
+        case .favorites(items: let places):
+            if places.count == 0 {
+                presentFavoritePicker()
+            } else {
+                navigationController?.pushViewController(RouteOptionsViewController(searchTo: places[indexPath.row]), animated: true)
+            }
+        default:
+            if let searchText = searchBar.text {
+                let payload = SearchResultSelectedPayload(
+                    searchText: searchText,
+                    selectedIndex: indexPath.row,
+                    totalResults: sections[indexPath.section].getItems().count
+                )
+                Analytics.shared.log(payload)
+            }
+            
+            let place = sections[indexPath.section].getItems()[indexPath.row]
+            Global.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
+            
+            let routeOptionsVC = RouteOptionsViewController(searchTo: place)
+            routeOptionsVC.didReceiveCurrentLocation(currentLocation)
+            navigationController?.pushViewController(routeOptionsVC, animated: true)
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
         searchBar.endEditing(true)
-
-        if shouldPushViewController,
-            let vcToPush = didSelectAllStops ? stopPickerViewController : routeOptionsViewController {
-            navigationController?.pushViewController(vcToPush, animated: true)
-        }
     }
-}
-
-extension HomeOptionsCardViewController: FavoritesSelectionDelegate {
-
-    func didAddNewFavorite() {
-        updatePlaces()
-    }
-
 }

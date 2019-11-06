@@ -32,20 +32,9 @@ enum PlaceType: String, Codable {
         case type
     }
 
-    init(name: String) {
-        self.name = name
-        self.type = .unknown
-    }
-
-    /// Initializer for Google Places
-    convenience init(name: String, placeDescription: String = "") {
-        self.init(name: name)
-        self.placeDescription = placeDescription
-    }
-
     /// Initializer for any type of location.
-    convenience init(name: String, latitude: Double, longitude: Double) {
-        self.init(name: name)
+    init(name: String, latitude: Double, longitude: Double) {
+        self.name = name
         self.type = .unknown
         self.latitude = latitude
         self.longitude = longitude
@@ -53,11 +42,9 @@ enum PlaceType: String, Codable {
 
     /// Initializer for Apple Places
     convenience init(name: String, latitude: Double, longitude: Double, placeDescription: String) {
-        self.init(name: name)
+        self.init(name: name, latitude: latitude, longitude: longitude)
         self.type = .applePlace
         self.placeDescription = placeDescription
-        self.latitude = latitude
-        self.longitude = longitude
     }
 
     // MARK: - Functions
