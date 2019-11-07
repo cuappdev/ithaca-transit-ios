@@ -94,7 +94,6 @@ class SearchResultsViewController: UIViewController {
         // Set Up Sections For TableView
         seeAllStopsSection = Section.seeAllStops
         recentSearchesSection = Section.recentSearches(items: recentLocations)
-        favoritesSection = Section.favorites(items: favorites)
         searchResultsSection = Section.searchResults(items: [])
 
         createDefaultSections()
@@ -188,8 +187,6 @@ extension SearchResultsViewController: UITableViewDataSource {
         switch sections[section] {
         case .recentSearches:
             return recentLocations.count
-        case .favorites:
-            return favorites.count
         default:
             return sections[section].getItems().count
         }
@@ -221,8 +218,8 @@ extension SearchResultsViewController: UITableViewDelegate {
         switch sections[section] {
         case .recentSearches:
             header = HeaderView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear)
-        case .favorites:
-            header = HeaderView(labelText: Constants.TableHeaders.favoriteDestinations, buttonType: .add)
+//        case .favorites:
+//            header = HeaderView(labelText: Constants.TableHeaders.favoriteDestinations, buttonType: .add)
         case .seeAllStops, .searchResults:
             return nil
         default:
@@ -238,7 +235,7 @@ extension SearchResultsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch sections[section] {
-        case .favorites, .recentSearches: return 50
+        case .recentSearches: return 50
         default: return 24
         }
     }

@@ -20,7 +20,8 @@ class FavoritesViewController: UIViewController {
 
     // MARK: - Data vars
     private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
-    private var favorites: [String] = ["Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels"] // Temp
+    private let addFavoritesReuseIdentifier = "AddFavoritesCollectionViewCell"
+    private let favoritePlaces = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,6 +60,7 @@ class FavoritesViewController: UIViewController {
         favoritesCollectionView.delegate = self
         favoritesCollectionView.dataSource = self
         favoritesCollectionView.register(FavoritesCollectionViewCell.self, forCellWithReuseIdentifier: favoritesReuseIdentifier)
+        favoritesCollectionView.register(AddFavoritesCollectionViewCell.self, forCellWithReuseIdentifier: addFavoritesReuseIdentifier)
         favoritesCollectionView.backgroundColor = .clear
         view.addSubview(favoritesCollectionView)
     }
@@ -106,15 +108,20 @@ class FavoritesViewController: UIViewController {
 extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return collectionView == favoritesCollectionView ? favorites.count : 0
+        return collectionView == favoritesCollectionView ? favoritePlaces.count + 1 : 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: favoritesReuseIdentifier, for: indexPath) as! FavoritesCollectionViewCell
-        cell.configure(for: favorites[indexPath.row])
-        return cell
+        if indexPath.item < favoritePlaces.count  {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: favoritesReuseIdentifier, for: indexPath) as! FavoritesCollectionViewCell
+            cell.configure(for: favoritePlaces[indexPath.row])
+            return cell
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: addFavoritesReuseIdentifier, for: indexPath) as! AddFavoritesCollectionViewCell
+            cell.configure(for: "test", delegate: self)
+            return cell
+         }
     }
-
 }
 
 extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
@@ -132,6 +139,35 @@ extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
 
     func supportedDrawerPositions() -> [PulleyPosition] {
         return [.collapsed, .partiallyRevealed]
+    }
+
+}
+
+// MARK: - HeaderView Delegate
+extension FavoritesViewController: HeaderViewDelegate {
+
+    func presentFavoritePicker() {
+        if favoritePlaces.count < 3 {
+            let favoritesTVC = FavoritesTableViewController()
+            favoritesTVC.didAddFavorite = {
+//                self.updatePlaces()
+            }
+            let navController = CustomNavigationController(rootViewController: favoritesTVC)
+            present(navController, animated: true, completion: nil)
+        } else {
+            let title = Constants.Alerts.MaxFavorites.title
+            let message = Constants.Alerts.MaxFavorites.message
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let done = UIAlertAction(title: Constants.Alerts.MaxFavorites.action, style: .default)
+            alertController.addAction(done)
+            present(alertController, animated: true, completion: nil)
+        }
+    }
+
+    func clearRecentSearches() {
+//        Global.shared.deleteAllRecents()
+//        recentLocations = []
+//        updateSections()
     }
 
 }

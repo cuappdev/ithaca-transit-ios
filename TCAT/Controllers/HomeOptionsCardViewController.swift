@@ -227,7 +227,7 @@ class HomeOptionsCardViewController: UIViewController {
     /// Updates the table sections to show favorites, recent searches, and all stops. Ultimately reloads the table.
     func updateSections() {
         sections.removeAll()
-        sections.append(Section.favorites(items: favorites))
+//        sections.append(Section.favorites(items: favorites))
         if recentLocations.count > 0 {
             sections.append(Section.recentSearches(items: recentLocations))
         }
@@ -245,10 +245,10 @@ class HomeOptionsCardViewController: UIViewController {
     private func tableViewContentHeight() -> CGFloat {
         return sections.reduce(0) { (result, section) -> CGFloat in
             switch section {
-            case .favorites:
+//            case .favorites:
                 // We should always have the Add Favorites row
-                let rows = CGFloat(max(1, section.getItems().count))
-                return headerHeight + tableViewRowHeight * rows + result
+//                let rows = CGFloat(max(1, section.getItems().count))
+//                return headerHeight + tableViewRowHeight * rows + result
             case .recentSearches:
                 return headerHeight + tableViewRowHeight * CGFloat(section.getItems().count) + result
             case .seeAllStops:

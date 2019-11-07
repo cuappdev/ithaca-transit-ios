@@ -50,9 +50,10 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(for name: String) {
-        nameLabel.text = name
+    func configure(for place: Place) {
+        nameLabel.text = place.name
     }
 
 }
+
 
