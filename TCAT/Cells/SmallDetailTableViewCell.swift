@@ -90,6 +90,10 @@ class SmallDetailTableViewCell: UITableViewCell {
             make.height.equalTo(titleLabelHeight)
         }
     }
+    
+    func hideHairline() {
+        hairline.isHidden = true
+    }
 
     override func prepareForReuse() {
         iconView.removeFromSuperview()

@@ -139,6 +139,7 @@ struct Constants {
 
         static let busStopDetailCellIdentifier = "BusStopCell"
         static let largeDetailCellIdentifier = "LargeCell"
+        static let notificationToggleCellIdentifier = "NotifToggleCell"
         static let smallDetailCellIdentifier = "SmallCell"
         static let generalCellIdentifier = "GeneralCell"
 
@@ -236,6 +237,13 @@ struct Constants {
         static let defaultZoom: Float = 15.5 // Use as initial zoom on homeMapVC
         static let maxZoom: Float = 25
         static let searchRadius = 24140
+    }
+    
+    struct Notification {
+        static let notifyBeforeBoarding = "Notify me 10 min before boarding"
+        static let notifyDelay = "Notify me about delays"
+        static let beforeBoardingConfirmation = "You will receive notifications 10 min before boarding time"
+        static let delayConfirmation = "You will receive notifications for delays in"
     }
 
     struct SearchBar {

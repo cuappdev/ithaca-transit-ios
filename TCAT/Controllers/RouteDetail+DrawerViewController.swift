@@ -47,6 +47,9 @@ class RouteDetailDrawerViewController: UIViewController {
 
     var directionsAndVisibleStops: [RouteDetailItem] = []
     var expandedDirections: Set<Direction> = []
+    let notificationCellHeight: CGFloat = 70
+    var notificationTitles: [String] = []
+    var sections: [RouteDetailSection] = []
     var selectedDirection: Direction?
 
     /// Number of seconds to wait before auto-refreshing bus delay network call.
@@ -77,7 +80,9 @@ class RouteDetailDrawerViewController: UIViewController {
 
         setupSummaryView()
         setupTableView()
+        setupNotificationTitles()
         setupSafeAreaCoverView()
+        setupSections()
 
         if let drawer = self.parent as? RouteDetailViewController {
             drawer.initialDrawerPosition = .partiallyRevealed
@@ -121,13 +126,20 @@ class RouteDetailDrawerViewController: UIViewController {
         tableView.register(SmallDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.smallDetailCellIdentifier)
         tableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.largeDetailCellIdentifier)
         tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: Constants.Cells.busStopDetailCellIdentifier)
+        tableView.register(NotificationToggleTableViewCell.self, forCellReuseIdentifier: Constants.Cells.notificationToggleCellIdentifier)
         tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.emptyFooterView)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: -34, left: 0.0, bottom: 34, right: 0.0)
         tableView.backgroundColor = Colors.white
+        tableView.sectionHeaderHeight = 0
         view.addSubview(tableView)
+    }
+    
+    private func setupNotificationTitles() {
+        notificationTitles.append(Constants.Notification.notifyDelay)
+        notificationTitles.append(Constants.Notification.notifyBeforeBoarding)
     }
 
     /// Creates a temporary view to cover the drawer contents when collapsed. Hidden by default.
@@ -135,6 +147,13 @@ class RouteDetailDrawerViewController: UIViewController {
         safeAreaCover.backgroundColor = Colors.backgroundWash
         safeAreaCover.alpha = 0
         view.addSubview(safeAreaCover)
+    }
+    
+    private func setupSections() {
+        sections.append(RouteDetailSection.routeDetail)
+        if !route.isRawWalkingRoute() {
+            sections.append(RouteDetailSection.notification)
+        }
     }
 
     private func setupConstraints() {
