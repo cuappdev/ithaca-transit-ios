@@ -19,8 +19,6 @@ class FavoritesViewController: UIViewController {
     private let tabSize = CGSize(width: 32, height: 4)
 
     // MARK: - Data vars
-    private let editTitle = "Edit"
-    private let favoritesTitle = "Favorites"
     private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
     private var favorites: [String] = ["Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels"] // Temp
 
@@ -36,7 +34,7 @@ class FavoritesViewController: UIViewController {
     }
 
     private func setupLabels() {
-        favoritesTitleLabel.text = favoritesTitle
+        favoritesTitleLabel.text = "Favorites"
         favoritesTitleLabel.textColor = .black
         favoritesTitleLabel.font = .getFont(.medium, size: 24)
         view.addSubview(favoritesTitleLabel)
@@ -48,7 +46,7 @@ class FavoritesViewController: UIViewController {
             .font: UIFont.getFont(.regular, size: 14.0),
             .foregroundColor: favoritesBlueColor,
         ]
-        let attributedString = NSMutableAttributedString(string: editTitle, attributes: attributes)
+        let attributedString = NSMutableAttributedString(string: "Edit", attributes: attributes)
         editButton.setAttributedTitle(attributedString, for: .normal)
         view.addSubview(editButton)
     }
