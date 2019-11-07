@@ -113,7 +113,7 @@ class SearchResultsViewController: UIViewController {
 
     private func createDefaultSections() {
         var sections = [
-            favoritesSection,
+//            favoritesSection,
             recentSearchesSection,
             seeAllStopsSection
         ].filter { !$0.isEmpty }

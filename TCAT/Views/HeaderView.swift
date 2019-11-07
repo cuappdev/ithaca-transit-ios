@@ -11,7 +11,6 @@ import UIKit
 
 protocol HeaderViewDelegate: class {
     func clearRecentSearches()
-    func presentFavoritePicker()
 }
 
 enum ButtonOption {

@@ -112,7 +112,7 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if indexPath.item < favoritePlaces.count  {
+        if indexPath.item < favoritePlaces.count {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: favoritesReuseIdentifier, for: indexPath) as! FavoritesCollectionViewCell
             cell.configure(for: favoritePlaces[indexPath.row])
             return cell
@@ -121,6 +121,12 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
             cell.configure(for: "test", delegate: self)
             return cell
          }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.item < favoritePlaces.count {
+            navigationController?.pushViewController(RouteOptionsViewController(searchTo: favoritePlaces[indexPath.row]), animated: true)
+        } 
     }
 }
 
@@ -143,8 +149,8 @@ extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
 
 }
 
-// MARK: - HeaderView Delegate
-extension FavoritesViewController: HeaderViewDelegate {
+// MARK: - FavoritesView Delegate
+extension FavoritesViewController: FavoritesViewDelegate {
 
     func presentFavoritePicker() {
         if favoritePlaces.count < 3 {
@@ -162,12 +168,6 @@ extension FavoritesViewController: HeaderViewDelegate {
             alertController.addAction(done)
             present(alertController, animated: true, completion: nil)
         }
-    }
-
-    func clearRecentSearches() {
-//        Global.shared.deleteAllRecents()
-//        recentLocations = []
-//        updateSections()
     }
 
 }

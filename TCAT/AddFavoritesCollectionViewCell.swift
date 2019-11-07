@@ -8,13 +8,17 @@
 
 import UIKit
 
+protocol FavoritesViewDelegate: class {
+    func presentFavoritePicker()
+}
+
 class AddFavoritesCollectionViewCell: UICollectionViewCell {
 
     private let addFavoriteButton = UIButton()
     private let addImageView = UIImageView()
     private let addLabel = UILabel()
 
-    private weak var favoritesViewDelegate: HeaderViewDelegate?
+    private weak var favoritesViewDelegate: FavoritesViewDelegate?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -63,7 +67,7 @@ class AddFavoritesCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(for name: String, delegate: HeaderViewDelegate) {
+    func configure(for name: String, delegate: FavoritesViewDelegate) {
         addLabel.text = "Add"
         favoritesViewDelegate = delegate
     }
