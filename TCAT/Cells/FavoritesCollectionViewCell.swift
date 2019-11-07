@@ -10,13 +10,12 @@ import UIKit
 
 class FavoritesCollectionViewCell: UICollectionViewCell {
 
-    private var nameLabel: UILabel!
-    private var heartImageView: UIImageView!
+    private let heartImageView = UIImageView()
+    private let nameLabel = UILabel()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        nameLabel = UILabel()
         nameLabel.font = .systemFont(ofSize: 12, weight: .regular)
         nameLabel.textColor = .black
         nameLabel.textAlignment = .center
@@ -24,27 +23,25 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
         nameLabel.lineBreakMode = .byTruncatingTail
         contentView.addSubview(nameLabel)
 
-        heartImageView = UIImageView(image: UIImage(named: "favorite"))
+        heartImageView.image = UIImage(named: "favorite")
         heartImageView.contentMode = .scaleAspectFit
         contentView.addSubview(heartImageView)
+
+        setupConstraints()
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    private func setupConstraints() {
 
         let heartImageSize = 56
         let nameLabelTopPadding = 11
 
         heartImageView.snp.makeConstraints{ make in
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview()
-            make.height.equalTo(heartImageSize)
-            make.width.equalTo(heartImageSize)
+            make.centerX.top.equalToSuperview()
+            make.size.equalTo(heartImageSize)
         }
 
         nameLabel.snp.makeConstraints { make in
-            make.left.equalToSuperview()
-            make.right.equalToSuperview()
+            make.left.right.equalToSuperview()
             make.top.equalTo(heartImageView.snp.bottom).offset(nameLabelTopPadding)
         }
 

@@ -82,11 +82,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Initalize first view based on context
         let showOnboarding = !userDefaults.bool(forKey: Constants.UserDefaults.onboardingShown)
-        let homeMapViewController = HomeMapViewController()
-        let favoritesViewController = FavoritesViewController()
         let parentHomeViewController = ParentHomeMapViewController(
-            contentViewController: homeMapViewController,
-            drawerViewController: favoritesViewController
+            contentViewController: HomeMapViewController(),
+            drawerViewController: FavoritesViewController()
         )
         let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : parentHomeViewController
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :

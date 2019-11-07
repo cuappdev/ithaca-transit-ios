@@ -12,11 +12,10 @@ import UIKit
 class FavoritesViewController: UIViewController {
 
     // MARK: - View vars
-    private var editButton: UIButton!
-    private let favoritesBlueColor = UIColor(hex: "08A0E0")
+    private let editButton = UIButton()
     private var favoritesCollectionView: UICollectionView!
-    private var favoritesTitleLabel: UILabel!
-    private let tab = UIView()
+    private let favoritesTitleLabel = UILabel()
+    private let tabView = UIView()
     private let tabSize = CGSize(width: 32, height: 4)
 
     // MARK: - Data vars
@@ -26,23 +25,25 @@ class FavoritesViewController: UIViewController {
     private var favorites: [String] = ["Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels"] // Temp
 
     override func viewDidLoad() {
-
         super.viewDidLoad()
+
         setupLabels()
+        setupButtons()
         setupFavoritesCollectionView()
-        setupTab()
+        setupTabView()
         setupConstraints()
 
     }
 
     private func setupLabels() {
-        favoritesTitleLabel = UILabel()
         favoritesTitleLabel.text = favoritesTitle
         favoritesTitleLabel.textColor = .black
         favoritesTitleLabel.font = .getFont(.medium, size: 24)
         view.addSubview(favoritesTitleLabel)
+    }
 
-        editButton = UIButton()
+    private func setupButtons() {
+        let favoritesBlueColor = UIColor(hex: "08A0E0")
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.getFont(.regular, size: 14.0),
             .foregroundColor: favoritesBlueColor,
@@ -65,21 +66,19 @@ class FavoritesViewController: UIViewController {
         view.addSubview(favoritesCollectionView)
     }
 
-    func setupTab() {
-        tab.backgroundColor = Colors.metadataIcon
-        tab.layer.cornerRadius = tabSize.height / 2
-        tab.clipsToBounds = true
-        view.addSubview(tab)
+    private func setupTabView() {
+        tabView.backgroundColor = Colors.metadataIcon
+        tabView.layer.cornerRadius = tabSize.height / 2
+        tabView.clipsToBounds = true
+        view.addSubview(tabView)
     }
 
     private func setupConstraints() {
-
         let tabTopInset: CGFloat = 6
         let horizontalPadding = 16
         let titleBarTopPadding = 21
         let favoritesTopPadding = 24
         let bottomPadding = 18
-
 
         favoritesTitleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(horizontalPadding)
@@ -98,13 +97,11 @@ class FavoritesViewController: UIViewController {
             make.bottom.equalToSuperview().offset(-bottomPadding).priority(.high)
         }
 
-        tab.snp.makeConstraints { make in
+        tabView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalToSuperview().inset(tabTopInset)
             make.size.equalTo(tabSize)
         }
-
-
     }
 
 }
@@ -112,19 +109,13 @@ class FavoritesViewController: UIViewController {
 extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == favoritesCollectionView {
-            return favorites.count
-        }
-        return 0
+        return collectionView == favoritesCollectionView ? favorites.count : 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == favoritesCollectionView {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: favoritesReuseIdentifier, for: indexPath) as! FavoritesCollectionViewCell
-            cell.configure(for: favorites[indexPath.row])
-            return cell
-        }
-        return UICollectionViewCell()
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: favoritesReuseIdentifier, for: indexPath) as! FavoritesCollectionViewCell
+        cell.configure(for: favorites[indexPath.row])
+        return cell
     }
 
 }
