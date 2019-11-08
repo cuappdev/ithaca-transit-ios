@@ -10,10 +10,10 @@ import UIKit
 
 class NotificationToggleTableViewCell: UITableViewCell {
 
-    private let hairline = UIView()
     private let firstHairline = UIView()
-    private let notifTitleLabel = UILabel()
+    private let hairline = UIView()
     private let notifSwitch = UISwitch()
+    private let notifTitleLabel = UILabel()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -21,14 +21,14 @@ class NotificationToggleTableViewCell: UITableViewCell {
         hairline.backgroundColor = Colors.tableViewSeparator
         contentView.addSubview(hairline)
         
-        notifTitleLabel.font = .getFont(.regular, size: 14)
-        notifTitleLabel.textColor = Colors.primaryText
-        contentView.addSubview(notifTitleLabel)
-        
         notifSwitch.onTintColor = Colors.tcatBlue
         notifSwitch.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
         notifSwitch.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
         contentView.addSubview(notifSwitch)
+        
+        notifTitleLabel.font = .getFont(.regular, size: 14)
+        notifTitleLabel.textColor = Colors.primaryText
+        contentView.addSubview(notifTitleLabel)
         
         setUpConstraints()
     }
