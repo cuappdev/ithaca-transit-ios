@@ -21,7 +21,7 @@ class FavoritesViewController: UIViewController {
     // MARK: - Data vars
     private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
     private let addFavoritesReuseIdentifier = "AddFavoritesCollectionViewCell"
-    private let favoritePlaces = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
+    private var favoritePlaces = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,6 +48,7 @@ class FavoritesViewController: UIViewController {
         ]
         let attributedString = NSMutableAttributedString(string: "Edit", attributes: attributes)
         editButton.setAttributedTitle(attributedString, for: .normal)
+        editButton.addTarget(self, action: #selector(editAction), for: .touchUpInside)
         view.addSubview(editButton)
     }
 
@@ -107,7 +108,8 @@ class FavoritesViewController: UIViewController {
             if favoritePlaces.count < 3 {
                 let favoritesTVC = FavoritesTableViewController()
                 favoritesTVC.didAddFavorite = {
-    //                self.updatePlaces()
+                    self.favoritePlaces = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
+                    self.favoritesCollectionView.reloadData()
                 }
                 let navController = CustomNavigationController(rootViewController: favoritesTVC)
                 present(navController, animated: true, completion: nil)
@@ -120,6 +122,10 @@ class FavoritesViewController: UIViewController {
                 present(alertController, animated: true, completion: nil)
             }
         }
+
+    @objc func editAction() {
+        print("editAction")
+    }
 
 }
 

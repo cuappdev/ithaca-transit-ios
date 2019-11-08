@@ -155,7 +155,6 @@ class HomeOptionsCardViewController: UIViewController {
         tableView.showsVerticalScrollIndicator = false
         tableView.rowHeight = tableViewRowHeight
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
-        tableView.register(AddFavoriteTableViewCell.self, forCellReuseIdentifier: Constants.Cells.addFavoriteIdentifier)
         tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.generalCellIdentifier)
         view.addSubview(tableView)
     }

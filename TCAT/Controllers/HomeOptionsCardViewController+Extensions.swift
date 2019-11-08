@@ -130,17 +130,6 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier, for: indexPath) as? GeneralTableViewCell else { return UITableViewCell() }
             cell.configure(for: .seeAllStops)
             return cell
-//        case .favorites(items: let favoritePlaces):
-//            if favoritePlaces.count > 0 {
-//                guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-//                    else { return UITableViewCell() }
-//                cell.configure(for: favoritePlaces[indexPath.row])
-//                return cell
-//            } else { // If there are no favorites, show an AddFavorite cell
-//                guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.addFavoriteIdentifier) as? AddFavoriteTableViewCell
-//                    else { return UITableViewCell() }
-//                return cell
-//            }
         default: // Recent searches, etc.
             guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
                 else { return UITableViewCell() }

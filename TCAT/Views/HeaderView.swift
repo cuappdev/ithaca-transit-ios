@@ -28,10 +28,6 @@ class HeaderView: UITableViewHeaderFooterView {
     private var button: UIButton?
     private var label: UILabel!
 
-//    @objc private func addNewFavorite(sender: UIButton) {
-//        headerViewDelegate?.presentFavoritePicker()
-//    }
-
     @objc private func clearRecentSearches(sender: UIButton) {
         headerViewDelegate?.clearRecentSearches()
     }
@@ -78,9 +74,6 @@ class HeaderView: UITableViewHeaderFooterView {
         button?.setTitleColor(Colors.tcatBlue, for: .normal)
 
         switch type {
-//        case .add:
-//            button?.setTitle(Constants.Buttons.add, for: .normal)
-//            button?.addTarget(self, action: #selector(addNewFavorite), for: .touchUpInside)
         case .clear:
             button?.setTitle(Constants.Buttons.clear, for: .normal)
             button?.addTarget(self, action: #selector(clearRecentSearches), for: .touchUpInside)
