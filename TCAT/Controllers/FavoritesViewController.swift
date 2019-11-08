@@ -103,6 +103,24 @@ class FavoritesViewController: UIViewController {
         }
     }
 
+    private func presentFavoritePicker() {
+            if favoritePlaces.count < 3 {
+                let favoritesTVC = FavoritesTableViewController()
+                favoritesTVC.didAddFavorite = {
+    //                self.updatePlaces()
+                }
+                let navController = CustomNavigationController(rootViewController: favoritesTVC)
+                present(navController, animated: true, completion: nil)
+            } else {
+                let title = Constants.Alerts.MaxFavorites.title
+                let message = Constants.Alerts.MaxFavorites.message
+                let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                let done = UIAlertAction(title: Constants.Alerts.MaxFavorites.action, style: .default)
+                alertController.addAction(done)
+                present(alertController, animated: true, completion: nil)
+            }
+        }
+
 }
 
 extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -118,7 +136,7 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: addFavoritesReuseIdentifier, for: indexPath) as! AddFavoritesCollectionViewCell
-            cell.configure(for: "test", delegate: self)
+//            cell.configure(delegate: self)
             return cell
          }
     }
@@ -126,7 +144,9 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item < favoritePlaces.count {
             navigationController?.pushViewController(RouteOptionsViewController(searchTo: favoritePlaces[indexPath.row]), animated: true)
-        } 
+        } else {
+            presentFavoritePicker()
+        }
     }
 }
 
@@ -145,29 +165,6 @@ extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
 
     func supportedDrawerPositions() -> [PulleyPosition] {
         return [.collapsed, .partiallyRevealed]
-    }
-
-}
-
-// MARK: - FavoritesView Delegate
-extension FavoritesViewController: FavoritesViewDelegate {
-
-    func presentFavoritePicker() {
-        if favoritePlaces.count < 3 {
-            let favoritesTVC = FavoritesTableViewController()
-            favoritesTVC.didAddFavorite = {
-//                self.updatePlaces()
-            }
-            let navController = CustomNavigationController(rootViewController: favoritesTVC)
-            present(navController, animated: true, completion: nil)
-        } else {
-            let title = Constants.Alerts.MaxFavorites.title
-            let message = Constants.Alerts.MaxFavorites.message
-            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            let done = UIAlertAction(title: Constants.Alerts.MaxFavorites.action, style: .default)
-            alertController.addAction(done)
-            present(alertController, animated: true, completion: nil)
-        }
     }
 
 }

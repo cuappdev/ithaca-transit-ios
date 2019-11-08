@@ -8,30 +8,21 @@
 
 import UIKit
 
-protocol FavoritesViewDelegate: class {
-    func presentFavoritePicker()
-}
-
 class AddFavoritesCollectionViewCell: UICollectionViewCell {
 
-    private let addFavoriteButton = UIButton()
     private let addImageView = UIImageView()
     private let addLabel = UILabel()
-
-    private weak var favoritesViewDelegate: FavoritesViewDelegate?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        addFavoriteButton.addTarget(self, action: #selector(addFavorite), for: .touchUpInside)
-        contentView.addSubview(addFavoriteButton)
-
+        addLabel.text = "Add"
         addLabel.font = .systemFont(ofSize: 14, weight: .regular)
         addLabel.textColor = UIColor(hex: "08A0E0")
         addLabel.textAlignment = .center
         contentView.addSubview(addLabel)
 
-        addImageView.image = UIImage(named: "tempAdd")
+        addImageView.image = UIImage(named: "favorite")
         addImageView.contentMode = .scaleAspectFit
         contentView.addSubview(addImageView)
 
@@ -53,23 +44,10 @@ class AddFavoritesCollectionViewCell: UICollectionViewCell {
             make.top.equalTo(addImageView.snp.bottom).offset(nameLabelTopPadding)
         }
 
-        addFavoriteButton.snp.makeConstraints{ make in
-            make.edges.equalToSuperview()
-        }
-
-    }
-
-    @objc private func addFavorite(sender: UIButton) {
-        favoritesViewDelegate?.presentFavoritePicker()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    func configure(for name: String, delegate: FavoritesViewDelegate) {
-        addLabel.text = "Add"
-        favoritesViewDelegate = delegate
     }
 
 }
