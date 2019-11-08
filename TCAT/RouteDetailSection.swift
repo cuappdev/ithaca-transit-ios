@@ -9,6 +9,6 @@
 import Foundation
 
 enum RouteDetailSection{
-    case routeDetail
     case notification
+    case routeDetail
 }
