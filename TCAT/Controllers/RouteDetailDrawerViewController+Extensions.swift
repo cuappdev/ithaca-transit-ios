@@ -114,7 +114,7 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
             switch directionsAndVisibleStops[indexPath.row] {
             case .busStop(let busStop):
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as? BusStopTableViewCell
-                    else { return UITableViewCell ()}
+                    else { return UITableViewCell()}
                 cell.configure(for: busStop.name)
                 return format(cell)
             case .direction(let direction):
@@ -124,9 +124,6 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                     cell.configure(for: direction,
                                    isFirstStep: indexPath.row == 0,
                                    isLastStep: indexPath.row == directionsAndVisibleStops.count - 1)
-                    if indexPath.row == directionsAndVisibleStops.count-1 {
-                        cell.hideHairline()
-                    }
                     return format(cell)
                 } else {
                     let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell

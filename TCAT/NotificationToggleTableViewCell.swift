@@ -23,7 +23,6 @@ class NotificationToggleTableViewCell: UITableViewCell {
         
         notifSwitch.onTintColor = Colors.tcatBlue
         notifSwitch.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
-        notifSwitch.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
         contentView.addSubview(notifSwitch)
         
         notifTitleLabel.font = .getFont(.regular, size: 14)
@@ -43,15 +42,15 @@ class NotificationToggleTableViewCell: UITableViewCell {
             make.height.equalTo(0.5)
         }
         
+        notifSwitch.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.trailing.equalToSuperview().offset(-switchTrailingInset)
+        }
+        
         notifTitleLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalToSuperview().offset(notifTitleLeadingInset)
             make.trailing.equalTo(notifSwitch.snp.leading).offset(notifTitleTrailingInset)
-        }
-        
-        notifSwitch.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.trailing.equalToSuperview().offset(-switchTrailingInset)
         }
     }
     
@@ -67,10 +66,6 @@ class NotificationToggleTableViewCell: UITableViewCell {
     
     func configure(for notifTitle: String) {
         notifTitleLabel.text = notifTitle
-    }
-    
-    @objc private func switchValueChanged() {
-        print("switch value changed")
     }
     
     required init?(coder: NSCoder) {

@@ -48,7 +48,10 @@ class RouteDetailDrawerViewController: UIViewController {
     var directionsAndVisibleStops: [RouteDetailItem] = []
     var expandedDirections: Set<Direction> = []
     let notificationCellHeight: CGFloat = 70
-    var notificationTitles: [String] = []
+    let notificationTitles = [
+        Constants.Notification.notifyDelay,
+        Constants.Notification.notifyBeforeBoarding
+    ]
     var sections: [RouteDetailSection] = []
     var selectedDirection: Direction?
 
@@ -80,7 +83,6 @@ class RouteDetailDrawerViewController: UIViewController {
 
         setupSummaryView()
         setupTableView()
-        setupNotificationTitles()
         setupSafeAreaCoverView()
         setupSections()
 
@@ -135,11 +137,6 @@ class RouteDetailDrawerViewController: UIViewController {
         tableView.backgroundColor = Colors.white
         tableView.sectionHeaderHeight = 0
         view.addSubview(tableView)
-    }
-    
-    private func setupNotificationTitles() {
-        notificationTitles.append(Constants.Notification.notifyDelay)
-        notificationTitles.append(Constants.Notification.notifyBeforeBoarding)
     }
 
     /// Creates a temporary view to cover the drawer contents when collapsed. Hidden by default.
