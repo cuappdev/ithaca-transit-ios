@@ -12,49 +12,51 @@ class NotificationToggleTableViewCell: UITableViewCell {
 
     private let firstHairline = UIView()
     private let hairline = UIView()
-    private let notifSwitch = UISwitch()
-    private let notifTitleLabel = UILabel()
-    
+    private let notificationSwitch = UISwitch()
+    private let notificationTitleLabel = UILabel()
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
+
+        selectionStyle = .none 
+
         hairline.backgroundColor = Colors.tableViewSeparator
         contentView.addSubview(hairline)
-        
-        notifSwitch.onTintColor = Colors.tcatBlue
-        notifSwitch.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
-        contentView.addSubview(notifSwitch)
-        
-        notifTitleLabel.font = .getFont(.regular, size: 14)
-        notifTitleLabel.textColor = Colors.primaryText
-        contentView.addSubview(notifTitleLabel)
-        
+
+        notificationSwitch.onTintColor = Colors.tcatBlue
+        notificationSwitch.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+        contentView.addSubview(notificationSwitch)
+
+        notificationTitleLabel.font = .getFont(.regular, size: 14)
+        notificationTitleLabel.textColor = Colors.primaryText
+        contentView.addSubview(notificationTitleLabel)
+
         setUpConstraints()
     }
-    
+
     private func setUpConstraints() {
-        let notifTitleLeadingInset = 16
-        let notifTitleTrailingInset = 10
+        let notificationTitleLeadingInset = 16
+        let notificationTitleTrailingInset = 10
         let switchTrailingInset = 15
-        
+
         hairline.snp.makeConstraints { make in
             make.bottom.leading.trailing.equalToSuperview()
             make.height.equalTo(0.5)
         }
-        
-        notifSwitch.snp.makeConstraints { make in
+
+        notificationSwitch.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().offset(-switchTrailingInset)
         }
-        
-        notifTitleLabel.snp.makeConstraints { make in
+
+        notificationTitleLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.leading.equalToSuperview().offset(notifTitleLeadingInset)
-            make.trailing.equalTo(notifSwitch.snp.leading).offset(notifTitleTrailingInset)
+            make.leading.equalToSuperview().offset(notificationTitleLeadingInset)
+            make.trailing.equalTo(notificationSwitch.snp.leading).offset(notificationTitleTrailingInset)
         }
     }
-    
-    func setupFirstCellHairline() {
+
+    func setupFirstHairline() {
         firstHairline.backgroundColor = Colors.tableViewSeparator
         contentView.addSubview(firstHairline)
         
@@ -63,13 +65,16 @@ class NotificationToggleTableViewCell: UITableViewCell {
             make.height.equalTo(0.5)
         }
     }
-    
-    func configure(for notifTitle: String) {
-        notifTitleLabel.text = notifTitle
+
+    func configure(for notificationTitle: String, isFirst: Bool) {
+        notificationTitleLabel.text = notificationTitle
+        if isFirst {
+            setupFirstHairline()
+        }
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
 }

@@ -138,10 +138,10 @@ struct Constants {
         static let addFavoriteIdentifier = "AddFavorite"
 
         static let busStopDetailCellIdentifier = "BusStopDetailCell"
+        static let generalCellIdentifier = "GeneralCell"
         static let largeDetailCellIdentifier = "LargeDetailCell"
         static let notificationToggleCellIdentifier = "NotificationToggleCell"
         static let smallDetailCellIdentifier = "SmallDetailCell"
-        static let generalCellIdentifier = "GeneralCell"
 
         static let informationCellIdentifier = "InformationCell"
     }
@@ -240,10 +240,10 @@ struct Constants {
     }
     
     struct Notification {
-        static let notifyBeforeBoarding = "Notify me 10 min before boarding"
-        static let notifyDelay = "Notify me about delays"
         static let beforeBoardingConfirmation = "You will receive notifications 10 min before boarding time"
         static let delayConfirmation = "You will receive notifications for delays in"
+        static let notifyBeforeBoarding = "Notify me 10 min before boarding"
+        static let notifyDelay = "Notify me about delays"
     }
 
     struct SearchBar {

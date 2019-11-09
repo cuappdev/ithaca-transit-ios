@@ -18,28 +18,39 @@ struct RouteDetailCellSize {
     static let smallHeight: CGFloat = 60
 }
 
-enum RouteDetailItem {
-
-    case direction (Direction)
-    case busStop (LocationObject)
-
-    func getDirection() -> Direction? {
-        switch self {
-        case .direction(let direction): return direction
-        default: return nil
-        }
-    }
-
-    func getBusStop() -> LocationObject? {
-        switch self {
-        case .busStop(let busStop): return busStop
-        default: return nil
-        }
-    }
-
-}
-
 class RouteDetailDrawerViewController: UIViewController {
+
+    struct Section {
+        let type: SectionType
+        var items: [RouteDetailItem]
+    }
+
+    enum SectionType {
+        case notification
+        case routeDetail
+    }
+
+    enum RouteDetailItem {
+
+        case busStop(LocationObject)
+        case direction(Direction)
+        case notificationTitle(String)
+        
+        func getBusStop() -> LocationObject? {
+            switch self {
+            case .busStop(let busStop): return busStop
+            default: return nil
+            }
+        }
+
+        func getDirection() -> Direction? {
+            switch self {
+            case .direction(let direction): return direction
+            default: return nil
+            }
+        }
+
+    }
 
     let safeAreaCover = UIView()
     var summaryView: SummaryView!
@@ -47,12 +58,7 @@ class RouteDetailDrawerViewController: UIViewController {
 
     var directionsAndVisibleStops: [RouteDetailItem] = []
     var expandedDirections: Set<Direction> = []
-    let notificationCellHeight: CGFloat = 70
-    let notificationTitles = [
-        Constants.Notification.notifyDelay,
-        Constants.Notification.notifyBeforeBoarding
-    ]
-    var sections: [RouteDetailSection] = []
+    var sections: [Section] = []
     var selectedDirection: Direction?
 
     /// Number of seconds to wait before auto-refreshing bus delay network call.
@@ -145,11 +151,20 @@ class RouteDetailDrawerViewController: UIViewController {
         safeAreaCover.alpha = 0
         view.addSubview(safeAreaCover)
     }
-    
+
     private func setupSections() {
-        sections.append(RouteDetailSection.routeDetail)
-        if !route.isRawWalkingRoute() {
-            sections.append(RouteDetailSection.notification)
+        let notificationTitles = [
+            RouteDetailItem.notificationTitle(Constants.Notification.notifyDelay),
+            RouteDetailItem.notificationTitle(Constants.Notification.notifyBeforeBoarding)
+        ]
+
+        let notificationSection = Section(type: .notification, items: notificationTitles)
+        let routeDetailSection = Section(type: .routeDetail, items: directionsAndVisibleStops)
+
+        if route.isRawWalkingRoute() {
+            sections = [routeDetailSection]
+        } else {
+            sections = [routeDetailSection, notificationSection]
         }
     }
 
@@ -239,7 +254,7 @@ class RouteDetailDrawerViewController: UIViewController {
     func toggleCellExpansion(for cell: LargeDetailTableViewCell) {
 
         guard let indexPath = tableView.indexPath(for: cell),
-            let direction = directionsAndVisibleStops[indexPath.row].getDirection() else { return }
+            let direction = sections[indexPath.section].items[indexPath.row].getDirection() else { return }
 
         // Prepare bus stop data to be inserted / deleted into Directions array
         let busStops = direction.stops.map { return RouteDetailItem.busStop($0) }
@@ -251,11 +266,11 @@ class RouteDetailDrawerViewController: UIViewController {
         // Insert or remove bus stop data based on selection
         if expandedDirections.contains(direction) {
             expandedDirections.remove(direction)
-            directionsAndVisibleStops.removeSubrange(busStopRange)
+            sections[indexPath.section].items.removeSubrange(busStopRange)
             tableView.deleteRows(at: indexPathArray, with: .middle)
         } else {
             expandedDirections.insert(direction)
-            directionsAndVisibleStops.insert(contentsOf: busStops, at: indexPath.row + 1)
+            sections[indexPath.section].items.insert(contentsOf: busStops, at: indexPath.row + 1)
             tableView.insertRows(at: indexPathArray, with: .middle)
         }
 

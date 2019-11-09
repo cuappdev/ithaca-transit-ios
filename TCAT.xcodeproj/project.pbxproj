@@ -25,7 +25,6 @@
 		22D9599F2269AB1700D115EC /* ServiceAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D9599E2269AB1700D115EC /* ServiceAlert.swift */; };
 		22FD6E8922925EDA0053A174 /* InformationTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FD6E8822925EDA0053A174 /* InformationTableHeaderView.swift */; };
 		30F148B4236F9F0500291AE2 /* NotificationToggleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F148B3236F9F0500291AE2 /* NotificationToggleTableViewCell.swift */; };
-		30F148B62373471900291AE2 /* RouteDetailSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F148B52373471900291AE2 /* RouteDetailSection.swift */; };
 		371F7516EDE896E8F926165F /* Pods_Today_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE1A6AF335384977A983BFF1 /* Pods_Today_Extension.framework */; };
 		4319AD3A2AF4CCF507164129 /* Pods_TCATTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BDD89B15CA2409469349E8C /* Pods_TCATTests.framework */; };
 		449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C781D80D0E80019300C /* AppDelegate.swift */; };
@@ -222,7 +221,6 @@
 		22FD6E8822925EDA0053A174 /* InformationTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InformationTableHeaderView.swift; path = Views/InformationTableHeaderView.swift; sourceTree = "<group>"; };
 		2F4B7F4D04B5E76C3C373607 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
 		30F148B3236F9F0500291AE2 /* NotificationToggleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationToggleTableViewCell.swift; sourceTree = "<group>"; };
-		30F148B52373471900291AE2 /* RouteDetailSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteDetailSection.swift; sourceTree = "<group>"; };
 		3BDD89B15CA2409469349E8C /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		411FF1B280B230ABFD3ED4AD /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
 		449A7C751D80D0E80019300C /* TCAT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCAT.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -586,7 +584,6 @@
 				BF73F0F21F60B0BD003B479D /* LocationObject.swift */,
 				DDE3BC221F5863D50014D2BB /* Place.swift */,
 				DD2F989A1E50F99A0005F6BC /* Route.swift */,
-				30F148B52373471900291AE2 /* RouteDetailSection.swift */,
 				224D8A5A229F5E3000C5D86A /* Section.swift */,
 				22D9599E2269AB1700D115EC /* ServiceAlert.swift */,
 				BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */,
@@ -1142,7 +1139,6 @@
 				7EBD9D9822263103008BF900 /* BusIcon.swift in Sources */,
 				E337970D1FC1606D00BCB28F /* InformationViewController.swift in Sources */,
 				7EBD9D96222630F2008BF900 /* Time.swift in Sources */,
-				30F148B62373471900291AE2 /* RouteDetailSection.swift in Sources */,
 				BF18AE122083B9B8000C3D82 /* Phrases.swift in Sources */,
 				7E0A65192226367100441967 /* WalkPath.swift in Sources */,
 				DDB49C9A1E8857E000A99C35 /* BusStopTableViewCell.swift in Sources */,

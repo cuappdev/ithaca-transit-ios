@@ -96,55 +96,54 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch sections[section] {
-        case .routeDetail: return directionsAndVisibleStops.count
-        case .notification: return notificationTitles.count
-        }
+        return sections[section].items.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // Formatting, including selectionStyle, and seperator line fixes
-        func format(_ cell: UITableViewCell) -> UITableViewCell {
-            cell.selectionStyle = .none
-            return cell
+        var item: RouteDetailItem
+
+        let section = sections[indexPath.section]
+
+        switch section.type {
+        case .routeDetail, .notification:
+            item = section.items[indexPath.row]
         }
-        
-        switch sections[indexPath.section] {
-        case .routeDetail:
-            switch directionsAndVisibleStops[indexPath.row] {
-            case .busStop(let busStop):
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as? BusStopTableViewCell
-                    else { return UITableViewCell()}
-                cell.configure(for: busStop.name)
-                return format(cell)
-            case .direction(let direction):
-                if direction.type == .walk || direction.type == .arrive {
-                    guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as? SmallDetailTableViewCell
-                        else { return UITableViewCell() }
-                    cell.configure(for: direction,
-                                   isFirstStep: indexPath.row == 0,
-                                   isLastStep: indexPath.row == directionsAndVisibleStops.count - 1)
-                    return format(cell)
-                } else {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
-                    cell.configure(
-                        for: direction,
-                        isFirstStep: indexPath.row == 0,
-                        isExpanded: expandedDirections.contains(direction),
-                        delegate: self
-                    )
-                    return format(cell)
-                }
+
+        switch item {
+        case .busStop(let busStop):
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as? BusStopTableViewCell
+                else { return UITableViewCell() }
+            cell.configure(for: busStop.name)
+            return cell
+        case .direction(let direction):
+            switch direction.type {
+            case .walk, .arrive:
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as? SmallDetailTableViewCell
+                    else { return UITableViewCell() }
+                cell.configure(
+                    for: direction,
+                    isFirstStep: indexPath.row == 0,
+                    isLastStep: indexPath.row == section.items.count - 1
+                )
+                return cell
+            default:
+                let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
+                cell.configure(
+                    for: direction,
+                    isFirstStep: indexPath.row == 0,
+                    isExpanded: expandedDirections.contains(direction),
+                    delegate: self
+                )
+                return cell
             }
-        case .notification:
+        case .notificationTitle(let notificationTitle):
             guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.notificationToggleCellIdentifier) as? NotificationToggleTableViewCell
                 else { return UITableViewCell() }
-            let notifTitle = notificationTitles[indexPath.row]
-            if indexPath.row == 0 {
-                cell.setupFirstCellHairline()
-            }
-            cell.configure(for: notifTitle)
-            return format(cell)
+            cell.configure(
+                for: notificationTitle,
+                isFirst: indexPath.row == 0
+            )
+            return cell
         }
     }
 }
@@ -152,9 +151,12 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
 extension RouteDetailDrawerViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch sections[indexPath.section] {
+        let notificationCellHeight: CGFloat = 70
+        let section = sections[indexPath.section]
+
+        switch section.type {
         case .routeDetail:
-            if let direction = directionsAndVisibleStops[indexPath.row].getDirection(),
+            if let direction = section.items[indexPath.row].getDirection(),
                     direction.type == .depart || direction.type == .transfer {
                 return UITableView.automaticDimension
             } else {
@@ -193,7 +195,7 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
         }
 
         if let message = message,
-            sections[section] == .routeDetail {
+            sections[section].type == .routeDetail {
             let phraseLabelFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.phraseLabelFooterView)
                 as? PhraseLabelFooterView ?? PhraseLabelFooterView(reuseIdentifier: Constants.Footers.phraseLabelFooterView)
             phraseLabelFooterView.configure(with: message)
@@ -205,8 +207,10 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if sections[indexPath.section] == .routeDetail {
-            let direction = directionsAndVisibleStops[indexPath.row].getDirection()
+        let section = sections[indexPath.section]
+
+        if section.type == .routeDetail {
+            let direction = section.items[indexPath.row].getDirection()
 
             selectedDirection = direction
 
