@@ -9,12 +9,19 @@
 import Foundation
 
 class ReachabilityManager: NSObject {
+    
     static let shared: ReachabilityManager = ReachabilityManager()
     
     private let reachability = Reachability()
+    private var listeners: [Pair] = []
     
-    typealias Listener = (Reachability.Connection) -> ()
-    private var listeners: [Listener] = []
+    typealias Listener = AnyObject
+    typealias Closure = (Reachability.Connection) -> ()
+    
+    private struct Pair {
+        weak var listener: Listener?
+        var closure: Closure
+    }
     
     private override init() {
         super.init()
@@ -22,7 +29,7 @@ class ReachabilityManager: NSObject {
         do {
             try reachability?.startNotifier()
         } catch {
-            printClass(context: "\(#function)", message: "Could not start reachability notifier.")
+            print("[ReachabilityManager] init: Could not start reachability notifier.")
         }
         
         NotificationCenter.default.addObserver(
@@ -32,14 +39,19 @@ class ReachabilityManager: NSObject {
             object: reachability
         )
     }
-    
-    func addListener(_ listener: @escaping Listener) {
-        listeners.append(listener)
+
+    /// Adds a listener to reachability updates.
+    /// Reminder: Be sure to begin the closure with `[weak self]`.
+    func addListener(_ listener: Listener, _ closure: @escaping Closure) {
+        listeners.append(Pair(listener: listener, closure: closure))
     }
     
     @objc func reachabilityChanged(_ notification: Notification) {
         guard let reachability = reachability else { return }
-        listeners.forEach { $0(reachability.connection) }
+        listeners = listeners.filter { pair -> Bool in
+            pair.closure(reachability.connection) // call the closures
+            return pair.listener != nil // remove closures for deinitialized listeners
+        }
     }
     
 }
