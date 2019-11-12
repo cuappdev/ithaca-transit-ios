@@ -22,9 +22,12 @@ class FavoritesViewController: UIViewController {
     private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
     private let addFavoritesReuseIdentifier = "AddFavoritesCollectionViewCell"
     private var favoritePlaces = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
+    private var isEditingFavorites: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        view.backgroundColor = .white
 
         setupLabels()
         setupButtons()
@@ -41,12 +44,13 @@ class FavoritesViewController: UIViewController {
     }
 
     private func setupButtons() {
+        let editString = isEditingFavorites ? "Done" : "Edit"
         let favoritesBlueColor = UIColor(hex: "08A0E0")
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.getFont(.regular, size: 14.0),
             .foregroundColor: favoritesBlueColor,
         ]
-        let attributedString = NSMutableAttributedString(string: "Edit", attributes: attributes)
+        let attributedString = NSMutableAttributedString(string: editString, attributes: attributes)
         editButton.setAttributedTitle(attributedString, for: .normal)
         editButton.addTarget(self, action: #selector(editAction), for: .touchUpInside)
         view.addSubview(editButton)
@@ -125,6 +129,9 @@ class FavoritesViewController: UIViewController {
 
     @objc func editAction() {
         print("editAction")
+        isEditingFavorites.toggle()
+        setupButtons()
+        favoritesCollectionView.reloadData()
     }
 
 }
@@ -132,24 +139,28 @@ class FavoritesViewController: UIViewController {
 extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return collectionView == favoritesCollectionView ? favoritePlaces.count + 1 : 0
+        return isEditingFavorites ? favoritePlaces.count : favoritePlaces.count + 1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.item < favoritePlaces.count {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: favoritesReuseIdentifier, for: indexPath) as! FavoritesCollectionViewCell
-            cell.configure(for: favoritePlaces[indexPath.row])
+            cell.configure(for: favoritePlaces[indexPath.row], editing: isEditingFavorites)
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: addFavoritesReuseIdentifier, for: indexPath) as! AddFavoritesCollectionViewCell
-//            cell.configure(delegate: self)
             return cell
          }
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item < favoritePlaces.count {
-            navigationController?.pushViewController(RouteOptionsViewController(searchTo: favoritePlaces[indexPath.row]), animated: true)
+            if isEditingFavorites {
+                favoritePlaces = Global.shared.deleteFavorite(favorite: favoritePlaces[indexPath.row], allFavorites: favoritePlaces)
+                favoritesCollectionView.reloadData()
+            } else {
+                navigationController?.pushViewController(RouteOptionsViewController(searchTo: favoritePlaces[indexPath.row]), animated: true)
+            }
         } else {
             presentFavoritePicker()
         }
@@ -166,7 +177,8 @@ extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
 extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
 
     func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return 200
+        let width = UIScreen.main.bounds.width
+        return 0.464*width
     }
 
     func supportedDrawerPositions() -> [PulleyPosition] {

@@ -23,7 +23,7 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
         nameLabel.lineBreakMode = .byTruncatingTail
         contentView.addSubview(nameLabel)
 
-        heartImageView.image = UIImage(named: "favorite")
+//        heartImageView.image = UIImage(named: "favorite")
         heartImageView.contentMode = .scaleAspectFit
         contentView.addSubview(heartImageView)
 
@@ -50,8 +50,13 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(for place: Place) {
+    func configure(for place: Place, editing: Bool) {
         nameLabel.text = place.name
+        if editing {
+            heartImageView.image = UIImage(named: "removeFavorite")
+        } else {
+            heartImageView.image = UIImage(named: "favorite")
+        }
     }
 
 }

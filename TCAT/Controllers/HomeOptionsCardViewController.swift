@@ -226,7 +226,6 @@ class HomeOptionsCardViewController: UIViewController {
     /// Updates the table sections to show favorites, recent searches, and all stops. Ultimately reloads the table.
     func updateSections() {
         sections.removeAll()
-//        sections.append(Section.favorites(items: favorites))
         if recentLocations.count > 0 {
             sections.append(Section.recentSearches(items: recentLocations))
         }

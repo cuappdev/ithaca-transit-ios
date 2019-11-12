@@ -22,7 +22,7 @@ class AddFavoritesCollectionViewCell: UICollectionViewCell {
         addLabel.textAlignment = .center
         contentView.addSubview(addLabel)
 
-        addImageView.image = UIImage(named: "favorite")
+        addImageView.image = UIImage(named: "add")
         addImageView.contentMode = .scaleAspectFit
         contentView.addSubview(addImageView)
 
