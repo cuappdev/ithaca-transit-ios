@@ -23,7 +23,6 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
         nameLabel.lineBreakMode = .byTruncatingTail
         contentView.addSubview(nameLabel)
 
-//        heartImageView.image = UIImage(named: "favorite")
         heartImageView.contentMode = .scaleAspectFit
         contentView.addSubview(heartImageView)
 

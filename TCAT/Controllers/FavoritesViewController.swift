@@ -128,7 +128,6 @@ class FavoritesViewController: UIViewController {
         }
 
     @objc func editAction() {
-        print("editAction")
         isEditingFavorites.toggle()
         setupButtons()
         favoritesCollectionView.reloadData()

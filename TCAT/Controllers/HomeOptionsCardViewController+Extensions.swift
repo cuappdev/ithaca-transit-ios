@@ -204,10 +204,6 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             switch sections[indexPath.section] {
-//            case .favorites:
-//                let place = sections[indexPath.section].getItems()[indexPath.row]
-//                favorites = Global.shared.deleteFavorite(favorite: place, allFavorites: favorites)
-//                updateSections()
             case .recentSearches:
                 let place = sections[indexPath.section].getItems()[indexPath.row]
                 recentLocations = Global.shared.deleteRecent(recent: place, allRecents: recentLocations)
