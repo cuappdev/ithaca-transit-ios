@@ -28,7 +28,6 @@ class FavoritesViewController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = .white
-
         setupLabels()
         setupButtons()
         setupFavoritesCollectionView()
@@ -109,23 +108,23 @@ class FavoritesViewController: UIViewController {
     }
 
     private func presentFavoritePicker() {
-            if favoritePlaces.count < 3 {
-                let favoritesTVC = FavoritesTableViewController()
-                favoritesTVC.didAddFavorite = {
-                    self.favoritePlaces = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
-                    self.favoritesCollectionView.reloadData()
-                }
-                let navController = CustomNavigationController(rootViewController: favoritesTVC)
-                present(navController, animated: true, completion: nil)
-            } else {
-                let title = Constants.Alerts.MaxFavorites.title
-                let message = Constants.Alerts.MaxFavorites.message
-                let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-                let done = UIAlertAction(title: Constants.Alerts.MaxFavorites.action, style: .default)
-                alertController.addAction(done)
-                present(alertController, animated: true, completion: nil)
+        if favoritePlaces.count < 3 {
+            let favoritesTVC = FavoritesTableViewController()
+            favoritesTVC.didAddFavorite = {
+                self.favoritePlaces = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
+                self.favoritesCollectionView.reloadData()
             }
+            let navController = CustomNavigationController(rootViewController: favoritesTVC)
+            present(navController, animated: true, completion: nil)
+        } else {
+            let title = Constants.Alerts.MaxFavorites.title
+            let message = Constants.Alerts.MaxFavorites.message
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let done = UIAlertAction(title: Constants.Alerts.MaxFavorites.action, style: .default)
+            alertController.addAction(done)
+            present(alertController, animated: true, completion: nil)
         }
+    }
 
     @objc func editAction() {
         isEditingFavorites.toggle()
@@ -176,8 +175,8 @@ extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
 extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
 
     func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        let width = UIScreen.main.bounds.width
-        return 0.464*width
+//        let width = UIScreen.main.bounds.width
+        return 200
     }
 
     func supportedDrawerPositions() -> [PulleyPosition] {

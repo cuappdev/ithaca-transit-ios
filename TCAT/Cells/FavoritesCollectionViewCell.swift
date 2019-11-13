@@ -51,11 +51,8 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
 
     func configure(for place: Place, editing: Bool) {
         nameLabel.text = place.name
-        if editing {
-            heartImageView.image = UIImage(named: "removeFavorite")
-        } else {
-            heartImageView.image = UIImage(named: "favorite")
-        }
+        let heartImage = editing ? "removeFavorite" : "favorite"
+        heartImageView.image = UIImage(named: heartImage)
     }
 
 }

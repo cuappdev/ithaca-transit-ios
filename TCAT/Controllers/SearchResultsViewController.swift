@@ -87,9 +87,8 @@ class SearchResultsViewController: UIViewController {
         // Set Up LocationManager
         locationManager.delegate = self
 
-        // Fetch RecentLocation and Favorites
+        // Fetch RecentLocation
         recentLocations = Global.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
-        favorites = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
 
         // Set Up Sections For TableView
         seeAllStopsSection = Section.seeAllStops

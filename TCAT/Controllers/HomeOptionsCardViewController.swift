@@ -235,7 +235,6 @@ class HomeOptionsCardViewController: UIViewController {
     /// Updates recent searches and favorites. Ultimately reloads the table.
     func updatePlaces() {
         recentLocations = Global.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
-        favorites = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
     }
 
     // MARK: - Table Calculations
