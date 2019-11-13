@@ -30,7 +30,6 @@ class FavoritesViewController: UIViewController {
         setupFavoritesCollectionView()
         setupTabView()
         setupConstraints()
-
     }
 
     private func setupLabels() {
