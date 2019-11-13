@@ -35,13 +35,6 @@ class RouteDetailDrawerViewController: UIViewController {
         case busStop(LocationObject)
         case direction(Direction)
         case notificationTitle(String)
-        
-        func getBusStop() -> LocationObject? {
-            switch self {
-            case .busStop(let busStop): return busStop
-            default: return nil
-            }
-        }
 
         func getDirection() -> Direction? {
             switch self {
@@ -161,10 +154,9 @@ class RouteDetailDrawerViewController: UIViewController {
         let notificationSection = Section(type: .notification, items: notificationTitles)
         let routeDetailSection = Section(type: .routeDetail, items: directionsAndVisibleStops)
 
-        if route.isRawWalkingRoute() {
-            sections = [routeDetailSection]
-        } else {
-            sections = [routeDetailSection, notificationSection]
+        sections = [routeDetailSection]
+        if !route.isRawWalkingRoute() {
+            sections.append(notificationSection)
         }
     }
 

@@ -100,16 +100,9 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var item: RouteDetailItem
-
         let section = sections[indexPath.section]
 
-        switch section.type {
-        case .routeDetail, .notification:
-            item = section.items[indexPath.row]
-        }
-
-        switch item {
+        switch section.items[indexPath.row] {
         case .busStop(let busStop):
             guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as? BusStopTableViewCell
                 else { return UITableViewCell() }

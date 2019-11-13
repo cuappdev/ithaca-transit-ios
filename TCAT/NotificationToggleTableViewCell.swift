@@ -10,18 +10,13 @@ import UIKit
 
 class NotificationToggleTableViewCell: UITableViewCell {
 
-    private let firstHairline = UIView()
-    private let hairline = UIView()
     private let notificationSwitch = UISwitch()
     private let notificationTitleLabel = UILabel()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        selectionStyle = .none 
-
-        hairline.backgroundColor = Colors.tableViewSeparator
-        contentView.addSubview(hairline)
+        selectionStyle = .none
 
         notificationSwitch.onTintColor = Colors.tcatBlue
         notificationSwitch.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
@@ -31,6 +26,8 @@ class NotificationToggleTableViewCell: UITableViewCell {
         notificationTitleLabel.textColor = Colors.primaryText
         contentView.addSubview(notificationTitleLabel)
 
+        setupHairline(isTop: false)
+
         setUpConstraints()
     }
 
@@ -38,11 +35,6 @@ class NotificationToggleTableViewCell: UITableViewCell {
         let notificationTitleLeadingInset = 16
         let notificationTitleTrailingInset = 10
         let switchTrailingInset = 15
-
-        hairline.snp.makeConstraints { make in
-            make.bottom.leading.trailing.equalToSuperview()
-            make.height.equalTo(0.5)
-        }
 
         notificationSwitch.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -55,21 +47,29 @@ class NotificationToggleTableViewCell: UITableViewCell {
             make.trailing.equalTo(notificationSwitch.snp.leading).offset(notificationTitleTrailingInset)
         }
     }
+    
+    func setupHairline(isTop: Bool) {
+        let hairline = UIView()
+        let hairlineHeight = 0.5
 
-    func setupFirstHairline() {
-        firstHairline.backgroundColor = Colors.tableViewSeparator
-        contentView.addSubview(firstHairline)
-        
-        firstHairline.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview()
-            make.height.equalTo(0.5)
+        hairline.backgroundColor = Colors.tableViewSeparator
+        contentView.addSubview(hairline)
+
+        hairline.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(hairlineHeight)
+            if isTop {
+                make.top.equalToSuperview()
+            } else {
+                make.bottom.equalToSuperview()
+            }
         }
     }
 
     func configure(for notificationTitle: String, isFirst: Bool) {
         notificationTitleLabel.text = notificationTitle
         if isFirst {
-            setupFirstHairline()
+            setupHairline(isTop: true)
         }
     }
 
