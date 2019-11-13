@@ -19,6 +19,8 @@ class BusStopTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
+        selectionStyle = .none
+
         titleLabel.font = .getFont(.regular, size: 14)
         titleLabel.textColor = Colors.secondaryText
         titleLabel.lineBreakMode = .byWordWrapping

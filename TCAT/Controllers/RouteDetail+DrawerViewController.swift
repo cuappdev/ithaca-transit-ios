@@ -18,28 +18,32 @@ struct RouteDetailCellSize {
     static let smallHeight: CGFloat = 60
 }
 
-enum RouteDetailItem {
-
-    case direction (Direction)
-    case busStop (LocationObject)
-
-    func getDirection() -> Direction? {
-        switch self {
-        case .direction(let direction): return direction
-        default: return nil
-        }
-    }
-
-    func getBusStop() -> LocationObject? {
-        switch self {
-        case .busStop(let busStop): return busStop
-        default: return nil
-        }
-    }
-
-}
-
 class RouteDetailDrawerViewController: UIViewController {
+
+    struct Section {
+        let type: SectionType
+        var items: [RouteDetailItem]
+    }
+
+    enum SectionType {
+        case notification
+        case routeDetail
+    }
+
+    enum RouteDetailItem {
+
+        case busStop(LocationObject)
+        case direction(Direction)
+        case notificationTitle(String)
+
+        func getDirection() -> Direction? {
+            switch self {
+            case .direction(let direction): return direction
+            default: return nil
+            }
+        }
+
+    }
 
     let safeAreaCover = UIView()
     var summaryView: SummaryView!
@@ -47,6 +51,7 @@ class RouteDetailDrawerViewController: UIViewController {
 
     var directionsAndVisibleStops: [RouteDetailItem] = []
     var expandedDirections: Set<Direction> = []
+    var sections: [Section] = []
     var selectedDirection: Direction?
 
     /// Number of seconds to wait before auto-refreshing bus delay network call.
@@ -78,6 +83,7 @@ class RouteDetailDrawerViewController: UIViewController {
         setupSummaryView()
         setupTableView()
         setupSafeAreaCoverView()
+        setupSections()
 
         if let drawer = self.parent as? RouteDetailViewController {
             drawer.initialDrawerPosition = .partiallyRevealed
@@ -121,12 +127,14 @@ class RouteDetailDrawerViewController: UIViewController {
         tableView.register(SmallDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.smallDetailCellIdentifier)
         tableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.largeDetailCellIdentifier)
         tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: Constants.Cells.busStopDetailCellIdentifier)
+        tableView.register(NotificationToggleTableViewCell.self, forCellReuseIdentifier: Constants.Cells.notificationToggleCellIdentifier)
         tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.emptyFooterView)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: -34, left: 0.0, bottom: 34, right: 0.0)
         tableView.backgroundColor = Colors.white
+        tableView.sectionHeaderHeight = 0
         view.addSubview(tableView)
     }
 
@@ -135,6 +143,21 @@ class RouteDetailDrawerViewController: UIViewController {
         safeAreaCover.backgroundColor = Colors.backgroundWash
         safeAreaCover.alpha = 0
         view.addSubview(safeAreaCover)
+    }
+
+    private func setupSections() {
+        let notificationTitles = [
+            RouteDetailItem.notificationTitle(Constants.Notification.notifyDelay),
+            RouteDetailItem.notificationTitle(Constants.Notification.notifyBeforeBoarding)
+        ]
+
+        let notificationSection = Section(type: .notification, items: notificationTitles)
+        let routeDetailSection = Section(type: .routeDetail, items: directionsAndVisibleStops)
+
+        sections = [routeDetailSection]
+        if !route.isRawWalkingRoute() {
+            sections.append(notificationSection)
+        }
     }
 
     private func setupConstraints() {
@@ -223,7 +246,7 @@ class RouteDetailDrawerViewController: UIViewController {
     func toggleCellExpansion(for cell: LargeDetailTableViewCell) {
 
         guard let indexPath = tableView.indexPath(for: cell),
-            let direction = directionsAndVisibleStops[indexPath.row].getDirection() else { return }
+            let direction = sections[indexPath.section].items[indexPath.row].getDirection() else { return }
 
         // Prepare bus stop data to be inserted / deleted into Directions array
         let busStops = direction.stops.map { return RouteDetailItem.busStop($0) }
@@ -235,11 +258,11 @@ class RouteDetailDrawerViewController: UIViewController {
         // Insert or remove bus stop data based on selection
         if expandedDirections.contains(direction) {
             expandedDirections.remove(direction)
-            directionsAndVisibleStops.removeSubrange(busStopRange)
+            sections[indexPath.section].items.removeSubrange(busStopRange)
             tableView.deleteRows(at: indexPathArray, with: .middle)
         } else {
             expandedDirections.insert(direction)
-            directionsAndVisibleStops.insert(contentsOf: busStops, at: indexPath.row + 1)
+            sections[indexPath.section].items.insert(contentsOf: busStops, at: indexPath.row + 1)
             tableView.insertRows(at: indexPathArray, with: .middle)
         }
 
