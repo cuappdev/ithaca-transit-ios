@@ -112,7 +112,6 @@ class SearchResultsViewController: UIViewController {
 
     private func createDefaultSections() {
         var sections = [
-//            favoritesSection,
             recentSearchesSection,
             seeAllStopsSection
         ].filter { !$0.isEmpty }
@@ -217,8 +216,6 @@ extension SearchResultsViewController: UITableViewDelegate {
         switch sections[section] {
         case .recentSearches:
             header = HeaderView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear)
-//        case .favorites:
-//            header = HeaderView(labelText: Constants.TableHeaders.favoriteDestinations, buttonType: .add)
         case .seeAllStops, .searchResults:
             return nil
         default:
