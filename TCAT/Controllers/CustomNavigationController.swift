@@ -199,7 +199,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
     // MARK: - UINavigationControllerDelegate Functions
 
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        setNavigationBarHidden(viewController is HomeMapViewController, animated: animated)
+        setNavigationBarHidden(viewController is ParentHomeMapViewController, animated: animated)
     }
 
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
