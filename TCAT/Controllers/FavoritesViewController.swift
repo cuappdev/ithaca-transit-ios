@@ -21,9 +21,28 @@ class FavoritesViewController: UIViewController {
     // MARK: - Data vars
     private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
     private let addFavoritesReuseIdentifier = "AddFavoritesCollectionViewCell"
-    private var favoritePlaces = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
-    private var isEditingFavorites: Bool = false
+    private var favoritePlaces: [Place]! {
+        didSet {
+            favoritesCollectionView.reloadData()
+        }
+    }
+    private var isEditingFavorites: Bool! {
+        didSet {
+            setupButtons()
+            favoritesCollectionView.reloadData()
+        }
+    }
 
+    init(isEditing: Bool) {
+        super.init(nibName: nil, bundle: nil)
+        isEditingFavorites = isEditing
+        favoritePlaces = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -44,10 +63,10 @@ class FavoritesViewController: UIViewController {
 
     private func setupButtons() {
         let editString = isEditingFavorites ? "Done" : "Edit"
-        let favoritesBlueColor = UIColor(hex: "08A0E0")
+//        let favoritesBlueColor = UIColor(hex: "08A0E0")
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.getFont(.regular, size: 14.0),
-            .foregroundColor: favoritesBlueColor,
+            .foregroundColor: Colors.tcatBlue,
         ]
         let attributedString = NSMutableAttributedString(string: editString, attributes: attributes)
         editButton.setAttributedTitle(attributedString, for: .normal)
@@ -107,12 +126,16 @@ class FavoritesViewController: UIViewController {
         }
     }
 
+    private func updateFavorites(newFavoritePlaces: [Place]) {
+        favoritePlaces = newFavoritePlaces
+    }
+
     private func presentFavoritePicker() {
         if favoritePlaces.count < 3 {
             let favoritesTVC = FavoritesTableViewController()
             favoritesTVC.didAddFavorite = {
-                self.favoritePlaces = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
-                self.favoritesCollectionView.reloadData()
+                let favorites = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
+                self.updateFavorites(newFavoritePlaces: favorites)
             }
             let navController = CustomNavigationController(rootViewController: favoritesTVC)
             present(navController, animated: true, completion: nil)
@@ -128,8 +151,6 @@ class FavoritesViewController: UIViewController {
 
     @objc func editAction() {
         isEditingFavorites.toggle()
-        setupButtons()
-        favoritesCollectionView.reloadData()
     }
 
 }
@@ -153,11 +174,12 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item < favoritePlaces.count {
+            let favorite = favoritePlaces[indexPath.row]
             if isEditingFavorites {
-                favoritePlaces = Global.shared.deleteFavorite(favorite: favoritePlaces[indexPath.row], allFavorites: favoritePlaces)
-                favoritesCollectionView.reloadData()
+                favoritePlaces = Global.shared.deleteFavorite(favorite: favorite, allFavorites: favoritePlaces)
+                updateFavorites(newFavoritePlaces: favoritePlaces)
             } else {
-                navigationController?.pushViewController(RouteOptionsViewController(searchTo: favoritePlaces[indexPath.row]), animated: true)
+                navigationController?.pushViewController(RouteOptionsViewController(searchTo: favorite), animated: true)
             }
         } else {
             presentFavoritePicker()

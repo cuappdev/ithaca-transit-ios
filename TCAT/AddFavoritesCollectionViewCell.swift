@@ -18,11 +18,11 @@ class AddFavoritesCollectionViewCell: UICollectionViewCell {
 
         addLabel.text = "Add"
         addLabel.font = .systemFont(ofSize: 14, weight: .regular)
-        addLabel.textColor = UIColor(hex: "08A0E0")
+        addLabel.textColor = Colors.tcatBlue
         addLabel.textAlignment = .center
         contentView.addSubview(addLabel)
 
-        addImageView.image = UIImage(named: "add")
+        addImageView.image = UIImage(named: "addFavorite")
         addImageView.contentMode = .scaleAspectFit
         contentView.addSubview(addImageView)
 
