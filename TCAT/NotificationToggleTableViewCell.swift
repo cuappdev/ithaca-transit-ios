@@ -6,9 +6,12 @@
 //  Copyright © 2019 cuappdev. All rights reserved.
 //
 
+import NotificationBannerSwift
 import UIKit
 
 class NotificationToggleTableViewCell: UITableViewCell {
+    
+    private var title = ""
 
     private let firstHairline = UIView()
     private let hairline = UIView()
@@ -16,6 +19,8 @@ class NotificationToggleTableViewCell: UITableViewCell {
     private let notificationTitleLabel = UILabel()
 
     private let hairlineHeight = 0.5
+    
+    private var notificationBanner: NotificationBanner?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -27,6 +32,7 @@ class NotificationToggleTableViewCell: UITableViewCell {
 
         notificationSwitch.onTintColor = Colors.tcatBlue
         notificationSwitch.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+        notificationSwitch.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
         contentView.addSubview(notificationSwitch)
 
         notificationTitleLabel.font = .getFont(.regular, size: 14)
@@ -69,9 +75,22 @@ class NotificationToggleTableViewCell: UITableViewCell {
     }
 
     func configure(for notificationTitle: String, isFirst: Bool) {
+        title = notificationTitle
         notificationTitleLabel.text = notificationTitle
         if isFirst {
             setupFirstHairline()
+        }
+    }
+    
+    @objc func switchValueChanged() {
+        if notificationSwitch.isOn {
+            if title == Constants.Notification.notifyDelay {
+                notificationBanner = NotificationBanner(customView: NotificationBannerView(notificationType: NotificationType.delayConfirmation))
+            } else {
+                notificationBanner = NotificationBanner(customView: NotificationBannerView(notificationType: NotificationType.beforeBoardingConfirmation))
+            }
+            notificationBanner?.bannerHeight = 100
+            notificationBanner?.show()
         }
     }
 

@@ -10,7 +10,7 @@ import UIKit
 
 class RoundShadowedView: UIView {
 
-    private var containerView: UIView!
+    var containerView: UIView!
 
     init(cornerRadius: CGFloat) {
         super.init(frame: .zero)
