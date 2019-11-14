@@ -7,18 +7,35 @@
 //
 
 import XCTest
-@testable import TCAT
 
 class TCATTests: XCTestCase {
+    
+    var vc: TestRetainVC?
     
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+
     }
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
+    }
+    
+    func testRetain() {
+        print("* Test retain...")
+        
+        vc = TestRetainVC()
+        
+        TestManager.shared.fire("* Hello")
+        TestManager.shared.fire("* Banana")
+        
+        vc = nil
+        
+        TestManager.shared.fire("* world")
+        
+        print("* Done.")
     }
     
     func testExample() {
