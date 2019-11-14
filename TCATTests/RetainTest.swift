@@ -10,12 +10,13 @@ import Foundation
 import UIKit
 
 class TestRetainVC: UIViewController {
+    
     let v = UIView()
     
     init() {
         super.init(nibName: nil, bundle: nil)
         
-        TestManager.shared.addListener(self) { [weak self] (s) in
+        TestManager.shared.addListener(self) { [weak self] s in
             self?.v.backgroundColor = .red
             print("Recevied " + s)
         }
@@ -24,6 +25,7 @@ class TestRetainVC: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
 }
 
 class TestManager {
@@ -37,7 +39,7 @@ class TestManager {
         var closure: Closure
     }
     typealias Listener = AnyObject
-    typealias Closure = (String) -> ()
+    typealias Closure = (String) -> Void
     
     func addListener(_ listener: Listener, _ closure: @escaping Closure) {
         listeners.append(Pair(listener: listener, closure: closure))

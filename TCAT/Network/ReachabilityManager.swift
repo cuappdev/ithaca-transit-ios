@@ -16,7 +16,7 @@ class ReachabilityManager: NSObject {
     private var listeners: [Pair] = []
     
     typealias Listener = AnyObject
-    typealias Closure = (Reachability.Connection) -> ()
+    typealias Closure = (Reachability.Connection) -> Void
     
     private struct Pair {
         weak var listener: Listener?
