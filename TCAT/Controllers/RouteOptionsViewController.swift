@@ -624,7 +624,7 @@ class RouteOptionsViewController: UIViewController {
                 banner = StatusBarNotificationBanner(title: bannerInfo.title, style: bannerInfo.style)
                 banner?.autoDismiss = false
                 banner?.dismissOnTap = true
-                banner?.show(queuePosition: .front, on: navigationController)
+                banner?.show(queue: NotificationBannerQueue(maxBannersOnScreenSimultaneously: 1), on: navigationController)
 
                 Analytics.shared.log(payload)
 

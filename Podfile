@@ -27,7 +27,7 @@ target 'TCAT' do
     
     # UI Frameworks
     pod 'DZNEmptyDataSet', :git=> 'https://github.com/cuappdev/DZNEmptyDataSet.git'
-    pod 'NotificationBannerSwift', :git=> 'https://github.com/cuappdev/NotificationBanner.git'
+    pod 'NotificationBannerSwift', '~> 3.0.0'
     pod 'Pulley', '~> 2.7'
     pod 'Presentation', :git=> 'https://github.com/cuappdev/Presentation.git'
     pod 'SnapKit', '~> 5.0'
