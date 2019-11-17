@@ -95,11 +95,11 @@ class FavoritesViewController: UIViewController {
     }
 
     private func setupConstraints() {
-        let tabTopInset: CGFloat = 6
+        let tabTopInset = 6
         let horizontalPadding = 16
         let titleBarTopPadding = 21
         let favoritesTopPadding = 24
-        let bottomPadding = 18
+        let favoritesBottomPadding = 18
 
         favoritesTitleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(horizontalPadding)
@@ -115,7 +115,7 @@ class FavoritesViewController: UIViewController {
             make.leading.equalToSuperview().inset(horizontalPadding)
             make.trailing.equalToSuperview().inset(horizontalPadding).priority(.high)
             make.top.equalTo(favoritesTitleLabel.snp.bottom).offset(favoritesTopPadding)
-            make.bottom.equalToSuperview().offset(-bottomPadding).priority(.high)
+            make.bottom.equalToSuperview().offset(-favoritesBottomPadding).priority(.high)
         }
 
         tabView.snp.makeConstraints { make in
@@ -196,11 +196,29 @@ extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
 extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
 
     func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return 200
+        return 192 + (pulleyViewController?.currentDisplayMode == .drawer ? bottomSafeArea : 0)
+    }
+
+    func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
+        return 54 + (pulleyViewController?.currentDisplayMode == .drawer ? bottomSafeArea : 0)
     }
 
     func supportedDrawerPositions() -> [PulleyPosition] {
         return [.collapsed, .partiallyRevealed]
+    }
+    
+    func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat)
+    {
+        if drawer.drawerPosition == .collapsed {
+            favoritesCollectionView.isHidden = true
+        } else {
+            favoritesCollectionView.alpha = 0.0
+            favoritesCollectionView.isHidden = false
+            UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseInOut, animations: {
+                self.favoritesCollectionView.alpha = 1.0
+            }) { (isCompleted) in
+            }
+        }
     }
 
 }
