@@ -12,6 +12,7 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
 
     private let heartImageView = UIImageView()
     private let nameLabel = UILabel()
+    private let minusImageView = UIImageView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -26,17 +27,28 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
         heartImageView.contentMode = .scaleAspectFit
         contentView.addSubview(heartImageView)
 
+        minusImageView.image = UIImage(named: "minus")
+        minusImageView.contentMode = .scaleAspectFit
+        contentView.addSubview(minusImageView)
+
         setupConstraints()
     }
 
     private func setupConstraints() {
 
         let heartImageSize = 56
+        let minusImageSize = 22
         let nameLabelTopPadding = 11
 
         heartImageView.snp.makeConstraints{ make in
             make.centerX.top.equalToSuperview()
             make.size.equalTo(heartImageSize)
+        }
+
+        minusImageView.snp.makeConstraints{ make in
+            make.centerX.equalTo(heartImageView).offset(24)
+            make.centerY.equalTo(heartImageView).offset(-16)
+            make.size.equalTo(minusImageSize)
         }
 
         nameLabel.snp.makeConstraints { make in
@@ -51,8 +63,9 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
 
     func configure(for place: Place, editing: Bool) {
         nameLabel.text = place.name
-        let heartImage = editing ? "removeFavorite" : "favorite"
+        let heartImage = editing ? "fadedHeart" : "blueHeart"
         heartImageView.image = UIImage(named: heartImage)
+        minusImageView.isHidden = !editing
     }
 
 }

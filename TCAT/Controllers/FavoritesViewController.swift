@@ -197,7 +197,6 @@ extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
 extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
 
     func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-//        let width = UIScreen.main.bounds.width
         return 200
     }
 
