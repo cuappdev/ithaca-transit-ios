@@ -33,7 +33,6 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
     }
 
     private func setupConstraints() {
-
         heartImageView.snp.makeConstraints{ make in
             make.centerX.top.equalToSuperview()
             make.size.equalTo(56)
