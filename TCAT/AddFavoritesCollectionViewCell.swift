@@ -18,12 +18,11 @@ class AddFavoritesCollectionViewCell: UICollectionViewCell {
 
         addLabel.text = "Add"
         addLabel.font = .systemFont(ofSize: 14, weight: .regular)
-        addLabel.textColor = Colors.tcatBlue
+        addLabel.textColor = Colors.notificationBlue
         addLabel.textAlignment = .center
         contentView.addSubview(addLabel)
 
         addImageView.image = UIImage(named: "addFavorite")
-        addImageView.contentMode = .scaleAspectFit
         contentView.addSubview(addImageView)
 
         setupConstraints()
@@ -31,17 +30,14 @@ class AddFavoritesCollectionViewCell: UICollectionViewCell {
 
     private func setupConstraints() {
 
-        let addImageSize = 56
-        let nameLabelTopPadding = 11
-
         addImageView.snp.makeConstraints{ make in
             make.centerX.top.equalToSuperview()
-            make.size.equalTo(addImageSize)
+            make.size.equalTo(56)
         }
 
         addLabel.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
-            make.top.equalTo(addImageView.snp.bottom).offset(nameLabelTopPadding)
+            make.top.equalTo(addImageView.snp.bottom).offset(11)
         }
 
     }

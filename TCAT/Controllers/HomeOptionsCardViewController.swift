@@ -242,10 +242,6 @@ class HomeOptionsCardViewController: UIViewController {
     private func tableViewContentHeight() -> CGFloat {
         return sections.reduce(0) { (result, section) -> CGFloat in
             switch section {
-//            case .favorites:
-                // We should always have the Add Favorites row
-//                let rows = CGFloat(max(1, section.getItems().count))
-//                return headerHeight + tableViewRowHeight * rows + result
             case .recentSearches:
                 return headerHeight + tableViewRowHeight * CGFloat(section.getItems().count) + result
             case .seeAllStops:

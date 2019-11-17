@@ -23,12 +23,10 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
         nameLabel.numberOfLines = 2
         nameLabel.lineBreakMode = .byTruncatingTail
         contentView.addSubview(nameLabel)
-
-        heartImageView.contentMode = .scaleAspectFit
+        
         contentView.addSubview(heartImageView)
 
         minusImageView.image = UIImage(named: "minus")
-        minusImageView.contentMode = .scaleAspectFit
         contentView.addSubview(minusImageView)
 
         setupConstraints()
@@ -36,24 +34,20 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
 
     private func setupConstraints() {
 
-        let heartImageSize = 56
-        let minusImageSize = 22
-        let nameLabelTopPadding = 11
-
         heartImageView.snp.makeConstraints{ make in
             make.centerX.top.equalToSuperview()
-            make.size.equalTo(heartImageSize)
+            make.size.equalTo(56)
         }
 
         minusImageView.snp.makeConstraints{ make in
             make.centerX.equalTo(heartImageView).offset(24)
             make.centerY.equalTo(heartImageView).offset(-16)
-            make.size.equalTo(minusImageSize)
+            make.size.equalTo(22)
         }
 
         nameLabel.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
-            make.top.equalTo(heartImageView.snp.bottom).offset(nameLabelTopPadding)
+            make.top.equalTo(heartImageView.snp.bottom).offset(11)
         }
     }
 

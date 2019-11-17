@@ -63,10 +63,9 @@ class FavoritesViewController: UIViewController {
 
     private func setupButtons() {
         let editString = isEditingFavorites ? "Done" : "Edit"
-//        let favoritesBlueColor = UIColor(hex: "08A0E0")
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.getFont(.regular, size: 14.0),
-            .foregroundColor: Colors.tcatBlue,
+            .foregroundColor: Colors.notificationBlue,
         ]
         let attributedString = NSMutableAttributedString(string: editString, attributes: attributes)
         editButton.setAttributedTitle(attributedString, for: .normal)
