@@ -17,6 +17,7 @@ class FavoritesViewController: UIViewController {
     private let favoritesTitleLabel = UILabel()
     private let tabView = UIView()
     private let tabSize = CGSize(width: 32, height: 4)
+//    public var backgroundDimmingOpacity: CGFloat = 0.5
 
     // MARK: - Data vars
     private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
@@ -196,29 +197,22 @@ extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
 extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
 
     func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return 192 + (pulleyViewController?.currentDisplayMode == .drawer ? bottomSafeArea : 0)
+        return 192 + bottomSafeArea
     }
 
     func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return 54 + (pulleyViewController?.currentDisplayMode == .drawer ? bottomSafeArea : 0)
+        return 54 + bottomSafeArea
     }
 
     func supportedDrawerPositions() -> [PulleyPosition] {
         return [.collapsed, .partiallyRevealed]
     }
-    
-    func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat)
-    {
-        if drawer.drawerPosition == .collapsed {
-            favoritesCollectionView.isHidden = true
-        } else {
-            favoritesCollectionView.alpha = 0.0
-            favoritesCollectionView.isHidden = false
-            UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseInOut, animations: {
-                self.favoritesCollectionView.alpha = 1.0
-            }) { (isCompleted) in
-            }
-        }
+
+    func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
+        let totalHeight : CGFloat = 192 - 54
+        let collapsedHeight = 54 + bottomSafeArea
+        let opacity = (distance - collapsedHeight) / totalHeight
+        favoritesCollectionView.alpha = opacity
     }
 
 }
