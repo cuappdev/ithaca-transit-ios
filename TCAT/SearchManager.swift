@@ -101,7 +101,7 @@ extension SearchManager: MKLocalSearchCompleterDelegate {
                     let lat = mapItem.placemark.coordinate.latitude
                     let long = mapItem.placemark.coordinate.longitude
                     let description = [address, city, state, country].joined(separator: ", ")
-                    let place = Place(name: name, latitude: lat, longitude: long, placeDescription: description)
+                    let place = Place(name: name, type: .applePlace, latitude: lat, longitude: long, placeDescription: description)
                     places.append(place)
                 }
                 dispatchGroup.leave()

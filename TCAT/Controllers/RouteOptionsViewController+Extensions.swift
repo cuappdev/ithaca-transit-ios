@@ -168,25 +168,27 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
 
     func didReceiveCurrentLocation(_ location: CLLocation?) {
         guard let currentLocation = location else { return }
-
-        searchBarView.resultsViewController?.currentLocation?.latitude = currentLocation.coordinate.latitude
-        searchBarView.resultsViewController?.currentLocation?.longitude = currentLocation.coordinate.longitude
+        
+        let currentPlace = Place(
+            name: Constants.General.currentLocation,
+            type: .currentLocation,
+            latitude: currentLocation.coordinate.latitude,
+            longitude: currentLocation.coordinate.longitude
+        )
+        
+        searchBarView.resultsViewController?.currentLocation = currentPlace
 
         if searchFrom?.name == Constants.General.currentLocation {
-            searchFrom?.latitude = currentLocation.coordinate.latitude
-            searchFrom?.longitude = currentLocation.coordinate.longitude
+            searchFrom = currentPlace
         }
 
         if searchTo.name == Constants.General.currentLocation {
-            searchTo.latitude = currentLocation.coordinate.latitude
-            searchTo.longitude = currentLocation.coordinate.longitude
+            searchTo = currentPlace
         }
 
         // If haven't selected start location, set to current location
         if searchFrom == nil {
-            let currentLocation = Place(name: Constants.General.currentLocation,
-                                        latitude: currentLocation.coordinate.latitude,
-                                        longitude: currentLocation.coordinate.longitude)
+            let currentLocation = currentPlace
             searchFrom = currentLocation
             searchBarView.resultsViewController?.currentLocation = currentLocation
             routeSelection.updateSearchBarTitles(from: currentLocation.name)

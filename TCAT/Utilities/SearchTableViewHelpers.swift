@@ -34,7 +34,7 @@ class Global {
 
     /// Returns the rest so we don't have to re-unarchive it
     func deleteFavorite(favorite: Place, allFavorites: [Place]) -> [Place] {
-        let newFavoritesList = allFavorites.filter { !favorite.isEqual($0) }
+        let newFavoritesList = allFavorites.filter { favorite != $0 }
         do {
             let data = try encoder.encode(newFavoritesList)
             sharedUserDefaults?.set(data, forKey: Constants.UserDefaults.favorites)
@@ -47,7 +47,7 @@ class Global {
 
     /// Returns the rest so we don't have to re-unarchive it
     func deleteRecent(recent: Place, allRecents: [Place]) -> [Place] {
-        let newRecentsList = allRecents.filter { !recent.isEqual($0) }
+        let newRecentsList = allRecents.filter { recent != $0 }
         do {
             let data = try encoder.encode(newRecentsList)
             userDefaults.set(data, forKey: Constants.UserDefaults.recentSearch)
@@ -77,7 +77,7 @@ class Global {
 
         // Ensure duplicates aren't added
         var places = retrievePlaces(for: key).filter { (savedPlace) -> Bool in
-            return !savedPlace.isEqual(place)
+            return savedPlace != place
         }
 
         places = bottom ? places + [place] : [place] + places

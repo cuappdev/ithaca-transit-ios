@@ -470,10 +470,8 @@ class RouteOptionsViewController: UIViewController {
             if #available(iOS 12.0, *) {
                 let intent = GetRoutesIntent()
                 intent.searchTo = searchTo.name
-                if let latitude = searchTo.latitude, let longitude = searchTo.longitude {
-                    intent.latitude = String(describing: latitude)
-                    intent.longitude = String(describing: longitude)
-                }
+                intent.latitude = String(describing: searchTo.latitude)
+                intent.longitude = String(describing: searchTo.longitude)
                 intent.suggestedInvocationPhrase = "Find bus to \(searchTo.name)"
                 let interaction = INInteraction(intent: intent, response: nil)
                 interaction.donate(completion: { (error) in
@@ -586,16 +584,8 @@ class RouteOptionsViewController: UIViewController {
 
     /// Returns whether coordinates are valid, checking country extremes. Returns nil if places don't have coordinates.
     private func checkPlaceCoordinates(startPlace: Place, endPlace: Place) -> Bool? {
-
-        guard let startCoordLatitude = startPlace.latitude,
-            let startCoordLongitude = startPlace.longitude,
-            let endCoordLatitude = endPlace.latitude,
-            let endCoordLongitude = endPlace.longitude else {
-            return nil
-        }
-
-        let latitudeValues = [startCoordLatitude, endCoordLatitude]
-        let longitudeValues  = [startCoordLongitude, endCoordLongitude]
+        let latitudeValues = [startPlace.latitude, endPlace.latitude]
+        let longitudeValues  = [startPlace.longitude, endPlace.longitude]
 
         let validLatitudes = latitudeValues.reduce(true) { (result, latitude) -> Bool in
             return result && latitude <= Constants.Values.RouteBorders.northBorder &&
@@ -619,21 +609,18 @@ class RouteOptionsViewController: UIViewController {
                 let action = UIAlertAction(title: actionTitle, style: .cancel, handler: nil)
                 alertController.addAction(action)
                 present(alertController, animated: true, completion: nil)
-
             case .showError(bannerInfo: let bannerInfo, payload: let payload):
                 banner = StatusBarNotificationBanner(title: bannerInfo.title, style: bannerInfo.style)
                 banner?.autoDismiss = false
                 banner?.dismissOnTap = true
                 banner?.show(queue: NotificationBannerQueue(maxBannersOnScreenSimultaneously: 1), on: navigationController)
-
+                
                 Analytics.shared.log(payload)
-
             case .hideBanner:
                 banner?.dismiss()
                 banner = nil
                 NotificationBannerQueue.default.removeAll()
                 mediumTapticGenerator.impactOccurred()
-
             }
 
         }
