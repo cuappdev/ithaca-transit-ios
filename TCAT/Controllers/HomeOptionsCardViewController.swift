@@ -117,12 +117,31 @@ class HomeOptionsCardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        addReachabilityListener()
+        
         setupTableView()
         setupInfoButton()
         setupSearchBarSeparator()
         setupSearchBar()
         setupConstraints()
         updatePlaces()
+    }
+    
+    private func addReachabilityListener() {
+        ReachabilityManager.shared.addListener(self) { [weak self] connection in
+            guard let self = self else { return }
+            
+            switch connection {
+            case .none:
+                self.isNetworkDown = true
+                self.searchBar.isUserInteractionEnabled = false
+                self.sections = []
+            case .cellular, .wifi:
+                self.isNetworkDown = false
+                self.updateSections()
+                self.searchBar.isUserInteractionEnabled = true
+            }
+        }
     }
 
     private func setupTableView() {

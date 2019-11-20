@@ -122,19 +122,6 @@ extension HomeOptionsCardViewController: HeaderViewDelegate {
 // MARK: - MapView Delegate
 extension HomeOptionsCardViewController: HomeMapViewDelegate {
 
-    func reachabilityChanged(connection: Reachability.Connection) {
-        switch connection {
-        case .none:
-            isNetworkDown = true
-            searchBar.isUserInteractionEnabled = false
-            sections = []
-        case .cellular, .wifi:
-            isNetworkDown = false
-            updateSections()
-            searchBar.isUserInteractionEnabled = true
-        }
-    }
-    
     func mapViewWillMove() {
         if let searchBarText = searchBar.text,
             searchBarText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {

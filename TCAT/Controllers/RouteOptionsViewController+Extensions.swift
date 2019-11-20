@@ -452,11 +452,3 @@ extension RouteOptionsViewController: RouteSelectionViewDelegate {
         Analytics.shared.log(payload)
     }
 }
-
-extension RouteOptionsViewController: ReachabilityDelegate {
-
-    func reachabilityChanged(connection: Reachability.Connection) {
-        setUserInteraction(to: connection != .none)
-    }
-
-}

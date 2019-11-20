@@ -101,6 +101,8 @@ class RouteOptionsViewController: UIViewController {
 
         title = Constants.Titles.routeOptions
 
+        addReachabilityListener()
+        
         setupRouteSelection(destination: searchTo)
         setupSearchBar()
         setupDatePicker()
@@ -160,6 +162,12 @@ class RouteOptionsViewController: UIViewController {
         return banner != nil ? .lightContent : .default
     }
 
+    private func addReachabilityListener() {
+        ReachabilityManager.shared.addListener(self) { [weak self] connection in
+            self?.setUserInteraction(to: connection != .none)
+        }
+    }
+    
     private func setupRouteSelection(destination: Place?) {
         routeSelection.configure(
             delegate: self,
