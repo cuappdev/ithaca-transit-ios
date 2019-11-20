@@ -30,7 +30,7 @@ class RoundShadowedView: UIView {
 
         addSubview(containerView)
 
-        containerView.snp.makeConstraints { (make) in
+        containerView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }

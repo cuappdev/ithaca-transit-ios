@@ -54,7 +54,7 @@ class NotificationBannerView: RoundShadowedView {
         let notificationLabelInset = 15
         let topPadding = 5
 
-        containerView.snp.remakeConstraints { (make) in
+        containerView.snp.remakeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(containerViewInset)
             make.top.equalToSuperview().inset(topPadding)
         }
