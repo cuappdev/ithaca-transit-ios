@@ -60,8 +60,7 @@ class NotificationBannerView: RoundShadowedView {
         }
 
         notificationLabel.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(notificationLabelInset)
-            make.top.bottom.equalToSuperview().inset(notificationLabelInset)
+            make.edges.equalToSuperview().inset(notificationLabelInset)
         }
     }
 
@@ -73,7 +72,7 @@ class NotificationBannerView: RoundShadowedView {
                 return Constants.Notification.beforeBoardingConfirmation
             case .delayConfirmation:
                 return Constants.Notification.delayConfirmation
-            case .busArriving, .busDelay:
+            default:
                 return ""
             }
         }
