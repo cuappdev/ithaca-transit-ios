@@ -7,6 +7,7 @@
 //
 
 import FutureNova
+import NotificationBannerSwift
 import Pulley
 import SwiftyJSON
 import UIKit
@@ -59,7 +60,9 @@ class RouteDetailDrawerViewController: UIViewController {
     private var busDelayNetworkTimer: Timer?
     private let chevronFlipDurationTime = 0.25
     private let networking: Networking = URLSession.shared.request
-    private var route: Route!
+    var route: Route!
+
+    var notificationBanner: FloatingNotificationBanner?
 
     // MARK: - Initalization
     init(route: Route) {

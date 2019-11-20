@@ -8,12 +8,11 @@
 
 import UIKit
 
-
 enum NotificationType {
     
     case beforeBoardingConfirmation, busArriving, busDelay, delayConfirmation
     
-    var color: UIColor {
+    var bannerColor: UIColor {
         switch self {
         case .beforeBoardingConfirmation, .busArriving, .delayConfirmation:
             return Colors.tcatBlue
@@ -21,56 +20,70 @@ enum NotificationType {
             return Colors.lateRed
         }
     }
-    
-    var title: String {
-        switch self {
-        case .beforeBoardingConfirmation:
-            return Constants.Notification.beforeBoardingConfirmation
-        case .delayConfirmation:
-            return Constants.Notification.delayConfirmation
-        case .busArriving:
-            return Constants.Notification.arrivalNotification
-        case .busDelay:
-            return Constants.Notification.delayNotification
-        }
-    }
+
 }
 
 class NotificationBannerView: RoundShadowedView {
-    
+
     private var type: NotificationType
 
     private let notificationLabel = UILabel()
-    
-    init(notificationType: NotificationType) {
+
+    init(busAttachment: NSTextAttachment, notificationType: NotificationType) {
         let cornerRadius: CGFloat = 10
-        
+
         self.type = notificationType
         super.init(cornerRadius: cornerRadius)
-        
-        layer.shadowOpacity = 1
 
-        containerView.backgroundColor = type.color
-        
-        notificationLabel.text = type.title
-        notificationLabel.textColor = Colors.white
+        layer.shadowOpacity = 0.8
+
+        containerView.backgroundColor = type.bannerColor
+
+        notificationLabel.attributedText = formatTitleLabel(attachment: busAttachment)
         notificationLabel.font = .getFont(.regular, size: 14)
+        notificationLabel.textColor = Colors.white
+        notificationLabel.lineBreakMode = .byWordWrapping
+        notificationLabel.numberOfLines = 0
         containerView.addSubview(notificationLabel)
         
         setupConstraints()
     }
-    
+
     private func setupConstraints() {
+        let containerViewInset = 8
         let notificationLabelInset = 15
-        
+        let topPadding = 5
+
         containerView.snp.remakeConstraints { (make) in
-            make.top.leading.trailing.equalToSuperview().inset(8)
-            make.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(containerViewInset)
+            make.top.equalToSuperview().inset(topPadding)
         }
-        
+
         notificationLabel.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(notificationLabelInset)
+            make.leading.trailing.equalToSuperview().inset(notificationLabelInset)
+            make.top.bottom.equalToSuperview().inset(notificationLabelInset)
         }
+    }
+
+    private func formatTitleLabel(attachment: NSTextAttachment) -> NSMutableAttributedString {
+ 
+        var beginningText: String {
+            switch type {
+            case .beforeBoardingConfirmation:
+                return Constants.Notification.beforeBoardingConfirmation
+            case .delayConfirmation:
+                return Constants.Notification.delayConfirmation
+            case .busArriving, .busDelay:
+                return ""
+            }
+        }
+
+        let notificationText = NSMutableAttributedString(string: beginningText)
+        if type == .delayConfirmation {
+            notificationText.append(NSAttributedString(attachment: attachment))
+        }
+
+        return notificationText
     }
     
     required init?(coder: NSCoder) {

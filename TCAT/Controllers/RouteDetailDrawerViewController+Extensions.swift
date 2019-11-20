@@ -6,6 +6,7 @@
 //  Copyright © 2019 cuappdev. All rights reserved.
 //
 
+import NotificationBannerSwift
 import Pulley
 import UIKit
 
@@ -36,6 +37,66 @@ extension RouteDetailDrawerViewController: LargeDetailTableViewDelegate {
 
     func toggleCellExpansion(on cell: LargeDetailTableViewCell) {
         toggleCellExpansion(for: cell)
+    }
+
+}
+
+extension RouteDetailDrawerViewController: NotificationToggleTableViewDelegate {
+
+    func displayNotificationBanner(notificationType: NotificationType) {
+        guard let direction = getFirstDirection() else { return }
+        notificationBanner = FloatingNotificationBanner(
+            customView: NotificationBannerView(
+                busAttachment: getBusIconImageAsTextAttachment(for: direction.routeNumber, notificationType: notificationType),
+                notificationType: notificationType
+            )
+        )
+        notificationBanner?.show(queue: NotificationBannerQueue(maxBannersOnScreenSimultaneously: 1), on: navigationController)
+    }
+
+    private func getFirstDirection() -> Direction? {
+        let firstDirection = route.directions.compactMap {
+            return $0.type == .depart ? $0 : nil
+        }.first
+        return firstDirection
+    }
+
+    private func getBusIconImageAsTextAttachment(for busNumber: Int, notificationType: NotificationType) -> NSTextAttachment {
+        let busIconSpacingBetweenText: CGFloat = 5
+
+        // Instantiate busIconView offScreen to later turn into UIImage
+        let busIconView = BusIcon(type: .lightSmallBlue, number: busNumber)
+
+        let busIconFrame = CGRect(
+            x: 0,
+            y: 0,
+            width: busIconView.intrinsicContentSize.width + busIconSpacingBetweenText * 2,
+            height: busIconView.intrinsicContentSize.height
+        )
+
+        // Create container to add padding on sides
+        let containerView = UIView(frame: busIconFrame)
+        containerView.isOpaque = false
+        containerView.addSubview(busIconView)
+        busIconView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(busIconSpacingBetweenText)
+            make.top.bottom.equalToSuperview()
+        }
+        view.addSubview(containerView)
+
+        // Create NSTextAttachment with the busIcon as a UIImage
+        let iconAttachment = NSTextAttachment()
+        iconAttachment.image = containerView.getImage()
+
+        // Lower the textAttachment to be centered within the text
+        var frame = containerView.frame
+        frame.origin.y -= 7
+        iconAttachment.bounds = frame
+
+        // Remove the container as it is no longer needed
+        containerView.removeFromSuperview()
+
+        return iconAttachment
     }
 
 }
@@ -134,7 +195,8 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                 else { return UITableViewCell() }
             cell.configure(
                 for: notificationTitle,
-                isFirst: indexPath.row == 0
+                isFirst: indexPath.row == 0,
+                delegate: self
             )
             return cell
         }

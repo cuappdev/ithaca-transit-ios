@@ -9,18 +9,23 @@
 import NotificationBannerSwift
 import UIKit
 
+protocol NotificationToggleTableViewDelegate: class {
+    func displayNotificationBanner(notificationType: NotificationType)
+}
+
 class NotificationToggleTableViewCell: UITableViewCell {
+    
+    private weak var delegate: NotificationToggleTableViewDelegate?
     
     private var title = ""
 
     private let firstHairline = UIView()
     private let hairline = UIView()
+    private var notificationBanner: NotificationBanner?
     private let notificationSwitch = UISwitch()
     private let notificationTitleLabel = UILabel()
 
     private let hairlineHeight = 0.5
-    
-    private var notificationBanner: NotificationBanner?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -74,7 +79,8 @@ class NotificationToggleTableViewCell: UITableViewCell {
         }
     }
 
-    func configure(for notificationTitle: String, isFirst: Bool) {
+    func configure(for notificationTitle: String, isFirst: Bool, delegate: NotificationToggleTableViewDelegate? = nil) {
+        self.delegate = delegate
         title = notificationTitle
         notificationTitleLabel.text = notificationTitle
         if isFirst {
@@ -84,13 +90,11 @@ class NotificationToggleTableViewCell: UITableViewCell {
     
     @objc func switchValueChanged() {
         if notificationSwitch.isOn {
-            if title == Constants.Notification.notifyDelay {
-                notificationBanner = NotificationBanner(customView: NotificationBannerView(notificationType: NotificationType.delayConfirmation))
+            if title == Constants.Notification.notifyBeforeBoarding {
+                delegate?.displayNotificationBanner(notificationType: NotificationType.beforeBoardingConfirmation)
             } else {
-                notificationBanner = NotificationBanner(customView: NotificationBannerView(notificationType: NotificationType.beforeBoardingConfirmation))
+                delegate?.displayNotificationBanner(notificationType: NotificationType.delayConfirmation)
             }
-            notificationBanner?.bannerHeight = 100
-            notificationBanner?.show()
         }
     }
 
