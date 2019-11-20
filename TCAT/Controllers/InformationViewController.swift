@@ -176,6 +176,7 @@ class InformationViewController: UIViewController {
             UIApplication.shared.open(URL)
         }
     }
+    
 }
 
 // MARK: - Table View Data Source
@@ -208,6 +209,7 @@ extension InformationViewController: UITableViewDataSource {
 
         return cell
     }
+    
 }
 
 // MARK: - Table View Delegate
