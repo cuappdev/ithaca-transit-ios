@@ -47,7 +47,7 @@ extension RouteDetailDrawerViewController: NotificationToggleTableViewDelegate {
         guard let direction = getFirstDirection() else { return }
         notificationBanner = FloatingNotificationBanner(
             customView: NotificationBannerView(
-                busAttachment: getBusIconImageAsTextAttachment(for: direction.routeNumber, notificationType: notificationType),
+                busAttachment: getBusIconImageAsTextAttachment(for: direction.routeNumber),
                 notificationType: notificationType
             )
         )
@@ -61,7 +61,7 @@ extension RouteDetailDrawerViewController: NotificationToggleTableViewDelegate {
         return firstDirection
     }
 
-    private func getBusIconImageAsTextAttachment(for busNumber: Int, notificationType: NotificationType) -> NSTextAttachment {
+    private func getBusIconImageAsTextAttachment(for busNumber: Int) -> NSTextAttachment {
         let busIconSpacingBetweenText: CGFloat = 5
 
         // Instantiate busIconView offScreen to later turn into UIImage
