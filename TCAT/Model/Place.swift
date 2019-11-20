@@ -26,7 +26,6 @@ struct Place {
         return type == .busStop ? "Bus Stop" : placeDescription ?? ""
     }
     
-    /// Initializer for Apple Places
     init(name: String, type: PlaceType,  latitude: Double, longitude: Double, placeDescription: String? = nil) {
         self.name = name
         self.latitude = latitude
