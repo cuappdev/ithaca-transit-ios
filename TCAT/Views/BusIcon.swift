@@ -123,7 +123,7 @@ class BusIcon: UIView {
         var constant: CGFloat
         switch type {
         case .liveTracking: constant = 0.87
-        case .directionSmall, .lightSmallRed, .lightSmallBlue: constant = 0.75
+        case .directionSmall, .lightSmallBlue, .lightSmallRed: constant = 0.75
         case .directionLarge: constant = 1
         }
         let imageSize = CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
