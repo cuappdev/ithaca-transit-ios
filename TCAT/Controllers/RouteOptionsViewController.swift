@@ -102,7 +102,7 @@ class RouteOptionsViewController: UIViewController {
         title = Constants.Titles.routeOptions
 
         addReachabilityListener()
-        
+
         setupRouteSelection(destination: searchTo)
         setupSearchBar()
         setupDatePicker()
@@ -167,7 +167,7 @@ class RouteOptionsViewController: UIViewController {
             self?.setUserInteraction(to: connection != .none)
         }
     }
-    
+
     private func setupRouteSelection(destination: Place?) {
         routeSelection.configure(
             delegate: self,
@@ -294,7 +294,7 @@ class RouteOptionsViewController: UIViewController {
         case .from:
             if let startingDestinationName = searchFrom?.name,
                 startingDestinationName != Constants.General.currentLocation &&
-                startingDestinationName != Constants.General.fromSearchBarPlaceholder {
+                    startingDestinationName != Constants.General.fromSearchBarPlaceholder {
                 searchBarText = startingDestinationName
             }
             placeholder = Constants.General.fromSearchBarPlaceholder
@@ -357,40 +357,40 @@ class RouteOptionsViewController: UIViewController {
         getAllDelays(trips: trips).observe(with: { result in
             DispatchQueue.main.async {
                 switch result {
-                    case .value(let delaysResponse):
-                        if !delaysResponse.success { return }
-                        let allDelays = delaysResponse.data
-                        for delayResponse in allDelays {
-                            let tripRoute = self.tripDictionary[delayResponse.tripID]
-                            guard let route = tripRoute,
-                                let routeId = tripRoute?.routeId,
-                                let direction = route.getFirstDepartRawDirection(),
-                                let delay = delayResponse.delay else {
-                                    continue
-                            }
-                            let departTime = direction.startTime
-                            let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
-                            var delayState: DelayState!
-                            let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
-                            if isLateDelay {
-                                delayState = DelayState.late(date: delayedDepartTime)
-                            } else {
-                                delayState = DelayState.onTime(date: departTime)
-                            }
-                            self.delayDictionary[routeId] = delayState
-                            route.getFirstDepartRawDirection()?.delay = delay
+                case .value(let delaysResponse):
+                    if !delaysResponse.success { return }
+                    let allDelays = delaysResponse.data
+                    for delayResponse in allDelays {
+                        let tripRoute = self.tripDictionary[delayResponse.tripID]
+                        guard let route = tripRoute,
+                            let routeId = tripRoute?.routeId,
+                            let direction = route.getFirstDepartRawDirection(),
+                            let delay = delayResponse.delay else {
+                                continue
                         }
-                    case .error(let error):
-                        self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                        let payload = NetworkErrorPayload(
-                            location: "\(self) Get All Delays",
-                            type: "\((error as NSError).domain)",
-                            description: error.localizedDescription
-                        )
-                        Analytics.shared.log(payload)
+                        let departTime = direction.startTime
+                        let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
+                        var delayState: DelayState!
+                        let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
+                        if isLateDelay {
+                            delayState = DelayState.late(date: delayedDepartTime)
+                        } else {
+                            delayState = DelayState.onTime(date: departTime)
+                        }
+                        self.delayDictionary[routeId] = delayState
+                        route.getFirstDepartRawDirection()?.delay = delay
                     }
+                case .error(let error):
+                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                    let payload = NetworkErrorPayload(
+                        location: "\(self) Get All Delays",
+                        type: "\((error as NSError).domain)",
+                        description: error.localizedDescription
+                    )
+                    Analytics.shared.log(payload)
                 }
-            })
+            }
+        })
     }
 
     @objc private func refreshRoutesAndTime() {
@@ -622,7 +622,7 @@ class RouteOptionsViewController: UIViewController {
                 banner?.autoDismiss = false
                 banner?.dismissOnTap = true
                 banner?.show(queue: NotificationBannerQueue(maxBannersOnScreenSimultaneously: 1), on: navigationController)
-                
+
                 Analytics.shared.log(payload)
             case .hideBanner:
                 banner?.dismiss()
@@ -688,5 +688,6 @@ class RouteOptionsViewController: UIViewController {
             drawerViewController: drawerViewController
         )
     }
-
+    
 }
+
