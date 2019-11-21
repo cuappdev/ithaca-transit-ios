@@ -29,7 +29,6 @@ class AddFavoritesCollectionViewCell: UICollectionViewCell {
     }
 
     private func setupConstraints() {
-
         addImageView.snp.makeConstraints{ make in
             make.centerX.top.equalToSuperview()
             make.size.equalTo(56)
@@ -39,7 +38,6 @@ class AddFavoritesCollectionViewCell: UICollectionViewCell {
             make.left.right.equalToSuperview()
             make.top.equalTo(addImageView.snp.bottom).offset(11)
         }
-
     }
 
     required init?(coder aDecoder: NSCoder) {

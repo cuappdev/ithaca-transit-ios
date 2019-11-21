@@ -23,12 +23,12 @@ class FavoritesViewController: UIViewController {
     // MARK: - Data vars
     private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
     private let addFavoritesReuseIdentifier = "AddFavoritesCollectionViewCell"
-    private var favoritePlaces: [Place]! {
+    private var favoritePlaces: [Place] {
         didSet {
             favoritesCollectionView.reloadData()
         }
     }
-    private var isEditingFavorites: Bool! {
+    private var isEditingFavorites: Bool {
         didSet {
             setupButtons()
             favoritesCollectionView.reloadData()
@@ -65,12 +65,9 @@ class FavoritesViewController: UIViewController {
 
     private func setupButtons() {
         let editString = isEditingFavorites ? "Done" : "Edit"
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.getFont(.regular, size: 14.0),
-            .foregroundColor: Colors.notificationBlue,
-        ]
-        let attributedString = NSMutableAttributedString(string: editString, attributes: attributes)
-        editButton.setAttributedTitle(attributedString, for: .normal)
+        editButton.setTitle(editString, for: .normal)
+        editButton.setTitleColor(Colors.notificationBlue, for: .normal)
+        editButton.titleLabel?.font = UIFont.getFont(.regular, size: 14.0)
         editButton.addTarget(self, action: #selector(editAction), for: .touchUpInside)
         view.addSubview(editButton)
     }
