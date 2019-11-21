@@ -87,7 +87,7 @@ class SearchResultsViewController: UIViewController {
         // Set Up LocationManager
         locationManager.delegate = self
 
-        // Fetch RecentLocation
+        // Fetch recent location
         recentLocations = Global.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
 
         // Set Up Sections For TableView

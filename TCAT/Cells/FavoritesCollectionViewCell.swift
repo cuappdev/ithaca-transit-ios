@@ -54,11 +54,11 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(for place: Place, editing: Bool) {
+    func configure(for place: Place, isEditing: Bool) {
         nameLabel.text = place.name
-        let heartImage = editing ? "fadedHeart" : "blueHeart"
+        let heartImage = isEditing ? "fadedHeart" : "blueHeart"
         heartImageView.image = UIImage(named: heartImage)
-        minusImageView.isHidden = !editing
+        minusImageView.isHidden = !isEditing
     }
 
 }

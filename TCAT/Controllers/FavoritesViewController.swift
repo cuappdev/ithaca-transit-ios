@@ -12,12 +12,13 @@ import UIKit
 class FavoritesViewController: UIViewController {
 
     // MARK: - View vars
+    private let collapsedRevealHeight: CGFloat = 54
     private let editButton = UIButton()
     private var favoritesCollectionView: UICollectionView!
     private let favoritesTitleLabel = UILabel()
+    private let partialRevealHeight: CGFloat = 192
     private let tabView = UIView()
     private let tabSize = CGSize(width: 32, height: 4)
-//    public var backgroundDimmingOpacity: CGFloat = 0.5
 
     // MARK: - Data vars
     private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
@@ -35,9 +36,9 @@ class FavoritesViewController: UIViewController {
     }
 
     init(isEditing: Bool) {
-        super.init(nibName: nil, bundle: nil)
         isEditingFavorites = isEditing
         favoritePlaces = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
@@ -131,6 +132,7 @@ class FavoritesViewController: UIViewController {
     }
 
     private func presentFavoritePicker() {
+        // Current favorites is capped at 3
         if favoritePlaces.count < 3 {
             let favoritesTVC = FavoritesTableViewController()
             favoritesTVC.didAddFavorite = {
@@ -164,7 +166,7 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.item < favoritePlaces.count {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: favoritesReuseIdentifier, for: indexPath) as! FavoritesCollectionViewCell
-            cell.configure(for: favoritePlaces[indexPath.row], editing: isEditingFavorites)
+            cell.configure(for: favoritePlaces[indexPath.row], isEditing: isEditingFavorites)
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: addFavoritesReuseIdentifier, for: indexPath) as! AddFavoritesCollectionViewCell
@@ -197,11 +199,11 @@ extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
 extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
 
     func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return 192 + bottomSafeArea
+        return bottomSafeArea + 192
     }
 
     func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return 54 + bottomSafeArea
+        return bottomSafeArea + 54
     }
 
     func supportedDrawerPositions() -> [PulleyPosition] {
@@ -209,8 +211,8 @@ extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
     }
 
     func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
-        let totalHeight : CGFloat = 192 - 54
-        let collapsedHeight = 54 + bottomSafeArea
+        let totalHeight = partialRevealHeight - collapsedRevealHeight
+        let collapsedHeight = collapsedRevealHeight + bottomSafeArea
         let opacity = (distance - collapsedHeight) / totalHeight
         favoritesCollectionView.alpha = opacity
     }
