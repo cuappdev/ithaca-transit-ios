@@ -240,10 +240,10 @@ struct Constants {
     }
     
     struct Notification {
-        static let arrivalNotification = "is arriving "
+        static let arrivalNotification = "is arriving"
         static let beforeBoardingConfirmation = "You will receive notifications 10 min before boarding time"
         static let delayConfirmation = "You will receive notifications for delays in"
-        static let delayNotification = "has been delayed to "
+        static let delayNotification = "has been delayed to"
         static let notifyBeforeBoarding = "Notify me 10 min before boarding"
         static let notifyDelay = "Notify me about delays"
     }

@@ -60,16 +60,14 @@ class RouteDetailDrawerViewController: UIViewController {
     private var busDelayNetworkTimer: Timer?
     private let chevronFlipDurationTime = 0.25
     private let networking: Networking = URLSession.shared.request
-    var route: Route!
-
-    var notificationBanner: FloatingNotificationBanner?
+    let route: Route
 
     // MARK: - Initalization
     init(route: Route) {
-        super.init(nibName: nil, bundle: nil)
         self.route = route
+        super.init(nibName: nil, bundle: nil)
         summaryView = SummaryView(route: route)
-        self.directionsAndVisibleStops = route.directions.map({ RouteDetailItem.direction($0) })
+        directionsAndVisibleStops = route.directions.map({ RouteDetailItem.direction($0) })
     }
 
     required convenience init(coder aDecoder: NSCoder) {

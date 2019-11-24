@@ -10,7 +10,7 @@ import NotificationBannerSwift
 import UIKit
 
 protocol NotificationToggleTableViewDelegate: class {
-    func displayNotificationBanner(notificationType: NotificationType)
+    func displayNotificationBanner(type: NotificationType)
 }
 
 class NotificationToggleTableViewCell: UITableViewCell {
@@ -91,9 +91,9 @@ class NotificationToggleTableViewCell: UITableViewCell {
     @objc func switchValueChanged() {
         if notificationSwitch.isOn {
             if title == Constants.Notification.notifyBeforeBoarding {
-                delegate?.displayNotificationBanner(notificationType: NotificationType.beforeBoardingConfirmation)
+                delegate?.displayNotificationBanner(type: NotificationType.beforeBoardingConfirmation)
             } else {
-                delegate?.displayNotificationBanner(notificationType: NotificationType.delayConfirmation)
+                delegate?.displayNotificationBanner(type: NotificationType.delayConfirmation)
             }
         }
     }

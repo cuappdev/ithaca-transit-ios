@@ -43,34 +43,33 @@ extension RouteDetailDrawerViewController: LargeDetailTableViewDelegate {
 
 extension RouteDetailDrawerViewController: NotificationToggleTableViewDelegate {
 
-    func displayNotificationBanner(notificationType: NotificationType) {
+    func displayNotificationBanner(type: NotificationType) {
         guard let direction = getFirstDirection() else { return }
-        notificationBanner = FloatingNotificationBanner(
+        FloatingNotificationBanner(
             customView: NotificationBannerView(
                 busAttachment: getBusIconImageAsTextAttachment(for: direction.routeNumber),
-                notificationType: notificationType
+                type: type
             )
+        ).show(
+            queue: NotificationBannerQueue(maxBannersOnScreenSimultaneously: 1),
+            on: navigationController
         )
-        notificationBanner?.show(queue: NotificationBannerQueue(maxBannersOnScreenSimultaneously: 1), on: navigationController)
     }
 
     private func getFirstDirection() -> Direction? {
-        let firstDirection = route.directions.compactMap {
-            return $0.type == .depart ? $0 : nil
-        }.first
-        return firstDirection
+        return route.directions.first(where: { $0.type == .depart })
     }
 
     private func getBusIconImageAsTextAttachment(for busNumber: Int) -> NSTextAttachment {
-        let busIconSpacingBetweenText: CGFloat = 5
+        let busIconTextSpacing: CGFloat = 5
 
-        // Instantiate busIconView offScreen to later turn into UIImage
-        let busIconView = BusIcon(type: .lightSmallBlue, number: busNumber)
+        // Instantiate busIconView off screen to later turn into UIImage
+        let busIconView = BusIcon(type: .blueBannerSmall, number: busNumber)
 
         let busIconFrame = CGRect(
             x: 0,
             y: 0,
-            width: busIconView.intrinsicContentSize.width + busIconSpacingBetweenText * 2,
+            width: busIconView.intrinsicContentSize.width + busIconTextSpacing * 2,
             height: busIconView.intrinsicContentSize.height
         )
 
@@ -79,7 +78,7 @@ extension RouteDetailDrawerViewController: NotificationToggleTableViewDelegate {
         containerView.isOpaque = false
         containerView.addSubview(busIconView)
         busIconView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(busIconSpacingBetweenText)
+            make.leading.trailing.equalToSuperview().inset(busIconTextSpacing)
             make.top.bottom.equalToSuperview()
         }
         view.addSubview(containerView)

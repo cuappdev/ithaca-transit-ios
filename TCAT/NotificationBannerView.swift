@@ -23,40 +23,38 @@ enum NotificationType {
 
 }
 
-class NotificationBannerView: RoundShadowedView {
+class NotificationBannerView: UIView {
 
     private var type: NotificationType
 
+    private let shadowedView = RoundShadowedView(cornerRadius: 10)
     private let notificationLabel = UILabel()
 
-    init(busAttachment: NSTextAttachment, notificationType: NotificationType) {
-        let cornerRadius: CGFloat = 10
+    init(busAttachment: NSTextAttachment, type: NotificationType) {
 
-        self.type = notificationType
-        super.init(cornerRadius: cornerRadius)
+        self.type = type
+        super.init(frame: .zero)
 
-        layer.shadowOpacity = 0.8
+        shadowedView.setColor(color: type.bannerColor)
+        shadowedView.layer.shadowOpacity = 0.8
+        addSubview(shadowedView)
 
-        containerView.backgroundColor = type.bannerColor
-
-        notificationLabel.attributedText = formatTitleLabel(attachment: busAttachment)
+        notificationLabel.attributedText = getNotificationLabelAttributedString(attachment: busAttachment)
         notificationLabel.font = .getFont(.regular, size: 14)
         notificationLabel.textColor = Colors.white
         notificationLabel.lineBreakMode = .byWordWrapping
         notificationLabel.numberOfLines = 0
-        containerView.addSubview(notificationLabel)
-        
+        shadowedView.addSubview(notificationLabel)
+
         setupConstraints()
     }
 
     private func setupConstraints() {
-        let containerViewInset = 8
         let notificationLabelInset = 15
-        let topPadding = 5
+        let shadowedViewInset = 6
 
-        containerView.snp.remakeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(containerViewInset)
-            make.top.equalToSuperview().inset(topPadding)
+        shadowedView.snp.makeConstraints { make in
+            make.leading.trailing.top.equalToSuperview().inset(shadowedViewInset)
         }
 
         notificationLabel.snp.makeConstraints { make in
@@ -64,17 +62,15 @@ class NotificationBannerView: RoundShadowedView {
         }
     }
 
-    private func formatTitleLabel(attachment: NSTextAttachment) -> NSMutableAttributedString {
- 
-        var beginningText: String {
-            switch type {
-            case .beforeBoardingConfirmation:
-                return Constants.Notification.beforeBoardingConfirmation
-            case .delayConfirmation:
-                return Constants.Notification.delayConfirmation
-            default:
-                return ""
-            }
+    private func getNotificationLabelAttributedString(attachment: NSTextAttachment) -> NSAttributedString {
+        var beginningText: String
+        switch type {
+        case .beforeBoardingConfirmation:
+            beginningText = Constants.Notification.beforeBoardingConfirmation
+        case .delayConfirmation:
+            beginningText = Constants.Notification.delayConfirmation
+        default:
+            beginningText = ""
         }
 
         let notificationText = NSMutableAttributedString(string: beginningText)

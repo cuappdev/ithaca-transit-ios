@@ -9,12 +9,12 @@ import UIKit
 
 enum BusIconType: String {
 
-    case directionSmall, directionLarge, lightSmallBlue, lightSmallRed, liveTracking
+    case blueBannerSmall, directionSmall, directionLarge, redBannerSmall, liveTracking
 
     /// Return BusIcon's frame width
     var width: CGFloat {
         switch self {
-        case .directionSmall, .lightSmallBlue, .lightSmallRed:
+        case .directionSmall, .blueBannerSmall, .redBannerSmall:
             return 48
         case .liveTracking:
             return 72
@@ -26,7 +26,7 @@ enum BusIconType: String {
     /// Return BusIcon's frame height
     var height: CGFloat {
         switch self {
-        case .directionSmall, .lightSmallBlue, .lightSmallRed:
+        case .directionSmall, .blueBannerSmall, .redBannerSmall:
             return 24
         case .liveTracking:
             return 30
@@ -49,7 +49,7 @@ enum BusIconType: String {
         switch self {
         case .directionSmall, .directionLarge, .liveTracking:
             return Colors.tcatBlue
-        case .lightSmallBlue, .lightSmallRed:
+        case .blueBannerSmall, .redBannerSmall:
             return Colors.white
         }
     }
@@ -58,9 +58,9 @@ enum BusIconType: String {
         switch self {
         case .directionSmall, .directionLarge, .liveTracking:
             return Colors.white
-        case .lightSmallBlue:
+        case .blueBannerSmall:
             return Colors.tcatBlue
-        case .lightSmallRed:
+        case .redBannerSmall:
             return Colors.lateRed
         }
     }
@@ -88,7 +88,7 @@ class BusIcon: UIView {
 
         var fontSize: CGFloat
         switch type {
-        case .directionSmall, .lightSmallBlue, .lightSmallRed: fontSize = 14
+        case .directionSmall, .blueBannerSmall, .redBannerSmall: fontSize = 14
         case .directionLarge: fontSize = 20
         case .liveTracking: fontSize = 16
         }
@@ -123,7 +123,7 @@ class BusIcon: UIView {
         var constant: CGFloat
         switch type {
         case .liveTracking: constant = 0.87
-        case .directionSmall, .lightSmallBlue, .lightSmallRed: constant = 0.75
+        case .directionSmall, .blueBannerSmall, .redBannerSmall: constant = 0.75
         case .directionLarge: constant = 1
         }
         let imageSize = CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
