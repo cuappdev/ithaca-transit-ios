@@ -31,7 +31,6 @@ class NotificationBannerView: UIView {
     private let shadowedView = RoundShadowedView(cornerRadius: 10)
 
     init(busAttachment: NSTextAttachment, type: NotificationType) {
-
         self.type = type
         super.init(frame: .zero)
 
