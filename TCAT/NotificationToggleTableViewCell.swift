@@ -6,7 +6,6 @@
 //  Copyright © 2019 cuappdev. All rights reserved.
 //
 
-import NotificationBannerSwift
 import UIKit
 
 protocol NotificationToggleTableViewDelegate: class {
@@ -21,7 +20,6 @@ class NotificationToggleTableViewCell: UITableViewCell {
 
     private let firstHairline = UIView()
     private let hairline = UIView()
-    private var notificationBanner: NotificationBanner?
     private let notificationSwitch = UISwitch()
     private let notificationTitleLabel = UILabel()
 

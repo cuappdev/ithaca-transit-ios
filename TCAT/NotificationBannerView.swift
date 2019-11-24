@@ -25,10 +25,10 @@ enum NotificationType {
 
 class NotificationBannerView: UIView {
 
-    private var type: NotificationType
+    private let type: NotificationType
 
-    private let shadowedView = RoundShadowedView(cornerRadius: 10)
     private let notificationLabel = UILabel()
+    private let shadowedView = RoundShadowedView(cornerRadius: 10)
 
     init(busAttachment: NSTextAttachment, type: NotificationType) {
 
@@ -53,12 +53,12 @@ class NotificationBannerView: UIView {
         let notificationLabelInset = 15
         let shadowedViewInset = 6
 
-        shadowedView.snp.makeConstraints { make in
-            make.leading.trailing.top.equalToSuperview().inset(shadowedViewInset)
-        }
-
         notificationLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(notificationLabelInset)
+        }
+
+        shadowedView.snp.makeConstraints { make in
+            make.leading.trailing.top.equalToSuperview().inset(shadowedViewInset)
         }
     }
 

@@ -7,7 +7,6 @@
 //
 
 import FutureNova
-import NotificationBannerSwift
 import Pulley
 import SwiftyJSON
 import UIKit
