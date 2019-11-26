@@ -59,7 +59,7 @@ class RouteDetailDrawerViewController: UIViewController {
     private var busDelayNetworkTimer: Timer?
     private let chevronFlipDurationTime = 0.25
     private let networking: Networking = URLSession.shared.request
-    let route: Route
+    private let route: Route
 
     // MARK: - Initalization
     init(route: Route) {
@@ -240,6 +240,10 @@ class RouteDetailDrawerViewController: UIViewController {
 
     private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
         return networking(Endpoint.getDelay(tripID: tripId, stopID: stopId)).decode()
+    }
+
+    func getFirstDirection() -> Direction? {
+        return route.directions.first(where: { $0.type == .depart })
     }
 
     /// Toggle the cell expansion at the indexPath

@@ -56,10 +56,6 @@ extension RouteDetailDrawerViewController: NotificationToggleTableViewDelegate {
         )
     }
 
-    private func getFirstDirection() -> Direction? {
-        return route.directions.first(where: { $0.type == .depart })
-    }
-
     private func getBusIconImageAsTextAttachment(for busNumber: Int) -> NSTextAttachment {
         let busIconTextSpacing: CGFloat = 5
 
