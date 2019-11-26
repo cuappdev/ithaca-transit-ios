@@ -9,14 +9,14 @@
 import UIKit
 
 protocol NotificationToggleTableViewDelegate: class {
-    func displayNotificationBanner(type: NotificationType)
+    func displayNotificationBanner(type: NotificationBannerType)
 }
 
 class NotificationToggleTableViewCell: UITableViewCell {
     
     private weak var delegate: NotificationToggleTableViewDelegate?
     
-    private var title = ""
+    private var type: NotificationType!
 
     private let firstHairline = UIView()
     private let hairline = UIView()
@@ -77,10 +77,10 @@ class NotificationToggleTableViewCell: UITableViewCell {
         }
     }
 
-    func configure(for notificationTitle: String, isFirst: Bool, delegate: NotificationToggleTableViewDelegate? = nil) {
+    func configure(for type: NotificationType, isFirst: Bool, delegate: NotificationToggleTableViewDelegate? = nil) {
         self.delegate = delegate
-        title = notificationTitle
-        notificationTitleLabel.text = notificationTitle
+        self.type = type
+        notificationTitleLabel.text = type.title
         if isFirst {
             setupFirstHairline()
         }
@@ -88,10 +88,12 @@ class NotificationToggleTableViewCell: UITableViewCell {
     
     @objc func switchValueChanged() {
         if notificationSwitch.isOn {
-            if title == Constants.Notification.notifyBeforeBoarding {
-                delegate?.displayNotificationBanner(type: NotificationType.beforeBoardingConfirmation)
-            } else {
-                delegate?.displayNotificationBanner(type: NotificationType.delayConfirmation)
+            switch type {
+            case .beforeBoarding:
+                delegate?.displayNotificationBanner(type: NotificationBannerType.beforeBoardingConfirmation)
+            case .delay:
+                delegate?.displayNotificationBanner(type: NotificationBannerType.delayConfirmation)
+            default: break
             }
         }
     }

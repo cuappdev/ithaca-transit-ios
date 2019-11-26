@@ -9,9 +9,24 @@
 import UIKit
 
 enum NotificationType {
-    
+
+    case beforeBoarding, delay
+
+    var title: String {
+        switch self {
+        case .beforeBoarding:
+            return Constants.Notification.notifyBeforeBoarding
+        case .delay:
+            return Constants.Notification.notifyDelay
+        }
+    }
+
+}
+
+enum NotificationBannerType {
+
     case beforeBoardingConfirmation, busArriving, busDelay, delayConfirmation
-    
+
     var bannerColor: UIColor {
         switch self {
         case .beforeBoardingConfirmation, .busArriving, .delayConfirmation:
@@ -25,12 +40,12 @@ enum NotificationType {
 
 class NotificationBannerView: UIView {
 
-    private let type: NotificationType
+    private let type: NotificationBannerType
 
     private let notificationLabel = UILabel()
     private let shadowedView = RoundShadowedView(cornerRadius: 10)
 
-    init(busAttachment: NSTextAttachment, type: NotificationType) {
+    init(busAttachment: NSTextAttachment, type: NotificationBannerType) {
         self.type = type
         super.init(frame: .zero)
 

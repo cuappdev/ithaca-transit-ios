@@ -43,7 +43,7 @@ extension RouteDetailDrawerViewController: LargeDetailTableViewDelegate {
 
 extension RouteDetailDrawerViewController: NotificationToggleTableViewDelegate {
 
-    func displayNotificationBanner(type: NotificationType) {
+    func displayNotificationBanner(type: NotificationBannerType) {
         guard let direction = getFirstDirection() else { return }
         FloatingNotificationBanner(
             customView: NotificationBannerView(
@@ -76,12 +76,12 @@ extension RouteDetailDrawerViewController: NotificationToggleTableViewDelegate {
         // Create container to add padding on sides
         let containerView = UIView(frame: busIconFrame)
         containerView.isOpaque = false
+        view.addSubview(containerView)
         containerView.addSubview(busIconView)
         busIconView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(busIconTextSpacing)
             make.top.bottom.equalToSuperview()
         }
-        view.addSubview(containerView)
 
         // Create NSTextAttachment with the busIcon as a UIImage
         let iconAttachment = NSTextAttachment()
@@ -189,11 +189,11 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                 )
                 return cell
             }
-        case .notificationTitle(let notificationTitle):
+        case .notificationType(let type):
             guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.notificationToggleCellIdentifier) as? NotificationToggleTableViewCell
                 else { return UITableViewCell() }
             cell.configure(
-                for: notificationTitle,
+                for: type,
                 isFirst: indexPath.row == 0,
                 delegate: self
             )

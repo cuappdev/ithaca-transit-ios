@@ -34,7 +34,7 @@ class RouteDetailDrawerViewController: UIViewController {
 
         case busStop(LocationObject)
         case direction(Direction)
-        case notificationTitle(String)
+        case notificationType(NotificationType)
 
         func getDirection() -> Direction? {
             switch self {
@@ -146,12 +146,12 @@ class RouteDetailDrawerViewController: UIViewController {
     }
 
     private func setupSections() {
-        let notificationTitles = [
-            RouteDetailItem.notificationTitle(Constants.Notification.notifyDelay),
-            RouteDetailItem.notificationTitle(Constants.Notification.notifyBeforeBoarding)
+        let notificationTypes = [
+            RouteDetailItem.notificationType(.delay),
+            RouteDetailItem.notificationType(.beforeBoarding)
         ]
 
-        let notificationSection = Section(type: .notification, items: notificationTitles)
+        let notificationSection = Section(type: .notification, items: notificationTypes)
         let routeDetailSection = Section(type: .routeDetail, items: directionsAndVisibleStops)
 
         sections = [routeDetailSection]
