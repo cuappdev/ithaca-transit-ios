@@ -9,16 +9,16 @@ import UIKit
 
 enum BusIconType: String {
 
-    case blueBannerSmall, directionSmall, directionLarge, redBannerSmall, liveTracking
+    case blueBannerSmall, directionLarge, directionSmall, liveTracking, redBannerSmall
 
     /// Return BusIcon's frame width
     var width: CGFloat {
         switch self {
-        case .directionSmall, .blueBannerSmall, .redBannerSmall:
+        case .blueBannerSmall, .directionSmall, .redBannerSmall:
             return 48
-        case .liveTracking:
-            return 72
         case .directionLarge:
+            return 72
+        case .liveTracking:
             return 72
         }
     }
@@ -26,12 +26,12 @@ enum BusIconType: String {
     /// Return BusIcon's frame height
     var height: CGFloat {
         switch self {
-        case .directionSmall, .blueBannerSmall, .redBannerSmall:
+        case .blueBannerSmall, .directionSmall, .redBannerSmall:
             return 24
-        case .liveTracking:
-            return 30
         case .directionLarge:
             return 36
+        case .liveTracking:
+            return 30
         }
     }
 
@@ -47,7 +47,7 @@ enum BusIconType: String {
     
     var baseColor: UIColor {
         switch self {
-        case .directionSmall, .directionLarge, .liveTracking:
+        case .directionLarge, .directionSmall, .liveTracking:
             return Colors.tcatBlue
         case .blueBannerSmall, .redBannerSmall:
             return Colors.white
@@ -56,10 +56,10 @@ enum BusIconType: String {
     
     var contentColor: UIColor {
         switch self {
-        case .directionSmall, .directionLarge, .liveTracking:
-            return Colors.white
         case .blueBannerSmall:
             return Colors.tcatBlue
+        case .directionLarge, .directionSmall, .liveTracking:
+            return Colors.white
         case .redBannerSmall:
             return Colors.lateRed
         }
@@ -88,7 +88,7 @@ class BusIcon: UIView {
 
         var fontSize: CGFloat
         switch type {
-        case .directionSmall, .blueBannerSmall, .redBannerSmall: fontSize = 14
+        case .blueBannerSmall, .directionSmall, .redBannerSmall: fontSize = 14
         case .directionLarge: fontSize = 20
         case .liveTracking: fontSize = 16
         }
@@ -122,9 +122,9 @@ class BusIcon: UIView {
 
         var constant: CGFloat
         switch type {
-        case .liveTracking: constant = 0.87
-        case .directionSmall, .blueBannerSmall, .redBannerSmall: constant = 0.75
+        case .blueBannerSmall, .directionSmall, .redBannerSmall: constant = 0.75
         case .directionLarge: constant = 1
+        case .liveTracking: constant = 0.87
         }
         let imageSize = CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
 
