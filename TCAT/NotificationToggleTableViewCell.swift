@@ -90,9 +90,9 @@ class NotificationToggleTableViewCell: UITableViewCell {
         if notificationSwitch.isOn {
             switch type {
             case .beforeBoarding:
-                delegate?.displayNotificationBanner(type: NotificationBannerType.beforeBoardingConfirmation)
+                delegate?.displayNotificationBanner(type: .beforeBoardingConfirmation)
             case .delay:
-                delegate?.displayNotificationBanner(type: NotificationBannerType.delayConfirmation)
+                delegate?.displayNotificationBanner(type: .delayConfirmation)
             default: break
             }
         }
