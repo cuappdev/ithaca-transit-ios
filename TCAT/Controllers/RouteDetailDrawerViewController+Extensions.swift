@@ -6,6 +6,7 @@
 //  Copyright © 2019 cuappdev. All rights reserved.
 //
 
+import NotificationBannerSwift
 import Pulley
 import UIKit
 
@@ -36,6 +37,61 @@ extension RouteDetailDrawerViewController: LargeDetailTableViewDelegate {
 
     func toggleCellExpansion(on cell: LargeDetailTableViewCell) {
         toggleCellExpansion(for: cell)
+    }
+
+}
+
+extension RouteDetailDrawerViewController: NotificationToggleTableViewDelegate {
+
+    func displayNotificationBanner(type: NotificationBannerType) {
+        guard let direction = getFirstDirection() else { return }
+        FloatingNotificationBanner(
+            customView: NotificationBannerView(
+                busAttachment: getBusIconImageAsTextAttachment(for: direction.routeNumber),
+                type: type
+            )
+        ).show(
+            queue: NotificationBannerQueue(maxBannersOnScreenSimultaneously: 1),
+            on: navigationController
+        )
+    }
+
+    private func getBusIconImageAsTextAttachment(for busNumber: Int) -> NSTextAttachment {
+        let busIconTextSpacing: CGFloat = 5
+
+        // Instantiate busIconView off screen to later turn into UIImage
+        let busIconView = BusIcon(type: .blueBannerSmall, number: busNumber)
+
+        let busIconFrame = CGRect(
+            x: 0,
+            y: 0,
+            width: busIconView.intrinsicContentSize.width + busIconTextSpacing * 2,
+            height: busIconView.intrinsicContentSize.height
+        )
+
+        // Create container to add padding on sides
+        let containerView = UIView(frame: busIconFrame)
+        containerView.isOpaque = false
+        view.addSubview(containerView)
+        containerView.addSubview(busIconView)
+        busIconView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(busIconTextSpacing)
+            make.top.bottom.equalToSuperview()
+        }
+
+        // Create NSTextAttachment with the busIcon as a UIImage
+        let iconAttachment = NSTextAttachment()
+        iconAttachment.image = containerView.getImage()
+
+        // Lower the textAttachment to be centered within the text
+        var frame = containerView.frame
+        frame.origin.y -= 7
+        iconAttachment.bounds = frame
+
+        // Remove the container as it is no longer needed
+        containerView.removeFromSuperview()
+
+        return iconAttachment
     }
 
 }
@@ -129,12 +185,13 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                 )
                 return cell
             }
-        case .notificationTitle(let notificationTitle):
+        case .notificationType(let type):
             guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.notificationToggleCellIdentifier) as? NotificationToggleTableViewCell
                 else { return UITableViewCell() }
             cell.configure(
-                for: notificationTitle,
-                isFirst: indexPath.row == 0
+                for: type,
+                isFirst: indexPath.row == 0,
+                delegate: self
             )
             return cell
         }

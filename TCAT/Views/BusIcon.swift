@@ -9,16 +9,16 @@ import UIKit
 
 enum BusIconType: String {
 
-    case directionSmall, directionLarge, liveTracking
+    case blueBannerSmall, directionLarge, directionSmall, liveTracking, redBannerSmall
 
     /// Return BusIcon's frame width
     var width: CGFloat {
         switch self {
-        case .directionSmall:
+        case .blueBannerSmall, .directionSmall, .redBannerSmall:
             return 48
-        case .liveTracking:
-            return 72
         case .directionLarge:
+            return 72
+        case .liveTracking:
             return 72
         }
     }
@@ -26,12 +26,12 @@ enum BusIconType: String {
     /// Return BusIcon's frame height
     var height: CGFloat {
         switch self {
-        case .directionSmall:
+        case .blueBannerSmall, .directionSmall, .redBannerSmall:
             return 24
-        case .liveTracking:
-            return 30
         case .directionLarge:
             return 36
+        case .liveTracking:
+            return 30
         }
     }
 
@@ -42,6 +42,26 @@ enum BusIconType: String {
             return 8
         default:
             return 4
+        }
+    }
+    
+    var baseColor: UIColor {
+        switch self {
+        case .blueBannerSmall, .redBannerSmall:
+            return Colors.white
+        case .directionLarge, .directionSmall, .liveTracking:
+            return Colors.tcatBlue
+        }
+    }
+    
+    var contentColor: UIColor {
+        switch self {
+        case .blueBannerSmall:
+            return Colors.tcatBlue
+        case .directionLarge, .directionSmall, .liveTracking:
+            return Colors.white
+        case .redBannerSmall:
+            return Colors.lateRed
         }
     }
 
@@ -68,7 +88,7 @@ class BusIcon: UIView {
 
         var fontSize: CGFloat
         switch type {
-        case .directionSmall: fontSize = 14
+        case .blueBannerSmall, .directionSmall, .redBannerSmall: fontSize = 14
         case .directionLarge: fontSize = 20
         case .liveTracking: fontSize = 16
         }
@@ -76,21 +96,21 @@ class BusIcon: UIView {
         backgroundColor = .clear
         isOpaque = false
 
-        baseView.backgroundColor = Colors.tcatBlue
+        baseView.backgroundColor = type.baseColor
         baseView.layer.cornerRadius = type.cornerRadius
         addSubview(baseView)
 
-        image.tintColor = Colors.white
+        image.tintColor = type.contentColor
         addSubview(image)
 
         label.text = "\(number)"
         label.font = .getFont(.semibold, size: fontSize)
-        label.textColor = Colors.white
+        label.textColor = type.contentColor
         label.textAlignment = .center
         addSubview(label)
 
         if type == .liveTracking {
-            liveIndicator = LiveIndicator(size: .large, color: Colors.white)
+            liveIndicator = LiveIndicator(size: .large, color: type.contentColor)
             addSubview(liveIndicator!)
         }
 
@@ -102,9 +122,9 @@ class BusIcon: UIView {
 
         var constant: CGFloat
         switch type {
-        case .liveTracking: constant = 0.87
-        case .directionSmall: constant = 0.75
+        case .blueBannerSmall, .directionSmall, .redBannerSmall: constant = 0.75
         case .directionLarge: constant = 1
+        case .liveTracking: constant = 0.87
         }
         let imageSize = CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
 

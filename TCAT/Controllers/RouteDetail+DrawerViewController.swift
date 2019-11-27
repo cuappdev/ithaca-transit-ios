@@ -34,7 +34,7 @@ class RouteDetailDrawerViewController: UIViewController {
 
         case busStop(LocationObject)
         case direction(Direction)
-        case notificationTitle(String)
+        case notificationType(NotificationType)
 
         func getDirection() -> Direction? {
             switch self {
@@ -59,14 +59,14 @@ class RouteDetailDrawerViewController: UIViewController {
     private var busDelayNetworkTimer: Timer?
     private let chevronFlipDurationTime = 0.25
     private let networking: Networking = URLSession.shared.request
-    private var route: Route!
+    private let route: Route
 
     // MARK: - Initalization
     init(route: Route) {
-        super.init(nibName: nil, bundle: nil)
         self.route = route
+        super.init(nibName: nil, bundle: nil)
         summaryView = SummaryView(route: route)
-        self.directionsAndVisibleStops = route.directions.map({ RouteDetailItem.direction($0) })
+        directionsAndVisibleStops = route.directions.map({ RouteDetailItem.direction($0) })
     }
 
     required convenience init(coder aDecoder: NSCoder) {
@@ -146,12 +146,12 @@ class RouteDetailDrawerViewController: UIViewController {
     }
 
     private func setupSections() {
-        let notificationTitles = [
-            RouteDetailItem.notificationTitle(Constants.Notification.notifyDelay),
-            RouteDetailItem.notificationTitle(Constants.Notification.notifyBeforeBoarding)
+        let notificationTypes = [
+            RouteDetailItem.notificationType(.delay),
+            RouteDetailItem.notificationType(.beforeBoarding)
         ]
 
-        let notificationSection = Section(type: .notification, items: notificationTitles)
+        let notificationSection = Section(type: .notification, items: notificationTypes)
         let routeDetailSection = Section(type: .routeDetail, items: directionsAndVisibleStops)
 
         sections = [routeDetailSection]
@@ -240,6 +240,10 @@ class RouteDetailDrawerViewController: UIViewController {
 
     private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
         return networking(Endpoint.getDelay(tripID: tripId, stopID: stopId)).decode()
+    }
+
+    func getFirstDirection() -> Direction? {
+        return route.directions.first(where: { $0.type == .depart })
     }
 
     /// Toggle the cell expansion at the indexPath

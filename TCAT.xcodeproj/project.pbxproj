@@ -28,6 +28,7 @@
 		22D9599F2269AB1700D115EC /* ServiceAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D9599E2269AB1700D115EC /* ServiceAlert.swift */; };
 		22FD6E8922925EDA0053A174 /* InformationTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FD6E8822925EDA0053A174 /* InformationTableHeaderView.swift */; };
 		30F148B4236F9F0500291AE2 /* NotificationToggleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F148B3236F9F0500291AE2 /* NotificationToggleTableViewCell.swift */; };
+		30F148BE237CA02F00291AE2 /* NotificationBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F148BD237CA02F00291AE2 /* NotificationBannerView.swift */; };
 		371F7516EDE896E8F926165F /* Pods_Today_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE1A6AF335384977A983BFF1 /* Pods_Today_Extension.framework */; };
 		4319AD3A2AF4CCF507164129 /* Pods_TCATTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BDD89B15CA2409469349E8C /* Pods_TCATTests.framework */; };
 		449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C781D80D0E80019300C /* AppDelegate.swift */; };
@@ -230,6 +231,7 @@
 		22FD6E8822925EDA0053A174 /* InformationTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InformationTableHeaderView.swift; path = Views/InformationTableHeaderView.swift; sourceTree = "<group>"; };
 		2F4B7F4D04B5E76C3C373607 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
 		30F148B3236F9F0500291AE2 /* NotificationToggleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationToggleTableViewCell.swift; sourceTree = "<group>"; };
+		30F148BD237CA02F00291AE2 /* NotificationBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationBannerView.swift; sourceTree = "<group>"; };
 		3BDD89B15CA2409469349E8C /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		411FF1B280B230ABFD3ED4AD /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
 		449A7C751D80D0E80019300C /* TCAT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCAT.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -644,6 +646,7 @@
 				BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */,
 				BF0002211FB37D0A00773109 /* LoadingIndicator.swift */,
 				BF316CAF2096352B005A14EF /* PhraseLabelFooterView.swift */,
+				30F148BD237CA02F00291AE2 /* NotificationBannerView.swift */,
 				22D76E902266CCC000FA21B9 /* RoundShadowedView.swift */,
 				BF2DA890224539DD006E527D /* RouteDiagram.swift */,
 				229BD4E6229792A90042D9D3 /* RouteDiagramSegment.swift */,
@@ -1191,6 +1194,7 @@
 				DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */,
 				DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */,
 				DCB717101FB76EA600BE4D26 /* StopPickerViewController.swift in Sources */,
+				30F148BE237CA02F00291AE2 /* NotificationBannerView.swift in Sources */,
 				22D76E8E2263E21F00FA21B9 /* HomeMapViewController.swift in Sources */,
 				7EBD9D9E22263120008BF900 /* WalkWithDistanceIcon.swift in Sources */,
 				449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */,

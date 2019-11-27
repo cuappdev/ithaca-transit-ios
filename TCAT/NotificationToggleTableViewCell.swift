@@ -8,7 +8,15 @@
 
 import UIKit
 
+protocol NotificationToggleTableViewDelegate: class {
+    func displayNotificationBanner(type: NotificationBannerType)
+}
+
 class NotificationToggleTableViewCell: UITableViewCell {
+    
+    private weak var delegate: NotificationToggleTableViewDelegate?
+    
+    private var type: NotificationType!
 
     private let firstHairline = UIView()
     private let hairline = UIView()
@@ -27,6 +35,7 @@ class NotificationToggleTableViewCell: UITableViewCell {
 
         notificationSwitch.onTintColor = Colors.tcatBlue
         notificationSwitch.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+        notificationSwitch.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
         contentView.addSubview(notificationSwitch)
 
         notificationTitleLabel.font = .getFont(.regular, size: 14)
@@ -68,10 +77,24 @@ class NotificationToggleTableViewCell: UITableViewCell {
         }
     }
 
-    func configure(for notificationTitle: String, isFirst: Bool) {
-        notificationTitleLabel.text = notificationTitle
+    func configure(for type: NotificationType, isFirst: Bool, delegate: NotificationToggleTableViewDelegate? = nil) {
+        self.delegate = delegate
+        self.type = type
+        notificationTitleLabel.text = type.title
         if isFirst {
             setupFirstHairline()
+        }
+    }
+    
+    @objc func switchValueChanged() {
+        if notificationSwitch.isOn {
+            switch type {
+            case .beforeBoarding:
+                delegate?.displayNotificationBanner(type: .beforeBoardingConfirmation)
+            case .delay:
+                delegate?.displayNotificationBanner(type: .delayConfirmation)
+            default: break
+            }
         }
     }
 
