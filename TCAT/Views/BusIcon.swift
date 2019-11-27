@@ -47,10 +47,10 @@ enum BusIconType: String {
     
     var baseColor: UIColor {
         switch self {
-        case .directionLarge, .directionSmall, .liveTracking:
-            return Colors.tcatBlue
         case .blueBannerSmall, .redBannerSmall:
             return Colors.white
+        case .directionLarge, .directionSmall, .liveTracking:
+            return Colors.tcatBlue
         }
     }
     
