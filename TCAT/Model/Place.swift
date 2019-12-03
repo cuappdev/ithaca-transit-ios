@@ -10,19 +10,33 @@ import CoreLocation
 import UIKit
 
 enum PlaceType: String, Codable {
-    case applePlace, busStop, unknown
+    case applePlace, busStop, currentLocation
 }
 
-@objc(Place) class Place: NSObject, Codable {
+struct Place {
 
-    var name: String
-    var type: PlaceType
-
-    /// Additional description of the place (e.g. address, "Bus Stop")
     private var placeDescription: String?
 
-    var latitude: Double?
-    var longitude: Double?
+    let latitude: Double
+    let longitude: Double
+    let name: String
+    let type: PlaceType
+
+    var description: String {
+        return type == .busStop ? "Bus Stop" : placeDescription ?? ""
+    }
+
+    init(name: String, type: PlaceType,  latitude: Double, longitude: Double, placeDescription: String? = nil) {
+        self.name = name
+        self.latitude = latitude
+        self.longitude = longitude
+        self.type = type
+        self.placeDescription = placeDescription
+    }
+
+}
+
+extension Place: Codable {
 
     private enum CodingKeys: String, CodingKey {
         case latitude = "lat"
@@ -32,33 +46,13 @@ enum PlaceType: String, Codable {
         case type
     }
 
-    /// Initializer for any type of location.
-    init(name: String, latitude: Double, longitude: Double) {
-        self.name = name
-        self.type = .unknown
-        self.latitude = latitude
-        self.longitude = longitude
-    }
+}
 
-    /// Initializer for Apple Places
-    convenience init(name: String, latitude: Double, longitude: Double, placeDescription: String) {
-        self.init(name: name, latitude: latitude, longitude: longitude)
-        self.type = .applePlace
-        self.placeDescription = placeDescription
-    }
+extension Place: Equatable {
 
-    // MARK: - Functions
-
-    override var description: String {
-        let exception = name == Constants.General.firstFavorite
-        return (type == .applePlace || exception) ? (placeDescription ?? "") : ("Bus Stop")
-    }
-
-    override func isEqual(_ object: Any?) -> Bool {
-        guard let object = object as? Place else {
-            return false
-        }
-        return object.name == name
+    static func == (lhs: Place, rhs: Place) -> Bool {
+        return lhs.name == rhs.name && lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
     }
 
 }
+

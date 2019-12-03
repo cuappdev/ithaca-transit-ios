@@ -336,6 +336,7 @@ extension SearchResultsViewController: CLLocationManagerDelegate {
         if let location = locations.last {
             currentLocation = Place(
                 name: Constants.General.currentLocation,
+                type: .currentLocation,
                 latitude: location.coordinate.latitude,
                 longitude: location.coordinate.longitude
             )

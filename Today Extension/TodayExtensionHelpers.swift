@@ -26,14 +26,8 @@ class TodayExtensionManager {
 
     func retrieveFavoritesCoordinates() -> [String] {
         if let storedPlaces = sharedUserDefaults?.value(forKey: Constants.UserDefaults.favorites) as? Data,
-            let places = try? decoder.decode([Place].self, from: storedPlaces)
-        {
-            return places.compactMap({
-                if let lat = $0.latitude, let long = $0.longitude {
-                    return "\(lat),\(long)"
-                }
-                return nil
-            })
+            let places = try? decoder.decode([Place].self, from: storedPlaces) {
+            return places.map { "\($0.latitude),\($0.longitude)" }
         } else {
             return []
         }
