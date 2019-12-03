@@ -206,7 +206,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
 
             if let latitude = latitude, let longitude = longitude, let stopName = stopName {
-                let place = Place(name: stopName, latitude: latitude, longitude: longitude)
+                let place = Place(name: stopName, type: .busStop, latitude: latitude, longitude: longitude)
                 let optionsVC = RouteOptionsViewController(searchTo: place)
                 navigationController.pushViewController(optionsVC, animated: false)
                 return true

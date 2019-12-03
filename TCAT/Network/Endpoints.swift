@@ -47,20 +47,11 @@ extension Endpoint {
         time: Date,
         type: SearchType
     ) -> Endpoint? {
-        guard
-            let startLat = start.latitude,
-            let startLong = start.longitude,
-            let endLat = end.latitude,
-            let endLong = end.longitude
-            else {
-                print("[Network] getRoutes() No Valid Coordinates")
-                return nil
-        }
         let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid)
         let body = GetRoutesBody(
             arriveBy: type == .arriveBy,
-            end: "\(endLat),\(endLong)",
-            start: "\(startLat),\(startLong)",
+            end: "\(end.latitude),\(end.longitude)",
+            start: "\(start.latitude),\(start.longitude)",
             time: time.timeIntervalSince1970,
             destinationName: end.name,
             originName: start.name,

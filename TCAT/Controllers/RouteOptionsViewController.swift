@@ -102,7 +102,7 @@ class RouteOptionsViewController: UIViewController {
         title = Constants.Titles.routeOptions
 
         addReachabilityListener()
-        
+
         setupRouteSelection(destination: searchTo)
         setupSearchBar()
         setupDatePicker()
@@ -167,7 +167,7 @@ class RouteOptionsViewController: UIViewController {
             self?.setUserInteraction(to: connection != .none)
         }
     }
-    
+
     private func setupRouteSelection(destination: Place?) {
         routeSelection.configure(
             delegate: self,
@@ -294,7 +294,7 @@ class RouteOptionsViewController: UIViewController {
         case .from:
             if let startingDestinationName = searchFrom?.name,
                 startingDestinationName != Constants.General.currentLocation &&
-                startingDestinationName != Constants.General.fromSearchBarPlaceholder {
+                    startingDestinationName != Constants.General.fromSearchBarPlaceholder {
                 searchBarText = startingDestinationName
             }
             placeholder = Constants.General.fromSearchBarPlaceholder
@@ -357,40 +357,40 @@ class RouteOptionsViewController: UIViewController {
         getAllDelays(trips: trips).observe(with: { result in
             DispatchQueue.main.async {
                 switch result {
-                    case .value(let delaysResponse):
-                        if !delaysResponse.success { return }
-                        let allDelays = delaysResponse.data
-                        for delayResponse in allDelays {
-                            let tripRoute = self.tripDictionary[delayResponse.tripID]
-                            guard let route = tripRoute,
-                                let routeId = tripRoute?.routeId,
-                                let direction = route.getFirstDepartRawDirection(),
-                                let delay = delayResponse.delay else {
-                                    continue
-                            }
-                            let departTime = direction.startTime
-                            let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
-                            var delayState: DelayState!
-                            let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
-                            if isLateDelay {
-                                delayState = DelayState.late(date: delayedDepartTime)
-                            } else {
-                                delayState = DelayState.onTime(date: departTime)
-                            }
-                            self.delayDictionary[routeId] = delayState
-                            route.getFirstDepartRawDirection()?.delay = delay
+                case .value(let delaysResponse):
+                    if !delaysResponse.success { return }
+                    let allDelays = delaysResponse.data
+                    for delayResponse in allDelays {
+                        let tripRoute = self.tripDictionary[delayResponse.tripID]
+                        guard let route = tripRoute,
+                            let routeId = tripRoute?.routeId,
+                            let direction = route.getFirstDepartRawDirection(),
+                            let delay = delayResponse.delay else {
+                                continue
                         }
-                    case .error(let error):
-                        self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                        let payload = NetworkErrorPayload(
-                            location: "\(self) Get All Delays",
-                            type: "\((error as NSError).domain)",
-                            description: error.localizedDescription
-                        )
-                        Analytics.shared.log(payload)
+                        let departTime = direction.startTime
+                        let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
+                        var delayState: DelayState!
+                        let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
+                        if isLateDelay {
+                            delayState = DelayState.late(date: delayedDepartTime)
+                        } else {
+                            delayState = DelayState.onTime(date: departTime)
+                        }
+                        self.delayDictionary[routeId] = delayState
+                        route.getFirstDepartRawDirection()?.delay = delay
                     }
+                case .error(let error):
+                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                    let payload = NetworkErrorPayload(
+                        location: "\(self) Get All Delays",
+                        type: "\((error as NSError).domain)",
+                        description: error.localizedDescription
+                    )
+                    Analytics.shared.log(payload)
                 }
-            })
+            }
+        })
     }
 
     @objc private func refreshRoutesAndTime() {
@@ -478,10 +478,8 @@ class RouteOptionsViewController: UIViewController {
             if #available(iOS 12.0, *) {
                 let intent = GetRoutesIntent()
                 intent.searchTo = searchTo.name
-                if let latitude = searchTo.latitude, let longitude = searchTo.longitude {
-                    intent.latitude = String(describing: latitude)
-                    intent.longitude = String(describing: longitude)
-                }
+                intent.latitude = String(describing: searchTo.latitude)
+                intent.longitude = String(describing: searchTo.longitude)
                 intent.suggestedInvocationPhrase = "Find bus to \(searchTo.name)"
                 let interaction = INInteraction(intent: intent, response: nil)
                 interaction.donate(completion: { (error) in
@@ -594,16 +592,8 @@ class RouteOptionsViewController: UIViewController {
 
     /// Returns whether coordinates are valid, checking country extremes. Returns nil if places don't have coordinates.
     private func checkPlaceCoordinates(startPlace: Place, endPlace: Place) -> Bool? {
-
-        guard let startCoordLatitude = startPlace.latitude,
-            let startCoordLongitude = startPlace.longitude,
-            let endCoordLatitude = endPlace.latitude,
-            let endCoordLongitude = endPlace.longitude else {
-            return nil
-        }
-
-        let latitudeValues = [startCoordLatitude, endCoordLatitude]
-        let longitudeValues  = [startCoordLongitude, endCoordLongitude]
+        let latitudeValues = [startPlace.latitude, endPlace.latitude]
+        let longitudeValues  = [startPlace.longitude, endPlace.longitude]
 
         let validLatitudes = latitudeValues.reduce(true) { (result, latitude) -> Bool in
             return result && latitude <= Constants.Values.RouteBorders.northBorder &&
@@ -627,7 +617,6 @@ class RouteOptionsViewController: UIViewController {
                 let action = UIAlertAction(title: actionTitle, style: .cancel, handler: nil)
                 alertController.addAction(action)
                 present(alertController, animated: true, completion: nil)
-
             case .showError(bannerInfo: let bannerInfo, payload: let payload):
                 banner = StatusBarNotificationBanner(title: bannerInfo.title, style: bannerInfo.style)
                 banner?.autoDismiss = false
@@ -635,13 +624,11 @@ class RouteOptionsViewController: UIViewController {
                 banner?.show(queue: NotificationBannerQueue(maxBannersOnScreenSimultaneously: 1), on: navigationController)
 
                 Analytics.shared.log(payload)
-
             case .hideBanner:
                 banner?.dismiss()
                 banner = nil
                 NotificationBannerQueue.default.removeAll()
                 mediumTapticGenerator.impactOccurred()
-
             }
 
         }
@@ -701,5 +688,6 @@ class RouteOptionsViewController: UIViewController {
             drawerViewController: drawerViewController
         )
     }
-
+    
 }
+
