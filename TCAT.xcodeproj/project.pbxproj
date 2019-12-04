@@ -134,6 +134,8 @@
 		C2AAAF6E233976B50025C640 /* SearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2AAAF6D233976B50025C640 /* SearchManager.swift */; };
 		D183AA021E6CB092006A9A15 /* Extensions+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* Extensions+App.swift */; };
 		D423AAF823749EC700EF2EB7 /* AddFavoritesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D423AAF723749EC700EF2EB7 /* AddFavoritesCollectionViewCell.swift */; };
+		D4756EA223986CB500FE7F0D /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */; };
+		D4756EA423986CCE00FE7F0D /* RetainTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4756EA323986CCE00FE7F0D /* RetainTest.swift */; };
 		D4B70A06237390EE00FEB7EA /* FavoritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A05237390EE00FEB7EA /* FavoritesViewController.swift */; };
 		D4B70A082373910900FEB7EA /* ParentHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A072373910900FEB7EA /* ParentHomeViewController.swift */; };
 		D4B70A0A2373912800FEB7EA /* FavoritesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A092373912800FEB7EA /* FavoritesCollectionViewCell.swift */; };
@@ -309,6 +311,8 @@
 		CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Analytics.swift; path = Utilities/Analytics.swift; sourceTree = "<group>"; };
 		D183AA011E6CB092006A9A15 /* Extensions+App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Extensions+App.swift"; path = "Utilities/Extensions+App.swift"; sourceTree = "<group>"; };
 		D423AAF723749EC700EF2EB7 /* AddFavoritesCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFavoritesCollectionViewCell.swift; sourceTree = "<group>"; };
+		D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReachabilityManager.swift; sourceTree = "<group>"; };
+		D4756EA323986CCE00FE7F0D /* RetainTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RetainTest.swift; sourceTree = "<group>"; };
 		D4B70A05237390EE00FEB7EA /* FavoritesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FavoritesViewController.swift; path = Controllers/FavoritesViewController.swift; sourceTree = "<group>"; };
 		D4B70A072373910900FEB7EA /* ParentHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParentHomeViewController.swift; path = Controllers/ParentHomeViewController.swift; sourceTree = "<group>"; };
 		D4B70A092373912800FEB7EA /* FavoritesCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FavoritesCollectionViewCell.swift; path = Cells/FavoritesCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -414,8 +418,8 @@
 			children = (
 				BF250D7E222FB12300E7F271 /* Endpoints.swift */,
 				22948BFB221B75C5003FC43F /* Models.swift */,
+				D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */,
 				DD3D9C201F94297100B164D4 /* Reachability.swift */,
-				069676EC23738C1F004F7152 /* ReachabilityManager.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -475,8 +479,8 @@
 		449A7C8C1D80D0E80019300C /* TCATTests */ = {
 			isa = PBXGroup;
 			children = (
+				D4756EA323986CCE00FE7F0D /* RetainTest.swift */,
 				449A7C8D1D80D0E80019300C /* TCATTests.swift */,
-				0645397023789C0400A4ED81 /* RetainTest.swift */,
 				449A7C8F1D80D0E80019300C /* Info.plist */,
 			);
 			path = TCATTests;
@@ -1170,6 +1174,7 @@
 				BF250D7F222FB12400E7F271 /* Endpoints.swift in Sources */,
 				7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */,
 				DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */,
+				D4756EA223986CB500FE7F0D /* ReachabilityManager.swift in Sources */,
 				D183AA021E6CB092006A9A15 /* Extensions+App.swift in Sources */,
 				7EEB14242231A34200134C8B /* Constants.swift in Sources */,
 				503EC37F1E969B2100B3D4D4 /* SearchResultsViewController.swift in Sources */,
@@ -1222,7 +1227,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0645397123789C0400A4ED81 /* RetainTest.swift in Sources */,
+				D4756EA423986CCE00FE7F0D /* RetainTest.swift in Sources */,
 				449A7C8E1D80D0E80019300C /* TCATTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
