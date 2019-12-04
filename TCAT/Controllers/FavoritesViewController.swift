@@ -28,12 +28,7 @@ class FavoritesViewController: UIViewController {
             favoritesCollectionView.reloadData()
         }
     }
-    private var isEditingFavorites: Bool {
-        didSet {
-            setupButtons()
-            favoritesCollectionView.reloadData()
-        }
-    }
+    private var isEditingFavorites: Bool
 
     init(isEditing: Bool) {
         isEditingFavorites = isEditing
@@ -128,6 +123,12 @@ class FavoritesViewController: UIViewController {
         favoritePlaces = newFavoritePlaces
     }
 
+    private func updateFavoritesView() {
+        let newEditString = isEditingFavorites ? "Done" : "Edit"
+        editButton.setTitle(newEditString, for: .normal)
+        favoritesCollectionView.reloadData()
+    }
+
     private func presentFavoritePicker() {
         // Current favorites is capped at 3
         if favoritePlaces.count < 3 {
@@ -150,6 +151,7 @@ class FavoritesViewController: UIViewController {
 
     @objc func editAction() {
         isEditingFavorites.toggle()
+        updateFavoritesView()
     }
 
 }
