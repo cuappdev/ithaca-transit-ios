@@ -2,7 +2,7 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "heart.png",
+      "filename" : "fadedHeart@1x.png",
       "scale" : "1x"
     },
     {

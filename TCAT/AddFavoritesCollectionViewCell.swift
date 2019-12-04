@@ -29,7 +29,7 @@ class AddFavoritesCollectionViewCell: UICollectionViewCell {
     }
 
     private func setupConstraints() {
-        addImageView.snp.makeConstraints{ make in
+        addImageView.snp.makeConstraints { make in
             make.centerX.top.equalToSuperview()
             make.size.equalTo(56)
         }
