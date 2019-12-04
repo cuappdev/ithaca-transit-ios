@@ -67,27 +67,15 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (6.3.1):
     - GoogleUtilities/Logger
-<<<<<<< HEAD
   - MarqueeLabel (4.0.0)
-  - nanopb (0.3.901):
-    - nanopb/decode (= 0.3.901)
-    - nanopb/encode (= 0.3.901)
-  - nanopb/decode (0.3.901)
-  - nanopb/encode (0.3.901)
-  - NotificationBannerSwift (3.0.2):
-    - MarqueeLabel (~> 4.0.0)
-    - SnapKit (~> 5.0.0)
-=======
-  - MarqueeLabel/Swift (3.2.1)
   - nanopb (0.3.9011):
     - nanopb/decode (= 0.3.9011)
     - nanopb/encode (= 0.3.9011)
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
-  - NotificationBannerSwift (2.1.0):
-    - MarqueeLabel/Swift (~> 3.2.1)
-    - SnapKit (~> 5.0)
->>>>>>> Address PR comments
+  - NotificationBannerSwift (3.0.2):
+    - MarqueeLabel (~> 4.0.0)
+    - SnapKit (~> 5.0.0)
   - Presentation (4.2.3)
   - Pulley (2.7.0)
   - SnapKit (5.0.1)
@@ -129,7 +117,9 @@ SPEC REPOS:
     - GoogleDataTransportCCTSupport
     - GoogleMaps
     - GoogleUtilities
+    - MarqueeLabel
     - nanopb
+    - NotificationBannerSwift
     - Pulley
     - SnapKit
     - SwiftLint
@@ -137,9 +127,6 @@ SPEC REPOS:
     - WhatsNewKit
     - Wormholy
     - Zip
-  trunk:
-    - MarqueeLabel
-    - NotificationBannerSwift
 
 EXTERNAL SOURCES:
   DZNEmptyDataSet:
@@ -176,15 +163,9 @@ SPEC CHECKSUMS:
   GoogleDataTransportCCTSupport: f6ab1962e9dc05ab1fb938b795e5b310209edeec
   GoogleMaps: 82f8fe307193bb4de6ef6bf9e88f1d624b718f9d
   GoogleUtilities: f895fde57977df4e0233edda0dbeac490e3703b6
-<<<<<<< HEAD
   MarqueeLabel: b55b26e690b6ad41faedd95cbf5eae6f1d1735b4
-  nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
-  NotificationBannerSwift: 713e20f21b6105f4a36a00e5d9fa414a930d3d8e
-=======
-  MarqueeLabel: 2daf039bf916937c8a4c9adfc13577cc5e51b4ce
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
-  NotificationBannerSwift: 44b3b617c0300d0e20b6ee67213a92b895089961
->>>>>>> Address PR comments
+  NotificationBannerSwift: 713e20f21b6105f4a36a00e5d9fa414a930d3d8e
   Presentation: 3c02ab6268b15e44b6146c511686eb9c3f81b7d0
   Pulley: 028ddcc7d2dcbc078d71b61b7eee8e786d72c14a
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
