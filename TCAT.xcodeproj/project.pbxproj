@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-        0645397123789C0400A4ED81 /* RetainTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0645397023789C0400A4ED81 /* RetainTest.swift */; };
-        069676ED23738C1F004F7152 /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069676EC23738C1F004F7152 /* ReachabilityManager.swift */; };
-        06C4EFD9236A755300D97117 /* AddFavoriteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C4EFD8236A755300D97117 /* AddFavoriteTableViewCell.swift */; };
 		222BDE16215C1CEE0040DD93 /* WhatsNewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */; };
 		22443222231871CD00987417 /* RouteDetailContentViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22443221231871CD00987417 /* RouteDetailContentViewController+Extensions.swift */; };
 		224432242318741500987417 /* HomeOptionsCardViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224432232318741500987417 /* HomeOptionsCardViewController+Extensions.swift */; };
@@ -208,8 +205,6 @@
 
 /* Begin PBXFileReference section */
 		05362765A3FFE8B3AC21E499 /* Pods-TCATUITests.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.local.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.local.xcconfig"; sourceTree = "<group>"; };
-        0645397023789C0400A4ED81 /* RetainTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetainTest.swift; sourceTree = "<group>"; };
-        069676EC23738C1F004F7152 /* ReachabilityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReachabilityManager.swift; sourceTree = "<group>"; };
 		1DD024FEFC067440B1903BA7 /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
 		222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WhatsNewHeaderView.swift; path = Views/WhatsNewHeaderView.swift; sourceTree = "<group>"; };
 		222D50AA32DFD72AAFF22E78 /* Pods-TCATTests.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.local.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.local.xcconfig"; sourceTree = "<group>"; };
@@ -1139,7 +1134,6 @@
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				D4B70A0A2373912800FEB7EA /* FavoritesCollectionViewCell.swift in Sources */,
 				5006F7BA1EC0F59A005ACAF2 /* SearchTableViewHelpers.swift in Sources */,
-                069676ED23738C1F004F7152 /* ReachabilityManager.swift in Sources */,
 				BFCA712D206AC69000E4CCE5 /* Keys.swift in Sources */,
 				22D76E8F2263E21F00FA21B9 /* HomeOptionsCardViewController.swift in Sources */,
 				C2240435231838C300095C5C /* PlaceCoordinates.swift in Sources */,
