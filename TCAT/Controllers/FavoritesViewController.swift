@@ -12,19 +12,38 @@ import UIKit
 class FavoritesViewController: UIViewController {
 
     // MARK: - View vars
+    private let collapsedRevealHeight: CGFloat = 54
     private let editButton = UIButton()
     private var favoritesCollectionView: UICollectionView!
     private let favoritesTitleLabel = UILabel()
+    private let partialRevealHeight: CGFloat = 192
     private let tabView = UIView()
     private let tabSize = CGSize(width: 32, height: 4)
 
     // MARK: - Data vars
     private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
-    private var favorites: [String] = ["Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels", "Collegetown Bagels"] // Temp
+    private let addFavoritesReuseIdentifier = "AddFavoritesCollectionViewCell"
+    private var favoritePlaces: [Place] {
+        didSet {
+            favoritesCollectionView.reloadData()
+        }
+    }
+    private var isEditingFavorites: Bool
 
+    init(isEditing: Bool) {
+        isEditingFavorites = isEditing
+        favoritePlaces = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.backgroundColor = .white
         setupLabels()
         setupButtons()
         setupFavoritesCollectionView()
@@ -40,13 +59,11 @@ class FavoritesViewController: UIViewController {
     }
 
     private func setupButtons() {
-        let favoritesBlueColor = UIColor(hex: "08A0E0")
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.getFont(.regular, size: 14.0),
-            .foregroundColor: favoritesBlueColor,
-        ]
-        let attributedString = NSMutableAttributedString(string: "Edit", attributes: attributes)
-        editButton.setAttributedTitle(attributedString, for: .normal)
+        let editString = isEditingFavorites ? "Done" : "Edit"
+        editButton.setTitle(editString, for: .normal)
+        editButton.setTitleColor(Colors.notificationBlue, for: .normal)
+        editButton.titleLabel?.font = UIFont.getFont(.regular, size: 14.0)
+        editButton.addTarget(self, action: #selector(editAction), for: .touchUpInside)
         view.addSubview(editButton)
     }
 
@@ -59,6 +76,7 @@ class FavoritesViewController: UIViewController {
         favoritesCollectionView.delegate = self
         favoritesCollectionView.dataSource = self
         favoritesCollectionView.register(FavoritesCollectionViewCell.self, forCellWithReuseIdentifier: favoritesReuseIdentifier)
+        favoritesCollectionView.register(AddFavoritesCollectionViewCell.self, forCellWithReuseIdentifier: addFavoritesReuseIdentifier)
         favoritesCollectionView.backgroundColor = .clear
         view.addSubview(favoritesCollectionView)
     }
@@ -71,11 +89,11 @@ class FavoritesViewController: UIViewController {
     }
 
     private func setupConstraints() {
-        let tabTopInset: CGFloat = 6
+        let tabTopInset = 6
         let horizontalPadding = 16
         let titleBarTopPadding = 21
         let favoritesTopPadding = 24
-        let bottomPadding = 18
+        let favoritesBottomPadding = 18
 
         favoritesTitleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(horizontalPadding)
@@ -91,7 +109,7 @@ class FavoritesViewController: UIViewController {
             make.leading.equalToSuperview().inset(horizontalPadding)
             make.trailing.equalToSuperview().inset(horizontalPadding).priority(.high)
             make.top.equalTo(favoritesTitleLabel.snp.bottom).offset(favoritesTopPadding)
-            make.bottom.equalToSuperview().offset(-bottomPadding).priority(.high)
+            make.bottom.equalToSuperview().offset(-favoritesBottomPadding).priority(.high)
         }
 
         tabView.snp.makeConstraints { make in
@@ -101,20 +119,73 @@ class FavoritesViewController: UIViewController {
         }
     }
 
+    private func updateFavorites(newFavoritePlaces: [Place]) {
+        favoritePlaces = newFavoritePlaces
+    }
+
+    private func updateFavoritesView() {
+        let newEditString = isEditingFavorites ? "Done" : "Edit"
+        editButton.setTitle(newEditString, for: .normal)
+        favoritesCollectionView.reloadData()
+    }
+
+    private func presentFavoritePicker() {
+        // Current favorites is capped at 3
+        if favoritePlaces.count < 3 {
+            let favoritesTVC = FavoritesTableViewController()
+            favoritesTVC.didAddFavorite = {
+                let favorites = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
+                self.updateFavorites(newFavoritePlaces: favorites)
+            }
+            let navController = CustomNavigationController(rootViewController: favoritesTVC)
+            present(navController, animated: true, completion: nil)
+        } else {
+            let title = Constants.Alerts.MaxFavorites.title
+            let message = Constants.Alerts.MaxFavorites.message
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let done = UIAlertAction(title: Constants.Alerts.MaxFavorites.action, style: .default)
+            alertController.addAction(done)
+            present(alertController, animated: true, completion: nil)
+        }
+    }
+
+    @objc func editAction() {
+        isEditingFavorites.toggle()
+        updateFavoritesView()
+    }
+
 }
 
 extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return collectionView == favoritesCollectionView ? favorites.count : 0
+        return isEditingFavorites ? favoritePlaces.count : favoritePlaces.count + 1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: favoritesReuseIdentifier, for: indexPath) as! FavoritesCollectionViewCell
-        cell.configure(for: favorites[indexPath.row])
-        return cell
+        if indexPath.item < favoritePlaces.count {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: favoritesReuseIdentifier, for: indexPath) as! FavoritesCollectionViewCell
+            cell.configure(for: favoritePlaces[indexPath.row], isEditing: isEditingFavorites)
+            return cell
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: addFavoritesReuseIdentifier, for: indexPath) as! AddFavoritesCollectionViewCell
+            return cell
+         }
     }
 
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.item < favoritePlaces.count {
+            let favorite = favoritePlaces[indexPath.row]
+            if isEditingFavorites {
+                favoritePlaces = Global.shared.deleteFavorite(favorite: favorite, allFavorites: favoritePlaces)
+                updateFavorites(newFavoritePlaces: favoritePlaces)
+            } else {
+                navigationController?.pushViewController(RouteOptionsViewController(searchTo: favorite), animated: true)
+            }
+        } else {
+            presentFavoritePicker()
+        }
+    }
 }
 
 extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
@@ -127,11 +198,22 @@ extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
 extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
 
     func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return 200
+        return bottomSafeArea + 192
+    }
+
+    func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
+        return bottomSafeArea + 54
     }
 
     func supportedDrawerPositions() -> [PulleyPosition] {
         return [.collapsed, .partiallyRevealed]
+    }
+
+    func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
+        let totalHeight = partialRevealHeight - collapsedRevealHeight
+        let collapsedHeight = collapsedRevealHeight + bottomSafeArea
+        let opacity = (distance - collapsedHeight) / totalHeight
+        favoritesCollectionView.alpha = opacity
     }
 
 }

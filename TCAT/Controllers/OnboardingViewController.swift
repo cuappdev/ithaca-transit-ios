@@ -119,7 +119,10 @@ class OnboardingViewController: PresentationController {
     @objc private func dismissView() {
         if isInitialViewing {
 
-            let rootVC = HomeMapViewController()
+            let rootVC = ParentHomeMapViewController(
+                contentViewController: HomeMapViewController(),
+                drawerViewController: FavoritesViewController(isEditing: false)
+            )
             let desiredViewController = CustomNavigationController(rootViewController: rootVC)
 
             if let appDelegate = UIApplication.shared.delegate as? AppDelegate,

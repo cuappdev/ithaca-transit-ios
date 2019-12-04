@@ -155,7 +155,6 @@ class HomeOptionsCardViewController: UIViewController {
         tableView.showsVerticalScrollIndicator = false
         tableView.rowHeight = tableViewRowHeight
         tableView.register(PlaceTableViewCell.self, forCellReuseIdentifier: Constants.Cells.placeIdentifier)
-        tableView.register(AddFavoriteTableViewCell.self, forCellReuseIdentifier: Constants.Cells.addFavoriteIdentifier)
         tableView.register(GeneralTableViewCell.self, forCellReuseIdentifier: Constants.Cells.generalCellIdentifier)
         view.addSubview(tableView)
     }
@@ -227,7 +226,6 @@ class HomeOptionsCardViewController: UIViewController {
     /// Updates the table sections to show favorites, recent searches, and all stops. Ultimately reloads the table.
     func updateSections() {
         sections.removeAll()
-        sections.append(Section.favorites(items: favorites))
         if recentLocations.count > 0 {
             sections.append(Section.recentSearches(items: recentLocations))
         }
@@ -237,7 +235,6 @@ class HomeOptionsCardViewController: UIViewController {
     /// Updates recent searches and favorites. Ultimately reloads the table.
     func updatePlaces() {
         recentLocations = Global.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
-        favorites = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
     }
 
     // MARK: - Table Calculations
@@ -245,10 +242,6 @@ class HomeOptionsCardViewController: UIViewController {
     private func tableViewContentHeight() -> CGFloat {
         return sections.reduce(0) { (result, section) -> CGFloat in
             switch section {
-            case .favorites:
-                // We should always have the Add Favorites row
-                let rows = CGFloat(max(1, section.getItems().count))
-                return headerHeight + tableViewRowHeight * rows + result
             case .recentSearches:
                 return headerHeight + tableViewRowHeight * CGFloat(section.getItems().count) + result
             case .seeAllStops:

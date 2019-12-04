@@ -13,6 +13,7 @@ struct Colors {
 
     // MARK: - Brand Color
     static let tcatBlue = UIColor(hex: "079DDC")
+    static let notificationBlue = UIColor(hex: "08A0E0")
 
     // MARK: - Accent Colors
     static let lateRed = UIColor(hex: "D6304F")
