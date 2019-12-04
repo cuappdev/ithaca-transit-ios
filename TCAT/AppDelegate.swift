@@ -84,7 +84,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let showOnboarding = !userDefaults.bool(forKey: Constants.UserDefaults.onboardingShown)
         let parentHomeViewController = ParentHomeMapViewController(
             contentViewController: HomeMapViewController(),
-            drawerViewController: FavoritesViewController()
+            drawerViewController: FavoritesViewController(isEditing: false)
         )
         let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : parentHomeViewController
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :

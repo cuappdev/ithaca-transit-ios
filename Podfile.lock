@@ -3,21 +3,21 @@ PODS:
     - Fabric (~> 1.10.2)
   - DZNEmptyDataSet (1.8.1)
   - Fabric (1.10.2)
-  - Firebase/Core (6.10.0):
+  - Firebase/Core (6.12.0):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (= 6.1.3)
-  - Firebase/CoreOnly (6.10.0):
-    - FirebaseCore (= 6.3.1)
-  - FirebaseAnalytics (6.1.3):
+    - FirebaseAnalytics (= 6.1.5)
+  - Firebase/CoreOnly (6.12.0):
+    - FirebaseCore (= 6.3.3)
+  - FirebaseAnalytics (6.1.5):
     - FirebaseCore (~> 6.3)
     - FirebaseInstanceID (~> 4.2)
-    - GoogleAppMeasurement (= 6.1.3)
+    - GoogleAppMeasurement (= 6.1.5)
     - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
     - GoogleUtilities/MethodSwizzler (~> 6.0)
     - GoogleUtilities/Network (~> 6.0)
     - "GoogleUtilities/NSData+zlib (~> 6.0)"
-    - nanopb (~> 0.3.901)
-  - FirebaseCore (6.3.1):
+    - nanopb (= 0.3.9011)
+  - FirebaseCore (6.3.3):
     - FirebaseCoreDiagnostics (~> 1.0)
     - FirebaseCoreDiagnosticsInterop (~> 1.0)
     - GoogleUtilities/Environment (~> 6.2)
@@ -28,26 +28,26 @@ PODS:
     - GoogleUtilities/Environment (~> 6.2)
     - GoogleUtilities/Logger (~> 6.2)
     - nanopb (~> 0.3.901)
-  - FirebaseCoreDiagnosticsInterop (1.0.0)
-  - FirebaseInstanceID (4.2.5):
+  - FirebaseCoreDiagnosticsInterop (1.1.0)
+  - FirebaseInstanceID (4.2.7):
     - FirebaseCore (~> 6.0)
     - GoogleUtilities/Environment (~> 6.0)
     - GoogleUtilities/UserDefaults (~> 6.0)
-  - FutureNova (0.1.5)
-  - GoogleAppMeasurement (6.1.3):
+  - FutureNova (0.1.6)
+  - GoogleAppMeasurement (6.1.5):
     - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
     - GoogleUtilities/MethodSwizzler (~> 6.0)
     - GoogleUtilities/Network (~> 6.0)
     - "GoogleUtilities/NSData+zlib (~> 6.0)"
-    - nanopb (~> 0.3.901)
+    - nanopb (= 0.3.9011)
   - GoogleDataTransport (3.0.1)
   - GoogleDataTransportCCTSupport (1.2.1):
     - GoogleDataTransport (~> 3.0)
     - nanopb (~> 0.3.901)
-  - GoogleMaps (3.5.0):
-    - GoogleMaps/Maps (= 3.5.0)
-  - GoogleMaps/Base (3.5.0)
-  - GoogleMaps/Maps (3.5.0):
+  - GoogleMaps (3.6.0):
+    - GoogleMaps/Maps (= 3.6.0)
+  - GoogleMaps/Base (3.6.0)
+  - GoogleMaps/Maps (3.6.0):
     - GoogleMaps/Base
   - GoogleUtilities/AppDelegateSwizzler (6.3.1):
     - GoogleUtilities/Environment
@@ -68,20 +68,20 @@ PODS:
   - GoogleUtilities/UserDefaults (6.3.1):
     - GoogleUtilities/Logger
   - MarqueeLabel (4.0.0)
-  - nanopb (0.3.901):
-    - nanopb/decode (= 0.3.901)
-    - nanopb/encode (= 0.3.901)
-  - nanopb/decode (0.3.901)
-  - nanopb/encode (0.3.901)
+  - nanopb (0.3.9011):
+    - nanopb/decode (= 0.3.9011)
+    - nanopb/encode (= 0.3.9011)
+  - nanopb/decode (0.3.9011)
+  - nanopb/encode (0.3.9011)
   - NotificationBannerSwift (3.0.2):
     - MarqueeLabel (~> 4.0.0)
     - SnapKit (~> 5.0.0)
   - Presentation (4.2.3)
   - Pulley (2.7.0)
   - SnapKit (5.0.1)
-  - SwiftLint (0.35.0)
+  - SwiftLint (0.36.0)
   - SwiftyJSON (5.0.0)
-  - WhatsNewKit (1.3.0)
+  - WhatsNewKit (1.3.1)
   - Wormholy (1.5.0)
   - Zip (1.1.0)
 
@@ -103,7 +103,7 @@ DEPENDENCIES:
   - Zip (~> 1.1)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  trunk:
     - Crashlytics
     - Fabric
     - Firebase
@@ -117,7 +117,9 @@ SPEC REPOS:
     - GoogleDataTransportCCTSupport
     - GoogleMaps
     - GoogleUtilities
+    - MarqueeLabel
     - nanopb
+    - NotificationBannerSwift
     - Pulley
     - SnapKit
     - SwiftLint
@@ -125,9 +127,6 @@ SPEC REPOS:
     - WhatsNewKit
     - Wormholy
     - Zip
-  trunk:
-    - MarqueeLabel
-    - NotificationBannerSwift
 
 EXTERNAL SOURCES:
   DZNEmptyDataSet:
@@ -142,7 +141,7 @@ CHECKOUT OPTIONS:
     :commit: a4a007e7ade7d9711f067f4d6510085fa1d92629
     :git: https://github.com/cuappdev/DZNEmptyDataSet.git
   FutureNova:
-    :commit: d5cf1493d75ff90b7118aa589598486838da4b49
+    :commit: db0540d78bd5bfb67f39945bbaf0fd3f2fbf56b5
     :git: https://github.com/cuappdev/ios-networking.git
   Presentation:
     :commit: d4aa2d3ad5901f6ebce0727af592824982f88d13
@@ -152,27 +151,27 @@ SPEC CHECKSUMS:
   Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
   DZNEmptyDataSet: b94434220f87d9dda46660eb4f07a424778e93b4
   Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
-  Firebase: 5e6b7b12bf9adb90986688edc06b156c37e109cd
-  FirebaseAnalytics: 0e3ecff2c5d86070f7d4325e21f1edabfbd558dc
-  FirebaseCore: 064c2dd92a8ca5974bbdcb080df9921e46bd34cd
+  Firebase: da031bc7012374e3bed17a6731b89327b29863b9
+  FirebaseAnalytics: 4e53a7eb7b76bc703c4d9239bc964545e9b23361
+  FirebaseCore: bcd6c112429249d7921e907d661e8955a3549e26
   FirebaseCoreDiagnostics: af29e43048607588c050889d19204f4d7b758c9f
-  FirebaseCoreDiagnosticsInterop: 6829da2b8d1fc795ff1bd99df751d3788035d2cb
-  FirebaseInstanceID: 550df9be1f99f751d8fcde3ac342a1e21a0e6c42
-  FutureNova: 6a0ed485ee7e4d6606eb9b5b33e0f42a5cd80726
-  GoogleAppMeasurement: 434cc7be25e71dc04b8d0e3079125127b330e84a
+  FirebaseCoreDiagnosticsInterop: e9b1b023157e3a2fc6418b5cb601e79b9af7b3a0
+  FirebaseInstanceID: ebd2ea79ee38db0cb5f5167b17a0d387e1cc7b6e
+  FutureNova: 95f9aa352b2c250253b96fdf380754afcc87c7f3
+  GoogleAppMeasurement: 037f46d1d8ae8b312720f1042585ab961a1289e3
   GoogleDataTransport: 166f9b9f82cbf60a204e8fe2daa9db3e3ec1fb15
   GoogleDataTransportCCTSupport: f6ab1962e9dc05ab1fb938b795e5b310209edeec
-  GoogleMaps: 32ca02de09de357a10ac773f2c70f1986751392d
+  GoogleMaps: 82f8fe307193bb4de6ef6bf9e88f1d624b718f9d
   GoogleUtilities: f895fde57977df4e0233edda0dbeac490e3703b6
   MarqueeLabel: b55b26e690b6ad41faedd95cbf5eae6f1d1735b4
-  nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
+  nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   NotificationBannerSwift: 713e20f21b6105f4a36a00e5d9fa414a930d3d8e
   Presentation: 3c02ab6268b15e44b6146c511686eb9c3f81b7d0
   Pulley: 028ddcc7d2dcbc078d71b61b7eee8e786d72c14a
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
-  SwiftLint: 5553187048b900c91aa03552807681bb6b027846
+  SwiftLint: fc9859e4e1752340664851f667bb1898b9c90114
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
-  WhatsNewKit: 7ec83c4ab2240605c3af63e302ede1310ab366be
+  WhatsNewKit: fc8ca82510148c030d66b3bb9b937175f8dcb3fd
   Wormholy: db6ac46a6d20db2d11ddcf975a5a9bcc1abc889e
   Zip: 8877eede3dda76bcac281225c20e71c25270774c
 

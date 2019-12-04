@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0645397123789C0400A4ED81 /* RetainTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0645397023789C0400A4ED81 /* RetainTest.swift */; };
-		069676ED23738C1F004F7152 /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069676EC23738C1F004F7152 /* ReachabilityManager.swift */; };
-		06C4EFD9236A755300D97117 /* AddFavoriteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C4EFD8236A755300D97117 /* AddFavoriteTableViewCell.swift */; };
 		222BDE16215C1CEE0040DD93 /* WhatsNewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */; };
 		22443222231871CD00987417 /* RouteDetailContentViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22443221231871CD00987417 /* RouteDetailContentViewController+Extensions.swift */; };
 		224432242318741500987417 /* HomeOptionsCardViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224432232318741500987417 /* HomeOptionsCardViewController+Extensions.swift */; };
@@ -134,6 +131,9 @@
 		C2AAAF6C23392F790025C640 /* AppleSearchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2AAAF6B23392F790025C640 /* AppleSearchResponse.swift */; };
 		C2AAAF6E233976B50025C640 /* SearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2AAAF6D233976B50025C640 /* SearchManager.swift */; };
 		D183AA021E6CB092006A9A15 /* Extensions+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* Extensions+App.swift */; };
+		D423AAF823749EC700EF2EB7 /* AddFavoritesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D423AAF723749EC700EF2EB7 /* AddFavoritesCollectionViewCell.swift */; };
+		D4756EA223986CB500FE7F0D /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */; };
+		D4756EA423986CCE00FE7F0D /* RetainTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4756EA323986CCE00FE7F0D /* RetainTest.swift */; };
 		D4B70A06237390EE00FEB7EA /* FavoritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A05237390EE00FEB7EA /* FavoritesViewController.swift */; };
 		D4B70A082373910900FEB7EA /* ParentHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A072373910900FEB7EA /* ParentHomeViewController.swift */; };
 		D4B70A0A2373912800FEB7EA /* FavoritesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A092373912800FEB7EA /* FavoritesCollectionViewCell.swift */; };
@@ -205,9 +205,6 @@
 
 /* Begin PBXFileReference section */
 		05362765A3FFE8B3AC21E499 /* Pods-TCATUITests.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.local.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.local.xcconfig"; sourceTree = "<group>"; };
-		0645397023789C0400A4ED81 /* RetainTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetainTest.swift; sourceTree = "<group>"; };
-		069676EC23738C1F004F7152 /* ReachabilityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReachabilityManager.swift; sourceTree = "<group>"; };
-		06C4EFD8236A755300D97117 /* AddFavoriteTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFavoriteTableViewCell.swift; sourceTree = "<group>"; };
 		1DD024FEFC067440B1903BA7 /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
 		222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WhatsNewHeaderView.swift; path = Views/WhatsNewHeaderView.swift; sourceTree = "<group>"; };
 		222D50AA32DFD72AAFF22E78 /* Pods-TCATTests.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.local.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.local.xcconfig"; sourceTree = "<group>"; };
@@ -309,6 +306,9 @@
 		C2AAAF6D233976B50025C640 /* SearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchManager.swift; sourceTree = "<group>"; };
 		CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Analytics.swift; path = Utilities/Analytics.swift; sourceTree = "<group>"; };
 		D183AA011E6CB092006A9A15 /* Extensions+App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Extensions+App.swift"; path = "Utilities/Extensions+App.swift"; sourceTree = "<group>"; };
+		D423AAF723749EC700EF2EB7 /* AddFavoritesCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFavoritesCollectionViewCell.swift; sourceTree = "<group>"; };
+		D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReachabilityManager.swift; sourceTree = "<group>"; };
+		D4756EA323986CCE00FE7F0D /* RetainTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RetainTest.swift; sourceTree = "<group>"; };
 		D4B70A05237390EE00FEB7EA /* FavoritesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FavoritesViewController.swift; path = Controllers/FavoritesViewController.swift; sourceTree = "<group>"; };
 		D4B70A072373910900FEB7EA /* ParentHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ParentHomeViewController.swift; path = Controllers/ParentHomeViewController.swift; sourceTree = "<group>"; };
 		D4B70A092373912800FEB7EA /* FavoritesCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FavoritesCollectionViewCell.swift; path = Cells/FavoritesCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -414,8 +414,8 @@
 			children = (
 				BF250D7E222FB12300E7F271 /* Endpoints.swift */,
 				22948BFB221B75C5003FC43F /* Models.swift */,
+				D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */,
 				DD3D9C201F94297100B164D4 /* Reachability.swift */,
-				069676EC23738C1F004F7152 /* ReachabilityManager.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -475,8 +475,8 @@
 		449A7C8C1D80D0E80019300C /* TCATTests */ = {
 			isa = PBXGroup;
 			children = (
+				D4756EA323986CCE00FE7F0D /* RetainTest.swift */,
 				449A7C8D1D80D0E80019300C /* TCATTests.swift */,
-				0645397023789C0400A4ED81 /* RetainTest.swift */,
 				449A7C8F1D80D0E80019300C /* Info.plist */,
 			);
 			path = TCATTests;
@@ -575,7 +575,6 @@
 		DD2F988F1E50D89C0005F6BC /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				06C4EFD8236A755300D97117 /* AddFavoriteTableViewCell.swift */,
 				DDB49C971E8857E000A99C35 /* BusStopTableViewCell.swift */,
 				BFEDB85A2232F22100052D49 /* GeneralTableViewCell.swift */,
 				DDB49C951E8857E000A99C35 /* LargeDetailTableViewCell.swift */,
@@ -584,6 +583,7 @@
 				503EC37C1E969ADF00B3D4D4 /* PlaceTableViewCell.swift */,
 				DDB49C961E8857E000A99C35 /* SmallDetailTableViewCell.swift */,
 				D4B70A092373912800FEB7EA /* FavoritesCollectionViewCell.swift */,
+				D423AAF723749EC700EF2EB7 /* AddFavoritesCollectionViewCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -1134,8 +1134,6 @@
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				D4B70A0A2373912800FEB7EA /* FavoritesCollectionViewCell.swift in Sources */,
 				5006F7BA1EC0F59A005ACAF2 /* SearchTableViewHelpers.swift in Sources */,
-				06C4EFD9236A755300D97117 /* AddFavoriteTableViewCell.swift in Sources */,
-				069676ED23738C1F004F7152 /* ReachabilityManager.swift in Sources */,
 				BFCA712D206AC69000E4CCE5 /* Keys.swift in Sources */,
 				22D76E8F2263E21F00FA21B9 /* HomeOptionsCardViewController.swift in Sources */,
 				C2240435231838C300095C5C /* PlaceCoordinates.swift in Sources */,
@@ -1171,6 +1169,7 @@
 				BF250D7F222FB12400E7F271 /* Endpoints.swift in Sources */,
 				7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */,
 				DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */,
+				D4756EA223986CB500FE7F0D /* ReachabilityManager.swift in Sources */,
 				D183AA021E6CB092006A9A15 /* Extensions+App.swift in Sources */,
 				7EEB14242231A34200134C8B /* Constants.swift in Sources */,
 				503EC37F1E969B2100B3D4D4 /* SearchResultsViewController.swift in Sources */,
@@ -1185,6 +1184,7 @@
 				7E155FD82231DAAE00FE7A9B /* Direction.swift in Sources */,
 				22443222231871CD00987417 /* RouteDetailContentViewController+Extensions.swift in Sources */,
 				DDB49C991E8857E000A99C35 /* SmallDetailTableViewCell.swift in Sources */,
+				D423AAF823749EC700EF2EB7 /* AddFavoritesCollectionViewCell.swift in Sources */,
 				7EBD9D8B22263096008BF900 /* Place.swift in Sources */,
 				DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */,
 				DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */,
@@ -1221,7 +1221,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0645397123789C0400A4ED81 /* RetainTest.swift in Sources */,
+				D4756EA423986CCE00FE7F0D /* RetainTest.swift in Sources */,
 				449A7C8E1D80D0E80019300C /* TCATTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

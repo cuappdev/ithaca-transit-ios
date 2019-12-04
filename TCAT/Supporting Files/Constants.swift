@@ -74,7 +74,7 @@ struct Constants {
 
         struct MaxFavorites {
             static let action = "Got It!"
-            static let message = "To add more favorites, please swipe left and delete one first."
+            static let message = "To add more favorites, please click edit and delete one first."
             static let title = "Maximum Number of Favorites"
         }
 
@@ -133,9 +133,7 @@ struct Constants {
     /// Cell identifiers
     struct Cells {
         static let placeIdentifier = "PlaceTableViewCell"
-        static let routeOptionsCellIdentifier = "routeCell"
-
-        static let addFavoriteIdentifier = "AddFavorite"
+        static let routeOptionsCellIdentifier = "RouteCell"
 
         static let busStopDetailCellIdentifier = "BusStopCell"
         static let largeDetailCellIdentifier = "LargeCell"
