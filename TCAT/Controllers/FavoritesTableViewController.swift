@@ -24,7 +24,7 @@ class FavoritesTableViewController: UIViewController {
     }
 
     /// Handler for favorite selection
-    var didAddFavorite: (() -> ())?
+    var didAddFavorite: (() -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()

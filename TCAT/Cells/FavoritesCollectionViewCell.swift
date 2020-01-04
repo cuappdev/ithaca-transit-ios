@@ -23,7 +23,7 @@ class FavoritesCollectionViewCell: UICollectionViewCell {
         nameLabel.numberOfLines = 2
         nameLabel.lineBreakMode = .byTruncatingTail
         contentView.addSubview(nameLabel)
-        
+
         contentView.addSubview(heartImageView)
 
         minusImageView.image = UIImage(named: "minus")

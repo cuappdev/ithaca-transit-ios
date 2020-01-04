@@ -168,14 +168,14 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
 
     func didReceiveCurrentLocation(_ location: CLLocation?) {
         guard let currentLocation = location else { return }
-        
+
         let currentPlace = Place(
             name: Constants.General.currentLocation,
             type: .currentLocation,
             latitude: currentLocation.coordinate.latitude,
             longitude: currentLocation.coordinate.longitude
         )
-        
+
         searchBarView.resultsViewController?.currentLocation = currentPlace
 
         if searchFrom?.name == Constants.General.currentLocation {

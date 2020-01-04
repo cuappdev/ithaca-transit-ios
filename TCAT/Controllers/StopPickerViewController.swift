@@ -11,19 +11,19 @@ import FutureNova
 import UIKit
 
 class StopPickerViewController: UIViewController {
-    
+
     private let tableView = UITableView()
     private typealias Section = (title: String, places: [Place])
     private var sections: [Section] = []
-    
+
     private var isLoading: Bool { return loadingIndicator != nil }
     private var loadingIndicator: LoadingIndicator?
 
     /// Handles a `Place` selection.
-    var onSelection: ((Place) -> ())?
+    var onSelection: ((Place) -> Void)?
 
     // MARK: - View setup
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -42,7 +42,7 @@ class StopPickerViewController: UIViewController {
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
         view.addSubview(tableView)
-        
+
         tableView.snp.makeConstraints { make in
             make.leading.bottom.trailing.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide)
@@ -58,7 +58,7 @@ class StopPickerViewController: UIViewController {
             make.width.height.equalTo(40)
         }
     }
-    
+
     // MARK: - Refresh stops
 
     private func getStopsFromServer() -> Future<Response<[Place]>> {
@@ -68,7 +68,7 @@ class StopPickerViewController: UIViewController {
     /// Get all bus stops from the server, update UserDefaults, and refresh the table
     private func refreshStops() {
         setUpLoadingIndicator()
-        
+
         if let busStopsData = userDefaults.data(forKey: Constants.UserDefaults.allBusStops),
             let busStops = try? decoder.decode([Place].self, from: busStopsData) {
             loadingIndicator?.removeFromSuperview()
@@ -78,11 +78,11 @@ class StopPickerViewController: UIViewController {
         } else {
             getStopsFromServer().observe { [weak self] result in
                 guard let self = self else { return }
-                
+
                 switch result {
                 case .value(let response):
                     guard !response.data.isEmpty else { return } // ensure the response has stops
-                    
+
                     do {
                         let stopsData = try JSONEncoder().encode(response.data) // note: response.data is [Place], not Data
                         userDefaults.set(stopsData, forKey: Constants.UserDefaults.allBusStops)
@@ -93,7 +93,7 @@ class StopPickerViewController: UIViewController {
                 case .error(let error):
                     self.logRefreshError(error)
                 }
-                
+
                 DispatchQueue.main.async {
                     self.loadingIndicator?.removeFromSuperview()
                     self.loadingIndicator = nil
@@ -102,10 +102,10 @@ class StopPickerViewController: UIViewController {
             }
         }
     }
-    
+
     /// Sorts `busStops` into table `Section`s in alphabetical order.
     private func tableSections(for busStops: [Place]) -> [Section] {
-        var sectionsDict: [String : [Place]] = [:]
+        var sectionsDict: [String: [Place]] = [:]
 
         // Sort into dict by first letter
         for busStop in busStops {
@@ -114,7 +114,7 @@ class StopPickerViewController: UIViewController {
                 sectionsDict[section, default: []].append(busStop)
             }
         }
-        
+
         // Sort titles, putting # at the end
         let titles = sectionsDict.keys.sorted { (a, b) -> Bool in
             if a == "#" {
@@ -131,7 +131,7 @@ class StopPickerViewController: UIViewController {
             return Section(title: title, places: places)
         }
     }
-    
+
     /// Logs an error that was thrown while attempting to refresh the bus stops.
     private func logRefreshError(_ error: Error) {
         self.printClass(context: "AllStopsTableViewController.refreshStops error", message: error.localizedDescription)
@@ -141,7 +141,7 @@ class StopPickerViewController: UIViewController {
             description: error.localizedDescription)
         Analytics.shared.log(payload)
     }
-    
+
 }
 
 // MARK: - DZNEmptyDataSetSource
@@ -173,12 +173,12 @@ extension StopPickerViewController: DZNEmptyDataSetSource {
 
 // MARK: - DZNEmptyDataSetDelegate
 extension StopPickerViewController: DZNEmptyDataSetDelegate {
-    
+
     func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
         setUpLoadingIndicator()
         refreshStops()
     }
-    
+
 }
 
 // MARK: - TableViewDelegate
@@ -203,7 +203,7 @@ extension StopPickerViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         onSelection?(place)
     }
-    
+
 }
 
 // MARK: - Table view data source
@@ -212,7 +212,7 @@ extension StopPickerViewController: UITableViewDataSource {
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         return sections.map { $0.title }
     }
-    
+
     func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
     }

@@ -231,10 +231,10 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
                 )
                 Analytics.shared.log(payload)
             }
-            
+
             let place = sections[indexPath.section].getItems()[indexPath.row]
             Global.shared.insertPlace(for: Constants.UserDefaults.recentSearch, place: place)
-            
+
             let routeOptionsVC = RouteOptionsViewController(searchTo: place)
             routeOptionsVC.didReceiveCurrentLocation(currentLocation)
             navigationController?.pushViewController(routeOptionsVC, animated: true)

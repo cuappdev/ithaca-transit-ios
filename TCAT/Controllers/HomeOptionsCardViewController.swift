@@ -68,7 +68,7 @@ class HomeOptionsCardViewController: UIViewController {
         let openScreenSpace = UIScreen.main.bounds.height - HomeMapViewController.optionsCardInset.top - keyboardHeight - 20
         return min(maxCardHeight, openScreenSpace)
     }
-    
+
     // MARK: - Table Content Variables
 
     /// Recent locations searched for. Up to `maxRecentsCount` are displayed in the table.
@@ -83,7 +83,7 @@ class HomeOptionsCardViewController: UIViewController {
             }
         }
     }
-    
+
     /// The user's favorited places. Up to `maxFavoritesCount` are displayed in the table.
     /// Updating this variable reloads the table.
     var favorites: [Place] = [] {
@@ -96,7 +96,7 @@ class HomeOptionsCardViewController: UIViewController {
             }
         }
     }
-    
+
     /// The table sections. Updating this variable reloads the table.
     var sections: [Section] = [] {
         didSet {
@@ -108,7 +108,7 @@ class HomeOptionsCardViewController: UIViewController {
     }
 
     // MARK: - VC initializer and setup
-    
+
     init(delegate: HomeOptionsCardDelegate? = nil) {
         super.init(nibName: nil, bundle: nil)
         self.delegate = delegate
@@ -118,7 +118,7 @@ class HomeOptionsCardViewController: UIViewController {
         super.viewDidLoad()
 
         addReachabilityListener()
-        
+
         setupTableView()
         setupInfoButton()
         setupSearchBarSeparator()
@@ -126,11 +126,11 @@ class HomeOptionsCardViewController: UIViewController {
         setupConstraints()
         updatePlaces()
     }
-    
+
     private func addReachabilityListener() {
         ReachabilityManager.shared.addListener(self) { [weak self] connection in
             guard let self = self else { return }
-            
+
             switch connection {
             case .none:
                 self.isNetworkDown = true
@@ -226,19 +226,19 @@ class HomeOptionsCardViewController: UIViewController {
     /// Updates the table sections to show favorites, recent searches, and all stops. Ultimately reloads the table.
     func updateSections() {
         sections.removeAll()
-        if recentLocations.count > 0 {
+        if !recentLocations.isEmpty {
             sections.append(Section.recentSearches(items: recentLocations))
         }
         sections.append(Section.seeAllStops)
     }
-    
+
     /// Updates recent searches and favorites. Ultimately reloads the table.
     func updatePlaces() {
         recentLocations = Global.shared.retrievePlaces(for: Constants.UserDefaults.recentSearch)
     }
 
     // MARK: - Table Calculations
-    
+
     private func tableViewContentHeight() -> CGFloat {
         return sections.reduce(0) { (result, section) -> CGFloat in
             switch section {
@@ -261,7 +261,7 @@ class HomeOptionsCardViewController: UIViewController {
             return collapsedHeight
         }
     }
-    
+
     // MARK: - infoButton Interactivity
 
     func animateInInfoButton() {
@@ -290,14 +290,14 @@ class HomeOptionsCardViewController: UIViewController {
             self.view.layoutIfNeeded()
         }
     }
-    
+
     /// Open information screen
     @objc private func openInformationScreen() {
         let informationViewController = InformationViewController()
         let navigationVC = CustomNavigationController(rootViewController: informationViewController)
         present(navigationVC, animated: true)
     }
-    
+
     // MARK: - Get Search Results
 
     /// Get Search Results
@@ -321,9 +321,9 @@ class HomeOptionsCardViewController: UIViewController {
             updateSections()
         }
     }
-    
+
     // MARK: - Keyboard
-    
+
     @objc func keyboardWillShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
             keyboardHeight = keyboardSize.height

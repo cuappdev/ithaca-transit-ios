@@ -34,7 +34,7 @@ class HomeMapViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupMapView()
         setupOptionsCard()
         setupConstraints()
@@ -128,7 +128,7 @@ class HomeMapViewController: UIViewController {
         locationManager.requestWhenInUseAuthorization()
         StoreReviewHelper.checkAndAskForReview()
     }
-    
+
 }
 
 // MARK: - Location Delegate
@@ -173,7 +173,7 @@ extension HomeMapViewController: CLLocationManagerDelegate {
 }
 
 extension HomeMapViewController: GMSMapViewDelegate {
-    
+
     func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
         delegate?.mapViewWillMove()
     }
@@ -181,11 +181,11 @@ extension HomeMapViewController: GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
         delegate?.mapViewWillMove()
     }
-    
+
 }
 
 extension HomeMapViewController: HomeOptionsCardDelegate {
-    
+
     func getCurrentLocation() -> CLLocation? { return currentLocation }
 
     func updateSize() {
@@ -199,7 +199,7 @@ extension HomeMapViewController: HomeOptionsCardDelegate {
             }
         }
     }
-    
+
 }
 
 /// Helper function inserted by Swift 4.2 migrator.
