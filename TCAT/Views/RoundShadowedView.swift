@@ -10,7 +10,7 @@ import UIKit
 
 class RoundShadowedView: UIView {
 
-    private var containerView: UIView!
+    private let containerView = UIView()
 
     init(cornerRadius: CGFloat) {
         super.init(frame: .zero)
@@ -22,7 +22,6 @@ class RoundShadowedView: UIView {
         layer.shadowOpacity = 0.4
         layer.shadowRadius = cornerRadius / 4
 
-        containerView = UIView()
         containerView.backgroundColor = .white
 
         containerView.layer.cornerRadius = cornerRadius
@@ -30,7 +29,7 @@ class RoundShadowedView: UIView {
 
         addSubview(containerView)
 
-        containerView.snp.makeConstraints { (make) in
+        containerView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
@@ -41,6 +40,10 @@ class RoundShadowedView: UIView {
         } else {
             containerView.addSubview(view)
         }
+    }
+
+    func setColor(color: UIColor) {
+        containerView.backgroundColor = color
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -6,6 +6,7 @@
 //  Copyright © 2019 cuappdev. All rights reserved.
 //
 
+import NotificationBannerSwift
 import Pulley
 import UIKit
 
@@ -36,6 +37,61 @@ extension RouteDetailDrawerViewController: LargeDetailTableViewDelegate {
 
     func toggleCellExpansion(on cell: LargeDetailTableViewCell) {
         toggleCellExpansion(for: cell)
+    }
+
+}
+
+extension RouteDetailDrawerViewController: NotificationToggleTableViewDelegate {
+
+    func displayNotificationBanner(type: NotificationBannerType) {
+        guard let direction = getFirstDirection() else { return }
+        FloatingNotificationBanner(
+            customView: NotificationBannerView(
+                busAttachment: getBusIconImageAsTextAttachment(for: direction.routeNumber),
+                type: type
+            )
+        ).show(
+            queue: NotificationBannerQueue(maxBannersOnScreenSimultaneously: 1),
+            on: navigationController
+        )
+    }
+
+    private func getBusIconImageAsTextAttachment(for busNumber: Int) -> NSTextAttachment {
+        let busIconTextSpacing: CGFloat = 5
+
+        // Instantiate busIconView off screen to later turn into UIImage
+        let busIconView = BusIcon(type: .blueBannerSmall, number: busNumber)
+
+        let busIconFrame = CGRect(
+            x: 0,
+            y: 0,
+            width: busIconView.intrinsicContentSize.width + busIconTextSpacing * 2,
+            height: busIconView.intrinsicContentSize.height
+        )
+
+        // Create container to add padding on sides
+        let containerView = UIView(frame: busIconFrame)
+        containerView.isOpaque = false
+        view.addSubview(containerView)
+        containerView.addSubview(busIconView)
+        busIconView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(busIconTextSpacing)
+            make.top.bottom.equalToSuperview()
+        }
+
+        // Create NSTextAttachment with the busIcon as a UIImage
+        let iconAttachment = NSTextAttachment()
+        iconAttachment.image = containerView.getImage()
+
+        // Lower the textAttachment to be centered within the text
+        var frame = containerView.frame
+        frame.origin.y -= 7
+        iconAttachment.bounds = frame
+
+        // Remove the container as it is no longer needed
+        containerView.removeFromSuperview()
+
+        return iconAttachment
     }
 
 }
@@ -90,33 +146,36 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
 }
 
 extension RouteDetailDrawerViewController: UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return sections.count
+    }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return directionsAndVisibleStops.count
+        return sections[section].items.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // Formatting, including selectionStyle, and seperator line fixes
-        func format(_ cell: UITableViewCell) -> UITableViewCell {
-            cell.selectionStyle = .none
-            return cell
-        }
+        let section = sections[indexPath.section]
 
-        switch directionsAndVisibleStops[indexPath.row] {
+        switch section.items[indexPath.row] {
         case .busStop(let busStop):
             guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as? BusStopTableViewCell
-                else { return UITableViewCell ()}
+                else { return UITableViewCell() }
             cell.configure(for: busStop.name)
-            return format(cell)
+            return cell
         case .direction(let direction):
-            if direction.type == .walk || direction.type == .arrive {
+            switch direction.type {
+            case .walk, .arrive:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as? SmallDetailTableViewCell
                     else { return UITableViewCell() }
-                cell.configure(for: direction,
-                               isFirstStep: indexPath.row == 0,
-                               isLastStep: indexPath.row == directionsAndVisibleStops.count - 1)
-                return format(cell)
-            } else {
+                cell.configure(
+                    for: direction,
+                    isFirstStep: indexPath.row == 0,
+                    isLastStep: indexPath.row == section.items.count - 1
+                )
+                return cell
+            default:
                 let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
                 cell.configure(
                     for: direction,
@@ -124,8 +183,17 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                     isExpanded: expandedDirections.contains(direction),
                     delegate: self
                 )
-                return format(cell)
+                return cell
             }
+        case .notificationType(let type):
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.notificationToggleCellIdentifier) as? NotificationToggleTableViewCell
+                else { return UITableViewCell() }
+            cell.configure(
+                for: type,
+                isFirst: indexPath.row == 0,
+                delegate: self
+            )
+            return cell
         }
     }
 }
@@ -133,11 +201,18 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
 extension RouteDetailDrawerViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if let direction = directionsAndVisibleStops[indexPath.row].getDirection(),
-                direction.type == .depart || direction.type == .transfer {
-            return UITableView.automaticDimension
-        } else {
-            return RouteDetailCellSize.smallHeight
+        let notificationCellHeight: CGFloat = 70
+        let section = sections[indexPath.section]
+
+        switch section.type {
+        case .routeDetail:
+            if let direction = section.items[indexPath.row].getDirection(),
+                    direction.type == .depart || direction.type == .transfer {
+                return UITableView.automaticDimension
+            } else {
+                return RouteDetailCellSize.smallHeight
+            }
+        case .notification: return notificationCellHeight 
         }
     }
 
@@ -169,7 +244,8 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
             message = nil
         }
 
-        if let message = message {
+        if let message = message,
+            sections[section].type == .routeDetail {
             let phraseLabelFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.phraseLabelFooterView)
                 as? PhraseLabelFooterView ?? PhraseLabelFooterView(reuseIdentifier: Constants.Footers.phraseLabelFooterView)
             phraseLabelFooterView.configure(with: message)
@@ -181,12 +257,16 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let direction = directionsAndVisibleStops[indexPath.row].getDirection()
+        let section = sections[indexPath.section]
 
-        selectedDirection = direction
+        if section.type == .routeDetail {
+            let direction = section.items[indexPath.row].getDirection()
 
-        if let drawer = self.parent as? RouteDetailViewController {
-            drawer.setDrawerPosition(position: .collapsed, animated: true)
+            selectedDirection = direction
+
+            if let drawer = self.parent as? RouteDetailViewController {
+                drawer.setDrawerPosition(position: .collapsed, animated: true)
+            }
         }
     }
 }

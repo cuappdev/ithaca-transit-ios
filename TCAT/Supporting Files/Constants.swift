@@ -135,10 +135,11 @@ struct Constants {
         static let placeIdentifier = "PlaceTableViewCell"
         static let routeOptionsCellIdentifier = "RouteCell"
 
-        static let busStopDetailCellIdentifier = "BusStopCell"
-        static let largeDetailCellIdentifier = "LargeCell"
-        static let smallDetailCellIdentifier = "SmallCell"
+        static let busStopDetailCellIdentifier = "BusStopDetailCell"
         static let generalCellIdentifier = "GeneralCell"
+        static let largeDetailCellIdentifier = "LargeDetailCell"
+        static let notificationToggleCellIdentifier = "NotificationToggleCell"
+        static let smallDetailCellIdentifier = "SmallDetailCell"
 
         static let informationCellIdentifier = "InformationCell"
     }
@@ -234,6 +235,15 @@ struct Constants {
         static let defaultZoom: Float = 15.5 // Use as initial zoom on homeMapVC
         static let maxZoom: Float = 25
         static let searchRadius = 24140
+    }
+    
+    struct Notification {
+        static let arrivalNotification = "is arriving"
+        static let beforeBoardingConfirmation = "You will receive notifications 10 min before boarding time"
+        static let delayConfirmation = "You will receive notifications for delays in"
+        static let delayNotification = "has been delayed to"
+        static let notifyBeforeBoarding = "Notify me 10 min before boarding"
+        static let notifyDelay = "Notify me about delays"
     }
 
     struct SearchBar {

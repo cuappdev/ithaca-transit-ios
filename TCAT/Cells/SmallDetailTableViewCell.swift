@@ -19,6 +19,8 @@ class SmallDetailTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
+        selectionStyle = .none
+
         titleLabel.font = .getFont(.regular, size: 14)
         titleLabel.textColor = Colors.primaryText
         titleLabel.lineBreakMode = .byWordWrapping
@@ -34,6 +36,11 @@ class SmallDetailTableViewCell: UITableViewCell {
 
         hairline.backgroundColor = Colors.tableViewSeparator
         contentView.addSubview(hairline)
+        
+        // Hide hairline for last SmallDetailTVC so it's not next to NotificationToggleTVC hairline
+        if isLastStep {
+            hairline.isHidden = true
+        }
 
         formatTitleLabel(for: direction)
 
