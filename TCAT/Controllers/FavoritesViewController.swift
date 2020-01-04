@@ -25,6 +25,7 @@ class FavoritesViewController: UIViewController {
     private let addFavoritesReuseIdentifier = "AddFavoritesCollectionViewCell"
     private var favoritePlaces: [Place] {
         didSet {
+            editButton.isEnabled = !favoritePlaces.isEmpty
             favoritesCollectionView.reloadData()
         }
     }
@@ -62,7 +63,9 @@ class FavoritesViewController: UIViewController {
         let editString = isEditingFavorites ? "Done" : "Edit"
         editButton.setTitle(editString, for: .normal)
         editButton.setTitleColor(Colors.notificationBlue, for: .normal)
+        editButton.setTitleColor(Colors.secondaryText, for: .disabled)
         editButton.titleLabel?.font = UIFont.getFont(.regular, size: 14.0)
+        editButton.isEnabled = !favoritePlaces.isEmpty
         editButton.addTarget(self, action: #selector(editAction), for: .touchUpInside)
         view.addSubview(editButton)
     }
@@ -178,7 +181,11 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
             let favorite = favoritePlaces[indexPath.row]
             if isEditingFavorites {
                 favoritePlaces = Global.shared.deleteFavorite(favorite: favorite, allFavorites: favoritePlaces)
-                updateFavorites(newFavoritePlaces: favoritePlaces)
+                if favoritePlaces.isEmpty {
+                    editAction()
+                } else {
+                    updateFavorites(newFavoritePlaces: favoritePlaces)
+                }
             } else {
                 navigationController?.pushViewController(RouteOptionsViewController(searchTo: favorite), animated: true)
             }
