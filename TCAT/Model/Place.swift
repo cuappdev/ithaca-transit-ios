@@ -26,7 +26,7 @@ struct Place {
         return type == .busStop ? "Bus Stop" : placeDescription ?? ""
     }
 
-    init(name: String, type: PlaceType,  latitude: Double, longitude: Double, placeDescription: String? = nil) {
+    init(name: String, type: PlaceType, latitude: Double, longitude: Double, placeDescription: String? = nil) {
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
@@ -55,4 +55,3 @@ extension Place: Equatable {
     }
 
 }
-

@@ -33,10 +33,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private let networking: Networking = URLSession.shared.request
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+
         // Set up networking
         Endpoint.setupEndpointConfig()
-        
+
         // Set Up Google Services
         FirebaseApp.configure()
 
@@ -66,8 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 } else {
                     userDefaults.set(defaultValue, forKey: key)
                 }
-            }
-            else if key == Constants.UserDefaults.favorites && sharedUserDefaults?.value(forKey: key) == nil {
+            } else if key == Constants.UserDefaults.favorites && sharedUserDefaults?.value(forKey: key) == nil {
                 sharedUserDefaults?.set(userDefaults.value(forKey: key), forKey: key)
             }
         }
@@ -89,7 +88,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : parentHomeViewController
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
-        
+
         // Initalize window without storyboard
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.rootViewController = navigationController
@@ -101,9 +100,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         handleShortcut(item: shortcutItem)
     }
-    
+
     // MARK: - Helper Functions
-    
+
     /// Creates and sets a unique identifier. If the device identifier changes, updates it.
     func setupUniqueIdentifier() {
         if let uid = UIDevice.current.identifierForVendor?.uuidString,
@@ -111,7 +110,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             sharedUserDefaults?.set(uid, forKey: Constants.UserDefaults.uid)
         }
     }
-    
+
     func handleShortcut(item: UIApplicationShortcutItem) {
         if let shortcutData = item.userInfo as? [String: Data] {
             guard let place = shortcutData["place"],
@@ -139,8 +138,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             DispatchQueue.main.async {
                 switch result {
                 case .value(let response):
-                    if response.data.isEmpty { self.handleGetAllStopsError() }
-                    else {
+                    if response.data.isEmpty { self.handleGetAllStopsError() } else {
                         let encodedObject = try? JSONEncoder().encode(response.data)
                         userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
                     }
@@ -178,7 +176,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     /// Open the app when opened via URL scheme
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-    
+
         // URLs for testing
         // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown
         // PlaceResult: ithaca-transit://getRoutes?lat=42.44707979999999&long=-76.4885196&destinationName=Hans%20Bethe%20House

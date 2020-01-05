@@ -688,6 +688,5 @@ class RouteOptionsViewController: UIViewController {
             drawerViewController: drawerViewController
         )
     }
-    
-}
 
+}
