@@ -78,11 +78,6 @@ class RouteDetailContentViewController: UIViewController {
         drawMapRoute()
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        centerMapOnOverview(drawerPreviewing: true)
-    }
-
     /// Construct Directions based on Route and parse Waypoint / Path data
     func initializeRoute(_ route: Route, _ currentLocation: CLLocationCoordinate2D?) {
         self.route = route
