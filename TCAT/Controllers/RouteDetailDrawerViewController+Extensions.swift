@@ -109,7 +109,7 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
     func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
         // Center map on drawer change
         let drawerPosition = drawer.drawerPosition
-        guard drawerPosition != currentPulleyPosition else { print("same position"); return }
+        guard drawerPosition != currentPulleyPosition else { return }
 
         currentPulleyPosition = drawerPosition
 
