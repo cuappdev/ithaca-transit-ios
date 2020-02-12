@@ -156,9 +156,10 @@ class RouteDetailDrawerViewController: UIViewController {
         let routeDetailSection = Section(type: .routeDetail, items: directionsAndVisibleStops)
 
         sections = [routeDetailSection]
-        if !route.isRawWalkingRoute() {
-            sections.append(notificationSection)
-        }
+        // TODO: Uncomment when notifications are implemented on backend
+        //        if !route.isRawWalkingRoute() {
+        //            sections.append(notificationSection)
+        //        }
     }
 
     private func setupConstraints() {
