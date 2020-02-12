@@ -49,6 +49,7 @@ class RouteDetailDrawerViewController: UIViewController {
     var summaryView: SummaryView!
     let tableView = UITableView(frame: .zero, style: .grouped)
 
+    var currentPulleyPosition: PulleyPosition?
     var directionsAndVisibleStops: [RouteDetailItem] = []
     var expandedDirections: Set<Direction> = []
     var sections: [Section] = []

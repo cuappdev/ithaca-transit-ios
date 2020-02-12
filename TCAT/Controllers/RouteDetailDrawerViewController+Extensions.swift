@@ -108,7 +108,12 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
 
     func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
         // Center map on drawer change
-        switch drawer.drawerPosition {
+        let drawerPosition = drawer.drawerPosition
+        guard drawerPosition != currentPulleyPosition else { return }
+
+        currentPulleyPosition = drawerPosition
+
+        switch drawerPosition {
         case .collapsed, .partiallyRevealed:
             guard let contentViewController = drawer.primaryContentViewController as? RouteDetailContentViewController
                 else { return }
@@ -120,7 +125,7 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
                 }
                 selectedDirection = nil
             } else {
-                contentViewController.centerMapOnOverview(drawerPreviewing: drawer.drawerPosition == .partiallyRevealed)
+                contentViewController.centerMapOnOverview(drawerPreviewing: drawerPosition == .partiallyRevealed)
             }
         default: break
         }
