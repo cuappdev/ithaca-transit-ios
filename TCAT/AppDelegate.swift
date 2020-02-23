@@ -42,9 +42,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
 
         #if DEBUG
-            GMSServices.provideAPIKey(Keys.googleMapsDebug.value)
+        GMSServices.provideAPIKey(Keys.googleMapsDebug.value)
         #else
-            GMSServices.provideAPIKey(Keys.googleMapsRelease.value)
+        GMSServices.provideAPIKey(Keys.googleMapsRelease.value)
         #endif
 
         // Update shortcut items
