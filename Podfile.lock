@@ -1,4 +1,5 @@
 PODS:
+  - AppDevAnnouncements (0.0.1)
   - Crashlytics (3.14.0):
     - Fabric (~> 1.10.2)
   - DZNEmptyDataSet (1.8.1)
@@ -86,6 +87,7 @@ PODS:
   - Zip (1.1.0)
 
 DEPENDENCIES:
+  - AppDevAnnouncements (from `https://github.com/cuappdev/appdev-announcements.git`)
   - Crashlytics (~> 3.12)
   - DZNEmptyDataSet (from `https://github.com/cuappdev/DZNEmptyDataSet.git`)
   - Fabric (~> 1.9)
@@ -129,6 +131,8 @@ SPEC REPOS:
     - Zip
 
 EXTERNAL SOURCES:
+  AppDevAnnouncements:
+    :git: https://github.com/cuappdev/appdev-announcements.git
   DZNEmptyDataSet:
     :git: https://github.com/cuappdev/DZNEmptyDataSet.git
   FutureNova:
@@ -137,6 +141,9 @@ EXTERNAL SOURCES:
     :git: https://github.com/cuappdev/Presentation.git
 
 CHECKOUT OPTIONS:
+  AppDevAnnouncements:
+    :commit: 31c4502ac6e9e77e3c478bc46b4e4960cfc90fe9
+    :git: https://github.com/cuappdev/appdev-announcements.git
   DZNEmptyDataSet:
     :commit: a4a007e7ade7d9711f067f4d6510085fa1d92629
     :git: https://github.com/cuappdev/DZNEmptyDataSet.git
@@ -148,6 +155,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/cuappdev/Presentation.git
 
 SPEC CHECKSUMS:
+  AppDevAnnouncements: da6074ec0011c8964caa11cabc959ca007cb958f
   Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
   DZNEmptyDataSet: b94434220f87d9dda46660eb4f07a424778e93b4
   Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
@@ -175,6 +183,6 @@ SPEC CHECKSUMS:
   Wormholy: db6ac46a6d20db2d11ddcf975a5a9bcc1abc889e
   Zip: 8877eede3dda76bcac281225c20e71c25270774c
 
-PODFILE CHECKSUM: 74f5baec712c32e17985650cbe8dc20c43556af2
+PODFILE CHECKSUM: 07932619e4e861bbcd832b42f9dd7c6b53e09b3a
 
 COCOAPODS: 1.8.4

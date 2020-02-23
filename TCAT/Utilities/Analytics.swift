@@ -227,3 +227,8 @@ struct SearchResultSelectedPayload: Payload {
     let selectedIndex: Int
     let totalResults: Int
 }
+
+/// Log whenever an announcement is presented to the user
+struct AnnouncementPresentedPayload: Payload {
+    static let eventName = "announcement_presented"
+}
