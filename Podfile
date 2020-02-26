@@ -34,6 +34,7 @@ target 'TCAT' do
     pod 'WhatsNewKit', '~> 1.1'
 
     # Other
+    pod 'AppDevAnnouncements', :git => 'https://github.com/cuappdev/appdev-announcements.git'
     pod 'SwiftLint'
     
     target 'TCATTests' do

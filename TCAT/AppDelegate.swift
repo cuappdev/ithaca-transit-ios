@@ -6,6 +6,7 @@
 //  Copyright © 2016 cuappdev. All rights reserved.
 //
 
+import AppDevAnnouncements
 import Crashlytics
 import Fabric
 import Firebase
@@ -41,9 +42,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
 
         #if DEBUG
-            GMSServices.provideAPIKey(Keys.googleMapsDebug.value)
+        GMSServices.provideAPIKey(Keys.googleMapsDebug.value)
         #else
-            GMSServices.provideAPIKey(Keys.googleMapsRelease.value)
+        GMSServices.provideAPIKey(Keys.googleMapsRelease.value)
         #endif
 
         // Update shortcut items
@@ -51,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Set Up Analytics
         #if !DEBUG
-            Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
+        Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
         #endif
 
         // Log basic information
@@ -89,9 +90,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
             CustomNavigationController(rootViewController: rootVC)
 
+        // Setup networking for AppDevAnnouncements
+        AnnouncementNetworking.setupConfig(
+            scheme: Keys.announcementsScheme.value,
+            host: Keys.announcementsHost.value,
+            commonPath: Keys.announcementsCommonPath.value,
+            announcementPath: Keys.announcementsPath.value
+        )
+
         // Initalize window without storyboard
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window!.rootViewController = navigationController
+        self.window?.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
 
         return true
@@ -115,8 +124,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let shortcutData = item.userInfo as? [String: Data] {
             guard let place = shortcutData["place"],
                 let destination = try? decoder.decode(Place.self, from: place) else {
-                print("[AppDelegate] Unable to access shortcutData['place']")
-                return
+                    print("[AppDelegate] Unable to access shortcutData['place']")
+                    return
             }
             let optionsVC = RouteOptionsViewController(searchTo: destination)
             if let navController = window?.rootViewController as? CustomNavigationController {
@@ -198,10 +207,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let lat = items?.filter({ $0.name == "lat" }).first?.value,
                 let long = items?.filter({ $0.name == "long" }).first?.value,
                 let stop = items?.filter({ $0.name == "stopName" }).first?.value {
-                    latitude = Double(lat)
-                    longitude = Double(long)
-                    stopName = stop
-                }
+                latitude = Double(lat)
+                longitude = Double(long)
+                stopName = stop
+            }
 
             if let latitude = latitude, let longitude = longitude, let stopName = stopName {
                 let place = Place(name: stopName, type: .busStop, latitude: latitude, longitude: longitude)

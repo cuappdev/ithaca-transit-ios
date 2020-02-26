@@ -10,6 +10,11 @@ import Foundation
 
 enum Keys: String {
 
+    case announcementsCommonPath = "announcements-common-path"
+    case announcementsHost = "announcements-host"
+    case announcementsPath = "announcements-path"
+    case announcementsScheme = "announcements-scheme"
+
     case fabricAPIKey = "fabric-api-key"
     case fabricBuildSecret = "fabric-build-secret"
 
