@@ -16,7 +16,6 @@ import Intents
 import SafariServices
 import SwiftyJSON
 import UIKit
-import WhatsNewKit
 
 /// This is used for app-specific preferences
 let userDefaults = UserDefaults.standard
@@ -157,21 +156,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
-    }
-
-    func showWhatsNew(items: [WhatsNew.Item]) {
-        let whatsNew = WhatsNew(
-            title: "WhatsNewKit",
-            // The features you want to showcase
-            items: items
-        )
-        // Initialize WhatsNewViewController with WhatsNew
-        let whatsNewViewController = WhatsNewViewController(
-            whatsNew: whatsNew
-        )
-
-        // Present it 🤩
-        UIApplication.shared.keyWindow?.presentInApp(whatsNewViewController)
     }
 
     /// Present an alert indicating bus stops weren't fetched.
