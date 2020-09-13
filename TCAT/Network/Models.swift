@@ -83,7 +83,6 @@ internal struct TripBody: Codable {
 }
 
 internal struct Delay: Codable {
-    let stopID: String
     let tripID: String
     let delay: Int?
 }

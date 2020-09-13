@@ -187,23 +187,9 @@ extension RouteDetailContentViewController {
     private func createDebugBusIcon() {
         let bus = BusLocation(
             dataType: .validData,
-            destination: "",
-            deviation: 0,
-            delay: 0,
-            direction: "",
-            displayStatus: "",
-            gpsStatus: 0,
-            heading: 0,
-            lastStop: "",
-            lastUpdated: Date(),
             latitude: 42.4491411,
             longitude: -76.4836815,
-            name: "16",
-            opStatus: "",
             routeID: 10,
-            runID: 0,
-            speed: 0,
-            tripID: 0,
             vehicleID: 0
         )
         let coords = CLLocationCoordinate2D(latitude: 42.4491411, longitude: -76.4836815)

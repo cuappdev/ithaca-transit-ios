@@ -17,7 +17,7 @@ class BusLocationView: UIView {
 
     private let circleSize = CGSize(width: 7, height: 7)
 
-    init(number: Int, bearing: Int, position: CLLocationCoordinate2D) {
+    init(number: Int, position: CLLocationCoordinate2D) {
         super.init(frame: .zero)
 
         frame.size = busLocationBackgroundView.frame.size

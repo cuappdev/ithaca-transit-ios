@@ -63,7 +63,7 @@ class ServiceAlertsViewController: UIViewController {
 
         getServiceAlerts()
 
-        let payload = ServiceAlertsPayload(didTapWhatsNew: false)
+        let payload = ServiceAlertsPayload()
         Analytics.shared.log(payload)
     }
 
