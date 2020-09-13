@@ -185,8 +185,6 @@ struct DataMigrationOnePointThreePayload: Payload {
 struct ServiceAlertsPayload: Payload {
     static let eventName: String = "Service Alerts Opened"
     let deviceInfo = DeviceInfo()
-
-    let didTapWhatsNew: Bool
 }
 
 struct PrimaryActionTappedPayload: Payload {
@@ -198,13 +196,6 @@ struct PrimaryActionTappedPayload: Payload {
 
 struct SecondaryActionTappedPayload: Payload {
     static let eventName: String = "Secondary Action Tapped"
-    let deviceInfo = DeviceInfo()
-
-    let actionDescription: String
-}
-
-struct WhatsNewCardDismissedPayload: Payload {
-    static let eventName: String = "Card Dismissed"
     let deviceInfo = DeviceInfo()
 
     let actionDescription: String

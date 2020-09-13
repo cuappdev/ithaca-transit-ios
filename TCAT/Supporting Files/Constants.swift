@@ -305,8 +305,6 @@ struct Constants {
         static let promotionDismissed = "promotionDismissed"
         static let recentSearch = "recentSearch"
         static let servicedRoutes = "servicedRoutes"
-        static let whatsNewCardVersion = "whatsNewVersion"
-        static let whatsNewDismissed = "whatsNewDismissed"
     }
 
     struct Values {
