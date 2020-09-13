@@ -54,25 +54,8 @@ class Route: NSObject, Codable {
     /// A unique identifier for the route
     var routeId: String
 
-    /// The amount of time from now until the departure
-    var timeUntilDeparture: DateComponents {
-        return Time.dateComponents(from: Date(), to: departureTime)
-    }
-
-    /// The starting coordinates of the route
-    var startCoords: CLLocationCoordinate2D
-
-    /// The ending coordinates of the route
-    var endCoords: CLLocationCoordinate2D
-
     /// The distance between the start and finish location, in miles
     var travelDistance: Double = 0.0
-
-    /// The most extreme points of the route
-    var boundingBox: Bounds
-
-    /// The number of transfers in a route. Defaults to 0
-    var numberOfTransfers: Int
 
     /// A list of Direction objects (used for Route Detail)
     var directions: [Direction]
@@ -97,13 +80,9 @@ class Route: NSObject, Codable {
 
     private enum CodingKeys: String, CodingKey {
         case arrivalTime
-        case boundingBox
         case departureTime
         case directions
-        case endCoords
-        case numberOfTransfers
         case routeId
-        case startCoords
     }
 
     required init(from decoder: Decoder) throws {
@@ -111,10 +90,6 @@ class Route: NSObject, Codable {
         departureTime = Date.parseDate(try container.decode(String.self, forKey: .departureTime))
         arrivalTime = Date.parseDate(try container.decode(String.self, forKey: .arrivalTime))
         routeId = try container.decode(String.self, forKey: .routeId)
-        startCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .startCoords)
-        endCoords = try container.decode(CLLocationCoordinate2D.self, forKey: .endCoords)
-        boundingBox = try container.decode(Bounds.self, forKey: .boundingBox)
-        numberOfTransfers = try container.decode(Int.self, forKey: .numberOfTransfers)
         directions = try container.decode([Direction].self, forKey: .directions)
         rawDirections = try container.decode([Direction].self, forKey: .directions)
         startName = Constants.General.currentLocation
@@ -218,12 +193,13 @@ class Route: NSObject, Codable {
             return
         }
 
+        let fromLocation = CLLocation(latitude: stop.startLocation.latitude, longitude: stop.startLocation.longitude)
+
         // If more than just a walking route that starts with walking
         if !isRawWalkingRoute() && rawDirections.first?.type == .walk && rawDirections.count > 1 {
             stop = rawDirections[1]
         }
 
-        let fromLocation = CLLocation(latitude: startCoords.latitude, longitude: startCoords.longitude)
         var endLocation = CLLocation(latitude: stop.startLocation.latitude, longitude: stop.startLocation.longitude)
 
         if isRawWalkingRoute() {
