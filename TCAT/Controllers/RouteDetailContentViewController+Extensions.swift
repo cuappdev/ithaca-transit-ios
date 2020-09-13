@@ -39,6 +39,7 @@ extension RouteDetailContentViewController {
             )
             liveTrackingNetworkTimer?.fire()
         }
+        centerMapOnOverview(drawerPreviewing: true)
     }
 
     override func viewWillDisappear(_ animated: Bool) {

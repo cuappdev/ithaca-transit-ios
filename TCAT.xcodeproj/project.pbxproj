@@ -126,6 +126,8 @@
 		C2240435231838C300095C5C /* PlaceCoordinates.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2240434231838C300095C5C /* PlaceCoordinates.swift */; };
 		C2AAAF6C23392F790025C640 /* AppleSearchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2AAAF6B23392F790025C640 /* AppleSearchResponse.swift */; };
 		C2AAAF6E233976B50025C640 /* SearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2AAAF6D233976B50025C640 /* SearchManager.swift */; };
+		C3619FE2183E890082F93662 /* Pods_TCATTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C9E195EF10D8F7869CD3F21 /* Pods_TCATTests.framework */; };
+		CFAB831FA98AB5A0502FD8D1 /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFC4AF899E93412D5D3A423D /* Pods_TCAT.framework */; };
 		D183AA021E6CB092006A9A15 /* Extensions+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = D183AA011E6CB092006A9A15 /* Extensions+App.swift */; };
 		D423AAF823749EC700EF2EB7 /* AddFavoritesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D423AAF723749EC700EF2EB7 /* AddFavoritesCollectionViewCell.swift */; };
 		D4756EA223986CB500FE7F0D /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */; };
@@ -151,6 +153,7 @@
 		DDBFEAA01E787008002BBD96 /* DatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9E1E787008002BBD96 /* DatePickerView.swift */; };
 		DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */; };
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
+		DE2AC26C68F1C5E10B01C8F1 /* Pods_TCATUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43BB6DEA3E3FE00A376D8627 /* Pods_TCATUITests.framework */; };
 		E337970D1FC1606D00BCB28F /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E337970C1FC1606D00BCB28F /* InformationViewController.swift */; };
 		E68700B61F9B4E069D17931E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8A1C717EB340065803DAFD0 /* Pods_TCAT.framework */; };
 		F70127A0240B5B89045ED2B0 /* Pods_Today_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F2FC5C9D02BA940FC57D58F /* Pods_Today_Extension.framework */; };
@@ -303,6 +306,7 @@
 		C2240434231838C300095C5C /* PlaceCoordinates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceCoordinates.swift; sourceTree = "<group>"; };
 		C2AAAF6B23392F790025C640 /* AppleSearchResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSearchResponse.swift; sourceTree = "<group>"; };
 		C2AAAF6D233976B50025C640 /* SearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchManager.swift; sourceTree = "<group>"; };
+		C6EE4D0678C437BECA753DB9 /* Pods-TCATUITests.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.local.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.local.xcconfig"; sourceTree = "<group>"; };
 		CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Analytics.swift; path = Utilities/Analytics.swift; sourceTree = "<group>"; };
 		D183AA011E6CB092006A9A15 /* Extensions+App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Extensions+App.swift"; path = "Utilities/Extensions+App.swift"; sourceTree = "<group>"; };
 		D423AAF723749EC700EF2EB7 /* AddFavoritesCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFavoritesCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -976,9 +980,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "SwiftLint Script";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TCATUITests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1025,46 +1032,18 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AppDevAnnouncements/AppDevAnnouncements.framework",
-				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
-				"${BUILT_PRODUCTS_DIR}/FutureNova/FutureNova.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
-				"${BUILT_PRODUCTS_DIR}/MarqueeLabel/MarqueeLabel.framework",
-				"${BUILT_PRODUCTS_DIR}/NotificationBannerSwift/NotificationBannerSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/Presentation/Presentation.framework",
-				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
-				"${BUILT_PRODUCTS_DIR}/Pulley/Pulley.framework",
-				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
-				"${BUILT_PRODUCTS_DIR}/WhatsNewKit/WhatsNewKit.framework",
-				"${BUILT_PRODUCTS_DIR}/Wormholy/Wormholy.framework",
-				"${BUILT_PRODUCTS_DIR}/Zip/Zip.framework",
-				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			inputFileListPaths = (
 			);
-			name = "[CP] Embed Pods Frameworks";
+			inputPaths = (
+			);
+			name = "Setup Firebase Environment GoogleService-Info.plist";
+			outputFileListPaths = (
+			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppDevAnnouncements.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DZNEmptyDataSet.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FutureNova.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MarqueeLabel.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NotificationBannerSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Presentation.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pulley.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WhatsNewKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Wormholy.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Zip.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "# Name of the resource we're selectively copying\nGOOGLESERVICE_INFO_PLIST=GoogleService-Info.plist\n\n# Get references to dev and prod versions of the GoogleService-Info.plist\n# NOTE: These should only live on the file system and should NOT be part of the target (since we'll be adding them to the target manually)\nGOOGLESERVICE_INFO_DEV=${PROJECT_DIR}/${TARGET_NAME}/Firebase/Dev/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PROD=${PROJECT_DIR}/${TARGET_NAME}/Firebase/Prod/${GOOGLESERVICE_INFO_PLIST}\n\n# Make sure the dev version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_DEV}\"\nif [ ! -f $GOOGLESERVICE_INFO_DEV ]\nthen\necho \"No Development GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\nexit 1\nfi\n\n# Make sure the prod version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PROD}\"\nif [ ! -f $GOOGLESERVICE_INFO_PROD ]\nthen\necho \"No Production GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\nexit 1\nfi\n\n# Get a reference to the destination location for the GoogleService-Info.plist\nPLIST_DESTINATION=${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\necho \"Will copy ${GOOGLESERVICE_INFO_PLIST} to final destination: ${PLIST_DESTINATION}\"\n\n# Copy over the prod GoogleService-Info.plist for Release builds\nif [ \"${CONFIGURATION}\" == \"Release\" ]\nthen\necho \"Using ${GOOGLESERVICE_INFO_PROD}\"\ncp \"${GOOGLESERVICE_INFO_PROD}\" \"${PLIST_DESTINATION}\"\nelse\necho \"Using ${GOOGLESERVICE_INFO_DEV}\"\ncp \"${GOOGLESERVICE_INFO_DEV}\" \"${PLIST_DESTINATION}\"\nfi\n";
 		};
 		B2762DDD1EE5C968344BB5E8 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1089,21 +1068,17 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
+				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
 			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-TCATTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E3FCA3C71FAA5AFB0069BD0F /* Fabric Configuration */ = {
