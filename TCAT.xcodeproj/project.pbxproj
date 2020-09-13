@@ -26,8 +26,6 @@
 		22FD6E8922925EDA0053A174 /* InformationTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FD6E8822925EDA0053A174 /* InformationTableHeaderView.swift */; };
 		30F148B4236F9F0500291AE2 /* NotificationToggleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F148B3236F9F0500291AE2 /* NotificationToggleTableViewCell.swift */; };
 		30F148BE237CA02F00291AE2 /* NotificationBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F148BD237CA02F00291AE2 /* NotificationBannerView.swift */; };
-		371F7516EDE896E8F926165F /* Pods_Today_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE1A6AF335384977A983BFF1 /* Pods_Today_Extension.framework */; };
-		4319AD3A2AF4CCF507164129 /* Pods_TCATTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BDD89B15CA2409469349E8C /* Pods_TCATTests.framework */; };
 		449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C781D80D0E80019300C /* AppDelegate.swift */; };
 		449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C7C1D80D0E80019300C /* Main.storyboard */; };
 		449A7C801D80D0E80019300C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C7F1D80D0E80019300C /* Assets.xcassets */; };
@@ -38,7 +36,6 @@
 		502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502D8F5E1E55161D005280F1 /* SearchBarView.swift */; };
 		503EC37D1E969ADF00B3D4D4 /* PlaceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37C1E969ADF00B3D4D4 /* PlaceTableViewCell.swift */; };
 		503EC37F1E969B2100B3D4D4 /* SearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37E1E969B2100B3D4D4 /* SearchResultsViewController.swift */; };
-		6934655577BDF2398A7C30F5 /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE444491ABFAAD81EF7AC44 /* Pods_TCAT.framework */; };
 		7E0A65192226367100441967 /* WalkPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */; };
 		7E0C97B5220362C10068439D /* SFProDisplay-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF8460A12172A5210027FB62 /* SFProDisplay-Semibold.otf */; };
 		7E0C97B62203649D0068439D /* SFProDisplay-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF84609F2172A5200027FB62 /* SFProDisplay-Regular.otf */; };
@@ -101,7 +98,7 @@
 		7EEF18A721B39C6200343FFD /* Today Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7EEF189B21B39C6200343FFD /* Today Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7EF304692227502E006B327E /* Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D94BD2FC2159993D00C9214E /* Keys.plist */; };
 		7EFDB7F72243009A006D5126 /* TodayExtensionErrorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFDB7F62243009A006D5126 /* TodayExtensionErrorCell.swift */; };
-		A3FFFF9AF010F35B5260E8BE /* Pods_TCATUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8FC0E42324D82CCFEC7C05 /* Pods_TCATUITests.framework */; };
+		AD1B7F4DAC497BD369A28358 /* Pods_TCATTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27C5CB0F6FDBF523F5ADA0C2 /* Pods_TCATTests.framework */; };
 		BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0002211FB37D0A00773109 /* LoadingIndicator.swift */; };
 		BF18AE102083B7F6000C3D82 /* StoreReviewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18AE0F2083B7F6000C3D82 /* StoreReviewHelper.swift */; };
 		BF18AE122083B9B8000C3D82 /* Phrases.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18AE112083B9B8000C3D82 /* Phrases.swift */; };
@@ -139,6 +136,7 @@
 		D4B70A06237390EE00FEB7EA /* FavoritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A05237390EE00FEB7EA /* FavoritesViewController.swift */; };
 		D4B70A082373910900FEB7EA /* ParentHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A072373910900FEB7EA /* ParentHomeViewController.swift */; };
 		D4B70A0A2373912800FEB7EA /* FavoritesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A092373912800FEB7EA /* FavoritesCollectionViewCell.swift */; };
+		DBA9547500B975532CFBE0E6 /* Pods_TCATUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6EF74B05355CCB79CA81128 /* Pods_TCATUITests.framework */; };
 		DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */; };
 		DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96451FC21B29009955C6 /* HeaderView.swift */; };
 		DCB717101FB76EA600BE4D26 /* StopPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7170F1FB76EA600BE4D26 /* StopPickerViewController.swift */; };
@@ -157,6 +155,8 @@
 		DDBFEAA11E787008002BBD96 /* RouteSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */; };
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
 		E337970D1FC1606D00BCB28F /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E337970C1FC1606D00BCB28F /* InformationViewController.swift */; };
+		E68700B61F9B4E069D17931E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8A1C717EB340065803DAFD0 /* Pods_TCAT.framework */; };
+		F70127A0240B5B89045ED2B0 /* Pods_Today_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F2FC5C9D02BA940FC57D58F /* Pods_Today_Extension.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -206,10 +206,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		05362765A3FFE8B3AC21E499 /* Pods-TCATUITests.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.local.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.local.xcconfig"; sourceTree = "<group>"; };
-		1DD024FEFC067440B1903BA7 /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
+		150AC52CEDC601C508F1CB76 /* Pods-TCATUITests.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.local.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.local.xcconfig"; sourceTree = "<group>"; };
 		222BDE15215C1CEE0040DD93 /* WhatsNewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WhatsNewHeaderView.swift; path = Views/WhatsNewHeaderView.swift; sourceTree = "<group>"; };
-		222D50AA32DFD72AAFF22E78 /* Pods-TCATTests.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.local.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.local.xcconfig"; sourceTree = "<group>"; };
 		22443221231871CD00987417 /* RouteDetailContentViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RouteDetailContentViewController+Extensions.swift"; path = "Controllers/RouteDetailContentViewController+Extensions.swift"; sourceTree = "<group>"; };
 		224432232318741500987417 /* HomeOptionsCardViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "HomeOptionsCardViewController+Extensions.swift"; path = "Controllers/HomeOptionsCardViewController+Extensions.swift"; sourceTree = "<group>"; };
 		224D8A5A229F5E3000C5D86A /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Section.swift; path = Model/Section.swift; sourceTree = "<group>"; };
@@ -226,11 +224,10 @@
 		22D76E902266CCC000FA21B9 /* RoundShadowedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RoundShadowedView.swift; path = Views/RoundShadowedView.swift; sourceTree = "<group>"; };
 		22D9599E2269AB1700D115EC /* ServiceAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlert.swift; path = Model/ServiceAlert.swift; sourceTree = "<group>"; };
 		22FD6E8822925EDA0053A174 /* InformationTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InformationTableHeaderView.swift; path = Views/InformationTableHeaderView.swift; sourceTree = "<group>"; };
-		2F4B7F4D04B5E76C3C373607 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
+		27C5CB0F6FDBF523F5ADA0C2 /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		30F148B3236F9F0500291AE2 /* NotificationToggleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationToggleTableViewCell.swift; sourceTree = "<group>"; };
 		30F148BD237CA02F00291AE2 /* NotificationBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationBannerView.swift; sourceTree = "<group>"; };
-		3BDD89B15CA2409469349E8C /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		411FF1B280B230ABFD3ED4AD /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
+		319A023F5367F28985F123A2 /* Pods-Today Extension.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.local.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.local.xcconfig"; sourceTree = "<group>"; };
 		449A7C751D80D0E80019300C /* TCAT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCAT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C781D80D0E80019300C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		449A7C7D1D80D0E80019300C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -243,11 +240,13 @@
 		449A7C941D80D0E80019300C /* TCATUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TCATUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C981D80D0E80019300C /* TCATUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCATUITests.swift; sourceTree = "<group>"; };
 		449A7C9A1D80D0E80019300C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		45788A342647D19AE0D2823E /* Pods-TCATTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.release.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.release.xcconfig"; sourceTree = "<group>"; };
 		5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = SearchTableViewHelpers.swift; path = Utilities/SearchTableViewHelpers.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		502D8F5E1E55161D005280F1 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchBarView.swift; path = Views/SearchBarView.swift; sourceTree = "<group>"; };
 		503EC37C1E969ADF00B3D4D4 /* PlaceTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceTableViewCell.swift; path = Cells/PlaceTableViewCell.swift; sourceTree = "<group>"; };
 		503EC37E1E969B2100B3D4D4 /* SearchResultsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = SearchResultsViewController.swift; path = Controllers/SearchResultsViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		50A19BAD1E4C214000AD6768 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = HomeViewController.swift; path = Controllers/HomeViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		5EA2F024E47855738046B69B /* Pods-Today Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.debug.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.debug.xcconfig"; sourceTree = "<group>"; };
 		7E14AEB12177E661006A344D /* TCAT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = TCAT.entitlements; path = "Supporting Files/TCAT.entitlements"; sourceTree = "<group>"; };
 		7E14AEC02177E846006A344D /* IntentsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IntentsUI.framework; path = System/Library/Frameworks/IntentsUI.framework; sourceTree = SDKROOT; };
 		7E14AEDA2177E884006A344D /* Siri.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Siri.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -265,13 +264,12 @@
 		7EEF18A421B39C6200343FFD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7EEF18AB21B39CF500343FFD /* Today Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Today Extension.entitlements"; sourceTree = "<group>"; };
 		7EFDB7F62243009A006D5126 /* TodayExtensionErrorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodayExtensionErrorCell.swift; sourceTree = "<group>"; };
-		8A2E117F9926062BFA4524F0 /* Pods-Today Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.debug.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.debug.xcconfig"; sourceTree = "<group>"; };
-		8FE444491ABFAAD81EF7AC44 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		97EDE9962FD1276E1860CB00 /* Pods-TCAT.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.local.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.local.xcconfig"; sourceTree = "<group>"; };
-		9F442757DE5FC60C8503AD59 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
-		A7D92882EC47B11C442F68BC /* Pods-Today Extension.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.local.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.local.xcconfig"; sourceTree = "<group>"; };
-		BA18532E609F6EBE6371896C /* Pods-TCATUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.debug.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		BDC1610962A12E65217852F0 /* Pods-Today Extension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.release.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.release.xcconfig"; sourceTree = "<group>"; };
+		7F2FC5C9D02BA940FC57D58F /* Pods_Today_Extension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Today_Extension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9184DD9DA907B4E003CB9F2E /* Pods-Today Extension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.release.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.release.xcconfig"; sourceTree = "<group>"; };
+		A781591737EAB3208B7C5185 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
+		AA4D65C70B34F6EB84BE347A /* Pods-TCATTests.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.local.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.local.xcconfig"; sourceTree = "<group>"; };
+		B4E42C41F3415E83D9F43607 /* Pods-TCAT.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.local.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.local.xcconfig"; sourceTree = "<group>"; };
+		B9EE9A33DC0B648CAC3581D5 /* Pods-TCATTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.debug.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BF0002211FB37D0A00773109 /* LoadingIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoadingIndicator.swift; path = Views/LoadingIndicator.swift; sourceTree = "<group>"; };
 		BF1209FA1F7759C200A7C930 /* BusLocationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BusLocationView.swift; path = Views/BusLocationView.swift; sourceTree = "<group>"; };
 		BF18AE0F2083B7F6000C3D82 /* StoreReviewHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StoreReviewHelper.swift; path = Utilities/StoreReviewHelper.swift; sourceTree = "<group>"; };
@@ -302,6 +300,7 @@
 		BFB86A06205C614C000794B2 /* OnboardingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OnboardingViewController.swift; path = Controllers/OnboardingViewController.swift; sourceTree = "<group>"; };
 		BFC367F521B66E9A00ABD9AC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/Intents.intentdefinition; sourceTree = "<group>"; };
 		BFCA712C206AC69000E4CCE5 /* Keys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Keys.swift; path = "Supporting Files/Keys.swift"; sourceTree = "<group>"; };
+		BFCE7D560E7713FD58F4D932 /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
 		BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WalkPath.swift; path = Model/WalkPath.swift; sourceTree = "<group>"; };
 		BFEDB85A2232F22100052D49 /* GeneralTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GeneralTableViewCell.swift; path = Cells/GeneralTableViewCell.swift; sourceTree = "<group>"; };
 		BFF41EB1204365E800E0696B /* SummaryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SummaryView.swift; path = Views/SummaryView.swift; sourceTree = "<group>"; };
@@ -344,10 +343,11 @@
 		DDBFEA9F1E787008002BBD96 /* RouteSelectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteSelectionView.swift; path = Views/RouteSelectionView.swift; sourceTree = "<group>"; };
 		DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteTableViewCell.swift; path = Cells/RouteTableViewCell.swift; sourceTree = "<group>"; };
 		DDE3BC221F5863D50014D2BB /* Place.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Place.swift; path = Model/Place.swift; sourceTree = "<group>"; };
-		DE1A6AF335384977A983BFF1 /* Pods_Today_Extension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Today_Extension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E337970C1FC1606D00BCB28F /* InformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InformationViewController.swift; path = Controllers/InformationViewController.swift; sourceTree = "<group>"; };
-		EC3AD4B56C4A98DA67267002 /* Pods-TCATTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.release.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.release.xcconfig"; sourceTree = "<group>"; };
-		EE8FC0E42324D82CCFEC7C05 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8A1C717EB340065803DAFD0 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6EF74B05355CCB79CA81128 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA07B88835AF4B4B57825EA7 /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
+		FDB1BCCCB27128551499EC7C /* Pods-TCATUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.debug.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -358,7 +358,7 @@
 				BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */,
 				BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */,
 				BF74AC1A1F945D7D00AFD4E4 /* GoogleMapsBase.framework in Frameworks */,
-				6934655577BDF2398A7C30F5 /* Pods_TCAT.framework in Frameworks */,
+				E68700B61F9B4E069D17931E /* Pods_TCAT.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,7 +366,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4319AD3A2AF4CCF507164129 /* Pods_TCATTests.framework in Frameworks */,
+				AD1B7F4DAC497BD369A28358 /* Pods_TCATTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,7 +374,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A3FFFF9AF010F35B5260E8BE /* Pods_TCATUITests.framework in Frameworks */,
+				DBA9547500B975532CFBE0E6 /* Pods_TCATUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,7 +390,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7EEF189D21B39C6200343FFD /* NotificationCenter.framework in Frameworks */,
-				371F7516EDE896E8F926165F /* Pods_Today_Extension.framework in Frameworks */,
+				F70127A0240B5B89045ED2B0 /* Pods_Today_Extension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -405,10 +405,10 @@
 				BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */,
 				7E14AEC02177E846006A344D /* IntentsUI.framework */,
 				7EEF189C21B39C6200343FFD /* NotificationCenter.framework */,
-				8FE444491ABFAAD81EF7AC44 /* Pods_TCAT.framework */,
-				3BDD89B15CA2409469349E8C /* Pods_TCATTests.framework */,
-				EE8FC0E42324D82CCFEC7C05 /* Pods_TCATUITests.framework */,
-				DE1A6AF335384977A983BFF1 /* Pods_Today_Extension.framework */,
+				E8A1C717EB340065803DAFD0 /* Pods_TCAT.framework */,
+				27C5CB0F6FDBF523F5ADA0C2 /* Pods_TCATTests.framework */,
+				F6EF74B05355CCB79CA81128 /* Pods_TCATUITests.framework */,
+				7F2FC5C9D02BA940FC57D58F /* Pods_Today_Extension.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -498,18 +498,18 @@
 		44BE841D0263A527944A6E0F /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				1DD024FEFC067440B1903BA7 /* Pods-TCAT.debug.xcconfig */,
-				2F4B7F4D04B5E76C3C373607 /* Pods-TCAT.release.xcconfig */,
-				9F442757DE5FC60C8503AD59 /* Pods-TCATTests.debug.xcconfig */,
-				EC3AD4B56C4A98DA67267002 /* Pods-TCATTests.release.xcconfig */,
-				BA18532E609F6EBE6371896C /* Pods-TCATUITests.debug.xcconfig */,
-				411FF1B280B230ABFD3ED4AD /* Pods-TCATUITests.release.xcconfig */,
-				8A2E117F9926062BFA4524F0 /* Pods-Today Extension.debug.xcconfig */,
-				BDC1610962A12E65217852F0 /* Pods-Today Extension.release.xcconfig */,
-				97EDE9962FD1276E1860CB00 /* Pods-TCAT.local.xcconfig */,
-				222D50AA32DFD72AAFF22E78 /* Pods-TCATTests.local.xcconfig */,
-				05362765A3FFE8B3AC21E499 /* Pods-TCATUITests.local.xcconfig */,
-				A7D92882EC47B11C442F68BC /* Pods-Today Extension.local.xcconfig */,
+				BFCE7D560E7713FD58F4D932 /* Pods-TCAT.debug.xcconfig */,
+				B4E42C41F3415E83D9F43607 /* Pods-TCAT.local.xcconfig */,
+				A781591737EAB3208B7C5185 /* Pods-TCAT.release.xcconfig */,
+				B9EE9A33DC0B648CAC3581D5 /* Pods-TCATTests.debug.xcconfig */,
+				AA4D65C70B34F6EB84BE347A /* Pods-TCATTests.local.xcconfig */,
+				45788A342647D19AE0D2823E /* Pods-TCATTests.release.xcconfig */,
+				FDB1BCCCB27128551499EC7C /* Pods-TCATUITests.debug.xcconfig */,
+				150AC52CEDC601C508F1CB76 /* Pods-TCATUITests.local.xcconfig */,
+				FA07B88835AF4B4B57825EA7 /* Pods-TCATUITests.release.xcconfig */,
+				5EA2F024E47855738046B69B /* Pods-Today Extension.debug.xcconfig */,
+				319A023F5367F28985F123A2 /* Pods-Today Extension.local.xcconfig */,
+				9184DD9DA907B4E003CB9F2E /* Pods-Today Extension.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -695,7 +695,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 449A7C9D1D80D0E80019300C /* Build configuration list for PBXNativeTarget "TCAT" */;
 			buildPhases = (
-				D8DDD726154D73C84EB51755 /* [CP] Check Pods Manifest.lock */,
+				1B3BBAEF4322E579A3144740 /* [CP] Check Pods Manifest.lock */,
 				449A7C711D80D0E80019300C /* Sources */,
 				449A7C721D80D0E80019300C /* Frameworks */,
 				7EE2479B23136DF7009C21ED /* Setup Firebase Environment GoogleService-Info.plist */,
@@ -703,8 +703,8 @@
 				E3FCA3C71FAA5AFB0069BD0F /* Fabric Configuration */,
 				2292F9DB215722ED00C8C931 /* SwiftLint Script */,
 				7E14AED52177E846006A344D /* Embed App Extensions */,
-				CB580393EA7A60B7144BB3D4 /* [CP] Embed Pods Frameworks */,
-				E4A868FF526A1649E71B9DA0 /* [CP] Copy Pods Resources */,
+				9A6FEFF1214CED5F4453A9FE /* [CP] Embed Pods Frameworks */,
+				5A33F199DB4AF04538DFC589 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -721,7 +721,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 449A7CA01D80D0E80019300C /* Build configuration list for PBXNativeTarget "TCATTests" */;
 			buildPhases = (
-				861CCA73B158AAD114C293EF /* [CP] Check Pods Manifest.lock */,
+				E0FFD300B4226CEC688B4F28 /* [CP] Check Pods Manifest.lock */,
 				449A7C851D80D0E80019300C /* Sources */,
 				449A7C861D80D0E80019300C /* Frameworks */,
 				449A7C871D80D0E80019300C /* Resources */,
@@ -740,7 +740,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 449A7CA31D80D0E80019300C /* Build configuration list for PBXNativeTarget "TCATUITests" */;
 			buildPhases = (
-				8D6C29C159EBE3790F81BFB2 /* [CP] Check Pods Manifest.lock */,
+				15D043B2A335054FC25D1EFA /* [CP] Check Pods Manifest.lock */,
 				449A7C901D80D0E80019300C /* Sources */,
 				449A7C911D80D0E80019300C /* Frameworks */,
 				449A7C921D80D0E80019300C /* Resources */,
@@ -776,7 +776,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7EEF18AA21B39C6300343FFD /* Build configuration list for PBXNativeTarget "Today Extension" */;
 			buildPhases = (
-				7A284AEEB17AB8B60847C27E /* [CP] Check Pods Manifest.lock */,
+				B2762DDD1EE5C968344BB5E8 /* [CP] Check Pods Manifest.lock */,
 				7EEF189721B39C6200343FFD /* Sources */,
 				7EEF189821B39C6200343FFD /* Frameworks */,
 				7EEF189921B39C6200343FFD /* Resources */,
@@ -933,83 +933,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2292F9DB215722ED00C8C931 /* SwiftLint Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "SwiftLint Script";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint autocorrect; swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
-		};
-		7A284AEEB17AB8B60847C27E /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Today Extension-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		7EE2479B23136DF7009C21ED /* Setup Firebase Environment GoogleService-Info.plist */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Setup Firebase Environment GoogleService-Info.plist";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Name of the resource we're selectively copying\nGOOGLESERVICE_INFO_PLIST=GoogleService-Info.plist\n\n# Get references to dev and prod versions of the GoogleService-Info.plist\n# NOTE: These should only live on the file system and should NOT be part of the target (since we'll be adding them to the target manually)\nGOOGLESERVICE_INFO_DEV=${PROJECT_DIR}/${TARGET_NAME}/Firebase/Dev/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PROD=${PROJECT_DIR}/${TARGET_NAME}/Firebase/Prod/${GOOGLESERVICE_INFO_PLIST}\n\n# Make sure the dev version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_DEV}\"\nif [ ! -f $GOOGLESERVICE_INFO_DEV ]\nthen\necho \"No Development GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\nexit 1\nfi\n\n# Make sure the prod version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PROD}\"\nif [ ! -f $GOOGLESERVICE_INFO_PROD ]\nthen\necho \"No Production GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\nexit 1\nfi\n\n# Get a reference to the destination location for the GoogleService-Info.plist\nPLIST_DESTINATION=${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\necho \"Will copy ${GOOGLESERVICE_INFO_PLIST} to final destination: ${PLIST_DESTINATION}\"\n\n# Copy over the prod GoogleService-Info.plist for Release builds\nif [ \"${CONFIGURATION}\" == \"Release\" ]\nthen\necho \"Using ${GOOGLESERVICE_INFO_PROD}\"\ncp \"${GOOGLESERVICE_INFO_PROD}\" \"${PLIST_DESTINATION}\"\nelse\necho \"Using ${GOOGLESERVICE_INFO_DEV}\"\ncp \"${GOOGLESERVICE_INFO_DEV}\" \"${PLIST_DESTINATION}\"\nfi\n";
-		};
-		861CCA73B158AAD114C293EF /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-TCATTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8D6C29C159EBE3790F81BFB2 /* [CP] Check Pods Manifest.lock */ = {
+		15D043B2A335054FC25D1EFA /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1031,7 +955,79 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CB580393EA7A60B7144BB3D4 /* [CP] Embed Pods Frameworks */ = {
+		1B3BBAEF4322E579A3144740 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TCAT-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		2292F9DB215722ED00C8C931 /* SwiftLint Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "SwiftLint Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint autocorrect; swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+		5A33F199DB4AF04538DFC589 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7EE2479B23136DF7009C21ED /* Setup Firebase Environment GoogleService-Info.plist */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Setup Firebase Environment GoogleService-Info.plist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Name of the resource we're selectively copying\nGOOGLESERVICE_INFO_PLIST=GoogleService-Info.plist\n\n# Get references to dev and prod versions of the GoogleService-Info.plist\n# NOTE: These should only live on the file system and should NOT be part of the target (since we'll be adding them to the target manually)\nGOOGLESERVICE_INFO_DEV=${PROJECT_DIR}/${TARGET_NAME}/Firebase/Dev/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PROD=${PROJECT_DIR}/${TARGET_NAME}/Firebase/Prod/${GOOGLESERVICE_INFO_PLIST}\n\n# Make sure the dev version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_DEV}\"\nif [ ! -f $GOOGLESERVICE_INFO_DEV ]\nthen\necho \"No Development GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\nexit 1\nfi\n\n# Make sure the prod version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PROD}\"\nif [ ! -f $GOOGLESERVICE_INFO_PROD ]\nthen\necho \"No Production GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\nexit 1\nfi\n\n# Get a reference to the destination location for the GoogleService-Info.plist\nPLIST_DESTINATION=${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\necho \"Will copy ${GOOGLESERVICE_INFO_PLIST} to final destination: ${PLIST_DESTINATION}\"\n\n# Copy over the prod GoogleService-Info.plist for Release builds\nif [ \"${CONFIGURATION}\" == \"Release\" ]\nthen\necho \"Using ${GOOGLESERVICE_INFO_PROD}\"\ncp \"${GOOGLESERVICE_INFO_PROD}\" \"${PLIST_DESTINATION}\"\nelse\necho \"Using ${GOOGLESERVICE_INFO_DEV}\"\ncp \"${GOOGLESERVICE_INFO_DEV}\" \"${PLIST_DESTINATION}\"\nfi\n";
+		};
+		9A6FEFF1214CED5F4453A9FE /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1077,7 +1073,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D8DDD726154D73C84EB51755 /* [CP] Check Pods Manifest.lock */ = {
+		B2762DDD1EE5C968344BB5E8 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1092,7 +1088,29 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-TCAT-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Today Extension-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E0FFD300B4226CEC688B4F28 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TCATTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1112,24 +1130,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "FABRIC_API_KEY=$(/usr/libexec/PlistBuddy -c \"Print :fabric-api-key\" \"${PROJECT_DIR}/TCAT/Supporting Files/Keys.plist\")\n\nFABRIC_BUILD_SECRET=$(/usr/libexec/PlistBuddy -c \"Print :fabric-build-secret\" \"${PROJECT_DIR}/TCAT/Supporting Files/Keys.plist\")\n\n\"${PODS_ROOT}/Fabric/run\" $FABRIC_API_KEY $FABRIC_BUILD_SECRET\n\n";
-		};
-		E4A868FF526A1649E71B9DA0 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh",
-				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1397,7 +1397,7 @@
 		};
 		449A7C9F1D80D0E80019300C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2F4B7F4D04B5E76C3C373607 /* Pods-TCAT.release.xcconfig */;
+			baseConfigurationReference = A781591737EAB3208B7C5185 /* Pods-TCAT.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1417,7 +1417,7 @@
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.9;
+				MARKETING_VERSION = 1.9.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1430,7 +1430,7 @@
 		};
 		449A7CA21D80D0E80019300C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EC3AD4B56C4A98DA67267002 /* Pods-TCATTests.release.xcconfig */;
+			baseConfigurationReference = 45788A342647D19AE0D2823E /* Pods-TCATTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CURRENT_PROJECT_VERSION = 47;
@@ -1446,7 +1446,7 @@
 		};
 		449A7CA51D80D0E80019300C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 411FF1B280B230ABFD3ED4AD /* Pods-TCATUITests.release.xcconfig */;
+			baseConfigurationReference = FA07B88835AF4B4B57825EA7 /* Pods-TCATUITests.release.xcconfig */;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 47;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1478,7 +1478,7 @@
 				INFOPLIST_FILE = Siri/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.9;
+				MARKETING_VERSION = 1.9.1;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.Siri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1490,7 +1490,7 @@
 		};
 		7EEF18A821B39C6300343FFD /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8A2E117F9926062BFA4524F0 /* Pods-Today Extension.debug.xcconfig */;
+			baseConfigurationReference = 5EA2F024E47855738046B69B /* Pods-Today Extension.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_APP_DISPLAY_NAME = "Ithaca Transit Beta";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1509,7 +1509,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Today Extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.9;
+				MARKETING_VERSION = 1.9.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug.TodayExtension;
@@ -1526,7 +1526,7 @@
 		};
 		7EEF18A921B39C6300343FFD /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BDC1610962A12E65217852F0 /* Pods-Today Extension.release.xcconfig */;
+			baseConfigurationReference = 9184DD9DA907B4E003CB9F2E /* Pods-Today Extension.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_APP_DISPLAY_NAME = "Ithaca Transit";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1544,7 +1544,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Today Extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.9;
+				MARKETING_VERSION = 1.9.1;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.TodayExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1559,7 +1559,7 @@
 		};
 		7EF8DCD722470DD20052D522 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8A2E117F9926062BFA4524F0 /* Pods-Today Extension.debug.xcconfig */;
+			baseConfigurationReference = 5EA2F024E47855738046B69B /* Pods-Today Extension.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Today Extension/Today Extension.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1578,7 +1578,7 @@
 		};
 		7EF8DCD822470DD20052D522 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BDC1610962A12E65217852F0 /* Pods-Today Extension.release.xcconfig */;
+			baseConfigurationReference = 9184DD9DA907B4E003CB9F2E /* Pods-Today Extension.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Today Extension/Today Extension.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1656,7 +1656,7 @@
 		};
 		BFF7E5EF223BFDF0001C6032 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1DD024FEFC067440B1903BA7 /* Pods-TCAT.debug.xcconfig */;
+			baseConfigurationReference = BFCE7D560E7713FD58F4D932 /* Pods-TCAT.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1676,7 +1676,7 @@
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.9;
+				MARKETING_VERSION = 1.9.1;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DDEBUG";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "$(inherited) \"-D\" \"COCOAPODS\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug;
@@ -1691,7 +1691,7 @@
 		};
 		BFF7E5F0223BFDF0001C6032 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9F442757DE5FC60C8503AD59 /* Pods-TCATTests.debug.xcconfig */;
+			baseConfigurationReference = B9EE9A33DC0B648CAC3581D5 /* Pods-TCATTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CURRENT_PROJECT_VERSION = 47;
@@ -1707,7 +1707,7 @@
 		};
 		BFF7E5F1223BFDF0001C6032 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BA18532E609F6EBE6371896C /* Pods-TCATUITests.debug.xcconfig */;
+			baseConfigurationReference = FDB1BCCCB27128551499EC7C /* Pods-TCATUITests.debug.xcconfig */;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 47;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1740,7 +1740,7 @@
 				INFOPLIST_FILE = Siri/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.9;
+				MARKETING_VERSION = 1.9.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug.Siri;
@@ -1813,7 +1813,7 @@
 		};
 		C27549D5233491FA00D5A754 /* Local */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 97EDE9962FD1276E1860CB00 /* Pods-TCAT.local.xcconfig */;
+			baseConfigurationReference = B4E42C41F3415E83D9F43607 /* Pods-TCAT.local.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1833,7 +1833,7 @@
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.9;
+				MARKETING_VERSION = 1.9.1;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DLOCAL";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "$(inherited) \"-D\" \"COCOAPODS\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug;
@@ -1848,7 +1848,7 @@
 		};
 		C27549D6233491FA00D5A754 /* Local */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 222D50AA32DFD72AAFF22E78 /* Pods-TCATTests.local.xcconfig */;
+			baseConfigurationReference = AA4D65C70B34F6EB84BE347A /* Pods-TCATTests.local.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CURRENT_PROJECT_VERSION = 47;
@@ -1864,7 +1864,7 @@
 		};
 		C27549D7233491FA00D5A754 /* Local */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 05362765A3FFE8B3AC21E499 /* Pods-TCATUITests.local.xcconfig */;
+			baseConfigurationReference = 150AC52CEDC601C508F1CB76 /* Pods-TCATUITests.local.xcconfig */;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 47;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1897,7 +1897,7 @@
 				INFOPLIST_FILE = Siri/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.9;
+				MARKETING_VERSION = 1.9.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug.Siri;
@@ -1911,7 +1911,7 @@
 		};
 		C27549D9233491FA00D5A754 /* Local */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A7D92882EC47B11C442F68BC /* Pods-Today Extension.local.xcconfig */;
+			baseConfigurationReference = 319A023F5367F28985F123A2 /* Pods-Today Extension.local.xcconfig */;
 			buildSettings = {
 				BUNDLE_APP_DISPLAY_NAME = "Ithaca Transit Beta";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1930,7 +1930,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Today Extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.9;
+				MARKETING_VERSION = 1.9.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug.TodayExtension;
