@@ -7,7 +7,7 @@
 //
 // To log an event, use the shared RegisterSession (RegisterSession.shared)
 
-import Crashlytics
+import FirebaseCrashlytics
 import Foundation
 import SwiftyJSON
 
