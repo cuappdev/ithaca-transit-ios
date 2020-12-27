@@ -10,7 +10,7 @@ inhibit_all_warnings!
 target 'TCAT' do
     
     # Location
-    pod 'GoogleMaps', '~> 3.1'
+    pod 'GoogleMaps'
     
     # Networking + Data
     pod 'SwiftyJSON', '~> 5.0'
@@ -18,9 +18,8 @@ target 'TCAT' do
     pod 'Wormholy', :configurations => ['Debug']
     
     # Analytics
-    pod 'Crashlytics', '~> 3.12'
-    pod 'Fabric', '~> 1.9'
-    pod 'Firebase/Core'
+    pod 'Firebase'
+    pod 'FirebaseCrashlytics'
     
     # File Management
     pod 'Zip', '~> 1.1'
@@ -61,8 +60,8 @@ target 'Today Extension' do
     pod 'FutureNova', :git => 'https://github.com/cuappdev/ios-networking.git'
  
     # Analytics
-    pod 'Crashlytics', '~> 3.12'
-    
+    pod 'Firebase'
+    pod 'FirebaseCrashlytics'
 end
 
 # Added for NotificationBannerSwift build issue

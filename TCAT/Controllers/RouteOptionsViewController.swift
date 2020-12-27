@@ -7,8 +7,8 @@
 //
 
 import CoreLocation
-import Crashlytics
 import DZNEmptyDataSet
+import FirebaseCrashlytics
 import FutureNova
 import Intents
 import NotificationBannerSwift

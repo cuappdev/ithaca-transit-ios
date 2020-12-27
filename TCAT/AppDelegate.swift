@@ -7,9 +7,8 @@
 //
 
 import AppDevAnnouncements
-import Crashlytics
-import Fabric
 import Firebase
+import FirebaseCrashlytics
 import FutureNova
 import GoogleMaps
 import Intents
