@@ -65,7 +65,11 @@ class Time {
 
     /// Calculates time bt 2 dates, returns DateComponents
     static func dateComponents(from startTime: Date, to endTime: Date) -> DateComponents {
-        return Calendar.current.dateComponents([.hour, .minute, .day], from: truncateSeconds(from: startTime), to: truncateSeconds(from: endTime))
+        return Calendar.current.dateComponents(
+            [.hour, .minute, .day],
+            from: truncateSeconds(from: startTime),
+            to: truncateSeconds(from: endTime)
+        )
     }
 
     /// Calculates dateComponenets for a single date

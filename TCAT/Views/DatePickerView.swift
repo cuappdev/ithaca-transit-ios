@@ -72,7 +72,8 @@ class DatePickerView: UIView {
         segmentedControl.tintColor = Colors.tcatBlue
         segmentedControl.setTitleTextAttributes(
             [.font: UIFont.getFont(.regular, size: 13.0)],
-            for: .normal)
+            for: .normal
+        )
     }
 
     private func setSegmentedControlOptions(_ segmentedContol: UISegmentedControl, options: [String]) {
@@ -85,7 +86,11 @@ class DatePickerView: UIView {
         styleSegmentedControl(timeTypeSegmentedControl)
         setSegmentedControlOptions(timeTypeSegmentedControl, options: [leaveAtElement.title, arriveByElement.title])
         timeTypeSegmentedControl.selectedSegmentIndex = leaveAtElement.index
-        timeTypeSegmentedControl.addTarget(self, action: #selector(timeTypeSegmentedControlValueChanged(segmentControl:)), for: .valueChanged)
+        timeTypeSegmentedControl.addTarget(
+            self,
+            action: #selector(timeTypeSegmentedControlValueChanged(segmentControl:)),
+            for: .valueChanged
+        )
 
         addSubview(timeTypeSegmentedControl)
     }
@@ -93,7 +98,11 @@ class DatePickerView: UIView {
     private func setupLeaveNowSegmentedControl() {
         styleSegmentedControl(leaveNowSegmentedControl)
         setSegmentedControlOptions(leaveNowSegmentedControl, options: [leaveNowElement.title])
-        leaveNowSegmentedControl.addTarget(self, action: #selector(leaveNowSegmentedControlValueChanged(segmentControl:)), for: .valueChanged)
+        leaveNowSegmentedControl.addTarget(
+            self,
+            action: #selector(leaveNowSegmentedControlValueChanged(segmentControl:)),
+            for: .valueChanged
+        )
 
         addSubview(leaveNowSegmentedControl)
     }

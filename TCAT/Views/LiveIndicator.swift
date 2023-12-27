@@ -69,7 +69,14 @@ class LiveIndicator: UIView {
 
     private func getCircleLayer(color: UIColor) -> CAShapeLayer {
         let diameter = intrinsicContentSize.height / 5
-        let circlePath = UIBezierPath(ovalIn: CGRect(x: 0, y: intrinsicContentSize.height - diameter, width: diameter, height: diameter))
+        let circlePath = UIBezierPath(
+            ovalIn: CGRect(
+                x: 0,
+                y: intrinsicContentSize.height - diameter,
+                width: diameter,
+                height: diameter
+            )
+        )
 
         let circleLayer = CAShapeLayer()
         circleLayer.path = circlePath.cgPath
@@ -128,8 +135,14 @@ class LiveIndicator: UIView {
         var timeInterval: TimeInterval = 0
 
         for layer in [circleLayer, smallArcLayer, largeArcLayer] {
-            let timer = Timer(fireAt: Date().addingTimeInterval(timeInterval), interval: LiveIndicator.interval, target: self,
-                              selector: #selector(self.animateLayer), userInfo: layer, repeats: true)
+            let timer = Timer(
+                fireAt: Date().addingTimeInterval(timeInterval),
+                interval: LiveIndicator.interval,
+                target: self,
+                selector: #selector(self.animateLayer),
+                userInfo: layer,
+                repeats: true
+            )
             RunLoop.main.add(timer, forMode: RunLoop.Mode.common)
             timeInterval += LiveIndicator.duration
         }

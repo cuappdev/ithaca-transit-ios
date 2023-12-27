@@ -155,6 +155,7 @@ class RouteOptionsViewController: UIViewController {
         routeTimer?.invalidate()
         updateTimer?.invalidate()
         // Remove notification observer
+        // swift-lint:disable:next notification_center_detachment
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -190,7 +191,10 @@ class RouteOptionsViewController: UIViewController {
         routeResults.emptyDataSetSource = self
         routeResults.emptyDataSetDelegate = self
         routeResults.contentOffset = .zero
-        routeResults.register(RouteTableViewCell.self, forCellReuseIdentifier: Constants.Cells.routeOptionsCellIdentifier)
+        routeResults.register(
+            RouteTableViewCell.self,
+            forCellReuseIdentifier: Constants.Cells.routeOptionsCellIdentifier
+        )
 
         setupRefreshControl()
 
@@ -219,7 +223,12 @@ class RouteOptionsViewController: UIViewController {
     private func setupDatePickerOverlay() {
         datePickerOverlay.backgroundColor = Colors.black
         datePickerOverlay.alpha = 0
-        datePickerOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissDatePicker)))
+        datePickerOverlay.addGestureRecognizer(
+            UITapGestureRecognizer(
+                target: self,
+                action: #selector(self.dismissDatePicker)
+            )
+        )
         view.addSubview(datePickerOverlay)
         view.sendSubviewToBack(datePickerOverlay)
     }
@@ -306,8 +315,12 @@ class RouteOptionsViewController: UIViewController {
             placeholder = Constants.General.toSearchBarPlaceholder
         }
 
-        if let textFieldInsideSearchBar = searchBarView.searchController?.searchBar.value(forKey: "searchField") as? UITextField {
-            textFieldInsideSearchBar.attributedPlaceholder = NSAttributedString(string: placeholder) // make placeholder invisible
+        if let textFieldInsideSearchBar = searchBarView.searchController?.searchBar.value(
+            forKey: "searchField"
+        ) as? UITextField {
+            textFieldInsideSearchBar.attributedPlaceholder = NSAttributedString(
+                string: placeholder // make placeholder invisible
+            )
             textFieldInsideSearchBar.text = searchBarText
         }
 
@@ -371,7 +384,10 @@ class RouteOptionsViewController: UIViewController {
                         let departTime = direction.startTime
                         let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
                         var delayState: DelayState!
-                        let isLateDelay = Time.compare(date1: delayedDepartTime, date2: departTime) == .orderedDescending
+                        let isLateDelay = Time.compare(
+                            date1: delayedDepartTime,
+                            date2: departTime
+                        ) == .orderedDescending
                         if isLateDelay {
                             delayState = DelayState.late(date: delayedDepartTime)
                         } else {
@@ -436,7 +452,10 @@ class RouteOptionsViewController: UIViewController {
 
             // Search For Routes Errors
 
-            guard let areValidCoordinates = self.checkPlaceCoordinates(startPlace: searchFrom, endPlace: searchTo) else {
+            guard let areValidCoordinates = self.checkPlaceCoordinates(
+                startPlace: searchFrom,
+                endPlace: searchTo
+            ) else {
                 // Place(s) don't have coordinates assigned
                 self.requestDidFinish(perform: [
                     .showError(
@@ -580,11 +599,15 @@ class RouteOptionsViewController: UIViewController {
 
         routes = []
         requestDidFinish(perform: [
-            .showError(bannerInfo: BannerInfo(title: Constants.Banner.cantConnectServer, style: .danger),
-                       payload: NetworkErrorPayload(
-                        location: "\(self) Get Routes",
-                        type: title,
-                        description: description
+            .showError(
+                bannerInfo: BannerInfo(
+                    title: Constants.Banner.cantConnectServer,
+                    style: .danger
+                ),
+                payload: NetworkErrorPayload(
+                    location: "\(self) Get Routes",
+                    type: title,
+                    description: description
                 )
             )
         ])
@@ -595,12 +618,14 @@ class RouteOptionsViewController: UIViewController {
         let latitudeValues = [startPlace.latitude, endPlace.latitude]
         let longitudeValues  = [startPlace.longitude, endPlace.longitude]
 
-        let validLatitudes = latitudeValues.reduce(true) { (result, latitude) -> Bool in
+        // swift-lint:disable:next reduce_boolean
+        let validLatitudes = latitudeValues.reduce(true) { result, latitude in
             return result && latitude <= Constants.Values.RouteBorders.northBorder &&
                 latitude >= Constants.Values.RouteBorders.southBorder
         }
 
-        let validLongitudes = longitudeValues.reduce(true) { (result, longitude) -> Bool in
+        // swift-lint:disable:next reduce_boolean
+        let validLongitudes = longitudeValues.reduce(true) { result, longitude in
             return result && longitude <= Constants.Values.RouteBorders.eastBorder &&
                 longitude >= Constants.Values.RouteBorders.westBorder
         }
@@ -621,7 +646,10 @@ class RouteOptionsViewController: UIViewController {
                 banner = StatusBarNotificationBanner(title: bannerInfo.title, style: bannerInfo.style)
                 banner?.autoDismiss = false
                 banner?.dismissOnTap = true
-                banner?.show(queue: NotificationBannerQueue(maxBannersOnScreenSimultaneously: 1), on: navigationController)
+                banner?.show(
+                    queue: NotificationBannerQueue(maxBannersOnScreenSimultaneously: 1),
+                    on: navigationController
+                )
 
                 TransitAnalytics.shared.log(payload)
             case .hideBanner:
@@ -676,9 +704,11 @@ class RouteOptionsViewController: UIViewController {
 
         let routeOptionsCell = routeResults.cellForRow(at: indexPath) as? RouteTableViewCell
 
-        let contentViewController = RouteDetailContentViewController(route: route,
-                                                                     currentLocation: routeDetailCurrentLocation,
-                                                                     routeOptionsCell: routeOptionsCell)
+        let contentViewController = RouteDetailContentViewController(
+            route: route,
+            currentLocation: routeDetailCurrentLocation,
+            routeOptionsCell: routeOptionsCell
+        )
 
         guard let drawerViewController = contentViewController.getDrawerDisplayController() else {
             return nil

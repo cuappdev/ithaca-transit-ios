@@ -165,15 +165,19 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
 
         switch section.items[indexPath.row] {
         case .busStop(let busStop):
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.busStopDetailCellIdentifier) as? BusStopTableViewCell
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: Constants.Cells.busStopDetailCellIdentifier
+            ) as? BusStopTableViewCell
                 else { return UITableViewCell() }
             cell.configure(for: busStop.name)
             return cell
         case .direction(let direction):
             switch direction.type {
             case .walk, .arrive:
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.smallDetailCellIdentifier, for: indexPath) as? SmallDetailTableViewCell
-                    else { return UITableViewCell() }
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: Constants.Cells.smallDetailCellIdentifier,
+                    for: indexPath
+                ) as? SmallDetailTableViewCell else { return UITableViewCell() }
                 cell.configure(
                     for: direction,
                     isFirstStep: indexPath.row == 0,
@@ -181,7 +185,9 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                 )
                 return cell
             default:
-                let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.largeDetailCellIdentifier) as! LargeDetailTableViewCell
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: Constants.Cells.largeDetailCellIdentifier
+                ) as? LargeDetailTableViewCell else { return UITableViewCell() }
                 cell.configure(
                     for: direction,
                     isFirstStep: indexPath.row == 0,
@@ -191,8 +197,9 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                 return cell
             }
         case .notificationType(let type):
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.notificationToggleCellIdentifier) as? NotificationToggleTableViewCell
-                else { return UITableViewCell() }
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: Constants.Cells.notificationToggleCellIdentifier
+            ) as? NotificationToggleTableViewCell else { return UITableViewCell() }
             cell.configure(
                 for: type,
                 isFirst: indexPath.row == 0,
@@ -223,8 +230,9 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         // Empty Footer
-        let emptyFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.emptyFooterView) ??
-            UITableViewHeaderFooterView(reuseIdentifier: Constants.Footers.emptyFooterView)
+        let emptyFooterView = tableView.dequeueReusableHeaderFooterView(
+            withIdentifier: Constants.Footers.emptyFooterView
+        ) ?? UITableViewHeaderFooterView(reuseIdentifier: Constants.Footers.emptyFooterView)
 
         emptyFooterView.contentView.backgroundColor = Colors.white
 
@@ -251,8 +259,11 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
 
         if let message = message,
             sections[section].type == .routeDetail {
-            let phraseLabelFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.Footers.phraseLabelFooterView)
-                as? PhraseLabelFooterView ?? PhraseLabelFooterView(reuseIdentifier: Constants.Footers.phraseLabelFooterView)
+            let phraseLabelFooterView = tableView.dequeueReusableHeaderFooterView(
+                withIdentifier: Constants.Footers.phraseLabelFooterView
+            ) as? PhraseLabelFooterView ?? PhraseLabelFooterView(
+                reuseIdentifier: Constants.Footers.phraseLabelFooterView
+            )
             phraseLabelFooterView.configure(with: message)
             return phraseLabelFooterView
         }

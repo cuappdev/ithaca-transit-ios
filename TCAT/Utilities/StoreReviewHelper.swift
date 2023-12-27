@@ -57,7 +57,7 @@ class StoreReviewHelper {
         switch appOpenCount {
         case firstRequestLaunchCount, secondRequestLaunchCount, thirdRequestLaunchCount:
             StoreReviewHelper.shared.requestReview()
-        case _ where appOpenCount % futureRequestInterval == 0 :
+        case _ where appOpenCount % futureRequestInterval == 0:
             StoreReviewHelper.shared.requestReview()
         default:
             break

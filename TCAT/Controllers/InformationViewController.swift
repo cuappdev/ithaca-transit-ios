@@ -13,14 +13,17 @@ import UIKit
 class InformationViewController: UIViewController {
 
     private var content: [[(name: String, action: Selector)]] = [
-        [ // Section 0
+        [
+            // Section 0
             (name: Constants.InformationView.serviceAlerts, action: #selector(showServiceAlerts))
         ],
-        [ // Section 1
+        [
+            // Section 1
             (name: Constants.InformationView.onboarding, action: #selector(presentOnboarding)),
             (name: Constants.InformationView.sendFeedback, action: #selector(sendFeedback))
         ],
-        [ // Section 2
+        [
+            // Section 2
             (name: Constants.InformationView.moreApps, action: #selector(showMoreApps)),
             (name: Constants.InformationView.website, action: #selector(openTeamWebsite))
         ]
@@ -141,25 +144,37 @@ class InformationViewController: UIViewController {
             let title = Constants.Alerts.EmailFailure.title
             let message = Constants.Alerts.EmailFailure.message
             let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.emailSettings, style: .default, handler: { _ in
-                let path = "App-Prefs:"
-                if let url = URL(string: path), UIApplication.shared.canOpenURL(url) {
-                    self.open(path, inApp: false)
-                } else {
-                    self.open(UIApplication.openSettingsURLString)
+            alertController.addAction(UIAlertAction(
+                title: Constants.Alerts.EmailFailure.emailSettings,
+                style: .default,
+                handler: { _ in
+                    let path = "App-Prefs:"
+                    if let url = URL(string: path), UIApplication.shared.canOpenURL(url) {
+                        self.open(path, inApp: false)
+                    } else {
+                        self.open(UIApplication.openSettingsURLString)
+                    }
+                    let payload = FeedbackErrorPayload(description: "Opened Email Settings")
+                    TransitAnalytics.shared.log(payload)
                 }
-                let payload = FeedbackErrorPayload(description: "Opened Email Settings")
-                TransitAnalytics.shared.log(payload)
-            }))
-            alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.copyEmail, style: .default, handler: { _ in
-                UIPasteboard.general.string = Constants.App.contactEmailAddress
-                let payload = FeedbackErrorPayload(description: "Copy Address to Clipboard")
-                TransitAnalytics.shared.log(payload)
-            }))
-            alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.cancel, style: .default, handler: { _ in
-                let payload = FeedbackErrorPayload(description: "Cancelled")
-                TransitAnalytics.shared.log(payload)
-            }))
+            ))
+            alertController.addAction(UIAlertAction(
+                title: Constants.Alerts.EmailFailure.copyEmail,
+                style: .default,
+                handler: { _ in
+                    UIPasteboard.general.string = Constants.App.contactEmailAddress
+                    let payload = FeedbackErrorPayload(description: "Copy Address to Clipboard")
+                    TransitAnalytics.shared.log(payload)
+                }
+            ))
+            alertController.addAction(UIAlertAction(
+                title: Constants.Alerts.EmailFailure.cancel,
+                style: .default,
+                handler: { _ in
+                    let payload = FeedbackErrorPayload(description: "Cancelled")
+                    TransitAnalytics.shared.log(payload)
+                }
+            ))
             present(alertController, animated: true)
         }
     }
@@ -192,7 +207,10 @@ extension InformationViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // Initalize and format cell
-        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.informationCellIdentifier, for: indexPath)
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: Constants.Cells.informationCellIdentifier,
+            for: indexPath
+        )
         cell.selectionStyle = .none
         cell.backgroundColor = Colors.white
         cell.textLabel?.textColor = Colors.primaryText
@@ -224,7 +242,11 @@ extension InformationViewController: UITableViewDelegate {
 
 extension InformationViewController: MFMailComposeViewControllerDelegate {
 
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Swift.Error?) {
+    func mailComposeController(
+        _ controller: MFMailComposeViewController,
+        didFinishWith result: MFMailComposeResult,
+        error: Swift.Error?
+    ) {
         controller.dismiss(animated: true)
         if let error = error {
             printClass(context: "Mail error", message: error.localizedDescription)

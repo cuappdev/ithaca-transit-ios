@@ -16,14 +16,18 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
     @objc func handleLongPressGesture(_ sender: UILongPressGestureRecognizer) {
         if sender.state == .began {
             let point = sender.location(in: routeResults)
-            if let indexPath = routeResults.indexPathForRow(at: point), let cell = routeResults.cellForRow(at: indexPath) {
+            if let indexPath = routeResults.indexPathForRow(at: point),
+               let cell = routeResults.cellForRow(at: indexPath) {
                 let route = routes[indexPath.section][indexPath.row]
                 presentShareSheet(from: view, for: route, with: cell.getImage())
             }
         }
     }
 
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+    func previewingContext(
+        _ previewingContext: UIViewControllerPreviewing,
+        viewControllerForLocation location: CGPoint
+    ) -> UIViewController? {
         let point = view.convert(location, to: routeResults)
 
         guard
@@ -44,7 +48,10 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
         return routeDetailViewController
     }
 
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+    func previewingContext(
+        _ previewingContext: UIViewControllerPreviewing,
+        commit viewControllerToCommit: UIViewController
+    ) {
         navigationController?.pushViewController(viewControllerToCommit, animated: true)
     }
 }
@@ -85,15 +92,19 @@ extension RouteOptionsViewController: DestinationDelegate {
 // MARK: - DatePickerViewDelegate
 extension RouteOptionsViewController: DatePickerViewDelegate {
     @objc func dismissDatePicker() {
-        UIView.animate(withDuration: 0.5, animations: {
-            self.setupConstraintsForHiddenDatePickerView()
-            self.datePickerOverlay.alpha = 0.0
+        UIView.animate(
+            withDuration: 0.5,
+            animations: {
+                self.setupConstraintsForHiddenDatePickerView()
+                self.datePickerOverlay.alpha = 0.0
 
-            self.view.layoutIfNeeded()
-        }, completion: { (_) in
-            self.view.sendSubviewToBack(self.datePickerOverlay)
-            self.view.sendSubviewToBack(self.datePickerView)
-        })
+                self.view.layoutIfNeeded()
+            },
+            completion: { _ in
+                self.view.sendSubviewToBack(self.datePickerOverlay)
+                self.view.sendSubviewToBack(self.datePickerView)
+            }
+        )
     }
 
     func saveDatePickerDate(for date: Date, searchType: SearchType) {
@@ -125,17 +136,34 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
         if error._code == CLError.denied.rawValue {
             locationManager.stopUpdatingLocation()
 
-            let alertController = UIAlertController(title: Constants.Alerts.LocationPermissions.title, message: Constants.Alerts.LocationPermissions.message, preferredStyle: .alert)
+            let alertController = UIAlertController(
+                title: Constants.Alerts.LocationPermissions.title,
+                message: Constants.Alerts.LocationPermissions.message,
+                preferredStyle: .alert
+            )
 
-            let settingsAction = UIAlertAction(title: Constants.Alerts.GeneralActions.settings, style: .default) { (_) in
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            let settingsAction = UIAlertAction(
+                title: Constants.Alerts.GeneralActions.settings,
+                style: .default
+            ) { _ in
+                UIApplication.shared.open(
+                    URL(string: UIApplication.openSettingsURLString)!,
+                    options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]),
+                    completionHandler: nil
+                )
             }
 
-            guard let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool else {
+            guard let showReminder = userDefaults.value(
+                forKey: Constants.UserDefaults.showLocationAuthReminder
+            ) as? Bool else {
 
                 userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
 
-                let cancelAction = UIAlertAction(title: Constants.Alerts.GeneralActions.cancel, style: .default, handler: nil)
+                let cancelAction = UIAlertAction(
+                    title: Constants.Alerts.GeneralActions.cancel,
+                    style: .default,
+                    handler: nil
+                )
                 alertController.addAction(cancelAction)
 
                 alertController.addAction(settingsAction)
@@ -150,7 +178,10 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
                 return
             }
 
-            let dontRemindAgainAction = UIAlertAction(title: Constants.Alerts.GeneralActions.dontRemind, style: .default) { (_) in
+            let dontRemindAgainAction = UIAlertAction(
+                title: Constants.Alerts.GeneralActions.dontRemind,
+                style: .default
+            ) { _ in
                 userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
             }
             alertController.addAction(dontRemindAgainAction)
@@ -210,14 +241,18 @@ extension RouteOptionsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.routeOptionsCellIdentifier, for: indexPath) as? RouteTableViewCell
-            else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: Constants.Cells.routeOptionsCellIdentifier,
+            for: indexPath
+        ) as? RouteTableViewCell else { return UITableViewCell() }
 
         let route = routes[indexPath.section][indexPath.row]
         cell.configure(for: route, delayState: delayDictionary[route.routeId])
 
         // Add share action for long press gestures on non 3D Touch devices
-        let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
+        let longPressGestureRecognizer = UILongPressGestureRecognizer(
+            target: self, action: #selector(handleLongPressGesture(_:))
+        )
         cell.addGestureRecognizer(longPressGestureRecognizer)
 
         setCellUserInteraction(cell, to: cellUserInteraction)
@@ -341,7 +376,9 @@ extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDele
         let titleLabel = UILabel()
         titleLabel.font = .getFont(.regular, size: 18.0)
         titleLabel.textColor = Colors.metadataIcon
-        titleLabel.text = showRouteSearchingLoader ? Constants.EmptyStateMessages.lookingForRoutes : Constants.EmptyStateMessages.noRoutesFound
+        titleLabel.text = showRouteSearchingLoader
+            ? Constants.EmptyStateMessages.lookingForRoutes
+            : Constants.EmptyStateMessages.noRoutesFound
 
         customView.addSubview(symbolView)
         customView.addSubview(titleLabel)
@@ -394,20 +431,25 @@ extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDele
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(
+    _ input: [String: Any]
+) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in
+        (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }
 
 extension RouteOptionsViewController: RouteSelectionViewDelegate {
     func swapFromAndTo() {
-        //Swap data
+        // Swap data
         let searchFromOld = searchFrom
         searchFrom = searchTo
         searchTo = searchFromOld
 
-        //Update UI
-        routeSelection.updateSearchBarTitles(from: searchFrom?.name ?? "",
-                                             to: searchTo.name)
+        // Update UI
+        routeSelection.updateSearchBarTitles(
+            from: searchFrom?.name ?? "",
+            to: searchTo.name
+        )
 
         searchForRoutes()
 

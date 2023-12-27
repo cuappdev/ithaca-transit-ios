@@ -41,11 +41,6 @@ target 'TCAT' do
         # Pods for testing
     end
     
-    target 'TCATUITests' do
-        inherit! :search_paths
-        # Pods for testing
-    end
-    
 end
 
 # Pods for Today Extension

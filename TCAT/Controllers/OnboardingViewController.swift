@@ -18,13 +18,6 @@ class OnboardingViewController: PresentationController {
         let top: CGFloat
         let speed: CGFloat
 
-        init(name: String, left: CGFloat, top: CGFloat, speed: CGFloat) {
-            self.name = name
-            self.left = left
-            self.top = top
-            self.speed = speed
-        }
-
         func positionAt(_ index: Int) -> Position? {
             var position: Position?
 
@@ -131,12 +124,16 @@ class OnboardingViewController: PresentationController {
 
                 desiredViewController.view.addSubview(snapshot)
                 window.rootViewController = desiredViewController
-                UIView.animate(withDuration: 0.5, animations: {
-                    snapshot.layer.opacity = 0
-                    snapshot.layer.transform = CATransform3DMakeScale(1.5, 1.5, 1.5)
-                }, completion: { _ in
-                    snapshot.removeFromSuperview()
-                })
+                UIView.animate(
+                    withDuration: 0.5,
+                    animations: {
+                        snapshot.layer.opacity = 0
+                        snapshot.layer.transform = CATransform3DMakeScale(1.5, 1.5, 1.5)
+                    }
+                    , completion: { _ in
+                        snapshot.removeFromSuperview()
+                    }
+                )
             }
             userDefaults.setValue(true, forKey: Constants.UserDefaults.onboardingShown)
         } else {
@@ -189,7 +186,12 @@ class OnboardingViewController: PresentationController {
 
             // Title Labels
             controller.add(animation: Content.centerTransition(forSlideContent: headerTitles[index]))
-            controller.add(animation: TransitionAnimation(content: headerTitles[index], destination: titleLabelPosition))
+            controller.add(
+                animation: TransitionAnimation(
+                    content: headerTitles[index],
+                    destination: titleLabelPosition
+                )
+            )
 
             // Detail Labels
             let animation = Content.centerTransition(forSlideContent: detailTitles[index])
@@ -279,8 +281,12 @@ class OnboardingViewController: PresentationController {
         (1...4).forEach { row in
             for (column, backgroundImage) in backgroundImages.enumerated() {
                 if let position = backgroundImage.positionAt(row), let content = contents[optional: column] {
-                    addAnimation(TransitionAnimation(content: content, destination: position,
-                                                     duration: 2.0, damping: 1.0), forPage: row)
+                    addAnimation(TransitionAnimation(
+                        content: content,
+                        destination: position,
+                        duration: 2.0,
+                        damping: 1.0
+                    ), forPage: row)
                 }
             }
         }

@@ -16,8 +16,10 @@ let increaseTapTargetTag: Int = 1865
 extension MKPolyline {
 
     public var coordinates: [CLLocationCoordinate2D] {
-        var coords = [CLLocationCoordinate2D](repeating: kCLLocationCoordinate2DInvalid,
-                                              count: self.pointCount)
+        var coords = [CLLocationCoordinate2D](
+            repeating: kCLLocationCoordinate2DInvalid,
+            count: self.pointCount
+        )
 
         self.getCoordinates(&coords, range: NSRange(location: 0, length: self.pointCount))
 
@@ -32,7 +34,11 @@ extension UIView {
 
     /// Round specific corners of UIView
     func roundCorners(corners: UIRectCorner, radius: CGFloat) {
-        let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        let path = UIBezierPath(
+            roundedRect: self.bounds,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
         let mask = CAShapeLayer()
         mask.path = path.cgPath
         self.layer.mask = mask
@@ -56,7 +62,12 @@ extension UILabel {
         let maxSize = CGSize(width: frame.size.width, height: CGFloat(Float.infinity))
         let charSize = font.lineHeight
         let labelText = (text ?? "") as NSString
-        let textSize = labelText.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, attributes: [.font: font ?? UIFont.getFont(.regular, size: 16)], context: nil)
+        let textSize = labelText.boundingRect(
+            with: maxSize,
+            options: .usesLineFragmentOrigin,
+            attributes: [.font: font ?? UIFont.getFont(.regular, size: 16)],
+            context: nil
+        )
         return Int(textSize.height/charSize)
     }
 
@@ -139,8 +150,12 @@ extension String {
 
     func heightWithConstrainedWidth(width: CGFloat, font: UIFont) -> CGFloat {
         let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
-        let boundingBox = self.boundingRect(with: constraintRect, options: [.usesLineFragmentOrigin],
-                                            attributes: [.font: font], context: nil)
+        let boundingBox = self.boundingRect(
+            with: constraintRect,
+            options: [.usesLineFragmentOrigin],
+            attributes: [.font: font],
+            context: nil
+        )
         return boundingBox.height
     }
     /// Bold a phrase that appears in a string, and return the attributed string. Only shows the last bolded phrase.
@@ -163,8 +178,15 @@ extension String {
         let plainString: String = attributedString.string
 
         do {
-            let regex = try NSRegularExpression(pattern: pattern, options: [])
-            let ranges = regex.matches(in: plainString, options: [], range: NSRange(location: 0, length: plainString.count)).map { $0.range }
+            let regex = try NSRegularExpression(
+                pattern: pattern,
+                options: []
+            )
+            let ranges = regex.matches(
+                in: plainString,
+                options: [],
+                range: NSRange(location: 0, length: plainString.count)
+            ).map { $0.range }
             for range in ranges { newAttributedString.addAttributes([.font: boldFont], range: range) }
         } catch {
             print("bold NSRegularExpression failed")
@@ -220,9 +242,13 @@ func presentShareSheet(from view: UIView, for route: Route, with image: UIImage?
     let activityVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
     activityVC.excludedActivityTypes = [.print, .assignToContact, .openInIBooks, .addToReadingList]
     activityVC.popoverPresentationController?.sourceView = view
-    activityVC.completionWithItemsHandler = { (activity, completed, items, error) in
+    activityVC.completionWithItemsHandler = { activity, completed, _, error in
         let sharingMethod = activity?.rawValue.replacingOccurrences(of: "com.apple.UIKit.activity.", with: "") ?? "None"
-        let payload = RouteSharedEventPayload(activityType: sharingMethod, didSelectAndCompleteShare: completed, error: error?.localizedDescription)
+        let payload = RouteSharedEventPayload(
+            activityType: sharingMethod,
+            didSelectAndCompleteShare: completed,
+            error: error?.localizedDescription
+        )
         TransitAnalytics.shared.log(payload)
     }
 
@@ -268,7 +294,12 @@ class LargeTapTargetButton: UIButton {
 
     override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let relativeFrame = self.bounds
-        let hitTestEdgeInsets = UIEdgeInsets(top: -tapTargetValue, left: -tapTargetValue, bottom: -tapTargetValue, right: -tapTargetValue)
+        let hitTestEdgeInsets = UIEdgeInsets(
+            top: -tapTargetValue,
+            left: -tapTargetValue,
+            bottom: -tapTargetValue,
+            right: -tapTargetValue
+        )
         let hitFrame = relativeFrame.inset(by: hitTestEdgeInsets)
         return hitFrame.contains(point)
     }

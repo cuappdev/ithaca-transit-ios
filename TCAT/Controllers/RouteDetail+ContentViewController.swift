@@ -116,6 +116,7 @@ class RouteDetailContentViewController: UIViewController {
                 }
 
                 // First & Last Bus Segments
+                // swiftlint:disable:next line_length
                 if !isTypeSet && direction.type == .depart && (pathIndex == 0 || pathIndex == direction.path.count - 1) {
                     type = .bus
                     isTypeSet = true
@@ -168,7 +169,7 @@ class RouteDetailContentViewController: UIViewController {
     /// Fetch live-tracking information for the first direction's bus route.
     /// Handles connection issues with banners. Animated indicators. 
     @objc func getBusLocations() {
-        let directionsAreValid = route.directions.reduce(true) { (result, direction) in
+        let directionsAreValid = route.directions.reduce(true) { result, direction in
             if direction.type == .depart {
                 return result && direction.routeNumber > 0 && direction.tripIdentifiers != nil
             } else {
@@ -180,7 +181,8 @@ class RouteDetailContentViewController: UIViewController {
             let payload = NetworkErrorPayload(
                 location: "\(self) Get Bus Locations",
                 type: "Invalid Directions",
-                description: "Directions are not valid")
+                description: "Directions are not valid"
+            )
             TransitAnalytics.shared.log(payload)
             return
         }
@@ -203,7 +205,8 @@ class RouteDetailContentViewController: UIViewController {
                     let payload = NetworkErrorPayload(
                         location: "\(self) Get Bus Locations",
                         type: "\((error as NSError).domain)",
-                        description: error.localizedDescription)
+                        description: error.localizedDescription
+                    )
                     TransitAnalytics.shared.log(payload)
                 }
             }
@@ -259,10 +262,13 @@ class RouteDetailContentViewController: UIViewController {
 
             newBus.appearAnimation = .none
 
-            updateUserData(for: newBus, with: [
-                Constants.BusUserData.actualCoordinates: busCoords,
-                Constants.BusUserData.vehicleID: bus.vehicleID
-                ])
+            updateUserData(
+                for: newBus,
+                with: [
+                    Constants.BusUserData.actualCoordinates: busCoords,
+                    Constants.BusUserData.vehicleID: bus.vehicleID
+                ]
+            )
 
             // Position
             newBus.position = busCoords
@@ -274,10 +280,13 @@ class RouteDetailContentViewController: UIViewController {
             marker.appearAnimation = .pop
             marker.iconView = iconView
 
-            updateUserData(for: marker, with: [
-                Constants.BusUserData.actualCoordinates: busCoords,
-                Constants.BusUserData.vehicleID: bus.vehicleID
-                ])
+            updateUserData(
+                for: marker,
+                with: [
+                    Constants.BusUserData.actualCoordinates: busCoords,
+                    Constants.BusUserData.vehicleID: bus.vehicleID
+                ]
+            )
 
             setIndex(of: marker, with: .bussing)
             marker.map = mapView
@@ -295,10 +304,16 @@ class RouteDetailContentViewController: UIViewController {
             guard let originalTransform = indicator.iconView?.transform else { continue }
             let insetValue = originalFrame.size.width / 24
             indicator.iconView?.transform = CGAffineTransform(scaleX: insetValue, y: insetValue)
-            UIView.animate(withDuration: LiveIndicator.duration * 2, delay: 0, usingSpringWithDamping: 1,
-                           initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
-                            indicator.iconView?.transform = originalTransform
-            })
+            UIView.animate(
+                withDuration: LiveIndicator.duration * 2,
+                delay: 0,
+                usingSpringWithDamping: 1,
+                initialSpringVelocity: 0,
+                options: .curveEaseInOut,
+                animations: {
+                    indicator.iconView?.transform = originalTransform
+                }
+            )
         }
     }
 
@@ -324,7 +339,12 @@ class RouteDetailContentViewController: UIViewController {
         var bottomOffset: Double {
             let constant = isPartiallyRevealed ? UIScreen.main.bounds.height / 2 - mapView.padding.bottom : 0
             let origin = mapView.projection.coordinate(for: CGPoint(x: 0, y: 0)).latitude
-            let withHeight = mapView.projection.coordinate(for: CGPoint(x: 0, y: constant + view.frame.size.height)).latitude
+            let withHeight = mapView.projection.coordinate(
+                for: CGPoint(
+                    x: 0,
+                    y: constant + view.frame.size.height
+                )
+            ).latitude
             return origin - withHeight
         }
         let top = bounds.farLeft.latitude - topOffset
@@ -388,8 +408,14 @@ class RouteDetailContentViewController: UIViewController {
     /// Centers map around all waypoints in routePaths, and animates the map
     func centerMapOnOverview(drawerPreviewing: Bool = false) {
         if drawerPreviewing {
+            // swiftlint:disable:next line_length
             let bottomOffset: CGFloat = (UIScreen.main.bounds.height / 2) - (mapPadding / 2) - view.safeAreaInsets.bottom
-            let edgeInsets = UIEdgeInsets(top: mapPadding / 2, left: mapPadding / 2, bottom: bottomOffset, right: mapPadding / 2)
+            let edgeInsets = UIEdgeInsets(
+                top: mapPadding / 2,
+                left: mapPadding / 2,
+                bottom: bottomOffset,
+                right: mapPadding / 2
+            )
             mapView.animate(with: GMSCameraUpdate.fit(bounds, with: edgeInsets))
         } else {
             mapView.animate(with: GMSCameraUpdate.fit(bounds, withPadding: mapPadding))

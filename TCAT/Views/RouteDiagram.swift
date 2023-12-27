@@ -13,7 +13,11 @@ class RouteDiagram: UIView {
     // MARK: - View vars
     private var routeDiagramSegments: [RouteDiagramSegment] = []
 
-    init(withDirections directions: [Direction], withTravelDistance travelDistance: Double, withWalkingRoute isWalkingRoute: Bool) {
+    init(
+        withDirections directions: [Direction],
+        withTravelDistance travelDistance: Double,
+        withWalkingRoute isWalkingRoute: Bool
+    ) {
         super.init(frame: .zero)
 
         var first = 0
@@ -24,7 +28,14 @@ class RouteDiagram: UIView {
                 continue
             }
 
-            let routeDiagramSegment = RouteDiagramSegment(for: direction, prev: routeDiagramSegments.last, isWalkingRoute: isWalkingRoute, index: index - first, isDestination: index == directions.count - 1, travelDistance: travelDistance)
+            let routeDiagramSegment = RouteDiagramSegment(
+                for: direction,
+                prev: routeDiagramSegments.last,
+                isWalkingRoute: isWalkingRoute,
+                index: index - first,
+                isDestination: index == directions.count - 1,
+                travelDistance: travelDistance
+            )
             routeDiagramSegments.append(routeDiagramSegment)
         }
 
@@ -35,7 +46,12 @@ class RouteDiagram: UIView {
         let busIconWidth: CGFloat = 48
         let spaceBtnBusIcons: CGFloat = 15.0
 
-        let stayOnBusCoverUpView = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: busIconWidth, height: spaceBtnBusIcons + 6)))
+        let stayOnBusCoverUpView = UIView(
+            frame: CGRect(
+                origin: CGPoint.zero,
+                size: CGSize(width: busIconWidth, height: spaceBtnBusIcons + 6)
+            )
+        )
         stayOnBusCoverUpView.backgroundColor = Colors.tcatBlue
 
         return stayOnBusCoverUpView

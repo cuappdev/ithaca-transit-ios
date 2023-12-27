@@ -145,7 +145,7 @@ public class Reachability {
 
     fileprivate let reachabilitySerialQueue = DispatchQueue(label: "uk.co.ashleymills.reachability")
 
-    required public init(reachabilityRef: SCNetworkReachability) {
+    public required init(reachabilityRef: SCNetworkReachability) {
         allowsCellularConnection = true
         self.reachabilityRef = reachabilityRef
     }
@@ -180,7 +180,13 @@ public extension Reachability {
 
         guard !notifierRunning else { return }
 
-        var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
+        var context = SCNetworkReachabilityContext(
+            version: 0,
+            info: nil,
+            retain: nil,
+            release: nil,
+            copyDescription: nil
+        )
         context.info = UnsafeMutableRawPointer(Unmanaged<Reachability>.passUnretained(self).toOpaque())
         if !SCNetworkReachabilitySetCallback(reachabilityRef, callback, &context) {
             stopNotifier()
@@ -300,7 +306,7 @@ fileprivate extension Reachability {
         return flags.contains(.connectionOnDemand)
     }
     var isConnectionOnTrafficOrDemandFlagSet: Bool {
-        return !flags.intersection([.connectionOnTraffic, .connectionOnDemand]).isEmpty
+        return !flags.isDisjoint(with: ([.connectionOnTraffic, .connectionOnDemand]))
     }
     var isTransientConnectionFlagSet: Bool {
         return flags.contains(.transientConnection)
@@ -312,7 +318,9 @@ fileprivate extension Reachability {
         return flags.contains(.isDirect)
     }
     var isConnectionRequiredAndTransientFlagSet: Bool {
-        return flags.intersection([.connectionRequired, .transientConnection]) == [.connectionRequired, .transientConnection]
+        return flags.intersection(
+            [.connectionRequired, .transientConnection]
+        ) == [.connectionRequired, .transientConnection]
     }
 
     var flags: SCNetworkReachabilityFlags {

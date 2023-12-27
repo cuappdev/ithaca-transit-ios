@@ -162,7 +162,11 @@ class RouteTableViewCell: UITableViewCell {
             setDepartureTime(withStartTime: Date(), withDelayState: delay)
         }
 
-        routeDiagram = RouteDiagram(withDirections: route.rawDirections, withTravelDistance: route.travelDistance, withWalkingRoute: route.isRawWalkingRoute())
+        routeDiagram = RouteDiagram(
+            withDirections: route.rawDirections,
+            withTravelDistance: route.travelDistance,
+            withWalkingRoute: route.isRawWalkingRoute()
+        )
 
         containerView.addSubview(routeDiagram)
 
@@ -221,7 +225,7 @@ class RouteTableViewCell: UITableViewCell {
             liveContainerView.addSubview(liveLabel)
             setLiveIndicatorViewsConstraints()
 
-        case .onTime(date: _):
+        case .onTime:
             liveLabel.textColor = Colors.liveGreen
             liveLabel.text = "On Time"
             liveIndicatorView.setColor(to: Colors.liveGreen)
@@ -229,7 +233,7 @@ class RouteTableViewCell: UITableViewCell {
             liveContainerView.addSubview(liveLabel)
             setLiveIndicatorViewsConstraints()
 
-        case .noDelay(date: _):
+        case .noDelay:
             liveLabel.removeFromSuperview()
             liveIndicatorView.removeFromSuperview()
         }

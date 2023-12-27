@@ -126,7 +126,12 @@ class RouteDiagramSegment: UIView {
 
             let addLineBreak = getStopLabelWidth(withName: name, withDistance: distance) > width
 
-            let travelDistance = NSMutableAttributedString(string: addLineBreak ? "\n\(distance.roundedString) away" : " \(distance.roundedString) away", attributes: travelDistanceAttrs)
+            let travelDistance = NSMutableAttributedString(
+                string: addLineBreak
+                    ? "\n\(distance.roundedString) away"
+                    : " \(distance.roundedString) away",
+                attributes: travelDistanceAttrs
+            )
             stopName.append(travelDistance)
         }
 
@@ -219,7 +224,9 @@ class RouteDiagramSegment: UIView {
         let isStopLabelSingleLine = isStopLabelOneLine(stopLabel)
 
         if isWalkingRoute {
-            let greyRouteLine = isStopLabelSingleLine ? SolidLine(color: Colors.metadataIcon) : SolidLine(overrideHeight: RouteLine.extendedHeight, color: Colors.metadataIcon)
+            let greyRouteLine = isStopLabelSingleLine
+                ? SolidLine(color: Colors.metadataIcon)
+                : SolidLine(overrideHeight: RouteLine.extendedHeight, color: Colors.metadataIcon)
 
             return greyRouteLine
         }

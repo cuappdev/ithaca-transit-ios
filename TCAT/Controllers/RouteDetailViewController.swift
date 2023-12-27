@@ -38,14 +38,19 @@ class RouteDetailViewController: PulleyViewController {
 
     /// 3D Touch Peep Pop Action(s)
     override var previewActionItems: [UIPreviewActionItem] {
-        let shareAction = UIPreviewAction(title: Constants.Buttons.share, style: .default, handler: { (_, viewController) -> Void in
-            guard let routeDetailViewController = viewController as? RouteDetailViewController,
-                let contentViewController = routeDetailViewController.primaryContentViewController as? RouteDetailContentViewController else {
-                return
-            }
+        let shareAction = UIPreviewAction(
+            title: Constants.Buttons.share,
+            style: .default,
+            handler: { _, viewController in
+                guard let routeDetailViewController = viewController as? RouteDetailViewController,
+                      // swiftlint:disable:next line_length
+                      let contentViewController = routeDetailViewController.primaryContentViewController as? RouteDetailContentViewController else {
+                    return
+                }
 
-            contentViewController.shareRoute()
-        })
+                contentViewController.shareRoute()
+            }
+        )
 
         return [shareAction]
 

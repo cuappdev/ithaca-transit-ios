@@ -35,7 +35,7 @@ class PlaceTableViewCell: UITableViewCell {
         let iconLeadingInset = 16
         let nameLabelHeight: CGFloat = 17
         let nameLabelLeadingInset = 10
-        let placeNameToDescriptionSpacing: CGFloat = 2.5 // Standard number from apple's UITableviewCell with .subtitle style
+        let placeNameToDescriptionSpacing: CGFloat = 2.5
         let trailingInset = 45
 
         iconView.snp.makeConstraints { make in

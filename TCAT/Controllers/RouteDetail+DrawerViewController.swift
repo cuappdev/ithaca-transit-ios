@@ -125,11 +125,26 @@ class RouteDetailDrawerViewController: UIViewController {
         tableView.bounces = false
         tableView.estimatedRowHeight = RouteDetailCellSize.smallHeight
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.register(SmallDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.smallDetailCellIdentifier)
-        tableView.register(LargeDetailTableViewCell.self, forCellReuseIdentifier: Constants.Cells.largeDetailCellIdentifier)
-        tableView.register(BusStopTableViewCell.self, forCellReuseIdentifier: Constants.Cells.busStopDetailCellIdentifier)
-        tableView.register(NotificationToggleTableViewCell.self, forCellReuseIdentifier: Constants.Cells.notificationToggleCellIdentifier)
-        tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: Constants.Footers.emptyFooterView)
+        tableView.register(
+            SmallDetailTableViewCell.self,
+            forCellReuseIdentifier: Constants.Cells.smallDetailCellIdentifier
+        )
+        tableView.register(
+            LargeDetailTableViewCell.self,
+            forCellReuseIdentifier: Constants.Cells.largeDetailCellIdentifier
+        )
+        tableView.register(
+            BusStopTableViewCell.self,
+            forCellReuseIdentifier: Constants.Cells.busStopDetailCellIdentifier
+        )
+        tableView.register(
+            NotificationToggleTableViewCell.self,
+            forCellReuseIdentifier: Constants.Cells.notificationToggleCellIdentifier
+        )
+        tableView.register(
+            UITableViewHeaderFooterView.self,
+            forHeaderFooterViewReuseIdentifier: Constants.Footers.emptyFooterView
+        )
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
@@ -207,9 +222,12 @@ class RouteDetailDrawerViewController: UIViewController {
 
                             // Update delay variable of other ensuing directions
                             directions.filter {
-                                let isAfter = directions.firstIndex(of: firstDepartDirection)! < directions.firstIndex(of: $0)!
+                                let isAfter = directions.firstIndex(
+                                    of: firstDepartDirection
+                                )! < directions.firstIndex(of: $0)!
                                 return isAfter && $0.type != .depart
-                            }.forEach { direction in
+                            }
+                            .forEach { direction in
                                 if direction.delay != nil {
                                     direction.delay! += delayDirection.delay ?? 0
                                 } else {
@@ -224,7 +242,8 @@ class RouteDetailDrawerViewController: UIViewController {
                             let payload = NetworkErrorPayload(
                                 location: "\(self) Get Delay",
                                 type: "Response Failure",
-                                description: "Response Failure")
+                                description: "Response Failure"
+                            )
                             TransitAnalytics.shared.log(payload)
                         }
                     case .error(let error):
@@ -232,7 +251,8 @@ class RouteDetailDrawerViewController: UIViewController {
                         let payload = NetworkErrorPayload(
                             location: "\(self) Get Delay",
                             type: "\((error as NSError).domain)",
-                            description: error.localizedDescription)
+                            description: error.localizedDescription
+                        )
                         TransitAnalytics.shared.log(payload)
                     }
                 }

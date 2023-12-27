@@ -35,7 +35,7 @@ public class Event<TPayload: Payload>: Codable {
         self.payload = try values.decode(TPayload.self, forKey: .payload)
         let decodedEventName = try values.decode(String.self, forKey: .eventName)
         if decodedEventName != eventName {
-            throw NSError()
+            throw NSError.init(domain: "bar", code: 0)
         }
     }
 
@@ -80,13 +80,13 @@ public class TimestampedEvent<TPayload: Payload>: Event<TPayload> {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let timestampString = try values.decode(String.self, forKey: .timestamp)
         guard let decodedTimestamp = dateFormatter.date(from: timestampString) else {
-            throw NSError()
+            throw NSError.init(domain: "bar", code: 0)
         }
         timestamp = decodedTimestamp
         try super.init(from: decoder)
     }
 
-    public override func encode(to encoder: Encoder) throws {
+    override public func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
         var values = encoder.container(keyedBy: CodingKeys.self)
         try values.encode(dateFormatter.string(from: timestamp), forKey: .timestamp)
