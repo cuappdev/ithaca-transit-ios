@@ -186,7 +186,8 @@ class InformationViewController: UIViewController {
 
         if inApp {
             let safariViewController = SFSafariViewController(url: URL)
-            UIApplication.shared.keyWindow?.presentInApp(safariViewController)
+            UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.presentInApp(safariViewController)
+//            UIApplication.shared.keyWindow?.presentInApp(safariViewController)
         } else {
             UIApplication.shared.open(URL)
         }

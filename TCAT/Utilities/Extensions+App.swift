@@ -186,7 +186,10 @@ extension String {
                 in: plainString,
                 options: [],
                 range: NSRange(location: 0, length: plainString.count)
-            ).map { $0.range }
+            )
+            .map {
+                $0.range
+            }
             for range in ranges { newAttributedString.addAttributes([.font: boldFont], range: range) }
         } catch {
             print("bold NSRegularExpression failed")
@@ -263,7 +266,7 @@ func areObjectsEqual<T: Equatable>(type: T.Type, a: Any, b: Any) -> Bool {
 
 infix operator ???: NilCoalescingPrecedence
 
-public func ???<T> (optional: T?, defaultValue: @autoclosure () -> String) -> String {
+public func ??? <T> (optional: T?, defaultValue: @autoclosure () -> String) -> String {
     switch optional {
     case let value?: return String(describing: value)
     case nil: return defaultValue()

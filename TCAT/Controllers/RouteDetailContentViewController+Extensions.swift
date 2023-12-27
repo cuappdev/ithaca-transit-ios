@@ -146,10 +146,13 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
                     existingIndicator.position = placement
                     existingIndicator.rotation = calculateBearing(from: placement, to: bus.position)
 
-                    updateUserData(for: existingIndicator, with: [
-                        Constants.BusUserData.actualCoordinates: bus.position,
-                        Constants.BusUserData.indicatorCoordinates: placement
-                        ])
+                    updateUserData(
+                        for: existingIndicator,
+                        with: [
+                            Constants.BusUserData.actualCoordinates: bus.position,
+                            Constants.BusUserData.indicatorCoordinates: placement
+                        ]
+                    )
 
                     existingIndicator.appearAnimation = .none
                     // Uncomment to avoid animation

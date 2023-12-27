@@ -155,7 +155,7 @@ class RouteOptionsViewController: UIViewController {
         routeTimer?.invalidate()
         updateTimer?.invalidate()
         // Remove notification observer
-        // swift-lint:disable:next notification_center_detachment
+        // swiftlint:disable:next notification_center_detachment
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -618,13 +618,13 @@ class RouteOptionsViewController: UIViewController {
         let latitudeValues = [startPlace.latitude, endPlace.latitude]
         let longitudeValues  = [startPlace.longitude, endPlace.longitude]
 
-        // swift-lint:disable:next reduce_boolean
+        // swiftlint:disable:next reduce_boolean
         let validLatitudes = latitudeValues.reduce(true) { result, latitude in
             return result && latitude <= Constants.Values.RouteBorders.northBorder &&
                 latitude >= Constants.Values.RouteBorders.southBorder
         }
 
-        // swift-lint:disable:next reduce_boolean
+        // swiftlint:disable:next reduce_boolean
         let validLongitudes = longitudeValues.reduce(true) { result, longitude in
             return result && longitude <= Constants.Values.RouteBorders.eastBorder &&
                 longitude >= Constants.Values.RouteBorders.westBorder

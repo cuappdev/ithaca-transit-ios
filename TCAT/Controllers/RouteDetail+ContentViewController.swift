@@ -84,7 +84,7 @@ class RouteDetailContentViewController: UIViewController {
         self.directions = route.directions
         self.currentLocation = currentLocation
 
-        let isWalkingRoute = directions.reduce(true) { $0 && $1.type == .walk }
+        let isWalkingRoute = directions.allSatisfy { $0.type == .walk }
         // Plot the paths of all directions
         for (directionIndex, direction) in directions.enumerated() {
             var waypoints: [Waypoint] = []
@@ -169,6 +169,7 @@ class RouteDetailContentViewController: UIViewController {
     /// Fetch live-tracking information for the first direction's bus route.
     /// Handles connection issues with banners. Animated indicators. 
     @objc func getBusLocations() {
+        // swiftlint:disable:next reduce_boolean
         let directionsAreValid = route.directions.reduce(true) { result, direction in
             if direction.type == .depart {
                 return result && direction.routeNumber > 0 && direction.tripIdentifiers != nil
