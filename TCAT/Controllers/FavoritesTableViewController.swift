@@ -125,7 +125,7 @@ extension FavoritesTableViewController: UITableViewDelegate {
                 selectedIndex: indexPath.row,
                 totalResults: resultsSection.getItems().count
             )
-            Analytics.shared.log(payload)
+            TransitAnalytics.shared.log(payload)
         }
         if let place = resultsSection.getItem(at: indexPath.row) {
             Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)

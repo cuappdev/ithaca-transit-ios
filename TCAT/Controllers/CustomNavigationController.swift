@@ -67,7 +67,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
         screenshotObserver = NotificationCenter.default.addObserver(forName: notifName, object: nil, queue: .main) { _ in
             guard let currentViewController = self.visibleViewController else { return }
             let payload = ScreenshotTakenPayload(location: "\(type(of: currentViewController))")
-            Analytics.shared.log(payload)
+            TransitAnalytics.shared.log(payload)
         }
     }
 
@@ -87,6 +87,13 @@ class CustomNavigationController: UINavigationController, UINavigationController
         navigationItem.backBarButtonItem?.setTitleTextAttributes(
             CustomNavigationController.buttonTitleTextAttributes, for: .normal
         )
+
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = Colors.white
+        appearance.titleTextAttributes = titleTextAttributes
+        navigationBar.standardAppearance = appearance
+        navigationBar.compactAppearance = appearance
+        navigationBar.scrollEdgeAppearance = appearance
     }
 
     /// Return an instance of custom back button

@@ -13,7 +13,7 @@ import SnapKit
 import UIKit
 
 // MARK: - HomeOptionsCardDelegate
-protocol HomeOptionsCardDelegate: class {
+protocol HomeOptionsCardDelegate: AnyObject {
     func updateSize()
     func getCurrentLocation() -> CLLocation?
 }

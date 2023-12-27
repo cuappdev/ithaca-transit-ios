@@ -181,7 +181,7 @@ class RouteDetailContentViewController: UIViewController {
                 location: "\(self) Get Bus Locations",
                 type: "Invalid Directions",
                 description: "Directions are not valid")
-            Analytics.shared.log(payload)
+            TransitAnalytics.shared.log(payload)
             return
         }
 
@@ -204,7 +204,7 @@ class RouteDetailContentViewController: UIViewController {
                         location: "\(self) Get Bus Locations",
                         type: "\((error as NSError).domain)",
                         description: error.localizedDescription)
-                    Analytics.shared.log(payload)
+                    TransitAnalytics.shared.log(payload)
                 }
             }
         }

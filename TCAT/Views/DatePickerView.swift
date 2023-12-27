@@ -13,7 +13,7 @@ struct SegmentControlElement {
     var index: Int
 }
 
-protocol DatePickerViewDelegate: class {
+protocol DatePickerViewDelegate: AnyObject {
     func dismissDatePicker()
     func saveDatePickerDate(for date: Date, searchType: SearchType)
 }

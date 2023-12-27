@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol InfoHeaderViewDelegate: class {
+protocol InfoHeaderViewDelegate: AnyObject {
     func showFunMessage()
 }
 
@@ -136,7 +136,7 @@ class InformationTableHeaderView: UIView {
         })
 
         let payload = BusTappedEventPayload()
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -39,7 +39,7 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
         previewingContext.sourceRect = routeResults.convert(cell.frame, to: view)
 
         let payload = RouteResultsCellPeekedPayload()
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
 
         return routeDetailViewController
     }
@@ -78,7 +78,7 @@ extension RouteOptionsViewController: DestinationDelegate {
         searchForRoutes()
 
         let payload: Payload = PlaceSelectedPayload(name: place.name, type: place.type)
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
     }
 }
 
@@ -112,7 +112,7 @@ extension RouteOptionsViewController: DatePickerViewDelegate {
         searchForRoutes()
 
         let payload = RouteOptionsSettingsPayload(description: buttonTapped)
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
     }
 }
 
@@ -246,7 +246,7 @@ extension RouteOptionsViewController: UITableViewDelegate {
         locationManager.stopUpdatingLocation()
         if let routeDetailViewController = createRouteDetailViewController(from: indexPath) {
             let payload = RouteResultsCellTappedEventPayload()
-            Analytics.shared.log(payload)
+            TransitAnalytics.shared.log(payload)
             let routeId = routes[indexPath.section][indexPath.row].routeId
             routeSelected(routeId: routeId)
             navigationController?.pushViewController(routeDetailViewController, animated: true)
@@ -413,7 +413,7 @@ extension RouteOptionsViewController: RouteSelectionViewDelegate {
 
         // Analytics
         let payload = RouteOptionsSettingsPayload(description: "Swapped To and From")
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
 
     }
 
@@ -436,7 +436,7 @@ extension RouteOptionsViewController: RouteSelectionViewDelegate {
         }
 
         let payload = RouteOptionsSettingsPayload(description: "Date Picker Accessed")
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
 
     }
 
@@ -444,13 +444,13 @@ extension RouteOptionsViewController: RouteSelectionViewDelegate {
         searchType = .from
         presentSearchBar()
         let payload = RouteOptionsSettingsPayload(description: "Searching From Tapped")
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
     }
 
     func searchingTo() {
         searchType = .to
         presentSearchBar()
         let payload = RouteOptionsSettingsPayload(description: "Searching To Tapped")
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
     }
 }

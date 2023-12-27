@@ -48,14 +48,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
 
-        // Set Up Analytics
-        #if !DEBUG
-        Crashlytics.start(withAPIKey: Keys.fabricAPIKey.value)
-        #endif
-
         // Log basic information
         let payload = AppLaunchedPayload()
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
         setupUniqueIdentifier()
 
         for (key, defaultValue) in userDataInits {
@@ -130,7 +125,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 navController.pushViewController(optionsVC, animated: false)
             }
             let payload = HomeScreenQuickActionUsedPayload(name: destination.name)
-            Analytics.shared.log(payload)
+            TransitAnalytics.shared.log(payload)
         }
     }
 
@@ -223,7 +218,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         intentDescription: intentDescription,
                         locationName: stopName
                     )
-                    Analytics.shared.log(payload)
+                    TransitAnalytics.shared.log(payload)
                 }
                 return true
             }

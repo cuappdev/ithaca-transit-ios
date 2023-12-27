@@ -387,7 +387,7 @@ class RouteOptionsViewController: UIViewController {
                         type: "\((error as NSError).domain)",
                         description: error.localizedDescription
                     )
-                    Analytics.shared.log(payload)
+                    TransitAnalytics.shared.log(payload)
                 }
             }
         })
@@ -517,7 +517,7 @@ class RouteOptionsViewController: UIViewController {
                         type: "\((error as NSError).domain)",
                         description: error.localizedDescription
                     )
-                    Analytics.shared.log(payload)
+                    TransitAnalytics.shared.log(payload)
                 }
             }
         }
@@ -568,7 +568,7 @@ class RouteOptionsViewController: UIViewController {
                         self.processRequestError(error: error)
                     }
                     let payload = DestinationSearchedEventPayload(destination: end.name)
-                    Analytics.shared.log(payload)
+                    TransitAnalytics.shared.log(payload)
                 }
             })
         }
@@ -623,7 +623,7 @@ class RouteOptionsViewController: UIViewController {
                 banner?.dismissOnTap = true
                 banner?.show(queue: NotificationBannerQueue(maxBannersOnScreenSimultaneously: 1), on: navigationController)
 
-                Analytics.shared.log(payload)
+                TransitAnalytics.shared.log(payload)
             case .hideBanner:
                 banner?.dismiss()
                 banner = nil

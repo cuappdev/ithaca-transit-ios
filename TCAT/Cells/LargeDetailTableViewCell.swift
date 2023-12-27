@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol LargeDetailTableViewDelegate: class {
+protocol LargeDetailTableViewDelegate: AnyObject {
     func toggleCellExpansion(on cell: LargeDetailTableViewCell)
 }
 

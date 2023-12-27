@@ -152,7 +152,7 @@ class RouteDetailDrawerViewController: UIViewController {
             RouteDetailItem.notificationType(.beforeBoarding)
         ]
 
-        let notificationSection = Section(type: .notification, items: notificationTypes)
+        _ = Section(type: .notification, items: notificationTypes)
         let routeDetailSection = Section(type: .routeDetail, items: directionsAndVisibleStops)
 
         sections = [routeDetailSection]
@@ -225,7 +225,7 @@ class RouteDetailDrawerViewController: UIViewController {
                                 location: "\(self) Get Delay",
                                 type: "Response Failure",
                                 description: "Response Failure")
-                            Analytics.shared.log(payload)
+                            TransitAnalytics.shared.log(payload)
                         }
                     case .error(let error):
                         self.printClass(context: "\(#function) error", message: error.localizedDescription)
@@ -233,7 +233,7 @@ class RouteDetailDrawerViewController: UIViewController {
                             location: "\(self) Get Delay",
                             type: "\((error as NSError).domain)",
                             description: error.localizedDescription)
-                        Analytics.shared.log(payload)
+                        TransitAnalytics.shared.log(payload)
                     }
                 }
             })

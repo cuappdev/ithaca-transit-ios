@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol RouteSelectionViewDelegate: class {
+protocol RouteSelectionViewDelegate: AnyObject {
     func swapFromAndTo()
     func showDatePicker()
     func searchingFrom()

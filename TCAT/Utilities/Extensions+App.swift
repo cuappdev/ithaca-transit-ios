@@ -223,7 +223,7 @@ func presentShareSheet(from view: UIView, for route: Route, with image: UIImage?
     activityVC.completionWithItemsHandler = { (activity, completed, items, error) in
         let sharingMethod = activity?.rawValue.replacingOccurrences(of: "com.apple.UIKit.activity.", with: "") ?? "None"
         let payload = RouteSharedEventPayload(activityType: sharingMethod, didSelectAndCompleteShare: completed, error: error?.localizedDescription)
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
     }
 
     UIApplication.shared.delegate?.window??.presentInApp(activityVC)

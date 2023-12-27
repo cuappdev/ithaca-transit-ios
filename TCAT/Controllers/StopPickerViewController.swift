@@ -139,7 +139,7 @@ class StopPickerViewController: UIViewController {
             location: "\(self) Get All Stops",
             type: "\((error as NSError).domain)",
             description: error.localizedDescription)
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
     }
 
 }

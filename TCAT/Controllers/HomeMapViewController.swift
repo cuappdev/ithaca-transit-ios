@@ -12,7 +12,7 @@ import GoogleMaps
 import SnapKit
 import UIKit
 
-protocol HomeMapViewDelegate: class {
+protocol HomeMapViewDelegate: AnyObject {
     func mapViewWillMove()
 }
 

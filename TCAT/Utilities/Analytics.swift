@@ -7,18 +7,19 @@
 //
 // To log an event, use the shared RegisterSession (RegisterSession.shared)
 
+import FirebaseAnalytics
 import FirebaseCrashlytics
 import Foundation
 import SwiftyJSON
 
-class Analytics {
+class TransitAnalytics {
 
-    static let shared = Analytics()
+    static let shared = TransitAnalytics()
 
     func log(_ payload: Payload) {
         #if !DEBUG
             let fabricEvent = payload.convertToFabric()
-            Answers.logCustomEvent(withName: fabricEvent.name, customAttributes: fabricEvent.attributes)
+            Analytics.logEvent(fabricEvent.name, parameters: fabricEvent.attributes)
         #endif
     }
 
@@ -59,10 +60,10 @@ extension Payload {
 /// Log device information
 struct DeviceInfo: Codable {
 
-    let model: String = UIDevice.current.modelName
-    let softwareVersion: String = UIDevice.current.systemVersion
-    let appVersion: String = Constants.App.version
-    let language: String = Locale.preferredLanguages.first ?? "n/a"
+    var model: String = UIDevice.current.modelName
+    var softwareVersion: String = UIDevice.current.systemVersion
+    var appVersion: String = Constants.App.version
+    var language: String = Locale.preferredLanguages.first ?? "n/a"
 
 }
 
@@ -72,13 +73,13 @@ struct DeviceInfo: Codable {
 /// Log app launch with device info
 struct AppLaunchedPayload: Payload {
     static let eventName: String = "App Launched"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 }
 
 /// Log favorites that a user adds
 struct FavoriteAddedPayload: Payload {
     static let eventName: String = "Favorite Added"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 
     let name: String
 }
@@ -86,7 +87,7 @@ struct FavoriteAddedPayload: Payload {
 /// Log when a user selects a Google Place
 struct PlaceSelectedPayload: Payload {
     static let eventName: String = "Place Selected"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 
     let name: String
     let type: PlaceType
@@ -95,7 +96,7 @@ struct PlaceSelectedPayload: Payload {
 /// Log front end route calculation
 struct DestinationSearchedEventPayload: Payload {
     static let eventName: String = "Destination Searched"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 
     let destination: String
 }
@@ -103,7 +104,7 @@ struct DestinationSearchedEventPayload: Payload {
 /// Log tap on route leading to Route Detail view
 struct RouteResultsCellTappedEventPayload: Payload {
     static let eventName: String = "Opened Route Detail View"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 }
 
 /// Log 3D touch Peek / Pop
@@ -114,19 +115,19 @@ struct RouteResultsCellPeekedPayload: Payload {
 /// Log opening of About page
 struct AboutPageOpenedPayload: Payload {
     static let eventName: String = "About Page Opened"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 }
 
 /// Log big blue bus tap
 struct BusTappedEventPayload: Payload {
     static let eventName: String = "Tapped Big Blue Bus"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 }
 
 /// Log route sharing
 struct RouteSharedEventPayload: Payload {
     static let eventName: String = "Share Route"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 
     let activityType: String
     let didSelectAndCompleteShare: Bool
@@ -136,7 +137,7 @@ struct RouteSharedEventPayload: Payload {
 /// Log any errors when sending feedback
 struct FeedbackErrorPayload: Payload {
     static let eventName: String = "Feedback Error"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 
     let description: String
 }
@@ -144,7 +145,7 @@ struct FeedbackErrorPayload: Payload {
 /// Log any errors when sending feedback
 struct RouteOptionsSettingsPayload: Payload {
     static let eventName: String = "Route Options Changed"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 
     let description: String
 }
@@ -152,7 +153,7 @@ struct RouteOptionsSettingsPayload: Payload {
 /// Screenshot taken within app
 struct ScreenshotTakenPayload: Payload {
     static let eventName: String = "Screenshot Taken"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 
     let location: String
 }
@@ -160,14 +161,14 @@ struct ScreenshotTakenPayload: Payload {
 /// App Shortcut used with 3D Touch from the Home Screen
 struct HomeScreenQuickActionUsedPayload: Payload {
     static let eventName: String = "Home Screen Quick Action Used"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 
     let name: String
 }
 
 struct SiriShortcutUsedPayload: Payload {
     static let eventName: String = "Siri Shortcut used"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 
     let didComplete: Bool
     let intentDescription: String
@@ -176,7 +177,7 @@ struct SiriShortcutUsedPayload: Payload {
 
 struct DataMigrationOnePointThreePayload: Payload {
     static let eventName: String = "v1.2.2 Data Migration"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 
     let success: Bool
     let errorDescription: String?
@@ -184,19 +185,19 @@ struct DataMigrationOnePointThreePayload: Payload {
 
 struct ServiceAlertsPayload: Payload {
     static let eventName: String = "Service Alerts Opened"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 }
 
 struct PrimaryActionTappedPayload: Payload {
     static let eventName: String = "Primary Action Tapped"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 
     let actionDescription: String
 }
 
 struct SecondaryActionTappedPayload: Payload {
     static let eventName: String = "Secondary Action Tapped"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 
     let actionDescription: String
 }
@@ -204,7 +205,7 @@ struct SecondaryActionTappedPayload: Payload {
 /// Log any network error
 struct NetworkErrorPayload: Payload {
     static let eventName: String = "Network Error"
-    let deviceInfo = DeviceInfo()
+    var deviceInfo = DeviceInfo()
 
     let location: String
     let type: String

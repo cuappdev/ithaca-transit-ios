@@ -31,7 +31,7 @@ class InformationViewController: UIViewController {
         super.viewDidLoad()
 
         let payload = AboutPageOpenedPayload()
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
 
         title = Constants.Titles.aboutUs
 
@@ -149,16 +149,16 @@ class InformationViewController: UIViewController {
                     self.open(UIApplication.openSettingsURLString)
                 }
                 let payload = FeedbackErrorPayload(description: "Opened Email Settings")
-                Analytics.shared.log(payload)
+                TransitAnalytics.shared.log(payload)
             }))
             alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.copyEmail, style: .default, handler: { _ in
                 UIPasteboard.general.string = Constants.App.contactEmailAddress
                 let payload = FeedbackErrorPayload(description: "Copy Address to Clipboard")
-                Analytics.shared.log(payload)
+                TransitAnalytics.shared.log(payload)
             }))
             alertController.addAction(UIAlertAction(title: Constants.Alerts.EmailFailure.cancel, style: .default, handler: { _ in
                 let payload = FeedbackErrorPayload(description: "Cancelled")
-                Analytics.shared.log(payload)
+                TransitAnalytics.shared.log(payload)
             }))
             present(alertController, animated: true)
         }

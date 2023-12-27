@@ -25,11 +25,9 @@
 		30F148B4236F9F0500291AE2 /* NotificationToggleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F148B3236F9F0500291AE2 /* NotificationToggleTableViewCell.swift */; };
 		30F148BE237CA02F00291AE2 /* NotificationBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F148BD237CA02F00291AE2 /* NotificationBannerView.swift */; };
 		449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C781D80D0E80019300C /* AppDelegate.swift */; };
-		449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C7C1D80D0E80019300C /* Main.storyboard */; };
 		449A7C801D80D0E80019300C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C7F1D80D0E80019300C /* Assets.xcassets */; };
 		449A7C831D80D0E80019300C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C811D80D0E80019300C /* LaunchScreen.storyboard */; };
 		449A7C8E1D80D0E80019300C /* TCATTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C8D1D80D0E80019300C /* TCATTests.swift */; };
-		449A7C991D80D0E80019300C /* TCATUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C981D80D0E80019300C /* TCATUITests.swift */; };
 		5006F7BA1EC0F59A005ACAF2 /* SearchTableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */; };
 		502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502D8F5E1E55161D005280F1 /* SearchBarView.swift */; };
 		503EC37D1E969ADF00B3D4D4 /* PlaceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37C1E969ADF00B3D4D4 /* PlaceTableViewCell.swift */; };
@@ -133,7 +131,6 @@
 		D4B70A06237390EE00FEB7EA /* FavoritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A05237390EE00FEB7EA /* FavoritesViewController.swift */; };
 		D4B70A082373910900FEB7EA /* ParentHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A072373910900FEB7EA /* ParentHomeViewController.swift */; };
 		D4B70A0A2373912800FEB7EA /* FavoritesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A092373912800FEB7EA /* FavoritesCollectionViewCell.swift */; };
-		DBA9547500B975532CFBE0E6 /* Pods_TCATUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6EF74B05355CCB79CA81128 /* Pods_TCATUITests.framework */; };
 		DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */; };
 		DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96451FC21B29009955C6 /* HeaderView.swift */; };
 		DCB717101FB76EA600BE4D26 /* StopPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7170F1FB76EA600BE4D26 /* StopPickerViewController.swift */; };
@@ -158,13 +155,6 @@
 
 /* Begin PBXContainerItemProxy section */
 		449A7C8A1D80D0E80019300C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 449A7C6D1D80D0E80019300C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 449A7C741D80D0E80019300C;
-			remoteInfo = TCAT;
-		};
-		449A7C951D80D0E80019300C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 449A7C6D1D80D0E80019300C /* Project object */;
 			proxyType = 1;
@@ -225,16 +215,12 @@
 		319A023F5367F28985F123A2 /* Pods-Today Extension.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.local.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.local.xcconfig"; sourceTree = "<group>"; };
 		449A7C751D80D0E80019300C /* TCAT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCAT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C781D80D0E80019300C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		449A7C7D1D80D0E80019300C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		449A7C7F1D80D0E80019300C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		449A7C821D80D0E80019300C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		449A7C841D80D0E80019300C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "Supporting Files/Info.plist"; sourceTree = "<group>"; };
 		449A7C891D80D0E80019300C /* TCATTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TCATTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C8D1D80D0E80019300C /* TCATTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCATTests.swift; sourceTree = "<group>"; };
 		449A7C8F1D80D0E80019300C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		449A7C941D80D0E80019300C /* TCATUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TCATUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		449A7C981D80D0E80019300C /* TCATUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCATUITests.swift; sourceTree = "<group>"; };
-		449A7C9A1D80D0E80019300C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		45788A342647D19AE0D2823E /* Pods-TCATTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.release.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.release.xcconfig"; sourceTree = "<group>"; };
 		5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = SearchTableViewHelpers.swift; path = Utilities/SearchTableViewHelpers.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		502D8F5E1E55161D005280F1 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchBarView.swift; path = Views/SearchBarView.swift; sourceTree = "<group>"; };
@@ -364,14 +350,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		449A7C911D80D0E80019300C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBA9547500B975532CFBE0E6 /* Pods_TCATUITests.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		7E14AED72177E884006A344D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -431,7 +409,6 @@
 			children = (
 				449A7C771D80D0E80019300C /* TCAT */,
 				449A7C8C1D80D0E80019300C /* TCATTests */,
-				449A7C971D80D0E80019300C /* TCATUITests */,
 				7E14AEDB2177E884006A344D /* Siri */,
 				7EEF189E21B39C6200343FFD /* Today Extension */,
 				449A7C761D80D0E80019300C /* Products */,
@@ -446,7 +423,6 @@
 			children = (
 				449A7C751D80D0E80019300C /* TCAT.app */,
 				449A7C891D80D0E80019300C /* TCATTests.xctest */,
-				449A7C941D80D0E80019300C /* TCATUITests.xctest */,
 				7E14AEDA2177E884006A344D /* Siri.appex */,
 				7EEF189B21B39C6200343FFD /* Today Extension.appex */,
 			);
@@ -478,15 +454,6 @@
 				449A7C8F1D80D0E80019300C /* Info.plist */,
 			);
 			path = TCATTests;
-			sourceTree = "<group>";
-		};
-		449A7C971D80D0E80019300C /* TCATUITests */ = {
-			isa = PBXGroup;
-			children = (
-				449A7C981D80D0E80019300C /* TCATUITests.swift */,
-				449A7C9A1D80D0E80019300C /* Info.plist */,
-			);
-			path = TCATUITests;
 			sourceTree = "<group>";
 		};
 		44BE841D0263A527944A6E0F /* Pods */ = {
@@ -565,7 +532,6 @@
 			isa = PBXGroup;
 			children = (
 				449A7C811D80D0E80019300C /* LaunchScreen.storyboard */,
-				449A7C7C1D80D0E80019300C /* Main.storyboard */,
 			);
 			name = Base.lproj;
 			sourceTree = "<group>";
@@ -727,25 +693,6 @@
 			productReference = 449A7C891D80D0E80019300C /* TCATTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		449A7C931D80D0E80019300C /* TCATUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 449A7CA31D80D0E80019300C /* Build configuration list for PBXNativeTarget "TCATUITests" */;
-			buildPhases = (
-				15D043B2A335054FC25D1EFA /* [CP] Check Pods Manifest.lock */,
-				449A7C901D80D0E80019300C /* Sources */,
-				449A7C911D80D0E80019300C /* Frameworks */,
-				449A7C921D80D0E80019300C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				449A7C961D80D0E80019300C /* PBXTargetDependency */,
-			);
-			name = TCATUITests;
-			productName = TCATUITests;
-			productReference = 449A7C941D80D0E80019300C /* TCATUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 		7E14AED92177E884006A344D /* Siri */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7E14AEF52177E884006A344D /* Build configuration list for PBXNativeTarget "Siri" */;
@@ -813,11 +760,6 @@
 						LastSwiftMigration = 1000;
 						TestTargetID = 449A7C741D80D0E80019300C;
 					};
-					449A7C931D80D0E80019300C = {
-						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 1000;
-						TestTargetID = 449A7C741D80D0E80019300C;
-					};
 					7E14AED92177E884006A344D = {
 						CreatedOnToolsVersion = 10.0;
 						DevelopmentTeam = ZGMCXU7X3U;
@@ -857,7 +799,6 @@
 			targets = (
 				449A7C741D80D0E80019300C /* TCAT */,
 				449A7C881D80D0E80019300C /* TCATTests */,
-				449A7C931D80D0E80019300C /* TCATUITests */,
 				7E14AED92177E884006A344D /* Siri */,
 				7EEF189A21B39C6200343FFD /* Today Extension */,
 			);
@@ -879,19 +820,11 @@
 				BF8460AE2172B0F80027FB62 /* SFUIText-Bold.otf in Resources */,
 				449A7C801D80D0E80019300C /* Assets.xcassets in Resources */,
 				BF8460A32172A5220027FB62 /* SFProDisplay-Regular.otf in Resources */,
-				449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */,
 				BF8460A42172A5220027FB62 /* SFProDisplay-Bold.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		449A7C871D80D0E80019300C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		449A7C921D80D0E80019300C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -924,28 +857,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		15D043B2A335054FC25D1EFA /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-TCATUITests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		1B3BBAEF4322E579A3144740 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -992,7 +903,8 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh",
-				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.xcframework/ios-arm64/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.xcframework/ios-arm64_x86_64-simulator/GoogleMaps.framework/Resources/GoogleMaps.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
@@ -1092,7 +1004,12 @@
 				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AppDevAnnouncements/AppDevAnnouncements.framework",
 				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCore/FirebaseCore.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCoreDiagnostics/FirebaseCoreDiagnostics.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCrashlytics/FirebaseCrashlytics.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseInstallations/FirebaseInstallations.framework",
 				"${BUILT_PRODUCTS_DIR}/FutureNova/FutureNova.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleDataTransport/GoogleDataTransport.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/MarqueeLabel/MarqueeLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/NotificationBannerSwift/NotificationBannerSwift.framework",
@@ -1110,7 +1027,12 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppDevAnnouncements.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DZNEmptyDataSet.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCoreDiagnostics.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCrashlytics.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseInstallations.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FutureNova.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleDataTransport.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MarqueeLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NotificationBannerSwift.framework",
@@ -1231,14 +1153,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		449A7C901D80D0E80019300C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				449A7C991D80D0E80019300C /* TCATUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		7E14AED62177E884006A344D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1291,11 +1205,6 @@
 			target = 449A7C741D80D0E80019300C /* TCAT */;
 			targetProxy = 449A7C8A1D80D0E80019300C /* PBXContainerItemProxy */;
 		};
-		449A7C961D80D0E80019300C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 449A7C741D80D0E80019300C /* TCAT */;
-			targetProxy = 449A7C951D80D0E80019300C /* PBXContainerItemProxy */;
-		};
 		7E14AEF02177E884006A344D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 7E14AED92177E884006A344D /* Siri */;
@@ -1309,14 +1218,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		449A7C7C1D80D0E80019300C /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				449A7C7D1D80D0E80019300C /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		449A7C811D80D0E80019300C /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1410,7 +1311,9 @@
 					"$(PROJECT_DIR)/Pods/GoogleMaps/Maps/Frameworks",
 				);
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				INFOPLIST_KEY_CFBundleDisplayName = "Ithaca Transit";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.9.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
@@ -1439,22 +1342,6 @@
 			};
 			name = Release;
 		};
-		449A7CA51D80D0E80019300C /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = FA07B88835AF4B4B57825EA7 /* Pods-TCATUITests.release.xcconfig */;
-			buildSettings = {
-				CURRENT_PROJECT_VERSION = 47;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				INFOPLIST_FILE = TCATUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCATUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TEST_TARGET_NAME = TCAT;
-			};
-			name = Release;
-		};
 		7E14AEF72177E884006A344D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1471,7 +1358,7 @@
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Siri/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 1.9.1;
 				MTL_FAST_MATH = YES;
@@ -1502,7 +1389,7 @@
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "$(SRCROOT)/Today Extension/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 1.9.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -1537,7 +1424,7 @@
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "$(SRCROOT)/Today Extension/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 1.9.1;
 				MTL_FAST_MATH = YES;
@@ -1669,7 +1556,9 @@
 					"$(PROJECT_DIR)/Pods/GoogleMaps/Maps/Frameworks",
 				);
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				INFOPLIST_KEY_CFBundleDisplayName = "Ithaca Transit";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.9.1;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DDEBUG";
@@ -1700,22 +1589,6 @@
 			};
 			name = Debug;
 		};
-		BFF7E5F1223BFDF0001C6032 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = FDB1BCCCB27128551499EC7C /* Pods-TCATUITests.debug.xcconfig */;
-			buildSettings = {
-				CURRENT_PROJECT_VERSION = 47;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				INFOPLIST_FILE = TCATUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCATUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TEST_TARGET_NAME = TCAT;
-			};
-			name = Debug;
-		};
 		BFF7E5F2223BFDF0001C6032 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1733,7 +1606,7 @@
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Siri/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 1.9.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -1826,7 +1699,9 @@
 					"$(PROJECT_DIR)/Pods/GoogleMaps/Maps/Frameworks",
 				);
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				INFOPLIST_KEY_CFBundleDisplayName = "Ithaca Transit";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.9.1;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DLOCAL";
@@ -1857,22 +1732,6 @@
 			};
 			name = Local;
 		};
-		C27549D7233491FA00D5A754 /* Local */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 150AC52CEDC601C508F1CB76 /* Pods-TCATUITests.local.xcconfig */;
-			buildSettings = {
-				CURRENT_PROJECT_VERSION = 47;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				INFOPLIST_FILE = TCATUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCATUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TEST_TARGET_NAME = TCAT;
-			};
-			name = Local;
-		};
 		C27549D8233491FA00D5A754 /* Local */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1890,7 +1749,7 @@
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Siri/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 1.9.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -1923,7 +1782,7 @@
 				DEVELOPMENT_TEAM = 524YAK9BG3;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "$(SRCROOT)/Today Extension/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 1.9.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -1969,16 +1828,6 @@
 				BFF7E5F0223BFDF0001C6032 /* Debug */,
 				C27549D6233491FA00D5A754 /* Local */,
 				449A7CA21D80D0E80019300C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		449A7CA31D80D0E80019300C /* Build configuration list for PBXNativeTarget "TCATUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BFF7E5F1223BFDF0001C6032 /* Debug */,
-				C27549D7233491FA00D5A754 /* Local */,
-				449A7CA51D80D0E80019300C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

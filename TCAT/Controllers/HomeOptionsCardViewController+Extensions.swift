@@ -229,7 +229,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
                     selectedIndex: indexPath.row,
                     totalResults: sections[indexPath.section].getItems().count
                 )
-                Analytics.shared.log(payload)
+                TransitAnalytics.shared.log(payload)
             }
 
             let place = sections[indexPath.section].getItems()[indexPath.row]

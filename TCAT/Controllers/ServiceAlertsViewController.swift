@@ -64,7 +64,7 @@ class ServiceAlertsViewController: UIViewController {
         getServiceAlerts()
 
         let payload = ServiceAlertsPayload()
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
     }
 
     private func setupConstraints() {
@@ -117,7 +117,7 @@ class ServiceAlertsViewController: UIViewController {
                         type: "\((error as NSError).domain)",
                         description: error.localizedDescription
                     )
-                    Analytics.shared.log(payload)
+                    TransitAnalytics.shared.log(payload)
                 }
             }
         })

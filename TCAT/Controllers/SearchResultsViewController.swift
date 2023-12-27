@@ -14,11 +14,11 @@ import MapKit
 import SwiftyJSON
 import UIKit
 
-protocol DestinationDelegate: class {
+protocol DestinationDelegate: AnyObject {
     func didSelectPlace(place: Place)
 }
 
-protocol SearchBarCancelDelegate: class {
+protocol SearchBarCancelDelegate: AnyObject {
     func didCancel()
 }
 
@@ -259,7 +259,7 @@ extension SearchResultsViewController: UITableViewDelegate {
                     selectedIndex: indexPath.row,
                     totalResults: sections[indexPath.section].getItems().count
                 )
-                Analytics.shared.log(payload)
+                TransitAnalytics.shared.log(payload)
             }
             let place = sections[indexPath.section].getItems()[indexPath.row]
             if place.latitude == 0.0 && place.longitude == 0.0 {
