@@ -34,7 +34,7 @@
 		503EC37F1E969B2100B3D4D4 /* SearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37E1E969B2100B3D4D4 /* SearchResultsViewController.swift */; };
 		7E0A65192226367100441967 /* WalkPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */; };
 		7E14AEDD2177E884006A344D /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
-		7E14AEF12177E884006A344D /* Siri.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7E14AEDA2177E884006A344D /* Siri.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7E14AEF12177E884006A344D /* Siri.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7E14AEDA2177E884006A344D /* Siri.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7E155FD72231DA8600FE7A9B /* BusLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1209FA1F7759C200A7C930 /* BusLocationView.swift */; };
 		7E155FD82231DAAE00FE7A9B /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36A7011F6637C900E4789E /* Direction.swift */; };
 		7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
@@ -131,15 +131,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		7E14AED52177E846006A344D /* Embed App Extensions */ = {
+		7E14AED52177E846006A344D /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				7E14AEF12177E884006A344D /* Siri.appex in Embed App Extensions */,
+				7E14AEF12177E884006A344D /* Siri.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -365,9 +365,8 @@
 		449A7C771D80D0E80019300C /* TCAT */ = {
 			isa = PBXGroup;
 			children = (
-				449A7C781D80D0E80019300C /* AppDelegate.swift */,
 				449A7C7F1D80D0E80019300C /* Assets.xcassets */,
-				DD2F988E1E50D8660005F6BC /* Base.lproj */,
+				DD2F988E1E50D8660005F6BC /* Base */,
 				DD2F988F1E50D89C0005F6BC /* Cells */,
 				DD47EA501E50D77D009C68EB /* Controllers */,
 				DD2F98911E50D8C90005F6BC /* Models */,
@@ -447,12 +446,13 @@
 			name = Fonts;
 			sourceTree = "<group>";
 		};
-		DD2F988E1E50D8660005F6BC /* Base.lproj */ = {
+		DD2F988E1E50D8660005F6BC /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				449A7C781D80D0E80019300C /* AppDelegate.swift */,
 				449A7C811D80D0E80019300C /* LaunchScreen.storyboard */,
 			);
-			name = Base.lproj;
+			name = Base;
 			sourceTree = "<group>";
 		};
 		DD2F988F1E50D89C0005F6BC /* Cells */ = {
@@ -577,7 +577,7 @@
 				7EE2479B23136DF7009C21ED /* Setup Firebase Environment GoogleService-Info.plist */,
 				449A7C731D80D0E80019300C /* Resources */,
 				2292F9DB215722ED00C8C931 /* SwiftLint Script */,
-				7E14AED52177E846006A344D /* Embed App Extensions */,
+				7E14AED52177E846006A344D /* Embed Foundation Extensions */,
 				9A6FEFF1214CED5F4453A9FE /* Setup Firebase Environment GoogleService-Info.plist */,
 				5A33F199DB4AF04538DFC589 /* [CP] Copy Pods Resources */,
 				EA6A24256D95E248AE35F1C6 /* [CP] Embed Pods Frameworks */,
@@ -634,8 +634,9 @@
 		449A7C6D1D80D0E80019300C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1010;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1500;
 				ORGANIZATIONNAME = cuappdev;
 				TargetAttributes = {
 					449A7C741D80D0E80019300C = {
@@ -1073,6 +1074,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1092,7 +1094,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1148,7 +1150,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CURRENT_PROJECT_VERSION = 47;
 				INFOPLIST_FILE = TCATTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1217,6 +1219,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1242,7 +1245,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1299,7 +1302,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CURRENT_PROJECT_VERSION = 47;
 				INFOPLIST_FILE = TCATTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1371,6 +1374,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1396,7 +1400,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1453,7 +1457,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CURRENT_PROJECT_VERSION = 47;
 				INFOPLIST_FILE = TCATTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -27,7 +27,6 @@ class SummaryView: UIView {
         // View Initialization
         super.init(frame: .zero)
 
-        // TODO:
         // This value ends up getting overwritten by constraints, which is what we want,
         // but for some reason if it is not set prior to writing the constraints, the
         // entire view comes out blank. I'm still investigating but it seems to be an,

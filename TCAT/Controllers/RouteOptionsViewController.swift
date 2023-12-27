@@ -580,7 +580,7 @@ class RouteOptionsViewController: UIViewController {
                                     self.routes.append(routeSection)
                                 }
 
-                        }
+                            }
                         self.getRoutesTrips()
                         self.requestDidFinish(perform: [.hideBanner])
                     case .error(let error):
