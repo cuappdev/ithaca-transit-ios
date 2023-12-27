@@ -43,21 +43,6 @@ target 'TCAT' do
     
 end
 
-# Pods for Today Extension
-target 'Today Extension' do
-    # Pods for Today Extension
-
-    # UI Frameworks	
-    pod 'SnapKit', '~> 5.0'
-
-    # Networking + Data
-    pod 'SwiftyJSON', '~> 5.0'
-    pod 'FutureNova', :git => 'https://github.com/cuappdev/ios-networking.git'
- 
-    # Analytics
-    pod 'Firebase'
-    pod 'FirebaseCrashlytics'
-end
 
 # Added for NotificationBannerSwift build issue
 post_install do |installer|
