@@ -29,13 +29,6 @@ struct Bounds: Codable {
     /// The maximum longitude value in all of the path's route.
     var maxLong: Double
 
-    init(minLat: Double, minLong: Double, maxLat: Double, maxLong: Double) {
-        self.minLat = minLat
-        self.minLong = minLong
-        self.maxLat = maxLat
-        self.maxLong = maxLong
-    }
-
 }
 
 struct RouteCalculationError: Swift.Error {
@@ -178,13 +171,14 @@ class Route: NSObject, Codable {
     // MARK: - Process routes
 
     func isRawWalkingRoute() -> Bool {
-        return rawDirections.reduce(true) { $0 && $1.type == .walk }
+        return rawDirections.allSatisfy { $0.type == .walk }
     }
 
     func getFirstDepartRawDirection() -> Direction? {
         return rawDirections.first { $0.type == .depart }
     }
 
+    // swiftlint:disable:next line_length
     /// Calculate travel distance from location passed in to first route summary object and updates travel distance of route
     func calculateTravelDistance(fromRawDirections rawDirections: [Direction]) {
 

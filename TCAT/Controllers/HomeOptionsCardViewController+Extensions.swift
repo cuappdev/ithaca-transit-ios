@@ -61,7 +61,13 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
         searchBar.returnKeyType = searchText.isEmpty ? .default : .search
         searchBar.setShowsCancelButton(true, animated: true)
         timer?.invalidate()
-        timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(getPlaces), userInfo: ["searchText": searchText], repeats: false)
+        timer = Timer.scheduledTimer(
+            timeInterval: 0.2,
+            target: self,
+            selector: #selector(getPlaces),
+            userInfo: ["searchText": searchText],
+            repeats: false
+        )
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -127,12 +133,16 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
         let section = sections[indexPath.section]
         switch section {
         case .seeAllStops:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier, for: indexPath) as? GeneralTableViewCell else { return UITableViewCell() }
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: Constants.Cells.generalCellIdentifier,
+                for: indexPath
+            ) as? GeneralTableViewCell else { return UITableViewCell() }
             cell.configure(for: .seeAllStops)
             return cell
         default: // Recent searches, etc.
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-                else { return UITableViewCell() }
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: Constants.Cells.placeIdentifier
+            ) as? PlaceTableViewCell else { return UITableViewCell() }
             cell.configure(for: sections[indexPath.section].getItems()[indexPath.row])
             return cell
         }
@@ -191,7 +201,10 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         }
     }
 
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+    func tableView(
+        _ tableView: UITableView,
+        editingStyleForRowAt indexPath: IndexPath
+    ) -> UITableViewCell.EditingStyle {
         let section = sections[indexPath.section]
         switch section {
         case .recentSearches:
@@ -201,7 +214,11 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         }
     }
 
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(
+        _ tableView: UITableView,
+        commit editingStyle: UITableViewCell.EditingStyle,
+        forRowAt indexPath: IndexPath
+    ) {
         if editingStyle == .delete {
             switch sections[indexPath.section] {
             case .recentSearches:
@@ -229,7 +246,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
                     selectedIndex: indexPath.row,
                     totalResults: sections[indexPath.section].getItems().count
                 )
-                Analytics.shared.log(payload)
+                TransitAnalytics.shared.log(payload)
             }
 
             let place = sections[indexPath.section].getItems()[indexPath.row]

@@ -20,7 +20,7 @@ class LoadingIndicator: RPCircularProgress {
         thicknessRatio = 0.25
     }
 
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
 

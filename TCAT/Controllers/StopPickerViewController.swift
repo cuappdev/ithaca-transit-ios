@@ -84,7 +84,8 @@ class StopPickerViewController: UIViewController {
                     guard !response.data.isEmpty else { return } // ensure the response has stops
 
                     do {
-                        let stopsData = try JSONEncoder().encode(response.data) // note: response.data is [Place], not Data
+                        // note: response.data is [Place], not Data
+                        let stopsData = try JSONEncoder().encode(response.data)
                         userDefaults.set(stopsData, forKey: Constants.UserDefaults.allBusStops)
                         self.sections = self.tableSections(for: response.data)
                     } catch {
@@ -138,8 +139,9 @@ class StopPickerViewController: UIViewController {
         let payload = NetworkErrorPayload(
             location: "\(self) Get All Stops",
             type: "\((error as NSError).domain)",
-            description: error.localizedDescription)
-        Analytics.shared.log(payload)
+            description: error.localizedDescription
+        )
+        TransitAnalytics.shared.log(payload)
     }
 
 }
@@ -192,7 +194,10 @@ extension StopPickerViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as? PlaceTableViewCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: Constants.Cells.placeIdentifier,
+            for: indexPath
+        ) as? PlaceTableViewCell else { return UITableViewCell() }
         cell.configure(for: sections[indexPath.section].places[indexPath.row])
         return cell
     }

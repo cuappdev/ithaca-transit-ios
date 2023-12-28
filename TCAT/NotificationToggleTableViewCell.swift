@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol NotificationToggleTableViewDelegate: class {
+protocol NotificationToggleTableViewDelegate: AnyObject {
     func displayNotificationBanner(type: NotificationBannerType)
 }
 

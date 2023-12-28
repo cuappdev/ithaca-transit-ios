@@ -26,11 +26,14 @@ class SearchManager: NSObject {
     private let searchCompleter = MKLocalSearchCompleter()
     private var searchResults = [MKLocalSearchCompletion]()
 
-    private override init() {
+    override private init() {
         super.init()
         searchCompleter.delegate = self
         if let searchRadius = CLLocationDistance(exactly: Constants.Map.searchRadius) {
-            let center = CLLocationCoordinate2D(latitude: Constants.Map.startingLat, longitude: Constants.Map.startingLong)
+            let center = CLLocationCoordinate2D(
+                latitude: Constants.Map.startingLat,
+                longitude: Constants.Map.startingLong
+            )
             searchCompleter.region = MKCoordinateRegion(
                 center: center,
                 latitudinalMeters: searchRadius,
@@ -82,7 +85,7 @@ extension SearchManager: MKLocalSearchCompleterDelegate {
         var places = [Place]()
         let dispatchGroup = DispatchGroup()
         searchResults = completer.results
-        searchResults.forEach { (completion) -> Void in
+        searchResults.forEach { completion in
             let searchRequest = MKLocalSearch.Request(completion: completion)
             let search = MKLocalSearch(request: searchRequest)
             dispatchGroup.enter()
@@ -101,7 +104,13 @@ extension SearchManager: MKLocalSearchCompleterDelegate {
                     let lat = mapItem.placemark.coordinate.latitude
                     let long = mapItem.placemark.coordinate.longitude
                     let description = [address, city, state, country].joined(separator: ", ")
-                    let place = Place(name: name, type: .applePlace, latitude: lat, longitude: long, placeDescription: description)
+                    let place = Place(
+                        name: name,
+                        type: .applePlace,
+                        latitude: lat,
+                        longitude: long,
+                        placeDescription: description
+                    )
                     places.append(place)
                 }
                 dispatchGroup.leave()

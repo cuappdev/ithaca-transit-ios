@@ -11,6 +11,8 @@ import UIKit
 /// App-wide constants
 struct Constants {
 
+    // swiftlint:disable line_length
+
     /// The phrases used for alerts
     struct Alerts {
 
@@ -343,5 +345,7 @@ struct Constants {
             static let westBorder: Double = -76.67690943302259 - (1 / 51.2738554594)
         }
     }
+
+    // swiftlint:enable line_length
 
 }

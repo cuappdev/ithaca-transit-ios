@@ -12,13 +12,18 @@ import GoogleMaps
 import SnapKit
 import UIKit
 
-protocol HomeMapViewDelegate: class {
+protocol HomeMapViewDelegate: AnyObject {
     func mapViewWillMove()
 }
 
 class HomeMapViewController: UIViewController {
 
-    static let optionsCardInset = UIEdgeInsets.init(top: UIScreen.main.bounds.height / 10, left: 20, bottom: 0, right: 20)
+    static let optionsCardInset = UIEdgeInsets.init(
+        top: UIScreen.main.bounds.height / 10,
+        left: 20,
+        bottom: 0,
+        right: 20
+    )
 
     private var loadingView = UIView()
     private var mapView: GMSMapView!
@@ -75,8 +80,14 @@ class HomeMapViewController: UIViewController {
         mapView.isIndoorEnabled = false
         mapView.padding = .init(top: 0, left: 0, bottom: 10, right: 10)
 
-        let northEast = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.north, longitude: Constants.Values.RouteMaxima.east)
-        let southWest = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.south, longitude: Constants.Values.RouteMaxima.west)
+        let northEast = CLLocationCoordinate2D(
+            latitude: Constants.Values.RouteMaxima.north,
+            longitude: Constants.Values.RouteMaxima.east
+        )
+        let southWest = CLLocationCoordinate2D(
+            latitude: Constants.Values.RouteMaxima.south,
+            longitude: Constants.Values.RouteMaxima.west
+        )
         let panBounds = GMSCoordinateBounds(coordinate: northEast, coordinate: southWest)
         mapView.cameraTargetBounds = panBounds
 
@@ -139,13 +150,23 @@ extension HomeMapViewController: CLLocationManagerDelegate {
             let alertTitle = Constants.Alerts.LocationDisabled.title
             let alertMessage = Constants.Alerts.LocationDisabled.message
             let alertController = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
-            let settingsAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.settings, style: .default) { _ in
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            let settingsAction = UIAlertAction(
+                title: Constants.Alerts.LocationDisabled.settings,
+                style: .default
+            ) { _ in
+                UIApplication.shared.open(
+                    URL(string: UIApplication.openSettingsURLString)!,
+                    options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]),
+                    completionHandler: nil
+                )
             }
 
             if let showReminder = userDefaults.value(forKey: Constants.UserDefaults.showLocationAuthReminder) as? Bool {
                 if showReminder {
-                    let dontRemindAgainAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default) { _ in
+                    let dontRemindAgainAction = UIAlertAction(
+                        title: Constants.Alerts.LocationDisabled.cancel,
+                        style: .default
+                    ) { _ in
                         self.userDefaults.set(false, forKey: Constants.UserDefaults.showLocationAuthReminder)
                     }
                     alertController.addAction(dontRemindAgainAction)
@@ -156,7 +177,11 @@ extension HomeMapViewController: CLLocationManagerDelegate {
                 return
             }
             userDefaults.set(true, forKey: Constants.UserDefaults.showLocationAuthReminder)
-            let cancelAction = UIAlertAction(title: Constants.Alerts.LocationDisabled.cancel, style: .default, handler: nil)
+            let cancelAction = UIAlertAction(
+                title: Constants.Alerts.LocationDisabled.cancel,
+                style: .default,
+                handler: nil
+            )
             alertController.addAction(cancelAction)
             alertController.addAction(settingsAction)
             alertController.preferredAction = settingsAction
@@ -203,7 +228,9 @@ extension HomeMapViewController: HomeOptionsCardDelegate {
 }
 
 /// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(
+    _ input: [String: Any]
+) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
     return Dictionary(uniqueKeysWithValues: input.map { key, value in
         (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)
     })

@@ -61,6 +61,7 @@ class Direction: NSObject, NSCopying, Codable {
     /// The number representing the bus route.
     var routeNumber: Int = 0
 
+    // swiftlint:disable:next line_length
     /// An array of bus stop locations on the bus route, including the departure and arrival stop. Empty if `type != .depart`.
     var stops: [LocationObject] = []
 
@@ -93,6 +94,7 @@ class Direction: NSObject, NSCopying, Codable {
 
     required init (from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+
         type = try container.decode(DirectionType.self, forKey: .type)
         name = try container.decode(String.self, forKey: .name)
         startLocation = try container.decode(CLLocationCoordinate2D.self, forKey: .startLocation)
@@ -100,12 +102,30 @@ class Direction: NSObject, NSCopying, Codable {
         startTime = Date.parseDate(try container.decode(String.self, forKey: .startTime))
         endTime = Date.parseDate(try container.decode(String.self, forKey: .endTime))
         path = try container.decode([CLLocationCoordinate2D].self, forKey: .path)
-        do { routeNumber = try container.decode(Int.self, forKey: .routeNumber) } catch { routeNumber = -1 }
+
+        do {
+            routeNumber = try container.decode(Int.self, forKey: .routeNumber)
+        } catch {
+            routeNumber = -1
+        }
+
         stops = try container.decode([LocationObject].self, forKey: .stops)
-        do { stayOnBusForTransfer = try container.decode(Bool.self, forKey: .stayOnBusForTransfer) } catch { stayOnBusForTransfer = false }
+
+        do {
+            stayOnBusForTransfer = try container.decode(Bool.self, forKey: .stayOnBusForTransfer)
+        } catch { stayOnBusForTransfer = false
+        }
+
         tripIdentifiers = try container.decode([String]?.self, forKey: .tripIdentifiers)
-        do { delay = try container.decode(Int?.self, forKey: .delay) } catch { delay = nil }
+
+        do {
+            delay = try container.decode(Int?.self, forKey: .delay)
+        } catch {
+            delay = nil
+        }
+
         travelDistance = try container.decode(Double.self, forKey: .travelDistance)
+
         super.init()
     }
 

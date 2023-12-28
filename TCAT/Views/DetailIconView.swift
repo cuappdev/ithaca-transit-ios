@@ -134,7 +134,9 @@ class DetailIconView: UIView {
                 return isLastStep ? direction.endTimeDescription : direction.startTimeDescription
             }
         }
-        let delayedTimeString = isLastStep ? direction.endTimeWithDelayDescription : direction.startTimeWithDelayDescription
+        let delayedTimeString = isLastStep
+            ? direction.endTimeWithDelayDescription
+            : direction.startTimeWithDelayDescription
 
         scheduledTimeLabel.text = scheduledTimeString
         delayedTimeLabel.text = delayedTimeString

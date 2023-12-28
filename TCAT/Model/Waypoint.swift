@@ -39,7 +39,13 @@ class Waypoint: NSObject {
     var longitude: CLLocationDegrees = 0
     var wpType: WaypointType = .origin
 
-    init(lat: CLLocationDegrees, long: CLLocationDegrees, wpType: WaypointType, busNumber: Int = 0, isStop: Bool = false) {
+    init(
+        lat: CLLocationDegrees,
+        long: CLLocationDegrees,
+        wpType: WaypointType,
+        busNumber: Int = 0,
+        isStop: Bool = false
+    ) {
         super.init()
         self.latitude = lat
         self.longitude = long
@@ -50,7 +56,11 @@ class Waypoint: NSObject {
         case .origin:
             self.iconView = Circle(size: .large, style: .solid, color: isStop ? Colors.tcatBlue : Colors.metadataIcon)
         case .destination:
-            self.iconView = Circle(size: .large, style: .bordered, color: isStop ? Colors.tcatBlue : Colors.metadataIcon)
+            self.iconView = Circle(
+                size: .large,
+                style: .bordered,
+                color: isStop ? Colors.tcatBlue : Colors.metadataIcon
+            )
         case .bus:
             self.iconView = Circle(size: .small, style: .solid, color: Colors.tcatBlue)
         case .walk:

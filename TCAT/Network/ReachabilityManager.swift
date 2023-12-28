@@ -23,7 +23,7 @@ class ReachabilityManager: NSObject {
         var closure: Closure
     }
 
-    private override init() {
+    override private init() {
         super.init()
 
         do {

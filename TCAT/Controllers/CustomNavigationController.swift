@@ -46,7 +46,7 @@ class CustomNavigationController: UINavigationController, UINavigationController
         }
     }
 
-    open override var childForStatusBarStyle: UIViewController? {
+    override open var childForStatusBarStyle: UIViewController? {
         return visibleViewController
     }
 
@@ -64,10 +64,14 @@ class CustomNavigationController: UINavigationController, UINavigationController
 
         // Add screenshot listener, log view controller name
         let notifName = UIApplication.userDidTakeScreenshotNotification
-        screenshotObserver = NotificationCenter.default.addObserver(forName: notifName, object: nil, queue: .main) { _ in
+        screenshotObserver = NotificationCenter.default.addObserver(
+            forName: notifName,
+            object: nil,
+            queue: .main
+        ) { _ in
             guard let currentViewController = self.visibleViewController else { return }
             let payload = ScreenshotTakenPayload(location: "\(type(of: currentViewController))")
-            Analytics.shared.log(payload)
+            TransitAnalytics.shared.log(payload)
         }
     }
 
@@ -87,6 +91,13 @@ class CustomNavigationController: UINavigationController, UINavigationController
         navigationItem.backBarButtonItem?.setTitleTextAttributes(
             CustomNavigationController.buttonTitleTextAttributes, for: .normal
         )
+
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = Colors.white
+        appearance.titleTextAttributes = titleTextAttributes
+        navigationBar.standardAppearance = appearance
+        navigationBar.compactAppearance = appearance
+        navigationBar.scrollEdgeAppearance = appearance
     }
 
     /// Return an instance of custom back button
@@ -105,8 +116,18 @@ class CustomNavigationController: UINavigationController, UINavigationController
         backButton.sizeToFit()
 
         // Expand frame to create bigger touch area
-        backButton.frame = CGRect(x: backButton.frame.minX, y: backButton.frame.minY, width: backButton.frame.width + additionalWidth, height: backButton.frame.height + additionalHeight)
-        backButton.contentEdgeInsets = UIEdgeInsets.init(top: 0, left: 0, bottom: 0, right: additionalWidth)
+        backButton.frame = CGRect(
+            x: backButton.frame.minX,
+            y: backButton.frame.minY,
+            width: backButton.frame.width + additionalWidth,
+            height: backButton.frame.height + additionalHeight
+        )
+        backButton.contentEdgeInsets = UIEdgeInsets.init(
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: additionalWidth
+        )
 
         backButton.addTarget(self, action: #selector(backAction), for: .touchUpInside)
 
@@ -146,19 +167,34 @@ class CustomNavigationController: UINavigationController, UINavigationController
         return viewController
     }
 
-    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+    override func present(
+        _ viewControllerToPresent: UIViewController,
+        animated flag: Bool,
+        completion: (() -> Void)? = nil
+    ) {
         super.present(viewControllerToPresent, animated: flag, completion: completion)
         banner.dismiss()
     }
 
     // MARK: - UINavigationControllerDelegate Functions
 
-    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        willShow viewController: UIViewController,
+        animated: Bool
+    ) {
         setNavigationBarHidden(viewController is ParentHomeMapViewController, animated: animated)
     }
 
-    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        interactivePopGestureRecognizer?.isEnabled = (responds(to: #selector(getter: interactivePopGestureRecognizer)) && viewControllers.count > 1)
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated: Bool
+    ) {
+        interactivePopGestureRecognizer?.isEnabled = (
+            responds(to: #selector(getter: interactivePopGestureRecognizer))
+            && viewControllers.count > 1
+        )
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -180,7 +216,7 @@ class OnboardingNavigationController: UINavigationController {
         navigationBar.isTranslucent = true
     }
 
-    open override var childForStatusBarStyle: UIViewController? {
+    override open var childForStatusBarStyle: UIViewController? {
         return visibleViewController
     }
 

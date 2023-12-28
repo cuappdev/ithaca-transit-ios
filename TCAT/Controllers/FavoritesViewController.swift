@@ -78,8 +78,14 @@ class FavoritesViewController: UIViewController {
         favoritesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: favoritesFlowLayout)
         favoritesCollectionView.delegate = self
         favoritesCollectionView.dataSource = self
-        favoritesCollectionView.register(FavoritesCollectionViewCell.self, forCellWithReuseIdentifier: favoritesReuseIdentifier)
-        favoritesCollectionView.register(AddFavoritesCollectionViewCell.self, forCellWithReuseIdentifier: addFavoritesReuseIdentifier)
+        favoritesCollectionView.register(
+            FavoritesCollectionViewCell.self,
+            forCellWithReuseIdentifier: favoritesReuseIdentifier
+        )
+        favoritesCollectionView.register(
+            AddFavoritesCollectionViewCell.self,
+            forCellWithReuseIdentifier: addFavoritesReuseIdentifier
+        )
         favoritesCollectionView.backgroundColor = .clear
         view.addSubview(favoritesCollectionView)
     }
@@ -165,13 +171,22 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
         return isEditingFavorites ? favoritePlaces.count : favoritePlaces.count + 1
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         if indexPath.item < favoritePlaces.count {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: favoritesReuseIdentifier, for: indexPath) as! FavoritesCollectionViewCell
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: favoritesReuseIdentifier,
+                for: indexPath
+            ) as? FavoritesCollectionViewCell else { return UICollectionViewCell() }
             cell.configure(for: favoritePlaces[indexPath.row], isEditing: isEditingFavorites)
             return cell
         } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: addFavoritesReuseIdentifier, for: indexPath) as! AddFavoritesCollectionViewCell
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: addFavoritesReuseIdentifier,
+                for: indexPath
+            ) as? AddFavoritesCollectionViewCell else { return UICollectionViewCell() }
             return cell
          }
     }
@@ -197,7 +212,11 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
 
 extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         return CGSize(width: 80, height: 95)
     }
 }

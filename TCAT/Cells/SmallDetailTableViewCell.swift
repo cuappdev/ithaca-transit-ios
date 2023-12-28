@@ -52,18 +52,22 @@ class SmallDetailTableViewCell: UITableViewCell {
 
         if direction.type == .arrive {
             // Arrive Direction
-            titleLabel.attributedText = direction.name.bold(in: direction.locationNameDescription,
-                                                            from: titleLabel.font,
-                                                            to: titleLabelBoldFont)
+            titleLabel.attributedText = direction.name.bold(
+                in: direction.locationNameDescription,
+                from: titleLabel.font,
+                to: titleLabelBoldFont
+            )
         } else {
             // Walk Direction
             var walkString = direction.locationNameDescription
             if direction.travelDistance > 0 {
                 walkString += " (\(direction.travelDistance.roundedString))"
             }
-            titleLabel.attributedText = direction.name.bold(in: walkString,
-                                                            from: titleLabel.font,
-                                                            to: titleLabelBoldFont)
+            titleLabel.attributedText = direction.name.bold(
+                in: walkString,
+                from: titleLabel.font,
+                to: titleLabelBoldFont
+            )
         }
     }
 

@@ -13,7 +13,7 @@ import SnapKit
 import UIKit
 
 // MARK: - HomeOptionsCardDelegate
-protocol HomeOptionsCardDelegate: class {
+protocol HomeOptionsCardDelegate: AnyObject {
     func updateSize()
     func getCurrentLocation() -> CLLocation?
 }
@@ -65,6 +65,7 @@ class HomeOptionsCardViewController: UIViewController {
     /// max height would make the card get covered by the keyboard, then we adjust it to be smaller.
     /// Otherwise, we keep it at the maximum height.
     private var adjustedMaxCardHeight: CGFloat {
+        // swiftlint:disable:next line_length
         let openScreenSpace = UIScreen.main.bounds.height - HomeMapViewController.optionsCardInset.top - keyboardHeight - 20
         return min(maxCardHeight, openScreenSpace)
     }
@@ -325,7 +326,9 @@ class HomeOptionsCardViewController: UIViewController {
     // MARK: - Keyboard
 
     @objc func keyboardWillShow(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+        if let keyboardSize = (
+            notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue
+        )?.cgRectValue {
             keyboardHeight = keyboardSize.height
         }
     }

@@ -64,7 +64,7 @@ class ServiceAlertsViewController: UIViewController {
         getServiceAlerts()
 
         let payload = ServiceAlertsPayload()
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
     }
 
     private func setupConstraints() {
@@ -101,13 +101,13 @@ class ServiceAlertsViewController: UIViewController {
             guard let self = self else { return }
             DispatchQueue.main.async {
                 switch result {
-                case .value (let response):
+                case .value(let response):
                     if response.success {
                         self.removeLoadingIndicator()
                         self.networkError = false
                         self.alerts = self.sortedAlerts(alertsList: response.data)
                     }
-                case .error (let error):
+                case .error(let error):
                     self.removeLoadingIndicator()
                     self.networkError = true
                     self.alerts = [:]
@@ -117,7 +117,7 @@ class ServiceAlertsViewController: UIViewController {
                         type: "\((error as NSError).domain)",
                         description: error.localizedDescription
                     )
-                    Analytics.shared.log(payload)
+                    TransitAnalytics.shared.log(payload)
                 }
             }
         })
@@ -221,8 +221,9 @@ extension ServiceAlertsViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ServiceAlertTableViewCell.identifier) as? ServiceAlertTableViewCell
-            else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: ServiceAlertTableViewCell.identifier
+        ) as? ServiceAlertTableViewCell else { return UITableViewCell() }
 
         if let alertList = alerts[priorities[indexPath.section]] {
             cell.configure(for: alertList[indexPath.row], isNotFirstRow: indexPath.row > 0)
@@ -239,7 +240,9 @@ extension ServiceAlertsViewController: DZNEmptyDataSetSource {
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         // If loading indicator is being shown, don't display description
         if isLoading { return nil }
-        let title = networkError ? Constants.EmptyStateMessages.noNetworkConnection : Constants.EmptyStateMessages.noActiveAlerts
+        let title = networkError
+            ? Constants.EmptyStateMessages.noNetworkConnection
+            : Constants.EmptyStateMessages.noActiveAlerts
         return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.metadataIcon])
     }
 

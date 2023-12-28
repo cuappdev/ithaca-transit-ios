@@ -98,7 +98,7 @@ class Global {
 
         if key == Constants.UserDefaults.favorites {
             let payload = FavoriteAddedPayload(name: place.name)
-            Analytics.shared.log(payload)
+            TransitAnalytics.shared.log(payload)
         }
     }
 

@@ -18,7 +18,7 @@ class ParentHomeMapViewController: PulleyViewController {
         // Present announcement if there are any new ones to present
         presentAnnouncement { presented in
             if presented {
-                Analytics.shared.log(AnnouncementPresentedPayload())
+                TransitAnalytics.shared.log(AnnouncementPresentedPayload())
             }
         }
     }

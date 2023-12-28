@@ -69,7 +69,11 @@ class Network {
     class func getCoordinates(
         start: CoordinateAcceptor,
         end: CoordinateAcceptor,
-        callback: @escaping (_ startCoord: CLLocationCoordinate2D?, _ endCoord: CLLocationCoordinate2D?, _ error: CoordinateVisitorError?) -> Void
+        callback: @escaping (
+            _ startCoord: CLLocationCoordinate2D?,
+            _ endCoord: CLLocationCoordinate2D?,
+            _ error: CoordinateVisitorError?
+        ) -> Void
     ) {
         let visitor = CoordinateVisitor()
         start.accept(visitor: visitor) { (startCoord, error) in
@@ -89,7 +93,11 @@ class Network {
 
     class func getRoutes(
         startCoord: CLLocationCoordinate2D,
-        endCoord: CLLocationCoordinate2D, startPlaceName: String, endPlaceName: String, time: Date, type: SearchType,
+        endCoord: CLLocationCoordinate2D,
+        startPlaceName: String,
+        endPlaceName: String,
+        time: Date,
+        type: SearchType,
         callback: @escaping (_ request: APIRequest<JSON, Error>) -> Void
     ) {
         let request: APIRequest<JSON, Error> = tron.swiftyJSON.request("route")
@@ -125,6 +133,7 @@ class Network {
         let start =  "\(startCoord.latitude),\(startCoord.longitude)"
         let time = time.timeIntervalSince1970
 
+        // swiftlint:disable:next line_length
         return  "\(address)\(path)?arriveBy=\(arriveBy)&end=\(end)&start=\(start)&time=\(time)&destinationName=\(destinationName)&originName=\(originName)"
     }
 
@@ -271,14 +280,23 @@ class AllBusStops: JSONDecodable {
 
         var middleGroundBusStops: [BusStop] = []
         for key in duplicates.keys {
-            if let currentBusStops = duplicates[key], let first = currentBusStops.first, let second = currentBusStops.last {
+            if let currentBusStops = duplicates[key],
+               let first = currentBusStops.first,
+               let second = currentBusStops.last {
+
                 let firstStopLocation = CLLocation(latitude: first.lat, longitude: first.long)
                 let secondStopLocation = CLLocation(latitude: second.lat, longitude: second.long)
 
                 let distanceBetween = firstStopLocation.distance(from: secondStopLocation)
-                let middleCoordinate = firstStopLocation.coordinate.middleLocationWith(location: secondStopLocation.coordinate)
+                let middleCoordinate = firstStopLocation.coordinate.middleLocationWith(
+                    location: secondStopLocation.coordinate
+                )
                 if distanceBetween < Constants.Values.maxDistanceBetweenStops {
-                    let middleBusStop = BusStop(name: first.name, lat: middleCoordinate.latitude, long: middleCoordinate.longitude)
+                    let middleBusStop = BusStop(
+                        name: first.name,
+                        lat: middleCoordinate.latitude,
+                        long: middleCoordinate.longitude
+                    )
                     middleGroundBusStops.append(middleBusStop)
                 } else {
                     nonDuplicateStops.append(contentsOf: [first, second])
@@ -310,9 +328,9 @@ class BusLocationResult: JSONDecodable {
     func parseBusLocation(json: JSON) -> BusLocation {
         let dataType: BusDataType = {
             switch json["case"].stringValue {
-            case "noData" : return .noData
-            case "validData" : return .validData
-            default : return .invalidData
+            case "noData": return .noData
+            case "validData": return .validData
+            default: return .invalidData
             }
         }()
 

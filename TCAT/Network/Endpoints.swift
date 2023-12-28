@@ -105,7 +105,11 @@ extension Endpoint {
         let locationsInfo = departDirections.map { direction -> BusLocationsInfo in
             // The id of the location, or bus stop, the bus needs to get to
             let stopID = direction.stops.first?.id ?? "-1"
-            return BusLocationsInfo(stopID: stopID, routeID: String(direction.routeNumber), tripIdentifiers: direction.tripIdentifiers!)
+            return BusLocationsInfo(
+                stopID: stopID,
+                routeID: String(direction.routeNumber),
+                tripIdentifiers: direction.tripIdentifiers!
+            )
         }
 
         let body = GetBusLocationsBody(data: locationsInfo)

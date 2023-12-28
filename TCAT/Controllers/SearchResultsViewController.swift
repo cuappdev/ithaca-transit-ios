@@ -14,11 +14,11 @@ import MapKit
 import SwiftyJSON
 import UIKit
 
-protocol DestinationDelegate: class {
+protocol DestinationDelegate: AnyObject {
     func didSelectPlace(place: Place)
 }
 
-protocol SearchBarCancelDelegate: class {
+protocol SearchBarCancelDelegate: AnyObject {
     func didCancel()
 }
 
@@ -193,13 +193,15 @@ extension SearchResultsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch sections[indexPath.section] {
         case .currentLocation, .seeAllStops:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.generalCellIdentifier) as? GeneralTableViewCell
-                else { return UITableViewCell() }
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: Constants.Cells.generalCellIdentifier
+            ) as? GeneralTableViewCell else { return UITableViewCell() }
             cell.configure(for: sections[indexPath.section])
             return cell
         default:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier) as? PlaceTableViewCell
-                else { return UITableViewCell() }
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: Constants.Cells.placeIdentifier
+            ) as? PlaceTableViewCell else { return UITableViewCell() }
             cell.configure(for: sections[indexPath.section].getItems()[indexPath.row])
             return cell
         }
@@ -259,7 +261,7 @@ extension SearchResultsViewController: UITableViewDelegate {
                     selectedIndex: indexPath.row,
                     totalResults: sections[indexPath.section].getItems().count
                 )
-                Analytics.shared.log(payload)
+                TransitAnalytics.shared.log(payload)
             }
             let place = sections[indexPath.section].getItems()[indexPath.row]
             if place.latitude == 0.0 && place.longitude == 0.0 {
@@ -351,7 +353,11 @@ extension SearchResultsViewController: CLLocationManagerDelegate {
 // MARK: - Navigation Controller Delegate
 extension SearchResultsViewController: UINavigationControllerDelegate {
 
-    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated: Bool
+    ) {
         if returningFromAllStopsTVC, let place = returningFromAllStopsBusStop {
             destinationDelegate?.didSelectPlace(place: place)
         }
@@ -371,12 +377,18 @@ extension SearchResultsViewController: DZNEmptyDataSetSource {
     }
 
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        return NSAttributedString(string: Constants.EmptyStateMessages.locationNotFound,
-                                  attributes: [.foregroundColor: Colors.metadataIcon])
+        return NSAttributedString(
+            string: Constants.EmptyStateMessages.locationNotFound,
+            attributes: [.foregroundColor: Colors.metadataIcon]
+        )
     }
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(
+    _ input: [String: Any]
+) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in
+        (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)
+    })
 }

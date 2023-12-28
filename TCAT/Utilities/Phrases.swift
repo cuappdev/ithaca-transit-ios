@@ -99,8 +99,7 @@ class Phrases {
 
     /// Select random string from array
     static func selectMessage(from messages: [String]) -> String {
-        let rand = Int(arc4random_uniform(UInt32(messages.count)))
-        return messages[rand]
+        return messages.randomElement() ?? ""
     }
 
 }
@@ -199,10 +198,8 @@ class LocationPhrases: Phrases {
 
     /// Return a string from the first location within the range of coordinates. Otherwise, return nil.
     static func generateMessage(latitude: Double, longitude: Double) -> String? {
-        for place in places {
-            if place.isWithinRange(latitude: latitude, longitude: longitude) {
-                return selectMessage(from: place.messages)
-            }
+        for place in places where place.isWithinRange(latitude: latitude, longitude: longitude) {
+            return selectMessage(from: place.messages)
         }
         return nil
     }
@@ -231,14 +228,23 @@ struct CustomLocation: Equatable {
 
     /// The bottom left corner longitude value for the location's bounding box
     var maximumLongitude: Double
+
     /// The bottom right corner latitude value for the location's bounding box
     var minimumLatitude: Double
+
     /// The top right corner longitude value for the location's bounding box
     var minimumLongitude: Double
+
     /// The top left corner latitude value for the location's bounding box
     var maximumLatitude: Double
 
-    init(messages: [String], minimumLongitude: Double, minimumLatitude: Double, maximumLongitude: Double, maximumLatitude: Double) {
+    init(
+        messages: [String],
+        minimumLongitude: Double,
+        minimumLatitude: Double,
+        maximumLongitude: Double,
+        maximumLatitude: Double
+    ) {
         self.messages = messages
         self.minimumLongitude = minimumLongitude
         self.minimumLatitude = minimumLatitude

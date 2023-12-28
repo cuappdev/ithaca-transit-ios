@@ -26,6 +26,7 @@ class ServiceAlertTableViewCell: UITableViewCell {
         let screenWidth = UIScreen.main.bounds.width
         let totalConstraintInset = borderInset * 2
 
+        // swiftlint:disable:next line_length
         return Int((screenWidth - totalConstraintInset + busIconHorizontalSpacing) / (iconWidth + busIconHorizontalSpacing))
     }
 

@@ -20,10 +20,6 @@ extension RouteDetailContentViewController {
         mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -72,8 +68,14 @@ extension RouteDetailContentViewController {
         let bottom = drawerDisplayController?.summaryView.frame.height ?? 0
         mapView.padding = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
 
-        let northEast = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.north, longitude: Constants.Values.RouteMaxima.east)
-        let southWest = CLLocationCoordinate2D(latitude: Constants.Values.RouteMaxima.south, longitude: Constants.Values.RouteMaxima.west)
+        let northEast = CLLocationCoordinate2D(
+            latitude: Constants.Values.RouteMaxima.north,
+            longitude: Constants.Values.RouteMaxima.east
+        )
+        let southWest = CLLocationCoordinate2D(
+            latitude: Constants.Values.RouteMaxima.south,
+            longitude: Constants.Values.RouteMaxima.west
+        )
         let panBounds = GMSCoordinateBounds(coordinate: northEast, coordinate: southWest)
         mapView.cameraTargetBounds = panBounds
 
@@ -101,8 +103,10 @@ extension RouteDetailContentViewController: CLLocationManagerDelegate {
 extension RouteDetailContentViewController: GMSMapViewDelegate {
 
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
-        guard let coordinates = getUserData(for: marker, key: Constants.BusUserData.actualCoordinates) as? CLLocationCoordinate2D
-            else { return true }
+        guard let coordinates = getUserData(
+            for: marker,
+            key: Constants.BusUserData.actualCoordinates
+        ) as? CLLocationCoordinate2D else { return true }
         let update = GMSCameraUpdate.setTarget(coordinates)
         mapView.animate(with: update)
 
@@ -142,10 +146,13 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
                     existingIndicator.position = placement
                     existingIndicator.rotation = calculateBearing(from: placement, to: bus.position)
 
-                    updateUserData(for: existingIndicator, with: [
-                        Constants.BusUserData.actualCoordinates: bus.position,
-                        Constants.BusUserData.indicatorCoordinates: placement
-                        ])
+                    updateUserData(
+                        for: existingIndicator,
+                        with: [
+                            Constants.BusUserData.actualCoordinates: bus.position,
+                            Constants.BusUserData.indicatorCoordinates: placement
+                        ]
+                    )
 
                     existingIndicator.appearAnimation = .none
                     // Uncomment to avoid animation
@@ -167,9 +174,12 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
                 updateUserData(
                     for: indicator,
                     with: [
-                    Constants.BusUserData.actualCoordinates: bus.position,
-                    Constants.BusUserData.indicatorCoordinates: placement,
-                    Constants.BusUserData.vehicleID: getUserData(for: bus, key: Constants.BusUserData.vehicleID) as? Int ?? -1
+                        Constants.BusUserData.actualCoordinates: bus.position,
+                        Constants.BusUserData.indicatorCoordinates: placement,
+                        Constants.BusUserData.vehicleID: getUserData(
+                            for: bus,
+                            key: Constants.BusUserData.vehicleID
+                        ) as? Int ?? -1
                     ]
                 )
 

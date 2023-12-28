@@ -32,9 +32,11 @@ class FavoritesTableViewController: UIViewController {
         view.backgroundColor = Colors.white
         title = Constants.Titles.favorite
         let systemItem: UIBarButtonItem.SystemItem = .cancel
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: systemItem,
-                                                            target: self,
-                                                            action: #selector(dismissVC))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: systemItem,
+            target: self,
+            action: #selector(dismissVC)
+        )
         navigationItem.rightBarButtonItem?.setTitleTextAttributes(
             CustomNavigationController.buttonTitleTextAttributes, for: .normal
         )
@@ -84,8 +86,10 @@ extension FavoritesTableViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.placeIdentifier, for: indexPath) as? PlaceTableViewCell
-            else { return UITableViewCell()}
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: Constants.Cells.placeIdentifier,
+            for: indexPath
+        ) as? PlaceTableViewCell else { return UITableViewCell() }
         if let place = resultsSection.getItem(at: indexPath.row) {
             cell.configure(for: place)
         }
@@ -125,7 +129,7 @@ extension FavoritesTableViewController: UITableViewDelegate {
                 selectedIndex: indexPath.row,
                 totalResults: resultsSection.getItems().count
             )
-            Analytics.shared.log(payload)
+            TransitAnalytics.shared.log(payload)
         }
         if let place = resultsSection.getItem(at: indexPath.row) {
             Global.shared.insertPlace(for: Constants.UserDefaults.favorites, place: place, bottom: true)
@@ -155,11 +159,13 @@ extension FavoritesTableViewController: DZNEmptyDataSetSource {
 extension FavoritesTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(timeInterval: 0.2,
-                                     target: self,
-                                     selector: #selector(getPlaces),
-                                     userInfo: ["searchText": searchText],
-                                     repeats: false)
+        timer = Timer.scheduledTimer(
+            timeInterval: 0.2,
+            target: self,
+            selector: #selector(getPlaces),
+            userInfo: ["searchText": searchText],
+            repeats: false
+        )
     }
 
     /// Get Search Results

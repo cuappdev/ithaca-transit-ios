@@ -27,7 +27,6 @@ class SummaryView: UIView {
         // View Initialization
         super.init(frame: .zero)
 
-        // TODO:
         // This value ends up getting overwritten by constraints, which is what we want,
         // but for some reason if it is not set prior to writing the constraints, the
         // entire view comes out blank. I'm still investigating but it seems to be an,
@@ -96,7 +95,10 @@ class SummaryView: UIView {
         let labelsContainerViewToBottomSpacing: CGFloat = 16
         let tabTopInset: CGFloat = 6
         let textLabelPadding: CGFloat = 16
-        let walkIconSize = CGSize(width: iconView.intrinsicContentSize.width * 2, height: iconView.intrinsicContentSize.height * 2)
+        let walkIconSize = CGSize(
+            width: iconView.intrinsicContentSize.width * 2,
+            height: iconView.intrinsicContentSize.height * 2
+        )
 
         tab.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
@@ -136,7 +138,8 @@ class SummaryView: UIView {
             var attributedString = departDirection.startTimeWithDelayDescription.bold(
                 in: content,
                 from: mainLabel.font,
-                to: mainLabelBoldFont)
+                to: mainLabelBoldFont
+            )
             attributedString = departDirection.name.bold(in: attributedString, to: mainLabelBoldFont)
 
             mainLabel.attributedText = attributedString
@@ -144,7 +147,9 @@ class SummaryView: UIView {
             if let delay = departDirection.delay {
                 color = delay >= 60 ? Colors.lateRed : Colors.liveGreen
 
-                let range = (attributedString.string as NSString).range(of: departDirection.startTimeWithDelayDescription)
+                let range = (attributedString.string as NSString).range(
+                    of: departDirection.startTimeWithDelayDescription
+                )
                 attributedString.addAttribute(.foregroundColor, value: color, range: range)
 
                 // Find time within label to place live indicator

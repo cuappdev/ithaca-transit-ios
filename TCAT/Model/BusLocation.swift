@@ -66,7 +66,7 @@ class BusLocation: NSObject, Codable {
 
     /// The Int type of routeID. Defaults to 0 if can't cast to Int
     var routeNumber: Int {
-        return routeID ?? 0
+        return routeID
     }
 
 }

@@ -84,7 +84,10 @@ class JSONFileManager {
 
                 printAndLog(timestamp: Date(), line: "\(fileName) \(#function): Deleted \(zipFileName)")
             } catch let error as NSError {
-                printAndLog(timestamp: Date(), line: "\(fileName) \(#function): Error when deleting \(zipFileName) \(error.debugDescription)")
+                printAndLog(
+                    timestamp: Date(),
+                    line: "\(fileName) \(#function): Error when deleting \(zipFileName) \(error.debugDescription)"
+                )
             }
         }
     }
@@ -130,7 +133,11 @@ class JSONFileManager {
 
             try jsonData.write(to: jsonFileURL, options: .atomic)
 
-            printAndLog(timestamp: Date(), line: "\(fileName) \(#function): Wrote \(type) to documents directory. Name: \(jsonFileName).\(jsonFileExtension)")
+            printAndLog(
+                timestamp: Date(),
+                // swiftlint:disable:next line_length
+                line: "\(fileName) \(#function): Wrote \(type) to documents directory. Name: \(jsonFileName).\(jsonFileExtension)"
+            )
         } catch {
             printAndLog(timestamp: Date(), line: "\(fileName) \(#function): \(error)")
         }
@@ -146,10 +153,17 @@ class JSONFileManager {
                 try FileManager.default.removeItem(atPath: jsonFilePath)
 
                 let (fileName: jsonFileName, fileExtension: jsonFileExtension) = getFileComponents(fileURL: url)
-                printAndLog(timestamp: Date(), line: "\(fileName) \(#function): Deleted \(jsonFileName).\(jsonFileExtension)")
+                printAndLog(
+                    timestamp: Date(),
+                    line: "\(fileName) \(#function): Deleted \(jsonFileName).\(jsonFileExtension)"
+                )
             } catch let error as NSError {
                 let (fileName: jsonFileName, fileExtension: jsonFileExtension) =  getFileComponents(fileURL: url)
-                printAndLog(timestamp: Date(), line: "\(fileName) \(#function): Error for \(jsonFileName).\(jsonFileExtension) \(error.debugDescription)")
+                printAndLog(
+                    timestamp: Date(),
+                    // swiftlint:disable:next line_length
+                    line: "\(fileName) \(#function): Error for \(jsonFileName).\(jsonFileExtension) \(error.debugDescription)"
+                )
             }
         }
     }
@@ -158,7 +172,10 @@ class JSONFileManager {
         var jsonURLs: [URL] = []
 
         do {
-            let fileURLs = try FileManager.default.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil)
+            let fileURLs = try FileManager.default.contentsOfDirectory(
+                at: documentsURL,
+                includingPropertiesForKeys: nil
+            )
 
             for url in fileURLs {
                 let (fileName: _, fileExtension: fileExtension) = getFileComponents(fileURL: url)
@@ -170,7 +187,11 @@ class JSONFileManager {
 
             return jsonURLs
         } catch {
-            printAndLog(timestamp: Date(), line: "\(fileName) \(#function):: Error while enumerating files at \(documentsURL.path): \(error.localizedDescription)")
+            printAndLog(
+                timestamp: Date(),
+                // swiftlint:disable:next line_length
+                line: "\(fileName) \(#function):: Error while enumerating files at \(documentsURL.path): \(error.localizedDescription)"
+            )
         }
 
         return jsonURLs
@@ -178,8 +199,18 @@ class JSONFileManager {
 
     // MARK: - Manage log
 
-    func logSearchParameters(timestamp: Date, startPlace: Place, endPlace: Place, searchTime: Date, searchTimeType: SearchType) {
-        logLine(timestamp: timestamp, line: "Search parameters: startPlace: \(startPlace). endPlace: \(endPlace). searchTime: \(Time.dateString(from: searchTime)). searchTimeType: \(searchTimeType)")
+    func logSearchParameters(
+        timestamp: Date,
+        startPlace: Place,
+        endPlace: Place,
+        searchTime: Date,
+        searchTimeType: SearchType
+    ) {
+        logLine(
+            timestamp: timestamp,
+            // swiftlint:disable:next line_length
+            line: "Search parameters: startPlace: \(startPlace). endPlace: \(endPlace). searchTime: \(Time.dateString(from: searchTime)). searchTimeType: \(searchTimeType)"
+        )
     }
 
     func logDelayParameters(timestamp: Date, stopId: String, tripId: String) {
@@ -200,7 +231,8 @@ class JSONFileManager {
     }
 
     private func logLine(timestamp: Date, line: String) {
-        if let data = "\(getTimeStampString(from: timestamp)): \(line)\n".data(using: .utf8), let fileHandle = FileHandle(forWritingAtPath: logURL.path) {
+        if let data = "\(getTimeStampString(from: timestamp)): \(line)\n".data(using: .utf8),
+           let fileHandle = FileHandle(forWritingAtPath: logURL.path) {
             defer {
                 fileHandle.closeFile()
             }

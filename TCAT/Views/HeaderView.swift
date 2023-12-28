@@ -9,7 +9,7 @@
 import SnapKit
 import UIKit
 
-protocol HeaderViewDelegate: class {
+protocol HeaderViewDelegate: AnyObject {
     func clearRecentSearches()
 }
 

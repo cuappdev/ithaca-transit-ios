@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -25,34 +25,18 @@
 		30F148B4236F9F0500291AE2 /* NotificationToggleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F148B3236F9F0500291AE2 /* NotificationToggleTableViewCell.swift */; };
 		30F148BE237CA02F00291AE2 /* NotificationBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F148BD237CA02F00291AE2 /* NotificationBannerView.swift */; };
 		449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C781D80D0E80019300C /* AppDelegate.swift */; };
-		449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C7C1D80D0E80019300C /* Main.storyboard */; };
 		449A7C801D80D0E80019300C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C7F1D80D0E80019300C /* Assets.xcassets */; };
 		449A7C831D80D0E80019300C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C811D80D0E80019300C /* LaunchScreen.storyboard */; };
 		449A7C8E1D80D0E80019300C /* TCATTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C8D1D80D0E80019300C /* TCATTests.swift */; };
-		449A7C991D80D0E80019300C /* TCATUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C981D80D0E80019300C /* TCATUITests.swift */; };
 		5006F7BA1EC0F59A005ACAF2 /* SearchTableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */; };
 		502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502D8F5E1E55161D005280F1 /* SearchBarView.swift */; };
 		503EC37D1E969ADF00B3D4D4 /* PlaceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37C1E969ADF00B3D4D4 /* PlaceTableViewCell.swift */; };
 		503EC37F1E969B2100B3D4D4 /* SearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EC37E1E969B2100B3D4D4 /* SearchResultsViewController.swift */; };
 		7E0A65192226367100441967 /* WalkPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */; };
-		7E0C97B5220362C10068439D /* SFProDisplay-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF8460A12172A5210027FB62 /* SFProDisplay-Semibold.otf */; };
-		7E0C97B62203649D0068439D /* SFProDisplay-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF84609F2172A5200027FB62 /* SFProDisplay-Regular.otf */; };
-		7E0C97B7220364A00068439D /* SFProDisplay-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF8460A22172A5210027FB62 /* SFProDisplay-Medium.otf */; };
-		7E0C97B8220364A20068439D /* SFProDisplay-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF8460A02172A5200027FB62 /* SFProDisplay-Bold.otf */; };
-		7E0C97B9220364FA0068439D /* SFUIText-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF8460A92172B0F70027FB62 /* SFUIText-Medium.otf */; };
-		7E0C97BA220364FC0068439D /* SFUIText-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF8460AB2172B0F80027FB62 /* SFUIText-Regular.otf */; };
-		7E0C97BB220364FF0068439D /* SFUIText-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF8460A82172B0F70027FB62 /* SFUIText-Semibold.otf */; };
-		7E0C97BC220365FC0068439D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 449A7C7F1D80D0E80019300C /* Assets.xcassets */; };
 		7E14AEDD2177E884006A344D /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
-		7E14AEF12177E884006A344D /* Siri.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7E14AEDA2177E884006A344D /* Siri.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		7E155FD62231DA8400FE7A9B /* BusLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1209FA1F7759C200A7C930 /* BusLocationView.swift */; };
+		7E14AEF12177E884006A344D /* Siri.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7E14AEDA2177E884006A344D /* Siri.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7E155FD72231DA8600FE7A9B /* BusLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1209FA1F7759C200A7C930 /* BusLocationView.swift */; };
 		7E155FD82231DAAE00FE7A9B /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36A7011F6637C900E4789E /* Direction.swift */; };
-		7E155FD92231DAAF00FE7A9B /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36A7011F6637C900E4789E /* Direction.swift */; };
-		7E2FFF0F2207B687008EA224 /* TodayExtensionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */; };
-		7E3C5B4122308D83000EFA10 /* LoadingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3C5B4022308D83000EFA10 /* LoadingTableViewCell.swift */; };
-		7E5FE3BC224922C000EF24D4 /* Extensions+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE04A6C21B461D7002F0C52 /* Extensions+Shared.swift */; };
-		7E75BAD621B3A72B00FB56BB /* TodayExtensionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */; };
 		7E7E4E79218E19C200C72376 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E14AEDC2177E884006A344D /* IntentHandler.swift */; };
 		7EBD9D8722263089008BF900 /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
 		7EBD9D8A22263094008BF900 /* LocationObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF73F0F21F60B0BD003B479D /* LocationObject.swift */; };
@@ -68,34 +52,9 @@
 		7EBD9D9B22263114008BF900 /* LiveIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */; };
 		7EBD9D9C22263118008BF900 /* RouteLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA134441EC6A8CB00460B18 /* RouteLine.swift */; };
 		7EBD9D9E22263120008BF900 /* WalkWithDistanceIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD659C8920508E1A00506BAC /* WalkWithDistanceIcon.swift */; };
-		7EC15850222C827C00BA9DA8 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0002211FB37D0A00773109 /* LoadingIndicator.swift */; };
-		7EC15851222C82B900BA9DA8 /* RPCircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C351F945F2A00B164D4 /* RPCircularProgress.swift */; };
-		7EE04A5021B4503C002F0C52 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2F989A1E50F99A0005F6BC /* Route.swift */; };
-		7EE04A5121B45132002F0C52 /* LiveIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5C52A3207B96F0003C93B9 /* LiveIndicator.swift */; };
-		7EE04A5321B4515B002F0C52 /* LocationObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF73F0F21F60B0BD003B479D /* LocationObject.swift */; };
-		7EE04A5421B4516E002F0C52 /* BusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16B8E41E7046390089B7B2 /* BusIcon.swift */; };
-		7EE04A5521B45192002F0C52 /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF84609D217139A30027FB62 /* Styles.swift */; };
-		7EE04A5821B45278002F0C52 /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE3BC221F5863D50014D2BB /* Place.swift */; };
-		7EE04A5B21B452D4002F0C52 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F51F6DB06A0073E8F7 /* Constants.swift */; };
-		7EE04A5C21B452EB002F0C52 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */; };
-		7EE04A5F21B45363002F0C52 /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBCD5E61E989E5800014641 /* Circle.swift */; };
-		7EE04A6021B45378002F0C52 /* RouteLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA134441EC6A8CB00460B18 /* RouteLine.swift */; };
-		7EE04A6121B4538C002F0C52 /* WalkWithDistanceIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD659C8920508E1A00506BAC /* WalkWithDistanceIcon.swift */; };
-		7EE04A6221B453B1002F0C52 /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5D233B1E6367A100F8DECE /* Time.swift */; };
-		7EE04A6421B453E3002F0C52 /* BusLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF456E0220489990005C611D /* BusLocation.swift */; };
-		7EE04A6921B455E0002F0C52 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE04A6721B454F4002F0C52 /* Shared.swift */; };
-		7EE04A6A21B45611002F0C52 /* EventPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94BD30021599E3200C9214E /* EventPayload.swift */; };
 		7EEB14242231A34200134C8B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD99E2F51F6DB06A0073E8F7 /* Constants.swift */; };
-		7EEB14252231A35800134C8B /* Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF250D7E222FB12300E7F271 /* Endpoints.swift */; };
-		7EEB14262231A37E00134C8B /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22948BFB221B75C5003FC43F /* Models.swift */; };
 		7EEB14272231A3CA00134C8B /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC27BD081FF6C91C00DAA7D5 /* Analytics.swift */; };
-		7EEC17FE2214D47A00EEF6C1 /* Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D94BD2FC2159993D00C9214E /* Keys.plist */; };
-		7EEC17FF2214D48800EEF6C1 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCA712C206AC69000E4CCE5 /* Keys.swift */; };
-		7EEF189D21B39C6200343FFD /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EEF189C21B39C6200343FFD /* NotificationCenter.framework */; };
-		7EEF18A021B39C6200343FFD /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEF189F21B39C6200343FFD /* TodayViewController.swift */; };
-		7EEF18A721B39C6200343FFD /* Today Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7EEF189B21B39C6200343FFD /* Today Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7EF304692227502E006B327E /* Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D94BD2FC2159993D00C9214E /* Keys.plist */; };
-		7EFDB7F72243009A006D5126 /* TodayExtensionErrorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFDB7F62243009A006D5126 /* TodayExtensionErrorCell.swift */; };
 		AD1B7F4DAC497BD369A28358 /* Pods_TCATTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27C5CB0F6FDBF523F5ADA0C2 /* Pods_TCATTests.framework */; };
 		BF0002221FB37D0A00773109 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0002211FB37D0A00773109 /* LoadingIndicator.swift */; };
 		BF18AE102083B7F6000C3D82 /* StoreReviewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF18AE0F2083B7F6000C3D82 /* StoreReviewHelper.swift */; };
@@ -133,7 +92,6 @@
 		D4B70A06237390EE00FEB7EA /* FavoritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A05237390EE00FEB7EA /* FavoritesViewController.swift */; };
 		D4B70A082373910900FEB7EA /* ParentHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A072373910900FEB7EA /* ParentHomeViewController.swift */; };
 		D4B70A0A2373912800FEB7EA /* FavoritesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B70A092373912800FEB7EA /* FavoritesCollectionViewCell.swift */; };
-		DBA9547500B975532CFBE0E6 /* Pods_TCATUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6EF74B05355CCB79CA81128 /* Pods_TCATUITests.framework */; };
 		DC2E96441FBF41CB009955C6 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96431FBF41CB009955C6 /* FavoritesTableViewController.swift */; };
 		DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E96451FC21B29009955C6 /* HeaderView.swift */; };
 		DCB717101FB76EA600BE4D26 /* StopPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7170F1FB76EA600BE4D26 /* StopPickerViewController.swift */; };
@@ -153,18 +111,10 @@
 		DDC83CA51E52B0D400D4EDDF /* RouteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC83CA41E52B0D400D4EDDF /* RouteTableViewCell.swift */; };
 		E337970D1FC1606D00BCB28F /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E337970C1FC1606D00BCB28F /* InformationViewController.swift */; };
 		E68700B61F9B4E069D17931E /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8A1C717EB340065803DAFD0 /* Pods_TCAT.framework */; };
-		F70127A0240B5B89045ED2B0 /* Pods_Today_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F2FC5C9D02BA940FC57D58F /* Pods_Today_Extension.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		449A7C8A1D80D0E80019300C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 449A7C6D1D80D0E80019300C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 449A7C741D80D0E80019300C;
-			remoteInfo = TCAT;
-		};
-		449A7C951D80D0E80019300C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 449A7C6D1D80D0E80019300C /* Project object */;
 			proxyType = 1;
@@ -178,26 +128,18 @@
 			remoteGlobalIDString = 7E14AED92177E884006A344D;
 			remoteInfo = Siri;
 		};
-		7EEF18A521B39C6200343FFD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 449A7C6D1D80D0E80019300C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7EEF189A21B39C6200343FFD;
-			remoteInfo = "Today Extension";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		7E14AED52177E846006A344D /* Embed App Extensions */ = {
+		7E14AED52177E846006A344D /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				7E14AEF12177E884006A344D /* Siri.appex in Embed App Extensions */,
-				7EEF18A721B39C6200343FFD /* Today Extension.appex in Embed App Extensions */,
+				7E14AEF12177E884006A344D /* Siri.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -225,16 +167,12 @@
 		319A023F5367F28985F123A2 /* Pods-Today Extension.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.local.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.local.xcconfig"; sourceTree = "<group>"; };
 		449A7C751D80D0E80019300C /* TCAT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCAT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C781D80D0E80019300C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		449A7C7D1D80D0E80019300C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		449A7C7F1D80D0E80019300C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		449A7C821D80D0E80019300C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		449A7C841D80D0E80019300C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "Supporting Files/Info.plist"; sourceTree = "<group>"; };
 		449A7C891D80D0E80019300C /* TCATTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TCATTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C8D1D80D0E80019300C /* TCATTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCATTests.swift; sourceTree = "<group>"; };
 		449A7C8F1D80D0E80019300C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		449A7C941D80D0E80019300C /* TCATUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TCATUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		449A7C981D80D0E80019300C /* TCATUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCATUITests.swift; sourceTree = "<group>"; };
-		449A7C9A1D80D0E80019300C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		45788A342647D19AE0D2823E /* Pods-TCATTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATTests.release.xcconfig"; path = "Target Support Files/Pods-TCATTests/Pods-TCATTests.release.xcconfig"; sourceTree = "<group>"; };
 		5006F7B91EC0F59A005ACAF2 /* SearchTableViewHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = SearchTableViewHelpers.swift; path = Utilities/SearchTableViewHelpers.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		502D8F5E1E55161D005280F1 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchBarView.swift; path = Views/SearchBarView.swift; sourceTree = "<group>"; };
@@ -247,18 +185,10 @@
 		7E14AEDA2177E884006A344D /* Siri.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Siri.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E14AEDC2177E884006A344D /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
 		7E14AEDE2177E884006A344D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayExtensionHelpers.swift; sourceTree = "<group>"; };
-		7E3C5B4022308D83000EFA10 /* LoadingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingTableViewCell.swift; sourceTree = "<group>"; };
-		7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodayExtensionCell.swift; sourceTree = "<group>"; };
 		7EE04A6721B454F4002F0C52 /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Shared.swift; path = Utilities/Shared.swift; sourceTree = "<group>"; };
 		7EE04A6C21B461D7002F0C52 /* Extensions+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Extensions+Shared.swift"; path = "Utilities/Extensions+Shared.swift"; sourceTree = "<group>"; };
 		7EE2478C23135EAC009C21ED /* Siri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Siri.entitlements; sourceTree = "<group>"; };
-		7EEF189B21B39C6200343FFD /* Today Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Today Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EEF189C21B39C6200343FFD /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
-		7EEF189F21B39C6200343FFD /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
-		7EEF18A421B39C6200343FFD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7EEF18AB21B39CF500343FFD /* Today Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Today Extension.entitlements"; sourceTree = "<group>"; };
-		7EFDB7F62243009A006D5126 /* TodayExtensionErrorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodayExtensionErrorCell.swift; sourceTree = "<group>"; };
 		7F2FC5C9D02BA940FC57D58F /* Pods_Today_Extension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Today_Extension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9184DD9DA907B4E003CB9F2E /* Pods-Today Extension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.release.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.release.xcconfig"; sourceTree = "<group>"; };
 		A781591737EAB3208B7C5185 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
@@ -364,27 +294,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		449A7C911D80D0E80019300C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBA9547500B975532CFBE0E6 /* Pods_TCATUITests.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		7E14AED72177E884006A344D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		7EEF189821B39C6200343FFD /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7EEF189D21B39C6200343FFD /* NotificationCenter.framework in Frameworks */,
-				F70127A0240B5B89045ED2B0 /* Pods_Today_Extension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,9 +344,7 @@
 			children = (
 				449A7C771D80D0E80019300C /* TCAT */,
 				449A7C8C1D80D0E80019300C /* TCATTests */,
-				449A7C971D80D0E80019300C /* TCATUITests */,
 				7E14AEDB2177E884006A344D /* Siri */,
-				7EEF189E21B39C6200343FFD /* Today Extension */,
 				449A7C761D80D0E80019300C /* Products */,
 				12F774CEB5023E6938BDCF3A /* Frameworks */,
 				44BE841D0263A527944A6E0F /* Pods */,
@@ -446,9 +357,7 @@
 			children = (
 				449A7C751D80D0E80019300C /* TCAT.app */,
 				449A7C891D80D0E80019300C /* TCATTests.xctest */,
-				449A7C941D80D0E80019300C /* TCATUITests.xctest */,
 				7E14AEDA2177E884006A344D /* Siri.appex */,
-				7EEF189B21B39C6200343FFD /* Today Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -456,9 +365,8 @@
 		449A7C771D80D0E80019300C /* TCAT */ = {
 			isa = PBXGroup;
 			children = (
-				449A7C781D80D0E80019300C /* AppDelegate.swift */,
 				449A7C7F1D80D0E80019300C /* Assets.xcassets */,
-				DD2F988E1E50D8660005F6BC /* Base.lproj */,
+				DD2F988E1E50D8660005F6BC /* Base */,
 				DD2F988F1E50D89C0005F6BC /* Cells */,
 				DD47EA501E50D77D009C68EB /* Controllers */,
 				DD2F98911E50D8C90005F6BC /* Models */,
@@ -478,15 +386,6 @@
 				449A7C8F1D80D0E80019300C /* Info.plist */,
 			);
 			path = TCATTests;
-			sourceTree = "<group>";
-		};
-		449A7C971D80D0E80019300C /* TCATUITests */ = {
-			isa = PBXGroup;
-			children = (
-				449A7C981D80D0E80019300C /* TCATUITests.swift */,
-				449A7C9A1D80D0E80019300C /* Info.plist */,
-			);
-			path = TCATUITests;
 			sourceTree = "<group>";
 		};
 		44BE841D0263A527944A6E0F /* Pods */ = {
@@ -532,20 +431,6 @@
 			path = Siri;
 			sourceTree = "<group>";
 		};
-		7EEF189E21B39C6200343FFD /* Today Extension */ = {
-			isa = PBXGroup;
-			children = (
-				7EEF18AB21B39CF500343FFD /* Today Extension.entitlements */,
-				7EEF18A421B39C6200343FFD /* Info.plist */,
-				7EFDB7F62243009A006D5126 /* TodayExtensionErrorCell.swift */,
-				7EEF189F21B39C6200343FFD /* TodayViewController.swift */,
-				7E75BAD521B3A72A00FB56BB /* TodayExtensionCell.swift */,
-				7E2FFF0E2207B687008EA224 /* TodayExtensionHelpers.swift */,
-				7E3C5B4022308D83000EFA10 /* LoadingTableViewCell.swift */,
-			);
-			path = "Today Extension";
-			sourceTree = "<group>";
-		};
 		BF8460A72172A7A90027FB62 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -561,13 +446,13 @@
 			name = Fonts;
 			sourceTree = "<group>";
 		};
-		DD2F988E1E50D8660005F6BC /* Base.lproj */ = {
+		DD2F988E1E50D8660005F6BC /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				449A7C781D80D0E80019300C /* AppDelegate.swift */,
 				449A7C811D80D0E80019300C /* LaunchScreen.storyboard */,
-				449A7C7C1D80D0E80019300C /* Main.storyboard */,
 			);
-			name = Base.lproj;
+			name = Base;
 			sourceTree = "<group>";
 		};
 		DD2F988F1E50D89C0005F6BC /* Cells */ = {
@@ -692,7 +577,7 @@
 				7EE2479B23136DF7009C21ED /* Setup Firebase Environment GoogleService-Info.plist */,
 				449A7C731D80D0E80019300C /* Resources */,
 				2292F9DB215722ED00C8C931 /* SwiftLint Script */,
-				7E14AED52177E846006A344D /* Embed App Extensions */,
+				7E14AED52177E846006A344D /* Embed Foundation Extensions */,
 				9A6FEFF1214CED5F4453A9FE /* Setup Firebase Environment GoogleService-Info.plist */,
 				5A33F199DB4AF04538DFC589 /* [CP] Copy Pods Resources */,
 				EA6A24256D95E248AE35F1C6 /* [CP] Embed Pods Frameworks */,
@@ -701,7 +586,6 @@
 			);
 			dependencies = (
 				7E14AEF02177E884006A344D /* PBXTargetDependency */,
-				7EEF18A621B39C6200343FFD /* PBXTargetDependency */,
 			);
 			name = TCAT;
 			productName = TCAT;
@@ -727,25 +611,6 @@
 			productReference = 449A7C891D80D0E80019300C /* TCATTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		449A7C931D80D0E80019300C /* TCATUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 449A7CA31D80D0E80019300C /* Build configuration list for PBXNativeTarget "TCATUITests" */;
-			buildPhases = (
-				15D043B2A335054FC25D1EFA /* [CP] Check Pods Manifest.lock */,
-				449A7C901D80D0E80019300C /* Sources */,
-				449A7C911D80D0E80019300C /* Frameworks */,
-				449A7C921D80D0E80019300C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				449A7C961D80D0E80019300C /* PBXTargetDependency */,
-			);
-			name = TCATUITests;
-			productName = TCATUITests;
-			productReference = 449A7C941D80D0E80019300C /* TCATUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 		7E14AED92177E884006A344D /* Siri */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7E14AEF52177E884006A344D /* Build configuration list for PBXNativeTarget "Siri" */;
@@ -763,32 +628,15 @@
 			productReference = 7E14AEDA2177E884006A344D /* Siri.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		7EEF189A21B39C6200343FFD /* Today Extension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 7EEF18AA21B39C6300343FFD /* Build configuration list for PBXNativeTarget "Today Extension" */;
-			buildPhases = (
-				B46A55D008F67C52AF2B5101 /* [CP] Check Pods Manifest.lock */,
-				7EEF189721B39C6200343FFD /* Sources */,
-				7EEF189821B39C6200343FFD /* Frameworks */,
-				7EEF189921B39C6200343FFD /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Today Extension";
-			productName = "Today Extension";
-			productReference = 7EEF189B21B39C6200343FFD /* Today Extension.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		449A7C6D1D80D0E80019300C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1010;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1500;
 				ORGANIZATIONNAME = cuappdev;
 				TargetAttributes = {
 					449A7C741D80D0E80019300C = {
@@ -813,24 +661,8 @@
 						LastSwiftMigration = 1000;
 						TestTargetID = 449A7C741D80D0E80019300C;
 					};
-					449A7C931D80D0E80019300C = {
-						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 1000;
-						TestTargetID = 449A7C741D80D0E80019300C;
-					};
 					7E14AED92177E884006A344D = {
 						CreatedOnToolsVersion = 10.0;
-						DevelopmentTeam = ZGMCXU7X3U;
-						LastSwiftMigration = 1020;
-						ProvisioningStyle = Automatic;
-						SystemCapabilities = {
-							com.apple.ApplicationGroups.iOS = {
-								enabled = 1;
-							};
-						};
-					};
-					7EEF189A21B39C6200343FFD = {
-						CreatedOnToolsVersion = 10.1;
 						DevelopmentTeam = ZGMCXU7X3U;
 						LastSwiftMigration = 1020;
 						ProvisioningStyle = Automatic;
@@ -857,9 +689,7 @@
 			targets = (
 				449A7C741D80D0E80019300C /* TCAT */,
 				449A7C881D80D0E80019300C /* TCATTests */,
-				449A7C931D80D0E80019300C /* TCATUITests */,
 				7E14AED92177E884006A344D /* Siri */,
-				7EEF189A21B39C6200343FFD /* Today Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -879,19 +709,11 @@
 				BF8460AE2172B0F80027FB62 /* SFUIText-Bold.otf in Resources */,
 				449A7C801D80D0E80019300C /* Assets.xcassets in Resources */,
 				BF8460A32172A5220027FB62 /* SFProDisplay-Regular.otf in Resources */,
-				449A7C7E1D80D0E80019300C /* Main.storyboard in Resources */,
 				BF8460A42172A5220027FB62 /* SFProDisplay-Bold.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		449A7C871D80D0E80019300C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		449A7C921D80D0E80019300C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -905,47 +727,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7EEF189921B39C6200343FFD /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7E0C97BB220364FF0068439D /* SFUIText-Semibold.otf in Resources */,
-				7E0C97B62203649D0068439D /* SFProDisplay-Regular.otf in Resources */,
-				7E0C97B5220362C10068439D /* SFProDisplay-Semibold.otf in Resources */,
-				7E0C97BA220364FC0068439D /* SFUIText-Regular.otf in Resources */,
-				7E0C97B8220364A20068439D /* SFProDisplay-Bold.otf in Resources */,
-				7E0C97B7220364A00068439D /* SFProDisplay-Medium.otf in Resources */,
-				7EEC17FE2214D47A00EEF6C1 /* Keys.plist in Resources */,
-				7E0C97BC220365FC0068439D /* Assets.xcassets in Resources */,
-				7E0C97B9220364FA0068439D /* SFUIText-Medium.otf in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		15D043B2A335054FC25D1EFA /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-TCATUITests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		1B3BBAEF4322E579A3144740 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -970,6 +754,7 @@
 		};
 		2292F9DB215722ED00C8C931 /* SwiftLint Script */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -983,7 +768,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint autocorrect; swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n\nif which swiftlint >/dev/null; then\n    swiftlint --fix && swiftlint\nelse\n    echo \"WARNING: SwiftLint not installed\"\nfi\n";
 		};
 		5A33F199DB4AF04538DFC589 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -992,7 +777,8 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh",
-				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.xcframework/ios-arm64/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.xcframework/ios-arm64_x86_64-simulator/GoogleMaps.framework/Resources/GoogleMaps.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
@@ -1061,28 +847,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# Name of the resource we're selectively copying\nGOOGLESERVICE_INFO_PLIST=GoogleService-Info.plist\n\n# Get references to dev and prod versions of the GoogleService-Info.plist\n# NOTE: These should only live on the file system and should NOT be part of the target (since we'll be adding them to the target manually)\nGOOGLESERVICE_INFO_DEV=${PROJECT_DIR}/${TARGET_NAME}/Firebase/Dev/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PROD=${PROJECT_DIR}/${TARGET_NAME}/Firebase/Prod/${GOOGLESERVICE_INFO_PLIST}\n\n# Make sure the dev version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_DEV}\"\nif [ ! -f $GOOGLESERVICE_INFO_DEV ]\nthen\necho \"No Development GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\nexit 1\nfi\n\n# Make sure the prod version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PROD}\"\nif [ ! -f $GOOGLESERVICE_INFO_PROD ]\nthen\necho \"No Production GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\nexit 1\nfi\n\n# Get a reference to the destination location for the GoogleService-Info.plist\nPLIST_DESTINATION=${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\necho \"Will copy ${GOOGLESERVICE_INFO_PLIST} to final destination: ${PLIST_DESTINATION}\"\n\n# Copy over the prod GoogleService-Info.plist for Release builds\nif [ \"${CONFIGURATION}\" == \"Release\" ]\nthen\necho \"Using ${GOOGLESERVICE_INFO_PROD}\"\ncp \"${GOOGLESERVICE_INFO_PROD}\" \"${PLIST_DESTINATION}\"\nelse\necho \"Using ${GOOGLESERVICE_INFO_DEV}\"\ncp \"${GOOGLESERVICE_INFO_DEV}\" \"${PLIST_DESTINATION}\"\nfi\n";
 		};
-		B46A55D008F67C52AF2B5101 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Today Extension-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		EA6A24256D95E248AE35F1C6 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1092,7 +856,12 @@
 				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AppDevAnnouncements/AppDevAnnouncements.framework",
 				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCore/FirebaseCore.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCoreDiagnostics/FirebaseCoreDiagnostics.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCrashlytics/FirebaseCrashlytics.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseInstallations/FirebaseInstallations.framework",
 				"${BUILT_PRODUCTS_DIR}/FutureNova/FutureNova.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleDataTransport/GoogleDataTransport.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/MarqueeLabel/MarqueeLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/NotificationBannerSwift/NotificationBannerSwift.framework",
@@ -1110,7 +879,12 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppDevAnnouncements.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DZNEmptyDataSet.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCoreDiagnostics.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCrashlytics.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseInstallations.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FutureNova.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleDataTransport.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MarqueeLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NotificationBannerSwift.framework",
@@ -1231,55 +1005,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		449A7C901D80D0E80019300C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				449A7C991D80D0E80019300C /* TCATUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		7E14AED62177E884006A344D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				BFC367F421B66E9A00ABD9AC /* Intents.intentdefinition in Sources */,
 				7E14AEDD2177E884006A344D /* IntentHandler.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		7EEF189721B39C6200343FFD /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7EC15850222C827C00BA9DA8 /* LoadingIndicator.swift in Sources */,
-				7EE04A5021B4503C002F0C52 /* Route.swift in Sources */,
-				7EE04A6A21B45611002F0C52 /* EventPayload.swift in Sources */,
-				7EE04A5421B4516E002F0C52 /* BusIcon.swift in Sources */,
-				7E3C5B4122308D83000EFA10 /* LoadingTableViewCell.swift in Sources */,
-				7EFDB7F72243009A006D5126 /* TodayExtensionErrorCell.swift in Sources */,
-				7EE04A6921B455E0002F0C52 /* Shared.swift in Sources */,
-				7EE04A5321B4515B002F0C52 /* LocationObject.swift in Sources */,
-				7E2FFF0F2207B687008EA224 /* TodayExtensionHelpers.swift in Sources */,
-				7EE04A6121B4538C002F0C52 /* WalkWithDistanceIcon.swift in Sources */,
-				7EE04A6221B453B1002F0C52 /* Time.swift in Sources */,
-				7EEB14262231A37E00134C8B /* Models.swift in Sources */,
-				7EE04A6021B45378002F0C52 /* RouteLine.swift in Sources */,
-				7EE04A5521B45192002F0C52 /* Styles.swift in Sources */,
-				7EE04A5C21B452EB002F0C52 /* Analytics.swift in Sources */,
-				7EEF18A021B39C6200343FFD /* TodayViewController.swift in Sources */,
-				7EC15851222C82B900BA9DA8 /* RPCircularProgress.swift in Sources */,
-				7EE04A5F21B45363002F0C52 /* Circle.swift in Sources */,
-				7E75BAD621B3A72B00FB56BB /* TodayExtensionCell.swift in Sources */,
-				7EE04A6421B453E3002F0C52 /* BusLocation.swift in Sources */,
-				7E5FE3BC224922C000EF24D4 /* Extensions+Shared.swift in Sources */,
-				7E155FD62231DA8400FE7A9B /* BusLocationView.swift in Sources */,
-				7EE04A5B21B452D4002F0C52 /* Constants.swift in Sources */,
-				7EEC17FF2214D48800EEF6C1 /* Keys.swift in Sources */,
-				7EE04A5821B45278002F0C52 /* Place.swift in Sources */,
-				7E155FD92231DAAF00FE7A9B /* Direction.swift in Sources */,
-				7EEB14252231A35800134C8B /* Endpoints.swift in Sources */,
-				7EE04A5121B45132002F0C52 /* LiveIndicator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1291,32 +1022,14 @@
 			target = 449A7C741D80D0E80019300C /* TCAT */;
 			targetProxy = 449A7C8A1D80D0E80019300C /* PBXContainerItemProxy */;
 		};
-		449A7C961D80D0E80019300C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 449A7C741D80D0E80019300C /* TCAT */;
-			targetProxy = 449A7C951D80D0E80019300C /* PBXContainerItemProxy */;
-		};
 		7E14AEF02177E884006A344D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 7E14AED92177E884006A344D /* Siri */;
 			targetProxy = 7E14AEEF2177E884006A344D /* PBXContainerItemProxy */;
 		};
-		7EEF18A621B39C6200343FFD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7EEF189A21B39C6200343FFD /* Today Extension */;
-			targetProxy = 7EEF18A521B39C6200343FFD /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		449A7C7C1D80D0E80019300C /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				449A7C7D1D80D0E80019300C /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		449A7C811D80D0E80019300C /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1361,6 +1074,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1380,10 +1094,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1410,8 +1125,13 @@
 					"$(PROJECT_DIR)/Pods/GoogleMaps/Maps/Frameworks",
 				);
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				INFOPLIST_KEY_CFBundleDisplayName = "Ithaca Transit";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.9.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1430,28 +1150,16 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CURRENT_PROJECT_VERSION = 47;
 				INFOPLIST_FILE = TCATTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCATTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TCAT.app/TCAT";
-			};
-			name = Release;
-		};
-		449A7CA51D80D0E80019300C /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = FA07B88835AF4B4B57825EA7 /* Pods-TCATUITests.release.xcconfig */;
-			buildSettings = {
-				CURRENT_PROJECT_VERSION = 47;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				INFOPLIST_FILE = TCATUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCATUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TEST_TARGET_NAME = TCAT;
 			};
 			name = Release;
 		};
@@ -1471,8 +1179,12 @@
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Siri/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 1.9.1;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.Siri;
@@ -1480,113 +1192,6 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		7EEF18A821B39C6300343FFD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5EA2F024E47855738046B69B /* Pods-Today Extension.debug.xcconfig */;
-			buildSettings = {
-				BUNDLE_APP_DISPLAY_NAME = "Ithaca Transit Beta";
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "Today Extension/Today Extension.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = ZGMCXU7X3U;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = "$(SRCROOT)/Today Extension/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.9.1;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug.TodayExtension;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = iphoneos;
-				SERVER_URL = "transit-testflight.cornellappdev.com";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
-		7EEF18A921B39C6300343FFD /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9184DD9DA907B4E003CB9F2E /* Pods-Today Extension.release.xcconfig */;
-			buildSettings = {
-				BUNDLE_APP_DISPLAY_NAME = "Ithaca Transit";
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "Today Extension/Today Extension.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
-				DEVELOPMENT_TEAM = ZGMCXU7X3U;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = "$(SRCROOT)/Today Extension/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.9.1;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.TodayExtension;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = iphoneos;
-				SERVER_URL = "transit-backend.cornellappdev.com";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
-		7EF8DCD722470DD20052D522 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5EA2F024E47855738046B69B /* Pods-Today Extension.debug.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "Today Extension/Today Extension.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = ZGMCXU7X3U;
-				INFOPLIST_FILE = "$(SRCROOT)/Today Extension/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.TodayExtension;
-				PRODUCT_NAME = "Today Extension";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SERVER_URL = "transit-testflight.cornellappdev.com";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
-		7EF8DCD822470DD20052D522 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9184DD9DA907B4E003CB9F2E /* Pods-Today Extension.release.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "Today Extension/Today Extension.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = ZGMCXU7X3U;
-				INFOPLIST_FILE = "$(SRCROOT)/Today Extension/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.TodayExtension;
-				PRODUCT_NAME = "Today Extension";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SERVER_URL = "transit-backend.cornellappdev.com";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -1614,6 +1219,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1639,7 +1245,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1669,8 +1275,13 @@
 					"$(PROJECT_DIR)/Pods/GoogleMaps/Maps/Frameworks",
 				);
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				INFOPLIST_KEY_CFBundleDisplayName = "Ithaca Transit";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.9.1;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DDEBUG";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "$(inherited) \"-D\" \"COCOAPODS\"";
@@ -1691,28 +1302,16 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CURRENT_PROJECT_VERSION = 47;
 				INFOPLIST_FILE = TCATTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCATTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TCAT.app/TCAT";
-			};
-			name = Debug;
-		};
-		BFF7E5F1223BFDF0001C6032 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = FDB1BCCCB27128551499EC7C /* Pods-TCATUITests.debug.xcconfig */;
-			buildSettings = {
-				CURRENT_PROJECT_VERSION = 47;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				INFOPLIST_FILE = TCATUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCATUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TEST_TARGET_NAME = TCAT;
 			};
 			name = Debug;
 		};
@@ -1733,8 +1332,12 @@
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Siri/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 1.9.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1771,6 +1374,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1796,7 +1400,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1826,8 +1430,13 @@
 					"$(PROJECT_DIR)/Pods/GoogleMaps/Maps/Frameworks",
 				);
 				INFOPLIST_FILE = "TCAT/Supporting Files/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				INFOPLIST_KEY_CFBundleDisplayName = "Ithaca Transit";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.9.1;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DLOCAL";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "$(inherited) \"-D\" \"COCOAPODS\"";
@@ -1848,28 +1457,16 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CURRENT_PROJECT_VERSION = 47;
 				INFOPLIST_FILE = TCATTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCATTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TCAT.app/TCAT";
-			};
-			name = Local;
-		};
-		C27549D7233491FA00D5A754 /* Local */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 150AC52CEDC601C508F1CB76 /* Pods-TCATUITests.local.xcconfig */;
-			buildSettings = {
-				CURRENT_PROJECT_VERSION = 47;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				INFOPLIST_FILE = TCATUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.cuappdev.TCATUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TEST_TARGET_NAME = TCAT;
 			};
 			name = Local;
 		};
@@ -1890,8 +1487,12 @@
 				DEVELOPMENT_TEAM = ZGMCXU7X3U;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Siri/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 1.9.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1901,42 +1502,6 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Local;
-		};
-		C27549D9233491FA00D5A754 /* Local */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 319A023F5367F28985F123A2 /* Pods-Today Extension.local.xcconfig */;
-			buildSettings = {
-				BUNDLE_APP_DISPLAY_NAME = "Ithaca Transit Beta";
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "Today Extension/Today Extension.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 524YAK9BG3;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = "$(SRCROOT)/Today Extension/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.9.1;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug.TodayExtension;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = iphoneos;
-				SERVER_URL = "transit-testflight.cornellappdev.com";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Local;
 		};
@@ -1973,34 +1538,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		449A7CA31D80D0E80019300C /* Build configuration list for PBXNativeTarget "TCATUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BFF7E5F1223BFDF0001C6032 /* Debug */,
-				C27549D7233491FA00D5A754 /* Local */,
-				449A7CA51D80D0E80019300C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
 		7E14AEF52177E884006A344D /* Build configuration list for PBXNativeTarget "Siri" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BFF7E5F2223BFDF0001C6032 /* Debug */,
 				C27549D8233491FA00D5A754 /* Local */,
 				7E14AEF72177E884006A344D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		7EEF18AA21B39C6300343FFD /* Build configuration list for PBXNativeTarget "Today Extension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				7EEF18A821B39C6300343FFD /* Debug */,
-				C27549D9233491FA00D5A754 /* Local */,
-				7EEF18A921B39C6300343FFD /* Release */,
-				7EF8DCD722470DD20052D522 /* Debug */,
-				7EF8DCD822470DD20052D522 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

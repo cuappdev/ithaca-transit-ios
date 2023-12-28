@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol InfoHeaderViewDelegate: class {
+protocol InfoHeaderViewDelegate: AnyObject {
     func showFunMessage()
 }
 
@@ -28,6 +28,7 @@ class InformationTableHeaderView: UIView {
     /// used are static except for the tcat image height, which is dependent on the width of the user's screen.
     private var headerHeight: CGFloat {
         let bottomPadding: CGFloat = 37
+        // swiftlint:disable:next line_length
         return tcatImageTopOffset + tcatImageSize.height + titleLabelTopOffset + titleLabelSize.height + descriptionLabelTopOffset + descriptionLabelSize.height + bottomPadding
     }
 
@@ -120,23 +121,36 @@ class InformationTableHeaderView: UIView {
         let velocity: CGFloat = 0
         let options: UIView.AnimationOptions = .curveEaseInOut
 
-        UIView.animate(withDuration: duration, delay: delay, usingSpringWithDamping: damping,
-                       initialSpringVelocity: velocity, options: options, animations: {
-            self.tcatImage.frame.origin.x += constant
-        }, completion: { _ in
-            self.tcatImage.frame.origin.x -= 2 * constant
+        UIView.animate(
+            withDuration: duration,
+            delay: delay,
+            usingSpringWithDamping: damping,
+            initialSpringVelocity: velocity,
+            options: options,
+            animations: {
+                self.tcatImage.frame.origin.x += constant
+            },
+            completion: { _ in
+                self.tcatImage.frame.origin.x -= 2 * constant
 
-            UIView.animate(withDuration: duration, delay: delay, usingSpringWithDamping: damping,
-                           initialSpringVelocity: velocity, options: options, animations: {
-
-                            self.tcatImage.frame.origin.x += constant
-            }, completion: { _ in
-                self.delegate?.showFunMessage()
-            })
-        })
+                UIView.animate(
+                    withDuration: duration,
+                    delay: delay,
+                    usingSpringWithDamping: damping,
+                    initialSpringVelocity: velocity,
+                    options: options,
+                    animations: {
+                        self.tcatImage.frame.origin.x += constant
+                    },
+                    completion: { _ in
+                        self.delegate?.showFunMessage()
+                    }
+                )
+            }
+        )
 
         let payload = BusTappedEventPayload()
-        Analytics.shared.log(payload)
+        TransitAnalytics.shared.log(payload)
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol LargeDetailTableViewDelegate: class {
+protocol LargeDetailTableViewDelegate: AnyObject {
     func toggleCellExpansion(on cell: LargeDetailTableViewCell)
 }
 
@@ -108,7 +108,12 @@ class LargeDetailTableViewCell: UITableViewCell {
     }
 
     /// Precondition: Direction is BoardDirection
-    func configure(for direction: Direction, isFirstStep: Bool, isExpanded: Bool, delegate: LargeDetailTableViewDelegate? = nil) {
+    func configure(
+        for direction: Direction,
+        isFirstStep: Bool,
+        isExpanded: Bool,
+        delegate: LargeDetailTableViewDelegate? = nil
+    ) {
         self.delegate = delegate
         setupHairline()
 
@@ -179,9 +184,11 @@ class LargeDetailTableViewCell: UITableViewCell {
         let labelBoldFont: UIFont = .getFont(.semibold, size: 14)
         let attributedString = direction.name.bold(in: content, from: titleLabel.font, to: labelBoldFont)
         titleLabelText.append(attributedString)
-        titleLabelText.addAttribute(.paragraphStyle,
-                                    value: paragraphStyle,
-                                    range: NSRange(location: 0, length: titleLabelText.length))
+        titleLabelText.addAttribute(
+            .paragraphStyle,
+            value: paragraphStyle,
+            range: NSRange(location: 0, length: titleLabelText.length)
+        )
         titleLabel.attributedText = titleLabelText
     }
 
