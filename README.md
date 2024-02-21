@@ -1,6 +1,6 @@
 # Ithaca Transit
 
-<img width="256" alt="Ithaca Transit App Icon" src="https://raw.githubusercontent.com/cuappdev/tcat-ios/master/app-icon.png">
+<img width="256" alt="Ithaca Transit App Icon" src="https://github.com/cuappdev/assets/blob/master/app-icons/Transit-83.5x83.5%402x.png">
 
 Download on the App Store [here](https://itunes.apple.com/app/id1290883721).
 
