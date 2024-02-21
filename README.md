@@ -1,8 +1,8 @@
 # Ithaca Transit
 
-<img width="256" alt="Ithaca Transit App Icon" src="https://github.com/cuappdev/assets/blob/master/app-icons/Transit-83.5x83.5%402x.png">
+<p align="center"><img src="https://github.com/cuappdev/assets/blob/master/app-icons/Transit-83.5x83.5%402x.png" width=210 /></p>
 
-Download on the App Store [here](https://itunes.apple.com/app/id1290883721).
+Introducing Ithaca Transit, a new end-to-end navigation service for built for the TCAT bus service. A free and open-source app, Ithaca Transit offers a diverse range of features in a beautiful, clean interface to help get you where you need to go. Download the current release on the [App Store](https://itunes.apple.com/app/id1290883721).
 
 # Build Instructions
 
