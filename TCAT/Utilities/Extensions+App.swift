@@ -75,7 +75,7 @@ extension UILabel {
     func boundingRect(of string: String) -> CGRect? {
 
         guard let range = self.text?.range(of: string) else { return nil }
-        let nsRange = string.nsRange(from: range)
+        guard let nsRange = self.text?.nsRange(from: range) else { return nil }
 
         guard let attributedText = attributedText else { return nil }
 
