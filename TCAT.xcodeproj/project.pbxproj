@@ -271,6 +271,7 @@
 		E8A1C717EB340065803DAFD0 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6EF74B05355CCB79CA81128 /* Pods_TCATUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA07B88835AF4B4B57825EA7 /* Pods-TCATUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.release.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.release.xcconfig"; sourceTree = "<group>"; };
+		FD69AF2A2B89212F00970C7E /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
 		FDB1BCCCB27128551499EC7C /* Pods-TCATUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCATUITests.debug.xcconfig"; path = "Target Support Files/Pods-TCATUITests/Pods-TCATUITests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -342,6 +343,7 @@
 		449A7C6C1D80D0E80019300C = {
 			isa = PBXGroup;
 			children = (
+				FD69AF292B8920D500970C7E /* ci_scripts */,
 				449A7C771D80D0E80019300C /* TCAT */,
 				449A7C8C1D80D0E80019300C /* TCATTests */,
 				7E14AEDB2177E884006A344D /* Siri */,
@@ -562,6 +564,14 @@
 				D4B70A072373910900FEB7EA /* ParentHomeViewController.swift */,
 			);
 			name = Controllers;
+			sourceTree = "<group>";
+		};
+		FD69AF292B8920D500970C7E /* ci_scripts */ = {
+			isa = PBXGroup;
+			children = (
+				FD69AF2A2B89212F00970C7E /* ci_post_clone.sh */,
+			);
+			path = ci_scripts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
