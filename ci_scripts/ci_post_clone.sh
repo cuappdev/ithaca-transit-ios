@@ -30,5 +30,5 @@ cd $CI_WORKSPACE/ci_scripts
 # Download files
 wget -O ../TCAT/Firebase/Prod/GoogleService-Info.plist "$DEV_GOOGLE_SERVICE_PLIST"
 wget -O ../TCAT/Firebase/Dev/GoogleService-Info.plist "$PROD_GOOGLE_SERVICE_PLIST"
-wget -O ../TCAT/Supporting\ Files/Keys.plist "$KEYS"
+wget -O ../TCAT/Supporting\ Files/Keys.plist "$KEYS_PLIST"
 
