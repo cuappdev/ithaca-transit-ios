@@ -6,6 +6,11 @@
 #  Created by Jayson  Hahn on 2/23/24.
 #  Copyright © 2024 cuappdev. All rights reserved.
 
+#Test echos
+echo "$CI_PROJECT_FILE_PATH"
+echo "$CI_PRIMARY_REPOSITORY_PATH"
+echo "$CI_WORKSPACE_PATH"
+
 echo "Installing Pods"
 
 # Install CocoaPods using Homebrew.
@@ -20,14 +25,14 @@ echo "Downloading Secrets"
 brew install wget
 
 # Create directories if they don't exist.
-cd $CI_PRIMARY_REPOSITORY_PATH/TCAT
+cd $CI_PROJECT_FILE_PATH/TCAT
 mkdir Firebase
 cd Firebase
 mkdir Dev
 mkdir Prod
 
 # Change directory to ci_scripts
-cd $CI_PRIMARY_REPOSITORY_PATH/TCAT/ci_scripts
+cd $CI_PROJECT_FILE_PATH/TCAT/ci_scripts
 
 # Download files
 wget -O ../TCAT/Firebase/Prod/GoogleService-Info.plist "$DEV_GOOGLE_SERVICE_PLIST"
