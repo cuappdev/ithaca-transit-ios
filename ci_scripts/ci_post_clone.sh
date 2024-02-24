@@ -20,9 +20,9 @@ echo "Downloading Secrets"
 brew install wget
 
 # Create directories if they don't exist.
-mkdir -p $CI_WORKSPACE/TCAT/Firebase
-mkdir -p $CI_WORKSPACE/TCAT/Firebase/Prod
-mkdir -p $CI_WORKSPACE/TCAT/Firebase/Dev
+mkdir $CI_WORKSPACE/TCAT/Firebase
+mkdir $CI_WORKSPACE/TCAT/Firebase/Prod
+mkdir $CI_WORKSPACE/TCAT/Firebase/Dev
 
 # Change directory to ci_scripts
 cd $CI_WORKSPACE/ci_scripts
