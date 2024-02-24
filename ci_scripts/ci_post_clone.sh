@@ -20,14 +20,14 @@ echo "Downloading Secrets"
 brew install wget
 
 # Create directories if they don't exist.
-cd $CI_WORKSPACE/TCAT
+cd $CI_PRIMARY_REPOSITORY_PATH/TCAT
 mkdir Firebase
 cd Firebase
 mkdir Dev
 mkdir Prod
 
 # Change directory to ci_scripts
-cd $CI_WORKSPACE/ci_scripts
+cd $CI_PRIMARY_REPOSITORY_PATH/TCAT/ci_scripts
 
 # Download files
 wget -O ../TCAT/Firebase/Prod/GoogleService-Info.plist "$DEV_GOOGLE_SERVICE_PLIST"
