@@ -20,7 +20,7 @@ echo "Downloading Secrets"
 brew install wget
 
 # Create directories if they don't exist.
-cd $CI_PRIMARY_REPOSITORY_PATH
+cd ../TCAT
 mkdir Firebase
 cd Firebase
 mkdir Dev
