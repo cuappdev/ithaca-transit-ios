@@ -56,8 +56,6 @@
 	<array>
 		<string>GetRoutesIntent</string>
 	</array>
-	<key>SERVER_URL</key>
-	<string>$(SERVER_URL)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>SFProDisplay-Bold.otf</string>
