@@ -63,7 +63,7 @@ enum TransitEnvironment {
         return value
     }()
 
-    /// The host AppDev Announcements.
+    /// The host for AppDev Announcements.
     static let announcementsHost: String = {
         guard let value = TransitEnvironment.keysDict[Keys.announcementsHost] as? String else {
             fatalError("ANNOUNCEMENTS_HOST not found in Info.plist")
