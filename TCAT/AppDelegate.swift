@@ -39,11 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Set Up Google Services
         FirebaseApp.configure()
 
-        #if DEBUG
-        GMSServices.provideAPIKey(Keys.googleMapsDebug.value)
-        #else
-        GMSServices.provideAPIKey(Keys.googleMapsRelease.value)
-        #endif
+        GMSServices.provideAPIKey(TransitEnvironment.googleMaps)
 
         // Update shortcut items
         AppShortcuts.shared.updateShortcutItems()
@@ -85,10 +81,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Setup networking for AppDevAnnouncements
         AnnouncementNetworking.setupConfig(
-            scheme: Keys.announcementsScheme.value,
-            host: Keys.announcementsHost.value,
-            commonPath: Keys.announcementsCommonPath.value,
-            announcementPath: Keys.announcementsPath.value
+            scheme: TransitEnvironment.announcementsScheme,
+            host: TransitEnvironment.announcementsHost,
+            commonPath: TransitEnvironment.announcementsCommonPath,
+            announcementPath: TransitEnvironment.announcementsPath
         )
 
         // Initalize window without storyboard

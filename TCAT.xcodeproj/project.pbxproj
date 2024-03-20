@@ -22,6 +22,7 @@
 		22D76E912266CCC000FA21B9 /* RoundShadowedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D76E902266CCC000FA21B9 /* RoundShadowedView.swift */; };
 		22D9599F2269AB1700D115EC /* ServiceAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D9599E2269AB1700D115EC /* ServiceAlert.swift */; };
 		22FD6E8922925EDA0053A174 /* InformationTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FD6E8822925EDA0053A174 /* InformationTableHeaderView.swift */; };
+		2E029E972BA284D800CF6079 /* TransitEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E029E962BA284D800CF6079 /* TransitEnvironment.swift */; };
 		30F148B4236F9F0500291AE2 /* NotificationToggleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F148B3236F9F0500291AE2 /* NotificationToggleTableViewCell.swift */; };
 		30F148BE237CA02F00291AE2 /* NotificationBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F148BD237CA02F00291AE2 /* NotificationBannerView.swift */; };
 		449A7C791D80D0E80019300C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449A7C781D80D0E80019300C /* AppDelegate.swift */; };
@@ -79,7 +80,6 @@
 		BFB86A07205C614C000794B2 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB86A06205C614C000794B2 /* OnboardingViewController.swift */; };
 		BFC367F321B66E9A00ABD9AC /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = BFC367F621B66E9A00ABD9AC /* Intents.intentdefinition */; };
 		BFC367F421B66E9A00ABD9AC /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = BFC367F621B66E9A00ABD9AC /* Intents.intentdefinition */; };
-		BFCA712D206AC69000E4CCE5 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCA712C206AC69000E4CCE5 /* Keys.swift */; };
 		BFEDB85B2232F22100052D49 /* GeneralTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEDB85A2232F22100052D49 /* GeneralTableViewCell.swift */; };
 		BFF41EB2204365E800E0696B /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF41EB1204365E800E0696B /* SummaryView.swift */; };
 		C2240435231838C300095C5C /* PlaceCoordinates.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2240434231838C300095C5C /* PlaceCoordinates.swift */; };
@@ -162,6 +162,7 @@
 		22D9599E2269AB1700D115EC /* ServiceAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ServiceAlert.swift; path = Model/ServiceAlert.swift; sourceTree = "<group>"; };
 		22FD6E8822925EDA0053A174 /* InformationTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InformationTableHeaderView.swift; path = Views/InformationTableHeaderView.swift; sourceTree = "<group>"; };
 		27C5CB0F6FDBF523F5ADA0C2 /* Pods_TCATTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCATTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E029E962BA284D800CF6079 /* TransitEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitEnvironment.swift; sourceTree = "<group>"; };
 		30F148B3236F9F0500291AE2 /* NotificationToggleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationToggleTableViewCell.swift; sourceTree = "<group>"; };
 		30F148BD237CA02F00291AE2 /* NotificationBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationBannerView.swift; sourceTree = "<group>"; };
 		319A023F5367F28985F123A2 /* Pods-Today Extension.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Today Extension.local.xcconfig"; path = "Target Support Files/Pods-Today Extension/Pods-Today Extension.local.xcconfig"; sourceTree = "<group>"; };
@@ -223,7 +224,6 @@
 		BFA53FED1FD45D7000E770DF /* RouteDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RouteDetailViewController.swift; path = Controllers/RouteDetailViewController.swift; sourceTree = "<group>"; };
 		BFB86A06205C614C000794B2 /* OnboardingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OnboardingViewController.swift; path = Controllers/OnboardingViewController.swift; sourceTree = "<group>"; };
 		BFC367F521B66E9A00ABD9AC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/Intents.intentdefinition; sourceTree = "<group>"; };
-		BFCA712C206AC69000E4CCE5 /* Keys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Keys.swift; path = "Supporting Files/Keys.swift"; sourceTree = "<group>"; };
 		BFCE7D560E7713FD58F4D932 /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
 		BFD5B4E31FAADFAE00955C37 /* WalkPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WalkPath.swift; path = Model/WalkPath.swift; sourceTree = "<group>"; };
 		BFEDB85A2232F22100052D49 /* GeneralTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GeneralTableViewCell.swift; path = Cells/GeneralTableViewCell.swift; sourceTree = "<group>"; };
@@ -414,7 +414,7 @@
 			children = (
 				BF8460A72172A7A90027FB62 /* Fonts */,
 				DD99E2F51F6DB06A0073E8F7 /* Constants.swift */,
-				BFCA712C206AC69000E4CCE5 /* Keys.swift */,
+				2E029E962BA284D800CF6079 /* TransitEnvironment.swift */,
 				449A7C841D80D0E80019300C /* Info.plist */,
 				D94BD2FC2159993D00C9214E /* Keys.plist */,
 				7E14AEB12177E661006A344D /* TCAT.entitlements */,
@@ -947,7 +947,6 @@
 				502D8F5F1E55161D005280F1 /* SearchBarView.swift in Sources */,
 				D4B70A0A2373912800FEB7EA /* FavoritesCollectionViewCell.swift in Sources */,
 				5006F7BA1EC0F59A005ACAF2 /* SearchTableViewHelpers.swift in Sources */,
-				BFCA712D206AC69000E4CCE5 /* Keys.swift in Sources */,
 				22D76E8F2263E21F00FA21B9 /* HomeOptionsCardViewController.swift in Sources */,
 				C2240435231838C300095C5C /* PlaceCoordinates.swift in Sources */,
 				224432242318741500987417 /* HomeOptionsCardViewController+Extensions.swift in Sources */,
@@ -972,6 +971,7 @@
 				DDB49C9A1E8857E000A99C35 /* BusStopTableViewCell.swift in Sources */,
 				C2AAAF6E233976B50025C640 /* SearchManager.swift in Sources */,
 				30F148B4236F9F0500291AE2 /* NotificationToggleTableViewCell.swift in Sources */,
+				2E029E972BA284D800CF6079 /* TransitEnvironment.swift in Sources */,
 				7EBD9D94222630E4008BF900 /* Extensions+Shared.swift in Sources */,
 				DC2E96461FC21B29009955C6 /* HeaderView.swift in Sources */,
 				DD87F20A1E878CB5000C244B /* Loader.swift in Sources */,
@@ -1169,7 +1169,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SERVER_URL = "transit-backend.cornellappdev.com";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1321,7 +1320,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SERVER_URL = "transit-testflight.cornellappdev.com";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1476,7 +1474,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SERVER_URL = localhost;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
