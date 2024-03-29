@@ -13,24 +13,9 @@ import FutureNova
 extension Endpoint {
 
     static func setupEndpointConfig() {
-        ///
-        /// Schemes
-        ///
-
-        /// Release - Uses main production server for Network requests.
-        /// Debug - Uses development server for Network requests.
-
-        guard let baseURL = Bundle.main.object(forInfoDictionaryKey: "SERVER_URL") as? String else {
-            fatalError("Could not find SERVER_URL in Info.plist!")
-        }
-        #if LOCAL
-            Endpoint.config.scheme = "http"
-            Endpoint.config.port = 3000
-        #else
-            Endpoint.config.scheme = "https"
-        #endif
-        Endpoint.config.host = baseURL
-        Endpoint.config.commonPath = "/api/v2"
+        Endpoint.config.scheme = "https"
+        Endpoint.config.host = TransitEnvironment.baseURL
+        Endpoint.config.commonPath = "/api/v3"
     }
 
     static func getAllStops() -> Endpoint {
