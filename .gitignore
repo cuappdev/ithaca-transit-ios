@@ -2,6 +2,10 @@
 **/config.json
 **/Keys.plist
 **/GoogleService-Info.plist
+**/uplift-codegen-config-dev.json
+**/uplift-codegen-config-prod.json
+**/UpliftAPI
+**/schema.graphqls
 
 .DS_Store
 */.DS_Store

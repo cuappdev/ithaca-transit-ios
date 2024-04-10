@@ -14,7 +14,7 @@ extension Endpoint {
 
     static func setupEndpointConfig() {
         Endpoint.config.scheme = "https"
-        Endpoint.config.host = TransitEnvironment.baseURL
+        Endpoint.config.host = TransitEnvironment.transitURL.replacingOccurrences(of: "https://", with: "")
         Endpoint.config.commonPath = "/api/v3"
     }
 
