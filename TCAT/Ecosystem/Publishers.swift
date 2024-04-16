@@ -10,6 +10,11 @@ import Apollo
 import Combine
 import Foundation
 
+/// A structure that represents a custom error from GraphQL.
+struct GraphQLErrorWrapper: Error {
+    let msg: String
+}
+
 extension Publishers {
 
     // MARK: - Queries
@@ -63,12 +68,17 @@ extension Publishers {
             ) { [weak self] result in
                 switch result {
                 case .success(let data):
-                    _ = self?.subscriber?.receive(data)
+                    if let graphQLError = data.errors?.first {
+                        let error = GraphQLErrorWrapper(msg: graphQLError.description)
+                        self?.subscriber?.receive(completion: .failure(error))
+                    } else {
+                        _ = self?.subscriber?.receive(data)
 
-                    if self?.configuration.cachePolicy == .returnCacheDataAndFetch && data.source == .cache {
-                        return
+                        if self?.configuration.cachePolicy == .returnCacheDataAndFetch && data.source == .cache {
+                            return
+                        }
+                        self?.subscriber?.receive(completion: .finished)
                     }
-                    self?.subscriber?.receive(completion: .finished)
 
                 case .failure(let error):
                     self?.subscriber?.receive(completion: .failure(error))
@@ -132,8 +142,13 @@ extension Publishers {
             ) { [weak self] result in
                 switch result {
                 case .success(let data):
-                    _ = self?.subscriber?.receive(data)
-                    self?.subscriber?.receive(completion: .finished)
+                    if let graphQLError = data.errors?.first {
+                        let error = GraphQLErrorWrapper(msg: graphQLError.description)
+                        self?.subscriber?.receive(completion: .failure(error))
+                    } else {
+                        _ = self?.subscriber?.receive(data)
+                        self?.subscriber?.receive(completion: .finished)
+                    }
 
                 case .failure(let error):
                     self?.subscriber?.receive(completion: .failure(error))
