@@ -33,4 +33,4 @@ wget -O ../TransitSecrets/GoogleService-Info.plist "$GOOGLE_PLIST"
 
 # Generate API file via Apollo
 echo "Generating API file"
-../Pods/Apollo/apollo-ios-cli generate -p "TransitSecrets/uplift-codegen-config-prod.json" -f
+../Pods/Apollo/apollo-ios-cli generate -p "../TransitSecrets/uplift-codegen-config-prod.json" -f
