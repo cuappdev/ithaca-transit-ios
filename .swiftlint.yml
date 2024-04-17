@@ -32,3 +32,4 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
 - TCAT/AppDelegate.swift
 - TCAT/Utilities/Loader.swift
 - TCAT/Views/RPCircularProgress.swift
+- UpliftAPI

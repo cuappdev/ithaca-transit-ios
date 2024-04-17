@@ -8,7 +8,6 @@
 
 import CoreLocation
 import DZNEmptyDataSet
-import FirebaseCrashlytics
 import FutureNova
 import Intents
 import NotificationBannerSwift
@@ -492,20 +491,6 @@ class RouteOptionsViewController: UIViewController {
 
             // Search for Routes Data Request
             processRequest(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType)
-
-            // Donate GetRoutes intent
-            if #available(iOS 12.0, *) {
-                let intent = GetRoutesIntent()
-                intent.searchTo = searchTo.name
-                intent.latitude = String(describing: searchTo.latitude)
-                intent.longitude = String(describing: searchTo.longitude)
-                intent.suggestedInvocationPhrase = "Find bus to \(searchTo.name)"
-                let interaction = INInteraction(intent: intent, response: nil)
-                interaction.donate(completion: { (error) in
-                    guard let error = error else { return }
-                    print("Intent Donation Error: \(error.localizedDescription)")
-                })
-            }
         }
     }
 

@@ -6,9 +6,7 @@
 //  Copyright © 2016 cuappdev. All rights reserved.
 //
 
-import AppDevAnnouncements
 import Firebase
-import FirebaseCrashlytics
 import FutureNova
 import GoogleMaps
 import Intents
@@ -80,12 +78,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             CustomNavigationController(rootViewController: rootVC)
 
         // Setup networking for AppDevAnnouncements
-        AnnouncementNetworking.setupConfig(
-            scheme: TransitEnvironment.announcementsScheme,
-            host: TransitEnvironment.announcementsHost,
-            commonPath: TransitEnvironment.announcementsCommonPath,
-            announcementPath: TransitEnvironment.announcementsPath
-        )
+        // TODO: Set up announcements once it's done
+//        AnnouncementNetworking.setupConfig(
+//            scheme: TransitEnvironment.announcementsScheme,
+//            host: TransitEnvironment.announcementsHost,
+//            commonPath: TransitEnvironment.announcementsCommonPath,
+//            announcementPath: TransitEnvironment.announcementsPath
+//        )
 
         // Initalize window without storyboard
         self.window = UIWindow(frame: UIScreen.main.bounds)
@@ -194,31 +193,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 
-        return false
-    }
-
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity,
-                     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-
-        if #available(iOS 12.0, *) {
-            if let intent = userActivity.interaction?.intent as? GetRoutesIntent,
-                let latitude = intent.latitude,
-                let longitude = intent.longitude,
-                let searchTo = intent.searchTo,
-                let stopName = searchTo.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed),
-                let url = URL(string: "ithaca-transit://getRoutes?lat=\(latitude)&long=\(longitude)&stopName=\(stopName)") {
-                UIApplication.shared.open(url, options: [:]) { didComplete in
-                    let intentDescription = userActivity.interaction?.intent.intentDescription ?? "No Intent Description"
-                    let payload = SiriShortcutUsedPayload(
-                        didComplete: didComplete,
-                        intentDescription: intentDescription,
-                        locationName: stopName
-                    )
-                    TransitAnalytics.shared.log(payload)
-                }
-                return true
-            }
-        }
         return false
     }
 

@@ -14,19 +14,20 @@ enum TransitEnvironment {
     /// Keys from Keys.plist.
     enum Keys {
 #if DEBUG
-        static let baseURL: String = "TRANSIT_DEV_URL"
+        static let eateryURL = "EATERY_DEV_URL"
+        static let googleMaps = "GOOGLE_MAPS_DEBUG"
+        static let transitURL = "TRANSIT_DEV_URL"
+        static let upliftURL = "UPLIFT_DEV_URL"
 #else
-        static let baseURL: String = "TRANSIT_PROD_URL"
+        static let eateryURL = "EATERY_PROD_URL"
+        static let googleMaps = "GOOGLE_MAPS_RELEASE"
+        static let transitURL = "TRANSIT_PROD_URL"
+        static let upliftURL = "UPLIFT_PROD_URL"
 #endif
         static let announcementsCommonPath = "ANNOUNCEMENTS_COMMON_PATH"
         static let announcementsHost = "ANNOUNCEMENTS_HOST"
         static let announcementsPath = "ANNOUNCEMENTS_PATH"
         static let announcementsScheme = "ANNOUNCEMENTS_SCHEME"
-#if DEBUG
-        static let googleMaps = "GOOGLE_MAPS_DEBUG"
-#else
-        static let googleMaps = "GOOGLE_MAPS_RELEASE"
-#endif
     }
 
     /// A dictionary storing key-value pairs from Keys.plist.
@@ -44,12 +45,46 @@ enum TransitEnvironment {
      * If the scheme is set to DEBUG, the development server URL is used.
      * If the scheme is set to RELEASE, the production server URL is used.
      */
-    static let baseURL: String = {
-        guard let baseURLString = TransitEnvironment.keysDict[Keys.baseURL] as? String else {
+    static let transitURL: String = {
+        guard let baseURLString = TransitEnvironment.keysDict[Keys.transitURL] as? String else {
 #if DEBUG
-            fatalError("TRANSIT_DEV_URL not found in Info.plist")
+            fatalError("TRANSIT_DEV_URL not found in Keys.plist")
 #else
-            fatalError("TRANSIT_PROD_URL not found in Info.plist")
+            fatalError("TRANSIT_PROD_URL not found in Keys.plist")
+#endif
+        }
+        return baseURLString
+    }()
+
+    /**
+     The base URL of Uplift's backend server.
+
+     * If the scheme is set to DEBUG, the development server URL is used.
+     * If the scheme is set to RELEASE, the production server URL is used.
+     */
+    static let upliftURL: String = {
+        guard let baseURLString = TransitEnvironment.keysDict[Keys.upliftURL] as? String else {
+#if DEBUG
+            fatalError("UPLIFT_DEV_URL not found in Keys.plist")
+#else
+            fatalError("UPLIFT_PROD_URL not found in Keys.plist")
+#endif
+        }
+        return baseURLString
+    }()
+
+    /**
+     The base URL of Eatery's backend server.
+
+     * If the scheme is set to DEBUG, the development server URL is used.
+     * If the scheme is set to RELEASE, the production server URL is used.
+     */
+    static let eateryURL: String = {
+        guard let baseURLString = TransitEnvironment.keysDict[Keys.eateryURL] as? String else {
+#if DEBUG
+            fatalError("EATERY_DEV_URL not found in Keys.plist")
+#else
+            fatalError("EATERY_PROD_URL not found in Keys.plist")
 #endif
         }
         return baseURLString
@@ -58,7 +93,7 @@ enum TransitEnvironment {
     /// The common path for AppDev Announcements.
     static let announcementsCommonPath: String = {
         guard let value = TransitEnvironment.keysDict[Keys.announcementsCommonPath] as? String else {
-            fatalError("ANNOUNCEMENTS_COMMON_PATH not found in Info.plist")
+            fatalError("ANNOUNCEMENTS_COMMON_PATH not found in Keys.plist")
         }
         return value
     }()
@@ -66,7 +101,7 @@ enum TransitEnvironment {
     /// The host for AppDev Announcements.
     static let announcementsHost: String = {
         guard let value = TransitEnvironment.keysDict[Keys.announcementsHost] as? String else {
-            fatalError("ANNOUNCEMENTS_HOST not found in Info.plist")
+            fatalError("ANNOUNCEMENTS_HOST not found in Keys.plist")
         }
         return value
     }()
@@ -74,7 +109,7 @@ enum TransitEnvironment {
     /// The path for AppDev Announcements.
     static let announcementsPath: String = {
         guard let value = TransitEnvironment.keysDict[Keys.announcementsPath] as? String else {
-            fatalError("ANNOUNCEMENTS_PATH not found in Info.plist")
+            fatalError("ANNOUNCEMENTS_PATH not found in Keys.plist")
         }
         return value
     }()
@@ -82,7 +117,7 @@ enum TransitEnvironment {
     /// The scheme for AppDev Announcements.
     static let announcementsScheme: String = {
         guard let value = TransitEnvironment.keysDict[Keys.announcementsScheme] as? String else {
-            fatalError("ANNOUNCEMENTS_SCHEME not found in Info.plist")
+            fatalError("ANNOUNCEMENTS_SCHEME not found in Keys.plist")
         }
         return value
     }()
@@ -96,9 +131,9 @@ enum TransitEnvironment {
     static let googleMaps: String = {
         guard let value = TransitEnvironment.keysDict[Keys.googleMaps] as? String else {
 #if DEBUG
-            fatalError("GOOGLE_MAPS_DEBUG not found in Info.plist")
+            fatalError("GOOGLE_MAPS_DEBUG not found in Keys.plist")
 #else
-            fatalError("GOOGLE_MAPS_RELEASE not found in Info.plist")
+            fatalError("GOOGLE_MAPS_RELEASE not found in Keys.plist")
 #endif
         }
         return value
