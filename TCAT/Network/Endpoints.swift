@@ -42,8 +42,8 @@ extension Endpoint {
             originName: start.name,
             uid: uid
         )
-
-        return Endpoint(path: Constants.Endpoints.getRoutes, body: body)
+        // MARK: - Temporary fix for Boom
+        return Endpoint(path: "/api/v2"+Constants.Endpoints.getRoutes, body: body, useCommonPath: false)
     }
 
     static func getMultiRoutes(
