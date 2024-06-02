@@ -139,7 +139,7 @@ PODS:
   - Zip (1.1.0)
 
 DEPENDENCIES:
-  - Apollo
+  - Apollo (~> 1.9.3)
   - DZNEmptyDataSet (from `https://github.com/cuappdev/DZNEmptyDataSet.git`)
   - Firebase
   - FirebaseCrashlytics
@@ -234,6 +234,6 @@ SPEC CHECKSUMS:
   Wormholy: ab1c8c2f02f58587a0941deb0088555ffbf039a1
   Zip: 8877eede3dda76bcac281225c20e71c25270774c
 
-PODFILE CHECKSUM: 2bc2917c9852873acd565e06b273a1884fa7d20b
+PODFILE CHECKSUM: a3b80dd04ea30998a17c032f2730e21ee8517238
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.2
