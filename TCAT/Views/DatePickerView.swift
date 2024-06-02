@@ -84,11 +84,6 @@ class DatePickerView: UIView {
         styleSegmentedControl(timeTypeSegmentedControl)
         setSegmentedControlOptions(timeTypeSegmentedControl, options: [leaveNowElement.title,leaveAtElement.title, arriveByElement.title])
         timeTypeSegmentedControl.selectedSegmentIndex = leaveNowElement.index
-        timeTypeSegmentedControl.addTarget(
-            self,
-            action: #selector(timeTypeSegmentedControlValueChanged(segmentControl:)),
-            for: .valueChanged
-        )
 
         addSubview(timeTypeSegmentedControl)
     }
@@ -180,7 +175,7 @@ class DatePickerView: UIView {
             default:
                 break
             }
-        }else {
+        } else {
             //If the user for some reason changes the date/time on datepicker, but selects leaveNow
             //we change the date/time on datepicker to be the current date/time
             datepicker.date = Date()
@@ -194,9 +189,6 @@ class DatePickerView: UIView {
     }
 
     // MARK: - Segment Controls
-
-    @objc private func timeTypeSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
-    }
 
     @objc private func leaveNowSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
         datepicker.date = Date()
