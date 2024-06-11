@@ -13,7 +13,7 @@ target 'TCAT' do
     pod 'GoogleMaps'
     
     # Networking + Data
-    pod 'Apollo'
+    pod 'Apollo', '~> 1.9.3'
     pod 'SwiftyJSON', '~> 5.0'
     pod 'FutureNova', :git => 'https://github.com/cuappdev/ios-networking.git'
     pod 'Wormholy', :configurations => ['Debug']

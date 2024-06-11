@@ -24,15 +24,14 @@ class DatePickerView: UIView {
 
     private weak var delegate: DatePickerViewDelegate?
     private let leaveNowElement = SegmentControlElement(title: Constants.General.datepickerLeaveNow, index: 0)
-    private let leaveAtElement = SegmentControlElement(title: Constants.General.datepickerLeaveAt, index: 0)
-    private let arriveByElement = SegmentControlElement(title: Constants.General.datepickerArriveBy, index: 1)
+    private let leaveAtElement = SegmentControlElement(title: Constants.General.datepickerLeaveAt, index: 1)
+    private let arriveByElement = SegmentControlElement(title: Constants.General.datepickerArriveBy, index: 2)
 
     // MARK: - View vars
 
     private var cancelButton: UIButton = UIButton()
     private var datepicker: UIDatePicker = UIDatePicker()
     private var doneButton: UIButton = UIButton()
-    private var leaveNowSegmentedControl: UISegmentedControl = UISegmentedControl()
     private var timeTypeSegmentedControl: UISegmentedControl = UISegmentedControl()
 
     // MARK: - Init
@@ -47,7 +46,6 @@ class DatePickerView: UIView {
 
         setupDatePicker()
         setupTimeTypeSegmentedControl()
-        setupLeaveNowSegmentedControl()
         setupCancelButton()
         setupDoneButton()
 
@@ -84,27 +82,10 @@ class DatePickerView: UIView {
 
     private func setupTimeTypeSegmentedControl() {
         styleSegmentedControl(timeTypeSegmentedControl)
-        setSegmentedControlOptions(timeTypeSegmentedControl, options: [leaveAtElement.title, arriveByElement.title])
-        timeTypeSegmentedControl.selectedSegmentIndex = leaveAtElement.index
-        timeTypeSegmentedControl.addTarget(
-            self,
-            action: #selector(timeTypeSegmentedControlValueChanged(segmentControl:)),
-            for: .valueChanged
-        )
+        setSegmentedControlOptions(timeTypeSegmentedControl, options: [leaveNowElement.title,leaveAtElement.title, arriveByElement.title])
+        timeTypeSegmentedControl.selectedSegmentIndex = leaveNowElement.index
 
         addSubview(timeTypeSegmentedControl)
-    }
-
-    private func setupLeaveNowSegmentedControl() {
-        styleSegmentedControl(leaveNowSegmentedControl)
-        setSegmentedControlOptions(leaveNowSegmentedControl, options: [leaveNowElement.title])
-        leaveNowSegmentedControl.addTarget(
-            self,
-            action: #selector(leaveNowSegmentedControlValueChanged(segmentControl:)),
-            for: .valueChanged
-        )
-
-        addSubview(leaveNowSegmentedControl)
     }
 
     private func setupCancelButton() {
@@ -154,19 +135,12 @@ class DatePickerView: UIView {
             make.trailing.equalTo(doneButton)
             make.top.equalTo(doneButton.snp.bottom).offset(spaceBtButtonAndSegmentedControl)
             make.height.equalTo(segmentedControlHeight)
-            make.leading.equalTo(leaveNowSegmentedControl.snp.trailing).offset(spaceBtSegmentControls)
-        }
-
-        leaveNowSegmentedControl.snp.makeConstraints { make in
             make.leading.equalTo(cancelButton)
-            make.top.equalTo(timeTypeSegmentedControl)
-            make.height.equalTo(segmentedControlHeight)
-            make.width.equalTo(timeTypeSegmentedControl.snp.width).multipliedBy(segmentedControlSizeRatio)
         }
 
         datepicker.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
-            make.top.equalTo(leaveNowSegmentedControl.snp.bottom).offset(spaceBtSegmentControlAndDatePicker)
+            make.leading.equalToSuperview().inset(90)
+            make.top.equalTo(timeTypeSegmentedControl.snp.bottom).offset(spaceBtSegmentControlAndDatePicker)
             make.height.equalTo(datePickerHeight)
             make.bottom.equalTo(safeAreaLayoutGuide)
         }
@@ -192,7 +166,7 @@ class DatePickerView: UIView {
 
     @objc private func doneButtonPressed() {
         var searchTimeType: SearchType = .leaveNow
-        if leaveNowSegmentedControl.selectedSegmentIndex != leaveNowElement.index {
+        if timeTypeSegmentedControl.selectedSegmentIndex != leaveNowElement.index {
             switch timeTypeSegmentedControl.selectedSegmentIndex {
             case arriveByElement.index:
                 searchTimeType = .arriveBy
@@ -201,6 +175,10 @@ class DatePickerView: UIView {
             default:
                 break
             }
+        } else {
+            //If the user for some reason changes the date/time on datepicker, but selects leaveNow
+            //we change the date/time on datepicker to be the current date/time
+            datepicker.date = Date()
         }
 
         delegate?.saveDatePickerDate(for: datepicker.date, searchType: searchTimeType)
@@ -212,12 +190,6 @@ class DatePickerView: UIView {
 
     // MARK: - Segment Controls
 
-    @objc private func timeTypeSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
-        if timeTypeSegmentedControl.selectedSegmentIndex == arriveByElement.index {
-            leaveNowSegmentedControl.selectedSegmentIndex = UISegmentedControl.noSegment
-        }
-    }
-
     @objc private func leaveNowSegmentedControlValueChanged(segmentControl: UISegmentedControl) {
         datepicker.date = Date()
     }
@@ -226,10 +198,7 @@ class DatePickerView: UIView {
 
     @objc private func datepickerValueChanged(datepicker: UIDatePicker) {
         if Time.compare(date1: datepicker.date, date2: Date()) == ComparisonResult.orderedSame {
-            leaveNowSegmentedControl.selectedSegmentIndex = leaveNowElement.index
-            timeTypeSegmentedControl.selectedSegmentIndex = leaveAtElement.index
-        } else {
-            leaveNowSegmentedControl.selectedSegmentIndex = UISegmentedControl.noSegment
+            timeTypeSegmentedControl.selectedSegmentIndex = leaveNowElement.index
         }
     }
 
