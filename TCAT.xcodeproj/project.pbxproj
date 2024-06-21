@@ -622,7 +622,6 @@
 				2292F9DB215722ED00C8C931 /* SwiftLint */,
 				7E14AED52177E846006A344D /* Embed Foundation Extensions */,
 				CE26CBF62B879837005D099A /* Crashlytics */,
-				2E9416612BC60AE7003DEB44 /* UpliftAPI */,
 				882B9E91268F347446806E32 /* [CP] Embed Pods Frameworks */,
 				0B4CA64206AF6DA1763F9ACB /* [CP] Copy Pods Resources */,
 			);
@@ -742,25 +741,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n\nif which swiftlint >/dev/null; then\n    swiftlint --fix && swiftlint\nelse\n    echo \"WARNING: SwiftLint not installed\"\nfi\n";
-		};
-		2E9416612BC60AE7003DEB44 /* UpliftAPI */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = UpliftAPI;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "CLI_PATH=\"./Pods/Apollo/apollo-ios-cli\"\nSECRETS_PATH=\"${SRCROOT}/TransitSecrets\"\n\nif [ \"${CONFIGURATION}\" != \"Release\" ]; then\n  CONFIG_PATH=\"${SECRETS_PATH}/uplift-codegen-config-dev.json\"\nfi\n\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n  CONFIG_PATH=\"${SECRETS_PATH}/uplift-codegen-config-prod.json\"\nfi\n\n\"${CLI_PATH}\" generate -p \"${CONFIG_PATH}\" -f\n";
 		};
 		882B9E91268F347446806E32 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
