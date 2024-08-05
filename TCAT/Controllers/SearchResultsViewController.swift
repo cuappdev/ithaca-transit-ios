@@ -153,6 +153,7 @@ class SearchResultsViewController: UIViewController {
     }
 
     @objc private func getPlaces(timer: Timer) {
+        print("here")
         if let userInfo = timer.userInfo as? [String: String],
             let searchText = userInfo["searchText"],
             !searchText.isEmpty {

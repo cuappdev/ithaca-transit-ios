@@ -36,6 +36,7 @@ class HomeMapViewController: UIViewController {
 
     private let loadingIndicatorSize = CGSize.init(width: 40, height: 40)
     private let userDefaults = UserDefaults.standard
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
