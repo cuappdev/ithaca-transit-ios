@@ -300,7 +300,6 @@ class HomeOptionsCardViewController: UIViewController {
     }
 
     // MARK: - Get Search Results
-
     /// Get Search Results
     @objc func getPlaces(timer: Timer) {
         if let userInfo = timer.userInfo as? [String: String],

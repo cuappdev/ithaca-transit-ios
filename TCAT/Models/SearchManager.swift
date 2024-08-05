@@ -25,6 +25,9 @@ class SearchManager: NSObject {
     private let networking: Networking = URLSession.shared.request
     private let searchCompleter = MKLocalSearchCompleter()
     private var searchResults = [MKLocalSearchCompletion]()
+    
+    private let gshLat = 42.442558
+    private let gshLong = -76.485336
 
     override private init() {
         super.init()
@@ -41,6 +44,13 @@ class SearchManager: NSObject {
             )
         }
     }
+    private func sortLocations(_ s1: Place, _ s2: Place) -> Bool  {
+        let s1Check = pow((s1.latitude-(self.gshLat)),2.0) + pow((s1.longitude-(self.gshLong)),2.0)
+        
+        let s2Check = pow((s2.latitude-(self.gshLat)),2.0) + pow((s2.longitude-(self.gshLong)),2.0)
+        return s1Check < s2Check
+    }
+    
 
     func performLookup(for query: String, completionHandler: @escaping SearchManagerCallback) {
         getAppleSearchResults(searchText: query).observe { [weak self] result in
@@ -55,7 +65,9 @@ class SearchManager: NSObject {
                     // If the list of Apple Places for this query already exists in
                     // server cache, no further work is needed
                     if let applePlaces = response.data.applePlaces {
-                        let searchResults = applePlaces + busStops
+                        let updatedApplePlaces = applePlaces.sorted(by: self.sortLocations)
+                        
+                        let searchResults = updatedApplePlaces + busStops
                         completionHandler(searchResults, nil)
                     } else {
                         // Otherwise, we need to perform the Apple Places lookup locally
