@@ -11,224 +11,151 @@ import UIKit
 
 class FavoritesViewController: UIViewController {
 
-    // MARK: - View vars
+    // MARK: ~ View vars
     private let collapsedRevealHeight: CGFloat = 54
-    private let editButton = UIButton()
-    private var favoritesCollectionView: UICollectionView!
-    private let favoritesTitleLabel = UILabel()
-    private let partialRevealHeight: CGFloat = 192
+    private let partialRevealHeight: CGFloat = 400
+
+    // MARK: ~ View vars
+    private var ecoFacilityCollectionView: UICollectionView!
+    private var ecoFilterCollectionView: UICollectionView!
+    private let titleLabel = UILabel()
     private let tabView = UIView()
     private let tabSize = CGSize(width: 32, height: 4)
 
-    // MARK: - Data vars
-    private let favoritesReuseIdentifier = "FavoritesCollectionViewCell"
-    private let addFavoritesReuseIdentifier = "AddFavoritesCollectionViewCell"
-    private var favoritePlaces: [Place] {
-        didSet {
-            editButton.isEnabled = !favoritePlaces.isEmpty
-            favoritesCollectionView.reloadData()
-        }
-    }
-    private var isEditingFavorites: Bool
-
-    init(isEditing: Bool) {
-        isEditingFavorites = isEditing
-        favoritePlaces = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    private let shownCells: [Facility] = [.eatery(DummyData.Betha), .eatery(DummyData.Okenshields)]
+    private let allEateries: [Eatery] = []
+    private let allGyms: [Gym] = []
+    private let filterColors = [UIColor(hex: "D82D4D"), UIColor(hex: "E79C20"), UIColor(hex: "079DDC")]
+    private let filterSymbols = ["FavoriteFilter", "dumbbell", "EateryLogo"]
+    private let filterNames = ["Favorites", "Gyms", "Eateries"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1)
         setupLabels()
-        setupButtons()
-        setupFavoritesCollectionView()
-        setupTabView()
+        setupFacilityCollectionView()
+        setupFilterCollectionView()
         setupConstraints()
+        ecoFacilityCollectionView.reloadData()
     }
 
     private func setupLabels() {
-        favoritesTitleLabel.text = "Favorites"
-        favoritesTitleLabel.textColor = .black
-        favoritesTitleLabel.font = .getFont(.medium, size: 24)
-        view.addSubview(favoritesTitleLabel)
+        titleLabel.text = "Near You"
+        titleLabel.textColor = .black
+        titleLabel.font = .getFont(.medium, size: 24)
+        view.addSubview(titleLabel)
     }
 
-    private func setupButtons() {
-        let editString = isEditingFavorites ? "Done" : "Edit"
-        editButton.setTitle(editString, for: .normal)
-        editButton.setTitleColor(Colors.notificationBlue, for: .normal)
-        editButton.setTitleColor(Colors.secondaryText, for: .disabled)
-        editButton.titleLabel?.font = UIFont.getFont(.regular, size: 14.0)
-        editButton.isEnabled = !favoritePlaces.isEmpty
-        editButton.addTarget(self, action: #selector(editAction), for: .touchUpInside)
-        view.addSubview(editButton)
+    private func setupFacilityCollectionView() {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 16
+        layout.minimumInteritemSpacing = 16
+
+        ecoFacilityCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        ecoFacilityCollectionView.register(EateryCollectionViewCell.self, forCellWithReuseIdentifier: EateryCollectionViewCell.reuse)
+        //        ecoCollectionView.register(FeedPostCollectionViewCell.self, forCellWithReuseIdentifier: FeedPostCollectionViewCell.reuse)
+        ecoFacilityCollectionView.delegate = self
+        ecoFacilityCollectionView.dataSource = self
+        ecoFacilityCollectionView.showsVerticalScrollIndicator = false
+        ecoFacilityCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        ecoFacilityCollectionView.backgroundColor = .clear
+        view.addSubview(ecoFacilityCollectionView)
     }
 
-    private func setupFavoritesCollectionView() {
-        let favoritesFlowLayout = UICollectionViewFlowLayout()
-        favoritesFlowLayout.minimumLineSpacing = 12.0
-        favoritesFlowLayout.minimumInteritemSpacing = 4.0
+    private func setupFilterCollectionView() {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 24
+        layout.minimumInteritemSpacing = 24
 
-        favoritesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: favoritesFlowLayout)
-        favoritesCollectionView.delegate = self
-        favoritesCollectionView.dataSource = self
-        favoritesCollectionView.register(
-            FavoritesCollectionViewCell.self,
-            forCellWithReuseIdentifier: favoritesReuseIdentifier
-        )
-        favoritesCollectionView.register(
-            AddFavoritesCollectionViewCell.self,
-            forCellWithReuseIdentifier: addFavoritesReuseIdentifier
-        )
-        favoritesCollectionView.backgroundColor = .clear
-        view.addSubview(favoritesCollectionView)
-    }
-
-    private func setupTabView() {
-        tabView.backgroundColor = Colors.metadataIcon
-        tabView.layer.cornerRadius = tabSize.height / 2
-        tabView.clipsToBounds = true
-        view.addSubview(tabView)
+        ecoFilterCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        ecoFilterCollectionView.register(EcoFilterCollectionViewCell.self, forCellWithReuseIdentifier: EcoFilterCollectionViewCell.reuse)
+        ecoFilterCollectionView.delegate = self
+        ecoFilterCollectionView.dataSource = self
+        ecoFilterCollectionView.showsHorizontalScrollIndicator = false
+        ecoFilterCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        ecoFilterCollectionView.backgroundColor = .clear
+        view.addSubview(ecoFilterCollectionView)
     }
 
     private func setupConstraints() {
-        let tabTopInset = 6
-        let horizontalPadding = 16
-        let titleBarTopPadding = 21
-        let favoritesTopPadding = 24
-        let favoritesBottomPadding = 18
 
-        favoritesTitleLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(horizontalPadding)
-            make.top.equalToSuperview().inset(titleBarTopPadding)
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(24)
+            make.top.equalToSuperview().inset(20)
         }
 
-        editButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(horizontalPadding)
-            make.top.equalToSuperview().inset(titleBarTopPadding)
+        ecoFacilityCollectionView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(24)
+            make.trailing.equalToSuperview().inset(24)
+            make.top.equalToSuperview().offset(172)
+            make.bottom.equalToSuperview()
         }
 
-        favoritesCollectionView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(horizontalPadding)
-            make.trailing.equalToSuperview().inset(horizontalPadding).priority(.high)
-            make.top.equalTo(favoritesTitleLabel.snp.bottom).offset(favoritesTopPadding)
-            make.bottom.equalToSuperview().offset(-favoritesBottomPadding).priority(.high)
+        ecoFilterCollectionView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(24)
+            make.trailing.equalToSuperview().inset(24)
+            make.top.equalToSuperview().offset(64)
+            make.bottom.equalTo(ecoFacilityCollectionView.snp.top)
         }
 
-        tabView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().inset(tabTopInset)
-            make.size.equalTo(tabSize)
-        }
-    }
-
-    private func updateFavorites(newFavoritePlaces: [Place]) {
-        favoritePlaces = newFavoritePlaces
-    }
-
-    private func updateFavoritesView() {
-        let newEditString = isEditingFavorites ? "Done" : "Edit"
-        editButton.setTitle(newEditString, for: .normal)
-        favoritesCollectionView.reloadData()
-    }
-
-    private func presentFavoritePicker() {
-        // Current favorites is capped at 3
-        if favoritePlaces.count < 3 {
-            let favoritesTVC = FavoritesTableViewController()
-            favoritesTVC.didAddFavorite = {
-                let favorites = Global.shared.retrievePlaces(for: Constants.UserDefaults.favorites)
-                self.updateFavorites(newFavoritePlaces: favorites)
-            }
-            let navController = CustomNavigationController(rootViewController: favoritesTVC)
-            present(navController, animated: true, completion: nil)
-        } else {
-            let title = Constants.Alerts.MaxFavorites.title
-            let message = Constants.Alerts.MaxFavorites.message
-            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            let done = UIAlertAction(title: Constants.Alerts.MaxFavorites.action, style: .default)
-            alertController.addAction(done)
-            present(alertController, animated: true, completion: nil)
-        }
-    }
-
-    @objc func editAction() {
-        isEditingFavorites.toggle()
-        updateFavoritesView()
     }
 
 }
 
-extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return isEditingFavorites ? favoritePlaces.count : favoritePlaces.count + 1
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        if indexPath.item < favoritePlaces.count {
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: favoritesReuseIdentifier,
-                for: indexPath
-            ) as? FavoritesCollectionViewCell else { return UICollectionViewCell() }
-            cell.configure(for: favoritePlaces[indexPath.row], isEditing: isEditingFavorites)
-            return cell
+        if collectionView == ecoFacilityCollectionView {
+            return shownCells.count
         } else {
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: addFavoritesReuseIdentifier,
-                for: indexPath
-            ) as? AddFavoritesCollectionViewCell else { return UICollectionViewCell() }
-            return cell
-         }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.item < favoritePlaces.count {
-            let favorite = favoritePlaces[indexPath.row]
-            if isEditingFavorites {
-                favoritePlaces = Global.shared.deleteFavorite(favorite: favorite, allFavorites: favoritePlaces)
-                if favoritePlaces.isEmpty {
-                    editAction()
-                } else {
-                    updateFavorites(newFavoritePlaces: favoritePlaces)
-                }
-            } else {
-                navigationController?.pushViewController(RouteOptionsViewController(searchTo: favorite), animated: true)
-            }
-        } else {
-            presentFavoritePicker()
+            return filterNames.count
         }
     }
-}
 
-extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if collectionView == ecoFacilityCollectionView {
+            switch shownCells[indexPath.row] {
+            case .eatery(let eatery):
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EateryCollectionViewCell.reuse, for: indexPath) as? EateryCollectionViewCell else { return UICollectionViewCell() }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        return CGSize(width: 80, height: 95)
+                cell.configure(eatery: eatery)
+                return cell
+            case .gym(let gym):
+                //            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EateryCollectionViewCell.reuse, for: indexPath) as? EateryCollectionViewCell else { return UICollectionViewCell() }
+                //
+                //            cell.configure(eatery: eatery)
+                //            return cell
+                return UICollectionViewCell()
+            }
+        } else {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EcoFilterCollectionViewCell.reuse, for: indexPath) as? EcoFilterCollectionViewCell else { return UICollectionViewCell() }
+
+            cell.configure(filterColor: filterColors[indexPath.row], filtername: filterNames[indexPath.row], filterSymbol: filterSymbols[indexPath.row])
+            return cell
+        }
     }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if collectionView == ecoFacilityCollectionView {
+            return CGSize(width: 344, height: 200)
+        } else {
+            return CGSize(width: 64, height: 92)
+        }
+    }
+
 }
 
 extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
 
     func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return bottomSafeArea + 192
+        return bottomSafeArea + partialRevealHeight
     }
 
     func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return bottomSafeArea + 54
+        return bottomSafeArea + collapsedRevealHeight
     }
 
     func supportedDrawerPositions() -> [PulleyPosition] {
@@ -239,7 +166,7 @@ extension FavoritesViewController: PulleyDrawerViewControllerDelegate {
         let totalHeight = partialRevealHeight - collapsedRevealHeight
         let collapsedHeight = collapsedRevealHeight + bottomSafeArea
         let opacity = (distance - collapsedHeight) / totalHeight
-        favoritesCollectionView.alpha = opacity
+        ecoFacilityCollectionView.alpha = opacity
     }
 
 }

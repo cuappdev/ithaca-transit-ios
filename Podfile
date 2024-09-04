@@ -32,6 +32,7 @@ target 'TCAT' do
     pod 'Presentation', :git=> 'https://github.com/cuappdev/Presentation.git'
     pod 'SnapKit', '~> 5.0'
     pod 'WhatsNewKit', '~> 1.1'
+    pod 'Kingfisher', '~> 7.0'
 
     # Other
     pod 'SwiftLint'

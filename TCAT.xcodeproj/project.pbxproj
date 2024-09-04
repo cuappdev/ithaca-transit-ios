@@ -127,6 +127,15 @@
 		BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */; };
 		D4756EA223986CB500FE7F0D /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */; };
 		DD3D9C211F94297100B164D4 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C201F94297100B164D4 /* Reachability.swift */; };
+		FD0629652BE1C2D0003E2C7F /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0629642BE1C2D0003E2C7F /* Status.swift */; };
+		FD0629672BE1C30C003E2C7F /* OpenHours.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0629662BE1C30C003E2C7F /* OpenHours.swift */; };
+		FD0629692BE1C3AC003E2C7F /* EcoLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0629682BE1C3AC003E2C7F /* EcoLocation.swift */; };
+		FD3C79722BE2907C0025C9B8 /* DummyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3C79712BE2907C0025C9B8 /* DummyData.swift */; };
+		FD3C79742BE2B0010025C9B8 /* EateryStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3C79732BE2B0010025C9B8 /* EateryStatus.swift */; };
+		FD5456B12BDD8BC900F9894E /* Gym.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD5456B02BDD8BC900F9894E /* Gym.swift */; };
+		FDE506F22BE751A500039918 /* EcoFilterCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE506F12BE751A500039918 /* EcoFilterCollectionViewCell.swift */; };
+		FDF100BA2BD9AB5400A6752C /* EateryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF100B92BD9AB5400A6752C /* EateryCollectionViewCell.swift */; };
+		FDF100BC2BD9AC7E00A6752C /* Eatery.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF100BB2BD9AC7E00A6752C /* Eatery.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -271,7 +280,16 @@
 		BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMaps.framework; sourceTree = "<group>"; };
 		D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReachabilityManager.swift; sourceTree = "<group>"; };
 		DD3D9C201F94297100B164D4 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		FD0629642BE1C2D0003E2C7F /* Status.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
+		FD0629662BE1C30C003E2C7F /* OpenHours.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenHours.swift; sourceTree = "<group>"; };
+		FD0629682BE1C3AC003E2C7F /* EcoLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcoLocation.swift; sourceTree = "<group>"; };
+		FD3C79712BE2907C0025C9B8 /* DummyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyData.swift; sourceTree = "<group>"; };
+		FD3C79732BE2B0010025C9B8 /* EateryStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EateryStatus.swift; sourceTree = "<group>"; };
+		FD5456B02BDD8BC900F9894E /* Gym.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gym.swift; sourceTree = "<group>"; };
 		FD69AF2A2B89212F00970C7E /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
+		FDE506F12BE751A500039918 /* EcoFilterCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcoFilterCollectionViewCell.swift; sourceTree = "<group>"; };
+		FDF100B92BD9AB5400A6752C /* EateryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EateryCollectionViewCell.swift; sourceTree = "<group>"; };
+		FDF100BB2BD9AC7E00A6752C /* Eatery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Eatery.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -346,6 +364,8 @@
 				2E9416762BC61679003DEB44 /* RouteTableViewCell.swift */,
 				2E94166D2BC61678003DEB44 /* ServiceAlertTableViewCell.swift */,
 				2E9416722BC61679003DEB44 /* SmallDetailTableViewCell.swift */,
+				FDF100B92BD9AB5400A6752C /* EateryCollectionViewCell.swift */,
+				FDE506F12BE751A500039918 /* EcoFilterCollectionViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -392,6 +412,12 @@
 				2E9416AE2BC61731003DEB44 /* ServiceAlert.swift */,
 				2E9416B42BC61731003DEB44 /* WalkPath.swift */,
 				2E9416AF2BC61731003DEB44 /* Waypoint.swift */,
+				FDF100BB2BD9AC7E00A6752C /* Eatery.swift */,
+				FD5456B02BDD8BC900F9894E /* Gym.swift */,
+				FD0629642BE1C2D0003E2C7F /* Status.swift */,
+				FD0629662BE1C30C003E2C7F /* OpenHours.swift */,
+				FD0629682BE1C3AC003E2C7F /* EcoLocation.swift */,
+				FD3C79732BE2B0010025C9B8 /* EateryStatus.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -439,6 +465,7 @@
 				2E9416E52BC61983003DEB44 /* StoreReviewHelper.swift */,
 				2E9416E42BC61983003DEB44 /* Styles.swift */,
 				2E9416E82BC61984003DEB44 /* Time.swift */,
+				FD3C79712BE2907C0025C9B8 /* DummyData.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -631,6 +658,8 @@
 			dependencies = (
 			);
 			name = TCAT;
+			packageProductDependencies = (
+			);
 			productName = TCAT;
 			productReference = 449A7C751D80D0E80019300C /* TCAT.app */;
 			productType = "com.apple.product-type.application";
@@ -674,6 +703,8 @@
 				Base,
 			);
 			mainGroup = 449A7C6C1D80D0E80019300C;
+			packageReferences = (
+			);
 			productRefGroup = 449A7C761D80D0E80019300C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -836,6 +867,7 @@
 				2E9416692BC615DF003DEB44 /* AppDelegate.swift in Sources */,
 				2E9FFA802BC673240051793C /* CapacityFields.graphql.swift in Sources */,
 				2E9416F32BC61984003DEB44 /* StoreReviewHelper.swift in Sources */,
+				FD0629652BE1C2D0003E2C7F /* Status.swift in Sources */,
 				2E9416C12BC61731003DEB44 /* WalkPath.swift in Sources */,
 				2E9416BC2BC61731003DEB44 /* Waypoint.swift in Sources */,
 				2E9417202BC61CF1003DEB44 /* WalkWithDistanceIcon.swift in Sources */,
@@ -844,6 +876,7 @@
 				2E9FFA882BC673240051793C /* Amenity.graphql.swift in Sources */,
 				2E9FFA852BC673240051793C /* AmenityType.graphql.swift in Sources */,
 				2E9416F02BC61984003DEB44 /* Extensions+Shared.swift in Sources */,
+				FD3C79722BE2907C0025C9B8 /* DummyData.swift in Sources */,
 				2E9FFA8F2BC673240051793C /* SchemaMetadata.graphql.swift in Sources */,
 				2E9416A22BC616B9003DEB44 /* ServiceAlertsViewController.swift in Sources */,
 				2E9416F42BC61984003DEB44 /* Analytics.swift in Sources */,
@@ -880,6 +913,7 @@
 				2E9416972BC616B9003DEB44 /* RouteDetail+ContentViewController.swift in Sources */,
 				2E9416F62BC61984003DEB44 /* Time.swift in Sources */,
 				2E9FFA8D2BC673240051793C /* Query.graphql.swift in Sources */,
+				FDF100BC2BD9AC7E00A6752C /* Eatery.swift in Sources */,
 				2E9416792BC61679003DEB44 /* AddFavoritesCollectionViewCell.swift in Sources */,
 				2E9FFA812BC673240051793C /* FacilityFields.graphql.swift in Sources */,
 				2E94171F2BC61CF1003DEB44 /* BusIcon.swift in Sources */,
@@ -898,8 +932,10 @@
 				2E9416F72BC61984003DEB44 /* SearchTableViewHelpers.swift in Sources */,
 				2E94171D2BC61CF1003DEB44 /* RoundShadowedView.swift in Sources */,
 				2E9416962BC616B9003DEB44 /* RouteDetailViewController.swift in Sources */,
+				FDE506F22BE751A500039918 /* EcoFilterCollectionViewCell.swift in Sources */,
 				2E9416BA2BC61731003DEB44 /* Place.swift in Sources */,
 				2E9416F52BC61984003DEB44 /* Extensions+App.swift in Sources */,
+				FDF100BA2BD9AB5400A6752C /* EateryCollectionViewCell.swift in Sources */,
 				2E9416782BC61679003DEB44 /* LargeDetailTableViewCell.swift in Sources */,
 				2E94169F2BC616B9003DEB44 /* HomeOptionsCardViewController.swift in Sources */,
 				2E94169A2BC616B9003DEB44 /* CustomNavigationController.swift in Sources */,
@@ -908,6 +944,7 @@
 				2E94167E2BC61679003DEB44 /* BusStopTableViewCell.swift in Sources */,
 				2E94167B2BC61679003DEB44 /* NotificationToggleTableViewCell.swift in Sources */,
 				2E9416BE2BC61731003DEB44 /* BusLocation.swift in Sources */,
+				FD0629692BE1C3AC003E2C7F /* EcoLocation.swift in Sources */,
 				2EC1F5142BC66A19001D9F66 /* ApolloNetwork.swift in Sources */,
 				2E9416C02BC61731003DEB44 /* Route.swift in Sources */,
 				2E94171E2BC61CF1003DEB44 /* RouteDiagram.swift in Sources */,
@@ -917,11 +954,14 @@
 				2E9416FB2BC61984003DEB44 /* AppShortcuts.swift in Sources */,
 				2E9416F22BC61984003DEB44 /* Styles.swift in Sources */,
 				2E9416DF2BC618DA003DEB44 /* TransitEnvironment.swift in Sources */,
+				FD5456B12BDD8BC900F9894E /* Gym.swift in Sources */,
 				2E9FFA8B2BC673240051793C /* Gym.graphql.swift in Sources */,
+				FD3C79742BE2B0010025C9B8 /* EateryStatus.swift in Sources */,
 				2E9FFA8E2BC673240051793C /* SchemaConfiguration.swift in Sources */,
 				2E9416EF2BC61984003DEB44 /* EventPayload.swift in Sources */,
 				22948BFD221B75C5003FC43F /* Models.swift in Sources */,
 				2E94167A2BC61679003DEB44 /* GeneralTableViewCell.swift in Sources */,
+				FD0629672BE1C30C003E2C7F /* OpenHours.swift in Sources */,
 				2E9417222BC61CF1003DEB44 /* BusLocationView.swift in Sources */,
 				2E9416C42BC61731003DEB44 /* Section.swift in Sources */,
 				2E9417252BC61CF1003DEB44 /* RouteSelectionView.swift in Sources */,
