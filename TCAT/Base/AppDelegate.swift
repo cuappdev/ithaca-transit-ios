@@ -13,12 +13,13 @@ import Intents
 import SafariServices
 import SwiftyJSON
 import UIKit
+import FirebaseMessaging
 
 /// This is used for app-specific preferences
 let userDefaults = UserDefaults.standard
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
     private let encoder = JSONEncoder()
@@ -36,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Set Up Google Services
         FirebaseApp.configure()
-
+        
         GMSServices.provideAPIKey(TransitEnvironment.googleMaps)
 
         // Update shortcut items
@@ -90,12 +91,48 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
+        
+        //Set up notifications
+        UNUserNotificationCenter.current().delegate = self
+
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+          options: authOptions,
+          completionHandler: { _, _ in }
+        )
+
+        application.registerForRemoteNotifications()
+        
+        
+        Messaging.messaging().delegate = self
+        
+        
+        
+
+        
+      
 
         return true
     }
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         handleShortcut(item: shortcutItem)
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+        Messaging.messaging().token { token, error in
+          if let error = error {
+            print("Error fetching FCM registration token: \(error)")
+          } else if let token = token {
+            print("FCM registration token: \(token)")
+            
+          }
+        }
+           
+       }
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("application didFailToRegisterForRemoteNotificationsWithError")
     }
 
     // MARK: - Helper Functions
@@ -204,5 +241,33 @@ extension UIWindow {
     func presentInApp(_ viewController: UIViewController) {
         (rootViewController as? UINavigationController)?.visibleViewController?.present(viewController, animated: true)
     }
+
+}
+
+extension AppDelegate {
+
+//MessagingDelegate
+//    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+//        self.firebaseToken = fcmToken!
+//        print("Firebase token: \(fcmToken)")
+//    }
+    
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+      print("Firebase registration token: \(String(describing: fcmToken))")
+
+      let dataDict: [String: String] = ["token": fcmToken ?? ""]
+      NotificationCenter.default.post(
+        name: Notification.Name("FCMToken"),
+        object: nil,
+        userInfo: dataDict
+      )
+      // TODO: If necessary send token to application server.
+      // Note: This callback is fired at each app startup and whenever a new token is generated.
+    }
+
+    //UNUserNotificationCenterDelegate
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+            print("APNs received with: \(userInfo)")
+        }
 
 }
