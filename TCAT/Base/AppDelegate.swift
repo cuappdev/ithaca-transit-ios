@@ -75,16 +75,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
         let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : parentHomeViewController
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
-            CustomNavigationController(rootViewController: rootVC)
+        CustomNavigationController(rootViewController: rootVC)
 
         // Setup networking for AppDevAnnouncements
         // TODO: Set up announcements once it's done
-//        AnnouncementNetworking.setupConfig(
-//            scheme: TransitEnvironment.announcementsScheme,
-//            host: TransitEnvironment.announcementsHost,
-//            commonPath: TransitEnvironment.announcementsCommonPath,
-//            announcementPath: TransitEnvironment.announcementsPath
-//        )
+        //        AnnouncementNetworking.setupConfig(
+        //            scheme: TransitEnvironment.announcementsScheme,
+        //            host: TransitEnvironment.announcementsHost,
+        //            commonPath: TransitEnvironment.announcementsCommonPath,
+        //            announcementPath: TransitEnvironment.announcementsPath
+        //        )
 
         // Initalize window without storyboard
         self.window = UIWindow(frame: UIScreen.main.bounds)
@@ -103,7 +103,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     /// Creates and sets a unique identifier. If the device identifier changes, updates it.
     func setupUniqueIdentifier() {
         if let uid = UIDevice.current.identifierForVendor?.uuidString,
-            uid != sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid) {
+           uid != sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid) {
             sharedUserDefaults?.set(uid, forKey: Constants.UserDefaults.uid)
         }
     }
@@ -111,9 +111,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func handleShortcut(item: UIApplicationShortcutItem) {
         if let shortcutData = item.userInfo as? [String: Data] {
             guard let place = shortcutData["place"],
-                let destination = try? decoder.decode(Place.self, from: place) else {
-                    print("[AppDelegate] Unable to access shortcutData['place']")
-                    return
+                  let destination = try? decoder.decode(Place.self, from: place) else {
+                print("[AppDelegate] Unable to access shortcutData['place']")
+                return
             }
             let optionsVC = RouteOptionsViewController(searchTo: destination)
             if let navController = window?.rootViewController as? CustomNavigationController {
@@ -128,7 +128,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return networking(Endpoint.getAllStops()).decode()
     }
 
-    /// Get all bus stops and store in userDefaults 
+    /// Get all bus stops and store in userDefaults
     func getBusStops() {
         getAllStops().observe { [weak self] result in
             guard let self = self else { return }
@@ -174,19 +174,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if url.absoluteString.contains("getRoutes") { // siri URL scheme
             var latitude: CLLocationDegrees?
             var longitude: CLLocationDegrees?
-            var stopName: String?
+            var destination: String?
 
-            if
-                let lat = items?.filter({ $0.name == "lat" }).first?.value,
-                let long = items?.filter({ $0.name == "long" }).first?.value,
-                let stop = items?.filter({ $0.name == "stopName" }).first?.value {
+            if let lat = items?.filter({ $0.name == "lat" }).first?.value,
+               let long = items?.filter({ $0.name == "long" }).first?.value,
+               let dest = items?.filter({ $0.name == "stopName" }).first?.value ??
+                items?.filter({ $0.name == "destinationName" }).first?.value {
+
                 latitude = Double(lat)
                 longitude = Double(long)
-                stopName = stop
+                destination = dest
             }
 
-            if let latitude = latitude, let longitude = longitude, let stopName = stopName {
-                let place = Place(name: stopName, type: .busStop, latitude: latitude, longitude: longitude)
+
+
+            if let latitude = latitude, let longitude = longitude, let destination = destination {
+                let place = Place(name: destination, type: .busStop, latitude: latitude, longitude: longitude)
                 let optionsVC = RouteOptionsViewController(searchTo: place)
                 navigationController.pushViewController(optionsVC, animated: false)
                 return true

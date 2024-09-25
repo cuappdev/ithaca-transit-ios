@@ -27,6 +27,7 @@ class RouteDetailContentViewController: UIViewController {
     var buses = [GMSMarker]()
     var currentLocation: CLLocationCoordinate2D?
     var directions: [Direction] = []
+    var endDestination: Place!
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
     var liveTrackingNetworkRefreshRate: Double = LiveIndicator.interval * 1.0
     var liveTrackingNetworkTimer: Timer?
@@ -49,12 +50,17 @@ class RouteDetailContentViewController: UIViewController {
     /// Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
     /// dummy data will be used. The directions parameter have logical assumptions,
     /// such as ArriveDirection always comes after DepartDirection.
-    init(route: Route, currentLocation: CLLocationCoordinate2D?, routeOptionsCell: RouteTableViewCell?) {
+    init(route: Route, endDestination: Place, currentLocation: CLLocationCoordinate2D?, routeOptionsCell: RouteTableViewCell?) {
         super.init(nibName: nil, bundle: nil)
         self.routeOptionsCell = routeOptionsCell
+        self.endDestination = endDestination
         initializeRoute(route, currentLocation)
     }
-
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -320,7 +326,7 @@ class RouteDetailContentViewController: UIViewController {
 
     // MARK: - Share Function
     @objc func shareRoute() {
-        presentShareSheet(from: view, for: route, with: routeOptionsCell?.getImage())
+        presentShareSheet(from: view, for: endDestination, with: routeOptionsCell?.getImage())
     }
 
     func calculatePlacement(position: CLLocationCoordinate2D, view: UIView) -> CLLocationCoordinate2D? {
@@ -473,11 +479,11 @@ class RouteDetailContentViewController: UIViewController {
         return drawerDisplayController
     }
 
-    required convenience init(coder aDecoder: NSCoder) {
-        guard let route = aDecoder.decodeObject(forKey: "route") as? Route
-            else { fatalError("init(coder:) has not been implemented") }
-
-        self.init(route: route, currentLocation: nil, routeOptionsCell: nil)
-    }
+//    required convenience init(coder aDecoder: NSCoder) {
+//        guard let route = aDecoder.decodeObject(forKey: "route") as? Route
+//            else { fatalError("init(coder:) has not been implemented") }
+//
+//        self.init(route: route, endDestination: , currentLocation: nil, routeOptionsCell: nil)
+//    }
 
 }

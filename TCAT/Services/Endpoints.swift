@@ -46,26 +46,6 @@ extension Endpoint {
         return Endpoint(path: "/api/v2"+Constants.Endpoints.getRoutes, body: body, useCommonPath: false)
     }
 
-    static func getMultiRoutes(
-        startCoord: CLLocationCoordinate2D,
-        time: Date,
-        endCoords: [String],
-        endPlaceNames: [String]
-    ) -> Endpoint {
-        let body = MultiRoutesBody(
-            start: "\(startCoord.latitude),\(startCoord.longitude)",
-            time: time.timeIntervalSince1970,
-            end: endCoords,
-            destinationNames: endPlaceNames
-        )
-        return Endpoint(path: Constants.Endpoints.multiRoute, body: body)
-    }
-
-    static func getPlaceIDCoordinates(placeID: String) -> Endpoint {
-        let body = PlaceIDCoordinatesBody(placeID: placeID)
-        return Endpoint(path: Constants.Endpoints.placeIDCoordinates, body: body)
-    }
-
     static func getAppleSearchResults(searchText: String) -> Endpoint {
         let body = SearchResultsBody(query: searchText)
         return Endpoint(path: Constants.Endpoints.appleSearch, body: body)
@@ -74,14 +54,6 @@ extension Endpoint {
     static func updateApplePlacesCache(searchText: String, places: [Place]) -> Endpoint {
         let body = ApplePlacesBody(query: searchText, places: places)
         return Endpoint(path: Constants.Endpoints.applePlaces, body: body)
-    }
-
-    static func routeSelected(routeId: String) -> Endpoint {
-        // Add unique identifier to request
-        let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid)
-
-        let body = RouteSelectedBody(routeId: routeId, uid: uid)
-        return Endpoint(path: Constants.Endpoints.routeSelected, body: body)
     }
 
     static func getBusLocations(_ directions: [Direction]) -> Endpoint {
@@ -109,11 +81,6 @@ extension Endpoint {
     static func getAllDelays(trips: [Trip]) -> Endpoint {
         let body = TripBody(data: trips)
         return Endpoint(path: Constants.Endpoints.delays, body: body)
-    }
-
-    static func getDelayUrl(tripId: String, stopId: String) -> String {
-        let path = "delay"
-        return "\(String(describing: Endpoint.config.host))\(path)?stopID=\(stopId)&tripID=\(tripId)"
     }
 
 }

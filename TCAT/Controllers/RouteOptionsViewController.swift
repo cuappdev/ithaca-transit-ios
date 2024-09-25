@@ -507,26 +507,6 @@ class RouteOptionsViewController: UIViewController {
         }
     }
 
-    func routeSelected(routeId: String) {
-        networking(Endpoint.routeSelected(routeId: routeId)).observe { [weak self] result in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                switch result {
-                case .value:
-                    self.printClass(context: "\(#function)", message: "success")
-                case .error(let error):
-                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                    let payload = NetworkErrorPayload(
-                        location: "\(self) Get Route Selected",
-                        type: "\((error as NSError).domain)",
-                        description: error.localizedDescription
-                    )
-                    TransitAnalytics.shared.log(payload)
-                }
-            }
-        }
-    }
-
     private func getRoutesTrips() {
         // For each route in each route array inside of the 'routes' array, get its
         // tripId and stopId to create trip array for request to get all delays.
@@ -691,6 +671,7 @@ class RouteOptionsViewController: UIViewController {
 
         let contentViewController = RouteDetailContentViewController(
             route: route,
+            endDestination: searchTo,
             currentLocation: routeDetailCurrentLocation,
             routeOptionsCell: routeOptionsCell
         )

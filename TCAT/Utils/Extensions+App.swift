@@ -230,17 +230,22 @@ extension Array where Element: Comparable {
 }
 
 /// Present a share sheet for a route in any context.
-func presentShareSheet(from view: UIView, for route: Route, with image: UIImage? = nil) {
-
-    let shareText = route.summaryDescription
-    let promotionalText = "Download Ithaca Transit on the App Store! \(Constants.App.appStoreLink)"
+func presentShareSheet(
+    from view: UIView,
+    for destination: Place,
+    with image: UIImage? = nil
+) {
+    
+    let lat: Double = destination.latitude
+    let long: Double = destination.longitude
+    let thirdParamName: String = (
+        destination.type == .busStop
+    ) ? "stopName" : "destinationName"
+    let destination = destination.name
+    
+    let promotionalText = "ithaca-transit://getRoutes?lat=\(lat)&long=\(long)&\(thirdParamName)=\(destination)"
 
     var activityItems: [Any] = [promotionalText]
-    if let shareImage = image {
-        activityItems.insert(shareImage, at: 0)
-    } else {
-        activityItems.insert(shareText, at: 0)
-    }
 
     let activityVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
     activityVC.excludedActivityTypes = [.print, .assignToContact, .openInIBooks, .addToReadingList]

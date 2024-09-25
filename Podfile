@@ -31,7 +31,6 @@ target 'TCAT' do
     pod 'Pulley', '~> 2.7'
     pod 'Presentation', :git=> 'https://github.com/cuappdev/Presentation.git'
     pod 'SnapKit', '~> 5.0'
-    pod 'WhatsNewKit', '~> 1.1'
 
     # Other
     pod 'SwiftLint'

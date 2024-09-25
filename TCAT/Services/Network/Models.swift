@@ -86,9 +86,3 @@ internal struct Delay: Codable {
     let tripID: String
     let delay: Int?
 }
-
-// Response
-struct Response<T: Codable>: Codable {
-    var success: Bool
-    var data: T
-}

@@ -127,6 +127,13 @@
 		BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */; };
 		D4756EA223986CB500FE7F0D /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */; };
 		DD3D9C211F94297100B164D4 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3D9C201F94297100B164D4 /* Reachability.swift */; };
+		FDE68D1E2C97E24900024A69 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D1D2C97E24900024A69 /* NetworkManager.swift */; };
+		FDE68D202C97EBBE00024A69 /* APIErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D1F2C97EBBE00024A69 /* APIErrorHandler.swift */; };
+		FDE68D222C97EF6200024A69 /* ApiEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D212C97EF6200024A69 /* ApiEndpoint.swift */; };
+		FDE68D242C97F32B00024A69 /* NetworkSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D232C97F32B00024A69 /* NetworkSession.swift */; };
+		FDE68D262C97FC0D00024A69 /* TransitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D252C97FC0D00024A69 /* TransitService.swift */; };
+		FDE68D282C97FC4600024A69 /* TransitProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D272C97FC4600024A69 /* TransitProvider.swift */; };
+		FDE68D2C2C9897E100024A69 /* APIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D2B2C9897E100024A69 /* APIResponse.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -272,6 +279,13 @@
 		D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReachabilityManager.swift; sourceTree = "<group>"; };
 		DD3D9C201F94297100B164D4 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		FD69AF2A2B89212F00970C7E /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
+		FDE68D1D2C97E24900024A69 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		FDE68D1F2C97EBBE00024A69 /* APIErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIErrorHandler.swift; sourceTree = "<group>"; };
+		FDE68D212C97EF6200024A69 /* ApiEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiEndpoint.swift; sourceTree = "<group>"; };
+		FDE68D232C97F32B00024A69 /* NetworkSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSession.swift; sourceTree = "<group>"; };
+		FDE68D252C97FC0D00024A69 /* TransitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitService.swift; sourceTree = "<group>"; };
+		FDE68D272C97FC4600024A69 /* TransitProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitProvider.swift; sourceTree = "<group>"; };
+		FDE68D2B2C9897E100024A69 /* APIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResponse.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -305,10 +319,13 @@
 		2292486621B891790004279C /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				BF250D7E222FB12300E7F271 /* Endpoints.swift */,
+				FDE68D212C97EF6200024A69 /* ApiEndpoint.swift */,
+				FDE68D1F2C97EBBE00024A69 /* APIErrorHandler.swift */,
 				22948BFB221B75C5003FC43F /* Models.swift */,
 				D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */,
 				DD3D9C201F94297100B164D4 /* Reachability.swift */,
+				FDE68D1D2C97E24900024A69 /* NetworkManager.swift */,
+				FDE68D232C97F32B00024A69 /* NetworkSession.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -392,6 +409,7 @@
 				2E9416AE2BC61731003DEB44 /* ServiceAlert.swift */,
 				2E9416B42BC61731003DEB44 /* WalkPath.swift */,
 				2E9416AF2BC61731003DEB44 /* Waypoint.swift */,
+				FDE68D2B2C9897E100024A69 /* APIResponse.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -582,7 +600,7 @@
 				2E9416822BC6168C003DEB44 /* Controllers */,
 				2E94165E2BC60A3B003DEB44 /* Ecosystem */,
 				2E9416AB2BC616DE003DEB44 /* Models */,
-				2292486621B891790004279C /* Network */,
+				FDE68D292C988CDB00024A69 /* Services */,
 				2E9416C72BC61763003DEB44 /* Supporting */,
 				2E9416E02BC618E6003DEB44 /* Utils */,
 				2E9416FD2BC61CAE003DEB44 /* Views */,
@@ -606,6 +624,25 @@
 				FD69AF2A2B89212F00970C7E /* ci_post_clone.sh */,
 			);
 			path = ci_scripts;
+			sourceTree = "<group>";
+		};
+		FDE68D292C988CDB00024A69 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				BF250D7E222FB12300E7F271 /* Endpoints.swift */,
+				2292486621B891790004279C /* Network */,
+				FDE68D2A2C98933900024A69 /* Providers */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		FDE68D2A2C98933900024A69 /* Providers */ = {
+			isa = PBXGroup;
+			children = (
+				FDE68D272C97FC4600024A69 /* TransitProvider.swift */,
+				FDE68D252C97FC0D00024A69 /* TransitService.swift */,
+			);
+			path = Providers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -819,7 +856,9 @@
 				2E9416C12BC61731003DEB44 /* WalkPath.swift in Sources */,
 				2E9416BC2BC61731003DEB44 /* Waypoint.swift in Sources */,
 				2E9417202BC61CF1003DEB44 /* WalkWithDistanceIcon.swift in Sources */,
+				FDE68D282C97FC4600024A69 /* TransitProvider.swift in Sources */,
 				2E94169B2BC616B9003DEB44 /* StopPickerViewController.swift in Sources */,
+				FDE68D1E2C97E24900024A69 /* NetworkManager.swift in Sources */,
 				2E9417162BC61CF1003DEB44 /* SearchBarView.swift in Sources */,
 				2E9FFA882BC673240051793C /* Amenity.graphql.swift in Sources */,
 				2E9FFA852BC673240051793C /* AmenityType.graphql.swift in Sources */,
@@ -851,6 +890,7 @@
 				2E9FFA8A2BC673240051793C /* Facility.graphql.swift in Sources */,
 				2E9416B92BC61731003DEB44 /* PlaceCoordinates.swift in Sources */,
 				2E9417142BC61CF1003DEB44 /* RouteLine.swift in Sources */,
+				FDE68D242C97F32B00024A69 /* NetworkSession.swift in Sources */,
 				2E9FFA8C2BC673240051793C /* OpenHours.graphql.swift in Sources */,
 				2E9417182BC61CF1003DEB44 /* RouteDiagramSegment.swift in Sources */,
 				2E9416C32BC61731003DEB44 /* SearchManager.swift in Sources */,
@@ -858,6 +898,7 @@
 				D4756EA223986CB500FE7F0D /* ReachabilityManager.swift in Sources */,
 				2E9FFA832BC673240051793C /* OpenHoursFields.graphql.swift in Sources */,
 				2E9416972BC616B9003DEB44 /* RouteDetail+ContentViewController.swift in Sources */,
+				FDE68D262C97FC0D00024A69 /* TransitService.swift in Sources */,
 				2E9416F62BC61984003DEB44 /* Time.swift in Sources */,
 				2E9FFA8D2BC673240051793C /* Query.graphql.swift in Sources */,
 				2E9416792BC61679003DEB44 /* AddFavoritesCollectionViewCell.swift in Sources */,
@@ -869,6 +910,7 @@
 				2E9416F12BC61984003DEB44 /* Shared.swift in Sources */,
 				2E9FFA892BC673240051793C /* Capacity.graphql.swift in Sources */,
 				2E9416BB2BC61731003DEB44 /* ServiceAlert.swift in Sources */,
+				FDE68D222C97EF6200024A69 /* ApiEndpoint.swift in Sources */,
 				2EC1F5162BC66CBA001D9F66 /* Publishers.swift in Sources */,
 				2E94169E2BC616B9003DEB44 /* SearchResultsViewController.swift in Sources */,
 				2E9FFA822BC673240051793C /* GymFields.graphql.swift in Sources */,
@@ -882,6 +924,7 @@
 				2E9416F52BC61984003DEB44 /* Extensions+App.swift in Sources */,
 				2E9416782BC61679003DEB44 /* LargeDetailTableViewCell.swift in Sources */,
 				2E94169F2BC616B9003DEB44 /* HomeOptionsCardViewController.swift in Sources */,
+				FDE68D2C2C9897E100024A69 /* APIResponse.swift in Sources */,
 				2E94169A2BC616B9003DEB44 /* CustomNavigationController.swift in Sources */,
 				2E9416DE2BC618DA003DEB44 /* Constants.swift in Sources */,
 				2E9FFA862BC673240051793C /* CourtType.graphql.swift in Sources */,
@@ -900,6 +943,7 @@
 				2E9FFA8B2BC673240051793C /* Gym.graphql.swift in Sources */,
 				2E9FFA8E2BC673240051793C /* SchemaConfiguration.swift in Sources */,
 				2E9416EF2BC61984003DEB44 /* EventPayload.swift in Sources */,
+				FDE68D202C97EBBE00024A69 /* APIErrorHandler.swift in Sources */,
 				22948BFD221B75C5003FC43F /* Models.swift in Sources */,
 				2E94167A2BC61679003DEB44 /* GeneralTableViewCell.swift in Sources */,
 				2E9417222BC61CF1003DEB44 /* BusLocationView.swift in Sources */,
