@@ -154,9 +154,21 @@ class DetailIconView: UIView {
         setTimeLabelTexts(for: direction, isLastStep: isLast)
 
         if direction.type == .walk {
-            scheduledTimeLabel.textColor = Colors.primaryText
-            centerScheduledLabel()
-            hideDelayedLabel()
+            if let delay = direction.delay {
+                if delay < 60 {
+                    scheduledTimeLabel.textColor = Colors.liveGreen
+                    centerScheduledLabel()
+                    hideDelayedLabel()
+                } else {
+                    scheduledTimeLabel.textColor = Colors.primaryText
+                    showDelayedLabel()
+                    offsetScheduledLabel()
+                }
+            } else {
+                scheduledTimeLabel.textColor = Colors.primaryText
+                hideDelayedLabel()
+                centerScheduledLabel()
+            }
         } else {
             if let delay = direction.delay {
                 if delay < 60 {
