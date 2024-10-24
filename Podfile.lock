@@ -59,7 +59,6 @@ PODS:
     - GoogleUtilities/Environment (~> 7.10)
     - nanopb (< 2.30911.0, >= 2.30908.0)
     - PromisesSwift (~> 2.1)
-  - FutureNova (0.1.6)
   - GoogleAppMeasurement (10.24.0):
     - GoogleAppMeasurement/AdIdSupport (= 10.24.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
@@ -134,7 +133,6 @@ PODS:
   - SnapKit (5.0.1)
   - SwiftLint (0.54.0)
   - SwiftyJSON (5.0.1)
-  - WhatsNewKit (1.3.7)
   - Wormholy (1.7.0)
   - Zip (1.1.0)
 
@@ -143,7 +141,6 @@ DEPENDENCIES:
   - DZNEmptyDataSet (from `https://github.com/cuappdev/DZNEmptyDataSet.git`)
   - Firebase
   - FirebaseCrashlytics
-  - FutureNova (from `https://github.com/cuappdev/ios-networking.git`)
   - GoogleMaps
   - NotificationBannerSwift (~> 3.0.0)
   - Presentation (from `https://github.com/cuappdev/Presentation.git`)
@@ -151,7 +148,6 @@ DEPENDENCIES:
   - SnapKit (~> 5.0)
   - SwiftLint
   - SwiftyJSON (~> 5.0)
-  - WhatsNewKit (~> 1.1)
   - Wormholy
   - Zip (~> 1.1)
 
@@ -180,15 +176,12 @@ SPEC REPOS:
     - SnapKit
     - SwiftLint
     - SwiftyJSON
-    - WhatsNewKit
     - Wormholy
     - Zip
 
 EXTERNAL SOURCES:
   DZNEmptyDataSet:
     :git: https://github.com/cuappdev/DZNEmptyDataSet.git
-  FutureNova:
-    :git: https://github.com/cuappdev/ios-networking.git
   Presentation:
     :git: https://github.com/cuappdev/Presentation.git
 
@@ -196,9 +189,6 @@ CHECKOUT OPTIONS:
   DZNEmptyDataSet:
     :commit: a4a007e7ade7d9711f067f4d6510085fa1d92629
     :git: https://github.com/cuappdev/DZNEmptyDataSet.git
-  FutureNova:
-    :commit: db0540d78bd5bfb67f39945bbaf0fd3f2fbf56b5
-    :git: https://github.com/cuappdev/ios-networking.git
   Presentation:
     :commit: b53eb453d2e1520e724cfac5e3e444e730ffe985
     :git: https://github.com/cuappdev/Presentation.git
@@ -215,7 +205,6 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 8f581fca6478a50705d2bd2abd66d306e0f5736e
   FirebaseRemoteConfigInterop: 6c349a466490aeace3ce9c091c86be1730711634
   FirebaseSessions: 2651b464e241c93fd44112f995d5ab663c970487
-  FutureNova: 95f9aa352b2c250253b96fdf380754afcc87c7f3
   GoogleAppMeasurement: f3abf08495ef2cba7829f15318c373b8d9226491
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
   GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
@@ -230,10 +219,9 @@ SPEC CHECKSUMS:
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftLint: c1de071d9d08c8aba837545f6254315bc900e211
   SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
-  WhatsNewKit: c87028c4059dccd113495422801914cc53f6aab0
   Wormholy: ab1c8c2f02f58587a0941deb0088555ffbf039a1
   Zip: 8877eede3dda76bcac281225c20e71c25270774c
 
-PODFILE CHECKSUM: a3b80dd04ea30998a17c032f2730e21ee8517238
+PODFILE CHECKSUM: 12c25e103a1201d074276cbcc1e62972bb0cb57f
 
 COCOAPODS: 1.15.0

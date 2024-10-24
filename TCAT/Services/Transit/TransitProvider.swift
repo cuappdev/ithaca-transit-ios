@@ -94,7 +94,7 @@ extension TransitProvider: ApiEndpoint {
         case .alerts, .allStops:
             return .GET
         default:
-            return .PUT
+            return .POST
         }
     }
 

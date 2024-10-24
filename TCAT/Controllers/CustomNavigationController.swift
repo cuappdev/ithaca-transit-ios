@@ -31,19 +31,10 @@ class CustomNavigationController: UINavigationController, UINavigationController
         super.init(rootViewController: rootViewController)
         view.backgroundColor = Colors.white
         customizeAppearance()
+    }
 
-        ReachabilityManager.shared.addListener(self) { [weak self] connection in
-            guard let self = self else { return }
-            switch connection {
-            case .wifi, .cellular:
-                self.banner.dismiss()
-            case .none:
-                self.banner.show(queuePosition: .front, on: self)
-                self.banner.autoDismiss = false
-                self.banner.isUserInteractionEnabled = false
-            }
-            self.setNeedsStatusBarAppearanceUpdate()
-        }
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: nil)
     }
 
     override open var childForStatusBarStyle: UIViewController? {
@@ -73,6 +64,8 @@ class CustomNavigationController: UINavigationController, UINavigationController
             let payload = ScreenshotTakenPayload(location: "\(type(of: currentViewController))")
             TransitAnalytics.shared.log(payload)
         }
+
+        NotificationCenter.default.addObserver(self, selector: #selector(handleReachabilityChange), name: .reachabilityChanged, object: nil)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -138,6 +131,17 @@ class CustomNavigationController: UINavigationController, UINavigationController
     @objc private func backAction() {
         _ = popViewController(animated: true)
     }
+
+    @objc func handleReachabilityChange() {
+            if NetworkMonitor.shared.isReachable {
+                self.banner.dismiss()
+            } else {
+                self.banner.show(queuePosition: .front, on: self)
+                self.banner.autoDismiss = false
+                self.banner.isUserInteractionEnabled = false
+            }
+            self.setNeedsStatusBarAppearanceUpdate()
+        }
 
     // MARK: - UINavigationController Functions
 

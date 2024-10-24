@@ -6,8 +6,8 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
+import Combine
 import CoreLocation
-import FutureNova
 import GoogleMaps
 import MapKit
 import NotificationBannerSwift
@@ -25,6 +25,7 @@ class RouteDetailContentViewController: UIViewController {
     var bounds = GMSCoordinateBounds()
     var busIndicators = [GMSMarker]()
     var buses = [GMSMarker]()
+    private var cancellables = Set<AnyCancellable>()
     var currentLocation: CLLocationCoordinate2D?
     var directions: [Direction] = []
     var endDestination: Place!
@@ -33,7 +34,6 @@ class RouteDetailContentViewController: UIViewController {
     var liveTrackingNetworkTimer: Timer?
     private var locationManager = CLLocationManager()
     var mapView: GMSMapView!
-    private let networking: Networking = URLSession.shared.request
     private var paths: [Path] = []
     private var route: Route!
     private var routeOptionsCell: RouteTableViewCell?
@@ -168,21 +168,14 @@ class RouteDetailContentViewController: UIViewController {
 
     // MARK: - Network Calls
 
-    private func busLocations(_ directions: [Direction]) -> Future<Response<[BusLocation]>> {
-        return networking(Endpoint.getBusLocations(directions)).decode()
-    }
-
     /// Fetch live-tracking information for the first direction's bus route.
-    /// Handles connection issues with banners. Animated indicators. 
+    /// Handles connection issues with banners. Animated indicators.
     @objc func getBusLocations() {
-        // swiftlint:disable:next reduce_boolean
-        let directionsAreValid = route.directions.reduce(true) { result, direction in
-            if direction.type == .depart {
-                return result && direction.routeNumber > 0 && direction.tripIdentifiers != nil
-            } else {
-                return true
-            }
+        // Check if directions are valid for live tracking
+        let directionsAreValid = route.directions.allSatisfy { direction in
+            direction.type != .depart || (direction.routeNumber > 0 && direction.tripIdentifiers != nil)
         }
+
         if !directionsAreValid {
             printClass(context: "\(#function)", message: "Directions are not valid")
             let payload = NetworkErrorPayload(
@@ -194,17 +187,12 @@ class RouteDetailContentViewController: UIViewController {
             return
         }
 
-        busLocations(route.directions).observe { [weak self] result in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                switch result {
-                case .value(let response):
-                    if response.data.isEmpty {
-                        // Reset banner in case transitioned from Error to Online - No Bus Locations
-                        self.hideBanner()
-                    }
-                    self.parseBusLocationsData(data: response.data)
-                case .error(let error):
+        // Fetch bus locations using the TransitService
+        TransitService.shared.getBusLocations(route.directions)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                guard let self = self else { return }
+                if case .failure(let error) = completion {
                     self.printClass(context: "\(#function) error", message: error.localizedDescription)
                     if let banner = self.banner, !banner.isDisplaying {
                         self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
@@ -216,9 +204,16 @@ class RouteDetailContentViewController: UIViewController {
                     )
                     TransitAnalytics.shared.log(payload)
                 }
-            }
-        }
-        // Bounce any visible indicators
+            }, receiveValue: { [weak self] busLocations in
+                guard let self = self else { return }
+                if busLocations.isEmpty {
+                    // Reset banner in case of transition from Error to Online - No Bus Locations
+                    self.hideBanner()
+                }
+                self.parseBusLocationsData(data: busLocations)
+            })
+            .store(in: &cancellables)
+
         bounceIndicators()
     }
 

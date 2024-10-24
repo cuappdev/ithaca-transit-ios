@@ -6,8 +6,8 @@
 //  Copyright © 2016 cuappdev. All rights reserved.
 //
 
+import Combine
 import Firebase
-import FutureNova
 import GoogleMaps
 import Intents
 import SafariServices
@@ -22,17 +22,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     private let encoder = JSONEncoder()
+    private let transitService: TransitServiceProtocol = TransitService.shared
+
     private let userDataInits: [(key: String, defaultValue: Any)] = [
         (key: Constants.UserDefaults.onboardingShown, defaultValue: false),
         (key: Constants.UserDefaults.recentSearch, defaultValue: [Any]()),
         (key: Constants.UserDefaults.favorites, defaultValue: [Any]())
     ]
-    private let networking: Networking = URLSession.shared.request
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-
-        // Set up networking
-        Endpoint.setupEndpointConfig()
 
         // Set Up Google Services
         FirebaseApp.configure()
@@ -47,17 +45,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         TransitAnalytics.shared.log(payload)
         setupUniqueIdentifier()
 
-        for (key, defaultValue) in userDataInits {
-            if userDefaults.value(forKey: key) == nil {
-                if key == Constants.UserDefaults.favorites && sharedUserDefaults?.value(forKey: key) == nil {
-                    sharedUserDefaults?.set(defaultValue, forKey: key)
-                } else {
-                    userDefaults.set(defaultValue, forKey: key)
-                }
-            } else if key == Constants.UserDefaults.favorites && sharedUserDefaults?.value(forKey: key) == nil {
-                sharedUserDefaults?.set(userDefaults.value(forKey: key), forKey: key)
-            }
-        }
+        // Initialize UserDefaults values if needed
+        initializeUserDefaults()
 
         // Track number of app opens for Store Review prompt
         StoreReviewHelper.incrementAppOpenedCount()
@@ -65,9 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Debug - Always Show Onboarding
         // userDefaults.set(false, forKey: Constants.UserDefaults.onboardingShown)
 
-        getBusStops()
-
-        // Initalize first view based on context
+        // Initialize first view based on context
         let showOnboarding = !userDefaults.bool(forKey: Constants.UserDefaults.onboardingShown)
         let parentHomeViewController = ParentHomeMapViewController(
             contentViewController: HomeMapViewController(),
@@ -100,18 +87,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Helper Functions
 
+    /// Initializes the UserDefaults values if not present
+    private func initializeUserDefaults() {
+        for (key, defaultValue) in userDataInits {
+            if userDefaults.value(forKey: key) == nil {
+                if key == Constants.UserDefaults.favorites && sharedUserDefaults?.value(forKey: key) == nil {
+                    sharedUserDefaults?.set(defaultValue, forKey: key)
+                } else {
+                    userDefaults.set(defaultValue, forKey: key)
+                }
+            } else if key == Constants.UserDefaults.favorites && sharedUserDefaults?.value(forKey: key) == nil {
+                sharedUserDefaults?.set(userDefaults.value(forKey: key), forKey: key)
+            }
+        }
+    }
+
     /// Creates and sets a unique identifier. If the device identifier changes, updates it.
-    func setupUniqueIdentifier() {
+    private func setupUniqueIdentifier() {
         if let uid = UIDevice.current.identifierForVendor?.uuidString,
            uid != sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid) {
             sharedUserDefaults?.set(uid, forKey: Constants.UserDefaults.uid)
         }
     }
 
-    func handleShortcut(item: UIApplicationShortcutItem) {
+    private func handleShortcut(item: UIApplicationShortcutItem) {
         if let shortcutData = item.userInfo as? [String: Data] {
             guard let place = shortcutData["place"],
-                  let destination = try? decoder.decode(Place.self, from: place) else {
+                  let destination = try? JSONDecoder().decode(Place.self, from: place) else {
                 print("[AppDelegate] Unable to access shortcutData['place']")
                 return
             }
@@ -124,44 +126,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    private func getAllStops() -> Future<Response<[Place]>> {
-        return networking(Endpoint.getAllStops()).decode()
-    }
-
-    /// Get all bus stops and store in userDefaults
-    func getBusStops() {
-        getAllStops().observe { [weak self] result in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                switch result {
-                case .value(let response):
-                    if response.data.isEmpty { self.handleGetAllStopsError() } else {
-                        let encodedObject = try? JSONEncoder().encode(response.data)
-                        userDefaults.set(encodedObject, forKey: Constants.UserDefaults.allBusStops)
-                    }
-                case .error(let error):
-                    print("getBusStops error:", error.localizedDescription)
-                    self.handleGetAllStopsError()
-                }
-            }
-        }
-    }
-
-    /// Present an alert indicating bus stops weren't fetched.
-    func handleGetAllStopsError() {
-        let title = "Couldn't Fetch Bus Stops"
-        let message = "The app will continue trying on launch. You can continue to use the app as normal."
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-        UIApplication.shared.keyWindow?.presentInApp(alertController)
-    }
-
     /// Open the app when opened via URL scheme
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
 
         // URLs for testing
         // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown
-        // PlaceResult: ithaca-transit://getRoutes?lat=42.44707979999999&long=-76.4885196&destinationName=Hans%20Bethe%20House
+        // PlaceResult: ithaca-transit://getRoutes?lat=42.4440892&long=-76.4847823&destinationName=Hollister%Hall&destinationType=applePlace
 
         let rootVC = HomeMapViewController()
         let navigationController = CustomNavigationController(rootViewController: rootVC)
@@ -170,8 +140,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.makeKeyAndVisible()
 
         let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
+        var placeType: PlaceType = .busStop
 
-        if url.absoluteString.contains("getRoutes") { // siri URL scheme
+        if url.absoluteString.contains("getRoutes") {
             var latitude: CLLocationDegrees?
             var longitude: CLLocationDegrees?
             var destination: String?
@@ -179,17 +150,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if let lat = items?.filter({ $0.name == "lat" }).first?.value,
                let long = items?.filter({ $0.name == "long" }).first?.value,
                let dest = items?.filter({ $0.name == "stopName" }).first?.value ??
-                items?.filter({ $0.name == "destinationName" }).first?.value {
+                items?.filter({ $0.name == "destinationName" }).first?.value,
+               let destType = items?.filter({ $0.name == "destinationType" }).first?.value {
 
                 latitude = Double(lat)
                 longitude = Double(long)
-                destination = dest
+                destination = dest.split(separator: "%").joined(separator: " ")
+                if destType == "applePlace" {
+                    placeType = .applePlace
+                }
+
             }
 
-
-
             if let latitude = latitude, let longitude = longitude, let destination = destination {
-                let place = Place(name: destination, type: .busStop, latitude: latitude, longitude: longitude)
+                let place = Place(name: destination, type: placeType, latitude: latitude, longitude: longitude)
                 let optionsVC = RouteOptionsViewController(searchTo: place)
                 navigationController.pushViewController(optionsVC, animated: false)
                 return true
@@ -203,7 +177,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension UIWindow {
 
-    /// Find the visible view controller in the root navigation controller and present passed in view controlelr.
+    /// Find the visible view controller in the root navigation controller and present passed in view controller.
     func presentInApp(_ viewController: UIViewController) {
         (rootViewController as? UINavigationController)?.visibleViewController?.present(viewController, animated: true)
     }

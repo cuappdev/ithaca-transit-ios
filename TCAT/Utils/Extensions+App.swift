@@ -241,9 +241,12 @@ func presentShareSheet(
     let thirdParamName: String = (
         destination.type == .busStop
     ) ? "stopName" : "destinationName"
-    let destination = destination.name
-    
-    let promotionalText = "ithaca-transit://getRoutes?lat=\(lat)&long=\(long)&\(thirdParamName)=\(destination)"
+    let destType = (
+        destination.type == .busStop
+    ) ? "busStop" : "applePlace"
+    let dest = destination.name
+    let formattedDestination = dest.split(separator: " ").joined(separator: "%")
+    let promotionalText = "ithaca-transit://getRoutes?lat=\(lat)&long=\(long)&\(thirdParamName)=\(formattedDestination)&destinationType=\(destType)"
 
     var activityItems: [Any] = [promotionalText]
 

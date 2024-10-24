@@ -43,36 +43,33 @@ extension ApiEndpoint {
         longPath.append("/")
         longPath.append(path)
         urlComponents?.path = longPath
-
+        
         if let queryParams = queryParams {
             urlComponents?.queryItems = [URLQueryItem]()
             for queryParam in queryParams {
                 urlComponents?.queryItems?.append(URLQueryItem(name: queryParam.name, value: queryParam.value))
             }
         }
-
+        
         guard let url = urlComponents?.url else { return URLRequest(url: URL(string: baseURLString)!) }
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
-
+        
         if let headers = headers {
             for header in headers {
                 request.addValue(header.value, forHTTPHeaderField: header.key)
             }
         }
-
+        
         if let params = params {
             let jsonData = try? JSONSerialization.data(withJSONObject: params)
             request.httpBody = jsonData
         }
-
+        
         if let customDataBody = customDataBody {
             request.httpBody = customDataBody
         }
-
-// #if DEBUG
-//        debugLog(request.cURL(pretty: true))
-// #endif
+        
         return request
     }
 }

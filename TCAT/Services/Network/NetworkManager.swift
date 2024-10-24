@@ -9,26 +9,65 @@
 import Foundation
 import Combine
 
-class NetworkManager {
+protocol NetworkService {
+    func request<T: Decodable>(_ request: URLRequest, decodingType: T.Type) -> AnyPublisher<T, ApiErrorHandler>
+}
 
-    let session: NetworkSession
-
-    init(session: NetworkSession = URLSession.shared) {
+class NetworkManager: NetworkService {
+    
+    private let session: URLSession
+    
+    init(session: URLSession = .shared) {
         self.session = session
     }
-
-    func performRequest<T>(
-        _ request: URLRequest,
-        decodingType: T.Type
-    ) -> AnyPublisher<
-        T,
-        APIErrorHandler
-    > where T: Decodable {
-        return session.publisher(request, decodingType: decodingType)
-            .mapError { error -> APIErrorHandler in
-                return error
+    
+    func request<T: Decodable>(_ request: URLRequest, decodingType: T.Type) -> AnyPublisher<T, ApiErrorHandler> {
+        return session.dataTaskPublisher(for: request)
+            .tryMap { result in
+                try self.handleResponse(result)
+            }
+            .decode(type: APIResponse<T>.self, decoder: JSONDecoder())
+            .tryMap { response in
+                try self.validateAPIResponse(response)
+            }
+            .mapError { error in
+                self.mapToAPIError(error)
             }
             .eraseToAnyPublisher()
     }
-
+    
+    // Handles HTTP response and decodes or throws an appropriate error
+    private func handleResponse(_ result: URLSession.DataTaskPublisher.Output) throws -> Data {
+        guard let httpResponse = result.response as? HTTPURLResponse else {
+            throw ApiErrorHandler.requestFailed
+        }
+        if (200..<300).contains(httpResponse.statusCode) {
+            return result.data
+        } else {
+            // Attempt to decode error message from server
+            if let apiError = try? JSONDecoder().decode(ApiError.self, from: result.data) {
+                throw ApiErrorHandler.customApiError(apiError)
+            } else {
+                throw ApiErrorHandler.emptyErrorWithStatusCode(httpResponse.statusCode.description)
+            }
+        }
+    }
+    
+    // Validate API response and handle future error cases
+    private func validateAPIResponse<T>(_ response: APIResponse<T>) throws -> T {
+        guard response.success else {
+            // This is a placeholder error handler. Update as needed. When backend sends more error codes.
+            throw ApiErrorHandler.customApiError(ApiError(code: "500", message: "Internal server error"))
+        }
+        
+        return response.data
+    }
+    
+    // Map Combine errors to custom APIErrorHandler types
+    private func mapToAPIError(_ error: Error) -> ApiErrorHandler {
+        if let apiError = error as? ApiErrorHandler {
+            return apiError
+        }
+        return ApiErrorHandler.normalError(error)
+    }
 }
