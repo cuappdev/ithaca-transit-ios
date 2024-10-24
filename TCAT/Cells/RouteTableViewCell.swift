@@ -6,7 +6,6 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import FutureNova
 import SwiftyJSON
 import UIKit
 
@@ -25,7 +24,6 @@ class RouteTableViewCell: UITableViewCell {
 
     // MARK: - Data vars
     private let containerViewLayoutInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 12)
-    private let networking: Networking = URLSession.shared.request
 
     // MARK: - Init
 

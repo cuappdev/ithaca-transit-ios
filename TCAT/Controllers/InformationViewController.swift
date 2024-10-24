@@ -183,7 +183,7 @@ class InformationViewController: UIViewController {
         guard let URL = URL(string: url) else {
             return
         }
-
+        
         if inApp {
             let safariViewController = SFSafariViewController(url: URL)
             UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.presentInApp(safariViewController)

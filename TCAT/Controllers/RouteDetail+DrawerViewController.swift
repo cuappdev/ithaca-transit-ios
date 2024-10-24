@@ -6,7 +6,7 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
-import FutureNova
+import Combine
 import Pulley
 import SwiftyJSON
 import UIKit
@@ -49,6 +49,7 @@ class RouteDetailDrawerViewController: UIViewController {
     var summaryView: SummaryView!
     let tableView = UITableView(frame: .zero, style: .grouped)
 
+    private var cancellables = Set<AnyCancellable>()
     var currentPulleyPosition: PulleyPosition?
     var directionsAndVisibleStops: [RouteDetailItem] = []
     var expandedDirections: Set<Direction> = []
@@ -57,9 +58,7 @@ class RouteDetailDrawerViewController: UIViewController {
 
     /// Number of seconds to wait before auto-refreshing bus delay network call.
     private var busDelayNetworkRefreshRate: Double = 10
-    private var busDelayNetworkTimer: Timer?
     private let chevronFlipDurationTime = 0.25
-    private let networking: Networking = URLSession.shared.request
     private let route: Route
 
     // MARK: - Initalization
@@ -89,29 +88,14 @@ class RouteDetailDrawerViewController: UIViewController {
         if let drawer = self.parent as? RouteDetailViewController {
             drawer.initialDrawerPosition = .partiallyRevealed
         }
-
+        getDelays()
         setupConstraints()
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        // Bus Delay Network Timer
-        busDelayNetworkTimer?.invalidate()
-        busDelayNetworkTimer = Timer.scheduledTimer(
-            timeInterval: busDelayNetworkRefreshRate,
-            target: self,
-            selector: #selector(getDelays),
-            userInfo: nil,
-            repeats: true
-        )
-        busDelayNetworkTimer?.fire()
-
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        busDelayNetworkTimer?.invalidate()
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
     }
 
     private func setupSummaryView() {
@@ -194,59 +178,26 @@ class RouteDetailDrawerViewController: UIViewController {
     }
 
     /// Fetch delay information and update table view cells.
-    @objc private func getDelays() {
-
+    private func getDelays() {
         // First depart direction(s)
         guard let delayDirection = route.getFirstDepartRawDirection() else {
             return // Use rawDirection (preserves first stop metadata)
         }
 
         let directions = directionsAndVisibleStops.compactMap { $0.getDirection() }
+        guard let firstDepartDirection = directions.first(where: { $0.type == .depart }) else { return }
 
-        let firstDepartDirection = directions.first(where: { $0.type == .depart })!
-
+        // Reset delays for directions
         directions.forEach { $0.delay = nil }
 
+        // Check if tripId and stopId are available
         if let tripId = delayDirection.tripIdentifiers?.first,
-            let stopId = delayDirection.stops.first?.id {
-
-            getDelay(tripId: tripId, stopId: stopId).observe(with: { [weak self] result in
-                guard let self = self else { return }
-                DispatchQueue.main.async {
-                    switch result {
-                    case .value(let response):
-                        if response.success {
-
-                            delayDirection.delay = response.data
-                            firstDepartDirection.delay = response.data
-
-                            // Update delay variable of other ensuing directions
-                            directions.filter {
-                                let isAfter = directions.firstIndex(
-                                    of: firstDepartDirection
-                                )! < directions.firstIndex(of: $0)!
-                                return isAfter && $0.type != .depart
-                            }
-                            .forEach { direction in
-                                if direction.delay != nil {
-                                    direction.delay! += delayDirection.delay ?? 0
-                                } else {
-                                    direction.delay = delayDirection.delay
-                                }
-                            }
-
-                            self.tableView.reloadData()
-                            self.summaryView.updateTimes(for: self.route)
-                        } else {
-                            self.printClass(context: "\(#function) success", message: "false")
-                            let payload = NetworkErrorPayload(
-                                location: "\(self) Get Delay",
-                                type: "Response Failure",
-                                description: "Response Failure"
-                            )
-                            TransitAnalytics.shared.log(payload)
-                        }
-                    case .error(let error):
+           let stopId = delayDirection.stops.first?.id {
+            TransitService.shared.getDelay(tripID: tripId, stopID: stopId, refreshInterval: busDelayNetworkRefreshRate)
+                .receive(on: DispatchQueue.main)
+                .sink(receiveCompletion: { [weak self] completion in
+                    guard let self = self else { return }
+                    if case .failure(let error) = completion {
                         self.printClass(context: "\(#function) error", message: error.localizedDescription)
                         let payload = NetworkErrorPayload(
                             location: "\(self) Get Delay",
@@ -255,13 +206,29 @@ class RouteDetailDrawerViewController: UIViewController {
                         )
                         TransitAnalytics.shared.log(payload)
                     }
-                }
-            })
-        }
-    }
+                }, receiveValue: { [weak self] delay in
+                    guard let self = self else { return }
 
-    private func getDelay(tripId: String, stopId: String) -> Future<Response<Int?>> {
-        return networking(Endpoint.getDelay(tripID: tripId, stopID: stopId)).decode()
+                    delayDirection.delay = delay
+                    firstDepartDirection.delay = delay
+
+                    directions.filter {
+                        let isAfter = directions.firstIndex(of: firstDepartDirection)! < directions.firstIndex(of: $0)!
+                        return isAfter && $0.type != .depart
+                    }
+                    .forEach { direction in
+                        if let currentDelay = direction.delay {
+                            direction.delay = currentDelay + (delay ?? 0)
+                        } else {
+                            direction.delay = delay
+                        }
+                    }
+
+                    self.tableView.reloadData()
+                    self.summaryView.updateTimes(for: self.route)
+                })
+                .store(in: &cancellables)
+        }
     }
 
     func getFirstDirection() -> Direction? {

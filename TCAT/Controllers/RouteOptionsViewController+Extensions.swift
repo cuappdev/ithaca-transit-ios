@@ -19,7 +19,7 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
             if let indexPath = routeResults.indexPathForRow(at: point),
                let cell = routeResults.cellForRow(at: indexPath) {
                 let route = routes[indexPath.section][indexPath.row]
-                presentShareSheet(from: view, for: route, with: cell.getImage())
+                presentShareSheet(from: view, for: searchTo, with: cell.getImage())
             }
         }
     }
@@ -283,7 +283,6 @@ extension RouteOptionsViewController: UITableViewDelegate {
             let payload = RouteResultsCellTappedEventPayload()
             TransitAnalytics.shared.log(payload)
             let routeId = routes[indexPath.section][indexPath.row].routeId
-            routeSelected(routeId: routeId)
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }

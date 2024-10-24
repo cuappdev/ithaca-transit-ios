@@ -6,8 +6,8 @@
 //  Copyright © 2019 cuappdev. All rights reserved.
 //
 
+import Combine
 import CoreLocation
-import FutureNova
 import GoogleMaps
 import SnapKit
 import UIKit
@@ -28,12 +28,12 @@ class HomeOptionsCardViewController: UIViewController {
     var searchBar: UISearchBar!
     var tableView: UITableView!
 
-    private let networking: Networking = URLSession.shared.request
     private var searchResultsSection: Section!
     var currentLocation: CLLocation? { return delegate?.getCurrentLocation() }
-    var timer: Timer?
+//    var timer: Timer?
     var isNetworkDown = false
 
+    private var currentSearchCancellable: AnyCancellable?
     private let infoButtonAnimationDuration = 0.1
     private var keyboardHeight: CGFloat = 0
     private let maxFavoritesCount = 2
@@ -118,7 +118,7 @@ class HomeOptionsCardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        addReachabilityListener()
+        NotificationCenter.default.addObserver(self, selector: #selector(handleReachabilityChange), name: .reachabilityChanged, object: nil)
 
         setupTableView()
         setupInfoButton()
@@ -128,21 +128,17 @@ class HomeOptionsCardViewController: UIViewController {
         updatePlaces()
     }
 
-    private func addReachabilityListener() {
-        ReachabilityManager.shared.addListener(self) { [weak self] connection in
-            guard let self = self else { return }
-
-            switch connection {
-            case .none:
-                self.isNetworkDown = true
-                self.searchBar.isUserInteractionEnabled = false
-                self.sections = []
-            case .cellular, .wifi:
-                self.isNetworkDown = false
-                self.updateSections()
-                self.searchBar.isUserInteractionEnabled = true
-            }
+    @objc func handleReachabilityChange() {
+        if NetworkMonitor.shared.isReachable {
+            self.isNetworkDown = false
+            self.updateSections()
+            self.searchBar.isUserInteractionEnabled = true
+        } else {
+            self.isNetworkDown = true
+            self.searchBar.isUserInteractionEnabled = false
+            self.sections = []
         }
+        self.setNeedsStatusBarAppearanceUpdate()
     }
 
     private func setupTableView() {
@@ -300,27 +296,25 @@ class HomeOptionsCardViewController: UIViewController {
     }
 
     // MARK: - Get Search Results
-    
     /// Get Search Results
-    @objc func getPlaces(timer: Timer) {
-        if let userInfo = timer.userInfo as? [String: String],
-            let searchText = userInfo["searchText"],
-            !searchText.isEmpty {
-            SearchManager.shared.performLookup(for: searchText) { [weak self] (searchResults, error) in
+    internal func startSearch(for searchText: String) {
+        currentSearchCancellable?.cancel()
+
+        currentSearchCancellable = SearchManager.shared.search(for: searchText)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] result in
                 guard let self = self else { return }
-                if let error = error {
-                    self.printClass(context: "SearchManager lookup error", message: error.localizedDescription)
-                    return
-                }
-                DispatchQueue.main.async {
+
+                switch result {
+                case .success(let searchResults):
                     self.searchResultsSection = Section.searchResults(items: searchResults)
                     self.tableView.contentOffset = .zero
                     self.sections = [self.searchResultsSection]
+
+                case .failure(let error):
+                    print("Search error: \(error.errorDescription)")
                 }
-            }
-        } else {
-            updateSections()
-        }
+            })
     }
 
     // MARK: - Keyboard

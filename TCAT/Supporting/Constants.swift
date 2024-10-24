@@ -169,9 +169,6 @@ struct Constants {
         static let delay = "/delay"
         static let delays = "/delays"
         static let getRoutes = "/route"
-        static let multiRoute = "/multiroute"
-        static let placeIDCoordinates = "/placeIDCoordinates"
-        static let routeSelected = "/routeSelected"
     }
 
     struct Footers {

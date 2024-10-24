@@ -60,14 +60,12 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchBar.returnKeyType = searchText.isEmpty ? .default : .search
         searchBar.setShowsCancelButton(true, animated: true)
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(
-            timeInterval: 0.2,
-            target: self,
-            selector: #selector(getPlaces),
-            userInfo: ["searchText": searchText],
-            repeats: false
-        )
+
+        guard !searchText.isEmpty else {
+            updateSections()
+            return
+        }
+        startSearch(for: searchText)
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {

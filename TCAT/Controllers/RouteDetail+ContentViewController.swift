@@ -6,8 +6,8 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
+import Combine
 import CoreLocation
-import FutureNova
 import GoogleMaps
 import MapKit
 import NotificationBannerSwift
@@ -25,14 +25,15 @@ class RouteDetailContentViewController: UIViewController {
     var bounds = GMSCoordinateBounds()
     var busIndicators = [GMSMarker]()
     var buses = [GMSMarker]()
+    private var cancellables = Set<AnyCancellable>()
     var currentLocation: CLLocationCoordinate2D?
     var directions: [Direction] = []
+    var endDestination: Place!
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
     var liveTrackingNetworkRefreshRate: Double = LiveIndicator.interval * 1.0
     var liveTrackingNetworkTimer: Timer?
     private var locationManager = CLLocationManager()
     var mapView: GMSMapView!
-    private let networking: Networking = URLSession.shared.request
     private var paths: [Path] = []
     private var route: Route!
     private var routeOptionsCell: RouteTableViewCell?
@@ -49,12 +50,17 @@ class RouteDetailContentViewController: UIViewController {
     /// Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
     /// dummy data will be used. The directions parameter have logical assumptions,
     /// such as ArriveDirection always comes after DepartDirection.
-    init(route: Route, currentLocation: CLLocationCoordinate2D?, routeOptionsCell: RouteTableViewCell?) {
+    init(route: Route, endDestination: Place, currentLocation: CLLocationCoordinate2D?, routeOptionsCell: RouteTableViewCell?) {
         super.init(nibName: nil, bundle: nil)
         self.routeOptionsCell = routeOptionsCell
+        self.endDestination = endDestination
         initializeRoute(route, currentLocation)
     }
-
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -162,21 +168,14 @@ class RouteDetailContentViewController: UIViewController {
 
     // MARK: - Network Calls
 
-    private func busLocations(_ directions: [Direction]) -> Future<Response<[BusLocation]>> {
-        return networking(Endpoint.getBusLocations(directions)).decode()
-    }
-
     /// Fetch live-tracking information for the first direction's bus route.
-    /// Handles connection issues with banners. Animated indicators. 
+    /// Handles connection issues with banners. Animated indicators.
     @objc func getBusLocations() {
-        // swiftlint:disable:next reduce_boolean
-        let directionsAreValid = route.directions.reduce(true) { result, direction in
-            if direction.type == .depart {
-                return result && direction.routeNumber > 0 && direction.tripIdentifiers != nil
-            } else {
-                return true
-            }
+        // Check if directions are valid for live tracking
+        let directionsAreValid = route.directions.allSatisfy { direction in
+            direction.type != .depart || (direction.routeNumber > 0 && direction.tripIdentifiers != nil)
         }
+
         if !directionsAreValid {
             printClass(context: "\(#function)", message: "Directions are not valid")
             let payload = NetworkErrorPayload(
@@ -188,17 +187,12 @@ class RouteDetailContentViewController: UIViewController {
             return
         }
 
-        busLocations(route.directions).observe { [weak self] result in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                switch result {
-                case .value(let response):
-                    if response.data.isEmpty {
-                        // Reset banner in case transitioned from Error to Online - No Bus Locations
-                        self.hideBanner()
-                    }
-                    self.parseBusLocationsData(data: response.data)
-                case .error(let error):
+        // Fetch bus locations using the TransitService
+        TransitService.shared.getBusLocations(route.directions)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                guard let self = self else { return }
+                if case .failure(let error) = completion {
                     self.printClass(context: "\(#function) error", message: error.localizedDescription)
                     if let banner = self.banner, !banner.isDisplaying {
                         self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
@@ -210,9 +204,16 @@ class RouteDetailContentViewController: UIViewController {
                     )
                     TransitAnalytics.shared.log(payload)
                 }
-            }
-        }
-        // Bounce any visible indicators
+            }, receiveValue: { [weak self] busLocations in
+                guard let self = self else { return }
+                if busLocations.isEmpty {
+                    // Reset banner in case of transition from Error to Online - No Bus Locations
+                    self.hideBanner()
+                }
+                self.parseBusLocationsData(data: busLocations)
+            })
+            .store(in: &cancellables)
+
         bounceIndicators()
     }
 
@@ -320,7 +321,7 @@ class RouteDetailContentViewController: UIViewController {
 
     // MARK: - Share Function
     @objc func shareRoute() {
-        presentShareSheet(from: view, for: route, with: routeOptionsCell?.getImage())
+        presentShareSheet(from: view, for: endDestination, with: routeOptionsCell?.getImage())
     }
 
     func calculatePlacement(position: CLLocationCoordinate2D, view: UIView) -> CLLocationCoordinate2D? {
@@ -473,11 +474,11 @@ class RouteDetailContentViewController: UIViewController {
         return drawerDisplayController
     }
 
-    required convenience init(coder aDecoder: NSCoder) {
-        guard let route = aDecoder.decodeObject(forKey: "route") as? Route
-            else { fatalError("init(coder:) has not been implemented") }
-
-        self.init(route: route, currentLocation: nil, routeOptionsCell: nil)
-    }
+//    required convenience init(coder aDecoder: NSCoder) {
+//        guard let route = aDecoder.decodeObject(forKey: "route") as? Route
+//            else { fatalError("init(coder:) has not been implemented") }
+//
+//        self.init(route: route, endDestination: , currentLocation: nil, routeOptionsCell: nil)
+//    }
 
 }
