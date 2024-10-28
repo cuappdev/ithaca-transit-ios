@@ -27,7 +27,6 @@ class WalkPath: Path {
         self.path = untraveledPath
         self.strokeColor = color
         self.strokeWidth = polylineWidth
-        
         guard let path = self.path else { return }
         let intervalDistanceIncrement: CGFloat = 20
         var previousCircle: (coordinate: CLLocationCoordinate2D, radius: Double)?
@@ -54,8 +53,6 @@ class WalkPath: Path {
                         continue
                     }
                 }
-
-                let isFinalDestination = (coordinateIndex == path.count() - 1)
                 circles.append((coordinate: circleCoordinate, radius: 5.0))
                 previousCircle = (coordinate: circleCoordinate, radius: 5.0)
             }
@@ -69,4 +66,4 @@ class WalkPath: Path {
         }
         return path
     }
-} 
+}
