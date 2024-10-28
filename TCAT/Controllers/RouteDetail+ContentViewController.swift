@@ -459,7 +459,8 @@ class RouteDetailContentViewController: UIViewController {
             }
         }()
     }
-    // Helper function that draws individual walking circles
+    
+    /// Helper function that draws individual walking circles
     private func createWalkPathCircle() -> UIImage {
         let fillColor = UIColor(white: 0.82, alpha: 1.0)
         let borderColor = UIColor(white: 0.57, alpha: 1.0)
@@ -483,6 +484,28 @@ class RouteDetailContentViewController: UIViewController {
     /// Draw all waypoints initially for all paths in [Path] or [[CLLocationCoordinate2D]], plus fill bounds
     private func drawMapRoute() {
         var pathCount = 0
+        // Helper function for creating bus stop circles
+        func busStopCircles(at coordinate: CLLocationCoordinate2D, on mapView: GMSMapView) -> GMSCircle {
+            let circle = GMSCircle(position: coordinate, radius: 50)
+            circle.fillColor = UIColor.white.withAlphaComponent(1.0)
+            circle.strokeColor = UIColor.black
+            circle.strokeWidth = 2.0
+            circle.map = mapView
+            circle.zIndex = 2
+            return circle
+        }
+        // Helper function to map final location marker
+        func mapLocationMarker() -> UIImage? {
+            let targetSize = CGSize(width: 18, height: 30)
+            guard let originalImage = UIImage(named: "locationMarker") else {
+                return nil
+            }
+            UIGraphicsBeginImageContextWithOptions(targetSize, false, 0.0)
+            originalImage.draw(in: CGRect(origin: .zero, size: targetSize))
+            let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            return resizedImage
+        }
         for path in paths {
             path.traveledPolyline.map = mapView
             path.map = mapView
@@ -494,16 +517,6 @@ class RouteDetailContentViewController: UIViewController {
                 bounds = bounds.includingCoordinate(waypoint.coordinate)
             }
             if let busPath = path as? BusPath {
-                // Helper function for creating bus stop circles
-                func busStopCircles(at coordinate: CLLocationCoordinate2D, on mapView: GMSMapView) -> GMSCircle {
-                    let circle = GMSCircle(position: coordinate, radius: 50)
-                    circle.fillColor = UIColor.white.withAlphaComponent(1.0)
-                    circle.strokeColor = UIColor.black
-                    circle.strokeWidth = 2.0
-                    circle.map = mapView
-                    circle.zIndex = 2
-                    return circle
-                }
                 // Creates circles at the first and last coordinate points / stops for bus route(s)
                 if let startBusStopCoordinate = busPath.waypoints.first {
                     let startCircle = busStopCircles(at: startBusStopCoordinate.coordinate, on: mapView)
@@ -528,19 +541,7 @@ class RouteDetailContentViewController: UIViewController {
                     }
                 }
             }
-        pathCount += 1
-        }
-        // Helper function for mapping location marker on map
-        func mapLocationMarker() -> UIImage? {
-            let targetSize = CGSize(width: 35, height: 35)
-            guard let originalImage = UIImage(named: "locationMarker") else {
-                return nil
-            }
-            UIGraphicsBeginImageContextWithOptions(targetSize, false, 0.0)
-            originalImage.draw(in: CGRect(origin: .zero, size: targetSize))
-            let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            return resizedImage
+            pathCount += 1
         }
         func mapRouteSegment(_ segment: [GMSCircle], to path: GMSMutablePath, addMarker: Bool = false) {
             for (index, waypoint) in segment.enumerated() {
@@ -557,7 +558,7 @@ class RouteDetailContentViewController: UIViewController {
             }
         }
 
-        // Maps each route segment and maps final location marker for last segment
+        // Maps each route segment and final location marker
         mapRouteSegment(firstRouteSegment, to: firstWalkSegment, addMarker: secondRouteSegment.isEmpty)
         if !secondRouteSegment.isEmpty {
             mapRouteSegment(secondRouteSegment, to: secondWalkSegment, addMarker: finalRouteSegment.isEmpty)
@@ -579,7 +580,8 @@ class RouteDetailContentViewController: UIViewController {
         configurePolyline(for: secondWalkSegment)
         configurePolyline(for: finalWalkSegment)
     }
-    // Adjusts the size of start / end bus stop circles based on zoom level
+    
+    /// Adjusts the size of endpoint bus stop circles based on zoom level
     func updateBusStopCircleSize() {
         let circleRadiusScale = 1 / mapView.projection.points(forMeters: 1, at: mapView.camera.target)
         let circleRadius = 4.5 * CLLocationDistance(circleRadiusScale)
