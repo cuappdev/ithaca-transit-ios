@@ -30,7 +30,7 @@ class WalkPath: Path {
         guard let path = self.path else { return }
         let intervalDistanceIncrement: CGFloat = 20
         var previousCircle: (coordinate: CLLocationCoordinate2D, radius: Double)?
-        // Maps circles in incremental distance
+        // Maps circle coordinates in incremental distance
         for coordinateIndex in 0 ..< path.count() - 1 {
             let startCoordinate = path.coordinate(at: coordinateIndex)
             let endCoordinate = path.coordinate(at: coordinateIndex + 1)
