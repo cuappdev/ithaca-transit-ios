@@ -459,32 +459,11 @@ class RouteDetailContentViewController: UIViewController {
             }
         }()
     }
-    
-    /// Helper function that draws individual walking circles
-    private func createWalkPathCircle() -> UIImage {
-        let fillColor = UIColor(white: 0.82, alpha: 1.0)
-        let borderColor = UIColor(white: 0.57, alpha: 1.0)
-        let diameter: CGFloat = 70.0
-        let borderWidth: CGFloat = 13.0
-
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: diameter, height: diameter))
-        return renderer.image { context in
-            context.cgContext.setFillColor(borderColor.cgColor)
-            context.cgContext.setStrokeColor(borderColor.cgColor)
-            context.cgContext.setLineWidth(borderWidth)
-            context.cgContext.addEllipse(in: CGRect(x: borderWidth / 2, y: borderWidth / 2, width: diameter - borderWidth, height: diameter - borderWidth))
-            context.cgContext.drawPath(using: .fillStroke)
-
-            context.cgContext.setFillColor(fillColor.cgColor)
-            context.cgContext.addEllipse(in: CGRect(x: borderWidth, y: borderWidth, width: diameter - 2 * borderWidth, height: diameter - 2 * borderWidth))
-            context.cgContext.fillPath()
-        }
-    }
 
     /// Draw all waypoints initially for all paths in [Path] or [[CLLocationCoordinate2D]], plus fill bounds
     private func drawMapRoute() {
         var pathCount = 0
-        // Helper function for creating bus stop circles
+        // Helper function to create bus stop circles
         func busStopCircles(at coordinate: CLLocationCoordinate2D, on mapView: GMSMapView) -> GMSCircle {
             let circle = GMSCircle(position: coordinate, radius: 50)
             circle.fillColor = UIColor.white.withAlphaComponent(1.0)
@@ -506,6 +485,26 @@ class RouteDetailContentViewController: UIViewController {
             UIGraphicsEndImageContext()
             return resizedImage
         }
+        // Helper function to create individual walking circles
+        func createWalkPathCircle() -> UIImage {
+            let fillColor = UIColor(white: 0.82, alpha: 1.0)
+            let borderColor = UIColor(white: 0.57, alpha: 1.0)
+            let diameter: CGFloat = 70.0
+            let borderWidth: CGFloat = 13.0
+
+            let renderer = UIGraphicsImageRenderer(size: CGSize(width: diameter, height: diameter))
+            return renderer.image { context in
+                context.cgContext.setFillColor(borderColor.cgColor)
+                context.cgContext.setStrokeColor(borderColor.cgColor)
+                context.cgContext.setLineWidth(borderWidth)
+                context.cgContext.addEllipse(in: CGRect(x: borderWidth / 2, y: borderWidth / 2, width: diameter - borderWidth, height: diameter - borderWidth))
+                context.cgContext.drawPath(using: .fillStroke)
+
+                context.cgContext.setFillColor(fillColor.cgColor)
+                context.cgContext.addEllipse(in: CGRect(x: borderWidth, y: borderWidth, width: diameter - 2 * borderWidth, height: diameter - 2 * borderWidth))
+                context.cgContext.fillPath()
+            }
+        }
         for path in paths {
             path.traveledPolyline.map = mapView
             path.map = mapView
@@ -517,7 +516,7 @@ class RouteDetailContentViewController: UIViewController {
                 bounds = bounds.includingCoordinate(waypoint.coordinate)
             }
             if let busPath = path as? BusPath {
-                // Creates circles at the first and last coordinate points / stops for bus route(s)
+                // Create circles at the first and last coordinate points / stops for bus route(s)
                 if let startBusStopCoordinate = busPath.waypoints.first {
                     let startCircle = busStopCircles(at: startBusStopCoordinate.coordinate, on: mapView)
                     finalDestinationCircles.append(startCircle)
@@ -527,7 +526,7 @@ class RouteDetailContentViewController: UIViewController {
                     finalDestinationCircles.append(endCircle)
                 }
             }
-            // Extracts and appends all coordinates of waypoints
+            // Extract and append all coordinates of waypoints
             if let walkPath = path as? WalkPath {
                 for circleInfo in walkPath.circles {
                     let circle = GMSCircle(position: circleInfo.coordinate, radius: circleInfo.radius)
@@ -558,7 +557,7 @@ class RouteDetailContentViewController: UIViewController {
             }
         }
 
-        // Maps each route segment and final location marker
+        // Map each route segment and draw final location marker for the last segment
         mapRouteSegment(firstRouteSegment, to: firstWalkSegment, addMarker: secondRouteSegment.isEmpty)
         if !secondRouteSegment.isEmpty {
             mapRouteSegment(secondRouteSegment, to: secondWalkSegment, addMarker: finalRouteSegment.isEmpty)
@@ -567,7 +566,7 @@ class RouteDetailContentViewController: UIViewController {
             mapRouteSegment(finalRouteSegment, to: finalWalkSegment, addMarker: true)
         }
 
-        // Configures polylines for each walking segment
+        // Configure polylines for each walking segment
         func configurePolyline(for path: GMSPath) {
             let walkPathCircle = createWalkPathCircle()
             let polyline = GMSPolyline(path: path)
