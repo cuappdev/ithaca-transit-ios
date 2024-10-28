@@ -45,7 +45,7 @@ class BusPath: Path {
 
         dashColors = [color, .clear]
 
-        self.polylineWidth = 8
+        self.polylineWidth = 5
         self.untraveledPath = createPathFromWaypoints(waypoints: waypoints)
         self.traveledPath = untraveledPath
 
