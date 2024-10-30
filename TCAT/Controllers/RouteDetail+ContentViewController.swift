@@ -47,8 +47,6 @@ class RouteDetailContentViewController: UIViewController {
     private var paths: [Path] = []
     private var route: Route!
     private var routeOptionsCell: RouteTableViewCell?
-    private var secondRouteSegment: [GMSCircle] = []
-    private let secondWalkSegment = GMSMutablePath()
 
     /// Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
     /// dummy data will be used. The directions parameter have logical assumptions,
@@ -537,9 +535,6 @@ class RouteDetailContentViewController: UIViewController {
                     let circle = GMSCircle(position: circleInfo.coordinate, radius: circleInfo.radius)
                     if pathCount == 0 {
                         firstRouteSegment.append(circle)
-                    } else if pathCount == 3 {
-                        // Walk - Bus - Walk scenario
-                        secondRouteSegment.append(circle)
                     } else {
                         finalRouteSegment.append(circle)
                     }
@@ -565,11 +560,7 @@ class RouteDetailContentViewController: UIViewController {
         }
 
         // Map each route segment and draw final location marker for the last segment
-        mapRouteSegment(firstRouteSegment, to: firstWalkSegment, addMarker: secondRouteSegment.isEmpty)
-        if !secondRouteSegment.isEmpty {
-            mapRouteSegment(secondRouteSegment, to: secondWalkSegment, addMarker: finalRouteSegment.isEmpty)
-        }
-        
+        mapRouteSegment(firstRouteSegment, to: firstWalkSegment, addMarker: finalRouteSegment.isEmpty)
         if !finalRouteSegment.isEmpty {
             mapRouteSegment(finalRouteSegment, to: finalWalkSegment, addMarker: true)
         }
@@ -578,14 +569,12 @@ class RouteDetailContentViewController: UIViewController {
         func configurePolyline(for path: GMSPath) {
             let walkPathCircle = createWalkPathCircle()
             let polyline = GMSPolyline(path: path)
-            polyline.strokeWidth = 9
-            
             let stampStyle = GMSSpriteStyle(image: walkPathCircle)
+            polyline.strokeWidth = 9
             polyline.spans = [GMSStyleSpan(style: GMSStrokeStyle.transparentStroke(withStamp: stampStyle))]
             polyline.map = mapView
         }
         configurePolyline(for: firstWalkSegment)
-        configurePolyline(for: secondWalkSegment)
         configurePolyline(for: finalWalkSegment)
     }
     
