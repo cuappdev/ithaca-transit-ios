@@ -11,14 +11,14 @@ import GoogleMaps
 import SwiftyJSON
 
 class WalkPath: Path {
-
-    var dashLengths: [NSNumber] = [6, 4]
-    var polylineWidth: CGFloat = 8
+    
+    var circles: [(coordinate: CLLocationCoordinate2D, radius: Double)] = []
+    var dashLengths: [NSNumber] = [30, 40]
+    var polylineWidth: CGFloat = 0
     var traveledPath: GMSMutablePath?
     var untraveledPath: GMSMutablePath?
 
     init(_ waypoints: [Waypoint]) {
-
         super.init(waypoints: waypoints)
         self.color = Colors.metadataIcon
 
@@ -28,10 +28,38 @@ class WalkPath: Path {
         self.path = untraveledPath
         self.strokeColor = color
         self.strokeWidth = polylineWidth
+        
+        guard let path = self.path else { return }
+        let intervalDistanceIncrement: CGFloat = 20
+        var previousCircle: (coordinate: CLLocationCoordinate2D, radius: Double)?
+        // Maps circle coordinates in incremental distance
+        for coordinateIndex in 0 ..< path.count() - 1 {
+            let startCoordinate = path.coordinate(at: coordinateIndex)
+            let endCoordinate = path.coordinate(at: coordinateIndex + 1)
+            let startLocation = CLLocation(latitude: startCoordinate.latitude, longitude: startCoordinate.longitude)
+            let endLocation = CLLocation(latitude: endCoordinate.latitude, longitude: endCoordinate.longitude)
+            let pathDistance = endLocation.distance(from: startLocation)
+            let intervalLatIncrement = (endLocation.coordinate.latitude - startLocation.coordinate.latitude) / pathDistance
+            let intervalLngIncrement = (endLocation.coordinate.longitude - startLocation.coordinate.longitude) / pathDistance
 
-        self.spans = GMSStyleSpans(untraveledPath!, [.solidColor(self.color)], dashLengths, .projected)
-        self.geodesic = false
+            for intervalDistance in 0 ..< Int(pathDistance) {
+                let intervalLat = startLocation.coordinate.latitude + (intervalLatIncrement * Double(intervalDistance))
+                let intervalLng = startLocation.coordinate.longitude + (intervalLngIncrement * Double(intervalDistance))
+                let circleCoordinate = CLLocationCoordinate2D(latitude: intervalLat, longitude: intervalLng)
 
+                if let previousCircle = previousCircle {
+                    let circleLocation = CLLocation(latitude: circleCoordinate.latitude, longitude: circleCoordinate.longitude)
+                    let previousCircleLocation = CLLocation(latitude: previousCircle.coordinate.latitude, longitude: previousCircle.coordinate.longitude)
+
+                    if circleLocation.distance(from: previousCircleLocation) < intervalDistanceIncrement {
+                        continue
+                    }
+                }
+                
+                circles.append((coordinate: circleCoordinate, radius: 5.0))
+                previousCircle = (coordinate: circleCoordinate, radius: 5.0)
+            }
+        }
     }
 
     func createPathFromWaypoints(waypoints: [Waypoint]) -> GMSMutablePath {
@@ -41,5 +69,4 @@ class WalkPath: Path {
         }
         return path
     }
-
 }
