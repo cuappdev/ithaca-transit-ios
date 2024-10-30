@@ -11,11 +11,12 @@ import GoogleMaps
 import SwiftyJSON
 
 class WalkPath: Path {
+    
+    var circles: [(coordinate: CLLocationCoordinate2D, radius: Double)] = []
     var dashLengths: [NSNumber] = [30, 40]
     var polylineWidth: CGFloat = 0
     var traveledPath: GMSMutablePath?
     var untraveledPath: GMSMutablePath?
-    var circles: [(coordinate: CLLocationCoordinate2D, radius: Double)] = []
 
     init(_ waypoints: [Waypoint]) {
         super.init(waypoints: waypoints)
@@ -27,6 +28,7 @@ class WalkPath: Path {
         self.path = untraveledPath
         self.strokeColor = color
         self.strokeWidth = polylineWidth
+        
         guard let path = self.path else { return }
         let intervalDistanceIncrement: CGFloat = 20
         var previousCircle: (coordinate: CLLocationCoordinate2D, radius: Double)?
@@ -53,6 +55,7 @@ class WalkPath: Path {
                         continue
                     }
                 }
+                
                 circles.append((coordinate: circleCoordinate, radius: 5.0))
                 previousCircle = (coordinate: circleCoordinate, radius: 5.0)
             }
