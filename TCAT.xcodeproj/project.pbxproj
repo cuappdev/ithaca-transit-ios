@@ -271,6 +271,11 @@
 		BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsBase.framework; path = Pods/GoogleMaps/Base/Frameworks/GoogleMapsBase.framework; sourceTree = "<group>"; };
 		BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsCore.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMapsCore.framework; sourceTree = "<group>"; };
 		BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMaps.framework; sourceTree = "<group>"; };
+		D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReachabilityManager.swift; sourceTree = "<group>"; };
+		DD3D9C201F94297100B164D4 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		EEB26AE02C9F998C002E863F /* TCATLocal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TCATLocal.entitlements; sourceTree = "<group>"; };
+		EEB26AE12C9F9B9A002E863F /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		EEB26AE32C9FA60E002E863F /* TCATDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TCATDebug.entitlements; sourceTree = "<group>"; };
 		FD69AF2A2B89212F00970C7E /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
 		FDA3439E2CB6DF4D00608A1A /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		FDE68D1D2C97E24900024A69 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
@@ -285,6 +290,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEB26AE22C9F9B9A002E863F /* UserNotifications.framework in Frameworks */,
 				BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */,
 				BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */,
 				BF74AC1A1F945D7D00AFD4E4 /* GoogleMapsBase.framework in Frameworks */,
@@ -298,6 +304,7 @@
 		12F774CEB5023E6938BDCF3A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EEB26AE12C9F9B9A002E863F /* UserNotifications.framework */,
 				BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */,
 				BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */,
 				BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */,
@@ -582,6 +589,8 @@
 		449A7C771D80D0E80019300C /* TCAT */ = {
 			isa = PBXGroup;
 			children = (
+				EEB26AE32C9FA60E002E863F /* TCATDebug.entitlements */,
+				EEB26AE02C9F998C002E863F /* TCATLocal.entitlements */,
 				449A7C7F1D80D0E80019300C /* Assets.xcassets */,
 				2E70434D2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy */,
 				2E9416662BC615B0003DEB44 /* Base */,
@@ -1105,7 +1114,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_APP_DISPLAY_NAME = "Ithaca Transit Beta";
-				CODE_SIGN_ENTITLEMENTS = TCAT/Supporting/TCAT.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TCAT/TCATDebug.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -1204,7 +1213,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_APP_DISPLAY_NAME = "Ithaca Transit Local";
-				CODE_SIGN_ENTITLEMENTS = TCAT/Supporting/TCAT.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TCAT/TCATLocal.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
