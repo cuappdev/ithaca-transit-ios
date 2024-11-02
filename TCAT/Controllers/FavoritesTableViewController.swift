@@ -165,7 +165,7 @@ extension FavoritesTableViewController: UISearchBarDelegate {
 
         currentSearchCancellable = SearchManager.shared.search(for: searchText)
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] result in
+            .sink { [weak self] result in
                 guard let self = self else { return }
 
                 switch result {
@@ -175,7 +175,7 @@ extension FavoritesTableViewController: UISearchBarDelegate {
                 case .failure(let error):
                     print("[FavoritesTableViewController] Search failed: \(error.errorDescription)")
                 }
-            })
+            }
     }
 
     // Update UI with the new search results

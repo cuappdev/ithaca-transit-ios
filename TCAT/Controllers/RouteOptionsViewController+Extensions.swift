@@ -72,6 +72,7 @@ extension RouteOptionsViewController: DestinationDelegate {
         switch searchType {
         case .from:
             searchFrom = place
+
         case .to:
             searchTo = place
         }
@@ -114,9 +115,14 @@ extension RouteOptionsViewController: DatePickerViewDelegate {
         routeSelection.setDatepickerTitle(withDate: date, withSearchTimeType: searchTimeType)
         var buttonTapped = ""
         switch searchType {
-        case .arriveBy: buttonTapped = "Arrive By Tapped"
-        case .leaveAt: buttonTapped = "Leave At Tapped"
-        case .leaveNow: buttonTapped = "Leave Now Tapped"
+        case .arriveBy:
+            buttonTapped = "Arrive By Tapped"
+
+        case .leaveAt:
+            buttonTapped = "Leave At Tapped"
+
+        case .leaveNow:
+            buttonTapped = "Leave Now Tapped"
         }
         dismissDatePicker()
 
@@ -297,7 +303,10 @@ extension RouteOptionsViewController: UITableViewDelegate {
                 } else {
                     return Constants.TableHeaders.boardingSoonFromNearby
                 }
-            case 2: return Constants.TableHeaders.walking
+
+            case 2:
+                return Constants.TableHeaders.walking
+
             default: return nil
             }
         }

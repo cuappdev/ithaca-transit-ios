@@ -179,6 +179,7 @@ class RouteDetailDrawerViewController: UIViewController {
 
     /// Fetch delay information and update table view cells.
     private func getDelays() {
+
         // First depart direction(s)
         guard let delayDirection = route.getFirstDepartRawDirection() else {
             return // Use rawDirection (preserves first stop metadata)
@@ -195,8 +196,9 @@ class RouteDetailDrawerViewController: UIViewController {
            let stopId = delayDirection.stops.first?.id {
             TransitService.shared.getDelay(tripID: tripId, stopID: stopId, refreshInterval: busDelayNetworkRefreshRate)
                 .receive(on: DispatchQueue.main)
-                .sink(receiveCompletion: { [weak self] completion in
+                .sink { [weak self] completion in
                     guard let self = self else { return }
+
                     if case .failure(let error) = completion {
                         self.printClass(context: "\(#function) error", message: error.localizedDescription)
                         let payload = NetworkErrorPayload(
@@ -206,7 +208,7 @@ class RouteDetailDrawerViewController: UIViewController {
                         )
                         TransitAnalytics.shared.log(payload)
                     }
-                }, receiveValue: { [weak self] delay in
+                } receiveValue: { [weak self] delay in
                     guard let self = self else { return }
 
                     delayDirection.delay = delay
@@ -226,7 +228,7 @@ class RouteDetailDrawerViewController: UIViewController {
 
                     self.tableView.reloadData()
                     self.summaryView.updateTimes(for: self.route)
-                })
+                }
                 .store(in: &cancellables)
         }
     }

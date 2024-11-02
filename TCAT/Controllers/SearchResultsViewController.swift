@@ -157,7 +157,7 @@ class SearchResultsViewController: UIViewController {
 
         currentSearchCancellable = SearchManager.shared.search(for: searchText)
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] result in
+            .sink { [weak self] result in
                 guard let self = self else { return }
 
                 switch result {
@@ -167,7 +167,7 @@ class SearchResultsViewController: UIViewController {
                 case .failure(let error):
                     self.printClass(context: "SearchManager lookup error", message: error.localizedDescription)
                 }
-            })
+            }
     }
 
 }
@@ -183,6 +183,7 @@ extension SearchResultsViewController: UITableViewDataSource {
         switch sections[section] {
         case .recentSearches:
             return recentLocations.count
+
         default:
             return sections[section].getItems().count
         }
@@ -196,6 +197,7 @@ extension SearchResultsViewController: UITableViewDataSource {
             ) as? GeneralTableViewCell else { return UITableViewCell() }
             cell.configure(for: sections[indexPath.section])
             return cell
+
         default:
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: Constants.Cells.placeIdentifier
@@ -216,8 +218,10 @@ extension SearchResultsViewController: UITableViewDelegate {
         switch sections[section] {
         case .recentSearches:
             header = HeaderView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear)
+
         case .seeAllStops, .searchResults:
             return nil
+
         default:
             break
         }
@@ -231,8 +235,11 @@ extension SearchResultsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch sections[section] {
-        case .recentSearches: return 50
-        default: return 24
+        case .recentSearches:
+            return 50
+
+        default:
+            return 24
         }
     }
 
@@ -315,6 +322,7 @@ extension SearchResultsViewController: UISearchBarDelegate, UISearchResultsUpdat
             createDefaultSections()
             return
         }
+
         startSearch(for: searchText)
     }
 

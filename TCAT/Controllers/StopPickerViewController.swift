@@ -67,24 +67,27 @@ class StopPickerViewController: UIViewController {
 
         TransitService.shared.getAllStops()
             .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { [weak self] completion in
+            .sink { [weak self] completion in
                 guard let self = self else { return }
+
                 self.loadingIndicator?.removeFromSuperview()
                 self.loadingIndicator = nil
 
                 switch completion {
-                case .failure(let error):
+                case .failure:
                     handleGetAllStopsError()
+
                 case .finished:
                     break
                 }
-            }, receiveValue: { [weak self] response in
+            } receiveValue: { [weak self] response in
                 guard let self = self else { return }
+
                 guard !response.isEmpty else { return }
 
                 self.sections = self.tableSections(for: response)
                 self.tableView.reloadData()
-            })
+            }
             .store(in: &cancellables)
     }
 

@@ -296,6 +296,7 @@ class RouteOptionsViewController: UIViewController {
                 searchBarText = startingDestinationName
             }
             placeholder = Constants.General.fromSearchBarPlaceholder
+
         case .to:
             let endingDestinationName = searchTo.name
             if endingDestinationName != Constants.General.currentLocation {
@@ -354,8 +355,9 @@ class RouteOptionsViewController: UIViewController {
     private func updateAllRoutesLiveTracking() {
         TransitService.shared.getAllDelays(trips: trips, refreshInterval: busDelaysNetworkRefreshRate)
             .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { [weak self] completion in
+            .sink { [weak self] completion in
                 guard let self = self else { return }
+
                 if case .failure(let error) = completion {
                     let payload = NetworkErrorPayload(
                         location: "\(self) Get All Delays",
@@ -365,7 +367,7 @@ class RouteOptionsViewController: UIViewController {
                     TransitAnalytics.shared.log(payload)
                     self.printClass(context: "\(#function) error", message: error.localizedDescription)
                 }
-            }, receiveValue: { [weak self] delays in
+            } receiveValue: { [weak self] delays in
                 guard let self = self else { return }
 
                 for delayResponse in delays {
@@ -379,17 +381,17 @@ class RouteOptionsViewController: UIViewController {
                         let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
 
                         let delayState: DelayState
-                        if delayedDepartTime > departTime {
-                            delayState = .late(date: delayedDepartTime)
-                        } else {
-                            delayState = .onTime(date: departTime)
-                        }
+                        delayState = delayedDepartTime > departTime ?  .late(
+                            date: delayedDepartTime
+                        ) : .late(
+                            date: departTime
+                        )
 
                         self.delayDictionary[routeId] = delayState
                         route.getFirstDepartRawDirection()?.delay = delay
                     }
                 }
-            })
+            }
             .store(in: &cancellables)
     }
 
@@ -427,6 +429,7 @@ class RouteOptionsViewController: UIViewController {
             switch searchType {
             case .from:
                 routeSelection.updateSearchBarTitles(from: searchFrom.name)
+
             case .to:
                 routeSelection.updateSearchBarTitles(to: searchTo.name)
             }
@@ -500,15 +503,17 @@ class RouteOptionsViewController: UIViewController {
     private func processRequest(start: Place, end: Place, time: Date, type: SearchType) {
         TransitService.shared.getRoutes(start: start, end: end, time: time, type: type)
             .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { [weak self] completion in
+            .sink { [weak self] completion in
                 guard let self = self else { return }
+
                 switch completion {
                 case .failure(let error):
                     self.processRequestError(error: error)
+
                 case .finished:
                     break
                 }
-            }, receiveValue: { [weak self] response in
+            } receiveValue: { [weak self] response in
                 guard let self = self else { return }
 
                 // Parse sections of routes
@@ -528,7 +533,7 @@ class RouteOptionsViewController: UIViewController {
                 // Log analytics
                 let payload = DestinationSearchedEventPayload(destination: end.name)
                 TransitAnalytics.shared.log(payload)
-            })
+            }
             .store(in: &cancellables)
     }
 
@@ -581,6 +586,7 @@ class RouteOptionsViewController: UIViewController {
                 let action = UIAlertAction(title: actionTitle, style: .cancel, handler: nil)
                 alertController.addAction(action)
                 present(alertController, animated: true, completion: nil)
+
             case .showError(bannerInfo: let bannerInfo, payload: let payload):
                 banner = StatusBarNotificationBanner(title: bannerInfo.title, style: bannerInfo.style)
                 banner?.autoDismiss = false
@@ -591,6 +597,7 @@ class RouteOptionsViewController: UIViewController {
                 )
 
                 TransitAnalytics.shared.log(payload)
+
             case .hideBanner:
                 banner?.dismiss()
                 banner = nil

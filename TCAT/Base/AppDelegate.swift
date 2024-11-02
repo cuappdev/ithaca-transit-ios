@@ -43,10 +43,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Log basic information
         let payload = AppLaunchedPayload()
         TransitAnalytics.shared.log(payload)
-        setupUniqueIdentifier()
+
+        // Initialize uid in UserDefaults values if needed
+        userDefaults.setupUniqueIdentifier()
 
         // Initialize UserDefaults values if needed
-        initializeUserDefaults()
+        userDefaults.initialize(with: userDataInits)
 
         // Track number of app opens for Store Review prompt
         StoreReviewHelper.incrementAppOpenedCount()
@@ -64,15 +66,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :
         CustomNavigationController(rootViewController: rootVC)
 
-        // Setup networking for AppDevAnnouncements
-        // TODO: Set up announcements once it's done
-        //        AnnouncementNetworking.setupConfig(
-        //            scheme: TransitEnvironment.announcementsScheme,
-        //            host: TransitEnvironment.announcementsHost,
-        //            commonPath: TransitEnvironment.announcementsCommonPath,
-        //            announcementPath: TransitEnvironment.announcementsPath
-        //        )
-
         // Initalize window without storyboard
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = navigationController
@@ -86,29 +79,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     // MARK: - Helper Functions
-
-    /// Initializes the UserDefaults values if not present
-    private func initializeUserDefaults() {
-        for (key, defaultValue) in userDataInits {
-            if userDefaults.value(forKey: key) == nil {
-                if key == Constants.UserDefaults.favorites && sharedUserDefaults?.value(forKey: key) == nil {
-                    sharedUserDefaults?.set(defaultValue, forKey: key)
-                } else {
-                    userDefaults.set(defaultValue, forKey: key)
-                }
-            } else if key == Constants.UserDefaults.favorites && sharedUserDefaults?.value(forKey: key) == nil {
-                sharedUserDefaults?.set(userDefaults.value(forKey: key), forKey: key)
-            }
-        }
-    }
-
-    /// Creates and sets a unique identifier. If the device identifier changes, updates it.
-    private func setupUniqueIdentifier() {
-        if let uid = UIDevice.current.identifierForVendor?.uuidString,
-           uid != sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid) {
-            sharedUserDefaults?.set(uid, forKey: Constants.UserDefaults.uid)
-        }
-    }
 
     private func handleShortcut(item: UIApplicationShortcutItem) {
         if let shortcutData = item.userInfo as? [String: Data] {
@@ -130,7 +100,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
 
         // URLs for testing
-        // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown
+        // BusStop: ithaca-transit://getRoutes?lat=42.442558&long=-76.485336&stopName=Collegetown&destinationType=busStop
         // PlaceResult: ithaca-transit://getRoutes?lat=42.4440892&long=-76.4847823&destinationName=Hollister%Hall&destinationType=applePlace
 
         let rootVC = HomeMapViewController()
@@ -162,7 +132,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
             }
 
-            if let latitude = latitude, let longitude = longitude, let destination = destination {
+            if let latitude, let longitude, let destination {
                 let place = Place(name: destination, type: placeType, latitude: latitude, longitude: longitude)
                 let optionsVC = RouteOptionsViewController(searchTo: place)
                 navigationController.pushViewController(optionsVC, animated: false)

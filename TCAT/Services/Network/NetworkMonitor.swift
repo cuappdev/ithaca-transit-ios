@@ -9,18 +9,27 @@
 import Network
 import Foundation
 
+/// A singleton class that monitors the network status using `NWPathMonitor`.
 final class NetworkMonitor {
 
+    /// The shared instance of `NetworkMonitor`.
     static let shared = NetworkMonitor()
 
+    /// A network path monitor that observes changes in network status.
+    /// This instance is used to monitor the network connectivity status of the device.
     private let monitor = NWPathMonitor()
     private var status: NWPath.Status = .requiresConnection
 
+    /// Indicates whether the current connection is cellular.
     public var isCellular: Bool = false
+
+    /// Indicates whether the network is reachable.
     public var isReachable: Bool { status == .satisfied }
 
-    // Optional handlers for reachability changes
+    /// Optional handler that gets called when the network becomes reachable.
     public var whenReachable: (() -> Void)?
+
+    /// Optional handler that gets called when the network becomes unreachable.
     public var whenUnreachable: (() -> Void)?
 
     private init() {}
@@ -54,12 +63,13 @@ final class NetworkMonitor {
         monitor.start(queue: queue)
     }
 
-    // MARK: - Stop Monitoring
+    /// Stops monitoring the network status.
     public func stopMonitoring() {
         monitor.cancel()
     }
 }
 
 extension Notification.Name {
+    /// Notification name for reachability changes.
     static let reachabilityChanged = Notification.Name("reachabilityChanged")
 }

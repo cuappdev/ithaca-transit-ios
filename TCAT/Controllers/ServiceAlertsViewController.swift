@@ -100,6 +100,7 @@ class ServiceAlertsViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 guard let self = self else { return }
+
                 switch completion {
                 case .failure(let error):
                     self.removeLoadingIndicator()
@@ -112,6 +113,7 @@ class ServiceAlertsViewController: UIViewController {
                         description: error.localizedDescription
                     )
                     TransitAnalytics.shared.log(payload)
+
                 case .finished:
                     break
                 }
@@ -195,10 +197,13 @@ extension ServiceAlertsViewController: UITableViewDelegate {
         switch priorities[section] {
         case 0:
             return HeaderView(labelText: Constants.TableHeaders.highPriority)
+
         case 1:
             return HeaderView(labelText: Constants.TableHeaders.mediumPriority)
+
         case 2:
             return HeaderView(labelText: Constants.TableHeaders.lowPriority)
+
         default:
             return HeaderView(labelText: Constants.TableHeaders.noPriority)
         }

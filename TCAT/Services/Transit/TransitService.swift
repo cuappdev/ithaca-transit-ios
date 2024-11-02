@@ -9,46 +9,76 @@
 import Foundation
 import Combine
 
+/// Protocol defining the methods for accessing transit-related services, including fetching delays, stops, alerts, and more.
 protocol TransitServiceProtocol: AnyObject {
-    func getAllDelays(trips: [Trip], refreshInterval: TimeInterval) -> AnyPublisher<[Delay], ApiErrorHandler>
-    func getAllStops() -> AnyPublisher<[Place], ApiErrorHandler>
-    func getAlerts() -> AnyPublisher<[ServiceAlert], ApiErrorHandler>
-    func getAppleSearchResults(searchText: String) -> AnyPublisher<AppleSearchResponse, ApiErrorHandler>
-    func getBusLocations(
-        _ directions: [Direction],
-        refreshInterval: TimeInterval
-    ) -> AnyPublisher<
-        [BusLocation],
-        ApiErrorHandler
-    >
-    func getDelay(tripID: String, stopID: String, refreshInterval: TimeInterval) -> AnyPublisher<Int?, ApiErrorHandler>
-    func getRoutes(
-        start: Place,
-        end: Place,
-        time: Date,
-        type: SearchType
-    ) -> AnyPublisher<
-        RouteSectionsObject,
-        ApiErrorHandler
-    >
-    func updateApplePlacesCache(searchText: String, places: [Place]) -> AnyPublisher<Bool, ApiErrorHandler>
 
+    /// Retrieves delay information for the specified trips, refreshing at regular intervals.
+    /// - Parameters:
+    ///   - trips: An array of `Trip` objects representing the trips for which delay data is required.
+    ///   - refreshInterval: The time interval (in seconds) between data refreshes.
+    /// - Returns: A publisher that emits an array of `Delay` objects on success, or an `ApiErrorHandler` on failure.
+    func getAllDelays(trips: [Trip], refreshInterval: TimeInterval) -> AnyPublisher<[Delay], ApiErrorHandler>
+
+    /// Retrieves all transit stops available.
+    /// - Returns: A publisher that emits an array of `Place` objects representing stops, or an `ApiErrorHandler` on failure.
+    func getAllStops() -> AnyPublisher<[Place], ApiErrorHandler>
+
+    /// Fetches active service alerts for transit services.
+    /// - Returns: A publisher that emits an array of `ServiceAlert` objects, or an `ApiErrorHandler` if unable to retrieve alerts.
+    func getAlerts() -> AnyPublisher<[ServiceAlert], ApiErrorHandler>
+
+    /// Searches for Apple places based on the provided text query.
+    /// - Parameter searchText: The text used to query Apple's location services.
+    /// - Returns: A publisher that emits an `AppleSearchResponse` object containing the results or an `ApiErrorHandler` on failure.
+    func getAppleSearchResults(searchText: String) -> AnyPublisher<AppleSearchResponse, ApiErrorHandler>
+
+    /// Retrieves real-time bus locations for the specified directions, refreshing at a defined interval.
+    /// - Parameters:
+    ///   - directions: An array of `Direction` objects to track bus locations.
+    ///   - refreshInterval: The time interval (in seconds) between data refreshes. Default is 5.0 seconds.
+    /// - Returns: A publisher emitting an array of `BusLocation` objects or an `ApiErrorHandler`.
+    func getBusLocations(_ directions: [Direction], refreshInterval: TimeInterval) -> AnyPublisher<[BusLocation], ApiErrorHandler>
+
+    /// Retrieves the delay time for a specific trip and stop at set intervals.
+    /// - Parameters:
+    ///   - tripID: Unique identifier of the trip.
+    ///   - stopID: Unique identifier of the stop.
+    ///   - refreshInterval: Time interval (in seconds) for data refreshes. Default is 10.0 seconds.
+    /// - Returns: A publisher emitting an optional `Int` delay (in seconds), or an `ApiErrorHandler` if retrieval fails.
+    func getDelay(tripID: String, stopID: String, refreshInterval: TimeInterval) -> AnyPublisher<Int?, ApiErrorHandler>
+
+    /// Finds available transit routes between the specified start and end locations for a given time.
+    /// - Parameters:
+    ///   - start: The starting `Place` for the route.
+    ///   - end: The destination `Place` for the route.
+    ///   - time: The desired time of travel.
+    ///   - type: Specifies whether the time is for arrival or departure.
+    /// - Returns: A publisher emitting a `RouteSectionsObject` with route details or an `ApiErrorHandler` on error.
+    func getRoutes(start: Place, end: Place, time: Date, type: SearchType) -> AnyPublisher<RouteSectionsObject, ApiErrorHandler>
+
+    /// Updates the local cache of Apple places based on the search text and provided locations.
+    /// - Parameters:
+    ///   - searchText: The query text used for retrieving places.
+    ///   - places: Array of `Place` objects to cache.
+    /// - Returns: A publisher emitting `true` if successful, or an `ApiErrorHandler` if the update fails.
+    func updateApplePlacesCache(searchText: String, places: [Place]) -> AnyPublisher<Bool, ApiErrorHandler>
 }
 
-// MARK: - TransitService Implementation
-
+/// Service implementing `TransitServiceProtocol` to fetch and manage transit-related data.
 class TransitService: TransitServiceProtocol {
 
     // Singleton instance
     static var shared = TransitService(networkManager: NetworkManager())
 
-    // Network manager instance
+    /// Manages network requests for transit services.
     private let networkManager: NetworkManager
 
     // Initializer
     init(networkManager: NetworkManager) {
         self.networkManager = networkManager
     }
+
+    // MARK: - Protocol Methods
 
     func getAllDelays(trips: [Trip], refreshInterval: TimeInterval = 10.0) -> AnyPublisher<[Delay], ApiErrorHandler> {
         let body = TripBody(data: trips)
@@ -135,7 +165,7 @@ class TransitService: TransitServiceProtocol {
         RouteSectionsObject,
         ApiErrorHandler
     > {
-        let uid = sharedUserDefaults?.string(forKey: Constants.UserDefaults.uid)
+        let uid = userDefaults.string(forKey: Constants.UserDefaults.uid)
         let body = GetRoutesBody(
             arriveBy: type == .arriveBy,
             end: "\(end.latitude),\(end.longitude)",

@@ -43,19 +43,21 @@ class SearchManager: NSObject {
                 guard let self = self, !searchText.isEmpty else {
                     return Fail(error: ApiErrorHandler.noSearchResultsFound).eraseToAnyPublisher()
                 }
+
                 self.lastSearchQuery = searchText
                 return TransitService.shared.getAppleSearchResults(searchText: searchText)
             }
-            .sink(receiveCompletion: { completion in
+            .sink { completion in
                 switch completion {
                 case .failure(let error):
                     self.searchPublisher.send(.failure(error))
+
                 case .finished:
                     break
                 }
-            }, receiveValue: { [weak self] response in
+            } receiveValue: { [weak self] response in
                 self?.processSearchResults(response: response)
-            })
+            }
             .store(in: &cancellables)
     }
 

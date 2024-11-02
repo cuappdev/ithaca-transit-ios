@@ -30,7 +30,6 @@ class HomeOptionsCardViewController: UIViewController {
 
     private var searchResultsSection: Section!
     var currentLocation: CLLocation? { return delegate?.getCurrentLocation() }
-//    var timer: Timer?
     var isNetworkDown = false
 
     private var currentSearchCancellable: AnyCancellable?
@@ -130,14 +129,13 @@ class HomeOptionsCardViewController: UIViewController {
 
     @objc func handleReachabilityChange() {
         if NetworkMonitor.shared.isReachable {
-            self.isNetworkDown = false
             self.updateSections()
-            self.searchBar.isUserInteractionEnabled = true
         } else {
-            self.isNetworkDown = true
-            self.searchBar.isUserInteractionEnabled = false
             self.sections = []
         }
+
+        self.isNetworkDown = !NetworkMonitor.shared.isReachable
+        self.searchBar.isUserInteractionEnabled = NetworkMonitor.shared.isReachable
         self.setNeedsStatusBarAppearanceUpdate()
     }
 
@@ -241,8 +239,10 @@ class HomeOptionsCardViewController: UIViewController {
             switch section {
             case .recentSearches:
                 return headerHeight + tableViewRowHeight * CGFloat(section.getItems().count) + result
+
             case .seeAllStops:
                 return HeaderView.separatorViewHeight + tableViewRowHeight + result
+
             default:
                 return tableViewRowHeight * CGFloat(section.getItems().count) + result
             }
@@ -302,7 +302,7 @@ class HomeOptionsCardViewController: UIViewController {
 
         currentSearchCancellable = SearchManager.shared.search(for: searchText)
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] result in
+            .sink { [weak self] result in
                 guard let self = self else { return }
 
                 switch result {
@@ -314,7 +314,7 @@ class HomeOptionsCardViewController: UIViewController {
                 case .failure(let error):
                     print("Search error: \(error.errorDescription)")
                 }
-            })
+            }
     }
 
     // MARK: - Keyboard

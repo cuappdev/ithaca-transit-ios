@@ -65,7 +65,14 @@ class CustomNavigationController: UINavigationController, UINavigationController
             TransitAnalytics.shared.log(payload)
         }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(handleReachabilityChange), name: .reachabilityChanged, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(
+                handleReachabilityChange
+            ),
+            name: .reachabilityChanged,
+            object: nil
+        )
     }
 
     override func viewWillDisappear(_ animated: Bool) {

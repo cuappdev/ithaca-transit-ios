@@ -49,9 +49,11 @@ class GeneralTableViewCell: UITableViewCell {
         case .seeAllStops:
             titleLabel.text = Constants.General.seeAllStops
             iconView.image = #imageLiteral(resourceName: "list")
+
         case .currentLocation:
             titleLabel.text = Constants.General.currentLocation
             iconView.image = #imageLiteral(resourceName: "location")
+
         default: break
         }
     }

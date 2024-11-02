@@ -82,7 +82,7 @@ class DatePickerView: UIView {
 
     private func setupTimeTypeSegmentedControl() {
         styleSegmentedControl(timeTypeSegmentedControl)
-        setSegmentedControlOptions(timeTypeSegmentedControl, options: [leaveNowElement.title,leaveAtElement.title, arriveByElement.title])
+        setSegmentedControlOptions(timeTypeSegmentedControl, options: [leaveNowElement.title, leaveAtElement.title, arriveByElement.title])
         timeTypeSegmentedControl.selectedSegmentIndex = leaveNowElement.index
 
         addSubview(timeTypeSegmentedControl)
@@ -157,6 +157,7 @@ class DatePickerView: UIView {
         switch searchTimeType {
         case .leaveAt, .leaveNow:
             timeTypeSegmentedControl.selectedSegmentIndex = leaveAtElement.index
+
         case .arriveBy:
             timeTypeSegmentedControl.selectedSegmentIndex = arriveByElement.index
         }
@@ -170,8 +171,10 @@ class DatePickerView: UIView {
             switch timeTypeSegmentedControl.selectedSegmentIndex {
             case arriveByElement.index:
                 searchTimeType = .arriveBy
+
             case leaveAtElement.index:
                 searchTimeType = .leaveAt
+
             default:
                 break
             }

@@ -18,6 +18,7 @@ enum JSONType {
         switch self {
         case .routeJSON:
             return "routeJSON"
+
         case .delayJSON:
             return "delayJSON"
         }

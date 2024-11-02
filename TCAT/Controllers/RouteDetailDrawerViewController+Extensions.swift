@@ -24,8 +24,10 @@ extension RouteDetailDrawerViewController: UIGestureRecognizerDelegate {
                 } else {
                     drawer.setDrawerPosition(position: .open, animated: true)
                 }
+
             case .open:
                 drawer.setDrawerPosition(position: .collapsed, animated: true)
+
             default: break
             }
         }
@@ -127,6 +129,7 @@ extension RouteDetailDrawerViewController: PulleyDrawerViewControllerDelegate {
             } else {
                 contentViewController.centerMapOnOverview(drawerPreviewing: drawerPosition == .partiallyRevealed)
             }
+
         default: break
         }
     }
@@ -171,6 +174,7 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                 else { return UITableViewCell() }
             cell.configure(for: busStop.name)
             return cell
+
         case .direction(let direction):
             switch direction.type {
             case .walk, .arrive:
@@ -184,6 +188,7 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                     isLastStep: indexPath.row == section.items.count - 1
                 )
                 return cell
+
             default:
                 guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: Constants.Cells.largeDetailCellIdentifier
@@ -196,6 +201,7 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                 )
                 return cell
             }
+
         case .notificationType(let type):
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: Constants.Cells.notificationToggleCellIdentifier
@@ -224,6 +230,7 @@ extension RouteDetailDrawerViewController: UITableViewDelegate {
             } else {
                 return RouteDetailCellSize.smallHeight
             }
+
         case .notification: return notificationCellHeight
         }
     }

@@ -65,6 +65,7 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
             updateSections()
             return
         }
+
         startSearch(for: searchText)
     }
 
@@ -120,10 +121,17 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch sections[section] {
-        case .seeAllStops: return 1
-        case .recentSearches: return recentLocations.count
-        case .searchResults: return sections[section].getItems().count
-        default: return 0
+        case .seeAllStops:
+            return 1
+
+        case .recentSearches:
+            return recentLocations.count
+
+        case .searchResults:
+            return sections[section].getItems().count
+
+        default:
+            return 0
         }
     }
 
@@ -137,6 +145,7 @@ extension HomeOptionsCardViewController: UITableViewDataSource {
             ) as? GeneralTableViewCell else { return UITableViewCell() }
             cell.configure(for: .seeAllStops)
             return cell
+
         default: // Recent searches, etc.
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: Constants.Cells.placeIdentifier
@@ -174,8 +183,10 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         switch sections[section] {
         case .recentSearches:
             return headerHeight
+
         case .seeAllStops:
             return HeaderView.separatorViewHeight
+
         default:
             return 0
         }
@@ -190,10 +201,13 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
                 separatorVisible: true,
                 delegate: self
             )
+
         case .seeAllStops:
             return HeaderView(separatorVisible: true)
+
         case .searchResults:
             return nil
+
         default:
             return nil
         }
@@ -207,6 +221,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
         switch section {
         case .recentSearches:
             return .delete
+
         default:
             return .none
         }
@@ -223,6 +238,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
                 let place = sections[indexPath.section].getItems()[indexPath.row]
                 recentLocations = Global.shared.deleteRecent(recent: place, allRecents: recentLocations)
                 updateSections()
+
             default: break
             }
         }
@@ -237,6 +253,7 @@ extension HomeOptionsCardViewController: UITableViewDelegate {
                 self.navigationController?.pushViewController(optionsVC, animated: true)
             }
             navigationController?.pushViewController(stopPickerVC, animated: true)
+
         default:
             if let searchText = searchBar.text {
                 let payload = SearchResultSelectedPayload(

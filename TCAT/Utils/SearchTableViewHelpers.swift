@@ -17,16 +17,8 @@ class Global {
     static let shared = Global()
 
     func retrievePlaces(for key: String) -> [Place] {
-        if key == Constants.UserDefaults.favorites {
-            if let storedPlaces = sharedUserDefaults?.value(forKey: key) as? Data,
-                let favorites = try? decoder.decode([Place].self, from: storedPlaces) {
-                return favorites
-            }
-
-        } else if
-            let storedPlaces = userDefaults.value(forKey: key) as? Data,
-            let places = try? decoder.decode([Place].self, from: storedPlaces)
-        {
+        if let storedPlaces = userDefaults.value(forKey: key) as? Data,
+            let places = try? decoder.decode([Place].self, from: storedPlaces) {
             return places
         }
         return [Place]()
@@ -37,7 +29,7 @@ class Global {
         let newFavoritesList = allFavorites.filter { favorite != $0 }
         do {
             let data = try encoder.encode(newFavoritesList)
-            sharedUserDefaults?.set(data, forKey: Constants.UserDefaults.favorites)
+            userDefaults.set(data, forKey: Constants.UserDefaults.favorites)
             AppShortcuts.shared.updateShortcutItems()
         } catch let error {
             print(error)
@@ -86,11 +78,7 @@ class Global {
 
         do {
             let data = try encoder.encode(places)
-            if key == Constants.UserDefaults.favorites {
-                sharedUserDefaults?.set(data, forKey: key)
-            } else {
-                userDefaults.set(data, forKey: key)
-            }
+            userDefaults.set(data, forKey: key)
             AppShortcuts.shared.updateShortcutItems()
         } catch let error {
             print(error)

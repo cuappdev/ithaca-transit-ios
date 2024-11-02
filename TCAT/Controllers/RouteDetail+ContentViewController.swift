@@ -28,7 +28,7 @@ class RouteDetailContentViewController: UIViewController {
     private var cancellables = Set<AnyCancellable>()
     var currentLocation: CLLocationCoordinate2D?
     var directions: [Direction] = []
-    var endDestination: Place!
+    var endDestination: Place
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
     var liveTrackingNetworkRefreshRate: Double = LiveIndicator.interval * 1.0
     var liveTrackingNetworkTimer: Timer?
@@ -51,16 +51,16 @@ class RouteDetailContentViewController: UIViewController {
     /// dummy data will be used. The directions parameter have logical assumptions,
     /// such as ArriveDirection always comes after DepartDirection.
     init(route: Route, endDestination: Place, currentLocation: CLLocationCoordinate2D?, routeOptionsCell: RouteTableViewCell?) {
-        super.init(nibName: nil, bundle: nil)
         self.routeOptionsCell = routeOptionsCell
         self.endDestination = endDestination
+        super.init(nibName: nil, bundle: nil)
         initializeRoute(route, currentLocation)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -190,8 +190,9 @@ class RouteDetailContentViewController: UIViewController {
         // Fetch bus locations using the TransitService
         TransitService.shared.getBusLocations(route.directions)
             .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { [weak self] completion in
+            .sink { [weak self] completion in
                 guard let self = self else { return }
+
                 if case .failure(let error) = completion {
                     self.printClass(context: "\(#function) error", message: error.localizedDescription)
                     if let banner = self.banner, !banner.isDisplaying {
@@ -204,14 +205,16 @@ class RouteDetailContentViewController: UIViewController {
                     )
                     TransitAnalytics.shared.log(payload)
                 }
-            }, receiveValue: { [weak self] busLocations in
+            } receiveValue: { [weak self] busLocations in
                 guard let self = self else { return }
+
                 if busLocations.isEmpty {
                     // Reset banner in case of transition from Error to Online - No Bus Locations
                     self.hideBanner()
                 }
+
                 self.parseBusLocationsData(data: busLocations)
-            })
+            }
             .store(in: &cancellables)
 
         bounceIndicators()
@@ -224,6 +227,7 @@ class RouteDetailContentViewController: UIViewController {
                 if !self.noDataRouteList.contains(busLocation.routeNumber) {
                     self.noDataRouteList.append(busLocation.routeNumber)
                 }
+
             case .invalidData:
                 if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
                     self.noDataRouteList.remove(at: previouslyUnavailableRoute)
@@ -442,14 +446,28 @@ class RouteDetailContentViewController: UIViewController {
     func setIndex(of marker: GMSMarker, with waypointType: WaypointType) {
         marker.zIndex = {
             switch waypointType {
-            case .bus: return 1
-            case .walk: return 1
-            case .origin: return 3
-            case .destination: return 3
-            case .stop: return 1
-            case .walking: return 0
+            case .bus:
+                return 1
+
+            case .walk:
+                return 1
+
+            case .origin:
+                return 3
+
+            case .destination:
+                return 3
+
+            case .stop:
+                return 1
+
+            case .walking:
+                return 0
+
             // For live bus icon / indicators
-            case .bussing: return 999 // large constant to place above other elements
+            case .bussing:
+                return 999 // large constant to place above other elements
+
             default: return 0
             }
         }()
@@ -473,12 +491,5 @@ class RouteDetailContentViewController: UIViewController {
     func getDrawerDisplayController() -> RouteDetailDrawerViewController? {
         return drawerDisplayController
     }
-
-//    required convenience init(coder aDecoder: NSCoder) {
-//        guard let route = aDecoder.decodeObject(forKey: "route") as? Route
-//            else { fatalError("init(coder:) has not been implemented") }
-//
-//        self.init(route: route, endDestination: , currentLocation: nil, routeOptionsCell: nil)
-//    }
 
 }

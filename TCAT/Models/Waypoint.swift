@@ -55,16 +55,20 @@ class Waypoint: NSObject {
         switch wpType {
         case .origin:
             self.iconView = Circle(size: .large, style: .solid, color: isStop ? Colors.tcatBlue : Colors.metadataIcon)
+
         case .destination:
             self.iconView = Circle(
                 size: .large,
                 style: .bordered,
                 color: isStop ? Colors.tcatBlue : Colors.metadataIcon
             )
+
         case .bus:
             self.iconView = Circle(size: .small, style: .solid, color: Colors.tcatBlue)
+
         case .walk:
             self.iconView = Circle(size: .small, style: .solid, color: Colors.metadataIcon)
+
         case .none, .stop, .walking, .bussing:
             self.iconView = UIView()
         }
@@ -126,8 +130,10 @@ class Waypoint: NSObject {
         switch wpType {
         case .destination:
             iconView.layer.borderColor = color.cgColor
+
         case .origin, .stop, .bus, .walk, .bussing, .walking:
             iconView.backgroundColor = color
+
         case .none:
             break
         }

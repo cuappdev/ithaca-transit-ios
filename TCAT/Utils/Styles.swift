@@ -66,17 +66,31 @@ extension UIFont {
         var fontString: String
         if size >= 14 {
             switch name {
-            case .regular: fontString = Fonts.SanFrancisco.ProDisplay.regular
-            case .medium: fontString = Fonts.SanFrancisco.ProDisplay.medium
-            case .semibold: fontString = Fonts.SanFrancisco.ProDisplay.semibold
-            case .bold: fontString = Fonts.SanFrancisco.ProDisplay.bold
+            case .regular:
+                fontString = Fonts.SanFrancisco.ProDisplay.regular
+
+            case .medium:
+                fontString = Fonts.SanFrancisco.ProDisplay.medium
+
+            case .semibold:
+                fontString = Fonts.SanFrancisco.ProDisplay.semibold
+
+            case .bold:
+                fontString = Fonts.SanFrancisco.ProDisplay.bold
             }
         } else {
             switch name {
-            case .regular: fontString = Fonts.SanFrancisco.ProText.regular
-            case .medium: fontString = Fonts.SanFrancisco.ProText.medium
-            case .semibold: fontString = Fonts.SanFrancisco.ProText.semibold
-            case .bold: fontString = Fonts.SanFrancisco.ProText.bold
+            case .regular:
+                fontString = Fonts.SanFrancisco.ProText.regular
+
+            case .medium:
+                fontString = Fonts.SanFrancisco.ProText.medium
+
+            case .semibold:
+                fontString = Fonts.SanFrancisco.ProText.semibold
+
+            case .bold:
+                fontString = Fonts.SanFrancisco.ProText.bold
             }
         }
         return UIFont(name: fontString, size: size)!
