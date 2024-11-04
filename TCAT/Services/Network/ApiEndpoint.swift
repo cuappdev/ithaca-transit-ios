@@ -73,7 +73,6 @@ extension ApiEndpoint {
             longPath.append(separatorPath)
         }
 
-        longPath.append("/")
         longPath.append(path)
         urlComponents?.path = longPath
 

@@ -87,7 +87,24 @@ internal struct Delay: Codable {
     let delay: Int?
 }
 
+internal struct DelayNotificationBody: Codable {
+    let deviceToken: String
+    let stopID: String?
+    let tripID: String
+    let uid: String
+}
+
+internal struct DepartureNotificationBody: Codable {
+    let deviceToken: String
+    let startTime: String
+    let uid: String
+}
+
 struct APIResponse<T: Decodable>: Decodable {
     var success: Bool
     var data: T
+}
+
+struct SimpleAPIResponse: Decodable {
+    var success: Bool
 }

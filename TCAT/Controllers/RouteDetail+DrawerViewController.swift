@@ -59,7 +59,7 @@ class RouteDetailDrawerViewController: UIViewController {
     /// Number of seconds to wait before auto-refreshing bus delay network call.
     private var busDelayNetworkRefreshRate: Double = 10
     private let chevronFlipDurationTime = 0.25
-    private let route: Route
+    internal let route: Route
 
     // MARK: - Initalization
     init(route: Route) {
@@ -151,14 +151,13 @@ class RouteDetailDrawerViewController: UIViewController {
             RouteDetailItem.notificationType(.beforeBoarding)
         ]
 
-        _ = Section(type: .notification, items: notificationTypes)
+        let notificationSection = Section(type: .notification, items: notificationTypes)
         let routeDetailSection = Section(type: .routeDetail, items: directionsAndVisibleStops)
 
         sections = [routeDetailSection]
-        // TODO: Uncomment when notifications are implemented on backend
-        //        if !route.isRawWalkingRoute() {
-        //            sections.append(notificationSection)
-        //        }
+        if !route.isRawWalkingRoute() {
+            sections.append(notificationSection)
+        }
     }
 
     private func setupConstraints() {

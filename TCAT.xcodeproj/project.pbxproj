@@ -124,6 +124,8 @@
 		BF74AC1A1F945D7D00AFD4E4 /* GoogleMapsBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */; };
 		BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */; };
 		BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */; };
+		FD44EC532CD86A5F009269A2 /* NotificationSubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD44EC522CD86A56009269A2 /* NotificationSubscriptionManager.swift */; };
+		FD44EC552CD86C55009269A2 /* NotificationTokenHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD44EC542CD86C4A009269A2 /* NotificationTokenHandler.swift */; };
 		FDA3439F2CB6DF5800608A1A /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDA3439E2CB6DF4D00608A1A /* NetworkMonitor.swift */; };
 		FDE68D1E2C97E24900024A69 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D1D2C97E24900024A69 /* NetworkManager.swift */; };
 		FDE68D202C97EBBE00024A69 /* ApiErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D1F2C97EBBE00024A69 /* ApiErrorHandler.swift */; };
@@ -271,11 +273,11 @@
 		BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsBase.framework; path = Pods/GoogleMaps/Base/Frameworks/GoogleMapsBase.framework; sourceTree = "<group>"; };
 		BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsCore.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMapsCore.framework; sourceTree = "<group>"; };
 		BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMaps.framework; sourceTree = "<group>"; };
-		D4756EA123986CB500FE7F0D /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReachabilityManager.swift; sourceTree = "<group>"; };
-		DD3D9C201F94297100B164D4 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		EEB26AE02C9F998C002E863F /* TCATLocal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TCATLocal.entitlements; sourceTree = "<group>"; };
 		EEB26AE12C9F9B9A002E863F /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		EEB26AE32C9FA60E002E863F /* TCATDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TCATDebug.entitlements; sourceTree = "<group>"; };
+		FD44EC522CD86A56009269A2 /* NotificationSubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSubscriptionManager.swift; sourceTree = "<group>"; };
+		FD44EC542CD86C4A009269A2 /* NotificationTokenHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationTokenHandler.swift; sourceTree = "<group>"; };
 		FD69AF2A2B89212F00970C7E /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
 		FDA3439E2CB6DF4D00608A1A /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		FDE68D1D2C97E24900024A69 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
@@ -290,7 +292,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EEB26AE22C9F9B9A002E863F /* UserNotifications.framework in Frameworks */,
 				BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */,
 				BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */,
 				BF74AC1A1F945D7D00AFD4E4 /* GoogleMapsBase.framework in Frameworks */,
@@ -401,7 +402,6 @@
 				2E9416AD2BC61731003DEB44 /* Place.swift */,
 				2E9416AC2BC61731003DEB44 /* PlaceCoordinates.swift */,
 				2E9416B32BC61731003DEB44 /* Route.swift */,
-				2E9416B62BC61731003DEB44 /* SearchManager.swift */,
 				2E9416B72BC61731003DEB44 /* Section.swift */,
 				2E9416AE2BC61731003DEB44 /* ServiceAlert.swift */,
 				2E9416B42BC61731003DEB44 /* WalkPath.swift */,
@@ -597,6 +597,7 @@
 				2E94166C2BC61604003DEB44 /* Cells */,
 				2E9416822BC6168C003DEB44 /* Controllers */,
 				2E94165E2BC60A3B003DEB44 /* Ecosystem */,
+				FD44EC562CD8914D009269A2 /* Managers */,
 				2E9416AB2BC616DE003DEB44 /* Models */,
 				FDE68D292C988CDB00024A69 /* Services */,
 				2E9416C72BC61763003DEB44 /* Supporting */,
@@ -614,6 +615,16 @@
 				78CE6235AE56D8B3776331B2 /* Pods-TCAT.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		FD44EC562CD8914D009269A2 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				FD44EC542CD86C4A009269A2 /* NotificationTokenHandler.swift */,
+				FD44EC522CD86A56009269A2 /* NotificationSubscriptionManager.swift */,
+				2E9416B62BC61731003DEB44 /* SearchManager.swift */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 		FD69AF292B8920D500970C7E /* ci_scripts */ = {
@@ -875,6 +886,7 @@
 				2E9416C22BC61731003DEB44 /* AppleSearchResponse.swift in Sources */,
 				2E9416A12BC616B9003DEB44 /* RouteOptionsViewController.swift in Sources */,
 				2E9416BF2BC61731003DEB44 /* Direction.swift in Sources */,
+				FD44EC532CD86A5F009269A2 /* NotificationSubscriptionManager.swift in Sources */,
 				2EC1F5122BC66972001D9F66 /* ApolloClientProtocol.swift in Sources */,
 				2E9FFA902BC673240051793C /* UpliftAPI.graphql.swift in Sources */,
 				2E9416BD2BC61731003DEB44 /* LocationObject.swift in Sources */,
@@ -904,6 +916,7 @@
 				2E9416F12BC61984003DEB44 /* Shared.swift in Sources */,
 				2E9FFA892BC673240051793C /* Capacity.graphql.swift in Sources */,
 				2E9416BB2BC61731003DEB44 /* ServiceAlert.swift in Sources */,
+				FD44EC552CD86C55009269A2 /* NotificationTokenHandler.swift in Sources */,
 				FDE68D222C97EF6200024A69 /* ApiEndpoint.swift in Sources */,
 				2EC1F5162BC66CBA001D9F66 /* Publishers.swift in Sources */,
 				2E94169E2BC616B9003DEB44 /* SearchResultsViewController.swift in Sources */,

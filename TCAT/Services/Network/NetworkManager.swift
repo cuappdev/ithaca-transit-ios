@@ -15,8 +15,21 @@ protocol NetworkService {
     /// - Parameters:
     ///   - request: The `URLRequest` to be sent.
     ///   - decodingType: The type to decode the response into. Must conform to `Decodable`.
+    ///   - responseType: The type of response format expected (.standard or .simple)
     /// - Returns: A publisher that emits the decoded object of type `T` or an `ApiErrorHandler` on failure.
-    func request<T: Decodable>(_ request: URLRequest, decodingType: T.Type) -> AnyPublisher<T, ApiErrorHandler>
+    func request<T: Decodable>(
+        _ request: URLRequest,
+        decodingType: T.Type,
+        responseType: ResponseFormat
+    ) -> AnyPublisher<
+        T,
+        ApiErrorHandler
+    >
+}
+
+enum ResponseFormat {
+    case standard    // Format with success and data
+    case simple      // Format with only success
 }
 
 class NetworkManager: NetworkService {
@@ -27,14 +40,20 @@ class NetworkManager: NetworkService {
         self.session = session
     }
 
-    func request<T: Decodable>(_ request: URLRequest, decodingType: T.Type) -> AnyPublisher<T, ApiErrorHandler> {
+    func request<T: Decodable>(
+        _ request: URLRequest,
+        decodingType: T.Type,
+        responseType: ResponseFormat = .standard
+    ) -> AnyPublisher<
+        T,
+        ApiErrorHandler
+    > {
         return session.dataTaskPublisher(for: request)
             .tryMap { result in
                 try self.handleResponse(result)
             }
-            .decode(type: APIResponse<T>.self, decoder: JSONDecoder())
-            .tryMap { response in
-                try self.validateAPIResponse(response)
+            .flatMap { data in
+                self.decodeResponse(data: data, decodingType: decodingType, responseType: responseType)
             }
             .mapError { error in
                 self.mapToAPIError(error)
@@ -60,7 +79,39 @@ class NetworkManager: NetworkService {
         }
     }
 
-    // Validate API response and handle future error cases
+    // Decodes the response based on response format
+    private func decodeResponse<T: Decodable>(
+        data: Data,
+        decodingType: T.Type,
+        responseType: ResponseFormat
+    ) -> AnyPublisher<
+        T,
+        Error
+    > {
+        let decoder = JSONDecoder()
+        switch responseType {
+        case .standard:
+            return Just(data)
+                .decode(type: APIResponse<T>.self, decoder: decoder)
+                .tryMap { response in
+                    try self.validateAPIResponse(response)
+                }
+                .eraseToAnyPublisher()
+        case .simple:
+            return Just(data)
+                .decode(type: SimpleAPIResponse.self, decoder: decoder)
+                .tryMap { response in
+                    let success = try self.validateSimpleResponse(response)
+                    guard let result = success as? T else {
+                        throw ApiErrorHandler.requestFailed
+                    }
+                    return result
+                }
+                .eraseToAnyPublisher()
+        }
+    }
+
+    // Validate standard API response
     private func validateAPIResponse<T>(_ response: APIResponse<T>) throws -> T {
         guard response.success else {
             // TODO: Update when backend sends more error codes
@@ -68,6 +119,16 @@ class NetworkManager: NetworkService {
         }
 
         return response.data
+    }
+
+    // Validate simple API response
+    private func validateSimpleResponse(_ response: SimpleAPIResponse) throws -> Bool {
+        guard response.success else {
+            // TODO: Update when backend sends more error codes
+            throw ApiErrorHandler.customApiError(ApiError(code: "500", message: "Internal server error"))
+        }
+
+        return response.success
     }
 
     // Map Combine errors to custom APIErrorHandler types

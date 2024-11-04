@@ -28,6 +28,9 @@ enum TransitEnvironment {
         static let announcementsHost = "ANNOUNCEMENTS_HOST"
         static let announcementsPath = "ANNOUNCEMENTS_PATH"
         static let announcementsScheme = "ANNOUNCEMENTS_SCHEME"
+        
+        // TODO: Remove once the Notifications moves to prod
+        static let devTransitURL = "TRANSIT_DEV_URL"
     }
 
     /// A dictionary storing key-value pairs from Keys.plist.
@@ -52,6 +55,14 @@ enum TransitEnvironment {
 #else
             fatalError("TRANSIT_PROD_URL not found in Keys.plist")
 #endif
+        }
+        return baseURLString
+    }()
+
+    // TODO: Remove once Notifications moves to prod
+    static let devTransitURL: String = {
+        guard let baseURLString = TransitEnvironment.keysDict[Keys.devTransitURL] as? String else {
+            fatalError("TRANSIT_DEV_URL not found in Keys.plist")
         }
         return baseURLString
     }()

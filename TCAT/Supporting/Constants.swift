@@ -166,8 +166,12 @@ struct Constants {
         static let applePlaces = "/applePlaces"
         static let appleSearch = "/appleSearch"
         static let busLocations = "/tracking"
+        static let cancelDelayNotification = "/cancelDelayNotification"
+        static let cancelDepartureNotification = "/cancelDepartureNotification"
         static let delay = "/delay"
+        static let delayNotification = "/delayNotification"
         static let delays = "/delays"
+        static let departureNotification = "/departureNotification"
         static let getRoutes = "/route"
     }
 

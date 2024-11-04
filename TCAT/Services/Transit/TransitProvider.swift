@@ -16,7 +16,11 @@ enum TransitProvider {
     case applePlaces(ApplePlacesBody)
     case appleSearch(SearchResultsBody)
     case busLocations(GetBusLocationsBody)
+    case cancelDelayNotification(DelayNotificationBody)
+    case cancelDepartureNotification(DepartureNotificationBody)
     case delay(GetDelayBody)
+    case delayNotification(DelayNotificationBody)
+    case departueNotification(DepartureNotificationBody)
     case routes(GetRoutesBody)
 }
 
@@ -25,7 +29,15 @@ extension TransitProvider: ApiEndpoint {
 
     /// Base URL string for the transit API.
     var baseURLString: String {
-        return TransitEnvironment.transitURL
+//        return TransitEnvironment.transitURL
+        // TODO: Remove once the Notifications moves to prod
+        switch self {
+        case .delayNotification, .departueNotification, .cancelDelayNotification, .cancelDepartureNotification:
+            return TransitEnvironment.devTransitURL
+
+        default:
+            return TransitEnvironment.transitURL
+        }
     }
 
     /// API path for the transit endpoints.
@@ -36,6 +48,9 @@ extension TransitProvider: ApiEndpoint {
     /// API version for the transit endpoints.
     var apiVersion: String {
         switch self {
+        case .delayNotification, .departueNotification, .cancelDelayNotification, .cancelDepartureNotification:
+            return "v1"
+
         case .routes:
             return "v2"
 
@@ -48,7 +63,7 @@ extension TransitProvider: ApiEndpoint {
     var separatorPath: String? {
         switch self {
         default:
-            return ""
+            return nil
         }
     }
 
@@ -73,8 +88,20 @@ extension TransitProvider: ApiEndpoint {
         case .busLocations:
             return Constants.Endpoints.busLocations
 
+        case .cancelDelayNotification:
+            return Constants.Endpoints.cancelDelayNotification
+            
+        case .cancelDepartureNotification:
+            return Constants.Endpoints.cancelDepartureNotification
+
         case .delay:
             return Constants.Endpoints.delay
+
+        case .departueNotification:
+            return Constants.Endpoints.departureNotification
+
+        case .delayNotification:
+            return Constants.Endpoints.delayNotification
 
         case .routes:
             return Constants.Endpoints.getRoutes
@@ -136,6 +163,12 @@ extension TransitProvider: ApiEndpoint {
 
         case .delay(let getDelayBody):
             return try? JSONEncoder().encode(getDelayBody)
+
+        case .delayNotification(let delayNotificationBody), .cancelDelayNotification(let delayNotificationBody):
+            return try? JSONEncoder().encode(delayNotificationBody)
+
+        case .departueNotification(let departureNotificationBody), .cancelDepartureNotification(let departureNotificationBody):
+            return try? JSONEncoder().encode(departureNotificationBody)
 
         case .routes(let getRoutesBody):
             return try? JSONEncoder().encode(getRoutesBody)

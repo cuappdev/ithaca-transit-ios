@@ -23,6 +23,9 @@ class NotificationToggleTableViewCell: UITableViewCell {
     private let notificationSwitch = UISwitch()
     private let notificationTitleLabel = UILabel()
 
+    private var startTime: String = ""
+    private var tripId: String = ""
+    private var stopId: String?
     private let hairlineHeight = 0.5
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -77,7 +80,17 @@ class NotificationToggleTableViewCell: UITableViewCell {
         }
     }
 
-    func configure(for type: NotificationType, isFirst: Bool, delegate: NotificationToggleTableViewDelegate? = nil) {
+    func configure(
+        for type: NotificationType,
+        isFirst: Bool,
+        delegate: NotificationToggleTableViewDelegate? = nil,
+        startTime: String,
+        tripId: String,
+        stopId: String?
+    ) {
+        self.startTime = startTime
+        self.tripId = tripId
+        self.stopId = stopId
         self.delegate = delegate
         self.type = type
         notificationTitleLabel.text = type.title
@@ -91,9 +104,21 @@ class NotificationToggleTableViewCell: UITableViewCell {
             switch type {
             case .beforeBoarding:
                 delegate?.displayNotificationBanner(type: .beforeBoardingConfirmation)
+                NotificationSubscriptionManager.shared.subscribeToDepartureNotifications(startTime: startTime)
 
             case .delay:
                 delegate?.displayNotificationBanner(type: .delayConfirmation)
+                NotificationSubscriptionManager.shared.subscribeToDelayNotifications(stopID: stopId, tripID: tripId)
+
+            default: break
+            }
+        } else {
+            switch type {
+            case .beforeBoarding:
+                NotificationSubscriptionManager.shared.unsubscribeFromDepartureNotifications(startTime: startTime)
+
+            case .delay:
+                NotificationSubscriptionManager.shared.subscribeToDelayNotifications(stopID: stopId, tripID: tripId)
 
             default: break
             }
