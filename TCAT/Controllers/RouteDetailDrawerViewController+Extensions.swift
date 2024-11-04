@@ -217,7 +217,7 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
             }
 
             // Convert startTime to the desired string format
-            let startTime = String(Int(delayDirection.startTime.timeIntervalSince1970))
+            let startTime = Int(delayDirection.startTime.timeIntervalSince1970)
 
             let stopId = delayDirection.stops.first?.id
             cell.configure(

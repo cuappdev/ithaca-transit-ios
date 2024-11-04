@@ -167,7 +167,11 @@ extension TransitProvider: ApiEndpoint {
         case .delayNotification(let delayNotificationBody), .cancelDelayNotification(let delayNotificationBody):
             return try? JSONEncoder().encode(delayNotificationBody)
 
-        case .departueNotification(let departureNotificationBody), .cancelDepartureNotification(let departureNotificationBody):
+        case .departueNotification(
+            let departureNotificationBody
+        ), .cancelDepartureNotification(
+            let departureNotificationBody
+        ):
             return try? JSONEncoder().encode(departureNotificationBody)
 
         case .routes(let getRoutesBody):

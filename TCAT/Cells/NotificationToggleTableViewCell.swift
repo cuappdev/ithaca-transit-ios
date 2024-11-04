@@ -23,7 +23,7 @@ class NotificationToggleTableViewCell: UITableViewCell {
     private let notificationSwitch = UISwitch()
     private let notificationTitleLabel = UILabel()
 
-    private var startTime: String = ""
+    private var startTime: Int = 0
     private var tripId: String = ""
     private var stopId: String?
     private let hairlineHeight = 0.5
@@ -84,7 +84,7 @@ class NotificationToggleTableViewCell: UITableViewCell {
         for type: NotificationType,
         isFirst: Bool,
         delegate: NotificationToggleTableViewDelegate? = nil,
-        startTime: String,
+        startTime: Int,
         tripId: String,
         stopId: String?
     ) {
@@ -103,9 +103,15 @@ class NotificationToggleTableViewCell: UITableViewCell {
         if notificationSwitch.isOn {
             switch type {
             case .beforeBoarding:
-                delegate?.displayNotificationBanner(type: .beforeBoardingConfirmation)
-                NotificationSubscriptionManager.shared.subscribeToDepartureNotifications(startTime: startTime)
-
+                // TODO debug this logic
+//                print("diff: \(startTime - Int(Date().timeIntervalSince1970))")
+                if startTime - Int(Date().timeIntervalSince1970) > 10 {
+                    delegate?.displayNotificationBanner(type: .beforeBoardingConfirmation)
+                    NotificationSubscriptionManager.shared.subscribeToDepartureNotifications(startTime: String(startTime))
+                } else {
+                    notificationSwitch.setOn(false, animated: true)
+                    delegate?.displayNotificationBanner(type: .unableToConfirmBeforeBoarding)
+                }
             case .delay:
                 delegate?.displayNotificationBanner(type: .delayConfirmation)
                 NotificationSubscriptionManager.shared.subscribeToDelayNotifications(stopID: stopId, tripID: tripId)
@@ -115,7 +121,7 @@ class NotificationToggleTableViewCell: UITableViewCell {
         } else {
             switch type {
             case .beforeBoarding:
-                NotificationSubscriptionManager.shared.unsubscribeFromDepartureNotifications(startTime: startTime)
+                NotificationSubscriptionManager.shared.unsubscribeFromDepartureNotifications(startTime: String(startTime))
 
             case .delay:
                 NotificationSubscriptionManager.shared.subscribeToDelayNotifications(stopID: stopId, tripID: tripId)

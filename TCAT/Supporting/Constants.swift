@@ -247,6 +247,7 @@ struct Constants {
         static let delayNotification = "has been delayed to"
         static let notifyBeforeBoarding = "Notify me 10 min before boarding"
         static let notifyDelay = "Notify me about delays"
+        static let unableToConfirmBeforeBoarding = "The bus is arriving in less than 10 minutes, so notifications are unavailable."
     }
 
     struct SearchBar {
