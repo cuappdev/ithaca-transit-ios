@@ -455,7 +455,38 @@ class RouteDetailContentViewController: UIViewController {
             }
         }()
     }
+    
+    /// Helper function to create individual walking circles
+    func createWalkPathCircle() -> UIImage {
+        let fillColor = UIColor(white: 0.82, alpha: 1.0)
+        let borderColor = UIColor(white: 0.57, alpha: 1.0)
+        let diameter: CGFloat = 70.0
+        let borderWidth: CGFloat = 13.0
 
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: diameter, height: diameter))
+        return renderer.image { context in
+            context.cgContext.setFillColor(borderColor.cgColor)
+            context.cgContext.setStrokeColor(borderColor.cgColor)
+            context.cgContext.setLineWidth(borderWidth)
+            context.cgContext.addEllipse(in: CGRect(x: borderWidth / 2, y: borderWidth / 2, width: diameter - borderWidth, height: diameter - borderWidth))
+            context.cgContext.drawPath(using: .fillStroke)
+
+            context.cgContext.setFillColor(fillColor.cgColor)
+            context.cgContext.addEllipse(in: CGRect(x: borderWidth, y: borderWidth, width: diameter - 2 * borderWidth, height: diameter - 2 * borderWidth))
+            context.cgContext.fillPath()
+        }
+    }
+    
+    /// Configure polylines for each walking segment
+    func configurePolyline(for path: GMSPath) {
+        let walkPathCircle = createWalkPathCircle()
+        let polyline = GMSPolyline(path: path)
+        let stampStyle = GMSSpriteStyle(image: walkPathCircle)
+        polyline.strokeWidth = 7
+        polyline.spans = [GMSStyleSpan(style: GMSStrokeStyle.transparentStroke(withStamp: stampStyle))]
+        polyline.map = mapView
+    }
+    
     /// Draw all waypoints initially for all paths in [Path] or [[CLLocationCoordinate2D]], plus fill bounds
     private func drawMapRoute() {
         var pathCount = 0
@@ -473,36 +504,13 @@ class RouteDetailContentViewController: UIViewController {
         // Helper function to map final location marker
         func mapLocationMarker() -> UIImage? {
             let targetSize = CGSize(width: 18, height: 30)
-            guard let originalImage = UIImage(named: "locationMarker") else {
-                return nil
-            }
+            guard let originalImage = UIImage(named: "locationMarker") else { return nil }
             
             UIGraphicsBeginImageContextWithOptions(targetSize, false, 0.0)
             originalImage.draw(in: CGRect(origin: .zero, size: targetSize))
             let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
             return resizedImage
-        }
-        
-        // Helper function to create individual walking circles
-        func createWalkPathCircle() -> UIImage {
-            let fillColor = UIColor(white: 0.82, alpha: 1.0)
-            let borderColor = UIColor(white: 0.57, alpha: 1.0)
-            let diameter: CGFloat = 70.0
-            let borderWidth: CGFloat = 13.0
-
-            let renderer = UIGraphicsImageRenderer(size: CGSize(width: diameter, height: diameter))
-            return renderer.image { context in
-                context.cgContext.setFillColor(borderColor.cgColor)
-                context.cgContext.setStrokeColor(borderColor.cgColor)
-                context.cgContext.setLineWidth(borderWidth)
-                context.cgContext.addEllipse(in: CGRect(x: borderWidth / 2, y: borderWidth / 2, width: diameter - borderWidth, height: diameter - borderWidth))
-                context.cgContext.drawPath(using: .fillStroke)
-
-                context.cgContext.setFillColor(fillColor.cgColor)
-                context.cgContext.addEllipse(in: CGRect(x: borderWidth, y: borderWidth, width: diameter - 2 * borderWidth, height: diameter - 2 * borderWidth))
-                context.cgContext.fillPath()
-            }
         }
         
         for path in paths {
@@ -544,7 +552,7 @@ class RouteDetailContentViewController: UIViewController {
         }
         
         func mapRouteSegment(_ segment: [GMSCircle], to path: GMSMutablePath, addMarker: Bool = false) {
-            for (index, waypoint) in segment.enumerated() {
+            segment.enumerated().forEach { index, waypoint in
                 let coordinates = CLLocation(latitude: waypoint.position.latitude, longitude: waypoint.position.longitude)
                 path.addLatitude(coordinates.coordinate.latitude, longitude: coordinates.coordinate.longitude)
                 if addMarker && index == segment.count - 1 {
@@ -564,18 +572,10 @@ class RouteDetailContentViewController: UIViewController {
         if !finalRouteSegment.isEmpty {
             mapRouteSegment(finalRouteSegment, to: finalWalkSegment, addMarker: true)
         }
-
-        // Configure polylines for each walking segment
-        func configurePolyline(for path: GMSPath) {
-            let walkPathCircle = createWalkPathCircle()
-            let polyline = GMSPolyline(path: path)
-            let stampStyle = GMSSpriteStyle(image: walkPathCircle)
-            polyline.strokeWidth = 9
-            polyline.spans = [GMSStyleSpan(style: GMSStrokeStyle.transparentStroke(withStamp: stampStyle))]
-            polyline.map = mapView
-        }
+        
         configurePolyline(for: firstWalkSegment)
         configurePolyline(for: finalWalkSegment)
+        
     }
     
     /// Adjusts the size of endpoint bus stop circles based on zoom level
