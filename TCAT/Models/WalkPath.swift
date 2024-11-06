@@ -51,9 +51,7 @@ class WalkPath: Path {
                     let circleLocation = CLLocation(latitude: circleCoordinate.latitude, longitude: circleCoordinate.longitude)
                     let previousCircleLocation = CLLocation(latitude: previousCircle.coordinate.latitude, longitude: previousCircle.coordinate.longitude)
 
-                    if circleLocation.distance(from: previousCircleLocation) < intervalDistanceIncrement {
-                        continue
-                    }
+                    if circleLocation.distance(from: previousCircleLocation) < intervalDistanceIncrement { continue }
                 }
                 
                 circles.append((coordinate: circleCoordinate, radius: 5.0))
