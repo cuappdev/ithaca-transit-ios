@@ -169,7 +169,7 @@ class RouteDetailContentViewController: UIViewController {
     }
 
     /// Fetch live-tracking information for the first direction's bus route.
-    /// Handles connection issues with banners. Animated indicators. 
+    /// Handles connection issues with banners. Animated indicators.
     @objc func getBusLocations() {
         // swiftlint:disable:next reduce_boolean
         let directionsAreValid = route.directions.reduce(true) { result, direction in
