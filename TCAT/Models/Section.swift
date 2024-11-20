@@ -17,9 +17,12 @@ enum Section {
 
     private func getVal() -> Any? {
         switch self {
-        case .seeAllStops: return nil
+        case .seeAllStops:
+            return nil
+
         case .currentLocation(let location):
             return location
+
         case .recentSearches(let items),
              .searchResults(let items):
             return items
@@ -28,26 +31,34 @@ enum Section {
 
     var isEmpty: Bool {
         switch self {
-        case .currentLocation, .seeAllStops: return false
-        case .recentSearches(let items),
-             .searchResults(let items): return items.isEmpty
+        case .currentLocation, .seeAllStops:
+            return false
+
+        case .recentSearches(let items), .searchResults(let items):
+            return items.isEmpty
         }
     }
 
     func getItems() -> [Place] {
         switch self {
-        case .seeAllStops: return []
-        case .currentLocation(let currLocation): return [currLocation]
-        case .recentSearches(let items),
-             .searchResults(let items): return items
+        case .seeAllStops:
+            return []
+
+        case .currentLocation(let currLocation):
+            return [currLocation]
+
+        case .recentSearches(let items), .searchResults(let items):
+            return items
         }
     }
 
     func getItem(at index: Int) -> Place? {
         switch self {
-        case .currentLocation, .seeAllStops: return nil
-        case .recentSearches(let items),
-             .searchResults(let items): return items[optional: index]
+        case .currentLocation, .seeAllStops:
+            return nil
+
+        case .recentSearches(let items), .searchResults(let items):
+            return items[optional: index]
         }
     }
 
@@ -65,11 +76,14 @@ extension Section: Equatable {
         switch (lhs, rhs) {
         case (.seeAllStops, .seeAllStops):
             return true
+
         case (.currentLocation(let locA), .currentLocation(let locB)):
             return locA == locB
+
         case (.searchResults(let itemsA), .searchResults(let itemsB)),
              (.recentSearches(let itemsA), .recentSearches(let itemsB)):
             return itemsA == itemsB
+
         default: return false
         }
     }

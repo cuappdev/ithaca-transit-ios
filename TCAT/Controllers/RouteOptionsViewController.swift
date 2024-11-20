@@ -6,9 +6,9 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
+import Combine
 import CoreLocation
 import DZNEmptyDataSet
-import FutureNova
 import Intents
 import NotificationBannerSwift
 import Pulley
@@ -38,6 +38,8 @@ class RouteOptionsViewController: UIViewController {
     let routeSelection = RouteSelectionView()
     var searchBarView = SearchBarView()
 
+    private var busDelaysNetworkRefreshRate: Double = 5.0
+    private var cancellables = Set<AnyCancellable>()
     var cellUserInteraction = true
     var currentLocation: CLLocationCoordinate2D?
     var lastRouteRefreshDate = Date()
@@ -57,11 +59,9 @@ class RouteOptionsViewController: UIViewController {
 
     private let estimatedRowHeight: CGFloat = 115
     private let mediumTapticGenerator = UIImpactFeedbackGenerator(style: .medium)
-    private let networking: Networking = URLSession.shared.request
     private let routeResultsTitle: String = Constants.Titles.routeResults
 
-    /// Timer to retrieve route delays and update route cells
-    private var routeTimer: Timer?
+    /// Timer to retrieve route update route cells
     private var updateTimer: Timer?
 
     /// Dictionary to map route id to delay
@@ -100,7 +100,7 @@ class RouteOptionsViewController: UIViewController {
 
         title = Constants.Titles.routeOptions
 
-        addReachabilityListener()
+        NotificationCenter.default.addObserver(self, selector: #selector(setUserInteraction), name: .reachabilityChanged, object: nil)
 
         setupRouteSelection(destination: searchTo)
         setupSearchBar()
@@ -117,14 +117,7 @@ class RouteOptionsViewController: UIViewController {
         }
 
         searchForRoutes()
-
-        routeTimer = Timer.scheduledTimer(
-            timeInterval: 5.0,
-            target: self,
-            selector: #selector(updateAllRoutesLiveTracking(sender:)),
-            userInfo: nil,
-            repeats: true
-        )
+        updateAllRoutesLiveTracking()
         updateTimer = Timer.scheduledTimer(
             timeInterval: 20.0,
             target: self,
@@ -151,7 +144,10 @@ class RouteOptionsViewController: UIViewController {
         // Remove banner
         banner?.dismiss()
         banner = nil
-        routeTimer?.invalidate()
+
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+
         updateTimer?.invalidate()
         // Remove notification observer
         // swiftlint:disable:next notification_center_detachment
@@ -160,12 +156,6 @@ class RouteOptionsViewController: UIViewController {
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return banner != nil ? .lightContent : .default
-    }
-
-    private func addReachabilityListener() {
-        ReachabilityManager.shared.addListener(self) { [weak self] connection in
-            self?.setUserInteraction(to: connection != .none)
-        }
     }
 
     private func setupRouteSelection(destination: Place?) {
@@ -306,6 +296,7 @@ class RouteOptionsViewController: UIViewController {
                 searchBarText = startingDestinationName
             }
             placeholder = Constants.General.fromSearchBarPlaceholder
+
         case .to:
             let endingDestinationName = searchTo.name
             if endingDestinationName != Constants.General.currentLocation {
@@ -361,51 +352,47 @@ class RouteOptionsViewController: UIViewController {
         routeResults.reloadData()
     }
 
-    private func getAllDelays(trips: [Trip]) -> Future<Response<[Delay]>> {
-        return networking(Endpoint.getAllDelays(trips: trips)).decode()
-    }
+    private func updateAllRoutesLiveTracking() {
+        TransitService.shared.getAllDelays(trips: trips, refreshInterval: busDelaysNetworkRefreshRate)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                guard let self = self else { return }
 
-    @objc func updateAllRoutesLiveTracking(sender: Timer) {
-        getAllDelays(trips: trips).observe(with: { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .value(let delaysResponse):
-                    if !delaysResponse.success { return }
-                    let allDelays = delaysResponse.data
-                    for delayResponse in allDelays {
-                        let tripRoute = self.tripDictionary[delayResponse.tripID]
-                        guard let route = tripRoute,
-                            let routeId = tripRoute?.routeId,
-                            let direction = route.getFirstDepartRawDirection(),
-                            let delay = delayResponse.delay else {
-                                continue
-                        }
-                        let departTime = direction.startTime
-                        let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
-                        var delayState: DelayState!
-                        let isLateDelay = Time.compare(
-                            date1: delayedDepartTime,
-                            date2: departTime
-                        ) == .orderedDescending
-                        if isLateDelay {
-                            delayState = DelayState.late(date: delayedDepartTime)
-                        } else {
-                            delayState = DelayState.onTime(date: departTime)
-                        }
-                        self.delayDictionary[routeId] = delayState
-                        route.getFirstDepartRawDirection()?.delay = delay
-                    }
-                case .error(let error):
-                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                if case .failure(let error) = completion {
                     let payload = NetworkErrorPayload(
                         location: "\(self) Get All Delays",
                         type: "\((error as NSError).domain)",
                         description: error.localizedDescription
                     )
                     TransitAnalytics.shared.log(payload)
+                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                }
+            } receiveValue: { [weak self] delays in
+                guard let self = self else { return }
+
+                for delayResponse in delays {
+                    if let route = self.tripDictionary[delayResponse.tripID],
+                       let direction = route.getFirstDepartRawDirection(),
+                       let delay = delayResponse.delay {
+
+                        let routeId = route.routeId
+
+                        let departTime = direction.startTime
+                        let delayedDepartTime = departTime.addingTimeInterval(TimeInterval(delay))
+
+                        let delayState: DelayState
+                        delayState = delayedDepartTime > departTime ?  .late(
+                            date: delayedDepartTime
+                        ) : .late(
+                            date: departTime
+                        )
+
+                        self.delayDictionary[routeId] = delayState
+                        route.getFirstDepartRawDirection()?.delay = delay
+                    }
                 }
             }
-        })
+            .store(in: &cancellables)
     }
 
     @objc private func refreshRoutesAndTime() {
@@ -442,6 +429,7 @@ class RouteOptionsViewController: UIViewController {
             switch searchType {
             case .from:
                 routeSelection.updateSearchBarTitles(from: searchFrom.name)
+
             case .to:
                 routeSelection.updateSearchBarTitles(to: searchTo.name)
             }
@@ -494,39 +482,6 @@ class RouteOptionsViewController: UIViewController {
         }
     }
 
-    private func getRoutes(
-        start: Place,
-        end: Place,
-        time: Date,
-        type: SearchType
-    ) -> Future<Response<RouteSectionsObject>>? {
-        if let endpoint = Endpoint.getRoutes(start: start, end: end, time: time, type: type) {
-            return networking(endpoint).decode()
-        } else {
-            return nil
-        }
-    }
-
-    func routeSelected(routeId: String) {
-        networking(Endpoint.routeSelected(routeId: routeId)).observe { [weak self] result in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                switch result {
-                case .value:
-                    self.printClass(context: "\(#function)", message: "success")
-                case .error(let error):
-                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                    let payload = NetworkErrorPayload(
-                        location: "\(self) Get Route Selected",
-                        type: "\((error as NSError).domain)",
-                        description: error.localizedDescription
-                    )
-                    TransitAnalytics.shared.log(payload)
-                }
-            }
-        }
-    }
-
     private func getRoutesTrips() {
         // For each route in each route array inside of the 'routes' array, get its
         // tripId and stopId to create trip array for request to get all delays.
@@ -546,36 +501,40 @@ class RouteOptionsViewController: UIViewController {
     }
 
     private func processRequest(start: Place, end: Place, time: Date, type: SearchType) {
-        if let result =  getRoutes(start: start, end: end, time: time, type: type) {
-            result.observe(with: { [weak self] result in
+        TransitService.shared.getRoutes(start: start, end: end, time: time, type: type)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
                 guard let self = self else { return }
-                DispatchQueue.main.async {
-                    switch result {
-                    case .value(let response):
 
-                        // Parse sections of routes
-                        [response.data.fromStop, response.data.boardingSoon, response.data.walking]
-                            .forEach { routeSection in
-                                routeSection.forEach { (route) in
-                                    route.formatDirections(start: self.searchFrom?.name, end: self.searchTo.name)
-                                }
-                                // Allow for custom display in search results for fromStop.
-                                // We want to display a [] if a bus stop is the origin and doesn't exist
-                                if !routeSection.isEmpty || self.searchFrom?.type == .busStop {
-                                    self.routes.append(routeSection)
-                                }
+                switch completion {
+                case .failure(let error):
+                    self.processRequestError(error: error)
 
-                            }
-                        self.getRoutesTrips()
-                        self.requestDidFinish(perform: [.hideBanner])
-                    case .error(let error):
-                        self.processRequestError(error: error)
-                    }
-                    let payload = DestinationSearchedEventPayload(destination: end.name)
-                    TransitAnalytics.shared.log(payload)
+                case .finished:
+                    break
                 }
-            })
-        }
+            } receiveValue: { [weak self] response in
+                guard let self = self else { return }
+
+                // Parse sections of routes
+                [response.fromStop, response.boardingSoon, response.walking].forEach { routeSection in
+                    routeSection.forEach { route in
+                        route.formatDirections(start: self.searchFrom?.name, end: self.searchTo.name)
+                    }
+                    // Add routes to results
+                    if !routeSection.isEmpty || self.searchFrom?.type == .busStop {
+                        self.routes.append(routeSection)
+                    }
+                }
+
+                self.getRoutesTrips()
+                self.requestDidFinish(perform: [.hideBanner])
+
+                // Log analytics
+                let payload = DestinationSearchedEventPayload(destination: end.name)
+                TransitAnalytics.shared.log(payload)
+            }
+            .store(in: &cancellables)
     }
 
     private func processRequestError(error: Error) {
@@ -627,6 +586,7 @@ class RouteOptionsViewController: UIViewController {
                 let action = UIAlertAction(title: actionTitle, style: .cancel, handler: nil)
                 alertController.addAction(action)
                 present(alertController, animated: true, completion: nil)
+
             case .showError(bannerInfo: let bannerInfo, payload: let payload):
                 banner = StatusBarNotificationBanner(title: bannerInfo.title, style: bannerInfo.style)
                 banner?.autoDismiss = false
@@ -637,6 +597,7 @@ class RouteOptionsViewController: UIViewController {
                 )
 
                 TransitAnalytics.shared.log(payload)
+
             case .hideBanner:
                 banner?.dismiss()
                 banner = nil
@@ -650,7 +611,8 @@ class RouteOptionsViewController: UIViewController {
         routeResults.reloadData()
     }
 
-    func setUserInteraction(to userInteraction: Bool) {
+    @objc func setUserInteraction() {
+        var userInteraction = NetworkMonitor.shared.isReachable
         cellUserInteraction = userInteraction
 
         for cell in routeResults.visibleCells {
@@ -691,6 +653,7 @@ class RouteOptionsViewController: UIViewController {
 
         let contentViewController = RouteDetailContentViewController(
             route: route,
+            endDestination: searchTo,
             currentLocation: routeDetailCurrentLocation,
             routeOptionsCell: routeOptionsCell
         )

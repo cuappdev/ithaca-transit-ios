@@ -19,7 +19,7 @@ extension RouteOptionsViewController: UIViewControllerPreviewingDelegate {
             if let indexPath = routeResults.indexPathForRow(at: point),
                let cell = routeResults.cellForRow(at: indexPath) {
                 let route = routes[indexPath.section][indexPath.row]
-                presentShareSheet(from: view, for: route, with: cell.getImage())
+                presentShareSheet(from: view, for: searchTo, with: cell.getImage())
             }
         }
     }
@@ -72,6 +72,7 @@ extension RouteOptionsViewController: DestinationDelegate {
         switch searchType {
         case .from:
             searchFrom = place
+
         case .to:
             searchTo = place
         }
@@ -114,9 +115,14 @@ extension RouteOptionsViewController: DatePickerViewDelegate {
         routeSelection.setDatepickerTitle(withDate: date, withSearchTimeType: searchTimeType)
         var buttonTapped = ""
         switch searchType {
-        case .arriveBy: buttonTapped = "Arrive By Tapped"
-        case .leaveAt: buttonTapped = "Leave At Tapped"
-        case .leaveNow: buttonTapped = "Leave Now Tapped"
+        case .arriveBy:
+            buttonTapped = "Arrive By Tapped"
+
+        case .leaveAt:
+            buttonTapped = "Leave At Tapped"
+
+        case .leaveNow:
+            buttonTapped = "Leave Now Tapped"
         }
         dismissDatePicker()
 
@@ -283,7 +289,6 @@ extension RouteOptionsViewController: UITableViewDelegate {
             let payload = RouteResultsCellTappedEventPayload()
             TransitAnalytics.shared.log(payload)
             let routeId = routes[indexPath.section][indexPath.row].routeId
-            routeSelected(routeId: routeId)
             navigationController?.pushViewController(routeDetailViewController, animated: true)
         }
     }
@@ -298,7 +303,10 @@ extension RouteOptionsViewController: UITableViewDelegate {
                 } else {
                     return Constants.TableHeaders.boardingSoonFromNearby
                 }
-            case 2: return Constants.TableHeaders.walking
+
+            case 2:
+                return Constants.TableHeaders.walking
+
             default: return nil
             }
         }

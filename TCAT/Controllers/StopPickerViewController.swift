@@ -6,12 +6,13 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
+import Combine
 import DZNEmptyDataSet
-import FutureNova
 import UIKit
 
 class StopPickerViewController: UIViewController {
 
+    private var cancellables = Set<AnyCancellable>()
     private let tableView = UITableView()
     private typealias Section = (title: String, places: [Place])
     private var sections: [Section] = []
@@ -29,7 +30,7 @@ class StopPickerViewController: UIViewController {
 
         title = Constants.Titles.allStops
         setupTableView()
-        refreshStops()
+        getAllStops()
     }
 
     private func setupTableView() {
@@ -59,49 +60,45 @@ class StopPickerViewController: UIViewController {
         }
     }
 
-    // MARK: - Refresh stops
-
-    private func getStopsFromServer() -> Future<Response<[Place]>> {
-        return URLSession.shared.request(endpoint: Endpoint.getAllStops()).decode()
-    }
-
-    /// Get all bus stops from the server, update UserDefaults, and refresh the table
-    private func refreshStops() {
+    // MARK: - Get all stops
+    /// Get all bus stops from the server
+    func getAllStops() {
         setUpLoadingIndicator()
 
-        if let busStopsData = userDefaults.data(forKey: Constants.UserDefaults.allBusStops),
-            let busStops = try? decoder.decode([Place].self, from: busStopsData) {
-            loadingIndicator?.removeFromSuperview()
-            loadingIndicator = nil
-            sections = tableSections(for: busStops)
-            tableView.reloadData()
-        } else {
-            getStopsFromServer().observe { [weak self] result in
+        TransitService.shared.getAllStops()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
                 guard let self = self else { return }
 
-                switch result {
-                case .value(let response):
-                    guard !response.data.isEmpty else { return } // ensure the response has stops
+                self.loadingIndicator?.removeFromSuperview()
+                self.loadingIndicator = nil
 
-                    do {
-                        // note: response.data is [Place], not Data
-                        let stopsData = try JSONEncoder().encode(response.data)
-                        userDefaults.set(stopsData, forKey: Constants.UserDefaults.allBusStops)
-                        self.sections = self.tableSections(for: response.data)
-                    } catch {
-                        self.logRefreshError(error)
-                    }
-                case .error(let error):
-                    self.logRefreshError(error)
-                }
+                switch completion {
+                case .failure:
+                    handleGetAllStopsError()
 
-                DispatchQueue.main.async {
-                    self.loadingIndicator?.removeFromSuperview()
-                    self.loadingIndicator = nil
-                    self.tableView.reloadData()
+                case .finished:
+                    break
                 }
+            } receiveValue: { [weak self] response in
+                guard let self = self else { return }
+
+                guard !response.isEmpty else { return }
+
+                self.sections = self.tableSections(for: response)
+                self.tableView.reloadData()
             }
-        }
+            .store(in: &cancellables)
+    }
+
+    // ToDo: Ask whats better when unable to get stop
+    /// Handle error when bus stops aren't fetched successfully
+    private func handleGetAllStopsError() {
+        let title = "Couldn't Fetch Bus Stops"
+        let message = "The app will continue trying on launch. You can continue to use the app as normal."
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+        UIApplication.shared.keyWindow?.presentInApp(alertController)
     }
 
     /// Sorts `busStops` into table `Section`s in alphabetical order.
@@ -178,7 +175,7 @@ extension StopPickerViewController: DZNEmptyDataSetDelegate {
 
     func emptyDataSet(_ scrollView: UIScrollView, didTap didTapButton: UIButton) {
         setUpLoadingIndicator()
-        refreshStops()
+        getAllStops()
     }
 
 }

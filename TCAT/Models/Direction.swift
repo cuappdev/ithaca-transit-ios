@@ -184,10 +184,13 @@ class Direction: NSObject, NSCopying, Codable {
         switch type {
         case .depart:
             return "at \(name)"
+
         case .arrive:
             return "Get off at \(name)"
+
         case .walk:
             return "Walk to \(name)"
+
         case .transfer:
             return "at \(name). Stay on bus."
         }

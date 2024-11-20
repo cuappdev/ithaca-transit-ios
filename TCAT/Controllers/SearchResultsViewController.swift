@@ -6,9 +6,9 @@
 //  Copyright © 2017 cuappdev. All rights reserved.
 //
 
+import Combine
 import CoreLocation
 import DZNEmptyDataSet
-import FutureNova
 import MapKit
 import SwiftyJSON
 import UIKit
@@ -30,11 +30,11 @@ class SearchResultsViewController: UIViewController {
     private weak var destinationDelegate: DestinationDelegate?
     private weak var searchBarCancelDelegate: SearchBarCancelDelegate?
 
+    private var currentSearchCancellable: AnyCancellable?
     private var favorites: [Place] = []
     private var favoritesSection: Section!
     private var initialTableViewIndexMinY: CGFloat!
     private let locationManager = CLLocationManager()
-    private let networking: Networking = URLSession.shared.request
     private var recentLocations: [Place] = []
     private var recentSearchesSection: Section!
     private var returningFromAllStopsBusStop: Place?
@@ -152,23 +152,22 @@ class SearchResultsViewController: UIViewController {
         })
     }
 
-    @objc private func getPlaces(timer: Timer) {
-        if let userInfo = timer.userInfo as? [String: String],
-            let searchText = userInfo["searchText"],
-            !searchText.isEmpty {
-            SearchManager.shared.performLookup(for: searchText) { [weak self] (searchResults, error) in
+    private func startSearch(for searchText: String) {
+        currentSearchCancellable?.cancel()
+
+        currentSearchCancellable = SearchManager.shared.search(for: searchText)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
                 guard let self = self else { return }
-                if let error = error {
-                    self.printClass(context: "SearchManager lookup error", message: error.localizedDescription)
-                    return
-                }
-                DispatchQueue.main.async {
+
+                switch result {
+                case .success(let searchResults):
                     self.updateSearchResultsSection(with: searchResults)
+
+                case .failure(let error):
+                    self.printClass(context: "SearchManager lookup error", message: error.localizedDescription)
                 }
             }
-        } else {
-            createDefaultSections()
-        }
     }
 
 }
@@ -184,6 +183,7 @@ extension SearchResultsViewController: UITableViewDataSource {
         switch sections[section] {
         case .recentSearches:
             return recentLocations.count
+
         default:
             return sections[section].getItems().count
         }
@@ -197,6 +197,7 @@ extension SearchResultsViewController: UITableViewDataSource {
             ) as? GeneralTableViewCell else { return UITableViewCell() }
             cell.configure(for: sections[indexPath.section])
             return cell
+
         default:
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: Constants.Cells.placeIdentifier
@@ -217,8 +218,10 @@ extension SearchResultsViewController: UITableViewDelegate {
         switch sections[section] {
         case .recentSearches:
             header = HeaderView(labelText: Constants.TableHeaders.recentSearches, buttonType: .clear)
+
         case .seeAllStops, .searchResults:
             return nil
+
         default:
             break
         }
@@ -232,8 +235,11 @@ extension SearchResultsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch sections[section] {
-        case .recentSearches: return 50
-        default: return 24
+        case .recentSearches:
+            return 50
+
+        default:
+            return 24
         }
     }
 
@@ -311,14 +317,13 @@ extension SearchResultsViewController: UISearchBarDelegate, UISearchResultsUpdat
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(
-            timeInterval: 0.75,
-            target: self,
-            selector: #selector(getPlaces),
-            userInfo: ["searchText": searchText],
-            repeats: false
-        )
+        // Start the search as the text changes
+        guard !searchText.isEmpty else {
+            createDefaultSections()
+            return
+        }
+
+        startSearch(for: searchText)
     }
 
 }

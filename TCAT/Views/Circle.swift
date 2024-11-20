@@ -46,6 +46,7 @@ class Circle: UIView {
         switch style {
         case .solid:
             backgroundColor = color
+
         case .bordered:
             backgroundColor = Colors.white
             layer.borderColor = color.cgColor
@@ -64,6 +65,7 @@ class Circle: UIView {
                 make.centerX.centerY.equalToSuperview()
                 make.size.equalTo(CGSize(width: solidCircleDiameter, height: solidCircleDiameter))
             }
+
         case .outline:
             backgroundColor = Colors.white
             layer.borderColor = color.cgColor

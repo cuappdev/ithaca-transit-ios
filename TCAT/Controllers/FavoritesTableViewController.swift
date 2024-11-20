@@ -8,15 +8,14 @@
 
 import UIKit
 import DZNEmptyDataSet
-import FutureNova
+import Combine
 
 class FavoritesTableViewController: UIViewController {
 
     private var searchBar = UISearchBar()
     private var tableView: UITableView!
 
-    private var timer: Timer?
-    private let networking: Networking = URLSession.shared.request
+    private var currentSearchCancellable: AnyCancellable?
     private var resultsSection = Section.searchResults(items: []) {
         didSet {
             tableView.reloadData()
@@ -158,35 +157,31 @@ extension FavoritesTableViewController: DZNEmptyDataSetSource {
 // MARK: - Search
 extension FavoritesTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(
-            timeInterval: 0.2,
-            target: self,
-            selector: #selector(getPlaces),
-            userInfo: ["searchText": searchText],
-            repeats: false
-        )
+        startSearch(for: searchText)
     }
 
-    /// Get Search Results
-    @objc func getPlaces(timer: Timer) {
-        if let userInfo = timer.userInfo as? [String: String],
-            let searchText = userInfo["searchText"],
-            !searchText.isEmpty {
-            SearchManager.shared.performLookup(for: searchText) { [weak self] (searchResults, error) in
+    private func startSearch(for searchText: String) {
+        currentSearchCancellable?.cancel()
+
+        currentSearchCancellable = SearchManager.shared.search(for: searchText)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
                 guard let self = self else { return }
-                DispatchQueue.main.async {
-                    if let error = error {
-                        self.printClass(context: "SearchManager lookup error", message: error.localizedDescription)
-                        self.resultsSection = Section.recentSearches(items: [])
-                        return
-                    }
-                    self.resultsSection = Section.searchResults(items: searchResults)
+
+                switch result {
+                case .success(let searchResults):
+                    self.updateSearchResults(with: searchResults)
+
+                case .failure(let error):
+                    print("[FavoritesTableViewController] Search failed: \(error.errorDescription)")
                 }
             }
-        } else {
-            resultsSection = Section.searchResults(items: [])
-        }
+    }
+
+    // Update UI with the new search results
+    private func updateSearchResults(with searchResults: [Place]) {
+        self.resultsSection = Section.searchResults(items: searchResults)
+        self.tableView.reloadData()
     }
 
 }
