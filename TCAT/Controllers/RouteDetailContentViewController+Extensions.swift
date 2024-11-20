@@ -187,6 +187,8 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
                 busIndicators.append(indicator)
             }
         }
+        // Updates bus stop circle sizes
+        updateBusStopCircleSize()
     }
 }
 

@@ -20,6 +20,7 @@ target 'TCAT' do
     # Analytics
     pod 'Firebase'
     pod 'FirebaseCrashlytics'
+    pod 'Firebase/Messaging'
     
     # File Management
     pod 'Zip', '~> 1.1'
