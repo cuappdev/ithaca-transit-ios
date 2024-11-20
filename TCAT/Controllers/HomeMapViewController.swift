@@ -7,7 +7,6 @@
 //
 
 import CoreLocation
-import FutureNova
 import GoogleMaps
 import SnapKit
 import UIKit

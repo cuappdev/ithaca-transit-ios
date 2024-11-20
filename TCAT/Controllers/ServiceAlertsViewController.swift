@@ -6,8 +6,8 @@
 //  Copyright © 2018 cuappdev. All rights reserved.
 //
 
+import Combine
 import DZNEmptyDataSet
-import FutureNova
 import SnapKit
 import UIKit
 
@@ -15,10 +15,10 @@ class ServiceAlertsViewController: UIViewController {
 
     private let tableView = UITableView(frame: .zero, style: .grouped)
 
+    private var cancellables = Set<AnyCancellable>()
     private var isLoading: Bool { return loadingIndicator != nil }
     private var loadingIndicator: LoadingIndicator?
     private var networkError: Bool = false
-    private let networking: Networking = URLSession.shared.request
     private var priorities = [Int]()
 
     private var alerts = [Int: [ServiceAlert]]() {
@@ -92,22 +92,17 @@ class ServiceAlertsViewController: UIViewController {
         }
     }
 
-    private func getAlerts() -> Future<Response<[ServiceAlert]>> {
-        return networking(Endpoint.getAlerts()).decode()
-    }
-
+    /// Fetches service alerts using TransitService and updates the table view.
     private func getServiceAlerts() {
-        getAlerts().observe(with: { [weak self] result in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                switch result {
-                case .value(let response):
-                    if response.success {
-                        self.removeLoadingIndicator()
-                        self.networkError = false
-                        self.alerts = self.sortedAlerts(alertsList: response.data)
-                    }
-                case .error(let error):
+        setUpLoadingIndicator()
+
+        TransitService.shared.getAlerts()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                guard let self = self else { return }
+
+                switch completion {
+                case .failure(let error):
                     self.removeLoadingIndicator()
                     self.networkError = true
                     self.alerts = [:]
@@ -118,9 +113,16 @@ class ServiceAlertsViewController: UIViewController {
                         description: error.localizedDescription
                     )
                     TransitAnalytics.shared.log(payload)
+
+                case .finished:
+                    break
                 }
+            } receiveValue: { [weak self] alerts in
+                self?.removeLoadingIndicator()
+                self?.networkError = false
+                self?.alerts = self?.sortedAlerts(alertsList: alerts) ?? [:]
             }
-        })
+            .store(in: &cancellables)
     }
 
     private func sortedAlerts(alertsList: [ServiceAlert]) -> [Int: [ServiceAlert]] {
@@ -195,10 +197,13 @@ extension ServiceAlertsViewController: UITableViewDelegate {
         switch priorities[section] {
         case 0:
             return HeaderView(labelText: Constants.TableHeaders.highPriority)
+
         case 1:
             return HeaderView(labelText: Constants.TableHeaders.mediumPriority)
+
         case 2:
             return HeaderView(labelText: Constants.TableHeaders.lowPriority)
+
         default:
             return HeaderView(labelText: Constants.TableHeaders.noPriority)
         }

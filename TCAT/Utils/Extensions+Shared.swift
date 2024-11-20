@@ -245,3 +245,30 @@ extension NSObject {
     }
 
 }
+
+extension UserDefaults {
+
+    /// Initializes user defaults with default values if they don't exist
+    func initialize(with defaults: [(key: String, defaultValue: Any)]) {
+        for (key, defaultValue) in defaults where !hasValue(forKey: key) {
+            set(defaultValue, forKey: key)
+        }
+    }
+
+    /// Creates and sets a unique identifier. If the device identifier changes, updates it.
+    func setupUniqueIdentifier() {
+        guard let uid = UIDevice.current.identifierForVendor?.uuidString else {
+            return
+        }
+
+        if uid != self.string(forKey: Constants.UserDefaults.uid) {
+            self.set(uid, forKey: Constants.UserDefaults.uid)
+        }
+    }
+
+    /// Checks if a value exists for a given key
+    private func hasValue(forKey key: String) -> Bool {
+        return object(forKey: key) != nil
+    }
+
+}

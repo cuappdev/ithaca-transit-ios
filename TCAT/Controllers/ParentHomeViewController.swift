@@ -11,18 +11,6 @@ import UIKit
 
 class ParentHomeMapViewController: PulleyViewController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Present announcement if there are any new ones to present
-        // TODO: Set up announcements once it's done
-//        presentAnnouncement { presented in
-//            if presented {
-//                TransitAnalytics.shared.log(AnnouncementPresentedPayload())
-//            }
-//        }
-    }
-
     required init(contentViewController: UIViewController, drawerViewController: UIViewController) {
         super.init(contentViewController: contentViewController, drawerViewController: drawerViewController)
     }

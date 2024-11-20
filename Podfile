@@ -15,7 +15,6 @@ target 'TCAT' do
     # Networking + Data
     pod 'Apollo', '~> 1.9.3'
     pod 'SwiftyJSON', '~> 5.0'
-    pod 'FutureNova', :git => 'https://github.com/cuappdev/ios-networking.git'
     pod 'Wormholy', :configurations => ['Debug']
     
     # Analytics
@@ -32,7 +31,6 @@ target 'TCAT' do
     pod 'Pulley', '~> 2.7'
     pod 'Presentation', :git=> 'https://github.com/cuappdev/Presentation.git'
     pod 'SnapKit', '~> 5.0'
-    pod 'WhatsNewKit', '~> 1.1'
 
     # Other
     pod 'SwiftLint'

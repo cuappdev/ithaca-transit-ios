@@ -87,8 +87,7 @@ internal struct Delay: Codable {
     let delay: Int?
 }
 
-// Response
-struct Response<T: Codable>: Codable {
+struct APIResponse<T: Decodable>: Decodable {
     var success: Bool
     var data: T
 }

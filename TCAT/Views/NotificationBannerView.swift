@@ -16,6 +16,7 @@ enum NotificationType {
         switch self {
         case .beforeBoarding:
             return Constants.Notification.notifyBeforeBoarding
+
         case .delay:
             return Constants.Notification.notifyDelay
         }
@@ -31,6 +32,7 @@ enum NotificationBannerType {
         switch self {
         case .beforeBoardingConfirmation, .busArriving, .delayConfirmation:
             return Colors.tcatBlue
+
         case .busDelay:
             return Colors.lateRed
         }
@@ -81,8 +83,10 @@ class NotificationBannerView: UIView {
         switch type {
         case .beforeBoardingConfirmation:
             beginningText = Constants.Notification.beforeBoardingConfirmation
+
         case .delayConfirmation:
             beginningText = Constants.Notification.delayConfirmation
+
         default:
             beginningText = ""
         }

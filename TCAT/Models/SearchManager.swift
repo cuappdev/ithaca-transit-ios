@@ -6,153 +6,121 @@
 //  Copyright © 2019 cuappdev. All rights reserved.
 //
 
-import FutureNova
+import Combine
+import Foundation
 import MapKit
-
-struct SearchManagerError: Swift.Error {
-    let description: String
-}
 
 class SearchManager: NSObject {
 
-    typealias SearchManagerCallback = (_ searchResults: [Place], _ error: Error?) -> Void
-
+    // MARK: - Public Properties
     static let shared = SearchManager()
 
-    // MARK: - Private vars
-    private var callback: SearchManagerCallback?
+    // MARK: - Private Properties
     private var busStops = [Place]()
-    private let networking: Networking = URLSession.shared.request
-    private let searchCompleter = MKLocalSearchCompleter()
-    private var searchResults = [MKLocalSearchCompletion]()
-    
-    private let gshLat = 42.442558
-    private let gshLong = -76.485336
+    private var cancellables = Set<AnyCancellable>()
+    private var searchQuerySubject = PassthroughSubject<String, Never>()
+    private var lastSearchQuery: String?
+    private var searchPublisher = PassthroughSubject<Result<[Place], ApiErrorHandler>, Never>()
 
+    // MARK: - Initializer
     override private init() {
         super.init()
-        searchCompleter.delegate = self
-        if let searchRadius = CLLocationDistance(exactly: Constants.Map.searchRadius) {
-            let center = CLLocationCoordinate2D(
-                latitude: Constants.Map.startingLat,
-                longitude: Constants.Map.startingLong
-            )
-            searchCompleter.region = MKCoordinateRegion(
-                center: center,
-                latitudinalMeters: searchRadius,
-                longitudinalMeters: searchRadius
-            )
+        setUpSearchSubscription()
+    }
+
+    // MARK: - Public Search Method
+    func search(for query: String) -> AnyPublisher<Result<[Place], ApiErrorHandler>, Never> {
+        searchQuerySubject.send(query)
+        return searchPublisher.eraseToAnyPublisher()
+    }
+
+    // MARK: - Private Methods
+    private func setUpSearchSubscription() {
+        searchQuerySubject
+            .removeDuplicates()
+            .debounce(for: .milliseconds(750), scheduler: DispatchQueue.main)
+            .flatMap { [weak self] searchText -> AnyPublisher<AppleSearchResponse, ApiErrorHandler> in
+                guard let self = self, !searchText.isEmpty else {
+                    return Fail(error: ApiErrorHandler.noSearchResultsFound).eraseToAnyPublisher()
+                }
+
+                self.lastSearchQuery = searchText
+                return TransitService.shared.getAppleSearchResults(searchText: searchText)
+            }
+            .sink { completion in
+                switch completion {
+                case .failure(let error):
+                    self.searchPublisher.send(.failure(error))
+
+                case .finished:
+                    break
+                }
+            } receiveValue: { [weak self] response in
+                self?.processSearchResults(response: response)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func processSearchResults(response: AppleSearchResponse) {
+        busStops = response.busStops
+
+        if let applePlaces = response.applePlaces, !applePlaces.isEmpty {
+            let combinedResults = applePlaces + busStops
+            self.searchPublisher.send(.success(combinedResults))
+        } else {
+            if let lastQuery = lastSearchQuery {
+                performLocalSearch(with: lastQuery)
+            } else {
+                self.searchPublisher.send(.failure(.noSearchResultsFound))
+            }
         }
     }
-    private func sortLocations(_ s1: Place, _ s2: Place) -> Bool  {
-        let s1Check = pow((s1.latitude-(self.gshLat)),2.0) + pow((s1.longitude-(self.gshLong)),2.0)
-        
-        let s2Check = pow((s2.latitude-(self.gshLat)),2.0) + pow((s2.longitude-(self.gshLong)),2.0)
-        return s1Check < s2Check
-    }
-    
 
-    func performLookup(for query: String, completionHandler: @escaping SearchManagerCallback) {
-        getAppleSearchResults(searchText: query).observe { [weak self] result in
-            guard let self = self else {
-                completionHandler([], SearchManagerError(description: "[SearchManager] self is nil"))
+    private func performLocalSearch(with query: String) {
+        guard !query.isEmpty else {
+            self.searchPublisher.send(.failure(.noSearchResultsFound))
+            return
+        }
+
+        let searchRequest = MKLocalSearch.Request()
+        searchRequest.naturalLanguageQuery = query
+        let localSearch = MKLocalSearch(request: searchRequest)
+
+        localSearch.start { [weak self] response, error in
+            guard let self = self else { return }
+
+            if let error = error {
+                self.searchPublisher.send(.failure(.normalError(error)))
                 return
             }
-            DispatchQueue.main.async {
-                switch result {
-                case .value(let response):
-                    let busStops = response.data.busStops
-                    // If the list of Apple Places for this query already exists in
-                    // server cache, no further work is needed
-                    if let applePlaces = response.data.applePlaces {
-                        let updatedApplePlaces = applePlaces.sorted(by: self.sortLocations)
-                        
-                        let searchResults = updatedApplePlaces + busStops
-                        completionHandler(searchResults, nil)
-                    } else {
-                        // Otherwise, we need to perform the Apple Places lookup locally
-                        // and only display results after this lookup is done
-                        self.busStops = busStops
-                        self.callback = completionHandler
-                        self.searchCompleter.queryFragment = query
-                    }
-                case .error(let error):
-                    completionHandler([], error)
-                }
+
+            let places = self.extractPlaces(from: response)
+
+            if places.isEmpty {
+                self.searchPublisher.send(.failure(.noSearchResultsFound))
+            } else {
+                let combinedResults = places + self.busStops
+                self.searchPublisher.send(.success(combinedResults))
             }
         }
     }
 
-    private func getAppleSearchResults(searchText: String) -> Future<Response<AppleSearchResponse>> {
-        return networking(Endpoint.getAppleSearchResults(searchText: searchText)).decode()
+    private func extractPlaces(from response: MKLocalSearch.Response?) -> [Place] {
+        return response?.mapItems.compactMap { mapItem -> Place? in
+            guard let name = mapItem.name,
+                  let address = mapItem.placemark.thoroughfare,
+                  let city = mapItem.placemark.locality,
+                  let state = mapItem.placemark.administrativeArea,
+                  let country = mapItem.placemark.country else { return nil }
+
+            let description = [address, city, state, country].joined(separator: ", ")
+            return Place(
+                name: name,
+                type: .applePlace,
+                latitude: mapItem.placemark.coordinate.latitude,
+                longitude: mapItem.placemark.coordinate.longitude,
+                placeDescription: description
+            )
+        } ?? []
     }
-
-}
-
-extension SearchManager: MKLocalSearchCompleterDelegate {
-
-    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        // Get list of ApplePlaces for this search query, i.e. completer.queryFragment
-        let query = completer.queryFragment
-        var places = [Place]()
-        let dispatchGroup = DispatchGroup()
-        searchResults = completer.results
-        searchResults.forEach { completion in
-            let searchRequest = MKLocalSearch.Request(completion: completion)
-            let search = MKLocalSearch(request: searchRequest)
-            dispatchGroup.enter()
-            search.start(completionHandler: { (response, error) in
-                if let error = error {
-                    print("[SearchManager] Apple Places search result error: \(error)")
-                    dispatchGroup.leave()
-                    return
-                }
-                if let mapItem = response?.mapItems.first,
-                    let name = mapItem.name,
-                    let address = mapItem.placemark.thoroughfare,
-                    let city = mapItem.placemark.locality,
-                    let state = mapItem.placemark.administrativeArea,
-                    let country = mapItem.placemark.country {
-                    let lat = mapItem.placemark.coordinate.latitude
-                    let long = mapItem.placemark.coordinate.longitude
-                    let description = [address, city, state, country].joined(separator: ", ")
-                    let place = Place(
-                        name: name,
-                        type: .applePlace,
-                        latitude: lat,
-                        longitude: long,
-                        placeDescription: description
-                    )
-                    places.append(place)
-                }
-                dispatchGroup.leave()
-            })
-        }
-        dispatchGroup.notify(queue: .main) {
-            let searchResults = places + self.busStops
-            self.callback?(searchResults, nil)
-
-            self.busStops = []
-            self.callback = nil
-
-            // Update server cache of Apple Places for this search query
-            self.updateApplePlacesCache(searchText: query, places: places).observe { [weak self] result in
-                guard self != nil else { return }
-                switch result {
-                case .value(let response):
-                    print("[SearchManager] Succeeded in updating apple places cache: \(response.data)")
-                default: break
-                }
-            }
-        }
-    }
-
-    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
-        print("[SearchManager] MKLocalSearch failed for error: \(error)")
-    }
-
-    private func updateApplePlacesCache(searchText: String, places: [Place]) -> Future<Response<Bool>> {
-        return networking(Endpoint.updateApplePlacesCache(searchText: searchText, places: places)).decode()
-    }
-
 }

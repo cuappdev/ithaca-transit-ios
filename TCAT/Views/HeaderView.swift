@@ -77,6 +77,7 @@ class HeaderView: UITableViewHeaderFooterView {
         case .clear:
             button?.setTitle(Constants.Buttons.clear, for: .normal)
             button?.addTarget(self, action: #selector(clearRecentSearches), for: .touchUpInside)
+
         default: return
         }
 

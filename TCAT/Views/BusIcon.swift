@@ -16,8 +16,10 @@ enum BusIconType: String {
         switch self {
         case .blueBannerSmall, .directionSmall, .redBannerSmall:
             return 48
+
         case .directionLarge:
             return 72
+
         case .liveTracking:
             return 72
         }
@@ -28,8 +30,10 @@ enum BusIconType: String {
         switch self {
         case .blueBannerSmall, .directionSmall, .redBannerSmall:
             return 24
+
         case .directionLarge:
             return 36
+
         case .liveTracking:
             return 30
         }
@@ -40,6 +44,7 @@ enum BusIconType: String {
         switch self {
         case .directionLarge:
             return 8
+
         default:
             return 4
         }
@@ -49,6 +54,7 @@ enum BusIconType: String {
         switch self {
         case .blueBannerSmall, .redBannerSmall:
             return Colors.white
+
         case .directionLarge, .directionSmall, .liveTracking:
             return Colors.tcatBlue
         }
@@ -58,8 +64,10 @@ enum BusIconType: String {
         switch self {
         case .blueBannerSmall:
             return Colors.tcatBlue
+
         case .directionLarge, .directionSmall, .liveTracking:
             return Colors.white
+
         case .redBannerSmall:
             return Colors.lateRed
         }
@@ -88,9 +96,14 @@ class BusIcon: UIView {
 
         var fontSize: CGFloat
         switch type {
-        case .blueBannerSmall, .directionSmall, .redBannerSmall: fontSize = 14
-        case .directionLarge: fontSize = 20
-        case .liveTracking: fontSize = 16
+        case .blueBannerSmall, .directionSmall, .redBannerSmall:
+            fontSize = 14
+
+        case .directionLarge:
+            fontSize = 20
+
+        case .liveTracking:
+            fontSize = 16
         }
 
         backgroundColor = .clear
@@ -122,9 +135,14 @@ class BusIcon: UIView {
 
         var constant: CGFloat
         switch type {
-        case .blueBannerSmall, .directionSmall, .redBannerSmall: constant = 0.75
-        case .directionLarge: constant = 1
-        case .liveTracking: constant = 0.87
+        case .blueBannerSmall, .directionSmall, .redBannerSmall:
+            constant = 0.75
+
+        case .directionLarge:
+            constant = 1
+
+        case .liveTracking:
+            constant = 0.87
         }
         let imageSize = CGSize(width: image.frame.width * constant, height: image.frame.height * constant)
 
