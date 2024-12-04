@@ -18,6 +18,8 @@ class SearchManager: NSObject {
     // MARK: - Private Properties
     private var busStops = [Place]()
     private var cancellables = Set<AnyCancellable>()
+    private let gshLat = 42.442558
+    private let gshLong = -76.485336
     private var searchQuerySubject = PassthroughSubject<String, Never>()
     private var lastSearchQuery: String?
     private var searchPublisher = PassthroughSubject<Result<[Place], ApiErrorHandler>, Never>()
