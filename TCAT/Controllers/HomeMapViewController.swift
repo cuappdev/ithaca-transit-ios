@@ -77,7 +77,7 @@ class HomeMapViewController: UIViewController {
         mapView.settings.indoorPicker = false
         mapView.isBuildingsEnabled = false
         mapView.isIndoorEnabled = false
-        mapView.padding = .init(top: 0, left: 0, bottom: 10, right: 10)
+        mapView.padding = .init(top: 0, left: 0, bottom: 90, right: 10)
 
         let northEast = CLLocationCoordinate2D(
             latitude: Constants.Values.RouteMaxima.north,
