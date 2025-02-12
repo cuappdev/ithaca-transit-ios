@@ -112,7 +112,7 @@ class InformationViewController: UIViewController {
     }
 
     @objc private func showMoreApps() {
-        let appStorePage = "https://itunes.apple.com/us/developer/walker-white/id1089672961"
+        let appStorePage = "https://apps.apple.com/us/developer/walker-white/id1089672961"
         open(appStorePage, inApp: false)
     }
 
