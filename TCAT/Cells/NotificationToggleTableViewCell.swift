@@ -107,24 +107,24 @@ class NotificationToggleTableViewCell: UITableViewCell {
 //                print("diff: \(startTime - Int(Date().timeIntervalSince1970))")
                 if startTime - Int(Date().timeIntervalSince1970) > 10 {
                     delegate?.displayNotificationBanner(type: .beforeBoardingConfirmation)
-                    NotificationSubscriptionManager.shared.subscribeToDepartureNotifications(startTime: String(startTime))
+                    TransitNotificationSubscriber.shared.subscribeToDepartureNotifications(startTime: String(startTime))
                 } else {
                     notificationSwitch.setOn(false, animated: true)
                     delegate?.displayNotificationBanner(type: .unableToConfirmBeforeBoarding)
                 }
             case .delay:
                 delegate?.displayNotificationBanner(type: .delayConfirmation)
-                NotificationSubscriptionManager.shared.subscribeToDelayNotifications(stopID: stopId, tripID: tripId)
+                TransitNotificationSubscriber.shared.subscribeToDelayNotifications(stopID: stopId, tripID: tripId)
 
             default: break
             }
         } else {
             switch type {
             case .beforeBoarding:
-                NotificationSubscriptionManager.shared.unsubscribeFromDepartureNotifications(startTime: String(startTime))
+                TransitNotificationSubscriber.shared.unsubscribeFromDepartureNotifications(startTime: String(startTime))
 
             case .delay:
-                NotificationSubscriptionManager.shared.unsubscribeFromDelayNotifications(stopID: stopId, tripID: tripId)
+                TransitNotificationSubscriber.shared.unsubscribeFromDelayNotifications(stopID: stopId, tripID: tripId)
 
             default: break
             }

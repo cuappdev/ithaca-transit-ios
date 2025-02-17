@@ -1,5 +1,5 @@
 //
-//  NotificationManager.swift
+//  TransitNotificationSubscriber.swift
 //  TCAT
 //
 //  Created by Jayson Hahn on 11/3/24.
@@ -8,15 +8,14 @@
 
 import Combine
 
-// Helper class to manage notifications
-class NotificationSubscriptionManager {
+class TransitNotificationSubscriber {
     
-    static let shared = NotificationSubscriptionManager()
+    static let shared = TransitNotificationSubscriber()
 
     private var cancellables = Set<AnyCancellable>()
 
     func subscribeToDelayNotifications(stopID: String?, tripID: String) {
-        NotificationTokenHandler.shared.getDeviceToken { [weak self] token in
+        PushNotificationService.shared.getDeviceToken { [weak self] token in
             guard let token = token,
                   let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) else { return }
 
@@ -41,7 +40,7 @@ class NotificationSubscriptionManager {
     }
 
     func subscribeToDepartureNotifications(startTime: String) {
-        NotificationTokenHandler.shared.getDeviceToken { [weak self] token in
+        PushNotificationService.shared.getDeviceToken { [weak self] token in
             guard let token = token,
                   let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) else { return }
 
@@ -65,7 +64,7 @@ class NotificationSubscriptionManager {
     }
 
     func unsubscribeFromDelayNotifications(stopID: String?, tripID: String) {
-        NotificationTokenHandler.shared.getDeviceToken { [weak self] token in
+        PushNotificationService.shared.getDeviceToken { [weak self] token in
             guard let token = token,
                   let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) else { return }
 
@@ -90,7 +89,7 @@ class NotificationSubscriptionManager {
     }
 
     func unsubscribeFromDepartureNotifications(startTime: String) {
-        NotificationTokenHandler.shared.getDeviceToken { [weak self] token in
+        PushNotificationService.shared.getDeviceToken { [weak self] token in
             guard let token = token,
                   let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) else { return }
 

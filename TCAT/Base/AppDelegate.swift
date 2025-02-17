@@ -19,7 +19,7 @@ import FirebaseMessaging
 let userDefaults = UserDefaults.standard
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate, UNUserNotificationCenterDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     private let encoder = JSONEncoder()
@@ -73,7 +73,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate, UNUser
         self.window?.makeKeyAndVisible()
 
         // Initialize and setup notifications
-        _ = NotificationTokenHandler.shared
+        _ = PushNotificationService.shared
 
         return true
     }

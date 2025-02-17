@@ -1,5 +1,5 @@
 //
-//  NotificationTokenHandler.swift
+//  PushNotificationService.swift
 //  TCAT
 //
 //  Created by Jayson Hahn on 11/3/24.
@@ -10,9 +10,9 @@ import FirebaseMessaging
 import UserNotifications
 import UIKit
 
-class NotificationTokenHandler: NSObject, MessagingDelegate, UNUserNotificationCenterDelegate {
+class PushNotificationService: NSObject, MessagingDelegate, UNUserNotificationCenterDelegate {
 
-    static let shared = NotificationTokenHandler()
+    static let shared = PushNotificationService()
 
     override init() {
         super.init()

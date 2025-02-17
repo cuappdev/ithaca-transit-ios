@@ -56,12 +56,6 @@ internal struct BusLocationsInfo: Codable {
     let tripIdentifiers: [String]
 }
 
-class RouteSectionsObject: Codable {
-    var fromStop: [Route]
-    var boardingSoon: [Route]
-    var walking: [Route]
-}
-
 internal struct GetDelayBody: Codable {
 
     let stopID: String
@@ -80,11 +74,6 @@ internal struct Trip: Codable {
 
 internal struct TripBody: Codable {
     var data: [Trip]
-}
-
-internal struct Delay: Codable {
-    let tripID: String
-    let delay: Int?
 }
 
 internal struct DelayNotificationBody: Codable {
