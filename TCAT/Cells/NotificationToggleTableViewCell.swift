@@ -103,9 +103,8 @@ class NotificationToggleTableViewCell: UITableViewCell {
         if notificationSwitch.isOn {
             switch type {
             case .beforeBoarding:
-                // TODO: debug this logic
-//                print("diff: \(startTime - Int(Date().timeIntervalSince1970))")
-                if startTime - Int(Date().timeIntervalSince1970) > 10 {
+                let now = Int(Date().timeIntervalSince1970)
+                if startTime - now > 600 {
                     delegate?.displayNotificationBanner(type: .beforeBoardingConfirmation)
                     TransitNotificationSubscriber.shared.subscribeToDepartureNotifications(startTime: String(startTime))
                 } else {
