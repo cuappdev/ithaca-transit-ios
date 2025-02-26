@@ -184,6 +184,7 @@ class RouteDetailDrawerViewController: UIViewController {
         guard let delayDirection = route.getFirstDepartRawDirection() else {
             return // Use rawDirection (preserves first stop metadata)
         }
+        print("delay direction \(delayDirection)")
 
         let directions = directionsAndVisibleStops.compactMap { $0.getDirection() }
         guard let firstDepartDirection = directions.first(where: { $0.type == .depart }) else { return }
@@ -200,8 +201,15 @@ class RouteDetailDrawerViewController: UIViewController {
                     guard let self = self else { return }
 
                     if case .failure(let error) = completion {
-                        self.printClass(context: "\(#function) error", message: error.localizedDescription)
-                        let payload = NetworkErrorPayload(
+                        self.printClass(context: "\(#function) error", message: """
+                            Error Description: \(error.localizedDescription)
+                            Failure Reason: \((error as NSError).localizedFailureReason ?? "N/A")
+                            Suggested Recovery: \((error as NSError).localizedRecoverySuggestion ?? "N/A")
+                            Error Domain: \((error as NSError).domain)
+                            Error Code: \((error as NSError).code)
+                            User Info: \((error as NSError).userInfo)
+                        """);
+                            let payload = NetworkErrorPayload(
                             location: "\(self) Get Delay",
                             type: "\((error as NSError).domain)",
                             description: error.localizedDescription
@@ -210,6 +218,8 @@ class RouteDetailDrawerViewController: UIViewController {
                     }
                 } receiveValue: { [weak self] delay in
                     guard let self = self else { return }
+                    
+                    print("Received delay: \(String(describing: delay))")
 
                     delayDirection.delay = delay
                     firstDepartDirection.delay = delay

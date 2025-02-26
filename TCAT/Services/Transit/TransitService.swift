@@ -82,6 +82,7 @@ class TransitService: TransitServiceProtocol {
 
     func getAllDelays(trips: [Trip], refreshInterval: TimeInterval = 10.0) -> AnyPublisher<[Delay], ApiErrorHandler> {
         let body = TripBody(data: trips)
+        print("get all delays \(body)")
         let request = TransitProvider.allDelays(body).makeRequest
 
         return Timer.publish(every: refreshInterval, on: .main, in: .default)
@@ -116,7 +117,7 @@ class TransitService: TransitServiceProtocol {
         ApiErrorHandler
     > {
         let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
-
+        
         let locationsInfo = departDirections.map { direction -> BusLocationsInfo in
             let stopID = direction.stops.first?.id ?? "-1"
             return BusLocationsInfo(
@@ -125,10 +126,10 @@ class TransitService: TransitServiceProtocol {
                 tripIdentifiers: direction.tripIdentifiers!
             )
         }
-
+        
         let body = GetBusLocationsBody(data: locationsInfo)
         let request = TransitProvider.busLocations(body).makeRequest
-
+        
         return Timer.publish(every: refreshInterval, on: .main, in: .default)
             .autoconnect()
             .flatMap { _ in
@@ -136,25 +137,68 @@ class TransitService: TransitServiceProtocol {
             }
             .eraseToAnyPublisher()
     }
-
+    
     func getDelay(
         tripID: String,
         stopID: String,
         refreshInterval: TimeInterval = 10.0
-    ) -> AnyPublisher<
-        Int?,
-        ApiErrorHandler
-    > {
-        let body = GetDelayBody(stopID: stopID, tripID: tripID)
-        let request = TransitProvider.delay(body).makeRequest
+    ) -> AnyPublisher<Int?, ApiErrorHandler> {
+        // Log the request
+        print("Requesting delay for tripID: \(tripID), stopID: \(stopID)")
+        let delayData = DelayData(tripId: tripID, stopId: stopID)
+        let body = GetDelayBody(data: [delayData])
+        print("Request body: \(body)")
 
+        let request = TransitProvider.delay(body).makeRequest
+        print("Request: \(request)")
+        
         return Timer.publish(every: refreshInterval, on: .main, in: .default)
             .autoconnect()
             .flatMap { _ in
-                self.networkManager.request(request, decodingType: Int?.self)
+                // Make the request and decode the response
+                self.networkManager.request(request, decodingType: [DelayDataResponse].self)
             }
+            .handleEvents(receiveOutput: { response in
+                // Log the response for debugging
+                print("receive response: \(response)")
+            })
+            .map { response in
+                // Check if the response contains a valid delay value
+                return response.first?.delay
+            }
+            .handleEvents(receiveOutput: { delay in
+                // Log the delay value to see if it's nil
+                print("given delay: \(String(describing: delay))")
+            })
             .eraseToAnyPublisher()
     }
+
+//        return Timer.publish(every: refreshInterval, on: .main, in: .default)
+//            .autoconnect()
+//            .flatMap { _ in
+//                // Request the data and decode into the response structure
+//                self.networkManager.request(request, decodingType: DelayResponse.self)
+//            }
+//            .map { response in
+//                // Extract the delay from the first data entry, if available
+//                print(response.data.first?.delay)
+//                return response.data.first?.delay
+//            }
+//            .handleEvents(
+//                receiveOutput: { delay in
+//                    print("Received delay: \(String(describing: delay))")
+//                },
+//                receiveCompletion: { completion in
+//                    switch completion {
+//                    case .failure(let error):
+//                        print("Error occurred: \(error.localizedDescription)")
+//                    case .finished:
+//                        print("Request finished successfully.")
+//                    }
+//                }
+//            )
+//            .eraseToAnyPublisher() // Erase to the desired return type
+    
 
     func getRoutes(
         start: Place,
@@ -175,7 +219,9 @@ class TransitService: TransitServiceProtocol {
             originName: start.name,
             uid: uid
         )
+        print("get routes request \(body)")
         let request = TransitProvider.routes(body).makeRequest
+        print("get routes request \(request)")
         return networkManager.request(request, decodingType: RouteSectionsObject.self)
     }
 

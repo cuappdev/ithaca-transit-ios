@@ -92,8 +92,8 @@ extension TransitProvider: ApiEndpoint {
     /// Query parameters for the transit API requests.
     var queryParams: [URLQueryItem]? {
         switch self {
-        case .delay(let getDelayBody):
-            return getDelayBody.toQueryItems()
+//        case .delay(let getDelayBody):
+//            return getDelayBody.toQueryItems()
 
         default:
             return nil

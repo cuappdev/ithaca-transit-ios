@@ -55,8 +55,8 @@ enum ApiErrorHandler: LocalizedError {
             return "Request failed"
 
         case .normalError(let error):
-            return error.localizedDescription
-
+            return "Normal error: \(error.localizedDescription)"
+        
         case .emptyErrorWithStatusCode(let status):
             return "Empty response with status code: \(status)"
 

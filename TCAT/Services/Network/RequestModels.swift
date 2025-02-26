@@ -62,16 +62,60 @@ class RouteSectionsObject: Codable {
     var walking: [Route]
 }
 
-internal struct GetDelayBody: Codable {
-
-    let stopID: String
-    let tripID: String
-
-    func toQueryItems() -> [URLQueryItem] {
-        return [URLQueryItem(name: "stopID", value: stopID), URLQueryItem(name: "tripID", value: tripID)]
-    }
-
+internal struct DelayData: Codable {
+    let tripId: String
+    let stopId: String
 }
+
+internal struct GetDelayBody: Codable {
+    var data: [DelayData]
+}
+
+struct DelayResponse: Decodable {
+    let success: Bool
+    let data: [DelayDataResponse]
+}
+
+struct DelayDataResponse: Decodable {
+    let stopId: String
+    let tripId: String
+    let delay: Int?
+}
+
+//func toQueryItems() -> [URLQueryItem] {
+//    return data.flatMap { delayData in
+//        return [
+//            URLQueryItem(name: "tripID", value: delayData.tripId),
+//            URLQueryItem(name: "stopID", value: delayData.stopId)
+//        ]
+//    }
+//}
+
+//internal struct GetDelayBody: Codable {
+//    
+//    struct DelayData: Codable {
+//        let tripId: String
+//        let stopId: String
+//    }
+////    let stopID: String
+////    let tripID: String
+//    let data: [DelayData]
+//    
+//    func toQueryItems() -> [URLQueryItem] {
+//            // Assuming you want to use the first entry in the data array
+//            if let firstData = data.first {
+//                return [
+//                    URLQueryItem(name: "stopID", value: firstData.stopId),
+//                    URLQueryItem(name: "tripID", value: firstData.tripId)
+//                ]
+//            }
+//            return []
+//        }
+////    func toQueryItems() -> [URLQueryItem] {
+////        return [URLQueryItem(name: "stopID", value: data.stopID), URLQueryItem(name: "tripID", value: data.tripID)]
+////    }
+//
+//}
 
 internal struct Trip: Codable {
     let stopID: String
