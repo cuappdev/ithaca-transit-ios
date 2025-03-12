@@ -94,7 +94,23 @@ class TransitService: TransitServiceProtocol {
 
     func getAllStops() -> AnyPublisher<[Place], ApiErrorHandler> {
         let request = TransitProvider.allStops.makeRequest
+        print("get all stops request \(request)")
+
         return networkManager.request(request, decodingType: [Place].self)
+            .mapError { error in
+                ApiErrorHandler.normalError(error)
+            }
+            .handleEvents(receiveOutput: { places in
+                print("received \(places.count) bus stops")
+            }, receiveCompletion: { completion in
+                switch completion {
+                case .failure(let error):
+                    print("api error \(error)")
+                case .finished:
+                    print("sucess")
+                }
+            })
+            .eraseToAnyPublisher()
     }
 
     func getAlerts() -> AnyPublisher<[ServiceAlert], ApiErrorHandler> {
@@ -175,7 +191,9 @@ class TransitService: TransitServiceProtocol {
             originName: start.name,
             uid: uid
         )
+        print("get routes request \(body)")
         let request = TransitProvider.routes(body).makeRequest
+        print("get routes request \(request)")
         return networkManager.request(request, decodingType: RouteSectionsObject.self)
     }
 

@@ -36,8 +36,16 @@ extension TransitProvider: ApiEndpoint {
     /// API version for the transit endpoints.
     var apiVersion: String {
         switch self {
-        case .routes:
+        case .allStops:
+            return "v1"
+        case .delay:
+            return "v1"
+//        case .routes:
+//            return "v1"
+        case .appleSearch:
             return "v2"
+//        case .routes:
+//            return "v2"
 
         default:
             return "v3"

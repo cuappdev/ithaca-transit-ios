@@ -32,10 +32,11 @@ class NetworkManager: NetworkService {
             .tryMap { result in
                 try self.handleResponse(result)
             }
-            .decode(type: APIResponse<T>.self, decoder: JSONDecoder())
-            .tryMap { response in
-                try self.validateAPIResponse(response)
-            }
+            .decode(type: T.self, decoder: JSONDecoder())
+//            .decode(type: APIResponse<T>.self, decoder: JSONDecoder())
+//            .tryMap { response in
+//                try self.validateAPIResponse(response)
+//            }
             .mapError { error in
                 self.mapToAPIError(error)
             }
