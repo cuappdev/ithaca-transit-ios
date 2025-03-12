@@ -61,7 +61,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate, UNUser
         let showOnboarding = !userDefaults.bool(forKey: Constants.UserDefaults.onboardingShown)
         let parentHomeViewController = ParentHomeMapViewController(
             contentViewController: HomeMapViewController(),
-            drawerViewController: FavoritesViewController(isEditing: false)
+            drawerViewController: EcosystemViewController(isEditing: false)
+//            drawerViewController: FavoritesViewController(isEditing: false)
         )
         let rootVC = showOnboarding ? OnboardingViewController(initialViewing: true) : parentHomeViewController
         let navigationController = showOnboarding ? OnboardingNavigationController(rootViewController: rootVC) :

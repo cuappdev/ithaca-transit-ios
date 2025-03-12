@@ -114,7 +114,7 @@ class OnboardingViewController: PresentationController {
 
             let rootVC = ParentHomeMapViewController(
                 contentViewController: HomeMapViewController(),
-                drawerViewController: FavoritesViewController(isEditing: false)
+                drawerViewController: EcosystemViewController(isEditing: false)
             )
             let desiredViewController = CustomNavigationController(rootViewController: rootVC)
 

@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		22948BFD221B75C5003FC43F /* RequestModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22948BFB221B75C5003FC43F /* RequestModels.swift */; };
 		28EA3E17A0C473892F5506EC /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 542B073726DFD1EE044EA97F /* Pods_TCAT.framework */; };
+		2C66F81B2D78EA1C008EFEE2 /* EcosystemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C66F81A2D78EA15008EFEE2 /* EcosystemViewController.swift */; };
+		2C66F81D2D7908C2008EFEE2 /* EcosystemTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C66F81C2D7908BC008EFEE2 /* EcosystemTableViewController.swift */; };
+		2C66F8212D790DF4008EFEE2 /* EateryCardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C66F8202D790DED008EFEE2 /* EateryCardCollectionViewCell.swift */; };
 		2E70434E2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2E70434D2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy */; };
 		2E9416602BC60A59003DEB44 /* UpliftQueries.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 2E94165F2BC60A59003DEB44 /* UpliftQueries.graphql */; };
 		2E9416692BC615DF003DEB44 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9416672BC615DF003DEB44 /* AppDelegate.swift */; };
@@ -147,6 +150,9 @@
 
 /* Begin PBXFileReference section */
 		22948BFB221B75C5003FC43F /* RequestModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestModels.swift; sourceTree = "<group>"; };
+		2C66F81A2D78EA15008EFEE2 /* EcosystemViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosystemViewController.swift; sourceTree = "<group>"; };
+		2C66F81C2D7908BC008EFEE2 /* EcosystemTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosystemTableViewController.swift; sourceTree = "<group>"; };
+		2C66F8202D790DED008EFEE2 /* EateryCardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EateryCardCollectionViewCell.swift; sourceTree = "<group>"; };
 		2E70434D2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2E94165F2BC60A59003DEB44 /* UpliftQueries.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UpliftQueries.graphql; sourceTree = "<group>"; };
 		2E9416672BC615DF003DEB44 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -347,6 +353,7 @@
 		2E94166C2BC61604003DEB44 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				2C66F8202D790DED008EFEE2 /* EateryCardCollectionViewCell.swift */,
 				2E94166F2BC61679003DEB44 /* AddFavoritesCollectionViewCell.swift */,
 				2E9416742BC61679003DEB44 /* BusStopTableViewCell.swift */,
 				2E9416732BC61679003DEB44 /* FavoritesCollectionViewCell.swift */,
@@ -365,6 +372,8 @@
 			isa = PBXGroup;
 			children = (
 				2E9416872BC616B9003DEB44 /* CustomNavigationController.swift */,
+				2C66F81C2D7908BC008EFEE2 /* EcosystemTableViewController.swift */,
+				2C66F81A2D78EA15008EFEE2 /* EcosystemViewController.swift */,
 				2E94168A2BC616B9003DEB44 /* FavoritesTableViewController.swift */,
 				2E9416912BC616B9003DEB44 /* FavoritesViewController.swift */,
 				2E9416902BC616B9003DEB44 /* HomeMapViewController.swift */,
@@ -890,6 +899,7 @@
 				2E9416972BC616B9003DEB44 /* RouteDetail+ContentViewController.swift in Sources */,
 				FDE68D262C97FC0D00024A69 /* TransitService.swift in Sources */,
 				2E9416F62BC61984003DEB44 /* Time.swift in Sources */,
+				2C66F81D2D7908C2008EFEE2 /* EcosystemTableViewController.swift in Sources */,
 				2E9FFA8D2BC673240051793C /* Query.graphql.swift in Sources */,
 				2E9416792BC61679003DEB44 /* AddFavoritesCollectionViewCell.swift in Sources */,
 				2E9FFA812BC673240051793C /* FacilityFields.graphql.swift in Sources */,
@@ -913,6 +923,7 @@
 				2E9416962BC616B9003DEB44 /* RouteDetailViewController.swift in Sources */,
 				2E9416BA2BC61731003DEB44 /* Place.swift in Sources */,
 				2E9416F52BC61984003DEB44 /* Extensions+App.swift in Sources */,
+				2C66F8212D790DF4008EFEE2 /* EateryCardCollectionViewCell.swift in Sources */,
 				2E9416782BC61679003DEB44 /* LargeDetailTableViewCell.swift in Sources */,
 				2E94169F2BC616B9003DEB44 /* HomeOptionsCardViewController.swift in Sources */,
 				2E94169A2BC616B9003DEB44 /* CustomNavigationController.swift in Sources */,
@@ -939,6 +950,7 @@
 				2E9417222BC61CF1003DEB44 /* BusLocationView.swift in Sources */,
 				2E9416C42BC61731003DEB44 /* Section.swift in Sources */,
 				2E9417252BC61CF1003DEB44 /* RouteSelectionView.swift in Sources */,
+				2C66F81B2D78EA1C008EFEE2 /* EcosystemViewController.swift in Sources */,
 				2E94171C2BC61CF1003DEB44 /* Circle.swift in Sources */,
 				2E9FFA842BC673240051793C /* GetAllGymsQuery.graphql.swift in Sources */,
 				2E9417122BC61CF1003DEB44 /* LoadingIndicator.swift in Sources */,
