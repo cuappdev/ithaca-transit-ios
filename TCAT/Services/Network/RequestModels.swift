@@ -62,6 +62,26 @@ class RouteSectionsObject: Codable {
     var walking: [Route]
 }
 
+//internal struct DelayData: Codable {
+//    let tripId: String
+//    let stopId: String
+//}
+//
+//internal struct GetDelayBody: Codable {
+//    var data: [DelayData]
+//}
+//
+//struct DelayResponse: Decodable {
+//    let success: Bool
+//    let data: [DelayDataResponse]
+//}
+//
+//struct DelayDataResponse: Decodable {
+//    let stopId: String
+//    let tripId: String
+//    let delay: Int?
+//}
+
 internal struct GetDelayBody: Codable {
 
     let stopID: String

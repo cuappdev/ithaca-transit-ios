@@ -83,6 +83,7 @@ extension RouteOptionsViewController: DestinationDelegate {
 
         hideSearchBar()
         dismissSearchBar()
+        print("calling searchforroutes in routeoptionextensions")
         searchForRoutes()
 
         let payload: Payload = PlaceSelectedPayload(name: place.name, type: place.type)
@@ -138,7 +139,10 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         printClass(context: ("CLLocationManager didFailWithError"), message: error.localizedDescription)
-
+        
+        let clError = error as? CLError
+        print("CLLocationManager didFailWithError: \(error.localizedDescription) (\(clError?.code.rawValue ?? -1))")
+        
         if error._code == CLError.denied.rawValue {
             locationManager.stopUpdatingLocation()
 
@@ -229,6 +233,7 @@ extension RouteOptionsViewController: CLLocationManagerDelegate {
             searchFrom = currentLocation
             searchBarView.resultsViewController?.currentLocation = currentLocation
             routeSelection.updateSearchBarTitles(from: currentLocation.name)
+            print("calling searchforroutes")
             searchForRoutes()
         }
     }

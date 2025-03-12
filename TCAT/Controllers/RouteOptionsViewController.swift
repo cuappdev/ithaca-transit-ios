@@ -95,28 +95,38 @@ class RouteOptionsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = Colors.backgroundWash
-
+        
+        print("routeoptionsviewcontroller loaded")
+        
         edgesForExtendedLayout = []
 
         title = Constants.Titles.routeOptions
 
         NotificationCenter.default.addObserver(self, selector: #selector(setUserInteraction), name: .reachabilityChanged, object: nil)
-
+        print("setuprouteselection")
         setupRouteSelection(destination: searchTo)
+        print("setupsearchbar")
         setupSearchBar()
+        print("setupdatepicker")
         setupDatePicker()
+        print("setuprouteresultstableview")
         setupRouteResultsTableView()
-
+        
+        print("setuprouteselection")
         setupRouteSelection(destination: searchTo)
+        print("setuplocationmanager")
         setupLocationManager()
-
+        
+        print("searchtime")
         // Assume user wants to find routes that leave at current time and set datepicker accordingly
         searchTime = Date()
         if let searchTime = searchTime {
             routeSelection.setDatepickerTitle(withDate: searchTime, withSearchTimeType: searchTimeType)
         }
-
+        
+        print("searchforroutes")
         searchForRoutes()
+        print("updateallrouteslivetracking")
         updateAllRoutesLiveTracking()
         updateTimer = Timer.scheduledTimer(
             timeInterval: 20.0,
@@ -191,11 +201,17 @@ class RouteOptionsViewController: UIViewController {
     }
 
     private func setupLocationManager() {
+        print("first")
         locationManager = CLLocationManager()
+        print("second")
         locationManager.delegate = self
+        print("third")
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        print("fourth")
         locationManager.distanceFilter = 10
+        print("fifth")
         locationManager.requestWhenInUseAuthorization()
+        print("sixth")
         locationManager.startUpdatingLocation()
     }
 
@@ -419,11 +435,13 @@ class RouteOptionsViewController: UIViewController {
     }
 
     func searchForRoutes() {
+        print("searchforroutes inside function")
         if let searchFrom = searchFrom,
             let searchTo = searchTo,
             let time = searchTime {
             let now = Date()
             lastRouteRefreshDate = now
+            print("resentandcurrentlyloading")
             resetAndShowCurrentlyLoading()
 
             switch searchType {
@@ -433,12 +451,15 @@ class RouteOptionsViewController: UIViewController {
             case .to:
                 routeSelection.updateSearchBarTitles(to: searchTo.name)
             }
-
+            print("mediumtaptic")
             // Prepare feedback on Network request
             mediumTapticGenerator.prepare()
 
             // Search For Routes Errors
-
+            
+            print("searching for routes")
+            print("curr location: \(String(describing: currentLocation))")
+            
             guard let areValidCoordinates = self.checkPlaceCoordinates(
                 startPlace: searchFrom,
                 endPlace: searchTo
@@ -476,7 +497,7 @@ class RouteOptionsViewController: UIViewController {
                 ])
                 return
             }
-
+            print("calling processrequest()")
             // Search for Routes Data Request
             processRequest(start: searchFrom, end: searchTo, time: time, type: self.searchTimeType)
         }
@@ -501,6 +522,7 @@ class RouteOptionsViewController: UIViewController {
     }
 
     private func processRequest(start: Place, end: Place, time: Date, type: SearchType) {
+        print("calling getroutes()")
         TransitService.shared.getRoutes(start: start, end: end, time: time, type: type)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in

@@ -100,16 +100,6 @@ class TransitService: TransitServiceProtocol {
             .mapError { error in
                 ApiErrorHandler.normalError(error)
             }
-            .handleEvents(receiveOutput: { places in
-                print("received \(places.count) bus stops")
-            }, receiveCompletion: { completion in
-                switch completion {
-                case .failure(let error):
-                    print("api error \(error)")
-                case .finished:
-                    print("sucess")
-                }
-            })
             .eraseToAnyPublisher()
     }
 
@@ -181,6 +171,7 @@ class TransitService: TransitServiceProtocol {
         RouteSectionsObject,
         ApiErrorHandler
     > {
+        print("getroutes running")
         let uid = userDefaults.string(forKey: Constants.UserDefaults.uid)
         let body = GetRoutesBody(
             arriveBy: type == .arriveBy,
@@ -191,9 +182,9 @@ class TransitService: TransitServiceProtocol {
             originName: start.name,
             uid: uid
         )
-        print("get routes request \(body)")
+        print("get routes request body \(body)")
         let request = TransitProvider.routes(body).makeRequest
-        print("get routes request \(request)")
+        print("get routes request link \(request)")
         return networkManager.request(request, decodingType: RouteSectionsObject.self)
     }
 
