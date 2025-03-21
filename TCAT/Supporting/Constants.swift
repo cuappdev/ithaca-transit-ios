@@ -304,6 +304,12 @@ struct Constants {
         static let promotionDismissed = "promotionDismissed"
         static let recentSearch = "recentSearch"
         static let servicedRoutes = "servicedRoutes"
+        
+        /// Analytics variables for Settings Page / Privacy
+//        static let hasLoggedIn = "hasLoggedIn"
+        static let isAnalyticsEnabled = "isAnalyticsEnabled"
+        static let isLocationAllowed = "isLocationAllowed"
+        static let activeIcon = "activeIcon"
     }
 
     struct Values {
