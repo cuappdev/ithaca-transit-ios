@@ -21,6 +21,10 @@ class SettingsPrivacyViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Track Analytics
+        let payload = SettingsNotifPrivacyPageOpenedPayload()
+        TransitAnalytics.shared.log(payload)
+
         setUpNavigationItem()
         setUpView()
         setUpConstraints()
@@ -29,40 +33,11 @@ class SettingsPrivacyViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-//        RootViewController.setStatusBarStyle(.darkContent)
-
         updateView()
     }
 
     private func setUpNavigationItem() {
-//        let appearance = UINavigationBarAppearance()
-//        appearance.titleTextAttributes = [
-//            .foregroundColor: UIColor.Eatery.black as Any,
-//            .font: UIFont.eateryNavigationBarTitleFont
-//        ]
-//        appearance.largeTitleTextAttributes = [
-//            .foregroundColor: UIColor.Eatery.blue as Any,
-//            .font: UIFont.eateryNavigationBarLargeTitleFont
-//        ]
-
         navigationItem.title = "Notifications & Privacy"
-
-//        let standardAppearance = appearance.copy()
-//        standardAppearance.configureWithDefaultBackground()
-//        navigationItem.standardAppearance = standardAppearance
-//
-//        let scrollEdgeAppearance = appearance.copy()
-//        scrollEdgeAppearance.configureWithTransparentBackground()
-//        navigationItem.scrollEdgeAppearance = scrollEdgeAppearance
-
-//        let backButton = UIBarButtonItem(
-//            image: UIImage(named: "ArrowLeft"),
-//            style: .plain,
-//            target: self,
-//            action: #selector(didTapBackButton)
-//        )
-//        backButton.tintColor = UIColor.Eatery.black
-//        navigationItem.leftBarButtonItem = backButton
     }
 
     private func setUpView() {
@@ -76,7 +51,7 @@ class SettingsPrivacyViewController: UIViewController {
                 UserDefaults.standard.set(isAnalyticsEnabled, forKey: Constants.UserDefaults.isAnalyticsEnabled)
             }
             .store(in: &cancellables)
-        
+
         hostingController.rootView.viewModel.$isLocationAllowed
             .dropFirst()
             .sink { isLocationAllowed in

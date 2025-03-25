@@ -43,7 +43,7 @@ class ServiceAlertsViewController: UIViewController {
         super.viewDidLoad()
 
         title = Constants.Titles.serviceAlerts
-        
+
         // Temporary change for settings page (make nav title prefer large to fit settings page theme)
         navigationController?.navigationBar.prefersLargeTitles = true
 

@@ -50,7 +50,6 @@ class SettingsAboutHeaderView: UIView {
 
     private func setUpLogoView() {
         logoView.image = UIImage(named: "appDevLogo")
-//        logoView.tintColor = UIColor
     }
 
     private func setUpSubtitleLabel() {

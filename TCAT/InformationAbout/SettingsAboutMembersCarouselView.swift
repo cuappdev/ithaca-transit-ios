@@ -63,7 +63,7 @@ class SettingsAboutMembersCarouselView: UIView {
         label.font = .preferredFont(forTextStyle: .footnote)
         label.text = title
 
-        stackView.addArrangedSubview(label)
+        addViewAnimated(label)
     }
 
     func addMemberView(name: String) {
@@ -76,7 +76,7 @@ class SettingsAboutMembersCarouselView: UIView {
         container.layoutMargins = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
         container.backgroundColor = Colors.carouselGray
 
-        stackView.addArrangedSubview(container)
+        addViewAnimated(container)
     }
 
     func addSeparator() {
@@ -87,7 +87,16 @@ class SettingsAboutMembersCarouselView: UIView {
             make.width.height.equalTo(8)
         }
 
-        stackView.addArrangedSubview(imageView)
+        addViewAnimated(imageView)
+    }
+
+    private func addViewAnimated(_ view: UIView) {
+        view.alpha = 0.0
+        stackView.addArrangedSubview(view)
+        UIView.animate(
+            withDuration: 0.4,
+            animations: { view.alpha = 1.0 }
+        )
     }
 
     override func layoutMarginsDidChange() {

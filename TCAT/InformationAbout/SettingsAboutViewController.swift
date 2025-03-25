@@ -10,58 +10,42 @@ import UIKit
 
 class SettingsAboutViewController: UIViewController {
 
+    // MARK: - Properties (view)
     private let subtitleLabel = UILabel()
-
     private let headerView = SettingsAboutHeaderView()
-
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
-
     private let websiteButton = ButtonView(content: PillButtonView())
+
+    // MARK: - Properties (data)
+    private var firstTimeLoading = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Track Analytics
+        let payload = SettingsAboutPageOpenedPayload()
+        TransitAnalytics.shared.log(payload)
+
         setUpNavigationItem()
         setUpView()
         setUpConstraints()
-
-        print("setting up carousel")
         setUpCarouselViews()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-//        RootViewController.setStatusBarStyle(.darkContent)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         scrollView.flashScrollIndicators()
+        if !firstTimeLoading {
+            reshuffle()
+        } else {
+            firstTimeLoading = false
+        }
     }
 
     private func setUpNavigationItem() {
-//        let appearance = UINavigationBarAppearance()
-//        appearance.titleTextAttributes = [
-//            .foregroundColor: UIColor.Eatery.black as Any,
-//            .font: UIFont.eateryNavigationBarTitleFont
-//        ]
-//        appearance.largeTitleTextAttributes = [
-//            .foregroundColor: UIColor.Eatery.blue as Any,
-//            .font: UIFont.eateryNavigationBarLargeTitleFont
-//        ]
-
         navigationItem.title = "About Transit"
-
-//        let standardAppearance = appearance.copy()
-//        standardAppearance.configureWithDefaultBackground()
-//        navigationItem.standardAppearance = standardAppearance
-//
-//        let scrollEdgeAppearance = appearance.copy()
-//        scrollEdgeAppearance.configureWithTransparentBackground()
-//        navigationItem.scrollEdgeAppearance = scrollEdgeAppearance
     }
 
     private func setUpView() {
@@ -71,7 +55,6 @@ class SettingsAboutViewController: UIViewController {
         setUpSubtitleLabel()
 
         view.addSubview(headerView)
-        setUpHeaderView()
 
         view.addSubview(scrollView)
         setUpScrollView()
@@ -86,9 +69,6 @@ class SettingsAboutViewController: UIViewController {
         subtitleLabel.font = .preferredFont(forTextStyle: .body)
 //        subtitleLabel.textColor = UIColor.Eatery.gray06
 //        subtitleLabel.font = .preferredFont(for: .body, weight: .medium)
-    }
-
-    private func setUpHeaderView() {
     }
 
     private func setUpScrollView() {
@@ -140,16 +120,6 @@ class SettingsAboutViewController: UIViewController {
             make.leading.trailing.equalTo(view.layoutMarginsGuide)
             make.bottom.equalTo(view.layoutMarginsGuide).inset(16)
         }
-    }
-
-    @objc private func didTapBackButton() {
-        navigationController?.popViewController(animated: true)
-    }
-
-    func addCarouselView(_ configure: (SettingsAboutMembersCarouselView) -> Void) {
-        let carouselView = SettingsAboutMembersCarouselView()
-        configure(carouselView)
-        stackView.addArrangedSubview(carouselView)
     }
 
     private struct HSection {
@@ -239,6 +209,12 @@ class SettingsAboutViewController: UIViewController {
         ])
     ]
 
+    private func addCarouselView(_ configure: (SettingsAboutMembersCarouselView) -> Void) {
+        let carouselView = SettingsAboutMembersCarouselView()
+        configure(carouselView)
+        stackView.addArrangedSubview(carouselView)
+    }
+
     private func setUpCarouselViews() {
         let sections = [sections[0]] + sections[1...].shuffled()
         for section in sections {
@@ -261,4 +237,22 @@ class SettingsAboutViewController: UIViewController {
         }
     }
 
+    private func reshuffle() {
+        let group = DispatchGroup()
+        for subview in stackView.subviews {
+            group.enter()
+            UIView.animate(
+                withDuration: 0.2,
+                animations: { subview.alpha = 0.0 },
+                completion: { _ in
+                    subview.removeFromSuperview()
+                    group.leave()
+                }
+            )
+        }
+
+        group.notify(queue: .main) {
+            self.setUpCarouselViews()
+        }
+    }
 }

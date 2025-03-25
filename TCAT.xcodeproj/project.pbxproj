@@ -363,8 +363,8 @@
 		1C0296C22D77E65D005B92FC /* InformationPrivacy */ = {
 			isa = PBXGroup;
 			children = (
-				1C0296EC2D87A690005B92FC /* SettingsPrivacyView.swift */,
 				1C0296D92D823F8D005B92FC /* SettingsPrivacyViewController.swift */,
+				1C0296EC2D87A690005B92FC /* SettingsPrivacyView.swift */,
 			);
 			path = InformationPrivacy;
 			sourceTree = "<group>";

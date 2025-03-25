@@ -17,9 +17,18 @@ class TransitAnalytics {
 
     func log(_ payload: Payload) {
         #if !DEBUG
-            let fabricEvent = payload.convertToFabric()
-            Analytics.logEvent(fabricEvent.name, parameters: fabricEvent.attributes)
+            let analyticsEnabled = UserDefaults.standard.bool(forKey: Constants.UserDefaults.isAnalyticsEnabled)
+            if analyticsEnabled {
+                let fabricEvent = payload.convertToFabric()
+                Analytics.logEvent(fabricEvent.name, parameters: fabricEvent.attributes)
+            }
         #endif
+            let analyticsEnabled = UserDefaults.standard.bool(forKey: Constants.UserDefaults.isAnalyticsEnabled)
+            if analyticsEnabled {
+                print("I'm analysing you!")
+            } else {
+                print("No analysis")
+            }
     }
 
 }
@@ -111,9 +120,27 @@ struct RouteResultsCellPeekedPayload: Payload {
     static let eventName: String = "Route Results Cell Peeked"
 }
 
-/// Log opening of About page
-struct AboutPageOpenedPayload: Payload {
-    static let eventName: String = "About Page Opened"
+/// Log opening of About page (settings page)
+struct SettingsPageOpenedPayload: Payload {
+    static let eventName: String = "Settings Page Opened"
+    var deviceInfo = DeviceInfo()
+}
+
+/// Log opening of Settings about page
+struct SettingsAboutPageOpenedPayload: Payload {
+    static let eventName: String = "Settings About Page Opened"
+    var deviceInfo = DeviceInfo()
+}
+
+/// Log opening of Settings Notif/Privacy page
+struct SettingsNotifPrivacyPageOpenedPayload: Payload {
+    static let eventName: String = "Settings Notifications & Privacy Page Opened"
+    var deviceInfo = DeviceInfo()
+}
+
+/// Log opening of Settings Support page
+struct SettingsSupportPageOpenedPayload: Payload {
+    static let eventName: String = "Settings Support Page Opened"
     var deviceInfo = DeviceInfo()
 }
 

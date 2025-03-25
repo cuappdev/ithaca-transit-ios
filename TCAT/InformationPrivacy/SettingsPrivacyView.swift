@@ -72,6 +72,7 @@ struct SettingsPrivacyView: View {
                 }
             }
             .listRowSeparator(.visible, edges: .bottom)
+
             // Notifications
             Button {
                 guard let url = URL(string: UIApplication.openSettingsURLString) else {

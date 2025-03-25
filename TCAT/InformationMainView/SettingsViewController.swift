@@ -32,7 +32,7 @@ class SettingsViewController: UIViewController {
         super.viewDidLoad()
 
         // Track Analytics
-        let payload = AboutPageOpenedPayload()
+        let payload = SettingsPageOpenedPayload()
         TransitAnalytics.shared.log(payload)
 
         // Populate row items
@@ -59,18 +59,19 @@ class SettingsViewController: UIViewController {
                 subtitle: "Need a refresher? See how to use the app",
                 navAction: .present(OnboardingViewController(initialViewing: false), [.large()])
             ),
+//            These two rows will be added as progress is made with design + ecosystem
 //            RowItem(
 //                image: UIImage(named: "favStar"),
 //                title: "Favorites",
 //                subtitle: "Manage your favorite stops",
 //                navAction: .push(SettingsFaveViewController())
 //            ),
-            RowItem(
-                image: UIImage(named: "settingsBus"),
-                title: "App Icon",
-                subtitle: "Choose your adventure",
-                navAction: .present(SettingsAppIconViewController(), [.medium()])
-            ),
+//            RowItem(
+//                image: UIImage(named: "settingsBus"),
+//                title: "App Icons",
+//                subtitle: "Choose your adventure",
+//                navAction: .present(SettingsAppIconViewController(), [.medium()])
+//            ),
             RowItem(
                 image: UIImage(named: "lock"),
                 title: "Notifications & Privacy",
@@ -121,17 +122,20 @@ class SettingsViewController: UIViewController {
         backButton.tintColor = .black
         navigationItem.leftBarButtonItem = backButton
 
-        // a very complicated way of making the nav bar large title blue
+        // navigation bar appearance
         let appearance = UINavigationBarAppearance()
         appearance.largeTitleTextAttributes = [
             .foregroundColor: Colors.tcatBlue as Any
         ]
 
         let scrollEdgeAppearance = appearance.copy()
-        scrollEdgeAppearance.configureWithTransparentBackground()
+        scrollEdgeAppearance.backgroundColor = Colors.white
+        scrollEdgeAppearance.shadowColor = .clear
         navigationItem.scrollEdgeAppearance = scrollEdgeAppearance
 
-        navigationController?.navigationBar.scrollEdgeAppearance?.shadowColor = .clear
+        let standardAppearance = appearance.copy()
+        navigationItem.standardAppearance = standardAppearance
+
         navigationController?.navigationBar.prefersLargeTitles = true
     }
 }
@@ -145,8 +149,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate, In
         tableView.backgroundColor = Colors.white
         tableView.separatorColor = Colors.dividerTextField
         tableView.showsVerticalScrollIndicator = false
-
-        tableView.separatorStyle = .none
+        tableView.separatorInset = .zero
 
         let headerView = InformationTableHeaderView()
         headerView.delegate = self
@@ -162,9 +165,21 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate, In
         present(alertController, animated: true)
     }
 
+    // navigation handler for this page
     private func handleNavigation(action: NavigationAction) {
+        // customize pushed view controller's appearance
+        let appearance = UINavigationBarAppearance()
+        appearance.largeTitleTextAttributes = [
+            .foregroundColor: Colors.tcatBlue as Any
+        ]
+        let scrollEdgeAppearance = appearance.copy()
+        scrollEdgeAppearance.shadowColor = .clear
+
+        // custom action based on NavigationAction type
         switch action {
         case .push(let viewController):
+            scrollEdgeAppearance.backgroundColor = Colors.white
+            viewController.navigationItem.scrollEdgeAppearance = scrollEdgeAppearance
             navigationController?.pushViewController(viewController, animated: true)
         case .present(let viewController, let detents):
             let nav = UINavigationController(rootViewController: viewController)
@@ -205,10 +220,11 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate, In
             subtitle: rowItem.subtitle
         )
 
-        if indexPath.row < (rows.count - 1) {
-            cell.addSeparator(width: 360)
+        if indexPath.row == (rows.count - 1) {
+            cell.separatorInset.left = .infinity
         }
 
+        cell.selectionStyle = .none
         return cell
     }
 

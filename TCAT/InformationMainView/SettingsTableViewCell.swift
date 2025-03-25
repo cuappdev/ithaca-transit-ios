@@ -36,19 +36,6 @@ class SettingsTableViewCell: UITableViewCell {
         subtitleLabel.text = subtitle
     }
 
-    // MARK: - Add Separator
-    func addSeparator(width: Int) {
-        let separatorImageView = UIImageView(image: UIImage(named: "tableSeparator"))
-        contentView.addSubview(separatorImageView)
-
-        separatorImageView.snp.makeConstraints { make in
-            make.height.equalTo(1)
-            make.width.equalTo(width)
-            make.centerX.equalToSuperview()
-            make.centerY.equalTo(contentView.snp.bottom)
-        }
-    }
-
     // MARK: - View setup
     private func setUpUI() {
 

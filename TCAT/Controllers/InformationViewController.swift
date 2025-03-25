@@ -33,7 +33,7 @@ class InformationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let payload = AboutPageOpenedPayload()
+        let payload = SettingsPageOpenedPayload()
         TransitAnalytics.shared.log(payload)
 
         title = Constants.Titles.aboutUs
