@@ -21,10 +21,6 @@ class SettingsPrivacyViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Track Analytics
-        let payload = SettingsNotifPrivacyPageOpenedPayload()
-        TransitAnalytics.shared.log(payload)
-
         setUpNavigationItem()
         setUpView()
         setUpConstraints()
@@ -32,6 +28,9 @@ class SettingsPrivacyViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        // Track Analytics
+        let payload = SettingsNotifPrivacyPageOpenedPayload()
+        TransitAnalytics.shared.log(payload)
 
         updateView()
     }

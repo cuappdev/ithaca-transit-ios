@@ -21,13 +21,17 @@ class SettingsSupportViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Track Analytics
-        let payload = SettingsSupportPageOpenedPayload()
-        TransitAnalytics.shared.log(payload)
-
         setUpNavigationItem()
         setUpView()
         setUpConstraints()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // Track Analytics
+        let payload = SettingsSupportPageOpenedPayload()
+        TransitAnalytics.shared.log(payload)
     }
 
     private func setUpNavigationItem() {

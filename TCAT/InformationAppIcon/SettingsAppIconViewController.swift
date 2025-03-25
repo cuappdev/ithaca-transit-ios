@@ -16,13 +16,12 @@ struct AppIcon {
 }
 
 class SettingsAppIconViewController: UIViewController {
-    
+
     // MARK: - Properties (data)
     private let icons: [AppIcon] = [
         // icons go here
         AppIcon(name: "Default", icon: UIImage(named: "AppIcon-Icon-App-20x20@2x"))
     ]
-
 
     // MARK: - Properties (view)
     private let collView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())

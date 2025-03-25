@@ -23,10 +23,6 @@ class SettingsAboutViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Track Analytics
-        let payload = SettingsAboutPageOpenedPayload()
-        TransitAnalytics.shared.log(payload)
-
         setUpNavigationItem()
         setUpView()
         setUpConstraints()
@@ -35,6 +31,9 @@ class SettingsAboutViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        // Track Analytics
+        let payload = SettingsAboutPageOpenedPayload()
+        TransitAnalytics.shared.log(payload)
 
         scrollView.flashScrollIndicators()
         if !firstTimeLoading {

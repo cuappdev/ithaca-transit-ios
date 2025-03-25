@@ -65,7 +65,11 @@ class ServiceAlertsViewController: UIViewController {
         setupConstraints()
 
         getServiceAlerts()
-
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
         let payload = ServiceAlertsPayload()
         TransitAnalytics.shared.log(payload)
     }
