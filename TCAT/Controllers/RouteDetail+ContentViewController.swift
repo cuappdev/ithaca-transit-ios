@@ -93,7 +93,7 @@ class RouteDetailContentViewController: UIViewController {
         getBusLocations()
         
         // Debug Function
-        // createDebugBusIcon()
+        createDebugBusIcon()
 
         // Draw route
         drawMapRoute()
