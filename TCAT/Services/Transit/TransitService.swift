@@ -116,25 +116,55 @@ class TransitService: TransitServiceProtocol {
         ApiErrorHandler
     > {
         let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
-
-        let locationsInfo = departDirections.map { direction -> BusLocationsInfo in
-            let stopID = direction.stops.first?.id ?? "-1"
+        let locationsInfo = departDirections.compactMap { direction -> BusLocationsInfo? in
+            let stopId = direction.stops.first?.id ?? "-1"
+            guard let tripId = direction.tripIdentifiers?.first else { return nil }
             return BusLocationsInfo(
-                stopID: stopID,
-                routeID: String(direction.routeNumber),
-                tripIdentifiers: direction.tripIdentifiers!
+                stopId: stopId,
+                routeId: String(direction.routeNumber),
+                tripId: tripId
             )
         }
+        
+        // Usable for buses that actually have live tracking
+        let debugLocationsInfo: [BusLocationsInfo] = [
+            BusLocationsInfo(stopId: "3593", routeId: "30", tripId: "t3FC-b3ED-slC")
+        ]
 
         let body = GetBusLocationsBody(data: locationsInfo)
+        print("get bus locations body: \(body)")
+
         let request = TransitProvider.busLocations(body).makeRequest
+        print("get bus locations request: \(request)")
 
         return Timer.publish(every: refreshInterval, on: .main, in: .default)
             .autoconnect()
             .flatMap { _ in
-                self.networkManager.request(request, decodingType: [BusLocation].self)
+                self.networkManager.requestResponse(request)
+                    .handleEvents(receiveOutput: { data in
+                        if let responseString = String(data: data, encoding: .utf8) {
+                            print("raw api response \(responseString)")
+                        } else {
+                            print("error in printing api response")
+                        }
+                    }, receiveCompletion: { completion in
+                        if case .failure(let error) = completion {
+                            print("network error \(error)")
+                        }
+                    })
+                    .decode(type: BusLocationResponse.self, decoder: JSONDecoder())
+                    .map(\.data)
+                    .mapError { error in
+                        print("mapping error \(error)")
+                        return ApiErrorHandler(error: error)
+                    }
+                    .catch { error in
+                        Just<[BusLocation]>([])
+                            .setFailureType(to: ApiErrorHandler.self)
+                    }
             }
             .eraseToAnyPublisher()
+
     }
 
     func getDelay(
