@@ -30,7 +30,11 @@ enum ApiErrorHandler: LocalizedError {
 
     /// Error indicating that no search results were found.
     case noSearchResultsFound
-
+    
+    /// Initializes `ApiErrorHandler` from any `Error` object.
+    init(error: Error) {
+        self = .normalError(error)
+    }
     /// Provides a localized description for each error case.
     var errorDescription: String {
         switch self {

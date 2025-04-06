@@ -50,10 +50,18 @@ internal struct GetBusLocationsBody: Codable {
     var data: [BusLocationsInfo]
 }
 
+struct BusLocationResponse: Decodable {
+    let success: Bool
+    let data: [BusLocation]
+}
+
 internal struct BusLocationsInfo: Codable {
-    let stopID: String
-    let routeID: String
-    let tripIdentifiers: [String]
+    let stopId: String
+    let routeId: String
+    let tripId: String
+//    let stopID: String
+//    let routeID: String
+//    let tripIdentifiers: [String]
 }
 
 internal struct GetDelayBody: Codable {

@@ -136,8 +136,8 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
             bearingView.tag = increaseTapTargetTag
 
             if let existingIndicator = busIndicators.first(where: {
-                let markerID = getUserData(for: $0, key: Constants.BusUserData.vehicleID) as? Int
-                let busID = getUserData(for: bus, key: Constants.BusUserData.vehicleID) as? Int
+                let markerID = getUserData(for: $0, key: Constants.BusUserData.vehicleId) as? Int
+                let busID = getUserData(for: bus, key: Constants.BusUserData.vehicleId) as? Int
                 return markerID == busID
             }) { // Update Indicator
                 if let placement = calculatePlacement(position: bus.position, view: bearingView) {
@@ -176,9 +176,9 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
                     with: [
                         Constants.BusUserData.actualCoordinates: bus.position,
                         Constants.BusUserData.indicatorCoordinates: placement,
-                        Constants.BusUserData.vehicleID: getUserData(
+                        Constants.BusUserData.vehicleId: getUserData(
                             for: bus,
-                            key: Constants.BusUserData.vehicleID
+                            key: Constants.BusUserData.vehicleId
                         ) as? Int ?? -1
                     ]
                 )
@@ -196,13 +196,13 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
 extension RouteDetailContentViewController {
 
     /// Create fake bus for debugging and testing bus indicators
-    private func createDebugBusIcon() {
+    func createDebugBusIcon() {
         let bus = BusLocation(
             dataType: .validData,
             latitude: 42.4491411,
             longitude: -76.4836815,
-            routeID: 10,
-            vehicleID: 0
+            routeId: "10",
+            vehicleId: "0"
         )
         let coords = CLLocationCoordinate2D(latitude: 42.4491411, longitude: -76.4836815)
         let marker = GMSMarker(position: coords)
@@ -213,7 +213,7 @@ extension RouteDetailContentViewController {
             for: marker,
             with: [
             Constants.BusUserData.actualCoordinates: coords,
-            Constants.BusUserData.vehicleID: 123456789
+            Constants.BusUserData.vehicleId: 123456789
             ]
         )
         marker.map = mapView

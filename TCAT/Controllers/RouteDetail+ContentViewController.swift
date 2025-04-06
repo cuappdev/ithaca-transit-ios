@@ -90,7 +90,7 @@ class RouteDetailContentViewController: UIViewController {
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
 
         // Debug Function
-        // createDebugBusIcon()
+        createDebugBusIcon()
 
         // Draw route
         drawMapRoute()
@@ -236,12 +236,13 @@ class RouteDetailContentViewController: UIViewController {
         data.forEach { busLocation in
             switch busLocation.dataType {
             case .noData:
-                if !self.noDataRouteList.contains(busLocation.routeNumber) {
-                    self.noDataRouteList.append(busLocation.routeNumber)
+                let routeNumberAsString = Int(busLocation.routeNumber)
+                if !self.noDataRouteList.contains(routeNumberAsString ?? 0) {
+                    self.noDataRouteList.append(routeNumberAsString ?? 0)
                 }
 
             case .invalidData:
-                if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
+                if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: Int(busLocation.routeNumber) ?? 0) {
                     self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                 }
                 if self.noDataRouteList.isEmpty {
@@ -250,7 +251,7 @@ class RouteDetailContentViewController: UIViewController {
                 self.showBanner(Constants.Banner.trackingLater, status: .info)
 
             case .validData:
-                if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
+                if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: Int(busLocation.routeNumber) ?? 0) {
                     self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                 }
                 if self.noDataRouteList.isEmpty {
@@ -269,7 +270,7 @@ class RouteDetailContentViewController: UIViewController {
         // New bus coordinates
         let busCoords = CLLocationCoordinate2D(latitude: bus.latitude, longitude: bus.longitude)
         let existingBus = buses.first(where: {
-            return getUserData(for: $0, key: Constants.BusUserData.vehicleID) as? Int == bus.vehicleID
+            return getUserData(for: $0, key: Constants.BusUserData.vehicleId) as? Int == Int(bus.vehicleId)
         })
 
         if let newBus = existingBus { // If bus is already on map, update and animate change
@@ -284,7 +285,7 @@ class RouteDetailContentViewController: UIViewController {
                 for: newBus,
                 with: [
                     Constants.BusUserData.actualCoordinates: busCoords,
-                    Constants.BusUserData.vehicleID: bus.vehicleID
+                    Constants.BusUserData.vehicleId: bus.vehicleId
                 ]
             )
 
@@ -302,7 +303,7 @@ class RouteDetailContentViewController: UIViewController {
                 for: marker,
                 with: [
                     Constants.BusUserData.actualCoordinates: busCoords,
-                    Constants.BusUserData.vehicleID: bus.vehicleID
+                    Constants.BusUserData.vehicleId: bus.vehicleId
                 ]
             )
 
