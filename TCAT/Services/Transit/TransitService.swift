@@ -153,8 +153,15 @@ class TransitService: TransitServiceProtocol {
                 tripId: tripId
             )
         }
+        
+        // Usable for buses that actually have live tracking
+        let debugLocationsInfo: [BusLocationsInfo] = [
+            BusLocationsInfo(stopId: "3593", routeId: "30", tripId: "t3FC-b3ED-slC")
+        ]
 
         let body = GetBusLocationsBody(data: locationsInfo)
+        print("get bus locations body: \(body)")
+
         let request = TransitProvider.busLocations(body).makeRequest
         
         return self.networkManager.requestResponse(request)
