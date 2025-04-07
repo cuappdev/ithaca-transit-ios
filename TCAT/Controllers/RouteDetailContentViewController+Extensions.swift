@@ -101,7 +101,6 @@ extension RouteDetailContentViewController: CLLocationManagerDelegate {
 
 // MARK: - Google Map View Delegate Functions
 extension RouteDetailContentViewController: GMSMapViewDelegate {
-    
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
         guard let coordinates = getUserData(
             for: marker,
@@ -109,7 +108,6 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
         ) as? CLLocationCoordinate2D else { return true }
         let update = GMSCameraUpdate.setTarget(coordinates)
         mapView.animate(with: update)
-        
         return true
     }
     
@@ -129,7 +127,7 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
         return userData[key]
     }
     
-    /// Slightly modified MapView that only has one indicator; previous one created one for each change in position. (Only works for one bus)
+    /// Slightly modified MapView that only has one indicator; the previous version created one for each change in position. (Only works for one bus)
     func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
             // Updates bus stop circle sizes
             updateBusStopCircleSize()
@@ -236,7 +234,6 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
 //           // Updates bus stop circle sizes
 //           updateBusStopCircleSize()
 //       }
-    
 }
 
 // MARK: - Debug
