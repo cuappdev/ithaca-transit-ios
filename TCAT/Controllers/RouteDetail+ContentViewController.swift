@@ -94,10 +94,11 @@ class RouteDetailContentViewController: UIViewController {
         guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
         
+        // Live tracking for buses
         getBusLocations()
         
         // Debug Function
-//        createDebugBusIcon()
+        // createDebugBusIcon()
 
         // Draw route
         drawMapRoute()
@@ -190,7 +191,7 @@ class RouteDetailContentViewController: UIViewController {
     /// Fetch live-tracking information for the first direction's bus route.
     /// Handles connection issues with banners. Animated indicators.
     @objc func getBusLocations() {
-        // Handles frequency of API calls
+
         let currentTime = Date().timeIntervalSince1970
         if currentTime - prevFetchTime < minimumFetchInterval {
             return
@@ -213,7 +214,6 @@ class RouteDetailContentViewController: UIViewController {
             return
         }
 
-        // Fetch bus locations using the TransitService
         TransitService.shared.getBusLocations(route.directions)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
