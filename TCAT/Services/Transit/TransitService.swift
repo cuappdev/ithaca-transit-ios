@@ -37,10 +37,7 @@ protocol TransitServiceProtocol: AnyObject {
     ///   - directions: An array of `Direction` objects to track bus locations.
     ///   - refreshInterval: The time interval (in seconds) between data refreshes. Default is 5.0 seconds.
     /// - Returns: A publisher emitting an array of `BusLocation` objects or an `ApiErrorHandler`.
-    func getBusLocations(
-        _ directions: [Direction]
-    ) -> AnyPublisher<[BusLocation], ApiErrorHandler>
-//    func getBusLocations(_ directions: [Direction], refreshInterval: TimeInterval) -> AnyPublisher<[BusLocation], ApiErrorHandler>
+    func getBusLocations(_ directions: [Direction]) -> AnyPublisher<[BusLocation], ApiErrorHandler>
 
     /// Retrieves the delay time for a specific trip and stop at set intervals.
     /// - Parameters:
@@ -110,70 +107,11 @@ class TransitService: TransitServiceProtocol {
         let request = TransitProvider.appleSearch(body).makeRequest
         return networkManager.request(request, decodingType: AppleSearchResponse.self)
     }
-
-//    func getBusLocations(
-//        _ directions: [Direction],
-//        refreshInterval: TimeInterval = 15.0
-//    ) -> AnyPublisher<
-//        [BusLocation],
-//        ApiErrorHandler
-//    > {
-//        let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
-//        let locationsInfo = departDirections.compactMap { direction -> BusLocationsInfo? in
-//            let stopId = direction.stops.first?.id ?? "-1"
-//            guard let tripId = direction.tripIdentifiers?.first else { return nil }
-//            return BusLocationsInfo(
-//                stopId: stopId,
-//                routeId: String(direction.routeNumber),
-//                tripId: tripId
-//            )
-//        }
-//        // Usable for buses that actually have live tracking
-//        let debugLocationsInfo: [BusLocationsInfo] = [
-//            BusLocationsInfo(stopId: "3593", routeId: "30", tripId: "t3FC-b3ED-slC")
-//        ]
-//
-//        let body = GetBusLocationsBody(data: locationsInfo)
-//        print("get bus locations body: \(body)")
-//
-//        let request = TransitProvider.busLocations(body).makeRequest
-//        print("get bus locations request: \(request)")
-//
-//        return Timer.publish(every: refreshInterval, on: .main, in: .default)
-//            .autoconnect()
-//            .flatMap { _ in
-//                self.networkManager.requestResponse(request)
-//                    .handleEvents(receiveOutput: { data in
-//                        if let responseString = String(data: data, encoding: .utf8) {
-//                            print("raw api response \(responseString)")
-//                        } else {
-//                            print("error in printing api response")
-//                        }
-//                    }, receiveCompletion: { completion in
-//                        if case .failure(let error) = completion {
-//                            print("network error \(error)")
-//                        }
-//                    })
-//                    .decode(type: BusLocationResponse.self, decoder: JSONDecoder())
-//                    .map(\.data)
-//                    .mapError { error in
-//                        print("mapping error \(error)")
-//                        return ApiErrorHandler(error: error)
-//                    }
-//                    .catch { error in
-//                        Just<[BusLocation]>([])
-//                            .setFailureType(to: ApiErrorHandler.self)
-//                    }
-//            }
-//            .eraseToAnyPublisher()
-//
-//    }
     
     // Version without Timer (called it too frequently)
     func getBusLocations(
         _ directions: [Direction]
     ) -> AnyPublisher<[BusLocation], ApiErrorHandler> {
-        // Prepare the locations info for the API request
         let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
         let locationsInfo = departDirections.compactMap { direction -> BusLocationsInfo? in
             let stopId = direction.stops.first?.id ?? "-1"
@@ -186,34 +124,20 @@ class TransitService: TransitServiceProtocol {
         }
 
         let body = GetBusLocationsBody(data: locationsInfo)
-        print("get bus locations body: \(body)")
-
         let request = TransitProvider.busLocations(body).makeRequest
-        print("get bus locations request: \(request)")
-
+        
         return self.networkManager.requestResponse(request)
-            .handleEvents(receiveOutput: { data in
-                if let responseString = String(data: data, encoding: .utf8) {
-                    print("raw api response \(responseString)")
-                } else {
-                    print("error in printing api response")
-                }
-            }, receiveCompletion: { completion in
-                if case .failure(let error) = completion {
-                    print("network error \(error)")
-                }
-            })
             .decode(type: BusLocationResponse.self, decoder: JSONDecoder())
             .map(\.data)
             .mapError { error in
-                print("mapping error \(error)")
                 return ApiErrorHandler(error: error)
             }
-            .catch { error in
+            .catch { _ in
                 Just<[BusLocation]>([])
                     .setFailureType(to: ApiErrorHandler.self)
             }
             .eraseToAnyPublisher()
+
     }
 
     func getDelay(
