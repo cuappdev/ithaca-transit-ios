@@ -288,6 +288,7 @@ class RouteDetailContentViewController: UIViewController {
             return getUserData(for: $0, key: Constants.BusUserData.vehicleId) as? String == bus.vehicleId
         }) {
             let previousCoordinates = getUserData(for: existingBus, key: Constants.BusUserData.actualCoordinates) as? CLLocationCoordinate2D
+            
             // Only update marker if the coordinates have changed
             if previousCoordinates == nil || previousCoordinates!.latitude != busCoords.latitude || previousCoordinates!.longitude != busCoords.longitude {
 
