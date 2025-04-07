@@ -17,11 +17,6 @@ import UIKit
 
 class RouteDetailContentViewController: UIViewController {
     
-    // TEMPORARY
-    var busIndicator: GMSMarker?
-    var debounceTimer: Timer?
-    // END TEMPORARY
-    
     var drawerDisplayController: RouteDetailDrawerViewController?
 
     /// Keep track of statuses of bus routes throughout view life cycle
@@ -29,6 +24,7 @@ class RouteDetailContentViewController: UIViewController {
 
     /// General Variables
     var bounds = GMSCoordinateBounds()
+    var busIndicator: GMSMarker?
     var busIndicators = [GMSMarker]()
     var buses = [GMSMarker]()
     private var cancellables = Set<AnyCancellable>()
@@ -290,7 +286,6 @@ class RouteDetailContentViewController: UIViewController {
         }) {
             let previousCoordinates = getUserData(for: existingBus, key: Constants.BusUserData.actualCoordinates) as? CLLocationCoordinate2D
             
-            // Only update marker if the coordinates have changed
             if previousCoordinates == nil || previousCoordinates!.latitude != busCoords.latitude || previousCoordinates!.longitude != busCoords.longitude {
 
                 let latencyConstant = 0.25 // Allow time to receive new live bus request
@@ -309,7 +304,7 @@ class RouteDetailContentViewController: UIViewController {
                 
                 CATransaction.commit()
             }
-        } else {  // Otherwise, add bus to map
+        } else {
             guard let iconView = bus.iconView as? BusLocationView else { return }
             let marker = GMSMarker(position: busCoords)
             marker.appearAnimation = .pop
@@ -322,7 +317,6 @@ class RouteDetailContentViewController: UIViewController {
                     Constants.BusUserData.vehicleId: bus.vehicleId
                 ]
             )
-            
             setIndex(of: marker, with: .bussing)
             marker.map = mapView
             buses.append(marker)
@@ -334,8 +328,6 @@ class RouteDetailContentViewController: UIViewController {
     
     private func removeOldMarkers(_ busLocations: [BusLocation]) {
         let activeVehicleIds = Set(busLocations.map { $0.vehicleId })
-
-        // Remove any markers whose vehicleId isn't in the active list
         buses.filter { busMarker in
             let vehicleId = getUserData(for: busMarker, key: Constants.BusUserData.vehicleId) as? String
             return vehicleId != nil && !activeVehicleIds.contains(vehicleId!)
