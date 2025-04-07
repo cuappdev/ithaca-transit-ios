@@ -131,6 +131,9 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
     
     /// Slightly modified MapView that only has one indicator; previous one created one for each change in position. (Only works for one bus)
     func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
+            // Updates bus stop circle sizes
+            updateBusStopCircleSize()
+        
             guard let bus = buses.first else { return }
             
             if let existingIndicator = busIndicator {
@@ -169,10 +172,9 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
                 }
             }
         
-            // Updates bus stop circle sizes
-            updateBusStopCircleSize()
         }
-    
+
+// NOTE: Keep for future use (live tracking of multiple buses)
 //    func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
 //           buses.forEach { bus in
 //               let bearingView = UIImageView(image: #imageLiteral(resourceName: "indicator"))
@@ -234,6 +236,7 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
 //           // Updates bus stop circle sizes
 //           updateBusStopCircleSize()
 //       }
+    
 }
 
 // MARK: - Debug
