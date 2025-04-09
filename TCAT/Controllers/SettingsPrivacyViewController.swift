@@ -7,6 +7,7 @@
 //
 import Combine
 import Foundation
+import CoreLocation
 import SwiftUI
 
 class SettingsPrivacyViewController: UIViewController {
@@ -17,6 +18,8 @@ class SettingsPrivacyViewController: UIViewController {
     }()
 
     private var cancellables: Set<AnyCancellable> = []
+    
+    private let locationManager = CLLocationManager()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,15 +73,13 @@ class SettingsPrivacyViewController: UIViewController {
     }
 
     private func updateView() {
-//        let isLocationAllowed: Bool
-//        switch LocationManager.shared.authorizationStatus {
-//        case .authorizedWhenInUse, .authorizedAlways:
-//            isLocationAllowed = true
-//        default:
-//            isLocationAllowed = false
-//        }
-
-        let isLocationAllowed = UserDefaults.standard.bool(forKey: Constants.UserDefaults.isLocationAllowed)
+        let isLocationAllowed: Bool
+        switch locationManager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            isLocationAllowed = true
+        default:
+            isLocationAllowed = false
+        }
         hostingController.rootView.viewModel.isLocationAllowed = isLocationAllowed
 
         let isAnalyticsEnabled = UserDefaults.standard.bool(forKey: Constants.UserDefaults.isAnalyticsEnabled)

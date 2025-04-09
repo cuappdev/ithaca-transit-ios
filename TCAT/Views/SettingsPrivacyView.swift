@@ -11,7 +11,7 @@ import SwiftUI
 class SettingsPrivacyViewModel: ObservableObject {
 
     @Published var isLocationAllowed: Bool = false
-    @Published var isAnalyticsEnabled: Bool = false
+    @Published var isAnalyticsEnabled: Bool = true
     @Published var isNotificationsAllowed: Bool = false
 
 }
