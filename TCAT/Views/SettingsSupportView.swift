@@ -34,7 +34,6 @@ struct SettingsSupportView: View {
                             .frame(width: 24, height: 24)
                         Text("Shoot us an email")
                             .padding(EdgeInsets(top: 14, leading: 0, bottom: 14, trailing: 0))
-//                            .font(Font(UIFont.preferredFont(for: .body, weight: .semibold)))
                             .font(Font(UIFont.preferredFont(forTextStyle: .body)))
                         Spacer()
                     }
@@ -46,7 +45,8 @@ struct SettingsSupportView: View {
             .listRowSeparator(.hidden)
 
             SwiftUI.Section {
-                sectionHeader(title: "Frequently Asked Questions")
+                // TODO: Add FAQs
+                // sectionHeader(title: "Frequently Asked Questions")
             }
         }
         .listStyle(.plain)

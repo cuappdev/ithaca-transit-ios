@@ -342,60 +342,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		1C0296B02D77E2A6005B92FC /* InformationMainView */ = {
-			isa = PBXGroup;
-			children = (
-				1C0296A92D77D9F5005B92FC /* SettingsViewController.swift */,
-				1C0296B52D77E578005B92FC /* SettingsTableViewCell.swift */,
-			);
-			path = InformationMainView;
-			sourceTree = "<group>";
-		};
-		1C0296BE2D77E63B005B92FC /* InformationAppIcon */ = {
-			isa = PBXGroup;
-			children = (
-				1C0296D72D7FE055005B92FC /* SettingsAppIconViewController.swift */,
-				1C591B592D8DD1B500DDA71D /* SettingsAppIconCollectionViewCell.swift */,
-			);
-			path = InformationAppIcon;
-			sourceTree = "<group>";
-		};
-		1C0296C22D77E65D005B92FC /* InformationPrivacy */ = {
-			isa = PBXGroup;
-			children = (
-				1C0296D92D823F8D005B92FC /* SettingsPrivacyViewController.swift */,
-				1C0296EC2D87A690005B92FC /* SettingsPrivacyView.swift */,
-			);
-			path = InformationPrivacy;
-			sourceTree = "<group>";
-		};
-		1C0296C62D77E6A1005B92FC /* InformationAbout */ = {
-			isa = PBXGroup;
-			children = (
-				1C0296E82D87A3B4005B92FC /* SettingsAboutViewController.swift */,
-				1C0296E62D87A370005B92FC /* SettingsAboutMembersCarouselView.swift */,
-				1C0296E42D87A2E3005B92FC /* SettingsAboutHeaderView.swift */,
-			);
-			path = InformationAbout;
-			sourceTree = "<group>";
-		};
-		1C0296CA2D77E6CB005B92FC /* InformationSupport */ = {
-			isa = PBXGroup;
-			children = (
-				1C591B4E2D8D22BD00DDA71D /* SettingsSupportViewController.swift */,
-				1C591B4A2D8D226300DDA71D /* SettingsSupportView.swift */,
-			);
-			path = InformationSupport;
-			sourceTree = "<group>";
-		};
-		1C0296DF2D82408F005B92FC /* SettingsFave */ = {
-			isa = PBXGroup;
-			children = (
-				1C0296E02D8240A7005B92FC /* SettingsFaveViewController.swift */,
-			);
-			path = SettingsFave;
-			sourceTree = "<group>";
-		};
 		2292486621B891790004279C /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -441,6 +387,8 @@
 				2E9416762BC61679003DEB44 /* RouteTableViewCell.swift */,
 				2E94166D2BC61678003DEB44 /* ServiceAlertTableViewCell.swift */,
 				2E9416722BC61679003DEB44 /* SmallDetailTableViewCell.swift */,
+				1C0296B52D77E578005B92FC /* SettingsTableViewCell.swift */,
+				1C591B592D8DD1B500DDA71D /* SettingsAppIconCollectionViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -467,6 +415,12 @@
 				2E94168F2BC616B9003DEB44 /* ServiceAlertsViewController.swift */,
 				2E94168B2BC616B9003DEB44 /* SearchResultsViewController.swift */,
 				2E9416882BC616B9003DEB44 /* StopPickerViewController.swift */,
+				1C0296A92D77D9F5005B92FC /* SettingsViewController.swift */,
+				1C0296E82D87A3B4005B92FC /* SettingsAboutViewController.swift */,
+				1C0296D72D7FE055005B92FC /* SettingsAppIconViewController.swift */,
+				1C0296D92D823F8D005B92FC /* SettingsPrivacyViewController.swift */,
+				1C591B4E2D8D22BD00DDA71D /* SettingsSupportViewController.swift */,
+				1C0296E02D8240A7005B92FC /* SettingsFaveViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -564,6 +518,10 @@
 				1C0296F32D8B609F005B92FC /* ButtonView.swift */,
 				1C0296F12D8B603F005B92FC /* PillButtonView.swift */,
 				1C0296EF2D8B5CF4005B92FC /* ContainerView.swift */,
+				1C0296E62D87A370005B92FC /* SettingsAboutMembersCarouselView.swift */,
+				1C0296E42D87A2E3005B92FC /* SettingsAboutHeaderView.swift */,
+				1C0296EC2D87A690005B92FC /* SettingsPrivacyView.swift */,
+				1C591B4A2D8D226300DDA71D /* SettingsSupportView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -681,12 +639,6 @@
 				2E94166C2BC61604003DEB44 /* Cells */,
 				2E9416FD2BC61CAE003DEB44 /* Views */,
 				2E9416822BC6168C003DEB44 /* Controllers */,
-				1C0296B02D77E2A6005B92FC /* InformationMainView */,
-				1C0296C62D77E6A1005B92FC /* InformationAbout */,
-				1C0296BE2D77E63B005B92FC /* InformationAppIcon */,
-				1C0296C22D77E65D005B92FC /* InformationPrivacy */,
-				1C0296CA2D77E6CB005B92FC /* InformationSupport */,
-				1C0296DF2D82408F005B92FC /* SettingsFave */,
 				2E94165E2BC60A3B003DEB44 /* Ecosystem */,
 				2E9416AB2BC616DE003DEB44 /* Models */,
 				FDE68D292C988CDB00024A69 /* Services */,
