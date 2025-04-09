@@ -290,9 +290,10 @@ class HomeOptionsCardViewController: UIViewController {
 
     /// Open information screen
     @objc private func openInformationScreen() {
-        let informationViewController = InformationViewController()
-        let navigationVC = CustomNavigationController(rootViewController: informationViewController)
-        present(navigationVC, animated: true)
+        let informationViewController = SettingsViewController()
+        navigationController?.pushViewController(informationViewController, animated: true)
+//        let navigationVC = CustomNavigationController(rootViewController: informationViewController)
+//        present(navigationVC, animated: true)
     }
 
     // MARK: - Get Search Results

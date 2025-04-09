@@ -7,6 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C0296AA2D77D9F5005B92FC /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0296A92D77D9F5005B92FC /* SettingsViewController.swift */; };
+		1C0296B62D77E578005B92FC /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0296B52D77E578005B92FC /* SettingsTableViewCell.swift */; };
+		1C0296D82D7FE055005B92FC /* SettingsAppIconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0296D72D7FE055005B92FC /* SettingsAppIconViewController.swift */; };
+		1C0296DA2D823F8D005B92FC /* SettingsPrivacyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0296D92D823F8D005B92FC /* SettingsPrivacyViewController.swift */; };
+		1C0296E12D8240A7005B92FC /* SettingsFaveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0296E02D8240A7005B92FC /* SettingsFaveViewController.swift */; };
+		1C0296E52D87A2EA005B92FC /* SettingsAboutHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0296E42D87A2E3005B92FC /* SettingsAboutHeaderView.swift */; };
+		1C0296E72D87A37D005B92FC /* SettingsAboutMembersCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0296E62D87A370005B92FC /* SettingsAboutMembersCarouselView.swift */; };
+		1C0296E92D87A3BA005B92FC /* SettingsAboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0296E82D87A3B4005B92FC /* SettingsAboutViewController.swift */; };
+		1C0296ED2D87A696005B92FC /* SettingsPrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0296EC2D87A690005B92FC /* SettingsPrivacyView.swift */; };
+		1C0296F02D8B5CFC005B92FC /* ContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0296EF2D8B5CF4005B92FC /* ContainerView.swift */; };
+		1C0296F22D8B604B005B92FC /* PillButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0296F12D8B603F005B92FC /* PillButtonView.swift */; };
+		1C0296F42D8B60A3005B92FC /* ButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0296F32D8B609F005B92FC /* ButtonView.swift */; };
+		1C591B4B2D8D226300DDA71D /* SettingsSupportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B4A2D8D226300DDA71D /* SettingsSupportView.swift */; };
+		1C591B4F2D8D22BD00DDA71D /* SettingsSupportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B4E2D8D22BD00DDA71D /* SettingsSupportViewController.swift */; };
+		1C591B5A2D8DD1B500DDA71D /* SettingsAppIconCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B592D8DD1B500DDA71D /* SettingsAppIconCollectionViewCell.swift */; };
 		22948BFD221B75C5003FC43F /* RequestModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22948BFB221B75C5003FC43F /* RequestModels.swift */; };
 		28EA3E17A0C473892F5506EC /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 542B073726DFD1EE044EA97F /* Pods_TCAT.framework */; };
 		2E70434E2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2E70434D2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy */; };
@@ -146,6 +161,21 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1C0296A92D77D9F5005B92FC /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		1C0296B52D77E578005B92FC /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
+		1C0296D72D7FE055005B92FC /* SettingsAppIconViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAppIconViewController.swift; sourceTree = "<group>"; };
+		1C0296D92D823F8D005B92FC /* SettingsPrivacyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPrivacyViewController.swift; sourceTree = "<group>"; };
+		1C0296E02D8240A7005B92FC /* SettingsFaveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFaveViewController.swift; sourceTree = "<group>"; };
+		1C0296E42D87A2E3005B92FC /* SettingsAboutHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutHeaderView.swift; sourceTree = "<group>"; };
+		1C0296E62D87A370005B92FC /* SettingsAboutMembersCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutMembersCarouselView.swift; sourceTree = "<group>"; };
+		1C0296E82D87A3B4005B92FC /* SettingsAboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutViewController.swift; sourceTree = "<group>"; };
+		1C0296EC2D87A690005B92FC /* SettingsPrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPrivacyView.swift; sourceTree = "<group>"; };
+		1C0296EF2D8B5CF4005B92FC /* ContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerView.swift; sourceTree = "<group>"; };
+		1C0296F12D8B603F005B92FC /* PillButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PillButtonView.swift; sourceTree = "<group>"; };
+		1C0296F32D8B609F005B92FC /* ButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonView.swift; sourceTree = "<group>"; };
+		1C591B4A2D8D226300DDA71D /* SettingsSupportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSupportView.swift; sourceTree = "<group>"; };
+		1C591B4E2D8D22BD00DDA71D /* SettingsSupportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSupportViewController.swift; sourceTree = "<group>"; };
+		1C591B592D8DD1B500DDA71D /* SettingsAppIconCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAppIconCollectionViewCell.swift; sourceTree = "<group>"; };
 		22948BFB221B75C5003FC43F /* RequestModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestModels.swift; sourceTree = "<group>"; };
 		2E70434D2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2E94165F2BC60A59003DEB44 /* UpliftQueries.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UpliftQueries.graphql; sourceTree = "<group>"; };
@@ -357,6 +387,8 @@
 				2E9416762BC61679003DEB44 /* RouteTableViewCell.swift */,
 				2E94166D2BC61678003DEB44 /* ServiceAlertTableViewCell.swift */,
 				2E9416722BC61679003DEB44 /* SmallDetailTableViewCell.swift */,
+				1C0296B52D77E578005B92FC /* SettingsTableViewCell.swift */,
+				1C591B592D8DD1B500DDA71D /* SettingsAppIconCollectionViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -383,6 +415,12 @@
 				2E94168F2BC616B9003DEB44 /* ServiceAlertsViewController.swift */,
 				2E94168B2BC616B9003DEB44 /* SearchResultsViewController.swift */,
 				2E9416882BC616B9003DEB44 /* StopPickerViewController.swift */,
+				1C0296A92D77D9F5005B92FC /* SettingsViewController.swift */,
+				1C0296E82D87A3B4005B92FC /* SettingsAboutViewController.swift */,
+				1C0296D72D7FE055005B92FC /* SettingsAppIconViewController.swift */,
+				1C0296D92D823F8D005B92FC /* SettingsPrivacyViewController.swift */,
+				1C591B4E2D8D22BD00DDA71D /* SettingsSupportViewController.swift */,
+				1C0296E02D8240A7005B92FC /* SettingsFaveViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -477,6 +515,13 @@
 				2E9417022BC61CF1003DEB44 /* SearchBarView.swift */,
 				2E9417062BC61CF1003DEB44 /* SummaryView.swift */,
 				2E94170C2BC61CF1003DEB44 /* WalkWithDistanceIcon.swift */,
+				1C0296F32D8B609F005B92FC /* ButtonView.swift */,
+				1C0296F12D8B603F005B92FC /* PillButtonView.swift */,
+				1C0296EF2D8B5CF4005B92FC /* ContainerView.swift */,
+				1C0296E62D87A370005B92FC /* SettingsAboutMembersCarouselView.swift */,
+				1C0296E42D87A2E3005B92FC /* SettingsAboutHeaderView.swift */,
+				1C0296EC2D87A690005B92FC /* SettingsPrivacyView.swift */,
+				1C591B4A2D8D226300DDA71D /* SettingsSupportView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -592,13 +637,13 @@
 				2E70434D2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy */,
 				2E9416662BC615B0003DEB44 /* Base */,
 				2E94166C2BC61604003DEB44 /* Cells */,
+				2E9416FD2BC61CAE003DEB44 /* Views */,
 				2E9416822BC6168C003DEB44 /* Controllers */,
 				2E94165E2BC60A3B003DEB44 /* Ecosystem */,
 				2E9416AB2BC616DE003DEB44 /* Models */,
 				FDE68D292C988CDB00024A69 /* Services */,
 				2E9416C72BC61763003DEB44 /* Supporting */,
 				2E9416E02BC618E6003DEB44 /* Utils */,
-				2E9416FD2BC61CAE003DEB44 /* Views */,
 			);
 			path = TCAT;
 			sourceTree = "<group>";
@@ -842,7 +887,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C0296AA2D77D9F5005B92FC /* SettingsViewController.swift in Sources */,
 				2E9416982BC616B9003DEB44 /* RouteDetail+DrawerViewController.swift in Sources */,
+				1C0296F42D8B60A3005B92FC /* ButtonView.swift in Sources */,
+				1C0296DA2D823F8D005B92FC /* SettingsPrivacyViewController.swift in Sources */,
 				2E94169D2BC616B9003DEB44 /* FavoritesTableViewController.swift in Sources */,
 				2E9416692BC615DF003DEB44 /* AppDelegate.swift in Sources */,
 				2E9FFA802BC673240051793C /* CapacityFields.graphql.swift in Sources */,
@@ -855,6 +903,7 @@
 				FDE68D1E2C97E24900024A69 /* NetworkManager.swift in Sources */,
 				2E9417162BC61CF1003DEB44 /* SearchBarView.swift in Sources */,
 				2E9FFA882BC673240051793C /* Amenity.graphql.swift in Sources */,
+				1C0296B62D77E578005B92FC /* SettingsTableViewCell.swift in Sources */,
 				2E9FFA852BC673240051793C /* AmenityType.graphql.swift in Sources */,
 				2E9416F02BC61984003DEB44 /* Extensions+Shared.swift in Sources */,
 				2E9FFA8F2BC673240051793C /* SchemaMetadata.graphql.swift in Sources */,
@@ -866,6 +915,7 @@
 				2E94167F2BC61679003DEB44 /* PlaceTableViewCell.swift in Sources */,
 				2E9417192BC61CF1003DEB44 /* PhraseLabelFooterView.swift in Sources */,
 				2E9416FC2BC61984003DEB44 /* Phrases.swift in Sources */,
+				1C0296E92D87A3BA005B92FC /* SettingsAboutViewController.swift in Sources */,
 				2E9417132BC61CF1003DEB44 /* InformationTableHeaderView.swift in Sources */,
 				2E9416A42BC616B9003DEB44 /* FavoritesViewController.swift in Sources */,
 				2E9416A82BC616B9003DEB44 /* RouteDetailDrawerViewController+Extensions.swift in Sources */,
@@ -873,6 +923,7 @@
 				2E9416A12BC616B9003DEB44 /* RouteOptionsViewController.swift in Sources */,
 				2E9416BF2BC61731003DEB44 /* Direction.swift in Sources */,
 				2EC1F5122BC66972001D9F66 /* ApolloClientProtocol.swift in Sources */,
+				1C591B4B2D8D226300DDA71D /* SettingsSupportView.swift in Sources */,
 				2E9FFA902BC673240051793C /* UpliftAPI.graphql.swift in Sources */,
 				2E9416BD2BC61731003DEB44 /* LocationObject.swift in Sources */,
 				2E9416802BC61679003DEB44 /* RouteTableViewCell.swift in Sources */,
@@ -884,24 +935,30 @@
 				2E9417142BC61CF1003DEB44 /* RouteLine.swift in Sources */,
 				2E9FFA8C2BC673240051793C /* OpenHours.graphql.swift in Sources */,
 				2E9417182BC61CF1003DEB44 /* RouteDiagramSegment.swift in Sources */,
+				1C0296F22D8B604B005B92FC /* PillButtonView.swift in Sources */,
 				2E9416C32BC61731003DEB44 /* SearchManager.swift in Sources */,
 				2E9417212BC61CF1003DEB44 /* NotificationBannerView.swift in Sources */,
 				2E9FFA832BC673240051793C /* OpenHoursFields.graphql.swift in Sources */,
 				2E9416972BC616B9003DEB44 /* RouteDetail+ContentViewController.swift in Sources */,
+				1C0296E12D8240A7005B92FC /* SettingsFaveViewController.swift in Sources */,
 				FDE68D262C97FC0D00024A69 /* TransitService.swift in Sources */,
 				2E9416F62BC61984003DEB44 /* Time.swift in Sources */,
 				2E9FFA8D2BC673240051793C /* Query.graphql.swift in Sources */,
 				2E9416792BC61679003DEB44 /* AddFavoritesCollectionViewCell.swift in Sources */,
+				1C0296E52D87A2EA005B92FC /* SettingsAboutHeaderView.swift in Sources */,
 				2E9FFA812BC673240051793C /* FacilityFields.graphql.swift in Sources */,
+				1C591B5A2D8DD1B500DDA71D /* SettingsAppIconCollectionViewCell.swift in Sources */,
 				2E94171F2BC61CF1003DEB44 /* BusIcon.swift in Sources */,
 				FDA3439F2CB6DF5800608A1A /* NetworkMonitor.swift in Sources */,
 				2E9417242BC61CF1003DEB44 /* DetailIconView.swift in Sources */,
 				2E94171A2BC61CF1003DEB44 /* SummaryView.swift in Sources */,
 				2E9416992BC616B9003DEB44 /* RouteDetailContentViewController+Extensions.swift in Sources */,
 				2E9416F12BC61984003DEB44 /* Shared.swift in Sources */,
+				1C0296F02D8B5CFC005B92FC /* ContainerView.swift in Sources */,
 				2E9FFA892BC673240051793C /* Capacity.graphql.swift in Sources */,
 				2E9416BB2BC61731003DEB44 /* ServiceAlert.swift in Sources */,
 				FDE68D222C97EF6200024A69 /* ApiEndpoint.swift in Sources */,
+				1C591B4F2D8D22BD00DDA71D /* SettingsSupportViewController.swift in Sources */,
 				2EC1F5162BC66CBA001D9F66 /* Publishers.swift in Sources */,
 				2E94169E2BC616B9003DEB44 /* SearchResultsViewController.swift in Sources */,
 				2E9FFA822BC673240051793C /* GymFields.graphql.swift in Sources */,
@@ -915,6 +972,7 @@
 				2E9416F52BC61984003DEB44 /* Extensions+App.swift in Sources */,
 				2E9416782BC61679003DEB44 /* LargeDetailTableViewCell.swift in Sources */,
 				2E94169F2BC616B9003DEB44 /* HomeOptionsCardViewController.swift in Sources */,
+				1C0296ED2D87A696005B92FC /* SettingsPrivacyView.swift in Sources */,
 				2E94169A2BC616B9003DEB44 /* CustomNavigationController.swift in Sources */,
 				2E9416DE2BC618DA003DEB44 /* Constants.swift in Sources */,
 				2E9FFA862BC673240051793C /* CourtType.graphql.swift in Sources */,
@@ -931,7 +989,9 @@
 				2E9416F22BC61984003DEB44 /* Styles.swift in Sources */,
 				2E9416DF2BC618DA003DEB44 /* TransitEnvironment.swift in Sources */,
 				2E9FFA8B2BC673240051793C /* Gym.graphql.swift in Sources */,
+				1C0296D82D7FE055005B92FC /* SettingsAppIconViewController.swift in Sources */,
 				2E9FFA8E2BC673240051793C /* SchemaConfiguration.swift in Sources */,
+				1C0296E72D87A37D005B92FC /* SettingsAboutMembersCarouselView.swift in Sources */,
 				2E9416EF2BC61984003DEB44 /* EventPayload.swift in Sources */,
 				FDE68D202C97EBBE00024A69 /* ApiErrorHandler.swift in Sources */,
 				22948BFD221B75C5003FC43F /* RequestModels.swift in Sources */,

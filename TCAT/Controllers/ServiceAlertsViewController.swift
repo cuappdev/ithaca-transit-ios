@@ -44,6 +44,9 @@ class ServiceAlertsViewController: UIViewController {
 
         title = Constants.Titles.serviceAlerts
 
+        // Temporary change for settings page (make nav title prefer large to fit settings page theme)
+        navigationController?.navigationBar.prefersLargeTitles = true
+
         view.backgroundColor = Colors.backgroundWash
         tableView.backgroundColor = view.backgroundColor
         tableView.dataSource = self
@@ -62,7 +65,11 @@ class ServiceAlertsViewController: UIViewController {
         setupConstraints()
 
         getServiceAlerts()
-
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
         let payload = ServiceAlertsPayload()
         TransitAnalytics.shared.log(payload)
     }

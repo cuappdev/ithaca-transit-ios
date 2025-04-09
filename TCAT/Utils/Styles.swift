@@ -31,6 +31,7 @@ struct Colors {
     // MARK: - Constants
     static let black = UIColor.black
     static let white = UIColor.white
+    static let carouselGray = UIColor(hex: "EFF1F4")
 
 }
 
