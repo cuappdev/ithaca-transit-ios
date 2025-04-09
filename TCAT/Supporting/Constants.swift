@@ -308,6 +308,7 @@ struct Constants {
         /// Analytics variables for Settings Page / Privacy
         static let isAnalyticsEnabled = "isAnalyticsEnabled"
         static let isLocationAllowed = "isLocationAllowed"
+        static let isNotificationsAllowed = "isNotificationsAllowed"
         static let activeIcon = "activeIcon"
     }
 

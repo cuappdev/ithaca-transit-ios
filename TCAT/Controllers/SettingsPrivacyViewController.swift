@@ -18,7 +18,7 @@ class SettingsPrivacyViewController: UIViewController {
     }()
 
     private var cancellables: Set<AnyCancellable> = []
-    
+
     private let locationManager = CLLocationManager()
 
     override func viewDidLoad() {
@@ -60,6 +60,13 @@ class SettingsPrivacyViewController: UIViewController {
                 UserDefaults.standard.set(isLocationAllowed, forKey: Constants.UserDefaults.isLocationAllowed)
             }
             .store(in: &cancellables)
+        
+        hostingController.rootView.viewModel.$isNotificationsAllowed
+            .dropFirst()
+            .sink { isNotificationsAllowed in
+                UserDefaults.standard.set(isNotificationsAllowed, forKey: Constants.UserDefaults.isNotificationsAllowed)
+            }
+            .store(in: &cancellables)
     }
 
     private func setUpConstraints() {
@@ -73,6 +80,7 @@ class SettingsPrivacyViewController: UIViewController {
     }
 
     private func updateView() {
+        // location update
         let isLocationAllowed: Bool
         switch locationManager.authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
@@ -82,6 +90,22 @@ class SettingsPrivacyViewController: UIViewController {
         }
         hostingController.rootView.viewModel.isLocationAllowed = isLocationAllowed
 
+        // notifications update
+        var isNotificationsAllowed = false
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            switch settings.authorizationStatus {
+            case .authorized:
+                isNotificationsAllowed = true
+            default:
+                isNotificationsAllowed = false
+            }
+
+            DispatchQueue.main.async {
+                self.hostingController.rootView.viewModel.isNotificationsAllowed = isNotificationsAllowed
+            }
+        }
+
+        // analytics update
         let isAnalyticsEnabled = UserDefaults.standard.bool(forKey: Constants.UserDefaults.isAnalyticsEnabled)
         hostingController.rootView.viewModel.isAnalyticsEnabled = isAnalyticsEnabled
     }
