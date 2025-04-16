@@ -10,6 +10,11 @@ import Pulley
 import SnapKit
 import UIKit
 
+struct Ball {
+    let name: String
+    let image: UIImage
+}
+
 class EcosystemViewController: UIViewController {
 
     // MARK: - Properties (views)
@@ -20,8 +25,15 @@ class EcosystemViewController: UIViewController {
 
     // MARK: - Properties (data)
     private let tabSize = CGSize(width: 32, height: 4)
-    private let balls = []
-    private let cards = []
+    private var currentTab = "Favorites"
+    private let balls: [Ball] = [
+        Ball(name: "Favorites", image: <#T##UIImage#>),
+        Ball(name: "Gyms", image: <#T##UIImage#>),
+        Ball(name: "Eateries", image: <#T##UIImage#>),
+        Ball(name: "Libraries", image: <#T##UIImage#>),
+        Ball(name: "Printers", image: <#T##UIImage#>)
+    ]
+    private let cards: [Any] = []
 
     // MARK: - Lifecycle
     override func viewDidLoad() {

@@ -13,6 +13,10 @@
 		1C591B6E2DB05AD100DDA71D /* Uplift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B6D2DB05ACC00DDA71D /* Uplift.swift */; };
 		1C591B702DB05AF900DDA71D /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B6F2DB05AF300DDA71D /* Library.swift */; };
 		1C591B722DB05AFE00DDA71D /* Printer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B712DB05AFC00DDA71D /* Printer.swift */; };
+		1C591B742DB05FF000DDA71D /* EcosysEateryCardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B732DB05FF000DDA71D /* EcosysEateryCardTableViewCell.swift */; };
+		1C591B7A2DB0612D00DDA71D /* EcosysUpliftCardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B792DB0612D00DDA71D /* EcosysUpliftCardTableViewCell.swift */; };
+		1C591B7C2DB0613C00DDA71D /* EcosysLibraryCardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B7B2DB0613C00DDA71D /* EcosysLibraryCardTableViewCell.swift */; };
+		1C591B7E2DB0614B00DDA71D /* EcosysPrinterCardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B7D2DB0614B00DDA71D /* EcosysPrinterCardTableViewCell.swift */; };
 		22948BFD221B75C5003FC43F /* RequestModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22948BFB221B75C5003FC43F /* RequestModels.swift */; };
 		28EA3E17A0C473892F5506EC /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 542B073726DFD1EE044EA97F /* Pods_TCAT.framework */; };
 		2E70434E2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2E70434D2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy */; };
@@ -158,6 +162,10 @@
 		1C591B6D2DB05ACC00DDA71D /* Uplift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uplift.swift; sourceTree = "<group>"; };
 		1C591B6F2DB05AF300DDA71D /* Library.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
 		1C591B712DB05AFC00DDA71D /* Printer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Printer.swift; sourceTree = "<group>"; };
+		1C591B732DB05FF000DDA71D /* EcosysEateryCardTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosysEateryCardTableViewCell.swift; sourceTree = "<group>"; };
+		1C591B792DB0612D00DDA71D /* EcosysUpliftCardTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosysUpliftCardTableViewCell.swift; sourceTree = "<group>"; };
+		1C591B7B2DB0613C00DDA71D /* EcosysLibraryCardTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosysLibraryCardTableViewCell.swift; sourceTree = "<group>"; };
+		1C591B7D2DB0614B00DDA71D /* EcosysPrinterCardTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosysPrinterCardTableViewCell.swift; sourceTree = "<group>"; };
 		22948BFB221B75C5003FC43F /* RequestModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestModels.swift; sourceTree = "<group>"; };
 		2E70434D2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2E94165F2BC60A59003DEB44 /* UpliftQueries.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UpliftQueries.graphql; sourceTree = "<group>"; };
@@ -329,6 +337,10 @@
 			children = (
 				1C591B672DA72A6D00DDA71D /* EcosystemViewController.swift */,
 				1C591B692DB058F100DDA71D /* EcosystemFilterBallCollectionViewCell.swift */,
+				1C591B732DB05FF000DDA71D /* EcosysEateryCardTableViewCell.swift */,
+				1C591B792DB0612D00DDA71D /* EcosysUpliftCardTableViewCell.swift */,
+				1C591B7B2DB0613C00DDA71D /* EcosysLibraryCardTableViewCell.swift */,
+				1C591B7D2DB0614B00DDA71D /* EcosysPrinterCardTableViewCell.swift */,
 			);
 			path = EcoSysUI;
 			sourceTree = "<group>";
@@ -887,9 +899,11 @@
 				2E9FFA8F2BC673240051793C /* SchemaMetadata.graphql.swift in Sources */,
 				2E9416A22BC616B9003DEB44 /* ServiceAlertsViewController.swift in Sources */,
 				2E9416F42BC61984003DEB44 /* Analytics.swift in Sources */,
+				1C591B742DB05FF000DDA71D /* EcosysEateryCardTableViewCell.swift in Sources */,
 				2E9416A62BC616B9003DEB44 /* OnboardingViewController.swift in Sources */,
 				2E9416A72BC616B9003DEB44 /* ParentHomeViewController.swift in Sources */,
 				2E94167D2BC61679003DEB44 /* FavoritesCollectionViewCell.swift in Sources */,
+				1C591B7C2DB0613C00DDA71D /* EcosysLibraryCardTableViewCell.swift in Sources */,
 				2E94167F2BC61679003DEB44 /* PlaceTableViewCell.swift in Sources */,
 				2E9417192BC61CF1003DEB44 /* PhraseLabelFooterView.swift in Sources */,
 				1C591B6A2DB058F100DDA71D /* EcosystemFilterBallCollectionViewCell.swift in Sources */,
@@ -949,6 +963,7 @@
 				2E9FFA862BC673240051793C /* CourtType.graphql.swift in Sources */,
 				2E94167E2BC61679003DEB44 /* BusStopTableViewCell.swift in Sources */,
 				2E94167B2BC61679003DEB44 /* NotificationToggleTableViewCell.swift in Sources */,
+				1C591B7A2DB0612D00DDA71D /* EcosysUpliftCardTableViewCell.swift in Sources */,
 				2E9416BE2BC61731003DEB44 /* BusLocation.swift in Sources */,
 				2EC1F5142BC66A19001D9F66 /* ApolloNetwork.swift in Sources */,
 				2E9416C02BC61731003DEB44 /* Route.swift in Sources */,
@@ -979,6 +994,7 @@
 				2E94169C2BC616B9003DEB44 /* RouteOptionsViewController+Extensions.swift in Sources */,
 				2E9416F92BC61984003DEB44 /* Loader.swift in Sources */,
 				2E9417172BC61CF1003DEB44 /* HeaderView.swift in Sources */,
+				1C591B7E2DB0614B00DDA71D /* EcosysPrinterCardTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

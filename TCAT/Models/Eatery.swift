@@ -6,3 +6,6 @@
 //  Copyright © 2025 Cornell AppDev. All rights reserved.
 //
 
+struct Eatery: Codable {
+    
+}
