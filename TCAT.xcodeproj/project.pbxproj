@@ -335,14 +335,42 @@
 		1C591B652DA7294C00DDA71D /* EcoSysUI */ = {
 			isa = PBXGroup;
 			children = (
+				1C591B812DB0642A00DDA71D /* VC */,
+				1C591B832DB0643E00DDA71D /* Models */,
+				1C591B822DB0643000DDA71D /* Cell */,
+			);
+			path = EcoSysUI;
+			sourceTree = "<group>";
+		};
+		1C591B812DB0642A00DDA71D /* VC */ = {
+			isa = PBXGroup;
+			children = (
 				1C591B672DA72A6D00DDA71D /* EcosystemViewController.swift */,
+			);
+			path = VC;
+			sourceTree = "<group>";
+		};
+		1C591B822DB0643000DDA71D /* Cell */ = {
+			isa = PBXGroup;
+			children = (
 				1C591B692DB058F100DDA71D /* EcosystemFilterBallCollectionViewCell.swift */,
 				1C591B732DB05FF000DDA71D /* EcosysEateryCardTableViewCell.swift */,
 				1C591B792DB0612D00DDA71D /* EcosysUpliftCardTableViewCell.swift */,
 				1C591B7B2DB0613C00DDA71D /* EcosysLibraryCardTableViewCell.swift */,
 				1C591B7D2DB0614B00DDA71D /* EcosysPrinterCardTableViewCell.swift */,
 			);
-			path = EcoSysUI;
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		1C591B832DB0643E00DDA71D /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1C591B712DB05AFC00DDA71D /* Printer.swift */,
+				1C591B6F2DB05AF300DDA71D /* Library.swift */,
+				1C591B6D2DB05ACC00DDA71D /* Uplift.swift */,
+				1C591B6B2DB05AA600DDA71D /* Eatery.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		2292486621B891790004279C /* Network */ = {
@@ -423,10 +451,6 @@
 		2E9416AB2BC616DE003DEB44 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				1C591B712DB05AFC00DDA71D /* Printer.swift */,
-				1C591B6F2DB05AF300DDA71D /* Library.swift */,
-				1C591B6D2DB05ACC00DDA71D /* Uplift.swift */,
-				1C591B6B2DB05AA600DDA71D /* Eatery.swift */,
 				2E9416B52BC61731003DEB44 /* AppleSearchResponse.swift */,
 				2E9416B12BC61731003DEB44 /* BusLocation.swift */,
 				2E9416B82BC61731003DEB44 /* BusPath.swift */,
@@ -711,7 +735,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1010;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "Cornell AppDev";
 				TargetAttributes = {
 					449A7C741D80D0E80019300C = {

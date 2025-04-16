@@ -15,25 +15,32 @@ struct Ball {
     let image: UIImage
 }
 
+enum CardType {
+    case normal
+    case favorite
+}
+
 class EcosystemViewController: UIViewController {
 
     // MARK: - Properties (views)
-    private let titleLabel = UILabel()
     private let tabView = UIView()
+    private let titleLabel = UILabel()
     private let filterCollView = UICollectionView()
+    private let customSeparator = UIImageView()
     private let cardsTableView = UITableView()
 
     // MARK: - Properties (data)
     private let tabSize = CGSize(width: 32, height: 4)
+    private let separatorSize = CGSize(width: 32, height: 4)
     private var currentTab = "Favorites"
     private let balls: [Ball] = [
-        Ball(name: "Favorites", image: <#T##UIImage#>),
-        Ball(name: "Gyms", image: <#T##UIImage#>),
-        Ball(name: "Eateries", image: <#T##UIImage#>),
-        Ball(name: "Libraries", image: <#T##UIImage#>),
-        Ball(name: "Printers", image: <#T##UIImage#>)
+        Ball(name: "Favorites", image: UIImage()),
+        Ball(name: "Gyms", image: UIImage()),
+        Ball(name: "Eateries", image: UIImage()),
+        Ball(name: "Libraries", image: UIImage()),
+        Ball(name: "Printers", image: UIImage())
     ]
-    private let cards: [Any] = []
+    private let allCardModels: [Any] = []
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -47,6 +54,8 @@ class EcosystemViewController: UIViewController {
     private func setupUI() {
         // Configure view
         view.backgroundColor = .white
+        
+        // Fetch cards
 
         // Add subviews
         setupTabView()
@@ -57,6 +66,9 @@ class EcosystemViewController: UIViewController {
         
         setupFilterBalls()
         view.addSubview(filterCollView)
+        
+        setupCustomSeparator()
+        view.addSubview(customSeparator)
         
         setupCards()
         view.addSubview(cardsTableView)
@@ -79,6 +91,9 @@ class EcosystemViewController: UIViewController {
         filterCollView.dataSource = self
     }
     
+    private func setupCustomSeparator() {
+    }
+    
     private func setupCards() {
         cardsTableView.delegate = self
         cardsTableView.dataSource = self
@@ -86,7 +101,16 @@ class EcosystemViewController: UIViewController {
 
     // MARK: - Constraints
     private func setupConstraints() {
+        // constants
         let titleLabelInset = 25
+        let separatorPadding = 20
+
+        tabView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().inset(5)
+            make.size.equalTo(tabSize)
+        }
+
         titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(titleLabelInset)
             make.left.equalToSuperview().inset(titleLabelInset)
@@ -94,10 +118,21 @@ class EcosystemViewController: UIViewController {
             make.height.equalTo(20)
         }
 
-        tabView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().inset(5)
-            make.size.equalTo(tabSize)
+        filterCollView.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).inset(20)
+            make.left.right.equalToSuperview()
+            make.height.equalTo(390)
+        }
+
+        customSeparator.snp.makeConstraints { make in
+            make.top.equalTo(filterCollView.snp.bottom).inset(separatorPadding)
+            make.left.right.equalToSuperview()
+            make.size.equalTo(separatorSize)
+        }
+
+        cardsTableView.snp.makeConstraints { make in
+            make.top.equalTo(customSeparator.snp.bottom).inset(separatorPadding)
+            make.left.right.bottom.equalToSuperview()
         }
     }
 
@@ -105,24 +140,20 @@ class EcosystemViewController: UIViewController {
 
 extension EcosystemViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        <#code#>
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        <#code#>
+        return UICollectionViewCell()
     }
-    
-    
 }
 
 extension EcosystemViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        <#code#>
+        return 1
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        <#code#>
+        return UITableViewCell()
     }
-    
-    
 }
