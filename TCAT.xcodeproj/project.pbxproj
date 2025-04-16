@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C591B682DA72A6D00DDA71D /* EcosystemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B672DA72A6D00DDA71D /* EcosystemViewController.swift */; };
+		1C591B6A2DB058F100DDA71D /* EcosystemFilterBallCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B692DB058F100DDA71D /* EcosystemFilterBallCollectionViewCell.swift */; };
+		1C591B6C2DB05AC900DDA71D /* Eatery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B6B2DB05AA600DDA71D /* Eatery.swift */; };
+		1C591B6E2DB05AD100DDA71D /* Uplift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B6D2DB05ACC00DDA71D /* Uplift.swift */; };
+		1C591B702DB05AF900DDA71D /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B6F2DB05AF300DDA71D /* Library.swift */; };
+		1C591B722DB05AFE00DDA71D /* Printer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B712DB05AFC00DDA71D /* Printer.swift */; };
 		22948BFD221B75C5003FC43F /* RequestModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22948BFB221B75C5003FC43F /* RequestModels.swift */; };
 		28EA3E17A0C473892F5506EC /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 542B073726DFD1EE044EA97F /* Pods_TCAT.framework */; };
 		2E70434E2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2E70434D2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy */; };
@@ -146,6 +152,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1C591B672DA72A6D00DDA71D /* EcosystemViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosystemViewController.swift; sourceTree = "<group>"; };
+		1C591B692DB058F100DDA71D /* EcosystemFilterBallCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosystemFilterBallCollectionViewCell.swift; sourceTree = "<group>"; };
+		1C591B6B2DB05AA600DDA71D /* Eatery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Eatery.swift; sourceTree = "<group>"; };
+		1C591B6D2DB05ACC00DDA71D /* Uplift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uplift.swift; sourceTree = "<group>"; };
+		1C591B6F2DB05AF300DDA71D /* Library.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
+		1C591B712DB05AFC00DDA71D /* Printer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Printer.swift; sourceTree = "<group>"; };
 		22948BFB221B75C5003FC43F /* RequestModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestModels.swift; sourceTree = "<group>"; };
 		2E70434D2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2E94165F2BC60A59003DEB44 /* UpliftQueries.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UpliftQueries.graphql; sourceTree = "<group>"; };
@@ -312,6 +324,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		1C591B652DA7294C00DDA71D /* EcoSysUI */ = {
+			isa = PBXGroup;
+			children = (
+				1C591B672DA72A6D00DDA71D /* EcosystemViewController.swift */,
+				1C591B692DB058F100DDA71D /* EcosystemFilterBallCollectionViewCell.swift */,
+			);
+			path = EcoSysUI;
+			sourceTree = "<group>";
+		};
 		2292486621B891790004279C /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -390,6 +411,10 @@
 		2E9416AB2BC616DE003DEB44 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				1C591B712DB05AFC00DDA71D /* Printer.swift */,
+				1C591B6F2DB05AF300DDA71D /* Library.swift */,
+				1C591B6D2DB05ACC00DDA71D /* Uplift.swift */,
+				1C591B6B2DB05AA600DDA71D /* Eatery.swift */,
 				2E9416B52BC61731003DEB44 /* AppleSearchResponse.swift */,
 				2E9416B12BC61731003DEB44 /* BusLocation.swift */,
 				2E9416B82BC61731003DEB44 /* BusPath.swift */,
@@ -593,6 +618,7 @@
 				2E9416662BC615B0003DEB44 /* Base */,
 				2E94166C2BC61604003DEB44 /* Cells */,
 				2E9416822BC6168C003DEB44 /* Controllers */,
+				1C591B652DA7294C00DDA71D /* EcoSysUI */,
 				2E94165E2BC60A3B003DEB44 /* Ecosystem */,
 				2E9416AB2BC616DE003DEB44 /* Models */,
 				FDE68D292C988CDB00024A69 /* Services */,
@@ -849,6 +875,7 @@
 				2E9416F32BC61984003DEB44 /* StoreReviewHelper.swift in Sources */,
 				2E9416C12BC61731003DEB44 /* WalkPath.swift in Sources */,
 				2E9416BC2BC61731003DEB44 /* Waypoint.swift in Sources */,
+				1C591B6E2DB05AD100DDA71D /* Uplift.swift in Sources */,
 				2E9417202BC61CF1003DEB44 /* WalkWithDistanceIcon.swift in Sources */,
 				FDE68D282C97FC4600024A69 /* TransitProvider.swift in Sources */,
 				2E94169B2BC616B9003DEB44 /* StopPickerViewController.swift in Sources */,
@@ -865,6 +892,7 @@
 				2E94167D2BC61679003DEB44 /* FavoritesCollectionViewCell.swift in Sources */,
 				2E94167F2BC61679003DEB44 /* PlaceTableViewCell.swift in Sources */,
 				2E9417192BC61CF1003DEB44 /* PhraseLabelFooterView.swift in Sources */,
+				1C591B6A2DB058F100DDA71D /* EcosystemFilterBallCollectionViewCell.swift in Sources */,
 				2E9416FC2BC61984003DEB44 /* Phrases.swift in Sources */,
 				2E9417132BC61CF1003DEB44 /* InformationTableHeaderView.swift in Sources */,
 				2E9416A42BC616B9003DEB44 /* FavoritesViewController.swift in Sources */,
@@ -910,6 +938,7 @@
 				2E9416A52BC616B9003DEB44 /* HomeOptionsCardViewController+Extensions.swift in Sources */,
 				2E9416F72BC61984003DEB44 /* SearchTableViewHelpers.swift in Sources */,
 				2E94171D2BC61CF1003DEB44 /* RoundShadowedView.swift in Sources */,
+				1C591B6C2DB05AC900DDA71D /* Eatery.swift in Sources */,
 				2E9416962BC616B9003DEB44 /* RouteDetailViewController.swift in Sources */,
 				2E9416BA2BC61731003DEB44 /* Place.swift in Sources */,
 				2E9416F52BC61984003DEB44 /* Extensions+App.swift in Sources */,
@@ -929,6 +958,7 @@
 				2E9416FA2BC61984003DEB44 /* JSONFileManager.swift in Sources */,
 				2E9416FB2BC61984003DEB44 /* AppShortcuts.swift in Sources */,
 				2E9416F22BC61984003DEB44 /* Styles.swift in Sources */,
+				1C591B722DB05AFE00DDA71D /* Printer.swift in Sources */,
 				2E9416DF2BC618DA003DEB44 /* TransitEnvironment.swift in Sources */,
 				2E9FFA8B2BC673240051793C /* Gym.graphql.swift in Sources */,
 				2E9FFA8E2BC673240051793C /* SchemaConfiguration.swift in Sources */,
@@ -936,9 +966,11 @@
 				FDE68D202C97EBBE00024A69 /* ApiErrorHandler.swift in Sources */,
 				22948BFD221B75C5003FC43F /* RequestModels.swift in Sources */,
 				2E94167A2BC61679003DEB44 /* GeneralTableViewCell.swift in Sources */,
+				1C591B702DB05AF900DDA71D /* Library.swift in Sources */,
 				2E9417222BC61CF1003DEB44 /* BusLocationView.swift in Sources */,
 				2E9416C42BC61731003DEB44 /* Section.swift in Sources */,
 				2E9417252BC61CF1003DEB44 /* RouteSelectionView.swift in Sources */,
+				1C591B682DA72A6D00DDA71D /* EcosystemViewController.swift in Sources */,
 				2E94171C2BC61CF1003DEB44 /* Circle.swift in Sources */,
 				2E9FFA842BC673240051793C /* GetAllGymsQuery.graphql.swift in Sources */,
 				2E9417122BC61CF1003DEB44 /* LoadingIndicator.swift in Sources */,
