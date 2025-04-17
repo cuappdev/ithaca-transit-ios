@@ -170,6 +170,11 @@ class EcosystemViewController: UIViewController {
             make.left.right.bottom.equalToSuperview().inset(superviewPadding)
         }
     }
+    // MARK: - Helpers
+    private func reloadAllData() {
+        filterCollView.reloadData()
+        cardsTableView.reloadData()
+    }
 }
 
 // MARK: - Collection View Delegate
@@ -198,7 +203,7 @@ extension EcosystemViewController: UICollectionViewDelegate, UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let ballData = balls[indexPath.row]
         currentTab = ballData.name
-        collectionView.reloadData()
+        reloadAllData()
     }
 }
 
@@ -224,7 +229,7 @@ extension EcosystemViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if favorites.count > 0 { return nil }
+        if favorites.count > 0 || currentTab != "Favorites" { return nil }
 
         let headerView = UITableViewHeaderFooterView()
 
