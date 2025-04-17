@@ -32,6 +32,12 @@ struct Colors {
     static let black = UIColor.black
     static let white = UIColor.white
 
+    // MARK: - Ecosystem Colors
+    static let faveRed = UIColor(hex: "D82D4D")
+    static let eateryBlue = UIColor(hex: "4A90E2")
+    static let upliftYellow = UIColor(hex: "F8E71C")
+    static let libraryGreen = UIColor(hex: "1BAF5D")
+    static let printerGrey = UIColor(hex: "616161")
 }
 
 /// Font identifiers
