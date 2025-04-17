@@ -33,7 +33,7 @@ class NotificationToggleTableViewCell: UITableViewCell {
         hairline.backgroundColor = Colors.tableViewSeparator
         contentView.addSubview(hairline)
 
-        notificationSwitch.onTintColor = Colors.tcatBlue
+        notificationSwitch.onTintColor = Colors.naviTcatBlue
         notificationSwitch.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
         notificationSwitch.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
         contentView.addSubview(notificationSwitch)

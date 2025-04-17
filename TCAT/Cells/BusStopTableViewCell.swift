@@ -12,7 +12,7 @@ class BusStopTableViewCell: UITableViewCell {
 
     private let connectorBottom = UIView()
     private let connectorTop = UIView()
-    private let statusCircle = Circle(size: .small, style: .outline, color: Colors.tcatBlue)
+    private let statusCircle = Circle(size: .small, style: .outline, color: Colors.naviTcatBlue)
     private let titleLabel = UILabel()
     private let hairline = UIView()
 
@@ -27,10 +27,10 @@ class BusStopTableViewCell: UITableViewCell {
         titleLabel.numberOfLines = 0
         contentView.addSubview(titleLabel)
 
-        connectorTop.backgroundColor = Colors.tcatBlue
+        connectorTop.backgroundColor = Colors.naviTcatBlue
         contentView.addSubview(connectorTop)
 
-        connectorBottom.backgroundColor = Colors.tcatBlue
+        connectorBottom.backgroundColor = Colors.naviTcatBlue
         contentView.addSubview(connectorBottom)
 
         contentView.addSubview(statusCircle)

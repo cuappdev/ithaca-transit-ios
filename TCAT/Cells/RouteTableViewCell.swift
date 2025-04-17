@@ -268,7 +268,7 @@ class RouteTableViewCell: UITableViewCell {
 
     private func setDepartureTimeToWalking() {
         departureTimeLabel.text = "Directions"
-        departureTimeLabel.textColor = Colors.metadataIcon
+        departureTimeLabel.textColor = Colors.lateRed
         arrowImageView.tintColor = Colors.metadataIcon
     }
 

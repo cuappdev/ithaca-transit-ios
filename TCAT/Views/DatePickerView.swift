@@ -67,7 +67,7 @@ class DatePickerView: UIView {
     }
 
     private func styleSegmentedControl(_ segmentedControl: UISegmentedControl) {
-        segmentedControl.tintColor = Colors.tcatBlue
+        segmentedControl.tintColor = Colors.naviTcatBlue
         segmentedControl.setTitleTextAttributes(
             [.font: UIFont.getFont(.regular, size: 13.0)],
             for: .normal
@@ -99,7 +99,7 @@ class DatePickerView: UIView {
 
     private func setupDoneButton() {
         doneButton.titleLabel?.font = .getFont(.regular, size: 17.0)
-        doneButton.setTitleColor(Colors.tcatBlue, for: .normal)
+        doneButton.setTitleColor(Colors.naviTcatBlue, for: .normal)
         doneButton.setTitle(Constants.Buttons.done, for: .normal)
         doneButton.addTarget(self, action: #selector(doneButtonPressed), for: .touchUpInside)
 

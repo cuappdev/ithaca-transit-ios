@@ -62,7 +62,7 @@ class FavoritesViewController: UIViewController {
     private func setupButtons() {
         let editString = isEditingFavorites ? "Done" : "Edit"
         editButton.setTitle(editString, for: .normal)
-        editButton.setTitleColor(Colors.notificationBlue, for: .normal)
+        editButton.setTitleColor(Colors.naviTcatBlue, for: .normal)
         editButton.setTitleColor(Colors.secondaryText, for: .disabled)
         editButton.titleLabel?.font = UIFont.getFont(.regular, size: 14.0)
         editButton.isEnabled = !favoritePlaces.isEmpty

@@ -56,14 +56,14 @@ enum BusIconType: String {
             return Colors.white
 
         case .directionLarge, .directionSmall, .liveTracking:
-            return Colors.tcatBlue
+            return Colors.naviTcatBlue
         }
     }
 
     var contentColor: UIColor {
         switch self {
         case .blueBannerSmall:
-            return Colors.tcatBlue
+            return Colors.naviTcatBlue
 
         case .directionLarge, .directionSmall, .liveTracking:
             return Colors.white

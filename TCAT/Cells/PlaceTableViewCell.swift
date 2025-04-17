@@ -59,7 +59,7 @@ class PlaceTableViewCell: UITableViewCell {
     }
 
     func configure(for place: Place) {
-        iconView.tintColor = place.type == .busStop ? Colors.tcatBlue : Colors.metadataIcon
+        iconView.tintColor = place.type == .busStop ? Colors.naviTcatBlue : Colors.metadataIcon
         iconView.image = place.type == .busStop ? UIImage(named: "bus-pin") : UIImage(named: "pin")
         nameLabel.text = place.name
         descriptionLabel.text = place.description

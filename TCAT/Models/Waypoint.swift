@@ -54,17 +54,17 @@ class Waypoint: NSObject {
 
         switch wpType {
         case .origin:
-            self.iconView = Circle(size: .large, style: .solid, color: isStop ? Colors.tcatBlue : Colors.metadataIcon)
+            self.iconView = Circle(size: .large, style: .solid, color: isStop ? Colors.naviTcatBlue : Colors.metadataIcon)
 
         case .destination:
             self.iconView = Circle(
                 size: .large,
                 style: .bordered,
-                color: isStop ? Colors.tcatBlue : Colors.metadataIcon
+                color: isStop ? Colors.naviTcatBlue : Colors.metadataIcon
             )
 
         case .bus:
-            self.iconView = Circle(size: .small, style: .solid, color: Colors.tcatBlue)
+            self.iconView = Circle(size: .small, style: .solid, color: Colors.naviTcatBlue)
 
         case .walk:
             self.iconView = Circle(size: .small, style: .solid, color: Colors.metadataIcon)
@@ -83,7 +83,7 @@ class Waypoint: NSObject {
     }
 
     func drawDestinationIcon() -> UIView {
-        return drawCircle(radius: largeDiameter / 2, innerColor: Colors.tcatBlue, borderColor: Colors.white)
+        return drawCircle(radius: largeDiameter / 2, innerColor: Colors.naviTcatBlue, borderColor: Colors.white)
     }
 
     func drawStopIcon() -> UIView {
@@ -91,7 +91,7 @@ class Waypoint: NSObject {
     }
 
     func drawBusPointIcon() -> UIView {
-        return drawCircle(radius: smallDiameter / 2, innerColor: Colors.tcatBlue)
+        return drawCircle(radius: smallDiameter / 2, innerColor: Colors.naviTcatBlue)
     }
 
     func drawWalkPointIcon() -> UIView {

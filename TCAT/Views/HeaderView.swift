@@ -71,7 +71,7 @@ class HeaderView: UITableViewHeaderFooterView {
 
     private func createButton(type: ButtonOption) {
         button = UIButton(type: .system)
-        button?.setTitleColor(Colors.tcatBlue, for: .normal)
+        button?.setTitleColor(Colors.naviTcatBlue, for: .normal)
 
         switch type {
         case .clear:

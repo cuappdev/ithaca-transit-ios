@@ -76,7 +76,7 @@ extension HomeOptionsCardViewController: UISearchBarDelegate {
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(true, animated: true)
         if let cancelButton = searchBar.value(forKey: Constants.SearchBar.cancelButton) as? UIButton {
-            cancelButton.setTitleColor(Colors.tcatBlue, for: .normal)
+            cancelButton.setTitleColor(Colors.naviTcatBlue, for: .normal)
         }
 
         searchBar.placeholder = nil

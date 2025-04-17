@@ -48,19 +48,19 @@ class DetailIconView: UIView {
             }
         } else {
             if isLastStep {
-                statusCircle = Circle(size: .large, style: .bordered, color: Colors.tcatBlue)
-                connectorTop.backgroundColor = Colors.tcatBlue
+                statusCircle = Circle(size: .large, style: .bordered, color: Colors.naviTcatBlue)
+                connectorTop.backgroundColor = Colors.naviTcatBlue
                 connectorBottom.backgroundColor = .clear
             } else {
-                statusCircle = Circle(size: .small, style: .solid, color: Colors.tcatBlue)
+                statusCircle = Circle(size: .small, style: .solid, color: Colors.naviTcatBlue)
                 if direction.type == .depart {
                     connectorTop.backgroundColor = Colors.dividerTextField
-                    connectorBottom.backgroundColor = Colors.tcatBlue
+                    connectorBottom.backgroundColor = Colors.naviTcatBlue
                 } else if direction.type == .transfer {
                     connectorTop.backgroundColor = Colors.tcatBlue
-                    connectorBottom.backgroundColor = Colors.tcatBlue
+                    connectorBottom.backgroundColor = Colors.naviTcatBlue
                 } else { // type == .arrive
-                    connectorTop.backgroundColor = Colors.tcatBlue
+                    connectorTop.backgroundColor = Colors.naviTcatBlue
                     connectorBottom.backgroundColor = Colors.dividerTextField
                 }
                 if isFirstStep {

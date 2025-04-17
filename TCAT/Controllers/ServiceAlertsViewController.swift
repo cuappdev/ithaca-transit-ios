@@ -255,7 +255,7 @@ extension ServiceAlertsViewController: DZNEmptyDataSetSource {
         // If loading indicator is being shown, don't display button
         if isLoading || !networkError { return nil }
         let title = Constants.Buttons.retry
-        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.tcatBlue])
+        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.naviTcatBlue])
     }
 
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {

@@ -12,6 +12,7 @@ import UIKit
 struct Colors {
 
     // MARK: - Brand Color
+    static let naviTcatBlue = UIColor(hex: "0D3B66")
     static let tcatBlue = UIColor(hex: "079DDC")
     static let notificationBlue = UIColor(hex: "08A0E0")
 

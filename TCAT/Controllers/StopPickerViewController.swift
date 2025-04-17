@@ -148,7 +148,7 @@ extension StopPickerViewController: DZNEmptyDataSetSource {
 
     func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
         // If loading indicator is being shown, don't display image
-        return isLoading ? nil : #imageLiteral(resourceName: "serverDown")
+        return isLoading ? nil : #imageLiteral(resourceName: "navi_serverDown")
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
@@ -166,7 +166,7 @@ extension StopPickerViewController: DZNEmptyDataSetSource {
             return nil
         }
         let title = Constants.Buttons.retry
-        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.tcatBlue])
+        return NSAttributedString(string: title, attributes: [.foregroundColor: Colors.naviTcatBlue])
     }
 }
 

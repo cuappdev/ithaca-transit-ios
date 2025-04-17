@@ -31,7 +31,7 @@ enum NotificationBannerType {
     var bannerColor: UIColor {
         switch self {
         case .beforeBoardingConfirmation, .busArriving, .delayConfirmation:
-            return Colors.tcatBlue
+            return Colors.naviTcatBlue
 
         case .busDelay:
             return Colors.lateRed

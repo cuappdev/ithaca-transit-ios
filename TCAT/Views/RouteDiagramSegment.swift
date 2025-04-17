@@ -187,12 +187,12 @@ class RouteDiagramSegment: UIView {
                     framedGreyCircle.backgroundColor = Colors.white
                     pin = framedGreyCircle
                 } else {
-                    let framedBlueCircle = Circle(size: .medium, style: .bordered, color: Colors.tcatBlue)
+                    let framedBlueCircle = Circle(size: .medium, style: .bordered, color: Colors.naviTcatBlue)
                     framedBlueCircle.backgroundColor = Colors.white
                     pin = framedBlueCircle
                 }
             } else {
-                let solidBlueCircle = Circle(size: .small, style: .solid, color: Colors.tcatBlue)
+                let solidBlueCircle = Circle(size: .small, style: .solid, color: Colors.naviTcatBlue)
                 pin = solidBlueCircle
             }
         }
@@ -234,8 +234,8 @@ class RouteDiagramSegment: UIView {
         switch direction.type {
         case .depart:
             let solidBlueRouteLine = isStopLabelSingleLine
-                ? SolidLine(color: Colors.tcatBlue)
-                : SolidLine(overrideHeight: RouteLine.extendedHeight, color: Colors.tcatBlue)
+                ? SolidLine(color: Colors.naviTcatBlue)
+                : SolidLine(overrideHeight: RouteLine.extendedHeight, color: Colors.naviTcatBlue)
 
             return solidBlueRouteLine
 

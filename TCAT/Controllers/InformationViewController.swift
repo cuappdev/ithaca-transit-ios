@@ -223,7 +223,7 @@ extension InformationViewController: UITableViewDataSource {
 
         // Set custom formatting based on cell
         if indexPath.section == 1 && indexPath.row == 1 {
-            cell.textLabel?.textColor = Colors.tcatBlue
+            cell.textLabel?.textColor = Colors.naviTcatBlue
         }
 
         return cell

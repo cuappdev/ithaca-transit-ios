@@ -41,7 +41,7 @@ class BusPath: Path {
 
     init(_ waypoints: [Waypoint]) {
         super.init(waypoints: waypoints)
-        self.color = Colors.tcatBlue
+        self.color = Colors.naviTcatBlue
 
         dashColors = [color, .clear]
 

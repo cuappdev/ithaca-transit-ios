@@ -52,7 +52,7 @@ class RouteDiagram: UIView {
                 size: CGSize(width: busIconWidth, height: spaceBtnBusIcons + 6)
             )
         )
-        stayOnBusCoverUpView.backgroundColor = Colors.tcatBlue
+        stayOnBusCoverUpView.backgroundColor = Colors.naviTcatBlue
 
         return stayOnBusCoverUpView
     }

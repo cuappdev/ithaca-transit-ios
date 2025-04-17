@@ -370,14 +370,14 @@ extension RouteOptionsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDele
         if showRouteSearchingLoader {
             symbolView = LoadingIndicator()
         } else {
-            let imageView = UIImageView(image: #imageLiteral(resourceName: "noRoutes"))
+            let imageView = UIImageView(image: #imageLiteral(resourceName: "navi_noRoutes"))
             imageView.contentMode = .scaleAspectFit
             symbolView = imageView
         }
 
         let retryButton = UIButton()
         retryButton.setTitle(Constants.Buttons.retry, for: .normal)
-        retryButton.setTitleColor(Colors.tcatBlue, for: .normal)
+        retryButton.setTitleColor(Colors.naviTcatBlue, for: .normal)
         retryButton.titleLabel?.font = .getFont(.regular, size: 16.0)
         retryButton.addTarget(self, action: #selector(tappedRetryButton), for: .touchUpInside)
 
