@@ -9,3 +9,7 @@
 struct Eatery: Codable {
     
 }
+
+let eateryDummyData = [
+    Eatery()
+]

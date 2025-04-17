@@ -10,7 +10,7 @@
 		1C591B682DA72A6D00DDA71D /* EcosystemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B672DA72A6D00DDA71D /* EcosystemViewController.swift */; };
 		1C591B6A2DB058F100DDA71D /* EcosystemFilterBallCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B692DB058F100DDA71D /* EcosystemFilterBallCollectionViewCell.swift */; };
 		1C591B6C2DB05AC900DDA71D /* Eatery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B6B2DB05AA600DDA71D /* Eatery.swift */; };
-		1C591B6E2DB05AD100DDA71D /* Uplift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B6D2DB05ACC00DDA71D /* Uplift.swift */; };
+		1C591B6E2DB05AD100DDA71D /* Gym.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B6D2DB05ACC00DDA71D /* Gym.swift */; };
 		1C591B702DB05AF900DDA71D /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B6F2DB05AF300DDA71D /* Library.swift */; };
 		1C591B722DB05AFE00DDA71D /* Printer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B712DB05AFC00DDA71D /* Printer.swift */; };
 		1C591B742DB05FF000DDA71D /* EcosysEateryCardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C591B732DB05FF000DDA71D /* EcosysEateryCardTableViewCell.swift */; };
@@ -159,7 +159,7 @@
 		1C591B672DA72A6D00DDA71D /* EcosystemViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosystemViewController.swift; sourceTree = "<group>"; };
 		1C591B692DB058F100DDA71D /* EcosystemFilterBallCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosystemFilterBallCollectionViewCell.swift; sourceTree = "<group>"; };
 		1C591B6B2DB05AA600DDA71D /* Eatery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Eatery.swift; sourceTree = "<group>"; };
-		1C591B6D2DB05ACC00DDA71D /* Uplift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uplift.swift; sourceTree = "<group>"; };
+		1C591B6D2DB05ACC00DDA71D /* Gym.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gym.swift; sourceTree = "<group>"; };
 		1C591B6F2DB05AF300DDA71D /* Library.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
 		1C591B712DB05AFC00DDA71D /* Printer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Printer.swift; sourceTree = "<group>"; };
 		1C591B732DB05FF000DDA71D /* EcosysEateryCardTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EcosysEateryCardTableViewCell.swift; sourceTree = "<group>"; };
@@ -335,6 +335,7 @@
 		1C591B652DA7294C00DDA71D /* EcoSysUI */ = {
 			isa = PBXGroup;
 			children = (
+				1C591B872DB15A5B00DDA71D /* Views */,
 				1C591B812DB0642A00DDA71D /* VC */,
 				1C591B832DB0643E00DDA71D /* Models */,
 				1C591B822DB0643000DDA71D /* Cell */,
@@ -367,10 +368,17 @@
 			children = (
 				1C591B712DB05AFC00DDA71D /* Printer.swift */,
 				1C591B6F2DB05AF300DDA71D /* Library.swift */,
-				1C591B6D2DB05ACC00DDA71D /* Uplift.swift */,
+				1C591B6D2DB05ACC00DDA71D /* Gym.swift */,
 				1C591B6B2DB05AA600DDA71D /* Eatery.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		1C591B872DB15A5B00DDA71D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		2292486621B891790004279C /* Network */ = {
@@ -911,7 +919,7 @@
 				2E9416F32BC61984003DEB44 /* StoreReviewHelper.swift in Sources */,
 				2E9416C12BC61731003DEB44 /* WalkPath.swift in Sources */,
 				2E9416BC2BC61731003DEB44 /* Waypoint.swift in Sources */,
-				1C591B6E2DB05AD100DDA71D /* Uplift.swift in Sources */,
+				1C591B6E2DB05AD100DDA71D /* Gym.swift in Sources */,
 				2E9417202BC61CF1003DEB44 /* WalkWithDistanceIcon.swift in Sources */,
 				FDE68D282C97FC4600024A69 /* TransitProvider.swift in Sources */,
 				2E94169B2BC616B9003DEB44 /* StopPickerViewController.swift in Sources */,

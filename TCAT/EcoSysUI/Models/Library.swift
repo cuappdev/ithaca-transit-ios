@@ -9,3 +9,7 @@
 struct Library: Codable {
     
 }
+
+let libraryDummyData = [
+    Library()
+]

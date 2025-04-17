@@ -35,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate, UNUser
 
         // Set Up Google Services
         FirebaseApp.configure()
-        
+
         GMSServices.provideAPIKey(TransitEnvironment.googleMaps)
 
         // Update shortcut items

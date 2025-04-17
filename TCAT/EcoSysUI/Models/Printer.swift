@@ -9,3 +9,7 @@
 struct Printer: Codable {
     
 }
+
+let printerDummyData = [
+    Printer()
+]
