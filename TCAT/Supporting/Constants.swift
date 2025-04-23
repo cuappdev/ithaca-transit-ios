@@ -195,7 +195,7 @@ struct Constants {
         static let favorites = "Your Favorites."
         static let liveTracking = "Live Tracking."
         static let searchAnywhere = "Search Anywhere."
-        static let welcome = "Welcome to Ithaca Transit."
+        static let welcome = "Welcome to Navi."
 
         /// Detail label messages
         static let favoritesMessage = "All of your favorite destinations are just one tap away."
