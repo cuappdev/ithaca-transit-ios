@@ -16,7 +16,7 @@ enum TransitEnvironment {
 #if DEBUG
         static let eateryURL = "EATERY_DEV_URL"
         static let googleMaps = "GOOGLE_MAPS_DEBUG"
-        static let transitURL = "TRANSIT_DEV_URL"
+        static let transitURL = "TRANSIT_PROD_URL"
         static let upliftURL = "UPLIFT_DEV_URL"
 #else
         static let eateryURL = "EATERY_PROD_URL"

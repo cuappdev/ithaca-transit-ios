@@ -101,7 +101,6 @@ extension RouteDetailContentViewController: CLLocationManagerDelegate {
 
 // MARK: - Google Map View Delegate Functions
 extension RouteDetailContentViewController: GMSMapViewDelegate {
-
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
         guard let coordinates = getUserData(
             for: marker,
@@ -109,10 +108,9 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
         ) as? CLLocationCoordinate2D else { return true }
         let update = GMSCameraUpdate.setTarget(coordinates)
         mapView.animate(with: update)
-
         return true
     }
-
+    
     func updateUserData(for marker: GMSMarker, with values: [String: Any]) {
         guard var userData = marker.userData as? [String: Any] else {
             marker.userData = values
@@ -123,86 +121,132 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
         }
         marker.userData = userData
     }
-
+    
     func getUserData(for marker: GMSMarker, key: String) -> Any? {
         guard let userData = marker.userData as? [String: Any] else { return nil }
         return userData[key]
     }
-
+    
+    /// Slightly modified MapView that only has one indicator; the previous version created one for each change in position. (Only works for one bus)
     func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
-        buses.forEach { bus in
-            let bearingView = UIImageView(image: #imageLiteral(resourceName: "indicator"))
-            bearingView.frame.size = CGSize(width: bearingView.frame.width / 2, height: bearingView.frame.height / 2)
-            bearingView.tag = increaseTapTargetTag
-
-            if let existingIndicator = busIndicators.first(where: {
-                let markerID = getUserData(for: $0, key: Constants.BusUserData.vehicleID) as? Int
-                let busID = getUserData(for: bus, key: Constants.BusUserData.vehicleID) as? Int
-                return markerID == busID
-            }) { // Update Indicator
-                if let placement = calculatePlacement(position: bus.position, view: bearingView) {
-                    // Uncomment to avoid animation
-                    // existingIndicator.map = nil 
+            // Updates bus stop circle sizes
+            updateBusStopCircleSize()
+        
+            guard let bus = buses.first else { return }
+            
+            if let existingIndicator = busIndicator {
+                if let placement = calculatePlacement(position: bus.position, view: existingIndicator.iconView!) {
                     existingIndicator.position = placement
                     existingIndicator.rotation = calculateBearing(from: placement, to: bus.position)
 
+                    existingIndicator.map = mapView
+                }
+            } else {
+                let bearingView = UIImageView(image: #imageLiteral(resourceName: "indicator"))
+                bearingView.frame.size = CGSize(width: bearingView.frame.width / 2, height: bearingView.frame.height / 2)
+                bearingView.tag = increaseTapTargetTag
+
+                if let placement = calculatePlacement(position: bus.position, view: bearingView) {
+                    let indicator = GMSMarker(position: placement)
+                    indicator.appearAnimation = .pop
+                    indicator.rotation = calculateBearing(from: placement, to: bus.position)
+                    indicator.iconView = bearingView
+                    setIndex(of: indicator, with: .bussing)
+
                     updateUserData(
-                        for: existingIndicator,
+                        for: indicator,
                         with: [
                             Constants.BusUserData.actualCoordinates: bus.position,
-                            Constants.BusUserData.indicatorCoordinates: placement
+                            Constants.BusUserData.indicatorCoordinates: placement,
+                            Constants.BusUserData.vehicleId: getUserData(
+                                for: bus,
+                                key: Constants.BusUserData.vehicleId
+                            ) as? Int ?? -1
                         ]
                     )
-
-                    existingIndicator.appearAnimation = .none
-                    // Uncomment to avoid animation
-                    // existingIndicator.map = mapView
-                } else {
-                    existingIndicator.map = nil
-                    busIndicators.remove(at: busIndicators.firstIndex(of: existingIndicator)!)
+                    
+                    indicator.map = mapView
+                    busIndicator = indicator
                 }
-                return
             }
-
-            if let placement = calculatePlacement(position: bus.position, view: bearingView) {
-                let indicator = GMSMarker(position: placement)
-                indicator.appearAnimation = .pop
-                indicator.rotation = calculateBearing(from: placement, to: bus.position)
-                indicator.iconView = bearingView
-                setIndex(of: indicator, with: .bussing)
-
-                updateUserData(
-                    for: indicator,
-                    with: [
-                        Constants.BusUserData.actualCoordinates: bus.position,
-                        Constants.BusUserData.indicatorCoordinates: placement,
-                        Constants.BusUserData.vehicleID: getUserData(
-                            for: bus,
-                            key: Constants.BusUserData.vehicleID
-                        ) as? Int ?? -1
-                    ]
-                )
-
-                indicator.map = mapView
-                busIndicators.append(indicator)
-            }
+        
         }
-        // Updates bus stop circle sizes
-        updateBusStopCircleSize()
-    }
+
+// NOTE: Keep for future use (live tracking of multiple buses)
+//    func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
+//           buses.forEach { bus in
+//               let bearingView = UIImageView(image: #imageLiteral(resourceName: "indicator"))
+//               bearingView.frame.size = CGSize(width: bearingView.frame.width / 2, height: bearingView.frame.height / 2)
+//               bearingView.tag = increaseTapTargetTag
+//
+//               if let existingIndicator = busIndicators.first(where: {
+//                   let markerID = getUserData(for: $0, key: Constants.BusUserData.vehicleId) as? Int
+//                   let busID = getUserData(for: bus, key: Constants.BusUserData.vehicleId) as? Int
+//                   return markerID == busID
+//               }) { // Update Indicator
+//                   if let placement = calculatePlacement(position: bus.position, view: bearingView) {
+//                       // Uncomment to avoid animation
+//                       // existingIndicator.map = nil
+//                       existingIndicator.position = placement
+//                       existingIndicator.rotation = calculateBearing(from: placement, to: bus.position)
+//
+//                       updateUserData(
+//                           for: existingIndicator,
+//                           with: [
+//                               Constants.BusUserData.actualCoordinates: bus.position,
+//                               Constants.BusUserData.indicatorCoordinates: placement
+//                           ]
+//                       )
+//
+//                       existingIndicator.appearAnimation = .none
+//                       // Uncomment to avoid animation
+//                       // existingIndicator.map = mapView
+//                   } else {
+//                       existingIndicator.map = nil
+//                       busIndicators.remove(at: busIndicators.firstIndex(of: existingIndicator)!)
+//                   }
+//                   return
+//               }
+//
+//               if let placement = calculatePlacement(position: bus.position, view: bearingView) {
+//                   let indicator = GMSMarker(position: placement)
+//                   indicator.appearAnimation = .pop
+//                   indicator.rotation = calculateBearing(from: placement, to: bus.position)
+//                   indicator.iconView = bearingView
+//                   setIndex(of: indicator, with: .bussing)
+//
+//                   updateUserData(
+//                       for: indicator,
+//                       with: [
+//                           Constants.BusUserData.actualCoordinates: bus.position,
+//                           Constants.BusUserData.indicatorCoordinates: placement,
+//                           Constants.BusUserData.vehicleId: getUserData(
+//                               for: bus,
+//                               key: Constants.BusUserData.vehicleId
+//                           ) as? Int ?? -1
+//                       ]
+//                   )
+//
+//                   indicator.map = mapView
+//                   busIndicators.append(indicator)
+//               }
+//           }
+//           // Updates bus stop circle sizes
+//           updateBusStopCircleSize()
+//       }
 }
 
 // MARK: - Debug
 extension RouteDetailContentViewController {
 
     /// Create fake bus for debugging and testing bus indicators
-    private func createDebugBusIcon() {
+    func createDebugBusIcon() {
         let bus = BusLocation(
             dataType: .validData,
             latitude: 42.4491411,
             longitude: -76.4836815,
-            routeID: 10,
-            vehicleID: 0
+            routeId: "10",
+            vehicleId: "0"
         )
         let coords = CLLocationCoordinate2D(latitude: 42.4491411, longitude: -76.4836815)
         let marker = GMSMarker(position: coords)
@@ -213,7 +257,7 @@ extension RouteDetailContentViewController {
             for: marker,
             with: [
             Constants.BusUserData.actualCoordinates: coords,
-            Constants.BusUserData.vehicleID: 123456789
+            Constants.BusUserData.vehicleId: 123456789
             ]
         )
         marker.map = mapView

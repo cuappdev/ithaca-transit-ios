@@ -78,4 +78,21 @@ class NetworkManager: NetworkService {
 
         return ApiErrorHandler.normalError(error)
     }
+    
+    // Returns raw response reqdata from backend requests (made for live tracking debugging)
+    func requestResponse(_ request: URLRequest) -> AnyPublisher<Data, ApiErrorHandler> {
+        return URLSession.shared.dataTaskPublisher(for: request)
+            .tryMap { data, response in
+                guard let httpResponse = response as? HTTPURLResponse,
+                      200..<300 ~= httpResponse.statusCode else {
+                    throw URLError(.badServerResponse)
+                }
+                return data
+            }
+            .mapError { error -> ApiErrorHandler in
+                return ApiErrorHandler(error: error)
+            }
+            .eraseToAnyPublisher()
+    }
+
 }

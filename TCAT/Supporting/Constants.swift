@@ -118,7 +118,7 @@ struct Constants {
     struct BusUserData {
         static let actualCoordinates = "actualCoords"
         static let indicatorCoordinates = "indicatorCoords"
-        static let vehicleID = "vehicleID"
+        static let vehicleId = "vehicleId"
     }
 
     /// The phrases used for buttons throughout the app

@@ -37,7 +37,7 @@ protocol TransitServiceProtocol: AnyObject {
     ///   - directions: An array of `Direction` objects to track bus locations.
     ///   - refreshInterval: The time interval (in seconds) between data refreshes. Default is 5.0 seconds.
     /// - Returns: A publisher emitting an array of `BusLocation` objects or an `ApiErrorHandler`.
-    func getBusLocations(_ directions: [Direction], refreshInterval: TimeInterval) -> AnyPublisher<[BusLocation], ApiErrorHandler>
+    func getBusLocations(_ directions: [Direction]) -> AnyPublisher<[BusLocation], ApiErrorHandler>
 
     /// Retrieves the delay time for a specific trip and stop at set intervals.
     /// - Parameters:
@@ -107,34 +107,37 @@ class TransitService: TransitServiceProtocol {
         let request = TransitProvider.appleSearch(body).makeRequest
         return networkManager.request(request, decodingType: AppleSearchResponse.self)
     }
-
+    
+    // Version without Timer (called it too frequently)
     func getBusLocations(
-        _ directions: [Direction],
-        refreshInterval: TimeInterval = 5.0
-    ) -> AnyPublisher<
-        [BusLocation],
-        ApiErrorHandler
-    > {
+        _ directions: [Direction]
+    ) -> AnyPublisher<[BusLocation], ApiErrorHandler> {
         let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
-
-        let locationsInfo = departDirections.map { direction -> BusLocationsInfo in
-            let stopID = direction.stops.first?.id ?? "-1"
+        let locationsInfo = departDirections.compactMap { direction -> BusLocationsInfo? in
+            let stopId = direction.stops.first?.id ?? "-1"
+            guard let tripId = direction.tripIdentifiers?.first else { return nil }
             return BusLocationsInfo(
-                stopID: stopID,
-                routeID: String(direction.routeNumber),
-                tripIdentifiers: direction.tripIdentifiers!
+                stopId: stopId,
+                routeId: String(direction.routeNumber),
+                tripId: tripId
             )
         }
 
         let body = GetBusLocationsBody(data: locationsInfo)
         let request = TransitProvider.busLocations(body).makeRequest
-
-        return Timer.publish(every: refreshInterval, on: .main, in: .default)
-            .autoconnect()
-            .flatMap { _ in
-                self.networkManager.request(request, decodingType: [BusLocation].self)
+        
+        return self.networkManager.requestResponse(request)
+            .decode(type: BusLocationResponse.self, decoder: JSONDecoder())
+            .map(\.data)
+            .mapError { error in
+                return ApiErrorHandler(error: error)
+            }
+            .catch { _ in
+                Just<[BusLocation]>([])
+                    .setFailureType(to: ApiErrorHandler.self)
             }
             .eraseToAnyPublisher()
+
     }
 
     func getDelay(

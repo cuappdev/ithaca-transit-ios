@@ -16,7 +16,7 @@ import SwiftyJSON
 import UIKit
 
 class RouteDetailContentViewController: UIViewController {
-
+    
     var drawerDisplayController: RouteDetailDrawerViewController?
 
     /// Keep track of statuses of bus routes throughout view life cycle
@@ -24,6 +24,7 @@ class RouteDetailContentViewController: UIViewController {
 
     /// General Variables
     var bounds = GMSCoordinateBounds()
+    var busIndicator: GMSMarker?
     var busIndicators = [GMSMarker]()
     var buses = [GMSMarker]()
     private var cancellables = Set<AnyCancellable>()
@@ -36,10 +37,11 @@ class RouteDetailContentViewController: UIViewController {
     var mapView: GMSMapView!
     private let mapPadding: CGFloat = 80
     private let markerRadius: CGFloat = 8
+    private let minimumFetchInterval: TimeInterval = 10.0 // Backend approximately updates coordinates every 30 seconds
     private var paths: [Path] = []
+    private var prevFetchTime: TimeInterval = 0
     private var route: Route!
     private var routeOptionsCell: RouteTableViewCell?
-
     /// Banner and Notifications
     private var banner: StatusBarNotificationBanner? {
         didSet {
@@ -56,7 +58,6 @@ class RouteDetailContentViewController: UIViewController {
     /// First Route Segment Variables
     private var firstRouteSegment: [GMSCircle] = []
     private let firstWalkSegment = GMSMutablePath()
-
 
     /// Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
     /// dummy data will be used. The directions parameter have logical assumptions,
@@ -87,7 +88,10 @@ class RouteDetailContentViewController: UIViewController {
         shareButton.tintColor = Colors.primaryText
         guard let routeDetailViewController = self.parent as? RouteDetailViewController else { return }
         routeDetailViewController.navigationItem.setRightBarButton(shareButton, animated: true)
-
+        
+        // Live tracking for buses
+        getBusLocations()
+        
         // Debug Function
         // createDebugBusIcon()
 
@@ -182,6 +186,13 @@ class RouteDetailContentViewController: UIViewController {
     /// Fetch live-tracking information for the first direction's bus route.
     /// Handles connection issues with banners. Animated indicators.
     @objc func getBusLocations() {
+
+        let currentTime = Date().timeIntervalSince1970
+        if currentTime - prevFetchTime < minimumFetchInterval {
+            return
+        }
+        prevFetchTime = currentTime
+        
         // Check if directions are valid for live tracking
         let directionsAreValid = route.directions.allSatisfy { direction in
             direction.type != .depart || (direction.routeNumber > 0 && direction.tripIdentifiers != nil)
@@ -198,7 +209,6 @@ class RouteDetailContentViewController: UIViewController {
             return
         }
 
-        // Fetch bus locations using the TransitService
         TransitService.shared.getBusLocations(route.directions)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
@@ -220,9 +230,10 @@ class RouteDetailContentViewController: UIViewController {
                 guard let self = self else { return }
 
                 if busLocations.isEmpty {
-                    // Reset banner in case of transition from Error to Online - No Bus Locations
+                    // Reset banner in case of transition from Error to Online
                     self.hideBanner()
                 }
+                self.removeOldMarkers(busLocations)
 
                 self.parseBusLocationsData(data: busLocations)
             }
@@ -230,17 +241,18 @@ class RouteDetailContentViewController: UIViewController {
 
         bounceIndicators()
     }
-
+    
     private func parseBusLocationsData(data: [BusLocation]) {
         data.forEach { busLocation in
             switch busLocation.dataType {
             case .noData:
-                if !self.noDataRouteList.contains(busLocation.routeNumber) {
-                    self.noDataRouteList.append(busLocation.routeNumber)
+                let routeNumberAsString = Int(busLocation.routeNumber)
+                if !self.noDataRouteList.contains(routeNumberAsString ?? 0) {
+                    self.noDataRouteList.append(routeNumberAsString ?? 0)
                 }
 
             case .invalidData:
-                if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
+                if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: Int(busLocation.routeNumber) ?? 0) {
                     self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                 }
                 if self.noDataRouteList.isEmpty {
@@ -249,7 +261,7 @@ class RouteDetailContentViewController: UIViewController {
                 self.showBanner(Constants.Banner.trackingLater, status: .info)
 
             case .validData:
-                if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: busLocation.routeNumber) {
+                if let previouslyUnavailableRoute = self.noDataRouteList.firstIndex(of: Int(busLocation.routeNumber) ?? 0) {
                     self.noDataRouteList.remove(at: previouslyUnavailableRoute)
                 }
                 if self.noDataRouteList.isEmpty {
@@ -259,7 +271,7 @@ class RouteDetailContentViewController: UIViewController {
             }
         }
     }
-
+    
     /// Update the map with new busLocations, adding or replacing based on vehicleID.
     /// If `validTripIDs` is passed in, only buses that match the tripID will be drawn.
     /// The input includes every bus associated with a certain line. Any visible indicators
@@ -267,44 +279,43 @@ class RouteDetailContentViewController: UIViewController {
     private func setBusLocation(_ bus: BusLocation) {
         // New bus coordinates
         let busCoords = CLLocationCoordinate2D(latitude: bus.latitude, longitude: bus.longitude)
-        let existingBus = buses.first(where: {
-            return getUserData(for: $0, key: Constants.BusUserData.vehicleID) as? Int == bus.vehicleID
-        })
 
-        if let newBus = existingBus { // If bus is already on map, update and animate change
-            let latencyConstant = 0.25 // Allow time to receive new live bus request
+        if let existingBus = buses.first(where: {
+            return getUserData(for: $0, key: Constants.BusUserData.vehicleId) as? String == bus.vehicleId
+        }) {
+            let previousCoordinates = getUserData(for: existingBus, key: Constants.BusUserData.actualCoordinates) as? CLLocationCoordinate2D
+            
+            if previousCoordinates == nil || previousCoordinates!.latitude != busCoords.latitude || previousCoordinates!.longitude != busCoords.longitude {
 
-            CATransaction.begin()
-            CATransaction.setAnimationDuration(liveTrackingNetworkRefreshRate + latencyConstant)
+                let latencyConstant = 0.25 // Allow time to receive new live bus request
+                CATransaction.begin()
+                CATransaction.setAnimationDuration(liveTrackingNetworkRefreshRate + latencyConstant)
+                existingBus.appearAnimation = .none
 
-            newBus.appearAnimation = .none
-
-            updateUserData(
-                for: newBus,
-                with: [
-                    Constants.BusUserData.actualCoordinates: busCoords,
-                    Constants.BusUserData.vehicleID: bus.vehicleID
-                ]
-            )
-
-            // Position
-            newBus.position = busCoords
-
-            CATransaction.commit()
-        } else { // Otherwise, add bus to map
+                updateUserData(
+                    for: existingBus,
+                    with: [
+                        Constants.BusUserData.actualCoordinates: busCoords,
+                        Constants.BusUserData.vehicleId: bus.vehicleId
+                    ]
+                )
+                existingBus.position = busCoords
+                
+                CATransaction.commit()
+            }
+        } else {
             guard let iconView = bus.iconView as? BusLocationView else { return }
             let marker = GMSMarker(position: busCoords)
             marker.appearAnimation = .pop
             marker.iconView = iconView
-
+            
             updateUserData(
                 for: marker,
                 with: [
                     Constants.BusUserData.actualCoordinates: busCoords,
-                    Constants.BusUserData.vehicleID: bus.vehicleID
+                    Constants.BusUserData.vehicleId: bus.vehicleId
                 ]
             )
-
             setIndex(of: marker, with: .bussing)
             marker.map = mapView
             buses.append(marker)
@@ -312,6 +323,17 @@ class RouteDetailContentViewController: UIViewController {
 
         // Update bus indicators (if map not moved)
         mapView.delegate?.mapView?(mapView, didChange: mapView.camera)
+    }
+    
+    private func removeOldMarkers(_ busLocations: [BusLocation]) {
+        let activeVehicleIds = Set(busLocations.map { $0.vehicleId })
+        buses.filter { busMarker in
+            let vehicleId = getUserData(for: busMarker, key: Constants.BusUserData.vehicleId) as? String
+            return vehicleId != nil && !activeVehicleIds.contains(vehicleId!)
+        }.forEach { removedMarker in
+            removedMarker.map = nil
+            buses.removeAll { $0 == removedMarker }
+        }
     }
 
     /// Animate any visible indicators
