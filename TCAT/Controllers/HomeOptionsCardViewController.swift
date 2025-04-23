@@ -296,7 +296,6 @@ class HomeOptionsCardViewController: UIViewController {
     }
 
     // MARK: - Get Search Results
-    
     /// Get Search Results
     internal func startSearch(for searchText: String) {
         currentSearchCancellable?.cancel()
