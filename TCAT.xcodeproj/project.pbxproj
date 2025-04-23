@@ -288,6 +288,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEB26AE22C9F9B9A002E863F /* UserNotifications.framework in Frameworks */,
 				BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */,
 				BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */,
 				BF74AC1A1F945D7D00AFD4E4 /* GoogleMapsBase.framework in Frameworks */,
