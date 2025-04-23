@@ -75,13 +75,6 @@ class SearchManager: NSObject {
             }
         }
     }
-    private func sortLocations(_ s1: Place, _ s2: Place) -> Bool  {
-        let s1Check = pow((s1.latitude-(self.gshLat)),2.0) + pow((s1.longitude-(self.gshLong)),2.0)
-        
-        let s2Check = pow((s2.latitude-(self.gshLat)),2.0) + pow((s2.longitude-(self.gshLong)),2.0)
-        return s1Check < s2Check
-    }
-    
 
     private func performLocalSearch(with query: String) {
         guard !query.isEmpty else {
