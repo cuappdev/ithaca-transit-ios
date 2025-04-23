@@ -205,7 +205,7 @@ class RouteDetailContentViewController: UIViewController {
                 guard let self = self else { return }
 
                 if case .failure(let error) = completion {
-                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
+                    self.printClass(context: "\(#function) error", message: error.errorDescription)
                     if let banner = self.banner, !banner.isDisplaying {
                         self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
                     }
