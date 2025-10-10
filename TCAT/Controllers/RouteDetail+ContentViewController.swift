@@ -34,6 +34,7 @@ class RouteDetailContentViewController: UIViewController {
     var liveTrackingNetworkTimer: Timer?
     private var locationManager = CLLocationManager()
     var mapView: GMSMapView!
+
     private let mapPadding: CGFloat = 80
     private let markerRadius: CGFloat = 8
     private var paths: [Path] = []
@@ -205,7 +206,9 @@ class RouteDetailContentViewController: UIViewController {
                 guard let self = self else { return }
 
                 if case .failure(let error) = completion {
+
                     self.printClass(context: "\(#function) error", message: error.errorDescription)
+
                     if let banner = self.banner, !banner.isDisplaying {
                         self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
                     }

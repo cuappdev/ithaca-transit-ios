@@ -206,11 +206,36 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: Constants.Cells.notificationToggleCellIdentifier
             ) as? NotificationToggleTableViewCell else { return UITableViewCell() }
+            
+            guard let delayDirection = route.getFirstDepartRawDirection() else {
+                return UITableViewCell()
+            }
+
+            // Ensure tripId is non-optional
+            guard let tripId = delayDirection.tripIdentifiers?.first else {
+                return UITableViewCell()
+            }
+
+            // Convert startTime to the desired string format
+            let startTime = Int(route.departureTime.timeIntervalSince1970)
+
+            let stopId = delayDirection.stops.first?.id
+            
+            let isOn = isToggleOn(for: type, tripId: tripId)
+
             cell.configure(
                 for: type,
-                isFirst: indexPath.row == 0,
-                delegate: self
+                isFirst: false,
+                delegate: self,
+                startTime: startTime,
+                tripId: tripId,
+                stopId: stopId
             )
+
+            // Make sure the visual switch matches your persisted state
+            // If you haven’t added an `isOn` parameter to configure, set it directly:
+            // (Alternatively, add an `isOn` parameter to `configure` and set inside that method.)
+            cell.setSwitchOn(isOn)
             return cell
         }
     }
