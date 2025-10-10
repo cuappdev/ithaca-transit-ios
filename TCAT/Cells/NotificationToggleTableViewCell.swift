@@ -132,8 +132,6 @@ class NotificationToggleTableViewCell: UITableViewCell {
         
         setToggle(isOn, for: type, tripId: tripId)
 
-  
-
         if isOn {
             switch type {
             case .beforeBoarding:

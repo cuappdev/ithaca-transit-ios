@@ -232,9 +232,6 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
                 stopId: stopId
             )
 
-            // Make sure the visual switch matches your persisted state
-            // If you haven’t added an `isOn` parameter to configure, set it directly:
-            // (Alternatively, add an `isOn` parameter to `configure` and set inside that method.)
             cell.setSwitchOn(isOn)
             return cell
         }
