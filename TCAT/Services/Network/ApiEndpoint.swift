@@ -73,7 +73,6 @@ extension ApiEndpoint {
             longPath.append(separatorPath)
         }
 
-        longPath.append("/")
         longPath.append(path)
         urlComponents?.path = longPath
 
@@ -103,7 +102,6 @@ extension ApiEndpoint {
         if let customDataBody = customDataBody {
             request.httpBody = customDataBody
         }
-
         return request
     }
 }

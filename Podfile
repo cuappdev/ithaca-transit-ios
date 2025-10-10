@@ -10,7 +10,7 @@ inhibit_all_warnings!
 target 'TCAT' do
     
     # Location
-    pod 'GoogleMaps'
+    pod 'GoogleMaps', '~> 8.4.0'
     
     # Networking + Data
     pod 'Apollo', '~> 1.9.3'

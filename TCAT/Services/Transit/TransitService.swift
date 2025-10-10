@@ -56,6 +56,37 @@ protocol TransitServiceProtocol: AnyObject {
     /// - Returns: A publisher emitting a `RouteSectionsObject` with route details or an `ApiErrorHandler` on error.
     func getRoutes(start: Place, end: Place, time: Date, type: SearchType) -> AnyPublisher<RouteSectionsObject, ApiErrorHandler>
 
+    /// Subscribes to delay notification for a specific trip's arrival
+    /// The notification is sent when there is a change in the delay.
+    /// - Parameters:
+    ///   - deviceToken: The FCM token for the device
+    ///   - stopID: The stop ID to monitor
+    ///   - tripID: The trip ID to monitor
+    ///   - uid: The unique identifier for the user
+    /// - Returns: A publisher that emits Bool on success, or an ApiErrorHandler on failure
+    func subscribeToDelayNotifications(
+        deviceToken: String,
+        stopID: String?,
+        tripID: String,
+        uid: String
+    ) -> AnyPublisher<Bool, ApiErrorHandler>
+
+    /// Subscribes to departure notifications for a specific trip
+    /// - Parameters:
+    ///   - deviceToken: The FCM token for the device
+    ///   - startTime: The timestamp to start monitoring from
+    ///   - uid: The unique identifier for the user
+    /// - Returns: A publisher that emits Bool on success, or an ApiErrorHandler on failure
+    func subscribeToDepartureNotifications(
+        deviceToken: String,
+        startTime: String,
+        uid: String
+    ) -> AnyPublisher<Bool, ApiErrorHandler>
+
+    func unsubscribeFromDelayNotifications(deviceToken: String, stopID: String?, tripID: String, uid: String) -> AnyPublisher<Bool, ApiErrorHandler>
+
+    func unsubscribeFromDepartureNotifications(deviceToken: String, startTime: String, uid: String) -> AnyPublisher<Bool, ApiErrorHandler>
+
     /// Updates the local cache of Apple places based on the search text and provided locations.
     /// - Parameters:
     ///   - searchText: The query text used for retrieving places.
@@ -177,6 +208,49 @@ class TransitService: TransitServiceProtocol {
         )
         let request = TransitProvider.routes(body).makeRequest
         return networkManager.request(request, decodingType: RouteSectionsObject.self)
+    }
+
+    func subscribeToDelayNotifications(
+        deviceToken: String,
+        stopID: String?,
+        tripID: String,
+        uid: String
+    ) -> AnyPublisher<Bool, ApiErrorHandler> {
+        let body = DelayNotificationBody(deviceToken: deviceToken, stopID: stopID, tripID: tripID, uid: uid)
+        let request = TransitProvider.delayNotification(body).makeRequest
+        return networkManager.request(request, decodingType: Bool.self, responseType: .simple)
+    }
+
+    func subscribeToDepartureNotifications(
+        deviceToken: String,
+        startTime: String,
+        uid: String
+    ) -> AnyPublisher<Bool, ApiErrorHandler> {
+        print("startTime: \(startTime)")
+        let body = DepartureNotificationBody(deviceToken: deviceToken, startTime: startTime, uid: uid)
+        let request = TransitProvider.departueNotification(body).makeRequest
+        return networkManager.request(request, decodingType: Bool.self, responseType: .simple)
+    }
+
+    func unsubscribeFromDelayNotifications(
+        deviceToken: String,
+        stopID: String?,
+        tripID: String,
+        uid: String
+    ) -> AnyPublisher<Bool, ApiErrorHandler> {
+        let body = DelayNotificationBody(deviceToken: deviceToken, stopID: stopID, tripID: tripID, uid: uid)
+        let request = TransitProvider.cancelDelayNotification(body).makeRequest
+        return networkManager.request(request, decodingType: Bool.self, responseType: .simple)
+    }
+
+    func unsubscribeFromDepartureNotifications(
+        deviceToken: String,
+        startTime: String,
+        uid: String
+    ) -> AnyPublisher<Bool, ApiErrorHandler> {
+        let body = DepartureNotificationBody(deviceToken: deviceToken, startTime: startTime, uid: uid)
+        let request = TransitProvider.cancelDepartureNotification(body).makeRequest
+        return networkManager.request(request, decodingType: Bool.self, responseType: .simple)
     }
 
     func updateApplePlacesCache(searchText: String, places: [Place]) -> AnyPublisher<Bool, ApiErrorHandler> {

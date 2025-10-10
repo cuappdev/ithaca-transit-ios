@@ -3,12 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		11DED336304A84735BDCFEC3 /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4C43A009E3DAAEEFC9A0BD5 /* Pods_TCAT.framework */; };
 		22948BFD221B75C5003FC43F /* RequestModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22948BFB221B75C5003FC43F /* RequestModels.swift */; };
-		28EA3E17A0C473892F5506EC /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 542B073726DFD1EE044EA97F /* Pods_TCAT.framework */; };
 		2E70434E2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2E70434D2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy */; };
 		2E9416602BC60A59003DEB44 /* UpliftQueries.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 2E94165F2BC60A59003DEB44 /* UpliftQueries.graphql */; };
 		2E9416692BC615DF003DEB44 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9416672BC615DF003DEB44 /* AppDelegate.swift */; };
@@ -264,18 +264,18 @@
 		2EC1F5152BC66CBA001D9F66 /* Publishers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Publishers.swift; sourceTree = "<group>"; };
 		449A7C751D80D0E80019300C /* TCAT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCAT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		449A7C7F1D80D0E80019300C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		542B073726DFD1EE044EA97F /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		78CE6235AE56D8B3776331B2 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
-		7A621E1F21DF0FC2CACD61FE /* Pods-TCAT.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.local.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.local.xcconfig"; sourceTree = "<group>"; };
-		7C562FAA4261465E07ACE741 /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
 		7E14AEC02177E846006A344D /* IntentsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IntentsUI.framework; path = System/Library/Frameworks/IntentsUI.framework; sourceTree = SDKROOT; };
 		7EEF189C21B39C6200343FFD /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
+		7F774800664BACA8CD504187 /* Pods-TCAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.debug.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.debug.xcconfig"; sourceTree = "<group>"; };
+		AB65818DE0F8825F8E2AFDA3 /* Pods-TCAT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.release.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.release.xcconfig"; sourceTree = "<group>"; };
 		BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsBase.framework; path = Pods/GoogleMaps/Base/Frameworks/GoogleMapsBase.framework; sourceTree = "<group>"; };
 		BF74AC1B1F945D8E00AFD4E4 /* GoogleMapsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsCore.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMapsCore.framework; sourceTree = "<group>"; };
 		BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMaps.framework; sourceTree = "<group>"; };
+		DEED3C993CDEA110A0400D70 /* Pods-TCAT.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCAT.local.xcconfig"; path = "Target Support Files/Pods-TCAT/Pods-TCAT.local.xcconfig"; sourceTree = "<group>"; };
 		EEB26AE02C9F998C002E863F /* TCATLocal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TCATLocal.entitlements; sourceTree = "<group>"; };
 		EEB26AE12C9F9B9A002E863F /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		EEB26AE32C9FA60E002E863F /* TCATDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TCATDebug.entitlements; sourceTree = "<group>"; };
+		F4C43A009E3DAAEEFC9A0BD5 /* Pods_TCAT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCAT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD44EC522CD86A56009269A2 /* TransitNotificationSubscriber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitNotificationSubscriber.swift; sourceTree = "<group>"; };
 		FD44EC542CD86C4A009269A2 /* PushNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationService.swift; sourceTree = "<group>"; };
 		FD69AF2A2B89212F00970C7E /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
@@ -287,10 +287,6 @@
 		FDE68D272C97FC4600024A69 /* TransitProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		FD2707CE2D63938C00BF2DF2 /* Core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Core; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXFrameworksBuildPhase section */
 		449A7C721D80D0E80019300C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -299,7 +295,7 @@
 				BF74AC1D1F945D8E00AFD4E4 /* GoogleMapsCore.framework in Frameworks */,
 				BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */,
 				BF74AC1A1F945D7D00AFD4E4 /* GoogleMapsBase.framework in Frameworks */,
-				28EA3E17A0C473892F5506EC /* Pods_TCAT.framework in Frameworks */,
+				11DED336304A84735BDCFEC3 /* Pods_TCAT.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -315,12 +311,11 @@
 				BF74AC191F945D7D00AFD4E4 /* GoogleMapsBase.framework */,
 				7E14AEC02177E846006A344D /* IntentsUI.framework */,
 				7EEF189C21B39C6200343FFD /* NotificationCenter.framework */,
-				542B073726DFD1EE044EA97F /* Pods_TCAT.framework */,
+				F4C43A009E3DAAEEFC9A0BD5 /* Pods_TCAT.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-
 		2292486621B891790004279C /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -604,7 +599,6 @@
 				2E94165E2BC60A3B003DEB44 /* Ecosystem */,
 				FD44EC562CD8914D009269A2 /* Managers */,
 				2E9416AB2BC616DE003DEB44 /* Models */,
-				FD2707CE2D63938C00BF2DF2 /* Core */,
 				FDE68D292C988CDB00024A69 /* Services */,
 				2E9416C72BC61763003DEB44 /* Supporting */,
 				2E9416E02BC618E6003DEB44 /* Utils */,
@@ -616,9 +610,9 @@
 		44BE841D0263A527944A6E0F /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				7C562FAA4261465E07ACE741 /* Pods-TCAT.debug.xcconfig */,
-				7A621E1F21DF0FC2CACD61FE /* Pods-TCAT.local.xcconfig */,
-				78CE6235AE56D8B3776331B2 /* Pods-TCAT.release.xcconfig */,
+				7F774800664BACA8CD504187 /* Pods-TCAT.debug.xcconfig */,
+				DEED3C993CDEA110A0400D70 /* Pods-TCAT.local.xcconfig */,
+				AB65818DE0F8825F8E2AFDA3 /* Pods-TCAT.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -666,22 +660,19 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 449A7C9D1D80D0E80019300C /* Build configuration list for PBXNativeTarget "TCAT" */;
 			buildPhases = (
-				E23EEB875E8C363D642AB893 /* [CP] Check Pods Manifest.lock */,
+				F6E30D44AE7060FBA9CA34DF /* [CP] Check Pods Manifest.lock */,
 				449A7C711D80D0E80019300C /* Sources */,
 				449A7C721D80D0E80019300C /* Frameworks */,
 				449A7C731D80D0E80019300C /* Resources */,
 				2292F9DB215722ED00C8C931 /* SwiftLint */,
 				7E14AED52177E846006A344D /* Embed Foundation Extensions */,
 				CE26CBF62B879837005D099A /* Crashlytics */,
-				882B9E91268F347446806E32 /* [CP] Embed Pods Frameworks */,
-				0B4CA64206AF6DA1763F9ACB /* [CP] Copy Pods Resources */,
+				10126D331FC535DE1C43147A /* [CP] Embed Pods Frameworks */,
+				AF0480DFC65AF5CB62CA0646 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				FD2707CE2D63938C00BF2DF2 /* Core */,
 			);
 			name = TCAT;
 			productName = TCAT;
@@ -761,25 +752,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0B4CA64206AF6DA1763F9ACB /* [CP] Copy Pods Resources */ = {
+		10126D331FC535DE1C43147A /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
+			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		2292F9DB215722ED00C8C931 /* SwiftLint */ = {
@@ -800,25 +787,21 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n\nif which swiftlint >/dev/null; then\n    swiftlint --fix && swiftlint\nelse\n    echo \"WARNING: SwiftLint not installed\"\nfi\n";
 		};
-		882B9E91268F347446806E32 /* [CP] Embed Pods Frameworks */ = {
+		AF0480DFC65AF5CB62CA0646 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TCAT/Pods-TCAT-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		CE26CBF62B879837005D099A /* Crashlytics */ = {
@@ -844,7 +827,7 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n";
 		};
-		E23EEB875E8C363D642AB893 /* [CP] Check Pods Manifest.lock */ = {
+		F6E30D44AE7060FBA9CA34DF /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1043,7 +1026,7 @@
 		};
 		449A7C9F1D80D0E80019300C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 78CE6235AE56D8B3776331B2 /* Pods-TCAT.release.xcconfig */;
+			baseConfigurationReference = AB65818DE0F8825F8E2AFDA3 /* Pods-TCAT.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_APP_DISPLAY_NAME = Navi;
@@ -1140,7 +1123,7 @@
 		};
 		BFF7E5EF223BFDF0001C6032 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7C562FAA4261465E07ACE741 /* Pods-TCAT.debug.xcconfig */;
+			baseConfigurationReference = 7F774800664BACA8CD504187 /* Pods-TCAT.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_APP_DISPLAY_NAME = "Navi Beta";
@@ -1239,7 +1222,7 @@
 		};
 		C27549D5233491FA00D5A754 /* Local */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7A621E1F21DF0FC2CACD61FE /* Pods-TCAT.local.xcconfig */;
+			baseConfigurationReference = DEED3C993CDEA110A0400D70 /* Pods-TCAT.local.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_APP_DISPLAY_NAME = "Navi Local";

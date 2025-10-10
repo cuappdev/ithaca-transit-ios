@@ -59,7 +59,7 @@ class RouteDetailDrawerViewController: UIViewController {
     /// Number of seconds to wait before auto-refreshing bus delay network call.
     private var busDelayNetworkRefreshRate: Double = 10
     private let chevronFlipDurationTime = 0.25
-    private let route: Route
+    internal let route: Route
 
     // MARK: - Initalization
     init(route: Route) {

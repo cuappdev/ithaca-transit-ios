@@ -89,6 +89,17 @@ internal struct DepartureNotificationBody: Codable {
     let uid: String
 }
 
+internal struct Delay: Codable {
+    let tripID: String
+    let delay: Int?
+}
+
+class RouteSectionsObject: Codable {
+    var fromStop: [Route]
+    var boardingSoon: [Route]
+    var walking: [Route]
+}
+
 struct APIResponse<T: Decodable>: Decodable {
     var success: Bool
     var data: T
