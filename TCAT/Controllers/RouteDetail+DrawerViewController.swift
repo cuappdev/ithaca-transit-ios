@@ -159,6 +159,26 @@ class RouteDetailDrawerViewController: UIViewController {
             sections.append(notificationSection)
         }
     }
+    
+    private func key(for type: NotificationType, tripId: String) -> String {
+        let typeKey: String
+        switch type {
+        case .delay: typeKey = "delay"
+        case .beforeBoarding: typeKey = "beforeBoarding"
+        }
+        return "toggle-\(typeKey)-\(tripId)"
+    }
+
+    // Or persist with UserDefaults:
+    func isToggleOn(for type: NotificationType, tripId: String) -> Bool {
+        let k = key(for: type, tripId: tripId)
+        return UserDefaults.standard.bool(forKey: k)
+    }
+
+    func setToggle(_ on: Bool, for type: NotificationType, tripId: String) {
+        let k = key(for: type, tripId: tripId)
+        UserDefaults.standard.set(on, forKey: k)
+    }
 
     private func setupConstraints() {
         summaryView.snp.makeConstraints { make in
@@ -264,3 +284,4 @@ class RouteDetailDrawerViewController: UIViewController {
     }
 
 }
+

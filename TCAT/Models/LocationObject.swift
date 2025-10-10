@@ -36,7 +36,7 @@ class LocationObject: NSObject, Codable {
         case latitude = "lat"
         case longitude = "long"
         case name
-        case id = "stopID"
+        case id = "stopId"
     }
 
     /// Blank init to store name

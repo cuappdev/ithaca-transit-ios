@@ -146,7 +146,7 @@ PODS:
   - SwiftLint (0.54.0)
   - SwiftyJSON (5.0.1)
   - Wormholy (1.7.0)
-  - Zip (1.1.0)
+  - Zip (2.1.2)
 
 DEPENDENCIES:
   - Apollo (~> 1.9.3)
@@ -162,7 +162,7 @@ DEPENDENCIES:
   - SwiftLint
   - SwiftyJSON (~> 5.0)
   - Wormholy
-  - Zip (~> 1.1)
+  - Zip (~> 2.1.2)
 
 SPEC REPOS:
   trunk:
@@ -235,8 +235,8 @@ SPEC CHECKSUMS:
   SwiftLint: c1de071d9d08c8aba837545f6254315bc900e211
   SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
   Wormholy: ab1c8c2f02f58587a0941deb0088555ffbf039a1
-  Zip: 8877eede3dda76bcac281225c20e71c25270774c
+  Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
 
-PODFILE CHECKSUM: af336d88f53594af448d02dc18637c2b6ebe685e
+PODFILE CHECKSUM: eb65fdf9dc23ed218f08a576b33aef5562c9b667
 
-COCOAPODS: 1.15.0
+COCOAPODS: 1.16.2

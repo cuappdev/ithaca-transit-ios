@@ -94,13 +94,47 @@ class NotificationToggleTableViewCell: UITableViewCell {
         self.delegate = delegate
         self.type = type
         notificationTitleLabel.text = type.title
+        notificationSwitch.setOn(isToggleOn(for: type, tripId: tripId), animated: false)
         if isFirst {
             setupFirstHairline()
         }
     }
+    
+    func setSwitchOn(_ isOn: Bool) {
+        notificationSwitch.setOn(isOn, animated: false)
+    }
+    
+    // Build a stable key for persistence
+    private func key(for type: NotificationType, tripId: String) -> String {
+        let typeKey: String
+        switch type {
+        case .delay: typeKey = "delay"
+        case .beforeBoarding: typeKey = "beforeBoarding"
+        // add any other cases here
+        }
+        return "toggle-\(typeKey)-\(tripId)"
+    }
+
+    func isToggleOn(for type: NotificationType, tripId: String) -> Bool {
+        let k = key(for: type, tripId: tripId)
+        return UserDefaults.standard.bool(forKey: k)
+    }
+
+    func setToggle(_ on: Bool, for type: NotificationType, tripId: String) {
+        let k = key(for: type, tripId: tripId)
+        UserDefaults.standard.set(on, forKey: k)
+    }
+    
 
     @objc func switchValueChanged() {
-        if notificationSwitch.isOn {
+
+        let isOn = notificationSwitch.isOn
+        
+        setToggle(isOn, for: type, tripId: tripId)
+
+  
+
+        if isOn {
             switch type {
             case .beforeBoarding:
                 let now = Int(Date().timeIntervalSince1970)
@@ -109,6 +143,7 @@ class NotificationToggleTableViewCell: UITableViewCell {
                     TransitNotificationSubscriber.shared.subscribeToDepartureNotifications(startTime: String(startTime))
                 } else {
                     notificationSwitch.setOn(false, animated: true)
+                    setToggle(false, for: type, tripId: tripId)
                     delegate?.displayNotificationBanner(type: .unableToConfirmBeforeBoarding)
                 }
             case .delay:

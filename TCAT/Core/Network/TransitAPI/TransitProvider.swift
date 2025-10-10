@@ -48,11 +48,8 @@ extension TransitProvider: ApiEndpoint {
     /// API version for the transit endpoints.
     var apiVersion: String {
         switch self {
-        case .delayNotification, .departueNotification, .cancelDelayNotification, .cancelDepartureNotification:
+        case .delayNotification, .departueNotification, .cancelDelayNotification, .cancelDepartureNotification, .allStops:
             return "v1"
-
-        case .routes:
-            return "v2"
 
         default:
             return "v3"

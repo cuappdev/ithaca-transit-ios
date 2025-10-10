@@ -217,17 +217,25 @@ extension RouteDetailDrawerViewController: UITableViewDataSource {
             }
 
             // Convert startTime to the desired string format
-            let startTime = Int(delayDirection.startTime.timeIntervalSince1970)
+            let startTime = Int(route.departureTime.timeIntervalSince1970)
 
             let stopId = delayDirection.stops.first?.id
+            
+            let isOn = isToggleOn(for: type, tripId: tripId)
+
             cell.configure(
                 for: type,
-                isFirst: indexPath.row == 0,
+                isFirst: false,
                 delegate: self,
                 startTime: startTime,
                 tripId: tripId,
                 stopId: stopId
             )
+
+            // Make sure the visual switch matches your persisted state
+            // If you haven’t added an `isOn` parameter to configure, set it directly:
+            // (Alternatively, add an `isOn` parameter to `configure` and set inside that method.)
+            cell.setSwitchOn(isOn)
             return cell
         }
     }

@@ -18,7 +18,7 @@ class TransitNotificationSubscriber {
         PushNotificationService.shared.getDeviceToken { [weak self] token in
             guard let token = token,
                   let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) else { return }
-
+            print("device token \(token)")
             TransitService.shared.subscribeToDelayNotifications(
                 deviceToken: token,
                 stopID: stopID,

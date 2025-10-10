@@ -94,6 +94,7 @@ class PushNotificationService: NSObject, MessagingDelegate, UNUserNotificationCe
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         // Show notification when app is in foreground
+        print("Foreground notification received: \(notification.request.content.userInfo)")
         completionHandler([[.banner, .sound]])
     }
 
@@ -157,6 +158,7 @@ class PushNotificationService: NSObject, MessagingDelegate, UNUserNotificationCe
 
      This method is called when a remote notification is received. It logs the notification's userInfo and calls the completion handler with `.newData`.
      */
+
     func application(
         _ application: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],

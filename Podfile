@@ -23,7 +23,7 @@ target 'TCAT' do
     pod 'Firebase/Messaging'
     
     # File Management
-    pod 'Zip', '~> 1.1'
+    pod 'Zip', '~> 2.1.2'
     
     # UI Frameworks
     pod 'DZNEmptyDataSet', :git=> 'https://github.com/cuappdev/DZNEmptyDataSet.git'

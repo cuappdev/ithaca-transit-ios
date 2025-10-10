@@ -239,7 +239,7 @@ class TransitService: TransitServiceProtocol {
         uid: String
     ) -> AnyPublisher<Bool, ApiErrorHandler> {
         let body = DelayNotificationBody(deviceToken: deviceToken, stopID: stopID, tripID: tripID, uid: uid)
-        let request = TransitProvider.delayNotification(body).makeRequest
+        let request = TransitProvider.cancelDelayNotification(body).makeRequest
         return networkManager.request(request, decodingType: Bool.self, responseType: .simple)
     }
 
@@ -249,7 +249,7 @@ class TransitService: TransitServiceProtocol {
         uid: String
     ) -> AnyPublisher<Bool, ApiErrorHandler> {
         let body = DepartureNotificationBody(deviceToken: deviceToken, startTime: startTime, uid: uid)
-        let request = TransitProvider.departueNotification(body).makeRequest
+        let request = TransitProvider.cancelDepartureNotification(body).makeRequest
         return networkManager.request(request, decodingType: Bool.self, responseType: .simple)
     }
 

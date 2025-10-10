@@ -102,7 +102,6 @@ extension ApiEndpoint {
         if let customDataBody = customDataBody {
             request.httpBody = customDataBody
         }
-
         return request
     }
 }

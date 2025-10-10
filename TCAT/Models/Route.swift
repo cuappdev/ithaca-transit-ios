@@ -46,7 +46,6 @@ class Route: NSObject, Codable {
 
     /// A unique identifier for the route
     var routeId: String
-
     /// The distance between the start and finish location, in miles
     var travelDistance: Double = 0.0
 
@@ -75,15 +74,15 @@ class Route: NSObject, Codable {
         case arrivalTime
         case departureTime
         case directions
-        case routeId
     }
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         departureTime = Date.parseDate(try container.decode(String.self, forKey: .departureTime))
         arrivalTime = Date.parseDate(try container.decode(String.self, forKey: .arrivalTime))
-        routeId = try container.decode(String.self, forKey: .routeId)
+        
         directions = try container.decode([Direction].self, forKey: .directions)
+        routeId = (directions.first?.routeNumber).map { String($0) } ?? "0"
         rawDirections = try container.decode([Direction].self, forKey: .directions)
         startName = Constants.General.currentLocation
         endName = Constants.General.destination

@@ -48,6 +48,7 @@ class NetworkManager: NetworkService {
         T,
         ApiErrorHandler
     > {
+        print(request.url?.absoluteString ?? "No URL")
         return session.dataTaskPublisher(for: request)
             .tryMap { result in
                 try self.handleResponse(result)
