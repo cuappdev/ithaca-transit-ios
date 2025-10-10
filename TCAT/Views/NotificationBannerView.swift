@@ -33,11 +33,7 @@ enum NotificationBannerType {
         case .beforeBoardingConfirmation, .busArriving, .delayConfirmation:
             return Colors.tcatBlue
 
-<<<<<<< HEAD
         case .busDelay, .unableToConfirmBeforeBoarding:
-=======
-        case .busDelay:
->>>>>>> master
             return Colors.lateRed
         }
     }
@@ -91,12 +87,9 @@ class NotificationBannerView: UIView {
         case .delayConfirmation:
             beginningText = Constants.Notification.delayConfirmation
 
-<<<<<<< HEAD
         case .unableToConfirmBeforeBoarding:
             beginningText = Constants.Notification.unableToConfirmBeforeBoarding
 
-=======
->>>>>>> master
         default:
             beginningText = ""
         }

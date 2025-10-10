@@ -83,15 +83,12 @@ internal struct DelayNotificationBody: Codable {
     let uid: String
 }
 
-<<<<<<<< HEAD:TCAT/Core/Network/TransitAPI/Models/RequestModels.swift
 internal struct DepartureNotificationBody: Codable {
     let deviceToken: String
     let startTime: String
     let uid: String
 }
 
-========
->>>>>>>> master:TCAT/Services/Network/RequestModels.swift
 struct APIResponse<T: Decodable>: Decodable {
     var success: Bool
     var data: T

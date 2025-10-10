@@ -30,19 +30,13 @@ class RouteDetailContentViewController: UIViewController {
     var currentLocation: CLLocationCoordinate2D?
     var directions: [Direction] = []
     var endDestination: Place
-<<<<<<< HEAD
-    /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
-=======
->>>>>>> master
     var liveTrackingNetworkRefreshRate: Double = LiveIndicator.interval * 1.0
     var liveTrackingNetworkTimer: Timer?
     private var locationManager = CLLocationManager()
     var mapView: GMSMapView!
-<<<<<<< HEAD
-=======
+
     private let mapPadding: CGFloat = 80
     private let markerRadius: CGFloat = 8
->>>>>>> master
     private var paths: [Path] = []
     private var route: Route!
     private var routeOptionsCell: RouteTableViewCell?
@@ -212,11 +206,9 @@ class RouteDetailContentViewController: UIViewController {
                 guard let self = self else { return }
 
                 if case .failure(let error) = completion {
-<<<<<<< HEAD
-                    self.printClass(context: "\(#function) error", message: error.localizedDescription)
-=======
+
                     self.printClass(context: "\(#function) error", message: error.errorDescription)
->>>>>>> master
+
                     if let banner = self.banner, !banner.isDisplaying {
                         self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
                     }
