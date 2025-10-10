@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22948BFD221B75C5003FC43F /* RequestModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22948BFB221B75C5003FC43F /* RequestModels.swift */; };
 		28EA3E17A0C473892F5506EC /* Pods_TCAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 542B073726DFD1EE044EA97F /* Pods_TCAT.framework */; };
 		2E70434E2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2E70434D2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy */; };
 		2E9416602BC60A59003DEB44 /* UpliftQueries.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 2E94165F2BC60A59003DEB44 /* UpliftQueries.graphql */; };
@@ -125,6 +126,12 @@
 		BF74AC1E1F945D8E00AFD4E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF74AC1C1F945D8E00AFD4E4 /* GoogleMaps.framework */; };
 		FD44EC532CD86A5F009269A2 /* TransitNotificationSubscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD44EC522CD86A56009269A2 /* TransitNotificationSubscriber.swift */; };
 		FD44EC552CD86C55009269A2 /* PushNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD44EC542CD86C4A009269A2 /* PushNotificationService.swift */; };
+		FDA3439F2CB6DF5800608A1A /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDA3439E2CB6DF4D00608A1A /* NetworkMonitor.swift */; };
+		FDE68D1E2C97E24900024A69 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D1D2C97E24900024A69 /* NetworkManager.swift */; };
+		FDE68D202C97EBBE00024A69 /* ApiErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D1F2C97EBBE00024A69 /* ApiErrorHandler.swift */; };
+		FDE68D222C97EF6200024A69 /* ApiEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D212C97EF6200024A69 /* ApiEndpoint.swift */; };
+		FDE68D262C97FC0D00024A69 /* TransitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D252C97FC0D00024A69 /* TransitService.swift */; };
+		FDE68D282C97FC4600024A69 /* TransitProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE68D272C97FC4600024A69 /* TransitProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -141,6 +148,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		22948BFB221B75C5003FC43F /* RequestModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestModels.swift; sourceTree = "<group>"; };
 		2E70434D2BB75E10003AC1D6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2E94165F2BC60A59003DEB44 /* UpliftQueries.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UpliftQueries.graphql; sourceTree = "<group>"; };
 		2E9416672BC615DF003DEB44 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -271,6 +279,12 @@
 		FD44EC522CD86A56009269A2 /* TransitNotificationSubscriber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitNotificationSubscriber.swift; sourceTree = "<group>"; };
 		FD44EC542CD86C4A009269A2 /* PushNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationService.swift; sourceTree = "<group>"; };
 		FD69AF2A2B89212F00970C7E /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
+		FDA3439E2CB6DF4D00608A1A /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		FDE68D1D2C97E24900024A69 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		FDE68D1F2C97EBBE00024A69 /* ApiErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiErrorHandler.swift; sourceTree = "<group>"; };
+		FDE68D212C97EF6200024A69 /* ApiEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiEndpoint.swift; sourceTree = "<group>"; };
+		FDE68D252C97FC0D00024A69 /* TransitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitService.swift; sourceTree = "<group>"; };
+		FDE68D272C97FC4600024A69 /* TransitProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -304,6 +318,19 @@
 				542B073726DFD1EE044EA97F /* Pods_TCAT.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+
+		2292486621B891790004279C /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				FDE68D212C97EF6200024A69 /* ApiEndpoint.swift */,
+				FDE68D1F2C97EBBE00024A69 /* ApiErrorHandler.swift */,
+				FDE68D1D2C97E24900024A69 /* NetworkManager.swift */,
+				FDA3439E2CB6DF4D00608A1A /* NetworkMonitor.swift */,
+				22948BFB221B75C5003FC43F /* RequestModels.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 		2E94165E2BC60A3B003DEB44 /* Ecosystem */ = {
@@ -578,6 +605,7 @@
 				FD44EC562CD8914D009269A2 /* Managers */,
 				2E9416AB2BC616DE003DEB44 /* Models */,
 				FD2707CE2D63938C00BF2DF2 /* Core */,
+				FDE68D292C988CDB00024A69 /* Services */,
 				2E9416C72BC61763003DEB44 /* Supporting */,
 				2E9416E02BC618E6003DEB44 /* Utils */,
 				2E9416FD2BC61CAE003DEB44 /* Views */,
@@ -611,6 +639,24 @@
 				FD69AF2A2B89212F00970C7E /* ci_post_clone.sh */,
 			);
 			path = ci_scripts;
+			sourceTree = "<group>";
+		};
+		FDE68D292C988CDB00024A69 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				2292486621B891790004279C /* Network */,
+				FDE68D2A2C98933900024A69 /* Transit */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		FDE68D2A2C98933900024A69 /* Transit */ = {
+			isa = PBXGroup;
+			children = (
+				FDE68D272C97FC4600024A69 /* TransitProvider.swift */,
+				FDE68D252C97FC0D00024A69 /* TransitService.swift */,
+			);
+			path = Transit;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -835,7 +881,9 @@
 				2E9416C12BC61731003DEB44 /* WalkPath.swift in Sources */,
 				2E9416BC2BC61731003DEB44 /* Waypoint.swift in Sources */,
 				2E9417202BC61CF1003DEB44 /* WalkWithDistanceIcon.swift in Sources */,
+				FDE68D282C97FC4600024A69 /* TransitProvider.swift in Sources */,
 				2E94169B2BC616B9003DEB44 /* StopPickerViewController.swift in Sources */,
+				FDE68D1E2C97E24900024A69 /* NetworkManager.swift in Sources */,
 				2E9417162BC61CF1003DEB44 /* SearchBarView.swift in Sources */,
 				2E9FFA882BC673240051793C /* Amenity.graphql.swift in Sources */,
 				2E9FFA852BC673240051793C /* AmenityType.graphql.swift in Sources */,
@@ -872,11 +920,13 @@
 				2E9417212BC61CF1003DEB44 /* NotificationBannerView.swift in Sources */,
 				2E9FFA832BC673240051793C /* OpenHoursFields.graphql.swift in Sources */,
 				2E9416972BC616B9003DEB44 /* RouteDetail+ContentViewController.swift in Sources */,
+				FDE68D262C97FC0D00024A69 /* TransitService.swift in Sources */,
 				2E9416F62BC61984003DEB44 /* Time.swift in Sources */,
 				2E9FFA8D2BC673240051793C /* Query.graphql.swift in Sources */,
 				2E9416792BC61679003DEB44 /* AddFavoritesCollectionViewCell.swift in Sources */,
 				2E9FFA812BC673240051793C /* FacilityFields.graphql.swift in Sources */,
 				2E94171F2BC61CF1003DEB44 /* BusIcon.swift in Sources */,
+				FDA3439F2CB6DF5800608A1A /* NetworkMonitor.swift in Sources */,
 				2E9417242BC61CF1003DEB44 /* DetailIconView.swift in Sources */,
 				2E94171A2BC61CF1003DEB44 /* SummaryView.swift in Sources */,
 				2E9416992BC616B9003DEB44 /* RouteDetailContentViewController+Extensions.swift in Sources */,
@@ -884,6 +934,7 @@
 				2E9FFA892BC673240051793C /* Capacity.graphql.swift in Sources */,
 				2E9416BB2BC61731003DEB44 /* ServiceAlert.swift in Sources */,
 				FD44EC552CD86C55009269A2 /* PushNotificationService.swift in Sources */,
+				FDE68D222C97EF6200024A69 /* ApiEndpoint.swift in Sources */,
 				2EC1F5162BC66CBA001D9F66 /* Publishers.swift in Sources */,
 				2E94169E2BC616B9003DEB44 /* SearchResultsViewController.swift in Sources */,
 				2E9FFA822BC673240051793C /* GymFields.graphql.swift in Sources */,
@@ -915,6 +966,8 @@
 				2E9FFA8B2BC673240051793C /* Gym.graphql.swift in Sources */,
 				2E9FFA8E2BC673240051793C /* SchemaConfiguration.swift in Sources */,
 				2E9416EF2BC61984003DEB44 /* EventPayload.swift in Sources */,
+				FDE68D202C97EBBE00024A69 /* ApiErrorHandler.swift in Sources */,
+				22948BFD221B75C5003FC43F /* RequestModels.swift in Sources */,
 				2E94167A2BC61679003DEB44 /* GeneralTableViewCell.swift in Sources */,
 				2E9417222BC61CF1003DEB44 /* BusLocationView.swift in Sources */,
 				2E9416C42BC61731003DEB44 /* Section.swift in Sources */,
@@ -993,7 +1046,7 @@
 			baseConfigurationReference = 78CE6235AE56D8B3776331B2 /* Pods-TCAT.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				BUNDLE_APP_DISPLAY_NAME = "Ithaca Transit";
+				BUNDLE_APP_DISPLAY_NAME = Navi;
 				CODE_SIGN_ENTITLEMENTS = TCAT/Supporting/TCAT.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1008,14 +1061,14 @@
 					"$(PROJECT_DIR)/Pods/GoogleMaps/Maps/Frameworks",
 				);
 				INFOPLIST_FILE = TCAT/Supporting/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Ithaca Transit";
+				INFOPLIST_KEY_CFBundleDisplayName = Navi;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1090,7 +1143,7 @@
 			baseConfigurationReference = 7C562FAA4261465E07ACE741 /* Pods-TCAT.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				BUNDLE_APP_DISPLAY_NAME = "Ithaca Transit Beta";
+				BUNDLE_APP_DISPLAY_NAME = "Navi Beta";
 				CODE_SIGN_ENTITLEMENTS = TCAT/TCATDebug.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1105,14 +1158,14 @@
 					"$(PROJECT_DIR)/Pods/GoogleMaps/Maps/Frameworks",
 				);
 				INFOPLIST_FILE = TCAT/Supporting/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Ithaca Transit";
+				INFOPLIST_KEY_CFBundleDisplayName = Navi;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.0.4;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DDEBUG";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "$(inherited) \"-D\" \"COCOAPODS\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat;
@@ -1189,7 +1242,7 @@
 			baseConfigurationReference = 7A621E1F21DF0FC2CACD61FE /* Pods-TCAT.local.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				BUNDLE_APP_DISPLAY_NAME = "Ithaca Transit Local";
+				BUNDLE_APP_DISPLAY_NAME = "Navi Local";
 				CODE_SIGN_ENTITLEMENTS = TCAT/TCATLocal.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1204,14 +1257,14 @@
 					"$(PROJECT_DIR)/Pods/GoogleMaps/Maps/Frameworks",
 				);
 				INFOPLIST_FILE = TCAT/Supporting/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Ithaca Transit";
+				INFOPLIST_KEY_CFBundleDisplayName = Navi;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.0.4;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DLOCAL";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "$(inherited) \"-D\" \"COCOAPODS\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cornellappdev.tcat.debug;

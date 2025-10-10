@@ -137,6 +137,7 @@ class NotificationToggleTableViewCell: UITableViewCell {
         if isOn {
             switch type {
             case .beforeBoarding:
+<<<<<<< HEAD
                 let now = Int(Date().timeIntervalSince1970)
                 if startTime - now > 600 {
                     delegate?.displayNotificationBanner(type: .beforeBoardingConfirmation)
@@ -159,6 +160,12 @@ class NotificationToggleTableViewCell: UITableViewCell {
 
             case .delay:
                 TransitNotificationSubscriber.shared.unsubscribeFromDelayNotifications(stopID: stopId, tripID: tripId)
+=======
+                delegate?.displayNotificationBanner(type: .beforeBoardingConfirmation)
+
+            case .delay:
+                delegate?.displayNotificationBanner(type: .delayConfirmation)
+>>>>>>> master
 
             default: break
             }

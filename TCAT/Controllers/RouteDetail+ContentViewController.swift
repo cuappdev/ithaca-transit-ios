@@ -22,6 +22,7 @@ class RouteDetailContentViewController: UIViewController {
     /// Keep track of statuses of bus routes throughout view life cycle
     var noDataRouteList: [Int] = []
 
+    /// General Variables
     var bounds = GMSCoordinateBounds()
     var busIndicators = [GMSMarker]()
     var buses = [GMSMarker]()
@@ -29,23 +30,40 @@ class RouteDetailContentViewController: UIViewController {
     var currentLocation: CLLocationCoordinate2D?
     var directions: [Direction] = []
     var endDestination: Place
+<<<<<<< HEAD
     /// Number of seconds to wait before auto-refreshing live tracking network call call, timed with live indicator
+=======
+>>>>>>> master
     var liveTrackingNetworkRefreshRate: Double = LiveIndicator.interval * 1.0
     var liveTrackingNetworkTimer: Timer?
     private var locationManager = CLLocationManager()
     var mapView: GMSMapView!
+<<<<<<< HEAD
+=======
+    private let mapPadding: CGFloat = 80
+    private let markerRadius: CGFloat = 8
+>>>>>>> master
     private var paths: [Path] = []
     private var route: Route!
     private var routeOptionsCell: RouteTableViewCell?
 
+    /// Banner and Notifications
     private var banner: StatusBarNotificationBanner? {
         didSet {
             setNeedsStatusBarAppearanceUpdate()
         }
     }
 
-    private let mapPadding: CGFloat = 80
-    private let markerRadius: CGFloat = 8
+    /// Final Destination Variables
+    private var finalDestinationCircles: [GMSCircle] = []
+    private var finalDestinationMarkers: [GMSMarker] = []
+    private var finalRouteSegment: [GMSCircle] = []
+    private let finalWalkSegment = GMSMutablePath()
+
+    /// First Route Segment Variables
+    private var firstRouteSegment: [GMSCircle] = []
+    private let firstWalkSegment = GMSMutablePath()
+
 
     /// Initalize RouteDetailViewController. Be sure to send a valid route, otherwise
     /// dummy data will be used. The directions parameter have logical assumptions,
@@ -194,7 +212,11 @@ class RouteDetailContentViewController: UIViewController {
                 guard let self = self else { return }
 
                 if case .failure(let error) = completion {
+<<<<<<< HEAD
                     self.printClass(context: "\(#function) error", message: error.localizedDescription)
+=======
+                    self.printClass(context: "\(#function) error", message: error.errorDescription)
+>>>>>>> master
                     if let banner = self.banner, !banner.isDisplaying {
                         self.showBanner(Constants.Banner.cannotConnectLive, status: .danger)
                     }
@@ -472,9 +494,64 @@ class RouteDetailContentViewController: UIViewController {
             }
         }()
     }
+    
+    /// Helper function to create individual walking circles
+    func createWalkPathCircle() -> UIImage {
+        let fillColor = UIColor(white: 0.82, alpha: 1.0)
+        let borderColor = UIColor(white: 0.57, alpha: 1.0)
+        let diameter: CGFloat = 70.0
+        let borderWidth: CGFloat = 13.0
 
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: diameter, height: diameter))
+        return renderer.image { context in
+            context.cgContext.setFillColor(borderColor.cgColor)
+            context.cgContext.setStrokeColor(borderColor.cgColor)
+            context.cgContext.setLineWidth(borderWidth)
+            context.cgContext.addEllipse(in: CGRect(x: borderWidth / 2, y: borderWidth / 2, width: diameter - borderWidth, height: diameter - borderWidth))
+            context.cgContext.drawPath(using: .fillStroke)
+
+            context.cgContext.setFillColor(fillColor.cgColor)
+            context.cgContext.addEllipse(in: CGRect(x: borderWidth, y: borderWidth, width: diameter - 2 * borderWidth, height: diameter - 2 * borderWidth))
+            context.cgContext.fillPath()
+        }
+    }
+    
+    /// Configure polylines for each walking segment
+    func configurePolyline(for path: GMSPath) {
+        let walkPathCircle = createWalkPathCircle()
+        let polyline = GMSPolyline(path: path)
+        let stampStyle = GMSSpriteStyle(image: walkPathCircle)
+        polyline.strokeWidth = 7
+        polyline.spans = [GMSStyleSpan(style: GMSStrokeStyle.transparentStroke(withStamp: stampStyle))]
+        polyline.map = mapView
+    }
+    
     /// Draw all waypoints initially for all paths in [Path] or [[CLLocationCoordinate2D]], plus fill bounds
     private func drawMapRoute() {
+        var pathCount = 0
+        // Helper function to create bus stop circles
+        func busStopCircles(at coordinate: CLLocationCoordinate2D, on mapView: GMSMapView) -> GMSCircle {
+            let circle = GMSCircle(position: coordinate, radius: 50)
+            circle.fillColor = UIColor.white.withAlphaComponent(1.0)
+            circle.strokeColor = UIColor.black
+            circle.strokeWidth = 2.0
+            circle.map = mapView
+            circle.zIndex = 2
+            return circle
+        }
+        
+        // Helper function to map final location marker
+        func mapLocationMarker() -> UIImage? {
+            let targetSize = CGSize(width: 18, height: 30)
+            guard let originalImage = UIImage(named: "locationMarker") else { return nil }
+            
+            UIGraphicsBeginImageContextWithOptions(targetSize, false, 0.0)
+            originalImage.draw(in: CGRect(origin: .zero, size: targetSize))
+            let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            return resizedImage
+        }
+        
         for path in paths {
             path.traveledPolyline.map = mapView
             path.map = mapView
@@ -485,6 +562,68 @@ class RouteDetailContentViewController: UIViewController {
                 setIndex(of: marker, with: waypoint.wpType)
                 bounds = bounds.includingCoordinate(waypoint.coordinate)
             }
+            
+            if let busPath = path as? BusPath {
+                // Create circles at the first and last coordinate points / stops for bus route(s)
+                if let startBusStopCoordinate = busPath.waypoints.first {
+                    let startCircle = busStopCircles(at: startBusStopCoordinate.coordinate, on: mapView)
+                    finalDestinationCircles.append(startCircle)
+                }
+                
+                if let finalBusStopCoordinate = busPath.waypoints.last {
+                    let endCircle = busStopCircles(at: finalBusStopCoordinate.coordinate, on: mapView)
+                    finalDestinationCircles.append(endCircle)
+                }
+            }
+            
+            // Extract and append all coordinates of waypoints
+            if let walkPath = path as? WalkPath {
+                for circleInfo in walkPath.circles {
+                    let circle = GMSCircle(position: circleInfo.coordinate, radius: circleInfo.radius)
+                    if pathCount == 0 {
+                        firstRouteSegment.append(circle)
+                    } else {
+                        finalRouteSegment.append(circle)
+                    }
+                }
+            }
+            pathCount += 1
+        }
+        
+        func mapRouteSegment(_ segment: [GMSCircle], to path: GMSMutablePath, addMarker: Bool = false) {
+            segment.enumerated().forEach { index, waypoint in
+                let coordinates = CLLocation(latitude: waypoint.position.latitude, longitude: waypoint.position.longitude)
+                path.addLatitude(coordinates.coordinate.latitude, longitude: coordinates.coordinate.longitude)
+                if addMarker && index == segment.count - 1 {
+                    let finalDestinationMarker = GMSMarker(position: coordinates.coordinate)
+                    
+                    if let locationMarker = mapLocationMarker() {
+                        finalDestinationMarker.icon = locationMarker
+                    }
+                    finalDestinationMarkers.append(finalDestinationMarker)
+                    finalDestinationMarker.map = mapView
+                }
+            }
+        }
+
+        // Map each route segment and draw final location marker for the last segment
+        mapRouteSegment(firstRouteSegment, to: firstWalkSegment, addMarker: finalRouteSegment.isEmpty)
+        if !finalRouteSegment.isEmpty {
+            mapRouteSegment(finalRouteSegment, to: finalWalkSegment, addMarker: true)
+        }
+        
+        configurePolyline(for: firstWalkSegment)
+        configurePolyline(for: finalWalkSegment)
+        
+    }
+    
+    /// Adjusts the size of endpoint bus stop circles based on zoom level
+    func updateBusStopCircleSize() {
+        let circleRadiusScale = 1 / mapView.projection.points(forMeters: 1, at: mapView.camera.target)
+        let circleRadius = 4.5 * CLLocationDistance(circleRadiusScale)
+
+        for circle in finalDestinationCircles {
+            circle.radius = circleRadius
         }
     }
 
