@@ -9,7 +9,7 @@
 import Combine
 
 class TransitNotificationSubscriber {
-    
+
     static let shared = TransitNotificationSubscriber()
 
     private var cancellables = Set<AnyCancellable>()
@@ -17,6 +17,7 @@ class TransitNotificationSubscriber {
     func subscribeToDelayNotifications(stopID: String?, tripID: String) {
         PushNotificationService.shared.getDeviceToken { [weak self] token in
             guard let token = token,
+                  let self,
                   let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) else { return }
             print("device token \(token)")
             TransitService.shared.subscribeToDelayNotifications(
@@ -35,13 +36,14 @@ class TransitNotificationSubscriber {
                     print("Departure notification subscription success: \(success)")
                 }
             )
-            .store(in: &self!.cancellables)
+            .store(in: &self.cancellables)
         }
     }
 
     func subscribeToDepartureNotifications(startTime: String) {
         PushNotificationService.shared.getDeviceToken { [weak self] token in
             guard let token = token,
+                  let self,
                   let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) else { return }
 
             TransitService.shared.subscribeToDepartureNotifications(
@@ -59,13 +61,14 @@ class TransitNotificationSubscriber {
                     print("Delay notification subscription success: \(success)")
                 }
             )
-            .store(in: &self!.cancellables)
+            .store(in: &self.cancellables)
         }
     }
 
     func unsubscribeFromDelayNotifications(stopID: String?, tripID: String) {
         PushNotificationService.shared.getDeviceToken { [weak self] token in
             guard let token = token,
+                  let self,
                   let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) else { return }
 
             TransitService.shared.unsubscribeFromDelayNotifications(
@@ -84,13 +87,14 @@ class TransitNotificationSubscriber {
                     print("Delay notification has been unsubscribed: \(success)")
                 }
             )
-            .store(in: &self!.cancellables)
+            .store(in: &self.cancellables)
         }
     }
 
     func unsubscribeFromDepartureNotifications(startTime: String) {
         PushNotificationService.shared.getDeviceToken { [weak self] token in
             guard let token = token,
+                  let self,
                   let uid = userDefaults.string(forKey: Constants.UserDefaults.uid) else { return }
 
             TransitService.shared.unsubscribeFromDepartureNotifications(
@@ -108,7 +112,7 @@ class TransitNotificationSubscriber {
                     print("Departure notification has been unsubscribed: \(success)")
                 }
             )
-            .store(in: &self!.cancellables)
+            .store(in: &self.cancellables)
         }
     }
 }
