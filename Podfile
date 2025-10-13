@@ -10,7 +10,7 @@ inhibit_all_warnings!
 target 'TCAT' do
     
     # Location
-    pod 'GoogleMaps'
+    pod 'GoogleMaps', '~> 8.4.0'
     
     # Networking + Data
     pod 'Apollo', '~> 1.9.3'
@@ -23,7 +23,7 @@ target 'TCAT' do
     pod 'Firebase/Messaging'
     
     # File Management
-    pod 'Zip', '~> 1.1'
+    pod 'Zip', '~> 2.1.2'
     
     # UI Frameworks
     pod 'DZNEmptyDataSet', :git=> 'https://github.com/cuappdev/DZNEmptyDataSet.git'

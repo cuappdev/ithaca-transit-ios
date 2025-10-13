@@ -20,7 +20,7 @@ enum TransitProvider {
     case cancelDepartureNotification(DepartureNotificationBody)
     case delay(GetDelayBody)
     case delayNotification(DelayNotificationBody)
-    case departureNotification(DepartureNotificationBody)
+    case departueNotification(DepartureNotificationBody)
     case routes(GetRoutesBody)
 }
 
@@ -32,7 +32,7 @@ extension TransitProvider: ApiEndpoint {
 //        return TransitEnvironment.transitURL
         // TODO: Remove once the Notifications moves to prod
         switch self {
-        case .delayNotification, .departureNotification, .cancelDelayNotification, .cancelDepartureNotification:
+        case .delayNotification, .departueNotification, .cancelDelayNotification, .cancelDepartureNotification:
             return TransitEnvironment.devTransitURL
 
         default:
@@ -48,7 +48,7 @@ extension TransitProvider: ApiEndpoint {
     /// API version for the transit endpoints.
     var apiVersion: String {
         switch self {
-        case .delayNotification, .departureNotification, .cancelDelayNotification, .cancelDepartureNotification, .allStops:
+        case .delayNotification, .departueNotification, .cancelDelayNotification, .cancelDepartureNotification, .allStops:
             return "v1"
 
         default:
@@ -94,7 +94,7 @@ extension TransitProvider: ApiEndpoint {
         case .delay:
             return Constants.Endpoints.delay
 
-        case .departureNotification:
+        case .departueNotification:
             return Constants.Endpoints.departureNotification
 
         case .delayNotification:
@@ -164,7 +164,7 @@ extension TransitProvider: ApiEndpoint {
         case .delayNotification(let delayNotificationBody), .cancelDelayNotification(let delayNotificationBody):
             return try? JSONEncoder().encode(delayNotificationBody)
 
-        case .departureNotification(
+        case .departueNotification(
             let departureNotificationBody
         ), .cancelDepartureNotification(
             let departureNotificationBody

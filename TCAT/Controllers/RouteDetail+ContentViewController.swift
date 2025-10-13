@@ -34,6 +34,7 @@ class RouteDetailContentViewController: UIViewController {
     var liveTrackingNetworkTimer: Timer?
     private var locationManager = CLLocationManager()
     var mapView: GMSMapView!
+
     private let mapPadding: CGFloat = 80
     private let markerRadius: CGFloat = 8
     private var paths: [Path] = []

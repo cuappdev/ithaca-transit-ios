@@ -59,7 +59,7 @@ class RouteDetailDrawerViewController: UIViewController {
     /// Number of seconds to wait before auto-refreshing bus delay network call.
     private var busDelayNetworkRefreshRate: Double = 10
     private let chevronFlipDurationTime = 0.25
-    private let route: Route
+    internal let route: Route
 
     // MARK: - Initalization
     init(route: Route) {
@@ -151,14 +151,33 @@ class RouteDetailDrawerViewController: UIViewController {
             RouteDetailItem.notificationType(.beforeBoarding)
         ]
 
-        _ = Section(type: .notification, items: notificationTypes)
+        let notificationSection = Section(type: .notification, items: notificationTypes)
         let routeDetailSection = Section(type: .routeDetail, items: directionsAndVisibleStops)
 
         sections = [routeDetailSection]
-        // TODO: Uncomment when notifications are implemented on backend
-        //        if !route.isRawWalkingRoute() {
-        //            sections.append(notificationSection)
-        //        }
+        if !route.isRawWalkingRoute() {
+            sections.append(notificationSection)
+        }
+    }
+    
+    private func key(for type: NotificationType, tripId: String) -> String {
+        let typeKey: String
+        switch type {
+        case .delay: typeKey = "delay"
+        case .beforeBoarding: typeKey = "beforeBoarding"
+        }
+        return "toggle-\(typeKey)-\(tripId)"
+    }
+
+    // Or persist with UserDefaults:
+    func isToggleOn(for type: NotificationType, tripId: String) -> Bool {
+        let k = key(for: type, tripId: tripId)
+        return UserDefaults.standard.bool(forKey: k)
+    }
+
+    func setToggle(_ on: Bool, for type: NotificationType, tripId: String) {
+        let k = key(for: type, tripId: tripId)
+        UserDefaults.standard.set(on, forKey: k)
     }
 
     private func setupConstraints() {
@@ -265,3 +284,4 @@ class RouteDetailDrawerViewController: UIViewController {
     }
 
 }
+
