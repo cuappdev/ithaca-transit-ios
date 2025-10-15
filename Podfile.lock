@@ -159,6 +159,7 @@ DEPENDENCIES:
   - DZNEmptyDataSet (from `https://github.com/cuappdev/DZNEmptyDataSet.git`)
   - Firebase
   - Firebase/Messaging
+  - Firebase/Messaging
   - FirebaseCrashlytics
   - GoogleMaps (~> 8.4.0)
   - NotificationBannerSwift (~> 3.0.0)
@@ -180,6 +181,7 @@ SPEC REPOS:
     - FirebaseCoreInternal
     - FirebaseCrashlytics
     - FirebaseInstallations
+    - FirebaseMessaging
     - FirebaseMessaging
     - FirebaseRemoteConfigInterop
     - FirebaseSessions
@@ -247,4 +249,5 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: fe3e20ea2d105a197821fb521e7cab43423411dd
 
+COCOAPODS: 1.16.2
 COCOAPODS: 1.16.2

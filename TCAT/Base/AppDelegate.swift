@@ -19,7 +19,7 @@ import FirebaseMessaging
 let userDefaults = UserDefaults.standard
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
     private let encoder = JSONEncoder()
@@ -35,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Set Up Google Services
         FirebaseApp.configure()
-
+        
         GMSServices.provideAPIKey(TransitEnvironment.googleMaps)
 
         // Update shortcut items
@@ -57,6 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Debug - Always Show Onboarding
         // userDefaults.set(false, forKey: Constants.UserDefaults.onboardingShown)
 
+        // Initialize first view based on context
         // Initialize first view based on context
         let showOnboarding = !userDefaults.bool(forKey: Constants.UserDefaults.onboardingShown)
         let parentHomeViewController = ParentHomeMapViewController(
@@ -155,5 +156,27 @@ extension UIWindow {
     func presentInApp(_ viewController: UIViewController) {
         (rootViewController as? UINavigationController)?.visibleViewController?.present(viewController, animated: true)
     }
+
+}
+
+extension AppDelegate {
+    
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print("Firebase registration token: \(String(describing: fcmToken))")
+        
+        let dataDict: [String: String] = ["token": fcmToken ?? ""]
+        NotificationCenter.default.post(
+            name: Notification.Name("FCMToken"),
+            object: nil,
+            userInfo: dataDict
+        )
+        // TODO: If necessary send token to application server.
+        // Note: This callback is fired at each app startup and whenever a new token is generated.
+    }
+
+    //UNUserNotificationCenterDelegate
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+            print("APNs received with: \(userInfo)")
+        }
 
 }
