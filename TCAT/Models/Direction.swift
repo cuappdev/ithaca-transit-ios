@@ -80,13 +80,13 @@ class Direction: NSObject, NSCopying, Codable {
         case endTime
         case name
         case path
-        case routeNumber
+        case routeNumber = "routeId"
         case startLocation
         case startTime
         case stayOnBusForTransfer
         case stops
         case travelDistance = "distance"
-        case tripIdentifiers
+        case tripIdentifiers = "tripIds"
         case type
     }
 

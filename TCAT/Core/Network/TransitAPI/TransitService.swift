@@ -228,7 +228,7 @@ class TransitService: TransitServiceProtocol {
     ) -> AnyPublisher<Bool, ApiErrorHandler> {
         print("startTime: \(startTime)")
         let body = DepartureNotificationBody(deviceToken: deviceToken, startTime: startTime, uid: uid)
-        let request = TransitProvider.departureNotification(body).makeRequest
+        let request = TransitProvider.departueNotification(body).makeRequest
         return networkManager.request(request, decodingType: Bool.self, responseType: .simple)
     }
 
