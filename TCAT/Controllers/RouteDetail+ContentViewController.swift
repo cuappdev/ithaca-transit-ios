@@ -16,7 +16,7 @@ import SwiftyJSON
 import UIKit
 
 class RouteDetailContentViewController: UIViewController {
-    
+
     var drawerDisplayController: RouteDetailDrawerViewController?
 
     /// Keep track of statuses of bus routes throughout view life cycle
@@ -187,11 +187,11 @@ class RouteDetailContentViewController: UIViewController {
     /// Fetch live-tracking information for the first direction's bus route.
     /// Handles connection issues with banners. Animated indicators.
     @objc func getBusLocations() {
-
         let currentTime = Date().timeIntervalSince1970
         if currentTime - prevFetchTime < minimumFetchInterval {
             return
         }
+        
         prevFetchTime = currentTime
         
         // Check if directions are valid for live tracking
@@ -234,6 +234,7 @@ class RouteDetailContentViewController: UIViewController {
                     // Reset banner in case of transition from Error to Online
                     self.hideBanner()
                 }
+                
                 self.removeOldMarkers(busLocations)
 
                 self.parseBusLocationsData(data: busLocations)
@@ -242,7 +243,7 @@ class RouteDetailContentViewController: UIViewController {
 
         bounceIndicators()
     }
-    
+
     private func parseBusLocationsData(data: [BusLocation]) {
         data.forEach { busLocation in
             switch busLocation.dataType {
@@ -272,7 +273,7 @@ class RouteDetailContentViewController: UIViewController {
             }
         }
     }
-    
+
     /// Update the map with new busLocations, adding or replacing based on vehicleID.
     /// If `validTripIDs` is passed in, only buses that match the tripID will be drawn.
     /// The input includes every bus associated with a certain line. Any visible indicators
@@ -287,7 +288,6 @@ class RouteDetailContentViewController: UIViewController {
             let previousCoordinates = getUserData(for: existingBus, key: Constants.BusUserData.actualCoordinates) as? CLLocationCoordinate2D
             
             if previousCoordinates == nil || previousCoordinates!.latitude != busCoords.latitude || previousCoordinates!.longitude != busCoords.longitude {
-
                 let latencyConstant = 0.25 // Allow time to receive new live bus request
                 CATransaction.begin()
                 CATransaction.setAnimationDuration(liveTrackingNetworkRefreshRate + latencyConstant)
@@ -300,6 +300,7 @@ class RouteDetailContentViewController: UIViewController {
                         Constants.BusUserData.vehicleId: bus.vehicleId
                     ]
                 )
+                
                 existingBus.position = busCoords
                 
                 CATransaction.commit()
@@ -309,7 +310,7 @@ class RouteDetailContentViewController: UIViewController {
             let marker = GMSMarker(position: busCoords)
             marker.appearAnimation = .pop
             marker.iconView = iconView
-            
+
             updateUserData(
                 for: marker,
                 with: [
@@ -317,6 +318,7 @@ class RouteDetailContentViewController: UIViewController {
                     Constants.BusUserData.vehicleId: bus.vehicleId
                 ]
             )
+            
             setIndex(of: marker, with: .bussing)
             marker.map = mapView
             buses.append(marker)
@@ -331,7 +333,8 @@ class RouteDetailContentViewController: UIViewController {
         buses.filter { busMarker in
             let vehicleId = getUserData(for: busMarker, key: Constants.BusUserData.vehicleId) as? String
             return vehicleId != nil && !activeVehicleIds.contains(vehicleId!)
-        }.forEach { removedMarker in
+        }
+        .forEach { removedMarker in
             removedMarker.map = nil
             buses.removeAll { $0 == removedMarker }
         }

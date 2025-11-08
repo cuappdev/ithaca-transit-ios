@@ -35,6 +35,7 @@ enum ApiErrorHandler: LocalizedError {
     init(error: Error) {
         self = .normalError(error)
     }
+    
     /// Provides a localized description for each error case.
     var errorDescription: String {
         switch self {

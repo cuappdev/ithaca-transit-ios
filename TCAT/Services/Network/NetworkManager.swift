@@ -149,6 +149,7 @@ class NetworkManager: NetworkService {
                       200..<300 ~= httpResponse.statusCode else {
                     throw URLError(.badServerResponse)
                 }
+                
                 return data
             }
             .mapError { error -> ApiErrorHandler in

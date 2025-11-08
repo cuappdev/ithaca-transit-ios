@@ -144,6 +144,7 @@ class TransitService: TransitServiceProtocol {
         _ directions: [Direction]
     ) -> AnyPublisher<[BusLocation], ApiErrorHandler> {
         let departDirections = directions.filter { $0.type == .depart && $0.tripIdentifiers != nil }
+        
         let locationsInfo = departDirections.compactMap { direction -> BusLocationsInfo? in
             let stopId = direction.stops.first?.id ?? "-1"
             guard let tripId = direction.tripIdentifiers?.first else { return nil }
@@ -175,7 +176,6 @@ class TransitService: TransitServiceProtocol {
                     .setFailureType(to: ApiErrorHandler.self)
             }
             .eraseToAnyPublisher()
-
     }
 
     func getDelay(
