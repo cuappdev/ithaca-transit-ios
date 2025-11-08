@@ -106,11 +106,12 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
             for: marker,
             key: Constants.BusUserData.actualCoordinates
         ) as? CLLocationCoordinate2D else { return true }
+        
         let update = GMSCameraUpdate.setTarget(coordinates)
         mapView.animate(with: update)
         return true
     }
-    
+
     func updateUserData(for marker: GMSMarker, with values: [String: Any]) {
         guard var userData = marker.userData as? [String: Any] else {
             marker.userData = values
@@ -121,7 +122,7 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
         }
         marker.userData = userData
     }
-    
+
     func getUserData(for marker: GMSMarker, key: String) -> Any? {
         guard let userData = marker.userData as? [String: Any] else { return nil }
         return userData[key]
@@ -169,7 +170,6 @@ extension RouteDetailContentViewController: GMSMapViewDelegate {
                     busIndicator = indicator
                 }
             }
-        
         }
 
 // NOTE: Keep for future use (live tracking of multiple buses)
