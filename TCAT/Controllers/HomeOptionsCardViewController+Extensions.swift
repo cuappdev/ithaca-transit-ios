@@ -19,6 +19,8 @@ extension HomeOptionsCardViewController {
         // Update searchbar attributes
         searchBar.placeholder = Constants.General.searchPlaceholder
         searchBar.text = nil
+        searchBar.setShowsCancelButton(false, animated: true)
+        animateInInfoButton()
 
         NotificationCenter.default.addObserver(
             self,
