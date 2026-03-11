@@ -38,6 +38,7 @@
 		2E9416A22BC616B9003DEB44 /* ServiceAlertsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E94168F2BC616B9003DEB44 /* ServiceAlertsViewController.swift */; };
 		2E9416A32BC616B9003DEB44 /* HomeMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9416902BC616B9003DEB44 /* HomeMapViewController.swift */; };
 		2E9416A42BC616B9003DEB44 /* FavoritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9416912BC616B9003DEB44 /* FavoritesViewController.swift */; };
+		44D092EE88B74F25BF7BB6EF /* RequestHotspotViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB5924E1980430C90FEB9FA /* RequestHotspotViewController.swift */; };
 		2E9416A52BC616B9003DEB44 /* HomeOptionsCardViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9416922BC616B9003DEB44 /* HomeOptionsCardViewController+Extensions.swift */; };
 		2E9416A62BC616B9003DEB44 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9416932BC616B9003DEB44 /* OnboardingViewController.swift */; };
 		2E9416A72BC616B9003DEB44 /* ParentHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9416942BC616B9003DEB44 /* ParentHomeViewController.swift */; };
@@ -178,6 +179,7 @@
 		2E94168F2BC616B9003DEB44 /* ServiceAlertsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceAlertsViewController.swift; sourceTree = "<group>"; };
 		2E9416902BC616B9003DEB44 /* HomeMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeMapViewController.swift; sourceTree = "<group>"; };
 		2E9416912BC616B9003DEB44 /* FavoritesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoritesViewController.swift; sourceTree = "<group>"; };
+		BDB5924E1980430C90FEB9FA /* RequestHotspotViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestHotspotViewController.swift; sourceTree = "<group>"; };
 		2E9416922BC616B9003DEB44 /* HomeOptionsCardViewController+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "HomeOptionsCardViewController+Extensions.swift"; sourceTree = "<group>"; };
 		2E9416932BC616B9003DEB44 /* OnboardingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		2E9416942BC616B9003DEB44 /* ParentHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParentHomeViewController.swift; sourceTree = "<group>"; };
@@ -371,6 +373,7 @@
 				2E9416872BC616B9003DEB44 /* CustomNavigationController.swift */,
 				2E94168A2BC616B9003DEB44 /* FavoritesTableViewController.swift */,
 				2E9416912BC616B9003DEB44 /* FavoritesViewController.swift */,
+				BDB5924E1980430C90FEB9FA /* RequestHotspotViewController.swift */,
 				2E9416902BC616B9003DEB44 /* HomeMapViewController.swift */,
 				2E94168C2BC616B9003DEB44 /* HomeOptionsCardViewController.swift */,
 				2E9416922BC616B9003DEB44 /* HomeOptionsCardViewController+Extensions.swift */,
@@ -882,6 +885,7 @@
 				2E9416FC2BC61984003DEB44 /* Phrases.swift in Sources */,
 				2E9417132BC61CF1003DEB44 /* InformationTableHeaderView.swift in Sources */,
 				2E9416A42BC616B9003DEB44 /* FavoritesViewController.swift in Sources */,
+				44D092EE88B74F25BF7BB6EF /* RequestHotspotViewController.swift in Sources */,
 				2E9416A82BC616B9003DEB44 /* RouteDetailDrawerViewController+Extensions.swift in Sources */,
 				2E9416C22BC61731003DEB44 /* AppleSearchResponse.swift in Sources */,
 				2E9416A12BC616B9003DEB44 /* RouteOptionsViewController.swift in Sources */,

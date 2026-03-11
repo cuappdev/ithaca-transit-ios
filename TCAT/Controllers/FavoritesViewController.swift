@@ -14,6 +14,7 @@ class FavoritesViewController: UIViewController {
     // MARK: - View vars
     private let collapsedRevealHeight: CGFloat = 54
     private let editButton = UIButton()
+    private let requestHotspotButton = UIButton()
     private var favoritesCollectionView: UICollectionView!
     private let favoritesTitleLabel = UILabel()
     private let partialRevealHeight: CGFloat = 192
@@ -68,6 +69,12 @@ class FavoritesViewController: UIViewController {
         editButton.isEnabled = !favoritePlaces.isEmpty
         editButton.addTarget(self, action: #selector(editAction), for: .touchUpInside)
         view.addSubview(editButton)
+
+        requestHotspotButton.setTitle("Request a HotSpot", for: .normal)
+        requestHotspotButton.setTitleColor(Colors.notificationBlue, for: .normal)
+        requestHotspotButton.titleLabel?.font = UIFont.getFont(.regular, size: 14.0)
+        requestHotspotButton.addTarget(self, action: #selector(requestHotspotAction), for: .touchUpInside)
+        view.addSubview(requestHotspotButton)
     }
 
     private func setupFavoritesCollectionView() {
@@ -111,6 +118,11 @@ class FavoritesViewController: UIViewController {
 
         editButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(horizontalPadding)
+            make.top.equalToSuperview().inset(titleBarTopPadding)
+        }
+
+        requestHotspotButton.snp.makeConstraints { make in
+            make.trailing.equalTo(editButton.snp.leading).offset(-12)
             make.top.equalToSuperview().inset(titleBarTopPadding)
         }
 
@@ -161,6 +173,12 @@ class FavoritesViewController: UIViewController {
     @objc func editAction() {
         isEditingFavorites.toggle()
         updateFavoritesView()
+    }
+
+    @objc private func requestHotspotAction() {
+        let requestVC = RequestHotspotViewController()
+        let navController = CustomNavigationController(rootViewController: requestVC)
+        present(navController, animated: true, completion: nil)
     }
 
 }
