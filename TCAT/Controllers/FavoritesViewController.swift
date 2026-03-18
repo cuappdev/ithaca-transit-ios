@@ -15,6 +15,7 @@ class FavoritesViewController: UIViewController {
     private let collapsedRevealHeight: CGFloat = 54
     private let editButton = UIButton()
     private let requestHotspotButton = UIButton()
+    private let testHotspotButton = UIButton()
     private var favoritesCollectionView: UICollectionView!
     private let favoritesTitleLabel = UILabel()
     private let partialRevealHeight: CGFloat = 192
@@ -75,6 +76,12 @@ class FavoritesViewController: UIViewController {
         requestHotspotButton.titleLabel?.font = UIFont.getFont(.regular, size: 14.0)
         requestHotspotButton.addTarget(self, action: #selector(requestHotspotAction), for: .touchUpInside)
         view.addSubview(requestHotspotButton)
+
+        testHotspotButton.setTitle("Test", for: .normal)
+        testHotspotButton.setTitleColor(Colors.notificationBlue, for: .normal)
+        testHotspotButton.titleLabel?.font = UIFont.getFont(.regular, size: 14.0)
+        testHotspotButton.addTarget(self, action: #selector(testHotspotAction), for: .touchUpInside)
+        view.addSubview(testHotspotButton)
     }
 
     private func setupFavoritesCollectionView() {
@@ -126,6 +133,11 @@ class FavoritesViewController: UIViewController {
             make.top.equalToSuperview().inset(titleBarTopPadding)
         }
 
+        testHotspotButton.snp.makeConstraints { make in
+            make.trailing.equalTo(requestHotspotButton.snp.leading).offset(-12)
+            make.top.equalToSuperview().inset(titleBarTopPadding)
+        }
+
         favoritesCollectionView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(horizontalPadding)
             make.trailing.equalToSuperview().inset(horizontalPadding).priority(.high)
@@ -173,6 +185,32 @@ class FavoritesViewController: UIViewController {
     @objc func editAction() {
         isEditingFavorites.toggle()
         updateFavoritesView()
+    }
+
+    @objc private func testHotspotAction() {
+        guard let pulley = pulleyViewController else { return }
+
+        let drawerView = pulley.drawerContentViewController.view
+        let mapVC = pulley.primaryContentViewController as? HomeMapViewController
+
+        UIView.animate(withDuration: 0.25) { drawerView?.alpha = 0 }
+        mapVC?.setOptionsCardHidden(true)
+        mapVC?.setMapBottomPadding(0, animated: true)
+
+        let vc = HotspotDetailViewController()
+        vc.onDismiss = {
+            UIView.animate(withDuration: 0.25) { drawerView?.alpha = 1 }
+            mapVC?.setOptionsCardHidden(false)
+            if let mapVC = mapVC {
+                mapVC.setMapBottomPadding(mapVC.defaultMapBottomPadding, animated: true)
+            }
+        }
+
+        pulley.addChild(vc)
+        vc.view.frame = pulley.view.bounds
+        vc.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        pulley.view.addSubview(vc.view)
+        vc.didMove(toParent: pulley)
     }
 
     @objc private func requestHotspotAction() {

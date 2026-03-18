@@ -27,6 +27,8 @@ class HomeMapViewController: UIViewController {
     private var loadingView = UIView()
     private var mapView: GMSMapView!
 
+    let defaultMapBottomPadding: CGFloat = UIScreen.main.bounds.height * 0.10
+
     private var bounds = GMSCoordinateBounds()
     private var currentLocation: CLLocation?
     private weak var delegate: HomeMapViewDelegate?
@@ -77,9 +79,7 @@ class HomeMapViewController: UIViewController {
         mapView.settings.indoorPicker = false
         mapView.isBuildingsEnabled = false
         mapView.isIndoorEnabled = false
-        let bottomPaddingPercentage: CGFloat = 0.10
-        let bottomPadding = UIScreen.main.bounds.height * bottomPaddingPercentage
-        mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: bottomPadding, right: 0)
+        mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: defaultMapBottomPadding, right: 0)
         
         let northEast = CLLocationCoordinate2D(
             latitude: Constants.Values.RouteMaxima.north,
@@ -133,6 +133,25 @@ class HomeMapViewController: UIViewController {
     func removeLoadingScreen() {
         loadingView.removeFromSuperview()
         checkReviewAndRequestLocation()
+    }
+
+    func setOptionsCardHidden(_ hidden: Bool) {
+        UIView.animate(withDuration: 0.25) {
+            self.optionsCardVC.view.alpha = hidden ? 0 : 1
+        }
+        optionsCardVC.view.isUserInteractionEnabled = !hidden
+    }
+
+    func setMapBottomPadding(_ bottomPadding: CGFloat, animated: Bool) {
+        let newPadding = UIEdgeInsets(top: 0, left: 0, bottom: bottomPadding, right: 0)
+        if animated {
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(0.45)
+            mapView.padding = newPadding
+            CATransaction.commit()
+        } else {
+            mapView.padding = newPadding
+        }
     }
 
     private func checkReviewAndRequestLocation() {
