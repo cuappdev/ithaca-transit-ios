@@ -75,7 +75,7 @@ class HotspotDetailViewController: UIViewController {
     // MARK: - Setup
     private func setupSubviews() {
         // cardView
-        cardView.backgroundColor = .white
+        cardView.backgroundColor = Colors.white
         cardView.layer.cornerRadius = 16
         cardView.layer.shadowColor = UIColor.black.cgColor
         cardView.layer.shadowOpacity = 0.15
@@ -96,7 +96,7 @@ class HotspotDetailViewController: UIViewController {
         // backButton — white circle with dark chevron, no text
         let chevronConfig = UIImage.SymbolConfiguration(pointSize: 16, weight: .semibold)
         backButton.setImage(UIImage(systemName: "chevron.left", withConfiguration: chevronConfig), for: .normal)
-        backButton.backgroundColor = .white
+        backButton.backgroundColor = Colors.white
         backButton.layer.cornerRadius = 20
         backButton.clipsToBounds = false
         backButton.tintColor = Colors.primaryText
@@ -117,7 +117,7 @@ class HotspotDetailViewController: UIViewController {
         // eventTitleLabel
         eventTitleLabel.text = "AppDev: Navi Tabling"
         eventTitleLabel.font = UIFont.getFont(.semibold, size: 22)
-        eventTitleLabel.textColor = .black
+        eventTitleLabel.textColor = Colors.primaryText
 
         // headerRow = icon + title side by side
         headerRow.addSubview(calendarImageView)
@@ -157,7 +157,9 @@ class HotspotDetailViewController: UIViewController {
 
         // separatorView
         separatorView.backgroundColor = Colors.metadataIcon.withAlphaComponent(0.4)
-        separatorView.snp.makeConstraints { make in make.height.equalTo(1) }
+        separatorView.snp.makeConstraints { make in
+            make.height.equalTo(1)
+        }
 
         // organizerHeaderLabel
         organizerHeaderLabel.text = "Organizer Message"
@@ -166,13 +168,13 @@ class HotspotDetailViewController: UIViewController {
 
         // organizerMessageLabel
         organizerMessageLabel.text = "Come check out our stall — we'll be here until 5 PM!"
-        organizerMessageLabel.font = UIFont.italicSystemFont(ofSize: 16)
+        organizerMessageLabel.font = UIFont.getFont(.regular, size: 16)
         organizerMessageLabel.textColor = Colors.secondaryText
         organizerMessageLabel.numberOfLines = 0
 
         // moreInfoLabel
         moreInfoLabel.text = "More information on our instagram @navicornell"
-        moreInfoLabel.font = UIFont.italicSystemFont(ofSize: 16)
+        moreInfoLabel.font = UIFont.getFont(.regular, size: 16)
         moreInfoLabel.textColor = Colors.secondaryText
         moreInfoLabel.numberOfLines = 0
 
@@ -260,6 +262,7 @@ class HotspotDetailViewController: UIViewController {
             self.cardView.alpha = 1
             self.cardView.transform = .identity
             self.directionsButton.alpha = 1
+            self.backButton.alpha = 1
         }
     }
 
@@ -327,7 +330,7 @@ class HotspotDetailViewController: UIViewController {
         }
         moreInfoLabel.isHidden = prog12 < 0.05
         moreInfoLabel.alpha = prog12
-        backButton.alpha = prog01
+        backButton.alpha = 1
 
         // Commit constraint + isHidden changes immediately so layout tracks the finger
         view.layoutIfNeeded()
@@ -358,10 +361,8 @@ class HotspotDetailViewController: UIViewController {
         toggle(organizerMessageLabel, isPartialOrOpen)
         toggle(moreInfoLabel, isOpen)
 
-        // Back button fades in/out
-        UIView.animate(withDuration: 0.2) {
-            self.backButton.alpha = snapIndex > 0 ? 1 : 0
-        }
+        // Back button is always visible
+        backButton.alpha = 1
     }
 
     // MARK: - Actions

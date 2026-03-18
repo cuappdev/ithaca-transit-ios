@@ -2,10 +2,11 @@
 //  RequestHotspotViewController.swift
 //  TCAT
 //
-//  Created on 2026-03-11.
+//  Created by Gabriel Castillo on 3/11/26.
 //  Copyright © 2026 cuappdev. All rights reserved.
 //
 
+import SnapKit
 import UIKit
 
 class RequestHotspotViewController: UIViewController {
