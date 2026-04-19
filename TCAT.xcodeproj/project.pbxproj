@@ -39,7 +39,11 @@
 		2E9416A32BC616B9003DEB44 /* HomeMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9416902BC616B9003DEB44 /* HomeMapViewController.swift */; };
 		2E9416A42BC616B9003DEB44 /* FavoritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9416912BC616B9003DEB44 /* FavoritesViewController.swift */; };
 		10B0D0ADB1114912BD54E6B6 /* HotspotDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF838821D604B34A4F34FBF /* HotspotDetailViewController.swift */; };
+		F689A4E9A9B044A68C20034E /* FunSpotCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69589A82F17745488C6E833D /* FunSpotCardViewController.swift */; };
 		44D092EE88B74F25BF7BB6EF /* RequestHotspotViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB5924E1980430C90FEB9FA /* RequestHotspotViewController.swift */; };
+		AD5C0921830C4ECF8A9F9B53 /* Hotspot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E365398B53C45F8B98ACE85 /* Hotspot.swift */; };
+		A201D3ECC68D4A1F9E2F629D /* FunSpot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72BF9E40F50347D58A76A432 /* FunSpot.swift */; };
+		A205070391FC4DFC8C308B6A /* CardUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 333E30642004418F8B0DE5A1 /* CardUtilities.swift */; };
 		2E9416A52BC616B9003DEB44 /* HomeOptionsCardViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9416922BC616B9003DEB44 /* HomeOptionsCardViewController+Extensions.swift */; };
 		2E9416A62BC616B9003DEB44 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9416932BC616B9003DEB44 /* OnboardingViewController.swift */; };
 		2E9416A72BC616B9003DEB44 /* ParentHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9416942BC616B9003DEB44 /* ParentHomeViewController.swift */; };
@@ -181,6 +185,7 @@
 		2E9416902BC616B9003DEB44 /* HomeMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeMapViewController.swift; sourceTree = "<group>"; };
 		2E9416912BC616B9003DEB44 /* FavoritesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoritesViewController.swift; sourceTree = "<group>"; };
 		FBF838821D604B34A4F34FBF /* HotspotDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotspotDetailViewController.swift; sourceTree = "<group>"; };
+		69589A82F17745488C6E833D /* FunSpotCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FunSpotCardViewController.swift; sourceTree = "<group>"; };
 		BDB5924E1980430C90FEB9FA /* RequestHotspotViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestHotspotViewController.swift; sourceTree = "<group>"; };
 		2E9416922BC616B9003DEB44 /* HomeOptionsCardViewController+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "HomeOptionsCardViewController+Extensions.swift"; sourceTree = "<group>"; };
 		2E9416932BC616B9003DEB44 /* OnboardingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
@@ -189,6 +194,9 @@
 		2E9416AC2BC61731003DEB44 /* PlaceCoordinates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCoordinates.swift; sourceTree = "<group>"; };
 		2E9416AD2BC61731003DEB44 /* Place.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
 		2E9416AE2BC61731003DEB44 /* ServiceAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceAlert.swift; sourceTree = "<group>"; };
+		2E365398B53C45F8B98ACE85 /* Hotspot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hotspot.swift; sourceTree = "<group>"; };
+		72BF9E40F50347D58A76A432 /* FunSpot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FunSpot.swift; sourceTree = "<group>"; };
+		333E30642004418F8B0DE5A1 /* CardUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardUtilities.swift; sourceTree = "<group>"; };
 		2E9416AF2BC61731003DEB44 /* Waypoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Waypoint.swift; sourceTree = "<group>"; };
 		2E9416B02BC61731003DEB44 /* LocationObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationObject.swift; sourceTree = "<group>"; };
 		2E9416B12BC61731003DEB44 /* BusLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BusLocation.swift; sourceTree = "<group>"; };
@@ -376,6 +384,7 @@
 				2E94168A2BC616B9003DEB44 /* FavoritesTableViewController.swift */,
 				2E9416912BC616B9003DEB44 /* FavoritesViewController.swift */,
 				FBF838821D604B34A4F34FBF /* HotspotDetailViewController.swift */,
+				69589A82F17745488C6E833D /* FunSpotCardViewController.swift */,
 				BDB5924E1980430C90FEB9FA /* RequestHotspotViewController.swift */,
 				2E9416902BC616B9003DEB44 /* HomeMapViewController.swift */,
 				2E94168C2BC616B9003DEB44 /* HomeOptionsCardViewController.swift */,
@@ -410,6 +419,8 @@
 				2E9416B32BC61731003DEB44 /* Route.swift */,
 				2E9416B72BC61731003DEB44 /* Section.swift */,
 				2E9416AE2BC61731003DEB44 /* ServiceAlert.swift */,
+				2E365398B53C45F8B98ACE85 /* Hotspot.swift */,
+				72BF9E40F50347D58A76A432 /* FunSpot.swift */,
 				2E9416B42BC61731003DEB44 /* WalkPath.swift */,
 				2E9416AF2BC61731003DEB44 /* Waypoint.swift */,
 			);
@@ -458,6 +469,7 @@
 				2E9416E32BC61983003DEB44 /* Shared.swift */,
 				2E9416E52BC61983003DEB44 /* StoreReviewHelper.swift */,
 				2E9416E42BC61983003DEB44 /* Styles.swift */,
+				333E30642004418F8B0DE5A1 /* CardUtilities.swift */,
 				2E9416E82BC61984003DEB44 /* Time.swift */,
 			);
 			path = Utils;
@@ -889,6 +901,7 @@
 				2E9417132BC61CF1003DEB44 /* InformationTableHeaderView.swift in Sources */,
 				2E9416A42BC616B9003DEB44 /* FavoritesViewController.swift in Sources */,
 				10B0D0ADB1114912BD54E6B6 /* HotspotDetailViewController.swift in Sources */,
+				F689A4E9A9B044A68C20034E /* FunSpotCardViewController.swift in Sources */,
 				44D092EE88B74F25BF7BB6EF /* RequestHotspotViewController.swift in Sources */,
 				2E9416A82BC616B9003DEB44 /* RouteDetailDrawerViewController+Extensions.swift in Sources */,
 				2E9416C22BC61731003DEB44 /* AppleSearchResponse.swift in Sources */,
@@ -936,6 +949,9 @@
 				2E94171D2BC61CF1003DEB44 /* RoundShadowedView.swift in Sources */,
 				2E9416962BC616B9003DEB44 /* RouteDetailViewController.swift in Sources */,
 				2E9416BA2BC61731003DEB44 /* Place.swift in Sources */,
+				AD5C0921830C4ECF8A9F9B53 /* Hotspot.swift in Sources */,
+				A201D3ECC68D4A1F9E2F629D /* FunSpot.swift in Sources */,
+				A205070391FC4DFC8C308B6A /* CardUtilities.swift in Sources */,
 				2E9416F52BC61984003DEB44 /* Extensions+App.swift in Sources */,
 				2E9416782BC61679003DEB44 /* LargeDetailTableViewCell.swift in Sources */,
 				2E94169F2BC616B9003DEB44 /* HomeOptionsCardViewController.swift in Sources */,

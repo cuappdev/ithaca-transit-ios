@@ -9,25 +9,17 @@
 import SnapKit
 import UIKit
 
-// MARK: - PassthroughView
-/// Passes touches through to the map for any region not occupied by a subview.
-private class PassthroughView: UIView {
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let hit = super.hitTest(point, with: event)
-        return hit == self ? nil : hit
-    }
-}
-
 class HotspotDetailViewController: UIViewController {
 
     // MARK: - Snap heights (collapsed, partial, open)
-    private let snapHeights: [CGFloat] = [140, 280, 310]
+    private let snapHeights: [CGFloat] = [140, 240, 310]
     private var cardHeightConstraint: Constraint?
     private var currentSnapIndex = 0
 
     // MARK: - Constants
-    private let directionsButtonHeight: CGFloat = 44
-    private let directionsButtonOverlap: CGFloat = 22
+    private let directionsButtonHeight: CGFloat = 40
+    private let directionsButtonOverlap: CGFloat = 26
+    private let directionsButtonWidth: CGFloat = 159
     private let dragIndicatorSize = CGSize(width: 36, height: 3)
 
     // MARK: - Subviews
@@ -38,7 +30,7 @@ class HotspotDetailViewController: UIViewController {
     private let contentClipView = UIView()  // clips overflowing rows during drag
 
     // Content rows
-    private let headerRow = UIView()       // calendar icon + title
+    private let headerRow = UIView()
     private let calendarImageView = UIImageView()
     private let eventTitleLabel = UILabel()
     private let locationLabel = UILabel()
@@ -51,8 +43,21 @@ class HotspotDetailViewController: UIViewController {
 
     private let directionsButton = UIButton(type: .system)
 
+    // MARK: - Data
+    private let hotspot: Hotspot
+
     // MARK: - Callback
     var onDismiss: (() -> Void)?
+
+    // MARK: - Init
+    init(hotspot: Hotspot) {
+        self.hotspot = hotspot
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - Lifecycle
     override func loadView() {
@@ -64,6 +69,7 @@ class HotspotDetailViewController: UIViewController {
         view.backgroundColor = .clear
         setupSubviews()
         setupConstraints()
+        configure(with: hotspot)
         updateVisibility(for: 0, animated: false)
     }
 
@@ -74,10 +80,9 @@ class HotspotDetailViewController: UIViewController {
 
     // MARK: - Setup
     private func setupSubviews() {
-        // cardView
         cardView.backgroundColor = Colors.white
         cardView.layer.cornerRadius = 16
-        cardView.layer.shadowColor = UIColor.black.cgColor
+        cardView.layer.shadowColor = Colors.black.cgColor
         cardView.layer.shadowOpacity = 0.15
         cardView.layer.shadowOffset = .zero
         cardView.layer.shadowRadius = 8
@@ -85,15 +90,12 @@ class HotspotDetailViewController: UIViewController {
         cardView.alpha = 0
         view.addSubview(cardView)
 
-        // pan gesture
         cardView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:))))
 
-        // dragIndicator
         dragIndicator.backgroundColor = Colors.naviOrange
         dragIndicator.layer.cornerRadius = 1.5
         cardView.addSubview(dragIndicator)
 
-        // backButton — white circle with dark chevron, no text
         let chevronConfig = UIImage.SymbolConfiguration(pointSize: 16, weight: .semibold)
         backButton.setImage(UIImage(systemName: "chevron.left", withConfiguration: chevronConfig), for: .normal)
         backButton.backgroundColor = Colors.white
@@ -102,24 +104,20 @@ class HotspotDetailViewController: UIViewController {
         backButton.tintColor = Colors.primaryText
         backButton.alpha = 0
         backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
-        backButton.layer.shadowColor = UIColor.black.cgColor
+        backButton.layer.shadowColor = Colors.black.cgColor
         backButton.layer.shadowOpacity = 0.15
         backButton.layer.shadowOffset = CGSize(width: 0, height: 2)
         backButton.layer.shadowRadius = 4
         view.addSubview(backButton)
 
-        // calendarImageView
         calendarImageView.image = UIImage(named: "hotspot-event")
         calendarImageView.tintColor = Colors.naviOrange
         calendarImageView.contentMode = .scaleAspectFit
         calendarImageView.setContentHuggingPriority(.required, for: .horizontal)
 
-        // eventTitleLabel
-        eventTitleLabel.text = "AppDev: Navi Tabling"
         eventTitleLabel.font = UIFont.getFont(.semibold, size: 22)
         eventTitleLabel.textColor = Colors.primaryText
 
-        // headerRow = icon + title side by side
         headerRow.addSubview(calendarImageView)
         headerRow.addSubview(eventTitleLabel)
         calendarImageView.snp.makeConstraints { make in
@@ -131,81 +129,63 @@ class HotspotDetailViewController: UIViewController {
             make.trailing.top.bottom.equalToSuperview()
         }
 
-        // locationLabel
-        locationLabel.text = "Duffield Atrium | 15 minute walk"
         locationLabel.font = UIFont.getFont(.regular, size: 16)
         locationLabel.textColor = Colors.metadataIcon
 
-        // tagsLabel
-        tagsLabel.text = "Stickers, charms, and bracelets"
         tagsLabel.font = UIFont.getFont(.regular, size: 16)
         tagsLabel.textColor = Colors.secondaryText
 
-        // timeLabel
-        let timeLabelText = NSMutableAttributedString()
-        let nowAttrs: [NSAttributedString.Key: Any] = [
-            .foregroundColor: Colors.liveGreen,
-            .font: UIFont.getFont(.regular, size: 16)
-        ]
-        let restAttrs: [NSAttributedString.Key: Any] = [
-            .foregroundColor: Colors.secondaryText,
-            .font: UIFont.getFont(.regular, size: 16)
-        ]
-        timeLabelText.append(NSAttributedString(string: "NOW", attributes: nowAttrs))
-        timeLabelText.append(NSAttributedString(string: " - until 5:00 PM", attributes: restAttrs))
-        timeLabel.attributedText = timeLabelText
+        timeLabel.font = UIFont.getFont(.regular, size: 16)
 
-        // separatorView
-        separatorView.backgroundColor = Colors.metadataIcon.withAlphaComponent(0.4)
+        separatorView.backgroundColor = Colors.dividerTextField
         separatorView.snp.makeConstraints { make in
             make.height.equalTo(1)
         }
 
-        // organizerHeaderLabel
         organizerHeaderLabel.text = "Organizer Message"
         organizerHeaderLabel.font = UIFont.getFont(.bold, size: 16)
         organizerHeaderLabel.textColor = Colors.secondaryText
 
-        // organizerMessageLabel
-        organizerMessageLabel.text = "Come check out our stall — we'll be here until 5 PM!"
-        organizerMessageLabel.font = UIFont.getFont(.regular, size: 16)
+        let baseFont = UIFont.getFont(.regular, size: 16)
+        let italicDescriptor = baseFont.fontDescriptor.withSymbolicTraits(.traitItalic)
+        let italicFont = italicDescriptor.map { UIFont(descriptor: $0, size: 16) } ?? UIFont.italicSystemFont(ofSize: 16)
+
+        organizerMessageLabel.font = italicFont
         organizerMessageLabel.textColor = Colors.secondaryText
         organizerMessageLabel.numberOfLines = 0
 
-        // moreInfoLabel
-        moreInfoLabel.text = "More information on our instagram @navicornell"
-        moreInfoLabel.font = UIFont.getFont(.regular, size: 16)
+        moreInfoLabel.font = italicFont
         moreInfoLabel.textColor = Colors.secondaryText
         moreInfoLabel.numberOfLines = 0
 
-        // contentStack — vertical, auto-collapses hidden rows
         contentStack.axis = .vertical
         contentStack.spacing = 8
         contentStack.alignment = .fill
-        contentStack.setCustomSpacing(12, after: tagsLabel)
-        contentStack.setCustomSpacing(12, after: separatorView)
+        contentStack.setCustomSpacing(12, after: timeLabel)
+        contentStack.setCustomSpacing(15, after: tagsLabel)
+        contentStack.setCustomSpacing(15, after: separatorView)
         [headerRow, locationLabel, timeLabel, tagsLabel,
          separatorView, organizerHeaderLabel, organizerMessageLabel,
          moreInfoLabel].forEach { contentStack.addArrangedSubview($0) }
 
-        // Set initial alpha=0 for views that start hidden so fade-in works correctly
         [timeLabel, separatorView, organizerHeaderLabel, organizerMessageLabel, moreInfoLabel].forEach {
             $0.alpha = 0
         }
 
-        // contentClipView prevents rows overflowing card bottom during drag
         contentClipView.clipsToBounds = true
         cardView.addSubview(contentClipView)
         contentClipView.addSubview(contentStack)
 
-        // directionsButton — lives in view so it can overlap the card bottom edge
         directionsButton.backgroundColor = Colors.naviOrange
-        directionsButton.layer.cornerRadius = 22
-        directionsButton.clipsToBounds = true
+        directionsButton.layer.cornerRadius = 20
+        directionsButton.layer.shadowColor = Colors.black.cgColor
+        directionsButton.layer.shadowOpacity = 0.15
+        directionsButton.layer.shadowOffset = CGSize(width: 0, height: 2)
+        directionsButton.layer.shadowRadius = 4
         directionsButton.setImage(UIImage(named: "hotspot-directions"), for: .normal)
         directionsButton.setTitle("  Directions", for: .normal)
-        directionsButton.setTitleColor(.white, for: .normal)
-        directionsButton.tintColor = .white
+        directionsButton.setTitleColor(Colors.white, for: .normal)
+        directionsButton.tintColor = Colors.white
         directionsButton.titleLabel?.font = UIFont.getFont(.semibold, size: 16)
         directionsButton.alpha = 0
         view.addSubview(directionsButton)
@@ -244,9 +224,38 @@ class HotspotDetailViewController: UIViewController {
         directionsButton.snp.makeConstraints { make in
             make.trailing.equalTo(cardView).inset(16)
             make.bottom.equalTo(cardView.snp.bottom).offset(directionsButtonOverlap)
-            make.width.equalTo(cardView.snp.width).multipliedBy(0.45)
+            make.width.equalTo(directionsButtonWidth)
             make.height.equalTo(directionsButtonHeight)
         }
+    }
+
+    // MARK: - Configuration
+    private func configure(with hotspot: Hotspot) {
+        eventTitleLabel.text = hotspot.title
+        locationLabel.text = hotspot.location
+        tagsLabel.text = hotspot.tags
+        organizerMessageLabel.text = hotspot.organizerMessage
+        moreInfoLabel.text = hotspot.moreInfo
+
+        let timeLabelText = NSMutableAttributedString()
+        let nowAttrs: [NSAttributedString.Key: Any] = [
+            .foregroundColor: Colors.liveGreen,
+            .font: UIFont.getFont(.regular, size: 16)
+        ]
+        let restAttrs: [NSAttributedString.Key: Any] = [
+            .foregroundColor: Colors.secondaryText,
+            .font: UIFont.getFont(.regular, size: 16)
+        ]
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "h:mm a"
+        let endTimeString = timeFormatter.string(from: hotspot.endTime)
+        if hotspot.isActive {
+            timeLabelText.append(NSAttributedString(string: "NOW", attributes: nowAttrs))
+            timeLabelText.append(NSAttributedString(string: " - until \(endTimeString)", attributes: restAttrs))
+        } else {
+            timeLabelText.append(NSAttributedString(string: endTimeString, attributes: restAttrs))
+        }
+        timeLabel.attributedText = timeLabelText
     }
 
     // MARK: - Entrance animation
@@ -303,23 +312,24 @@ class HotspotDetailViewController: UIViewController {
     private func snap(to index: Int, animated: Bool) {
         currentSnapIndex = index
         cardHeightConstraint?.update(offset: snapHeights[index])
-        updateVisibility(for: index, animated: animated)
+
         if animated {
             UIView.animate(
-                withDuration: 0.42,
+                withDuration: 0.45,
                 delay: 0,
-                usingSpringWithDamping: 0.78,
-                initialSpringVelocity: 0.3,
+                usingSpringWithDamping: 0.82,
+                initialSpringVelocity: 0.4,
                 options: [.allowUserInteraction]
             ) {
                 self.view.layoutIfNeeded()
             }
+            updateVisibility(for: index, animated: true)
+        } else {
+            view.layoutIfNeeded()
+            updateVisibility(for: index, animated: false)
         }
     }
 
-    // Drives row alphas AND layout continuously while the user is dragging.
-    // isHidden is tied to a 5% threshold so tagsLabel shifts up while timeLabel
-    // is still essentially invisible, rather than jumping suddenly on release.
     private func updateAlphasDuringDrag(height: CGFloat) {
         let prog01 = ((height - snapHeights[0]) / (snapHeights[1] - snapHeights[0])).clamped(to: 0...1)
         let prog12 = ((height - snapHeights[1]) / (snapHeights[2] - snapHeights[1])).clamped(to: 0...1)
@@ -331,9 +341,6 @@ class HotspotDetailViewController: UIViewController {
         moreInfoLabel.isHidden = prog12 < 0.05
         moreInfoLabel.alpha = prog12
         backButton.alpha = 1
-
-        // Commit constraint + isHidden changes immediately so layout tracks the finger
-        view.layoutIfNeeded()
     }
 
     // MARK: - Visibility
@@ -344,15 +351,28 @@ class HotspotDetailViewController: UIViewController {
         let toggle: (UIView, Bool) -> Void = { v, visible in
             if animated {
                 if visible { v.isHidden = false }
-                UIView.animate(withDuration: 0.25, animations: {
+                UIView.animate(
+                    withDuration: 0.35,
+                    delay: 0,
+                    usingSpringWithDamping: 0.9,
+                    initialSpringVelocity: 0.1,
+                    options: [.allowUserInteraction]
+                ) {
                     v.alpha = visible ? 1 : 0
-                }, completion: { _ in
+                } completion: { _ in
                     if !visible { v.isHidden = true }
-                })
+                }
             } else {
                 v.isHidden = !visible
                 v.alpha = visible ? 1 : 0
             }
+        }
+
+        if isPartialOrOpen {
+            organizerMessageLabel.text = hotspot.shortOrganizerMessage ?? hotspot.organizerMessage
+        }
+        if isOpen {
+            organizerMessageLabel.text = hotspot.organizerMessage
         }
 
         toggle(timeLabel, isPartialOrOpen)
@@ -361,7 +381,6 @@ class HotspotDetailViewController: UIViewController {
         toggle(organizerMessageLabel, isPartialOrOpen)
         toggle(moreInfoLabel, isOpen)
 
-        // Back button is always visible
         backButton.alpha = 1
     }
 
@@ -386,11 +405,4 @@ class HotspotDetailViewController: UIViewController {
         }
     }
 
-}
-
-// MARK: - Comparable clamp helper
-private extension Comparable {
-    func clamped(to range: ClosedRange<Self>) -> Self {
-        return min(max(self, range.lowerBound), range.upperBound)
-    }
 }

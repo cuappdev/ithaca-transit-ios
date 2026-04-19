@@ -19,6 +19,8 @@ struct Colors {
     static let lateRed = UIColor(hex: "D6304F")
     static let liveGreen = UIColor(hex: "1BAF5D")
     static let naviOrange = UIColor(hex: "FFAA00")
+    static let naviBrown = UIColor(hex: "A4761A")
+    static let naviBedBlue = UIColor(hex: "77B7FF")
     static let warningOrange = UIColor(hex: "E79C20")
 
     // MARK: - Grayscale Colors

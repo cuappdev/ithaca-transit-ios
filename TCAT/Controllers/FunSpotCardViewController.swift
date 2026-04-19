@@ -9,15 +9,6 @@
 import SnapKit
 import UIKit
 
-// MARK: - PassthroughView
-/// Passes touches through to the map for any region not occupied by a subview.
-private class PassthroughView: UIView {
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let hit = super.hitTest(point, with: event)
-        return hit == self ? nil : hit
-    }
-}
-
 class FunSpotCardViewController: UIViewController {
 
     // MARK: - Snap heights (collapsed, expanded)
@@ -26,8 +17,9 @@ class FunSpotCardViewController: UIViewController {
     private var currentSnapIndex = 0
 
     // MARK: - Constants
-    private let imageHeight: CGFloat = 150          // snapHeights[0] / 2
-    private let buttonHeight: CGFloat = 44
+    private let imageHeight: CGFloat = 150
+    private let buttonHeight: CGFloat = 40
+    private let buttonWidth: CGFloat = 159
     private let cardCornerRadius: CGFloat = 16
     private let horizontalPadding: CGFloat = 16
     private let dragIndicatorSize = CGSize(width: 36, height: 3)
@@ -62,8 +54,21 @@ class FunSpotCardViewController: UIViewController {
     private let shareButton = UIButton(type: .system)
     private let directionsButton = UIButton(type: .system)
 
+    // MARK: - Data
+    private var funSpot: FunSpot
+
     // MARK: - Callback
     var onDismiss: (() -> Void)?
+
+    // MARK: - Init
+    init(funSpot: FunSpot) {
+        self.funSpot = funSpot
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - Lifecycle
     override func loadView() {
@@ -75,6 +80,7 @@ class FunSpotCardViewController: UIViewController {
         view.backgroundColor = .clear
         setupSubviews()
         setupConstraints()
+        configure(with: funSpot)
         expandedStack.isHidden = true
         expandedStack.alpha = 0
     }
@@ -86,10 +92,9 @@ class FunSpotCardViewController: UIViewController {
 
     // MARK: - Setup
     private func setupSubviews() {
-        // cardView
         cardView.backgroundColor = Colors.white
         cardView.layer.cornerRadius = cardCornerRadius
-        cardView.layer.shadowColor = UIColor.black.cgColor
+        cardView.layer.shadowColor = Colors.black.cgColor
         cardView.layer.shadowOpacity = 0.15
         cardView.layer.shadowOffset = .zero
         cardView.layer.shadowRadius = 8
@@ -98,20 +103,18 @@ class FunSpotCardViewController: UIViewController {
         view.addSubview(cardView)
         cardView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:))))
 
-        // imageView — top corners masked to match card rounding
-        imageView.backgroundColor = .systemBlue
+        // top corners masked to match card rounding
+        imageView.backgroundColor = Colors.backgroundWash
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = cardCornerRadius
         imageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         cardView.addSubview(imageView)
 
-        // dragIndicator — added after imageView so it renders on top
         dragIndicator.backgroundColor = Colors.naviOrange
         dragIndicator.layer.cornerRadius = 1.5
         cardView.addSubview(dragIndicator)
 
-        // backButton
         let chevronConfig = UIImage.SymbolConfiguration(pointSize: 16, weight: .semibold)
         backButton.setImage(UIImage(systemName: "chevron.left", withConfiguration: chevronConfig), for: .normal)
         backButton.backgroundColor = Colors.white
@@ -119,49 +122,46 @@ class FunSpotCardViewController: UIViewController {
         backButton.clipsToBounds = false
         backButton.tintColor = Colors.primaryText
         backButton.alpha = 0
-        backButton.layer.shadowColor = UIColor.black.cgColor
+        backButton.layer.shadowColor = Colors.black.cgColor
         backButton.layer.shadowOpacity = 0.15
         backButton.layer.shadowOffset = CGSize(width: 0, height: 2)
         backButton.layer.shadowRadius = 4
         backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
         view.addSubview(backButton)
 
-        // contentClipView
         contentClipView.clipsToBounds = true
         cardView.addSubview(contentClipView)
 
-        // contentStack
         contentStack.axis = .vertical
         contentStack.spacing = 8
         contentStack.alignment = .fill
         contentClipView.addSubview(contentStack)
 
         // --- titleRow ---
-        locationTitleLabel.text = "Statler Hotel"
         locationTitleLabel.font = UIFont.getFont(.semibold, size: 22)
         locationTitleLabel.textColor = Colors.primaryText
 
         // TODO: Replace with real category icon based on fun spot type
-        categoryIconCircle.backgroundColor = UIColor(white: 0.93, alpha: 1)
-        categoryIconCircle.layer.cornerRadius = 20
-        categoryIconCircle.clipsToBounds = true
+        categoryIconCircle.backgroundColor = .clear
+        categoryIconCircle.layer.cornerRadius = 15
+        categoryIconCircle.layer.borderColor = Colors.dividerTextField.cgColor
+        categoryIconCircle.layer.borderWidth = 1
         categoryIconCircle.setContentHuggingPriority(.required, for: .horizontal)
 
-        categoryIconView.image = UIImage(named: "hotspot-bed")?.withRenderingMode(.alwaysOriginal)
         categoryIconView.contentMode = .scaleAspectFit
         categoryIconView.setContentHuggingPriority(.required, for: .horizontal)
         categoryIconCircle.addSubview(categoryIconView)
 
         let starImage = UIImage(named: "hotspot-star")?.withRenderingMode(.alwaysOriginal)
+        let starFillImage = UIImage(named: "hotspot-star-fill")?.withRenderingMode(.alwaysOriginal)
         starButton.setImage(starImage, for: .normal)
-        starButton.setImage(starImage, for: .selected)
+        starButton.setImage(starFillImage, for: .selected)
         starButton.setContentHuggingPriority(.required, for: .horizontal)
         starButton.addTarget(self, action: #selector(starTapped), for: .touchUpInside)
 
         [locationTitleLabel, categoryIconCircle, starButton].forEach { titleRow.addSubview($0) }
 
         // --- addressLabel ---
-        addressLabel.text = "103 State Dr | 0.3 miles away"
         addressLabel.font = UIFont.getFont(.regular, size: 16)
         addressLabel.textColor = Colors.metadataIcon
 
@@ -170,62 +170,58 @@ class FunSpotCardViewController: UIViewController {
         expandedStack.spacing = 8
         expandedStack.alignment = .fill
 
-        separatorView.backgroundColor = Colors.metadataIcon.withAlphaComponent(0.4)
+        separatorView.backgroundColor = Colors.dividerTextField
 
         aboutLabel.text = "About"
-        aboutLabel.font = UIFont.getFont(.bold, size: 16)
-        aboutLabel.textColor = Colors.secondaryText
+        aboutLabel.font = UIFont.getFont(.semibold, size: 16)
+        aboutLabel.textColor = Colors.primaryText
 
-        descriptionLabel.text = "The Statler Hotel at Cornell University is a AAA Four Diamond award-winning hotel that serves as both a luxury hotel and a working laboratory for Cornell's hospitality students."
         descriptionLabel.font = UIFont.getFont(.regular, size: 16)
         descriptionLabel.textColor = Colors.secondaryText
         descriptionLabel.numberOfLines = 0
 
-        let italicDescriptor = UIFont.getFont(.regular, size: 16)
-            .fontDescriptor
-            .withSymbolicTraits(.traitItalic)
-        let italicFont = italicDescriptor.map { UIFont(descriptor: $0, size: 16) }
-            ?? UIFont.italicSystemFont(ofSize: 16)
-        quoteLabel.attributedText = NSAttributedString(
-            string: "\u{201C}Where hospitality meets education.\u{201D}",
-            attributes: [
-                .font: italicFont,
-                .foregroundColor: Colors.secondaryText
-            ]
-        )
         quoteLabel.numberOfLines = 0
 
         [separatorView, aboutLabel, descriptionLabel, quoteLabel]
             .forEach { expandedStack.addArrangedSubview($0) }
+        expandedStack.setCustomSpacing(20, after: separatorView)
+        expandedStack.setCustomSpacing(12, after: aboutLabel)
+        expandedStack.setCustomSpacing(12, after: descriptionLabel)
 
         // --- buttonsRow ---
-        shareButton.backgroundColor = Colors.backgroundWash
-        shareButton.layer.cornerRadius = buttonHeight / 2
-        shareButton.clipsToBounds = true
-        let shareConfig = UIImage.SymbolConfiguration(pointSize: 16, weight: .semibold)
-        shareButton.setImage(UIImage(systemName: "square.and.arrow.up", withConfiguration: shareConfig), for: .normal)
+        shareButton.backgroundColor = Colors.white
+        shareButton.layer.cornerRadius = 20
+        shareButton.layer.borderColor = Colors.naviOrange.cgColor
+        shareButton.layer.borderWidth = 1
+        shareButton.layer.shadowColor = Colors.black.cgColor
+        shareButton.layer.shadowOpacity = 0.15
+        shareButton.layer.shadowOffset = CGSize(width: 0, height: 2)
+        shareButton.layer.shadowRadius = 4
+        shareButton.setImage(UIImage(named: "hotspot-share")?.withRenderingMode(.alwaysOriginal), for: .normal)
         shareButton.setTitle("  Share", for: .normal)
-        shareButton.tintColor = Colors.primaryText
-        shareButton.setTitleColor(Colors.primaryText, for: .normal)
+        shareButton.tintColor = Colors.naviBrown
+        shareButton.setTitleColor(Colors.naviBrown, for: .normal)
         shareButton.titleLabel?.font = UIFont.getFont(.semibold, size: 16)
 
         directionsButton.backgroundColor = Colors.naviOrange
-        directionsButton.layer.cornerRadius = buttonHeight / 2
-        directionsButton.clipsToBounds = true
+        directionsButton.layer.cornerRadius = 20
+        directionsButton.layer.shadowColor = Colors.black.cgColor
+        directionsButton.layer.shadowOpacity = 0.15
+        directionsButton.layer.shadowOffset = CGSize(width: 0, height: 2)
+        directionsButton.layer.shadowRadius = 4
         directionsButton.setImage(UIImage(named: "hotspot-directions"), for: .normal)
         directionsButton.setTitle("  Directions", for: .normal)
-        directionsButton.tintColor = .white
-        directionsButton.setTitleColor(.white, for: .normal)
+        directionsButton.tintColor = Colors.white
+        directionsButton.setTitleColor(Colors.white, for: .normal)
         directionsButton.titleLabel?.font = UIFont.getFont(.semibold, size: 16)
 
         [shareButton, directionsButton].forEach { buttonsRow.addSubview($0) }
         cardView.addSubview(buttonsRow)
 
-        // Assemble contentStack
         [titleRow, addressLabel, expandedStack]
             .forEach { contentStack.addArrangedSubview($0) }
         contentStack.setCustomSpacing(4, after: titleRow)
-        contentStack.setCustomSpacing(12, after: addressLabel)
+        contentStack.setCustomSpacing(24, after: addressLabel)
     }
 
     private func setupConstraints() {
@@ -250,7 +246,7 @@ class FunSpotCardViewController: UIViewController {
         contentClipView.snp.makeConstraints { make in
             make.top.equalTo(imageView.snp.bottom)
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(buttonsRow.snp.top).offset(-12)
+            make.bottom.equalTo(buttonsRow.snp.top).offset(-20)
         }
 
         contentStack.snp.makeConstraints { make in
@@ -258,7 +254,6 @@ class FunSpotCardViewController: UIViewController {
             make.leading.trailing.equalToSuperview().inset(horizontalPadding)
         }
 
-        // titleRow internals
         locationTitleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.top.bottom.equalToSuperview().inset(8)
@@ -267,7 +262,7 @@ class FunSpotCardViewController: UIViewController {
         categoryIconCircle.snp.makeConstraints { make in
             make.trailing.equalTo(starButton.snp.leading).offset(-8)
             make.centerY.equalToSuperview()
-            make.size.equalTo(CGSize(width: 40, height: 40))
+            make.size.equalTo(CGSize(width: 38, height: 30))
         }
         categoryIconView.snp.makeConstraints { make in
             make.center.equalToSuperview()
@@ -279,12 +274,10 @@ class FunSpotCardViewController: UIViewController {
             make.size.equalTo(CGSize(width: 30, height: 30))
         }
 
-        // separatorView height
         separatorView.snp.makeConstraints { make in
             make.height.equalTo(1)
         }
 
-        // buttonsRow pinned to card bottom
         buttonsRow.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(horizontalPadding)
             make.bottom.equalToSuperview().inset(16)
@@ -292,17 +285,50 @@ class FunSpotCardViewController: UIViewController {
         }
         shareButton.snp.makeConstraints { make in
             make.leading.top.bottom.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.45)
+            make.width.equalTo(buttonWidth)
         }
         directionsButton.snp.makeConstraints { make in
             make.trailing.top.bottom.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.45)
+            make.width.equalTo(buttonWidth)
         }
 
         backButton.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(16)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).inset(8)
             make.size.equalTo(CGSize(width: 40, height: 40))
+        }
+    }
+
+    // MARK: - Configuration
+    private func configure(with funSpot: FunSpot) {
+        locationTitleLabel.text = funSpot.name
+        addressLabel.text = "\(funSpot.address) | \(String(format: "%.1f", funSpot.distanceMiles)) miles away"
+        descriptionLabel.text = funSpot.about
+        starButton.isSelected = funSpot.isFavorite
+
+        let iconName: String
+        switch funSpot.category {
+        case .hotel: iconName = "hotspot-bed"
+        default: iconName = "hotspot-\(funSpot.category.rawValue)"
+        }
+        categoryIconView.image = UIImage(named: iconName)?.withRenderingMode(.alwaysOriginal)
+
+        if let quote = funSpot.quote {
+            let italicDescriptor = UIFont.getFont(.regular, size: 16)
+                .fontDescriptor
+                .withSymbolicTraits(.traitItalic)
+            let italicFont = italicDescriptor.map { UIFont(descriptor: $0, size: 16) }
+                ?? UIFont.italicSystemFont(ofSize: 16)
+            quoteLabel.attributedText = NSAttributedString(
+                string: "\u{201C}\(quote)\u{201D}",
+                attributes: [
+                    .font: italicFont,
+                    .foregroundColor: Colors.secondaryText
+                ]
+            )
+            quoteLabel.isHidden = false
+        } else {
+            quoteLabel.isHidden = true
         }
     }
 
@@ -349,8 +375,8 @@ class FunSpotCardViewController: UIViewController {
     }
 
     private func bestSnapIndex(for height: CGFloat, velocity: CGFloat) -> Int {
-        if velocity < -300 { return 1 }   // fast upward flick → expanded
-        if velocity > 300  { return 0 }   // fast downward flick → collapsed
+        if velocity < -400 { return 1 }
+        if velocity > 400  { return 0 }
         return snapHeights.indices.min(by: {
             abs(snapHeights[$0] - height) < abs(snapHeights[$1] - height)
         }) ?? 0
@@ -364,10 +390,10 @@ class FunSpotCardViewController: UIViewController {
         if animated {
             if isExpanded { expandedStack.isHidden = false }
             UIView.animate(
-                withDuration: 0.42,
+                withDuration: 0.45,
                 delay: 0,
-                usingSpringWithDamping: 0.78,
-                initialSpringVelocity: 0.3,
+                usingSpringWithDamping: 0.82,
+                initialSpringVelocity: 0.4,
                 options: [.allowUserInteraction]
             ) {
                 self.view.layoutIfNeeded()
@@ -380,6 +406,13 @@ class FunSpotCardViewController: UIViewController {
             expandedStack.alpha = isExpanded ? 1 : 0
             view.layoutIfNeeded()
         }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        shareButton.layer.shadowPath = UIBezierPath(
+            roundedRect: shareButton.bounds, cornerRadius: 20
+        ).cgPath
     }
 
     // MARK: - Actions
@@ -403,15 +436,9 @@ class FunSpotCardViewController: UIViewController {
     }
 
     @objc private func starTapped() {
-        starButton.isSelected.toggle()
+        funSpot.isFavorite.toggle()
+        starButton.isSelected = funSpot.isFavorite
         // TODO: persist favorite state
     }
 
-}
-
-// MARK: - Comparable clamp helper
-private extension Comparable {
-    func clamped(to range: ClosedRange<Self>) -> Self {
-        return min(max(self, range.lowerBound), range.upperBound)
-    }
 }
