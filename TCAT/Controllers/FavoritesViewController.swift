@@ -14,9 +14,6 @@ class FavoritesViewController: UIViewController {
     // MARK: - View vars
     private let collapsedRevealHeight: CGFloat = 54
     private let editButton = UIButton()
-    private let requestHotspotButton = UIButton()
-    private let testHotspotButton = UIButton()
-    private let testFunSpotButton = UIButton()
     private var favoritesCollectionView: UICollectionView!
     private let favoritesTitleLabel = UILabel()
     private let partialRevealHeight: CGFloat = 192
@@ -71,24 +68,6 @@ class FavoritesViewController: UIViewController {
         editButton.isEnabled = !favoritePlaces.isEmpty
         editButton.addTarget(self, action: #selector(editAction), for: .touchUpInside)
         view.addSubview(editButton)
-
-        requestHotspotButton.setTitle("Request a HotSpot", for: .normal)
-        requestHotspotButton.setTitleColor(Colors.notificationBlue, for: .normal)
-        requestHotspotButton.titleLabel?.font = UIFont.getFont(.regular, size: 14.0)
-        requestHotspotButton.addTarget(self, action: #selector(requestHotspotAction), for: .touchUpInside)
-        view.addSubview(requestHotspotButton)
-
-        testHotspotButton.setTitle("Test Hotspot", for: .normal)
-        testHotspotButton.setTitleColor(Colors.notificationBlue, for: .normal)
-        testHotspotButton.titleLabel?.font = UIFont.getFont(.regular, size: 14.0)
-        testHotspotButton.addTarget(self, action: #selector(testHotspotAction), for: .touchUpInside)
-        view.addSubview(testHotspotButton)
-
-        testFunSpotButton.setTitle("Test FunSpot", for: .normal)
-        testFunSpotButton.setTitleColor(Colors.notificationBlue, for: .normal)
-        testFunSpotButton.titleLabel?.font = UIFont.getFont(.regular, size: 14.0)
-        testFunSpotButton.addTarget(self, action: #selector(testFunSpotAction), for: .touchUpInside)
-        view.addSubview(testFunSpotButton)
     }
 
     private func setupFavoritesCollectionView() {
@@ -132,21 +111,6 @@ class FavoritesViewController: UIViewController {
 
         editButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(horizontalPadding)
-            make.top.equalToSuperview().inset(titleBarTopPadding)
-        }
-
-        requestHotspotButton.snp.makeConstraints { make in
-            make.trailing.equalTo(editButton.snp.leading).offset(-12)
-            make.top.equalToSuperview().inset(titleBarTopPadding)
-        }
-
-        testHotspotButton.snp.makeConstraints { make in
-            make.trailing.equalTo(requestHotspotButton.snp.leading).offset(-12)
-            make.top.equalToSuperview().inset(titleBarTopPadding)
-        }
-
-        testFunSpotButton.snp.makeConstraints { make in
-            make.trailing.equalTo(testHotspotButton.snp.leading).offset(-12)
             make.top.equalToSuperview().inset(titleBarTopPadding)
         }
 
@@ -199,80 +163,6 @@ class FavoritesViewController: UIViewController {
         updateFavoritesView()
     }
 
-    @objc private func testHotspotAction() {
-        guard let pulley = pulleyViewController else { return }
-
-        let drawerView = pulley.drawerContentViewController.view
-        let mapVC = pulley.primaryContentViewController as? HomeMapViewController
-
-        UIView.animate(withDuration: 0.25) { drawerView?.alpha = 0 }
-        mapVC?.setOptionsCardHidden(true)
-        mapVC?.setMapBottomPadding(0, animated: true)
-
-        let sampleHotspot = Hotspot(
-            id: "sample-hotspot-1",
-            title: "AppDev: Navi Tabling",
-            location: "Duffield Atrium | 15 minute walk",
-            tags: "Stickers, charms, and bracelets",
-            startTime: Date(),
-            endTime: Calendar.current.date(byAdding: .hour, value: 2, to: Date()) ?? Date(),
-            isActive: true,
-            organizerMessage: "Come and join us for a charm bracelet making session with the team behind Navi.\n\nMore information on our instagram @navicornell",
-            shortOrganizerMessage: "Come and join our tabling event! @navicornell",
-            moreInfo: ""
-        )
-        let vc = HotspotDetailViewController(hotspot: sampleHotspot)
-        vc.onDismiss = {
-            UIView.animate(withDuration: 0.25) { drawerView?.alpha = 1 }
-            mapVC?.setOptionsCardHidden(false)
-            if let mapVC = mapVC {
-                mapVC.setMapBottomPadding(mapVC.defaultMapBottomPadding, animated: true)
-            }
-        }
-        vc.view.frame = pulley.view.bounds
-        vc.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        pulley.add(vc)
-    }
-
-    @objc private func testFunSpotAction() {
-        guard let pulley = pulleyViewController else { return }
-
-        let drawerView = pulley.drawerContentViewController.view
-        let mapVC = pulley.primaryContentViewController as? HomeMapViewController
-
-        UIView.animate(withDuration: 0.25) { drawerView?.alpha = 0 }
-        mapVC?.setOptionsCardHidden(true)
-        mapVC?.setMapBottomPadding(0, animated: true)
-
-        let sampleFunSpot = FunSpot(
-            id: "sample-funspot-1",
-            name: "Statler Hotel",
-            address: "130 Statler Dr",
-            distanceMiles: 0.3,
-            category: .hotel,
-            about: "The Statler Hotel at Cornell University is a AAA Four Diamond award-winning hotel that serves as both a luxury hotel and a working laboratory for Cornell's hospitality students.",
-            quote: "Where hospitality meets education.",
-            imageURL: "funspot-statler-hotel",
-            isFavorite: false
-        )
-        let vc = FunSpotCardViewController(funSpot: sampleFunSpot)
-        vc.onDismiss = {
-            UIView.animate(withDuration: 0.25) { drawerView?.alpha = 1 }
-            mapVC?.setOptionsCardHidden(false)
-            if let mapVC = mapVC {
-                mapVC.setMapBottomPadding(mapVC.defaultMapBottomPadding, animated: true)
-            }
-        }
-        vc.view.frame = pulley.view.bounds
-        vc.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        pulley.add(vc)
-    }
-
-    @objc private func requestHotspotAction() {
-        let requestVC = RequestHotspotViewController()
-        let navController = CustomNavigationController(rootViewController: requestVC)
-        present(navController, animated: true, completion: nil)
-    }
 
 }
 
