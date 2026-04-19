@@ -217,9 +217,9 @@ class FavoritesViewController: UIViewController {
             startTime: Date(),
             endTime: Calendar.current.date(byAdding: .hour, value: 2, to: Date()) ?? Date(),
             isActive: true,
-            organizerMessage: "Come and join us for a charm bracelet making\nsession with the team behind Navi.\n\nMore information on our instagram @navicornell",
+            organizerMessage: "Come and join us for a charm bracelet making session with the team behind Navi.\n\nMore information on our instagram @navicornell",
             shortOrganizerMessage: "Come and join our tabling event! @navicornell",
-            moreInfo: "More information on our instagram @navicornell"
+            moreInfo: ""
         )
         let vc = HotspotDetailViewController(hotspot: sampleHotspot)
         vc.onDismiss = {
