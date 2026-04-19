@@ -6,6 +6,7 @@
 //  Copyright © 2026 cuappdev. All rights reserved.
 //
 
+import PhotosUI
 import SnapKit
 import UIKit
 
@@ -28,13 +29,17 @@ class RequestHotspotViewController: UIViewController {
     private let descriptionTextView = UITextView()
     private let locationTextField = UITextField()
 
-    private let addPhotosButton = UIButton()
+    private let addPhotoButton = UIButton(type: .system)
     private let submitButton = UIButton()
 
     // MARK: - Data vars
     private let descriptionPlaceholder = "Add A Description..."
     private var selectedEventType: String?
     private let eventTypeOptions = ["Academic", "Social", "Sports", "Cultural", "Other"]
+    private var selectedImage: UIImage?
+    private var selectedPlace: Place?
+    private var searchBarView = SearchBarView()
+    private var backButton: UIBarButtonItem?
 
     // MARK: - Init
 
@@ -57,6 +62,7 @@ class RequestHotspotViewController: UIViewController {
         setupActionButtons()
         setupConstraints()
         setupKeyboardObservers()
+        setupLocationSearch()
     }
 
     deinit {
@@ -119,33 +125,39 @@ class RequestHotspotViewController: UIViewController {
         configureTextField(nameTextField, placeholder: "Enter your name...")
         configureTextField(netIDTextField, placeholder: "Enter your NetID...")
         configureTextField(locationTextField, placeholder: "Enter a location...")
+        locationTextField.delegate = self
 
         setupEventTypeButton()
         setupDescriptionTextView()
     }
 
     private func setupEventTypeButton() {
-        eventTypeButton.setTitle("Choose an option...", for: .normal)
-        eventTypeButton.setTitleColor(Colors.metadataIcon, for: .normal)
-        eventTypeButton.titleLabel?.font = .getFont(.regular, size: 16)
-        eventTypeButton.contentHorizontalAlignment = .left
-        eventTypeButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
-        eventTypeButton.backgroundColor = Colors.backgroundWash
-        eventTypeButton.layer.cornerRadius = 8
-        eventTypeButton.clipsToBounds = true
+        var config = UIButton.Configuration.plain()
+        config.title = "Choose an option..."
+        config.baseForegroundColor = Colors.metadataIcon
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 0)
+        config.background.backgroundColor = Colors.backgroundWash
+        config.background.cornerRadius = 8
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
+            var updated = attrs
+            updated.font = UIFont.getFont(.regular, size: 16)
+            return updated
+        }
+        eventTypeButton.configuration = config
+        eventTypeButton.contentHorizontalAlignment = .leading
 
         let actions = eventTypeOptions.map { option in
             UIAction(title: option) { [weak self] _ in
-                self?.selectedEventType = option
-                self?.eventTypeButton.setTitle(option, for: .normal)
-                self?.eventTypeButton.setTitleColor(Colors.primaryText, for: .normal)
+                guard let self else { return }
+                self.selectedEventType = option
+                self.eventTypeButton.configuration?.title = option
+                self.eventTypeButton.configuration?.baseForegroundColor = Colors.primaryText
             }
         }
         eventTypeButton.menu = UIMenu(title: "", children: actions)
         eventTypeButton.showsMenuAsPrimaryAction = true
         contentView.addSubview(eventTypeButton)
 
-        // Chevron pinned to the right edge of the button
         eventTypeChevron.image = UIImage(systemName: "chevron.down")
         eventTypeChevron.tintColor = Colors.metadataIcon
         eventTypeChevron.contentMode = .scaleAspectFit
@@ -166,15 +178,25 @@ class RequestHotspotViewController: UIViewController {
         contentView.addSubview(descriptionTextView)
     }
 
+    private func setupLocationSearch() {
+        searchBarView = SearchBarView(searchBarCancelDelegate: self, destinationDelegate: self)
+        hideLocationSearch()
+    }
+
     private func setupActionButtons() {
-        addPhotosButton.setTitle("+ Add Photos", for: .normal)
-        addPhotosButton.setTitleColor(Colors.primaryText, for: .normal)
-        addPhotosButton.titleLabel?.font = .getFont(.regular, size: 16)
-        addPhotosButton.backgroundColor = Colors.backgroundWash
-        addPhotosButton.layer.cornerRadius = 22
-        addPhotosButton.clipsToBounds = true
-        addPhotosButton.addTarget(self, action: #selector(addPhotosTapped), for: .touchUpInside)
-        contentView.addSubview(addPhotosButton)
+        var config = UIButton.Configuration.plain()
+        var titleAttr = AttributeContainer()
+        titleAttr.font = UIFont.getFont(.semibold, size: 16)
+        config.attributedTitle = AttributedString("Add Photo", attributes: titleAttr)
+        config.image = plusIcon()
+        config.imagePadding = 8
+        config.imagePlacement = .leading
+        config.baseForegroundColor = Colors.secondaryText
+        config.background.backgroundColor = Colors.backgroundWash
+        config.background.cornerRadius = 22
+        addPhotoButton.configuration = config
+        addPhotoButton.addTarget(self, action: #selector(addPhotoTapped), for: .touchUpInside)
+        contentView.addSubview(addPhotoButton)
 
         submitButton.setTitle("Submit", for: .normal)
         submitButton.setTitleColor(Colors.white, for: .normal)
@@ -280,7 +302,7 @@ class RequestHotspotViewController: UIViewController {
             make.height.equalTo(fieldHeight)
         }
 
-        addPhotosButton.snp.makeConstraints { make in
+        addPhotoButton.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(hPad)
             make.top.equalTo(locationTextField.snp.bottom).offset(fieldToLabel)
             make.height.equalTo(fieldHeight)
@@ -288,10 +310,40 @@ class RequestHotspotViewController: UIViewController {
 
         submitButton.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(hPad)
-            make.top.equalTo(addPhotosButton.snp.bottom).offset(fieldToLabel)
+            make.top.equalTo(addPhotoButton.snp.bottom).offset(fieldToLabel)
             make.height.equalTo(48)
             make.bottom.equalToSuperview().inset(32)
         }
+    }
+
+    // MARK: - Location search bar (mirrors RouteOptionsViewController pattern)
+
+    private func showLocationSearch() {
+        navigationItem.searchController = searchBarView.searchController
+        navigationController?.view.setNeedsLayout()
+        backButton = navigationItem.leftBarButtonItem
+        navigationItem.setLeftBarButton(nil, animated: false)
+        navigationItem.hidesBackButton = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            self.searchBarView.searchController?.isActive = true
+        }
+    }
+
+    private func hideLocationSearch() {
+        navigationItem.searchController = nil
+        navigationController?.view.setNeedsLayout()
+        if let backButton {
+            navigationItem.setLeftBarButton(backButton, animated: false)
+        }
+        navigationItem.hidesBackButton = false
+        searchBarView.searchController?.isActive = false
+    }
+
+    // MARK: - Helpers
+
+    private func plusIcon() -> UIImage {
+        UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold))
+            ?? UIImage()
     }
 
     // MARK: - Actions
@@ -300,8 +352,13 @@ class RequestHotspotViewController: UIViewController {
         dismiss(animated: true)
     }
 
-    @objc private func addPhotosTapped() {
-        // TODO: Implement photo picker
+    @objc private func addPhotoTapped() {
+        var config = PHPickerConfiguration(photoLibrary: .shared())
+        config.selectionLimit = 1
+        config.filter = .images
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        present(picker, animated: true)
     }
 
     @objc private func submitTapped() {
@@ -338,6 +395,65 @@ extension RequestHotspotViewController: UITextViewDelegate {
         if textView.text.isEmpty {
             textView.text = descriptionPlaceholder
             textView.textColor = Colors.metadataIcon
+        }
+    }
+
+}
+
+// MARK: - UITextFieldDelegate
+
+extension RequestHotspotViewController: UITextFieldDelegate {
+
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        guard textField == locationTextField else { return true }
+        showLocationSearch()
+        return false
+    }
+
+}
+
+// MARK: - DestinationDelegate
+
+extension RequestHotspotViewController: DestinationDelegate {
+
+    func didSelectPlace(place: Place) {
+        selectedPlace = place
+        locationTextField.text = place.name
+        hideLocationSearch()
+        searchBarView.searchController?.dismiss(animated: true)
+    }
+
+}
+
+// MARK: - SearchBarCancelDelegate
+
+extension RequestHotspotViewController: SearchBarCancelDelegate {
+
+    func didCancel() {
+        hideLocationSearch()
+    }
+
+}
+
+// MARK: - PHPickerViewControllerDelegate
+
+extension RequestHotspotViewController: PHPickerViewControllerDelegate {
+
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        guard let result = results.first else { return }
+        result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] object, _ in
+            guard let self = self, let image = object as? UIImage else { return }
+            DispatchQueue.main.async {
+                self.selectedImage = image
+                let thumbnail = image.preparingThumbnail(of: CGSize(width: 28, height: 28))
+                var config = self.addPhotoButton.configuration ?? UIButton.Configuration.plain()
+                var titleAttr = AttributeContainer()
+                titleAttr.font = UIFont.getFont(.semibold, size: 16)
+                config.attributedTitle = AttributedString("Change Photo", attributes: titleAttr)
+                config.image = thumbnail?.withRoundedCorners(radius: 4) ?? self.plusIcon()
+                self.addPhotoButton.configuration = config
+            }
         }
     }
 

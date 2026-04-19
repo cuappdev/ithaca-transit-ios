@@ -229,12 +229,9 @@ class FavoritesViewController: UIViewController {
                 mapVC.setMapBottomPadding(mapVC.defaultMapBottomPadding, animated: true)
             }
         }
-
-        pulley.addChild(vc)
         vc.view.frame = pulley.view.bounds
         vc.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        pulley.view.addSubview(vc.view)
-        vc.didMove(toParent: pulley)
+        pulley.add(vc)
     }
 
     @objc private func testFunSpotAction() {
@@ -255,7 +252,7 @@ class FavoritesViewController: UIViewController {
             category: .hotel,
             about: "The Statler Hotel at Cornell University is a AAA Four Diamond award-winning hotel that serves as both a luxury hotel and a working laboratory for Cornell's hospitality students.",
             quote: "Where hospitality meets education.",
-            imageURL: nil,
+            imageURL: "funspot-statler-hotel",
             isFavorite: false
         )
         let vc = FunSpotCardViewController(funSpot: sampleFunSpot)
@@ -266,12 +263,9 @@ class FavoritesViewController: UIViewController {
                 mapVC.setMapBottomPadding(mapVC.defaultMapBottomPadding, animated: true)
             }
         }
-
-        pulley.addChild(vc)
         vc.view.frame = pulley.view.bounds
         vc.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        pulley.view.addSubview(vc.view)
-        vc.didMove(toParent: pulley)
+        pulley.add(vc)
     }
 
     @objc private func requestHotspotAction() {

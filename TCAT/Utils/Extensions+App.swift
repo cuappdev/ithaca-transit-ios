@@ -229,6 +229,28 @@ extension Array where Element: Comparable {
 
 }
 
+extension UIFont {
+
+    func italic() -> UIFont {
+        let descriptor = fontDescriptor.withSymbolicTraits(.traitItalic)
+        return descriptor.map { UIFont(descriptor: $0, size: pointSize) } ?? UIFont.italicSystemFont(ofSize: pointSize)
+    }
+
+}
+
+extension UIImage {
+
+    func withRoundedCorners(radius: CGFloat) -> UIImage? {
+        let rect = CGRect(origin: .zero, size: size)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { _ in
+            UIBezierPath(roundedRect: rect, cornerRadius: radius).addClip()
+            draw(in: rect)
+        }
+    }
+
+}
+
 /// Present a share sheet for a route in any context.
 func presentShareSheet(
     from view: UIView,

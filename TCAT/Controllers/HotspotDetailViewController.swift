@@ -9,25 +9,24 @@
 import SnapKit
 import UIKit
 
-class HotspotDetailViewController: UIViewController {
+class HotspotDetailViewController: SnapCardViewController {
 
-    // MARK: - Snap heights (collapsed, partial, open)
-    private let snapHeights: [CGFloat] = [140, 240, 310]
-    private var cardHeightConstraint: Constraint?
-    private var currentSnapIndex = 0
+    // MARK: - SnapCardViewController overrides
+
+    override var snapHeights: [CGFloat] { [140, 240, 310] }
+    override var cardBottomInset: CGFloat { directionsButtonOverlap }
+    override func extraEntranceViews() -> [UIView] { [directionsButton] }
 
     // MARK: - Constants
+
     private let directionsButtonHeight: CGFloat = 40
     private let directionsButtonOverlap: CGFloat = 26
     private let directionsButtonWidth: CGFloat = 159
-    private let dragIndicatorSize = CGSize(width: 36, height: 3)
 
     // MARK: - Subviews
-    private let cardView = UIView()
-    private let dragIndicator = UIView()
-    private let backButton = UIButton(type: .system)
+
     private let contentStack = UIStackView()
-    private let contentClipView = UIView()  // clips overflowing rows during drag
+    private let contentClipView = UIView()
 
     // Content rows
     private let headerRow = UIView()
@@ -44,12 +43,11 @@ class HotspotDetailViewController: UIViewController {
     private let directionsButton = UIButton(type: .system)
 
     // MARK: - Data
+
     private let hotspot: Hotspot
 
-    // MARK: - Callback
-    var onDismiss: (() -> Void)?
-
     // MARK: - Init
+
     init(hotspot: Hotspot) {
         self.hotspot = hotspot
         super.init(nibName: nil, bundle: nil)
@@ -60,56 +58,18 @@ class HotspotDetailViewController: UIViewController {
     }
 
     // MARK: - Lifecycle
-    override func loadView() {
-        view = PassthroughView()
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .clear
         setupSubviews()
         setupConstraints()
         configure(with: hotspot)
         updateVisibility(for: 0, animated: false)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        animateEntrance()
-    }
-
     // MARK: - Setup
+
     private func setupSubviews() {
-        cardView.backgroundColor = Colors.white
-        cardView.layer.cornerRadius = 16
-        cardView.layer.shadowColor = Colors.black.cgColor
-        cardView.layer.shadowOpacity = 0.15
-        cardView.layer.shadowOffset = .zero
-        cardView.layer.shadowRadius = 8
-        cardView.clipsToBounds = false
-        cardView.alpha = 0
-        view.addSubview(cardView)
-
-        cardView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:))))
-
-        dragIndicator.backgroundColor = Colors.naviOrange
-        dragIndicator.layer.cornerRadius = 1.5
-        cardView.addSubview(dragIndicator)
-
-        let chevronConfig = UIImage.SymbolConfiguration(pointSize: 16, weight: .semibold)
-        backButton.setImage(UIImage(systemName: "chevron.left", withConfiguration: chevronConfig), for: .normal)
-        backButton.backgroundColor = Colors.white
-        backButton.layer.cornerRadius = 20
-        backButton.clipsToBounds = false
-        backButton.tintColor = Colors.primaryText
-        backButton.alpha = 0
-        backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
-        backButton.layer.shadowColor = Colors.black.cgColor
-        backButton.layer.shadowOpacity = 0.15
-        backButton.layer.shadowOffset = CGSize(width: 0, height: 2)
-        backButton.layer.shadowRadius = 4
-        view.addSubview(backButton)
-
         calendarImageView.image = UIImage(named: "hotspot-event")
         calendarImageView.tintColor = Colors.naviOrange
         calendarImageView.contentMode = .scaleAspectFit
@@ -120,14 +80,6 @@ class HotspotDetailViewController: UIViewController {
 
         headerRow.addSubview(calendarImageView)
         headerRow.addSubview(eventTitleLabel)
-        calendarImageView.snp.makeConstraints { make in
-            make.leading.centerY.equalToSuperview()
-            make.size.equalTo(CGSize(width: 23, height: 24))
-        }
-        eventTitleLabel.snp.makeConstraints { make in
-            make.leading.equalTo(calendarImageView.snp.trailing).offset(8)
-            make.trailing.top.bottom.equalToSuperview()
-        }
 
         locationLabel.font = UIFont.getFont(.regular, size: 16)
         locationLabel.textColor = Colors.metadataIcon
@@ -138,18 +90,12 @@ class HotspotDetailViewController: UIViewController {
         timeLabel.font = UIFont.getFont(.regular, size: 16)
 
         separatorView.backgroundColor = Colors.dividerTextField
-        separatorView.snp.makeConstraints { make in
-            make.height.equalTo(1)
-        }
 
         organizerHeaderLabel.text = "Organizer Message"
         organizerHeaderLabel.font = UIFont.getFont(.bold, size: 16)
         organizerHeaderLabel.textColor = Colors.secondaryText
 
-        let baseFont = UIFont.getFont(.regular, size: 16)
-        let italicDescriptor = baseFont.fontDescriptor.withSymbolicTraits(.traitItalic)
-        let italicFont = italicDescriptor.map { UIFont(descriptor: $0, size: 16) } ?? UIFont.italicSystemFont(ofSize: 16)
-
+        let italicFont = UIFont.getFont(.regular, size: 16).italic()
         organizerMessageLabel.font = italicFont
         organizerMessageLabel.textColor = Colors.secondaryText
         organizerMessageLabel.numberOfLines = 0
@@ -192,17 +138,17 @@ class HotspotDetailViewController: UIViewController {
     }
 
     private func setupConstraints() {
-        cardView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.9)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(directionsButtonOverlap)
-            cardHeightConstraint = make.height.equalTo(snapHeights[0]).constraint
+        calendarImageView.snp.makeConstraints { make in
+            make.leading.centerY.equalToSuperview()
+            make.size.equalTo(CGSize(width: 23, height: 24))
+        }
+        eventTitleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(calendarImageView.snp.trailing).offset(8)
+            make.trailing.top.bottom.equalToSuperview()
         }
 
-        dragIndicator.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().inset(10)
-            make.size.equalTo(dragIndicatorSize)
+        separatorView.snp.makeConstraints { make in
+            make.height.equalTo(1)
         }
 
         contentClipView.snp.makeConstraints { make in
@@ -215,12 +161,6 @@ class HotspotDetailViewController: UIViewController {
             make.leading.trailing.equalToSuperview().inset(16)
         }
 
-        backButton.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(16)
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).inset(8)
-            make.size.equalTo(CGSize(width: 40, height: 40))
-        }
-
         directionsButton.snp.makeConstraints { make in
             make.trailing.equalTo(cardView).inset(16)
             make.bottom.equalTo(cardView.snp.bottom).offset(directionsButtonOverlap)
@@ -230,6 +170,7 @@ class HotspotDetailViewController: UIViewController {
     }
 
     // MARK: - Configuration
+
     private func configure(with hotspot: Hotspot) {
         eventTitleLabel.text = hotspot.title
         locationLabel.text = hotspot.location
@@ -258,77 +199,17 @@ class HotspotDetailViewController: UIViewController {
         timeLabel.attributedText = timeLabelText
     }
 
-    // MARK: - Entrance animation
-    private func animateEntrance() {
-        cardView.transform = CGAffineTransform(translationX: 0, y: 60)
-        UIView.animate(
-            withDuration: 0.45,
-            delay: 0,
-            usingSpringWithDamping: 0.82,
-            initialSpringVelocity: 0.4,
-            options: [.allowUserInteraction]
-        ) {
-            self.cardView.alpha = 1
-            self.cardView.transform = .identity
-            self.directionsButton.alpha = 1
-            self.backButton.alpha = 1
-        }
+    // MARK: - SnapCardViewController hooks
+
+    override func dragDidChange(height: CGFloat) {
+        updateAlphasDuringDrag(height: height)
     }
 
-    // MARK: - Pan gesture
-    private var panStartHeight: CGFloat = 0
-
-    @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
-        let translation = gesture.translation(in: view)
-
-        switch gesture.state {
-        case .began:
-            panStartHeight = snapHeights[currentSnapIndex]
-
-        case .changed:
-            let newHeight = (panStartHeight - translation.y)
-                .clamped(to: snapHeights.first!...snapHeights.last!)
-            cardHeightConstraint?.update(offset: newHeight)
-            updateAlphasDuringDrag(height: newHeight)
-
-        case .ended, .cancelled:
-            let velocity = gesture.velocity(in: view).y
-            let currentHeight = panStartHeight - translation.y
-            snap(to: bestSnapIndex(for: currentHeight, velocity: velocity), animated: true)
-
-        default:
-            break
-        }
+    override func didSnap(to index: Int, animated: Bool) {
+        updateVisibility(for: index, animated: animated)
     }
 
-    private func bestSnapIndex(for height: CGFloat, velocity: CGFloat) -> Int {
-        if velocity < -400, currentSnapIndex < snapHeights.count - 1 { return currentSnapIndex + 1 }
-        if velocity > 400, currentSnapIndex > 0 { return currentSnapIndex - 1 }
-        return snapHeights.indices.min(by: {
-            abs(snapHeights[$0] - height) < abs(snapHeights[$1] - height)
-        }) ?? 0
-    }
-
-    private func snap(to index: Int, animated: Bool) {
-        currentSnapIndex = index
-        cardHeightConstraint?.update(offset: snapHeights[index])
-
-        if animated {
-            UIView.animate(
-                withDuration: 0.45,
-                delay: 0,
-                usingSpringWithDamping: 0.82,
-                initialSpringVelocity: 0.4,
-                options: [.allowUserInteraction]
-            ) {
-                self.view.layoutIfNeeded()
-            }
-            updateVisibility(for: index, animated: true)
-        } else {
-            view.layoutIfNeeded()
-            updateVisibility(for: index, animated: false)
-        }
-    }
+    // MARK: - Drag alphas
 
     private func updateAlphasDuringDrag(height: CGFloat) {
         let prog01 = ((height - snapHeights[0]) / (snapHeights[1] - snapHeights[0])).clamped(to: 0...1)
@@ -344,6 +225,7 @@ class HotspotDetailViewController: UIViewController {
     }
 
     // MARK: - Visibility
+
     private func updateVisibility(for snapIndex: Int, animated: Bool) {
         let isPartialOrOpen = snapIndex >= 1
         let isOpen = snapIndex >= 2
@@ -382,27 +264,6 @@ class HotspotDetailViewController: UIViewController {
         toggle(moreInfoLabel, isOpen)
 
         backButton.alpha = 1
-    }
-
-    // MARK: - Actions
-    @objc private func backTapped() {
-        UIView.animate(
-            withDuration: 0.3,
-            delay: 0,
-            usingSpringWithDamping: 1,
-            initialSpringVelocity: 0,
-            options: []
-        ) {
-            self.cardView.alpha = 0
-            self.cardView.transform = CGAffineTransform(translationX: 0, y: 60)
-            self.backButton.alpha = 0
-            self.directionsButton.alpha = 0
-        } completion: { _ in
-            self.onDismiss?()
-            self.willMove(toParent: nil)
-            self.view.removeFromSuperview()
-            self.removeFromParent()
-        }
     }
 
 }

@@ -9,26 +9,23 @@
 import SnapKit
 import UIKit
 
-class FunSpotCardViewController: UIViewController {
+class FunSpotCardViewController: SnapCardViewController {
 
-    // MARK: - Snap heights (collapsed, expanded)
-    private let snapHeights: [CGFloat] = [300, 500]
-    private var cardHeightConstraint: Constraint?
-    private var currentSnapIndex = 0
+    // MARK: - SnapCardViewController overrides
+
+    override var snapHeights: [CGFloat] { [300, 500] }
+    override var dragIndicatorColor: UIColor { Colors.white }
 
     // MARK: - Constants
+
     private let imageHeight: CGFloat = 150
     private let buttonHeight: CGFloat = 40
     private let buttonWidth: CGFloat = 159
-    private let cardCornerRadius: CGFloat = 16
     private let horizontalPadding: CGFloat = 16
-    private let dragIndicatorSize = CGSize(width: 36, height: 3)
 
     // MARK: - Subviews
-    private let cardView = UIView()
+
     private let imageView = UIImageView()
-    private let dragIndicator = UIView()
-    private let backButton = UIButton(type: .system)
     private let contentClipView = UIView()
     private let contentStack = UIStackView()
 
@@ -55,12 +52,11 @@ class FunSpotCardViewController: UIViewController {
     private let directionsButton = UIButton(type: .system)
 
     // MARK: - Data
+
     private var funSpot: FunSpot
 
-    // MARK: - Callback
-    var onDismiss: (() -> Void)?
-
     // MARK: - Init
+
     init(funSpot: FunSpot) {
         self.funSpot = funSpot
         super.init(nibName: nil, bundle: nil)
@@ -71,13 +67,9 @@ class FunSpotCardViewController: UIViewController {
     }
 
     // MARK: - Lifecycle
-    override func loadView() {
-        view = PassthroughView()
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .clear
         setupSubviews()
         setupConstraints()
         configure(with: funSpot)
@@ -85,49 +77,18 @@ class FunSpotCardViewController: UIViewController {
         expandedStack.alpha = 0
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        animateEntrance()
-    }
-
     // MARK: - Setup
-    private func setupSubviews() {
-        cardView.backgroundColor = Colors.white
-        cardView.layer.cornerRadius = cardCornerRadius
-        cardView.layer.shadowColor = Colors.black.cgColor
-        cardView.layer.shadowOpacity = 0.15
-        cardView.layer.shadowOffset = .zero
-        cardView.layer.shadowRadius = 8
-        cardView.clipsToBounds = false
-        cardView.alpha = 0
-        view.addSubview(cardView)
-        cardView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:))))
 
+    private func setupSubviews() {
         // top corners masked to match card rounding
         imageView.backgroundColor = Colors.backgroundWash
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = cardCornerRadius
+        imageView.layer.cornerRadius = 16
         imageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         cardView.addSubview(imageView)
-
-        dragIndicator.backgroundColor = Colors.naviOrange
-        dragIndicator.layer.cornerRadius = 1.5
-        cardView.addSubview(dragIndicator)
-
-        let chevronConfig = UIImage.SymbolConfiguration(pointSize: 16, weight: .semibold)
-        backButton.setImage(UIImage(systemName: "chevron.left", withConfiguration: chevronConfig), for: .normal)
-        backButton.backgroundColor = Colors.white
-        backButton.layer.cornerRadius = 20
-        backButton.clipsToBounds = false
-        backButton.tintColor = Colors.primaryText
-        backButton.alpha = 0
-        backButton.layer.shadowColor = Colors.black.cgColor
-        backButton.layer.shadowOpacity = 0.15
-        backButton.layer.shadowOffset = CGSize(width: 0, height: 2)
-        backButton.layer.shadowRadius = 4
-        backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
-        view.addSubview(backButton)
+        // dragIndicator was added in base class before imageView — bring it above
+        cardView.bringSubviewToFront(dragIndicator)
 
         contentClipView.clipsToBounds = true
         cardView.addSubview(contentClipView)
@@ -141,7 +102,6 @@ class FunSpotCardViewController: UIViewController {
         locationTitleLabel.font = UIFont.getFont(.semibold, size: 22)
         locationTitleLabel.textColor = Colors.primaryText
 
-        // TODO: Replace with real category icon based on fun spot type
         categoryIconCircle.backgroundColor = .clear
         categoryIconCircle.layer.cornerRadius = 15
         categoryIconCircle.layer.borderColor = Colors.dividerTextField.cgColor
@@ -225,22 +185,9 @@ class FunSpotCardViewController: UIViewController {
     }
 
     private func setupConstraints() {
-        cardView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.9)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(16)
-            cardHeightConstraint = make.height.equalTo(snapHeights[0]).constraint
-        }
-
         imageView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(imageHeight)
-        }
-
-        dragIndicator.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().inset(10)
-            make.size.equalTo(dragIndicatorSize)
         }
 
         contentClipView.snp.makeConstraints { make in
@@ -291,20 +238,19 @@ class FunSpotCardViewController: UIViewController {
             make.trailing.top.bottom.equalToSuperview()
             make.width.equalTo(buttonWidth)
         }
-
-        backButton.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(16)
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).inset(8)
-            make.size.equalTo(CGSize(width: 40, height: 40))
-        }
     }
 
     // MARK: - Configuration
+
     private func configure(with funSpot: FunSpot) {
         locationTitleLabel.text = funSpot.name
         addressLabel.text = "\(funSpot.address) | \(String(format: "%.1f", funSpot.distanceMiles)) miles away"
         descriptionLabel.text = funSpot.about
         starButton.isSelected = funSpot.isFavorite
+
+        if let name = funSpot.imageURL {
+            imageView.image = UIImage(named: name)
+        }
 
         let iconName: String
         switch funSpot.category {
@@ -314,15 +260,10 @@ class FunSpotCardViewController: UIViewController {
         categoryIconView.image = UIImage(named: iconName)?.withRenderingMode(.alwaysOriginal)
 
         if let quote = funSpot.quote {
-            let italicDescriptor = UIFont.getFont(.regular, size: 16)
-                .fontDescriptor
-                .withSymbolicTraits(.traitItalic)
-            let italicFont = italicDescriptor.map { UIFont(descriptor: $0, size: 16) }
-                ?? UIFont.italicSystemFont(ofSize: 16)
             quoteLabel.attributedText = NSAttributedString(
                 string: "\u{201C}\(quote)\u{201D}",
                 attributes: [
-                    .font: italicFont,
+                    .font: UIFont.getFont(.regular, size: 16).italic(),
                     .foregroundColor: Colors.secondaryText
                 ]
             )
@@ -332,61 +273,10 @@ class FunSpotCardViewController: UIViewController {
         }
     }
 
-    // MARK: - Entrance animation
-    private func animateEntrance() {
-        cardView.transform = CGAffineTransform(translationX: 0, y: 60)
-        UIView.animate(
-            withDuration: 0.45,
-            delay: 0,
-            usingSpringWithDamping: 0.82,
-            initialSpringVelocity: 0.4,
-            options: [.allowUserInteraction]
-        ) {
-            self.cardView.alpha = 1
-            self.cardView.transform = .identity
-            self.backButton.alpha = 1
-        }
-    }
+    // MARK: - SnapCardViewController hook
 
-    // MARK: - Pan gesture
-    private var panStartHeight: CGFloat = 0
-
-    @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
-        let translation = gesture.translation(in: view)
-
-        switch gesture.state {
-        case .began:
-            panStartHeight = snapHeights[currentSnapIndex]
-
-        case .changed:
-            let newHeight = (panStartHeight - translation.y)
-                .clamped(to: snapHeights.first!...snapHeights.last!)
-            cardHeightConstraint?.update(offset: newHeight)
-            view.layoutIfNeeded()
-
-        case .ended, .cancelled:
-            let velocity = gesture.velocity(in: view).y
-            let currentHeight = panStartHeight - translation.y
-            snap(to: bestSnapIndex(for: currentHeight, velocity: velocity), animated: true)
-
-        default:
-            break
-        }
-    }
-
-    private func bestSnapIndex(for height: CGFloat, velocity: CGFloat) -> Int {
-        if velocity < -400 { return 1 }
-        if velocity > 400  { return 0 }
-        return snapHeights.indices.min(by: {
-            abs(snapHeights[$0] - height) < abs(snapHeights[$1] - height)
-        }) ?? 0
-    }
-
-    private func snap(to index: Int, animated: Bool) {
-        currentSnapIndex = index
-        cardHeightConstraint?.update(offset: snapHeights[index])
+    override func didSnap(to index: Int, animated: Bool) {
         let isExpanded = index == 1
-
         if animated {
             if isExpanded { expandedStack.isHidden = false }
             UIView.animate(
@@ -396,7 +286,6 @@ class FunSpotCardViewController: UIViewController {
                 initialSpringVelocity: 0.4,
                 options: [.allowUserInteraction]
             ) {
-                self.view.layoutIfNeeded()
                 self.expandedStack.alpha = isExpanded ? 1 : 0
             } completion: { _ in
                 if !isExpanded { self.expandedStack.isHidden = true }
@@ -404,7 +293,6 @@ class FunSpotCardViewController: UIViewController {
         } else {
             expandedStack.isHidden = !isExpanded
             expandedStack.alpha = isExpanded ? 1 : 0
-            view.layoutIfNeeded()
         }
     }
 
@@ -416,24 +304,6 @@ class FunSpotCardViewController: UIViewController {
     }
 
     // MARK: - Actions
-    @objc private func backTapped() {
-        UIView.animate(
-            withDuration: 0.3,
-            delay: 0,
-            usingSpringWithDamping: 1,
-            initialSpringVelocity: 0,
-            options: []
-        ) {
-            self.cardView.alpha = 0
-            self.cardView.transform = CGAffineTransform(translationX: 0, y: 60)
-            self.backButton.alpha = 0
-        } completion: { _ in
-            self.onDismiss?()
-            self.willMove(toParent: nil)
-            self.view.removeFromSuperview()
-            self.removeFromParent()
-        }
-    }
 
     @objc private func starTapped() {
         funSpot.isFavorite.toggle()
